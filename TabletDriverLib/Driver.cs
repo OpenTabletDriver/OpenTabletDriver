@@ -43,7 +43,7 @@ namespace TabletDriverLib
 
         private void Main()
         {
-            Log.WriteLine("Driver has started.");
+            Log.WriteLine("INFO", "Driver has started.");
 
             while (IsRunning)
             {
