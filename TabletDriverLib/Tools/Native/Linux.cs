@@ -6,17 +6,6 @@ namespace TabletDriverLib.Tools.Native
     using XPointer = System.IntPtr;
     using Display = System.IntPtr;
     using Window = System.IntPtr;
-    using Drawable = System.IntPtr;
-    using Font = System.IntPtr;
-    using Pixmap = System.IntPtr;
-    using Cursor = System.IntPtr;
-    using Colormap = System.IntPtr;
-    using GContext = System.IntPtr;
-    using KeySym = System.IntPtr;
-    using Mask = System.IntPtr;
-    using Atom = System.IntPtr;
-    using VisualID = System.IntPtr;
-    using Time = System.IntPtr;
     
     internal class Linux
     {
@@ -24,20 +13,22 @@ namespace TabletDriverLib.Tools.Native
 
         [DllImport("libX11", EntryPoint = "XOpenDisplay")]
         private extern static IntPtr sys_XOpenDisplay(IntPtr display);
-        public static Display XOpenDisplay(IntPtr display)
+        public static IntPtr XOpenDisplay(IntPtr display)
         {
             lock (Lock)
                 return sys_XOpenDisplay(display);
         }
+
+        [DllImport("libX11", EntryPoint = "XCloseDisplay")]
+        public extern static int XCloseDisplay(IntPtr display);
         
         [DllImport("libX11", EntryPoint = "XQueryPointer")]
-        public extern static bool XQueryPointer(Display display, Window w, out Window root, out Window child, out IntPtr root_x, out IntPtr root_y, out IntPtr win_x, out IntPtr win_y, out UIntPtr mask_return);
-
+        public extern static bool XQueryPointer(IntPtr display, IntPtr window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
 
         [DllImport("libX11", EntryPoint = "XWarpPointer")]
-        public extern static uint XWarpPointer(Display display, Window src_w, Window dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
-        
+        public extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
+
         [DllImport("libX11", EntryPoint = "XFlush")]
-        public extern static int XFlush(Display display); 
+        public extern static int XFlush(IntPtr display); 
     }
 }

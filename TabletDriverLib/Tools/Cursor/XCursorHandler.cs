@@ -3,8 +3,18 @@ using TabletDriverLib.Class;
 
 namespace TabletDriverLib.Tools.Cursor
 {
-    public class XCursorHandler : ICursorHandler
+    public class XCursorHandler : ICursorHandler, IDisposable
     {
+        public XCursorHandler()
+        {
+            Native.Linux.XOpenDisplay((IntPtr) 0);
+        }
+
+        public void Dispose()
+        {
+            Native.Linux.XCloseDisplay((IntPtr) 0);
+        }
+
         public Point GetCursorPosition()
         {
             Native.Linux.XQueryPointer((IntPtr) 0, (IntPtr) 0, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
