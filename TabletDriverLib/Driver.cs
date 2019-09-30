@@ -12,7 +12,7 @@ namespace TabletDriverLib
             SetPlatformSpecifics(Environment.OSVersion.Platform);
         }
 
-        public Logger Log { private set; get; } = new Logger();
+        internal Logger Log { set; get; } = new Logger();
         public Configuration Configuration { set; get; }
         public bool IsRunning { private set; get; }
         

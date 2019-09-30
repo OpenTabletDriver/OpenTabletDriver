@@ -1,10 +1,9 @@
 using System.Diagnostics;
 using System.IO;
-using TabletDriverLib.Interface;
 
 namespace TabletDriverLib.Class
 {
-    public class Logger : ILogger
+    internal class Logger
     {
         public void Write(string text)
         {
@@ -18,7 +17,7 @@ namespace TabletDriverLib.Class
 
         public void WriteLine(string prefix, string text)
         {
-            Trace.WriteLine($"{prefix}: {text}");
+            Trace.WriteLine($"[{prefix}]\t{text}");
         }
     }
 }
