@@ -1,0 +1,11 @@
+# IDE
+/.vs
+/.vscode
+
+# Build Artifacts
+**/obj
+**/bin
+/Build
+
+# User Preferences
+*.user
