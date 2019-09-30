@@ -12,12 +12,7 @@ namespace TabletDriverLib.Tools.Cursor
 
         public void SetCursorPosition(Point pos)
         {
-            var point = new Native.MacOSX.CGPoint
-            {
-                X = (Single)pos.X,
-                Y = (Single)pos.Y
-            };
-            Native.MacOSX.CGWarpMouseCursorPosition(point);
+            Native.MacOSX.CGWarpMouseCursorPosition((Native.MacOSX.CGPoint)pos);
         }
     }
 }

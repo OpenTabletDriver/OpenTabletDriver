@@ -7,7 +7,7 @@ namespace TabletDriverLib.Tools.Cursor
         public Point GetCursorPosition()
         {
             Native.Windows.GetCursorPos(out Native.Windows.POINT pt);
-            return new Point(pt.X, pt.Y);
+            return (Point)pt;
         }
 
         public void SetCursorPosition(Point pos)

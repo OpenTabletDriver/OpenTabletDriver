@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using TabletDriverLib.Class;
 
 namespace TabletDriverLib.Tools.Native
 {
@@ -16,14 +17,14 @@ namespace TabletDriverLib.Tools.Native
                 this.Y = y;
             }
 
-            public static implicit operator System.Drawing.Point(POINT p)
+            public static explicit operator Point(POINT p)
             {
-                return new System.Drawing.Point(p.X, p.Y);
+                return new Point(p.X, p.Y);
             }
 
-            public static implicit operator POINT(System.Drawing.Point p)
+            public static explicit operator POINT(Point p)
             {
-                return new POINT(p.X, p.Y);
+                return new POINT((int)p.X, (int)p.Y);
             }
         }
 
