@@ -15,6 +15,7 @@ namespace TabletDriverLib
         internal Logger Log { set; get; } = new Logger();
         public Configuration Configuration { set; get; }
         public bool IsRunning { private set; get; }
+        public bool Debugging { set; get; }
         
         private ICursorHandler CursorHandler;
 
@@ -46,6 +47,10 @@ namespace TabletDriverLib
 
             while (IsRunning)
             {
+                if (Debugging)
+                {
+                    // TODO: Debug functions
+                }
                 // TODO: Main() function
             }
         }
