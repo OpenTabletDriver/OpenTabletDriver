@@ -59,11 +59,14 @@ namespace TabletDriverLib
                 case PlatformID.Win32NT:
                 case PlatformID.WinCE:
                     CursorHandler = new WindowsCursorHandler();
+                    Log.WriteLine("INFO", "Using windows cursor handler.");
                     return;
                 case PlatformID.Unix:
                     CursorHandler = new XCursorHandler();
+                    Log.WriteLine("INFO", "Using X Window System cursor handler.");
                     return;
                 case PlatformID.MacOSX:
+                    Log.WriteLine("INFO", "Using MacOSX cursor handler.");
                     CursorHandler = new MacOSCursorHandler();
                     return;
                 default:
