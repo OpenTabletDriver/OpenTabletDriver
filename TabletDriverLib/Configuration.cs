@@ -9,7 +9,7 @@ namespace TabletDriverLib
         {
         }
 
-        public List<Area> TabletAreas { set; get; } = new List<Area>();
         public List<Area> ScreenAreas { set; get; } = new List<Area>();
+        public List<Area> TabletAreas { set; get; } = new List<Area>();
     }
 }
