@@ -5,6 +5,11 @@ namespace TabletDriverLib.Tools.Cursor
 {
     public class MacOSCursorHandler : ICursorHandler
     {
+        public Point GetCursorPosition()
+        {
+            throw new NotImplementedException();
+        }
+
         public void SetCursorPosition(Point pos)
         {
             var point = new Native.MacOSX.CGPoint

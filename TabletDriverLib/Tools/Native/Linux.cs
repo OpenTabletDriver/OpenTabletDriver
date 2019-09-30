@@ -30,6 +30,10 @@ namespace TabletDriverLib.Tools.Native
                 return sys_XOpenDisplay(display);
         }
         
+        [DllImport("libX11", EntryPoint = "XQueryPointer")]
+        public extern static bool XQueryPointer(Display display, Window w, out Window root, out Window child, out IntPtr root_x, out IntPtr root_y, out IntPtr win_x, out IntPtr win_y, out UIntPtr mask_return);
+
+
         [DllImport("libX11", EntryPoint = "XWarpPointer")]
         public extern static uint XWarpPointer(Display display, Window src_w, Window dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
         
