@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using TabletDriverLib.Interface;
 
@@ -19,6 +18,12 @@ namespace TabletDriverLib.Class
         {
             using (LogInput)
                 await LogInput.WriteLineAsync(text);
+        }
+
+        public async void WriteLine(string prefix, string text)
+        {
+            using (LogInput)
+                await LogInput.WriteLineAsync($"{prefix}: {text}");
         }
     }
 }

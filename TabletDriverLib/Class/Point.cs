@@ -61,9 +61,19 @@ namespace TabletDriverLib.Class
             return new Point(x,y);
         }
 
+        public static implicit operator Point(Vector2 vector)
+        {
+            return new Point(vector.X, vector.Y);
+        }
+
         public static implicit operator Vector2(Point point)
         {
             return new Vector2(point.X, point.Y);
+        }
+
+        public static implicit operator Point(System.Drawing.Point pt)
+        {
+            return new Point((float)pt.X, (float)pt.Y);
         }
 
         public static implicit operator System.Drawing.Point(Point point)

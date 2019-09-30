@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TabletDriverLib.Class;
+using TabletDriverLib.Tools.Cursor;
 
 namespace TabletDriverLib
 {
@@ -8,12 +9,16 @@ namespace TabletDriverLib
     {
         public Driver()
         {
+            var platform = Environment.OSVersion.Platform;
+            
         }
 
         public Logger Log { private set; get; } = new Logger();
         public Configuration Configuration { set; get; }
-
         public bool IsRunning { private set; get; }
+        
+        private ICursorHandler CursorHandler;
+
 
         #region Public Methods
 
@@ -43,6 +48,28 @@ namespace TabletDriverLib
             while (IsRunning)
             {
 
+            }
+        }
+
+        private void SetPlatformSpecifics(PlatformID platform)
+        {
+            switch (platform)
+            {
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.Win32NT:
+                case PlatformID.WinCE:
+                    CursorHandler = new WindowsCursorHandler();
+                    return;
+                case PlatformID.Unix:
+                    CursorHandler = new XCursorHandler();
+                    return;
+                case PlatformID.MacOSX:
+                    CursorHandler = new MacOSCursorHandler();
+                    return;
+                default:
+                    Log.WriteLine("ERROR", $"Failed to create a cursor handler for this platform ({platform}).");
+                    return;
             }
         }
     }

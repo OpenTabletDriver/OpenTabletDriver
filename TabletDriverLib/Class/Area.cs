@@ -1,6 +1,3 @@
-using System;
-using System.Numerics;
-
 namespace TabletDriverLib.Class
 {
     public class Area
