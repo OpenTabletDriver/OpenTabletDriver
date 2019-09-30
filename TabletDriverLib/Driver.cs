@@ -9,8 +9,7 @@ namespace TabletDriverLib
     {
         public Driver()
         {
-            var platform = Environment.OSVersion.Platform;
-            
+            SetPlatformSpecifics(Environment.OSVersion.Platform);
         }
 
         public Logger Log { private set; get; } = new Logger();
