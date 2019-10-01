@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using TabletDriverLib.Class;
 
 namespace TabletDriverLib
@@ -11,5 +12,7 @@ namespace TabletDriverLib
 
         public List<Area> ScreenAreas { set; get; } = new List<Area>();
         public List<Area> TabletAreas { set; get; } = new List<Area>();
+
+        public DirectoryInfo TabletConfigurationDirectory { set; get; }
     }
 }
