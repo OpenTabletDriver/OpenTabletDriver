@@ -1,6 +1,5 @@
 using System;
 using TabletDriverLib.Class;
-using TabletDriverLib.Tools.Display;
 
 namespace TabletDriverLib.Tools.Cursor
 {
