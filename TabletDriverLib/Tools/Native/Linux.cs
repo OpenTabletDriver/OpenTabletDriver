@@ -12,8 +12,8 @@ namespace TabletDriverLib.Tools.Native
         private static object Lock = new object();
 
         [DllImport("libX11", EntryPoint = "XOpenDisplay")]
-        private extern static IntPtr sys_XOpenDisplay(IntPtr display);
-        public static IntPtr XOpenDisplay(IntPtr display)
+        private extern unsafe static IntPtr sys_XOpenDisplay(char* display);
+        public static unsafe IntPtr XOpenDisplay(char* display)
         {
             lock (Lock)
                 return sys_XOpenDisplay(display);
