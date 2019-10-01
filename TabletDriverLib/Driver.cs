@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Timers;
 using TabletDriverLib.Class;
 using TabletDriverLib.Tools.Cursor;
 
@@ -22,12 +23,12 @@ namespace TabletDriverLib
 
         #region Public Methods
 
-        public async void Start()
+        public void Start()
         {
             if (!IsRunning)
             {
                 IsRunning = true;
-                await Task.Run(Main);
+                Log.WriteLine("INFO", "Driver has started.");
             }
             else
                 throw new Exception("The service is already running.");
@@ -41,20 +42,6 @@ namespace TabletDriverLib
 
         #endregion
 
-        private void Main()
-        {
-            Log.WriteLine("INFO", "Driver has started.");
-
-            while (IsRunning)
-            {
-                if (Debugging)
-                {
-                    // TODO: Debug functions
-                }
-                // TODO: Main() function
-            }
-        }
-
         private void SetPlatformSpecifics(PlatformID platform)
         {
             switch (platform)
@@ -64,7 +51,7 @@ namespace TabletDriverLib
                 case PlatformID.Win32NT:
                 case PlatformID.WinCE:
                     CursorHandler = new WindowsCursorHandler();
-                    Log.WriteLine("INFO", "Using windows cursor handler.");
+                    Log.WriteLine("INFO", "Using Windows cursor handler.");
                     return;
                 case PlatformID.Unix:
                     CursorHandler = new XCursorHandler();

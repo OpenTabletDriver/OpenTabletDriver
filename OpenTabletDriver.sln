@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TabletDriverLib", "TabletDriverLib\TabletDriverLib.csproj", "{E1407092-4EC3-4FDB-A1F7-27684B889750}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TabletDriverCLI", "TabletDriverCLI\TabletDriverCLI.csproj", "{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,17 @@ Global
 		{E1407092-4EC3-4FDB-A1F7-27684B889750}.Release|x64.Build.0 = Release|Any CPU
 		{E1407092-4EC3-4FDB-A1F7-27684B889750}.Release|x86.ActiveCfg = Release|Any CPU
 		{E1407092-4EC3-4FDB-A1F7-27684B889750}.Release|x86.Build.0 = Release|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Debug|x64.Build.0 = Debug|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Debug|x86.Build.0 = Debug|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Release|x64.ActiveCfg = Release|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Release|x64.Build.0 = Release|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Release|x86.ActiveCfg = Release|Any CPU
+		{0574E6E0-0840-4DC9-A5A4-A177333CBFFF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
