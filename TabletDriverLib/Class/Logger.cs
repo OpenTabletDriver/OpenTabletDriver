@@ -17,7 +17,7 @@ namespace TabletDriverLib.Class
 
         public void WriteLine(string prefix, string text)
         {
-            Trace.WriteLine($"[{prefix}]\t{text}");
+            Trace.WriteLine($"[{prefix}] {text}");
         }
     }
 }
