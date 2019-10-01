@@ -1,44 +1,39 @@
 using System;
 using TabletDriverLib.Class;
+using TabletDriverLib.Tools.Display;
 
 namespace TabletDriverLib.Tools.Cursor
 {
     using Display = IntPtr;
+    using Window = IntPtr;
     
     public class XCursorHandler : ICursorHandler, IDisposable
     {
         public unsafe XCursorHandler()
         {
             Display = Native.Linux.XOpenDisplay(null);
+            RootWindow = Native.Linux.XDefaultRootWindow(Display);
         }
 
         public void Dispose()
         {
-            if (Display is Display dp)
-                Native.Linux.XCloseDisplay(dp);
-            Display = null;
+            Native.Linux.XCloseDisplay(Display);
         }
+
+        private Display Display;
+        private Window RootWindow;
 
         public Point GetCursorPosition()
         {
-            if (Display is Display dp)
-            {
-                Native.Linux.XQueryPointer(dp, (IntPtr) 0, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
+            Native.Linux.XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
                 return new Point((int)x, (int)y);
-            }
-            else
-                return null;
         }
 
         public void SetCursorPosition(Point pos)
         {
-            if (Display is Display dp)
-            {
-                Native.Linux.XWarpPointer(dp, (IntPtr) 0, new IntPtr(0), 0, 0, 0, 0, (int)pos.X, (int)pos.Y);
-                Native.Linux.XFlush(dp);
-            }
+            Native.Linux.XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
+            Native.Linux.XWarpPointer(Display, RootWindow, new IntPtr(0), 0, 0, 0, 0, (int)pos.X - x, (int)pos.Y - y);
+            Native.Linux.XFlush(Display);
         }
-
-        Display? Display;
     }
 }
