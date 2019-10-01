@@ -45,5 +45,10 @@ namespace TabletDriverCLI
         {
             Trace.WriteLine($"[{prefix}] {text}");
         }
+
+        public static string Remainder(this string[] tokens, int index)
+        {
+            return string.Join(" ", tokens.Skip(index));
+        }
     }
 }

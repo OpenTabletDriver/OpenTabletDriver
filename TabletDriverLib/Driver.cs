@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Timers;
 using TabletDriverLib.Class;
+using TabletDriverLib.Tools;
 using TabletDriverLib.Tools.Cursor;
 
 namespace TabletDriverLib
@@ -13,12 +14,13 @@ namespace TabletDriverLib
             SetPlatformSpecifics(Environment.OSVersion.Platform);
         }
 
-        internal Logger Log { set; get; } = new Logger();
+        internal static Logger Log { set; get; } = new Logger();
         public Configuration Configuration { set; get; }
         public bool IsRunning { private set; get; }
         public bool Debugging { set; get; }
         
         private ICursorHandler CursorHandler;
+        public DeviceManager DeviceManager { private set; get; } = new DeviceManager();
 
 
         #region Public Methods
@@ -27,8 +29,11 @@ namespace TabletDriverLib
         {
             if (!IsRunning)
             {
-                IsRunning = true;
                 Log.WriteLine("INFO", "Driver has started.");
+                IsRunning = true;
+                
+                foreach (var d in DeviceManager.GetDeviceIdentifiers())
+                    Log.WriteLine("DEVICE", d);
             }
             else
                 throw new Exception("The service is already running.");
@@ -39,7 +44,7 @@ namespace TabletDriverLib
             if (IsRunning)
                 IsRunning = false;
         }
-
+        
         #endregion
 
         private void SetPlatformSpecifics(PlatformID platform)

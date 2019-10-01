@@ -66,6 +66,9 @@ namespace TabletDriverCLI
                 case "clear":
                     Console.Clear();
                     return true;
+                case "tablet":
+                    Driver.DeviceManager.OpenTablet(tokens.Remainder(1));
+                    return true;
                 default:
                     return false;
             }
