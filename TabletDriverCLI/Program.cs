@@ -66,6 +66,10 @@ namespace TabletDriverCLI
                 case "clear":
                     Console.Clear();
                     return true;
+                case "devices":
+                    foreach (var str in Driver.DeviceManager.GetDeviceIdentifiers())
+                        Log("DEVICE", str);
+                    return true;
                 case "tablet":
                     Driver.DeviceManager.OpenTablet(tokens.Remainder(1));
                     return true;
