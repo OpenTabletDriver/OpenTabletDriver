@@ -43,7 +43,7 @@ namespace TabletDriverCLI
 
         public static void Log(string prefix, string text)
         {
-            Trace.WriteLine($"[{prefix}] {text}");
+            Trace.WriteLine($"[{prefix.ToUpper()}] {text}");
         }
 
         public static string Remainder(this string[] tokens, int index)

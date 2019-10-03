@@ -32,7 +32,7 @@ namespace TabletDriverLib
                 Log.WriteLine("INFO", "Driver has started.");
                 IsRunning = true;
                 
-                foreach (var d in DeviceManager.GetDeviceIdentifiers())
+                foreach (var d in DeviceManager.GetAllDeviceIdentifiers())
                     Log.WriteLine("DEVICE", d);
             }
             else

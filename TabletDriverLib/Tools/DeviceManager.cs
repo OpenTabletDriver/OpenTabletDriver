@@ -11,9 +11,9 @@ namespace TabletDriverLib.Tools
         {
         }
 
-        public IEnumerable<string> GetDeviceIdentifiers()
+        public IEnumerable<string> GetAllDeviceIdentifiers()
         {
-            return DeviceList.Local.GetAllDevices().ToList().ConvertAll(
+            return Devices.ToList().ConvertAll(
                 (device) => $"{device.GetFriendlyName()}: {device.DevicePath}");
         }
 
@@ -26,20 +26,24 @@ namespace TabletDriverLib.Tools
         {
             CloseTablet();
             
-            ActiveTablet = Devices.First(d => d.DevicePath == devicePath);
-            var result = ActiveTablet.TryOpen(out var stream);
-            
-            ActiveTabletStream = stream;
-            Driver.Log.WriteLine("DEVICE", $"Device opened: {ActiveTablet.GetFriendlyName()}");
-            return result;
+            Tablet = Devices.FirstOrDefault(d => d.DevicePath == devicePath);
+            if (Tablet != null)
+            {
+                Driver.Log.WriteLine("DEVICE", $"Device opened: {Tablet.GetFriendlyName()}");
+                return true;
+            }
+            else
+            {
+                Driver.Log.WriteLine("ERROR", $"Failed to open device through path '{devicePath}'");
+                return false;
+            }
         }
-        
+
         public bool CloseTablet()
         {
-            if (ActiveTabletStream != null)
+            if (Tablet != null)
             {
-                ActiveTablet = null;
-                ActiveTabletStream.Dispose();
+                Tablet = null;
                 return true;
             }
             else
@@ -50,10 +54,9 @@ namespace TabletDriverLib.Tools
 
         public void Dispose()
         {
-            ActiveTabletStream.Dispose();
+            Tablet = null;
         }
 
-        public HidDevice ActiveTablet { private set; get; }
-        public HidStream ActiveTabletStream { private set; get; }
+        public HidDevice Tablet { private set; get; }
     }
 }

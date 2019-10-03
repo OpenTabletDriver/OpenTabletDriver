@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using TabletDriverLib;
@@ -67,11 +68,28 @@ namespace TabletDriverCLI
                     Console.Clear();
                     return true;
                 case "devices":
-                    foreach (var str in Driver.DeviceManager.GetDeviceIdentifiers())
+                    foreach (var str in Driver.DeviceManager.GetAllDeviceIdentifiers())
                         Log("DEVICE", str);
                     return true;
                 case "tablet":
                     Driver.DeviceManager.OpenTablet(tokens.Remainder(1));
+                    return true;
+                case "tabletinfo":
+                    var tablet = Driver.DeviceManager.Tablet;
+                    var properties = new Dictionary<string, object>
+                    {
+                        { "DevicePath", tablet.DevicePath },
+                        { "FriendlyName", tablet.GetFriendlyName() },
+                        { "Manufacturer", tablet.GetManufacturer() },
+                        { "ProductName", tablet.GetProductName() },
+                        { "FeatureReportLength", tablet.GetMaxFeatureReportLength() },
+                        { "InputReportLength", tablet.GetMaxInputReportLength() },
+                        { "OutputReportLength", tablet.GetMaxOutputReportLength() },
+                        { "SerialNumber", tablet.GetSerialNumber() },
+                        { "SerialPorts", string.Join(',', tablet.GetSerialPorts()) },
+                    };
+                    foreach (var property in properties)
+                        Log("DEVICE", $"{property.Key}: {property.Value}");
                     return true;
                 default:
                     return false;
