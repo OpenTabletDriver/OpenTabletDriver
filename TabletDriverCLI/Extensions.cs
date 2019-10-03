@@ -46,9 +46,39 @@ namespace TabletDriverCLI
             Trace.WriteLine($"[{prefix.ToUpper()}] {text}");
         }
 
+        public static void Log(Exception ex)
+        {
+            Log(ex.GetType().Name, ex.Message.Replace(Environment.NewLine, "; "));
+        }
+
+        public static void DebugLog(string prefix, string text)
+        {
+            Debug.WriteLine($"[{prefix.ToUpper()}] {text}");
+        }
+
+        public static void DebugLog(Exception ex)
+        {
+            DebugLog(ex.GetType().Name, ex.Message);
+        }
+
         public static string Remainder(this string[] tokens, int index)
         {
             return string.Join(" ", tokens.Skip(index));
+        }
+
+        public static T TryGetResult<T>(Func<T> method)
+        {
+            try
+            {
+                var result = method.Invoke();
+                DebugLog("TRYGET", "Got result: " + result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                DebugLog(ex);
+                return default(T);
+            }
         }
     }
 }

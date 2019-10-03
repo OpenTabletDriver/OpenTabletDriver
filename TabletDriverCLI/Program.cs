@@ -36,7 +36,7 @@ namespace TabletDriverCLI
                 }
                 catch (Exception ex)
                 {
-                    Log(ex.GetType().Name.ToUpper(), ex.Message);
+                    Log(ex);
                 }
             }
             return Task.CompletedTask;
@@ -76,24 +76,20 @@ namespace TabletDriverCLI
                     return true;
                 case "tabletinfo":
                     var tablet = Driver.DeviceManager.Tablet;
-                    var properties = new Dictionary<string, object>
-                    {
-                        { "DevicePath", tablet.DevicePath },
-                        { "FriendlyName", tablet.GetFriendlyName() },
-                        { "Manufacturer", tablet.GetManufacturer() },
-                        { "ProductName", tablet.GetProductName() },
-                        { "FeatureReportLength", tablet.GetMaxFeatureReportLength() },
-                        { "InputReportLength", tablet.GetMaxInputReportLength() },
-                        { "OutputReportLength", tablet.GetMaxOutputReportLength() },
-                        { "SerialNumber", tablet.GetSerialNumber() },
-                        { "SerialPorts", string.Join(',', tablet.GetSerialPorts()) },
-                    };
-                    foreach (var property in properties)
-                        Log("DEVICE", $"{property.Key}: {property.Value}");
+                    WriteDeviceInfo("DevicePath", tablet.DevicePath);
+                    WriteDeviceInfo("FriendlyName", TryGetResult(tablet.GetFriendlyName));
+                    WriteDeviceInfo("Manufacturer", TryGetResult(tablet.GetManufacturer));
+                    WriteDeviceInfo("ProductName", TryGetResult(tablet.GetProductName));
+                    WriteDeviceInfo("FeatureReportLength", TryGetResult(tablet.GetMaxFeatureReportLength));
+                    WriteDeviceInfo("InputReportLength", TryGetResult(tablet.GetMaxInputReportLength));
+                    WriteDeviceInfo("OutputReportLength", TryGetResult(tablet.GetMaxOutputReportLength));
+                    WriteDeviceInfo("SerialNumber", TryGetResult(tablet.GetSerialNumber));
                     return true;
                 default:
                     return false;
             }
         }
+
+        private static void WriteDeviceInfo(string property, object value) => Log("DEVICE", $"{property}:\t{value}");
     }
 }
