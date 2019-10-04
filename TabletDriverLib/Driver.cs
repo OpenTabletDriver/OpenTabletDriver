@@ -31,9 +31,6 @@ namespace TabletDriverLib
             {
                 Log.WriteLine("INFO", "Driver has started.");
                 IsRunning = true;
-                
-                foreach (var d in DeviceManager.GetAllDeviceIdentifiers())
-                    Log.WriteLine("DEVICE", d);
             }
             else
                 throw new Exception("The service is already running.");

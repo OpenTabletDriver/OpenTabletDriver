@@ -11,6 +11,10 @@ namespace TabletDriverLib.Tools
         {
         }
 
+        public HidDevice Tablet { private set; get; }
+
+        public TabletReader TabletReader { private set; get; }
+
         public IEnumerable<string> GetAllDeviceIdentifiers()
         {
             return Devices.ToList().ConvertAll(
@@ -30,6 +34,8 @@ namespace TabletDriverLib.Tools
             if (Tablet != null)
             {
                 Driver.Log.WriteLine("DEVICE", $"Device opened: {Tablet.GetFriendlyName()}");
+                TabletReader = new TabletReader(Tablet);
+                TabletReader.Start();
                 return true;
             }
             else
@@ -44,6 +50,7 @@ namespace TabletDriverLib.Tools
             if (Tablet != null)
             {
                 Tablet = null;
+                TabletReader?.Stop();
                 return true;
             }
             else
@@ -55,8 +62,8 @@ namespace TabletDriverLib.Tools
         public void Dispose()
         {
             Tablet = null;
+            TabletReader?.Abort();
+            TabletReader = null;
         }
-
-        public HidDevice Tablet { private set; get; }
     }
 }
