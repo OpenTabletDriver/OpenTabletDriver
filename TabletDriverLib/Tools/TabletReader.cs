@@ -16,7 +16,28 @@ namespace TabletDriverLib.Tools
         public TabletReader(HidDevice tablet)
         {
             Tablet = tablet;
-            ReportStream = Tablet.Open();
+            var config = new OpenConfiguration();
+            config.SetOption(OpenOption.Priority, OpenPriority.High);
+            for (int retries = 3; retries >= 0; retries--)
+            {
+                if (Tablet.TryOpen(config, out var stream, out var exception))
+                {
+                    ReportStream = (HidStream)stream;
+                    break;
+                }
+                else
+                {                    
+                    Log.Fail($"{exception.Message}; {retries} more retries.");
+                    Thread.Sleep(1000);
+                }
+            }
+
+            if (ReportStream == null)
+            {
+                Log.Fail("Failed to open tablet stream.");
+                return;
+            }
+
             WorkerThread = new Thread(Background)
             {
                 Name = "TabletDriver Tablet Reader",
@@ -32,9 +53,9 @@ namespace TabletDriverLib.Tools
         private Thread WorkerThread;
         public bool Working { protected set; get; }
 
-        private int InputReportLength;
-        private byte[] LastReport;
         private HidDeviceInputReceiver Input;
+        public TabletReport RecentReport { private set; get; }
+        private int InputReportLength { set; get; }
 
         public void Start()
         {
@@ -65,19 +86,11 @@ namespace TabletDriverLib.Tools
             var buffer = new byte[InputReportLength];
             if (Input.TryRead(buffer, 0, out var dataReport))
             {
-                // Set last report to the read values
-                LastReport = buffer;
-                var report = new TabletReport(buffer);
+                RecentReport = new TabletReport(buffer);
                 // Logging
-                if (Driver.Debugging)
+                if (Driver.Debugging && RecentReport.Lift > 0x80)
                 {
-                    // Driver.Log.WriteLine($"<{GetFormattedTime()}> REPORT", BitConverter.ToString(buffer).Replace('-', ' '));
-                    if (report.InRange)
-                    {
-                        Driver.Log.WriteLine(
-                            $"<{GetFormattedTime()}> TABLETREPORT",
-                            $"InRange:{report.InRange}, Position:[{report.Position}], Pressure:{report.Pressure}");
-                    }
+                    Log.WriteLine($"<{GetFormattedTime()}> TABLETREPORT", RecentReport.ToString());
                 }
             }   
         }

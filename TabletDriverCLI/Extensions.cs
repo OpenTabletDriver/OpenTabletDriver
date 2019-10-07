@@ -71,7 +71,6 @@ namespace TabletDriverCLI
             try
             {
                 var result = method.Invoke();
-                DebugLog("TRYGET", "Got result: " + result);
                 return result;
             }
             catch (Exception ex)

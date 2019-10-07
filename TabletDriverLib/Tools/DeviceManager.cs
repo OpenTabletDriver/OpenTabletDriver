@@ -33,14 +33,14 @@ namespace TabletDriverLib.Tools
             Tablet = Devices.FirstOrDefault(d => d.DevicePath == devicePath);
             if (Tablet != null)
             {
-                Driver.Log.WriteLine("DEVICE", $"Device opened: {Tablet.GetFriendlyName()}");
+                Log.WriteLine("DEVICE", $"Device opened: {Tablet.GetFriendlyName()}");
                 TabletReader = new TabletReader(Tablet);
                 TabletReader.Start();
                 return true;
             }
             else
             {
-                Driver.Log.WriteLine("ERROR", $"Failed to open device through path '{devicePath}'");
+                Log.Fail($"Failed to open device through path '{devicePath}'");
                 return false;
             }
         }
@@ -51,6 +51,7 @@ namespace TabletDriverLib.Tools
             {
                 Tablet = null;
                 TabletReader?.Stop();
+                TabletReader?.Dispose();
                 return true;
             }
             else
@@ -63,7 +64,7 @@ namespace TabletDriverLib.Tools
         {
             Tablet = null;
             TabletReader?.Abort();
-            TabletReader = null;
+            TabletReader?.Dispose();
         }
     }
 }
