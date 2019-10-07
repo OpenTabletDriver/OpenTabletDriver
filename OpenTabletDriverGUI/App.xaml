@@ -1,0 +1,48 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:OpenTabletDriverGUI"
+             x:Class="OpenTabletDriverGUI.App">
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
+        <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
+        
+        <Style Selector="TabControl">
+            <!-- <Setter Property="Background" Value="#F0F0F0"/> -->
+        </Style>
+        <Style Selector="TabControl WrapPanel">
+            <Setter Property="Margin" Value="5,0"/>
+        </Style>
+
+        <Style Selector="TabItem">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="MinHeight" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,-5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+        </Style>
+
+        <Style Selector="TabItem:focus">
+            <Setter Property="Foreground" Value="#2B579A"/>
+            <Setter Property="Margin" Value="0,0,0,-5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style Selector="TabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#f0f0f0"/>
+        </Style>
+
+        <Style Selector="TabItem:selected">
+            <Setter Property="Foreground" Value="#2B579A"/>
+            <Setter Property="Margin" Value="0,0,0,-5"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+        <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#f0f0f0"/>
+        </Style>
+    </Application.Styles>
+</Application>

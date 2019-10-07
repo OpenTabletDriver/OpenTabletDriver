@@ -1,0 +1,97 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:OpenTabletDriverGUI.ViewModels;assembly=OpenTabletDriverGUI"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="OpenTabletDriverGUI.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Width="1280" Height="720"
+        Title="OpenTabletDriverGUI">
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Menu Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Black">
+            <MenuItem Header="File">
+                <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
+            </MenuItem>
+        </Menu>
+        <TabControl Grid.Row="1">
+            <TabItem Header="Main Settings">
+                <Border BorderThickness="0,1,0,0" BorderBrush="Black">
+                    <Grid RowDefinitions="*,*" HorizontalAlignment="Stretch">
+                        <Grid Grid.Row="0" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*,*">
+                            <TextBlock Grid.ColumnSpan="4" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5"
+                                Text="Display Settings" FontWeight="Bold"/>
+                            <Border Grid.Column="0" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Width" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="1" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Height" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="2" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="X Offset" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="3" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Y Offset" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                        <Grid Grid.Row="1" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*,*">
+                            <TextBlock Grid.ColumnSpan="4" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5" 
+                                Text="Tablet Settings" FontWeight="Bold"/>
+                            <Border Grid.Column="0" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Width" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="1" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Height" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="2" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="X Offset" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="3" Grid.Row="2" Margin="5" BorderThickness="1" BorderBrush="Black" MinHeight="50">
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Y Offset" HorizontalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" Grid.Row="1" Margin="1"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </TabItem>
+            <TabItem Header="Console">
+                <Border BorderThickness="0,1,0,0" BorderBrush="Black">
+
+                </Border>
+            </TabItem>
+        </TabControl>
+        <Grid Grid.Row="2">
+            <Button Content="Apply Settings" Command="{Binding UpdateSettings}"
+                HorizontalAlignment="Right" VerticalAlignment="Center"
+                Margin="5"/>
+        </Grid>
+    </Grid>
+
+</Window>
