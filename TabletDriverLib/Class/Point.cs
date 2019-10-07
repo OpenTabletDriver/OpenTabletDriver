@@ -81,6 +81,11 @@ namespace TabletDriverLib.Class
             return new System.Drawing.Point((int)point.X, (int)point.Y);
         }
 
+        public static implicit operator string(Point point)
+        {
+            return point.ToString();
+        }
+
         #endregion
     }
 }
