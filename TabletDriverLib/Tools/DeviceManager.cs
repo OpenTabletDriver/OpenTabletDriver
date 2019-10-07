@@ -50,6 +50,7 @@ namespace TabletDriverLib.Tools
             {
                 Log.Info($"Opened tablet '{Tablet.GetFriendlyName()}'.");
                 Log.Info($"Device path: {Tablet.DevicePath}");
+                TabletReader = new TabletReader(Tablet);
                 return true;
             }
             else
