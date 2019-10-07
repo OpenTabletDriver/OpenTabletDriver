@@ -55,7 +55,7 @@ namespace TabletDriverLib.Tools
 
         private HidDeviceInputReceiver Input;
         public TabletReport RecentReport { private set; get; }
-        private int InputReportLength { set; get; }
+        private int InputReportLength { set; get ; }
 
         public void Start()
         {

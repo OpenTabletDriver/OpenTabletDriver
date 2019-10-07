@@ -22,17 +22,14 @@ namespace TabletDriverLib.Class
         public Point Position { private set; get; }
         public uint Pressure { private set; get; }
 
-        public override string ToString()
-        {
-            return $"InRange:{InRange}, Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}";
-        }
+        public override string ToString() => ToString(false);
 
         public string ToString(bool raw)
         {
             if (raw)
                 return BitConverter.ToString(Raw).Replace('-', ' ');
             else
-                return ToString();
+                return $"InRange:{InRange}, Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}";
         }
     }
 }

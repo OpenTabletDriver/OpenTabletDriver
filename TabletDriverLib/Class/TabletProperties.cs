@@ -1,64 +1,91 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace TabletDriverLib.Class
 {
+    [XmlRoot(Namespace = "TabletDriverLib", ElementName = "Tablet")]
     public class TabletProperties
     {
-        public TabletProperties()
-        {
-        }
-
-        public TabletProperties(Guid gUID, string tabletName, float width, float height, float maxX, float maxY, uint maxPressure)
-        {
-            GUID = gUID;
-            TabletName = tabletName;
-            Width = width;
-            Height = height;
-            MaxX = maxX;
-            MaxY = maxY;
-            MaxPressure = maxPressure;
-        }
-
         /// <summary>
-        /// The device's GUID
+        /// The device's name.
         /// </summary>
         /// <value></value>
-        public Guid GUID { set; get; } = Guid.Empty;
-        
-        /// <summary>
-        /// The device's name
-        /// </summary>
-        /// <value></value>
+        [XmlElement("Name")]
         public string TabletName { set; get; } = string.Empty;
 
         /// <summary>
-        /// The device's horizontal active area in millimeters
+        /// The device's vendor ID.
         /// </summary>
         /// <value></value>
+        [XmlElement("VendorID")]
+        public int VendorID { set; get; } = 0;
+
+        /// <summary>
+        /// The device's product ID.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("ProductID")]
+        public int ProductID { set; get; } = 0;
+
+        /// <summary>
+        /// The device number. Tablets can have multiple devices associated with it, and this value specifies which.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("DeviceNumber")]
+        public int DeviceNumber { set; get; } = 0;
+
+        /// <summary>
+        /// The device's horizontal active area in millimeters.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("Width")]
         public float Width { set; get; } = 0;
 
         /// <summary>
-        /// The device's vertical active area in millimeters 
+        /// The device's vertical active area in millimeters.
         /// </summary>
         /// <value></value>
+        [XmlElement("Height")]
         public float Height { set; get; } = 0;
 
         /// <summary>
-        /// The device's maximum horizontal input
+        /// The device's maximum horizontal input.
         /// </summary>
         /// <value></value>
+        [XmlElement("MaxX")]
         public float MaxX { set; get; } = 0;
 
         /// <summary>
-        /// The device's maximum vertical input
+        /// The device's maximum vertical input.
         /// </summary>
         /// <value></value>
+        [XmlElement("MaxY")]
         public float MaxY { set; get; } = 0;
 
         /// <summary>
-        /// The device's maximum input pressure detection value
+        /// The device's maximum input pressure detection value.
         /// </summary>
         /// <value></value>
+        [XmlElement("MaxPressure")]
         public uint MaxPressure { set; get; } = 0;
+
+        #region XML Serialization
+
+        private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));
+
+        public void Write(FileInfo file)
+        {
+            using (var fs = file.OpenWrite())
+                XmlSerializer.Serialize(fs, this);
+        }
+
+        public static TabletProperties Read(FileInfo file)
+        {
+            using (var fs = file.OpenRead())
+                return (TabletProperties)XmlSerializer.Deserialize(fs);
+        }
+
+        #endregion
     }
 }

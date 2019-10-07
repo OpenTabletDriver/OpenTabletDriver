@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using TabletDriverLib;
+using TabletDriverLib.Class;
 
 namespace TabletDriverCLI
 {
@@ -43,6 +45,7 @@ namespace TabletDriverCLI
         }
 
         private static Driver Driver { set; get; }
+        private static TabletProperties Tablet;
 
         private static bool CLICommand(string command)
         {
@@ -75,15 +78,62 @@ namespace TabletDriverCLI
                     Driver.DeviceManager.OpenTablet(tokens.Remainder(1));
                     return true;
                 case "tabletinfo":
-                    var tablet = Driver.DeviceManager.Tablet;
-                    WriteDeviceInfo("DevicePath", tablet.DevicePath);
-                    WriteDeviceInfo("FriendlyName", TryGetResult(tablet.GetFriendlyName));
-                    WriteDeviceInfo("Manufacturer", TryGetResult(tablet.GetManufacturer));
-                    WriteDeviceInfo("ProductName", TryGetResult(tablet.GetProductName));
-                    WriteDeviceInfo("FeatureReportLength", TryGetResult(tablet.GetMaxFeatureReportLength));
-                    WriteDeviceInfo("InputReportLength", TryGetResult(tablet.GetMaxInputReportLength));
-                    WriteDeviceInfo("OutputReportLength", TryGetResult(tablet.GetMaxOutputReportLength));
-                    WriteDeviceInfo("SerialNumber", TryGetResult(tablet.GetSerialNumber));
+                    var tabDevice = Driver.DeviceManager.Tablet;
+                    WriteDeviceInfo("DevicePath", tabDevice.DevicePath);
+                    WriteDeviceInfo("FriendlyName", TryGetResult(tabDevice.GetFriendlyName));
+                    WriteDeviceInfo("Manufacturer", TryGetResult(tabDevice.GetManufacturer));
+                    WriteDeviceInfo("ProductName", TryGetResult(tabDevice.GetProductName));
+                    WriteDeviceInfo("FeatureReportLength", TryGetResult(tabDevice.GetMaxFeatureReportLength));
+                    WriteDeviceInfo("InputReportLength", TryGetResult(tabDevice.GetMaxInputReportLength));
+                    WriteDeviceInfo("OutputReportLength", TryGetResult(tabDevice.GetMaxOutputReportLength));
+                    WriteDeviceInfo("SerialNumber", TryGetResult(tabDevice.GetSerialNumber));
+                    return true;
+                case "identifiers":
+                    tabDevice = Driver.DeviceManager.Tablet;
+                    WriteDeviceInfo("VendorId", tabDevice.VendorID.ToString("X"));
+                    WriteDeviceInfo("ProductId", tabDevice.ProductID.ToString("X"));
+                    WriteDeviceInfo("FileSystemName", TryGetResult(tabDevice.GetFileSystemName));
+                    WriteDeviceInfo("ReleaseNumber", tabDevice.ReleaseNumber);
+                    return true;
+                case "newtablet":
+                    Tablet = new TabletProperties();
+                    Log("INFO", "Created new tablet properties.");
+                    return true;
+                case "detect":
+                    Driver.DeviceManager.OpenTablet(Tablet);
+                    return true;
+                case "set.name":
+                    Tablet.TabletName = tokens.Remainder(1);
+                    return true;
+                case "set.vid":
+                    Tablet.VendorID = Convert.ToInt32(tokens[1]);
+                    return true;
+                case "set.pid":
+                    Tablet.ProductID = Convert.ToInt32(tokens[1]);
+                    return true;
+                case "set.width":
+                    Tablet.Width = Convert.ToInt32(tokens[1]);
+                    return true;
+                case "set.height":
+                    Tablet.Height = Convert.ToInt32(tokens[1]);
+                    return true;
+                case "set.x":
+                    Tablet.MaxX = Convert.ToInt32(tokens[1]);
+                    return true;
+                case "set.y":
+                    Tablet.MaxY = Convert.ToInt32(tokens[1]);
+                    return true;
+                case "set.p":
+                case "set.pressure":
+                    Tablet.MaxPressure = Convert.ToUInt32(tokens[1]);
+                    return true;
+                case "tablet.save":
+                    var savePath = tokens[1];
+                    Tablet.Write(new FileInfo(savePath));
+                    return true;
+                case "tablet.read":
+                    var readPath = tokens[1];
+                    Tablet = TabletProperties.Read(new FileInfo(readPath));
                     return true;
                 default:
                     return false;

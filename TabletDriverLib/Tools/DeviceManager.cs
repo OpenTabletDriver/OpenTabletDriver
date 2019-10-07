@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
+using TabletDriverLib.Class;
 
 namespace TabletDriverLib.Tools
 {
@@ -28,19 +29,32 @@ namespace TabletDriverLib.Tools
 
         public bool OpenTablet(string devicePath)
         {
+            var device = Devices.FirstOrDefault(d => d.DevicePath == devicePath);
+            return Open(device);
+        }
+
+        public bool OpenTablet(TabletProperties properties)
+        {
+            Log.Info("Searching for device...");
+            var matching = Devices.Where(d => d.ProductID == properties.ProductID && d.VendorID == properties.VendorID);
+            var ordered = matching.OrderBy(d => d.GetFileSystemName());
+            var device = ordered.ElementAtOrDefault(properties.DeviceNumber);
+            return Open(device);
+        }
+
+        internal bool Open(HidDevice device)
+        {
             CloseTablet();
-            
-            Tablet = Devices.FirstOrDefault(d => d.DevicePath == devicePath);
+            Tablet = device;
             if (Tablet != null)
             {
-                Log.WriteLine("DEVICE", $"Device opened: {Tablet.GetFriendlyName()}");
-                TabletReader = new TabletReader(Tablet);
-                TabletReader.Start();
+                Log.Info($"Opened tablet '{Tablet.GetFriendlyName()}'.");
+                Log.Info($"Device path: {Tablet.DevicePath}");
                 return true;
             }
             else
             {
-                Log.Fail($"Failed to open device through path '{devicePath}'");
+                Log.Fail("Failed to open tablet.");
                 return false;
             }
         }
