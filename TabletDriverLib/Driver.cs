@@ -15,8 +15,7 @@ namespace TabletDriverLib
         public bool IsRunning { private set; get; }
         public static bool Debugging { set; get; }
         
-        private ICursorHandler CursorHandler;
-        public DeviceManager DeviceManager { private set; get; } = new DeviceManager();
+        public InputManager InputManager { private set; get; } = new InputManager();
 
 
         #region Public Methods
@@ -48,19 +47,12 @@ namespace TabletDriverLib
                 case PlatformID.Win32Windows:
                 case PlatformID.Win32NT:
                 case PlatformID.WinCE:
-                    CursorHandler = new WindowsCursorHandler();
-                    Log.Info("Using Windows cursor handler.");
                     return;
                 case PlatformID.Unix:
-                    CursorHandler = new XCursorHandler();
-                    Log.Info("Using X Window System cursor handler.");
                     return;
                 case PlatformID.MacOSX:
-                    Log.Info("Using MacOSX cursor handler.");
-                    CursorHandler = new MacOSCursorHandler();
                     return;
                 default:
-                    Log.Fail($"Failed to create a cursor handler for this platform ({platform}).");
                     return;
             }
         }

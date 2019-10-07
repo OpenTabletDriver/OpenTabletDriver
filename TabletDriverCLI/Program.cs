@@ -71,14 +71,14 @@ namespace TabletDriverCLI
                     Console.Clear();
                     return true;
                 case "devices":
-                    foreach (var str in Driver.DeviceManager.GetAllDeviceIdentifiers())
+                    foreach (var str in Driver.InputManager.GetAllDeviceIdentifiers())
                         Log("DEVICE", str);
                     return true;
                 case "tablet":
-                    Driver.DeviceManager.OpenTablet(tokens.Remainder(1));
+                    Driver.InputManager.OpenTablet(tokens.Remainder(1));
                     return true;
                 case "tabletinfo":
-                    var tabDevice = Driver.DeviceManager.Tablet;
+                    var tabDevice = Driver.InputManager.Tablet;
                     WriteDeviceInfo("DevicePath", tabDevice.DevicePath);
                     WriteDeviceInfo("FriendlyName", TryGetResult(tabDevice.GetFriendlyName));
                     WriteDeviceInfo("Manufacturer", TryGetResult(tabDevice.GetManufacturer));
@@ -89,7 +89,7 @@ namespace TabletDriverCLI
                     WriteDeviceInfo("SerialNumber", TryGetResult(tabDevice.GetSerialNumber));
                     return true;
                 case "identifiers":
-                    tabDevice = Driver.DeviceManager.Tablet;
+                    tabDevice = Driver.InputManager.Tablet;
                     WriteDeviceInfo("VendorId", tabDevice.VendorID.ToString("X"));
                     WriteDeviceInfo("ProductId", tabDevice.ProductID.ToString("X"));
                     WriteDeviceInfo("FileSystemName", TryGetResult(tabDevice.GetFileSystemName));
@@ -100,7 +100,7 @@ namespace TabletDriverCLI
                     Log("INFO", "Created new tablet properties.");
                     return true;
                 case "detect":
-                    Driver.DeviceManager.OpenTablet(Tablet);
+                    Driver.InputManager.OpenTablet(Tablet);
                     return true;
                 case "set.name":
                     Tablet.TabletName = tokens.Remainder(1);

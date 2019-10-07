@@ -1,20 +1,43 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
 using TabletDriverLib.Class;
+using TabletDriverLib.Tools.Cursor;
 
 namespace TabletDriverLib.Tools
 {
-    public class DeviceManager : IDisposable
+    public class InputManager : IDisposable
     {
-        public DeviceManager()
+        public InputManager()
         {
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.Win32NT:
+                case PlatformID.WinCE:
+                    CursorHandler = new WindowsCursorHandler();
+                    Log.Info("Using Windows cursor handler.");
+                    return;
+                case PlatformID.Unix:
+                    CursorHandler = new XCursorHandler();
+                    Log.Info("Using X Window System cursor handler.");
+                    return;
+                case PlatformID.MacOSX:
+                    Log.Info("Using MacOSX cursor handler.");
+                    CursorHandler = new MacOSCursorHandler();
+                    return;
+                default:
+                    Log.Fail($"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).");
+                    return;
+            }
         }
 
         public HidDevice Tablet { private set; get; }
 
         public TabletReader TabletReader { private set; get; }
+        private ICursorHandler CursorHandler;
 
         public IEnumerable<string> GetAllDeviceIdentifiers()
         {
@@ -51,6 +74,7 @@ namespace TabletDriverLib.Tools
                 Log.Info($"Opened tablet '{Tablet.GetFriendlyName()}'.");
                 Log.Info($"Device path: {Tablet.DevicePath}");
                 TabletReader = new TabletReader(Tablet);
+                TabletReader.Start();
                 return true;
             }
             else
