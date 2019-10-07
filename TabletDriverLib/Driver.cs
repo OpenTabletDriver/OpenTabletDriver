@@ -17,7 +17,7 @@ namespace TabletDriverLib
         internal static Logger Log { set; get; } = new Logger();
         public Configuration Configuration { set; get; }
         public bool IsRunning { private set; get; }
-        public bool Debugging { set; get; }
+        public static bool Debugging { set; get; }
         
         private ICursorHandler CursorHandler;
         public DeviceManager DeviceManager { private set; get; } = new DeviceManager();

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using HidSharp;
@@ -57,23 +58,25 @@ namespace TabletDriverLib.Tools
 
         private void InputReceived(object sender, EventArgs e)
         {
-            var buffer = new byte[128];
+            var buffer = new byte[16];
             Input.TryRead(buffer, 0, out var report);
-            ReadReport(ref report);
+            if (Driver.Debugging)
+                Driver.Log.WriteLine($"<{GetFormattedTime()}> REPORT", BitConverter.ToString(buffer).Replace('-', ' '));
         }
 
-        private void ReadReport(ref Report report)
+        private static string GetFormattedTime()
         {
-            var parser = new DeviceItemInputParser(report.DeviceItem);
-            var buffer = new byte[128];
-            if (parser.TryParseReport(buffer, 0, report))
-            {
-                Driver.Log.WriteLine("READ", $"ValueCount:{parser.ValueCount}");
-            }
-            else
-            {
-                Driver.Log.WriteLine("FAIL", "Failed to read report.");
-            }
+            var hr = string.Format(GetNumberFormat(2), DateTime.Now.Hour);
+            var min = string.Format(GetNumberFormat(2), DateTime.Now.Minute);
+            var sec = string.Format(GetNumberFormat(2), DateTime.Now.Second);
+            var ms = string.Format(GetNumberFormat(3), DateTime.Now.Millisecond);
+            return $"{hr}:{min}:{sec}.{ms}";
+        }
+
+        private static string GetNumberFormat(int digits)
+        {
+            var zeros = Enumerable.Repeat('0', digits).ToArray();
+            return "{0:" + new string(zeros) + "}";
         }
     }
 }
