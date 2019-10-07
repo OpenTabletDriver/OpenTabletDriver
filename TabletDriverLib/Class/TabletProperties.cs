@@ -70,6 +70,13 @@ namespace TabletDriverLib.Class
         [XmlElement("MaxPressure")]
         public uint MaxPressure { set; get; } = 0;
 
+        #region Math
+
+        public float ProportionX => MaxX / Width;
+        public float ProportionY => MaxY / Width;
+
+        #endregion
+
         #region XML Serialization
 
         private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));

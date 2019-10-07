@@ -50,11 +50,13 @@ namespace TabletDriverLib.Tools
         public HidDevice Tablet { private set; get; }
         public HidStream ReportStream { private set; get; }
 
+        public event EventHandler<TabletReport> Report;
+
         private Thread WorkerThread;
         public bool Working { protected set; get; }
 
         private HidDeviceInputReceiver Input;
-        public TabletReport RecentReport { private set; get; }
+        
         private int InputReportLength { set; get ; }
 
         public void Start()
@@ -86,12 +88,11 @@ namespace TabletDriverLib.Tools
             var buffer = new byte[InputReportLength];
             if (Input.TryRead(buffer, 0, out var dataReport))
             {
-                RecentReport = new TabletReport(buffer);
+                var report = new TabletReport(buffer);
+                Report?.Invoke(this, report);
                 // Logging
-                if (Driver.Debugging && RecentReport.Lift > 0x80)
-                {
-                    Log.WriteLine($"<{GetFormattedTime()}> TABLETREPORT", RecentReport.ToString());
-                }
+                if (Driver.Debugging)
+                    Log.WriteLine($"<{GetFormattedTime()}> TABLETREPORT", report.ToString());
             }   
         }
 

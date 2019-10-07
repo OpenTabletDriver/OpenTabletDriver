@@ -11,13 +11,11 @@ namespace TabletDriverLib
             SetPlatformSpecifics(Environment.OSVersion.Platform);
         }
 
-        public Configuration Configuration { set; get; }
+        public InputManager InputManager { private set; get; } = new InputManager();
+        
         public bool IsRunning { private set; get; }
         public static bool Debugging { set; get; }
-        
-        public InputManager InputManager { private set; get; } = new InputManager();
-
-
+       
         #region Public Methods
 
         public void Start()

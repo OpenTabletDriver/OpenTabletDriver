@@ -135,6 +135,41 @@ namespace TabletDriverCLI
                     var readPath = tokens[1];
                     Tablet = TabletProperties.Read(new FileInfo(readPath));
                     return true;
+                case "hook":
+                    var hook = Convert.ToBoolean(tokens[1]);
+                    if (hook)
+                    {
+                        Log("INFO", "Hooking input positions");
+                        Driver.InputManager.BindPositions(hook);
+                    }
+                    else
+                    {
+                        Log("INFO", "Unhooking input positions");
+                        Driver.InputManager.BindPositions(hook);
+                    }
+                    return true;
+                case "tabletarea":
+                    Driver.InputManager.TabletArea = new Area
+                    {
+                        Width = Convert.ToSingle(tokens[1]),
+                        Height = Convert.ToSingle(tokens[2]),
+                    };
+                    if (tokens.Length > 3)
+                    {
+                        Driver.InputManager.TabletArea.Position = new Point(Convert.ToSingle(tokens[3]), Convert.ToSingle(tokens[4]));
+                    }
+                    return true;
+                case "displayarea":
+                    Driver.InputManager.DisplayArea = new Area
+                    {
+                        Width = Convert.ToSingle(tokens[1]),
+                        Height = Convert.ToSingle(tokens[2]),
+                    };
+                    if (tokens.Length > 3)
+                    {
+                        Driver.InputManager.DisplayArea.Position = new Point(Convert.ToSingle(tokens[3]), Convert.ToSingle(tokens[4]));
+                    }
+                    return true;
                 default:
                     return false;
             }

@@ -35,9 +35,10 @@ namespace TabletDriverLib.Tools
         }
 
         public HidDevice Tablet { private set; get; }
+        public TabletProperties TabletProperties { set; get; }
+        private ICursorHandler CursorHandler;
 
         public TabletReader TabletReader { private set; get; }
-        private ICursorHandler CursorHandler;
 
         public IEnumerable<string> GetAllDeviceIdentifiers()
         {
@@ -62,6 +63,13 @@ namespace TabletDriverLib.Tools
             var matching = Devices.Where(d => d.ProductID == properties.ProductID && d.VendorID == properties.VendorID);
             var ordered = matching.OrderBy(d => d.GetFileSystemName());
             var device = ordered.ElementAtOrDefault(properties.DeviceNumber);
+            TabletProperties = properties;
+            if (TabletArea == null)
+            {
+                TabletArea = new Area();
+                TabletArea.Width = TabletProperties.MaxX;
+                TabletArea.Height = TabletProperties.MaxY;
+            }
             return Open(device);
         }
 
@@ -105,5 +113,41 @@ namespace TabletDriverLib.Tools
             TabletReader?.Abort();
             TabletReader?.Dispose();
         }
+
+        #region Areas
+
+        public Area DisplayArea { set; get; }
+        public Area TabletArea { set; get; }
+
+        public void BindPositions(bool val)
+        {
+            if (val)
+            {
+                TabletReader.Report += Translate;
+            }
+            else
+            {
+                TabletReader.Report -= Translate;
+            }
+        }
+
+        private void Translate(object sender, TabletReport report)
+        {
+            if (report.Lift > 0x80)
+            {
+                var scaleX = DisplayArea.Width / TabletArea.Width;
+                var scaleY = DisplayArea.Height / TabletArea.Height;
+                var pos = new Point(
+                    (scaleX * report.Position.X),
+                    (scaleY * report.Position.Y));
+                if (Driver.Debugging)
+                {
+                    Log.WriteLine("POSITION", pos);
+                }
+                CursorHandler.SetCursorPosition(pos);
+            }
+        }
+
+        #endregion
     }
 }
