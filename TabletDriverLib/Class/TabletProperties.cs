@@ -132,6 +132,13 @@ namespace TabletDriverLib.Class
         [XmlElement("MaxPressure")]
         public uint MaxPressure { set; get; } = 0;
 
+        /// <summary>
+        /// The device's minimum detection lift.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("MinimumRange")]
+        public uint MinimumRange { set; get; } = 0;
+
         #region Math
 
         public float ProportionX => MaxX / Width;

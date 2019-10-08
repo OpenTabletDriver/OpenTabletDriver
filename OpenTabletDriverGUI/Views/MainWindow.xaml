@@ -114,7 +114,11 @@
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Button Content="Toggle input hook" Command="{Binding ToggleHook}"/>
+            </StackPanel>
             <Button Content="Apply Settings" Command="{Binding UpdateSettings}"
+
                 HorizontalAlignment="Right" VerticalAlignment="Center"
                 Margin="5"/>
         </Grid>

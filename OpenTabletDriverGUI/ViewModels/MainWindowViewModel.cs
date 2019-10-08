@@ -96,6 +96,13 @@ namespace OpenTabletDriverGUI.ViewModels
             get => _tR;
         }
 
+        private bool _hooked;
+        public bool InputHooked 
+        {
+            set => this.RaiseAndSetIfChanged(ref _hooked, value);
+            get => _hooked;
+        }
+
         public void UpdateSettings()
         {
             Driver.InputManager.DisplayArea = new Area
@@ -164,6 +171,13 @@ namespace OpenTabletDriverGUI.ViewModels
                         Driver.InputManager.OpenTablet(TabletProperties.Read(file));
                 }
             }
+        }
+
+        public void ToggleHook()
+        {
+            InputHooked = !InputHooked;
+            Log.Info("Hooking inputs: " + InputHooked);
+            Driver.InputManager.BindPositions(InputHooked);
         }
     }
 }

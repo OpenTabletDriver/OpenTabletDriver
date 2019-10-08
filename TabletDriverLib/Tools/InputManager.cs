@@ -133,7 +133,7 @@ namespace TabletDriverLib.Tools
 
         private void Translate(object sender, TabletReport report)
         {
-            if (report.Lift > 0x80)
+            if (report.Lift > TabletProperties.MinimumRange)
             {
                 var scaleX = DisplayArea.Width / TabletArea.Width;
                 var scaleY = DisplayArea.Height / TabletArea.Height;
