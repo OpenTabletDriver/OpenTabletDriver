@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using OpenTabletDriverGUI.Models;
@@ -105,7 +105,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 Position = new Point(DisplayX, DisplayY),
                 Rotation = DisplayRotation
             };
-            Log.Info($"Set display area: [{DisplayWidth}x{DisplayHeight}@{DisplayX},{DisplayY}:{DisplayRotation}]");
+            Log.Info($"Set display area: [{DisplayWidth}x{DisplayHeight}@{DisplayX},{DisplayY};{DisplayRotation}°]");
             Driver.InputManager.TabletArea = new Area
             {
                 Width = TabletWidth,
@@ -113,14 +113,13 @@ namespace OpenTabletDriverGUI.ViewModels
                 Position = new Point(TabletX, TabletY),
                 Rotation = TabletRotation
             };
-            Log.Info($"Set tablet area:  [{TabletWidth}x{TabletHeight}@{TabletX},{TabletY}:{TabletRotation}]");
+            Log.Info($"Set tablet area:  [{TabletWidth}x{TabletHeight}@{TabletX},{TabletY};{TabletRotation}°]");
             Log.Info("Applied all settings.");
         }
 
         public async Task LoadTabletConfiguration()
         {
-            var fd = new OpenFileDialog();
-            var result = await fd.ShowAsync(App.Current.MainWindow);
+            var result = await new OpenFileDialog().ShowAsync(App.Current.MainWindow);
             if (result != null)
             {
                 foreach (var file in result)
@@ -135,6 +134,34 @@ namespace OpenTabletDriverGUI.ViewModels
                     {
                         Log.WriteException(ex);
                     }
+                }
+            }
+        }
+
+        public async Task SaveTabletConfiguration()
+        {
+            var file = await new SaveFileDialog().ShowAsync(App.Current.MainWindow);
+            if (file != null)
+            {
+                Driver.InputManager.TabletProperties.Write(new FileInfo(file));
+            }
+        }
+
+        public async Task OpenTabletConfigurationFolder()
+        {
+            var path = await new OpenFolderDialog().ShowAsync(App.Current.MainWindow);
+            if (path != null)
+            {
+                var directory = new DirectoryInfo(path);
+                if (directory.Exists)
+                {
+                    List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
+                    
+                    foreach (var dir in directory.EnumerateDirectories())
+                        configRepository.AddRange(dir.GetFiles());
+
+                    foreach (var file in configRepository)
+                        Driver.InputManager.OpenTablet(TabletProperties.Read(file));
                 }
             }
         }

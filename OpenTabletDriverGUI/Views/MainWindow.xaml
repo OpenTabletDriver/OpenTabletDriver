@@ -23,7 +23,9 @@
     <Grid RowDefinitions="Auto,*,Auto,Auto">
         <Menu Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Black">
             <MenuItem Header="File">
+                <MenuItem Header="Load tablet configuration directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
                 <MenuItem Header="Load tablet configuration..." Command="{Binding LoadTabletConfiguration}"/>
+                <MenuItem Header="Save tablet configuration as..." Command="{Binding SaveTabletConfiguration}"/>
                 <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
             </MenuItem>
         </Menu>
