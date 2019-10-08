@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -29,11 +30,72 @@ namespace TabletDriverLib.Class
         public int ProductID { set; get; } = 0;
 
         /// <summary>
-        /// The device number. Tablets can have multiple devices associated with it, and this value specifies which.
+        /// The device number. 
+        /// Tablets can have multiple devices associated with it, depending on your platform.
         /// </summary>
         /// <value></value>
-        [XmlElement("DeviceNumber")]
-        public int DeviceNumber { set; get; } = 0;
+        [XmlIgnore]
+        public int DeviceNumber 
+        {
+            get
+            {
+                switch (Environment.OSVersion.Platform)
+                {
+                    case PlatformID.Win32S:
+                    case PlatformID.Win32Windows:
+                    case PlatformID.Win32NT:
+                    case PlatformID.WinCE:
+                        return WindowsDeviceNumber;
+                    case PlatformID.Unix:
+                        return LinuxDeviceNumber;
+                    case PlatformID.MacOSX:
+                        return MacOSXDeviceNumber;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+            set
+            {
+                switch (Environment.OSVersion.Platform)
+                {
+                    case PlatformID.Win32S:
+                    case PlatformID.Win32Windows:
+                    case PlatformID.Win32NT:
+                    case PlatformID.WinCE:
+                        WindowsDeviceNumber = value;
+                        return;
+                    case PlatformID.Unix:
+                        LinuxDeviceNumber = value;
+                        return;
+                    case PlatformID.MacOSX:
+                        MacOSXDeviceNumber = value;
+                        return;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+
+        /// <summary>
+        /// The device number on the Linux platform.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("LinuxDeviceNumber")]
+        public int LinuxDeviceNumber { set; get; } = 0; 
+
+        /// <summary>
+        /// The device number on the Windows platform.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("WindowsDeviceNumber")]
+        public int WindowsDeviceNumber { set; get; } = 0;
+
+        /// <summary>
+        /// The device number on the Mac OS X platform.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("MacOSXDeviceNumber")]
+        public int MacOSXDeviceNumber { set; get; } = 0;
 
         /// <summary>
         /// The device's horizontal active area in millimeters.
