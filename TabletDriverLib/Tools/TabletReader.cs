@@ -16,27 +16,6 @@ namespace TabletDriverLib.Tools
         public TabletReader(HidDevice tablet)
         {
             Tablet = tablet;
-            var config = new OpenConfiguration();
-            config.SetOption(OpenOption.Priority, OpenPriority.High);
-            for (int retries = 3; retries >= 0; retries--)
-            {
-                if (Tablet.TryOpen(config, out var stream, out var exception))
-                {
-                    ReportStream = (HidStream)stream;
-                    break;
-                }
-                else
-                {                    
-                    Log.Fail($"{exception.Message}; {retries} more retries.");
-                    Thread.Sleep(1000);
-                }
-            }
-
-            if (ReportStream == null)
-            {
-                Log.Fail("Failed to open tablet stream.");
-                return;
-            }
 
             WorkerThread = new Thread(Background)
             {
@@ -44,7 +23,6 @@ namespace TabletDriverLib.Tools
                 IsBackground = true,
                 Priority = ThreadPriority.BelowNormal,
             };
-            InputReportLength = tablet.GetMaxInputReportLength();
         }
 
         public HidDevice Tablet { private set; get; }
@@ -77,6 +55,30 @@ namespace TabletDriverLib.Tools
 
         private void Background()
         {
+            var config = new OpenConfiguration();
+            config.SetOption(OpenOption.Priority, OpenPriority.High);
+            for (int retries = 3; retries > 0; retries--)
+            {
+                if (Tablet.TryOpen(config, out var stream, out var exception))
+                {
+                    ReportStream = (HidStream)stream;
+                    break;
+                }
+                else
+                {                    
+                    Log.Fail($"{exception.Message} {retries} more retries.");
+                    Thread.Sleep(1000);
+                }
+            }
+            
+            if (ReportStream == null)
+            {
+                Log.Fail("Failed to open tablet.");
+                return;
+            }
+
+            InputReportLength = Tablet.GetMaxInputReportLength();
+
             var descriptor = Tablet.GetReportDescriptor();
             Input = descriptor.CreateHidDeviceInputReceiver();
             Input.Start(ReportStream);

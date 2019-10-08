@@ -13,7 +13,6 @@
     </Design.DataContext>
     <Window.Styles>
         <Style Selector="TextBlock.h1">
-            <!-- <Setter Property="Grid.ColumnSpan" Value="4"/> -->
             <Setter Property="VerticalAlignment" Value="Top"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -21,9 +20,10 @@
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*,Auto,Auto">
         <Menu Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Black">
             <MenuItem Header="File">
+                <MenuItem Header="Load tablet configuration..." Command="{Binding LoadTabletConfiguration}"/>
                 <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
             </MenuItem>
         </Menu>
@@ -104,7 +104,10 @@
             </TabItem>
             <TabItem Header="Console">
                 <Border BorderThickness="0,1,0,0" BorderBrush="Black">
-
+                    <Grid RowDefinitions="*,Auto">
+                        <TextBox IsReadOnly="True" Margin="5" FontFamily="Ubuntu Mono, Lucida Console" FontSize="16"
+                            Background="Black" Foreground="White" Text="{Binding TraceListener.Contents}"/>
+                    </Grid>
                 </Border>
             </TabItem>
         </TabControl>
@@ -113,6 +116,9 @@
                 HorizontalAlignment="Right" VerticalAlignment="Center"
                 Margin="5"/>
         </Grid>
+        <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="Black">
+            <TextBlock Text="{Binding TraceListener.Status}"/>
+        </Border>
     </Grid>
 
 </Window>
