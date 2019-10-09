@@ -53,13 +53,13 @@
                             <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="Display Settings"/>
                             <Border Grid.Column="0" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
-                                    <TextBlock Grid.Row="0" Text="Width"/>
+                                    <TextBlock Grid.Row="0" Text="Width (px)"/>
                                     <TextBox Grid.Row="1" Text="{Binding DisplayWidth}"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
-                                    <TextBlock Grid.Row="0" Text="Height"/>
+                                    <TextBlock Grid.Row="0" Text="Height (px)"/>
                                     <TextBox Grid.Row="1" Text="{Binding DisplayHeight}"/>
                                 </Grid>
                             </Border>
@@ -80,13 +80,13 @@
                             <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="Tablet Settings"/>
                             <Border Grid.Column="0" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
-                                    <TextBlock Grid.Row="0" Text="Width"/>
+                                    <TextBlock Grid.Row="0" Text="Width (mm)"/>
                                     <TextBox Grid.Row="1" Text="{Binding TabletWidth}"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
-                                    <TextBlock Grid.Row="0" Text="Height"/>
+                                    <TextBlock Grid.Row="0" Text="Height (mm)"/>
                                     <TextBox Grid.Row="1" Text="{Binding TabletHeight}"/>
                                 </Grid>
                             </Border>

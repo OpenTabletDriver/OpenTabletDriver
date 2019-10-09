@@ -135,8 +135,8 @@ namespace TabletDriverLib.Tools
         {
             if (report.Lift > TabletProperties.MinimumRange)
             {
-                var scaleX = DisplayArea.Width / TabletArea.Width;
-                var scaleY = DisplayArea.Height / TabletArea.Height;
+                var scaleX = (DisplayArea.Width * TabletProperties.Width) / (TabletArea.Width * TabletProperties.MaxX);
+                var scaleY = (DisplayArea.Height * TabletProperties.Height) / (TabletArea.Height * TabletProperties.MaxY);
                 var pos = new Point(
                     (scaleX * report.Position.X),
                     (scaleY * report.Position.Y));
