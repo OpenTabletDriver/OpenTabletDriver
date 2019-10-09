@@ -23,6 +23,8 @@
     <Grid RowDefinitions="Auto,*,Auto,Auto">
         <Menu Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Black">
             <MenuItem Header="File">
+                <MenuItem Header="Load settings..." Command="{Binding LoadSettingsDialog}"/>
+                <MenuItem Header="Save settings..." Command="{Binding SaveSettingsDialog}"/>
                 <MenuItem Header="Load tablet configuration directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
                 <MenuItem Header="Load tablet configuration..." Command="{Binding LoadTabletConfiguration}"/>
                 <MenuItem Header="Save tablet configuration as..." Command="{Binding SaveTabletConfiguration}"/>
@@ -114,13 +116,13 @@
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                <Button Content="Toggle input hook" Command="{Binding ToggleHook}"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5">
+                <Button Content="Enable input hook" Command="{Binding ToggleHook}" IsVisible="{Binding !InputHooked}"/>
+                <Button Content="Disable input hook" Command="{Binding ToggleHook}" IsVisible="{Binding InputHooked}"/>
             </StackPanel>
-            <Button Content="Apply Settings" Command="{Binding UpdateSettings}"
-
-                HorizontalAlignment="Right" VerticalAlignment="Center"
-                Margin="5"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5">
+                <Button Content="Apply Settings" Command="{Binding UpdateSettings}"/>
+            </StackPanel>
         </Grid>
         <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="Black">
             <TextBlock Text="{Binding TraceListener.Status}"/>

@@ -59,7 +59,7 @@ namespace TabletDriverLib.Tools
 
         public bool OpenTablet(TabletProperties properties)
         {
-            Log.Info("Searching for device...");
+            Log.Info($"Searching for tablet: {properties.TabletName}");
             var matching = Devices.Where(d => d.ProductID == properties.ProductID && d.VendorID == properties.VendorID);
             var ordered = matching.OrderBy(d => d.GetFileSystemName());
             var device = ordered.ElementAtOrDefault(properties.DeviceNumber);
@@ -116,8 +116,8 @@ namespace TabletDriverLib.Tools
 
         #region Areas
 
-        public Area DisplayArea { set; get; }
-        public Area TabletArea { set; get; }
+        public Area DisplayArea { set; get; } = new Area();
+        public Area TabletArea { set; get; } = new Area();
 
         public void BindPositions(bool val)
         {
@@ -140,10 +140,6 @@ namespace TabletDriverLib.Tools
                 var pos = new Point(
                     (scaleX * report.Position.X),
                     (scaleY * report.Position.Y));
-                if (Driver.Debugging)
-                {
-                    Log.WriteLine("POSITION", pos);
-                }
                 CursorHandler.SetCursorPosition(pos);
             }
         }

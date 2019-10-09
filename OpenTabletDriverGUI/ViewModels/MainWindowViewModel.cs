@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Avalonia.Controls;
 using OpenTabletDriverGUI.Models;
 using ReactiveUI;
@@ -12,95 +13,132 @@ using TabletDriverLib.Class;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
+    [XmlRoot("Configuration", DataType = "OpenTabletDriverCfg")]
     public class MainWindowViewModel : ViewModelBase
     {
         public MainWindowViewModel()
         {
             Trace.Listeners.Add(TraceListener);
-            Driver = new Driver();
         }
         
-        private ReactiveTraceListener _trace = new ReactiveTraceListener();
-        public ReactiveTraceListener TraceListener
+        [XmlIgnore]
+        private ReactiveTraceListener TraceListener
         {
             set => this.RaiseAndSetIfChanged(ref _trace, value);
             get => _trace;
         }
+        private ReactiveTraceListener _trace = new ReactiveTraceListener();
 
-        private Driver _driver;
-        public Driver Driver
+        [XmlIgnore]
+        private Driver Driver
         {
             set => this.RaiseAndSetIfChanged(ref _driver, value);
             get => _driver;
         }
+        private Driver _driver;
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
 
+        [XmlElement("DisplayWidth")]
         public float DisplayWidth 
         {
             set => this.RaiseAndSetIfChanged(ref _dW, value);
             get => _dW;
         }
 
+        [XmlElement("DisplayHeight")]
         public float DisplayHeight
         {
             set => this.RaiseAndSetIfChanged(ref _dH, value);
             get => _dH;
         }
 
+        [XmlElement("DisplayXOffset")]
         public float DisplayX
         {
             set => this.RaiseAndSetIfChanged(ref _dX, value);
             get => _dX;
         }
 
+        [XmlElement("DisplayYOffset")]
         public float DisplayY
         {
             set => this.RaiseAndSetIfChanged(ref _dY, value);
             get => _dY;
         }
 
+        [XmlElement("DisplayRotation")]
         public float DisplayRotation
         {
             set => this.RaiseAndSetIfChanged(ref _dR, value);
             get => _dR;
         }
 
+        [XmlElement("TabletWidth")]
         public float TabletWidth
         {
             set => this.RaiseAndSetIfChanged(ref _tW, value);
             get => _tW;
         }
 
+        [XmlElement("TabletHeight")]
         public float TabletHeight
         {
             set => this.RaiseAndSetIfChanged(ref _tH, value);
             get => _tH;
         }
 
+        [XmlElement("TabletXOffset")]
         public float TabletX
         {
             set => this.RaiseAndSetIfChanged(ref _tX, value);
             get => _tX;
         }
 
+        [XmlElement("TabletYOffset")]
         public float TabletY
         {
             set => this.RaiseAndSetIfChanged(ref _tY, value);
             get => _tY;
         }
 
+        [XmlElement("TabletRotation")]
         public float TabletRotation
         {
             set => this.RaiseAndSetIfChanged(ref _tR, value);
             get => _tR;
         }
 
-        private bool _hooked;
+        [XmlIgnore]
         public bool InputHooked 
         {
-            set => this.RaiseAndSetIfChanged(ref _hooked, value);
+            private set => this.RaiseAndSetIfChanged(ref _hooked, value);
             get => _hooked;
+        }
+        private bool _hooked;
+
+        private void OpenConfigurations(DirectoryInfo directory)
+        {
+            List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
+            foreach (var dir in directory.EnumerateDirectories())
+                configRepository.AddRange(dir.EnumerateFiles());
+
+            var configs = configRepository.ConvertAll(file => TabletProperties.Read(file));
+            OpenConfigurations(configs);
+        }
+
+        private void OpenConfigurations(IEnumerable<TabletProperties> configs)
+        {
+            foreach (var config in configs)
+            {
+                if (Driver.InputManager.OpenTablet(config))
+                    break;
+            }
+
+            if (Driver.InputManager.Tablet == null)
+            {
+                Log.Fail("No configured tablets connected.");
+            }
         }
 
         public void UpdateSettings()
@@ -124,33 +162,41 @@ namespace OpenTabletDriverGUI.ViewModels
             Log.Info("Applied all settings.");
         }
 
+        public void Initialize()
+        {
+            Driver = new Driver();
+            
+            var settings = new FileInfo("settings.xml");
+            if (settings.Exists)
+            {
+                Deserialize(settings);
+                Log.Info("Loaded user settings");
+            }
+            
+            var configurationDir = new DirectoryInfo("Configurations");
+            if (configurationDir.Exists)
+                OpenConfigurations(configurationDir);
+        }
+
         public async Task LoadTabletConfiguration()
         {
             var result = await new OpenFileDialog().ShowAsync(App.Current.MainWindow);
             if (result != null)
             {
-                foreach (var file in result)
-                {
-                    try
-                    {
-                        var tablet = TabletProperties.Read(new FileInfo(file));
-                        if (Driver.InputManager.OpenTablet(tablet))
-                            break;
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.WriteException(ex);
-                    }
-                }
+                var files = result.ToList().ConvertAll(item => new FileInfo(item));
+                var configs = files.ConvertAll(file => TabletProperties.Read(file));
+                OpenConfigurations(configs);
             }
         }
 
         public async Task SaveTabletConfiguration()
         {
-            var file = await new SaveFileDialog().ShowAsync(App.Current.MainWindow);
-            if (file != null)
+            var result = await new SaveFileDialog().ShowAsync(App.Current.MainWindow);
+            if (result != null)
             {
-                Driver.InputManager.TabletProperties.Write(new FileInfo(file));
+                var file = new FileInfo(result);
+                Driver.InputManager.TabletProperties.Write(file);
+                Log.Info($"Saved current tablet configuration to '{file.FullName}'.");
             }
         }
 
@@ -162,22 +208,86 @@ namespace OpenTabletDriverGUI.ViewModels
                 var directory = new DirectoryInfo(path);
                 if (directory.Exists)
                 {
-                    List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
                     
-                    foreach (var dir in directory.EnumerateDirectories())
-                        configRepository.AddRange(dir.GetFiles());
+                    
+                }
+            }
+        }
 
-                    foreach (var file in configRepository)
-                        Driver.InputManager.OpenTablet(TabletProperties.Read(file));
+        public async Task LoadSettingsDialog()
+        {
+            var path = await new OpenFileDialog().ShowAsync(App.Current.MainWindow);
+            if (path != null)
+            {
+                var file = new FileInfo(path[0]);
+                try
+                {
+                    Deserialize(file);
+                    Log.Info("Successfully read settings from file.");
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception(ex);
+                    Log.Fail("Unable to read settings from file: " + path[0]);
+                }
+            }
+        }
+
+        public async Task SaveSettingsDialog()
+        {
+            var path = await new SaveFileDialog().ShowAsync(App.Current.MainWindow);
+            if (path != null)
+            {
+                var file = new FileInfo(path);
+                try 
+                {
+                    Serialize(file);
+                    Log.Info("Wrote settings to file: " + path);
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception(ex);
+                    Log.Fail("Unable to write settings to file: " + path);
                 }
             }
         }
 
         public void ToggleHook()
         {
-            InputHooked = !InputHooked;
-            Log.Info("Hooking inputs: " + InputHooked);
-            Driver.InputManager.BindPositions(InputHooked);
+            try
+            {
+                InputHooked = !InputHooked;
+                Log.Info("Hooking inputs: " + InputHooked);
+                Driver.InputManager.BindPositions(InputHooked);
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                Log.Fail("Unable to hook input.");
+                InputHooked = !InputHooked;
+            }
         }
+
+        #region XML Serialization
+
+        private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(MainWindowViewModel));
+
+        public void Deserialize(FileInfo file)
+        {
+            using (var stream = file.OpenRead())
+            {
+                var data = (MainWindowViewModel)XmlSerializer.Deserialize(stream);
+                data.CopyPropertiesTo(this);
+                UpdateSettings();
+            }
+        }
+
+        public void Serialize(FileInfo file)
+        {
+            using (var stream = file.OpenWrite())
+                XmlSerializer.Serialize(stream, this);
+        }
+
+        #endregion
     }
 }

@@ -24,9 +24,11 @@ namespace OpenTabletDriverGUI
         // container, etc.
         private static void AppMain(Application app, string[] args)
         {
+            var viewModel = new MainWindowViewModel();
+            viewModel.Initialize();
             var window = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = viewModel
             };
 
             app.Run(window);

@@ -20,7 +20,7 @@ namespace OpenTabletDriverGUI
             WriteLine($"[{prefix.ToUpper()}] {text}");
         }
         
-        public static void WriteException(Exception ex)
+        public static void Exception(Exception ex)
         {
             WriteLine(ex.GetType().Name, ex.Message);
         }

@@ -14,10 +14,10 @@ namespace TabletDriverLib.Class
             Rotation = rotation;
         }
 
-        public float Width { set; get; }
-        public float Height { set; get; }
-        public Point Position { set; get; }
+        public float Width { set; get; } = 0;
+        public float Height { set; get; } = 0;
+        public Point Position { set; get; } = new Point();
 
-        public float Rotation { set; get; }
+        public float Rotation { set; get; } = 0;
     }
 }
