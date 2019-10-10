@@ -1,4 +1,3 @@
-using System;
 using TabletDriverLib.Class;
 
 namespace TabletDriverLib.Tools.Cursor
@@ -7,7 +6,10 @@ namespace TabletDriverLib.Tools.Cursor
     {
         public Point GetCursorPosition()
         {
-            throw new NotImplementedException();
+            var eventRef = Native.MacOSX.CGEventCreate();
+            var cursor = Native.MacOSX.CGEventGetLocation(ref eventRef);
+            Native.MacOSX.CFRelease(eventRef);
+            return (Point)cursor;
         }
 
         public void SetCursorPosition(Point pos)
