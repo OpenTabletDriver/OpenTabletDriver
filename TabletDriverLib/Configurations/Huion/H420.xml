@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
+  <Name>Huion H420</Name>
+  <VendorID>9580</VendorID>
+  <ProductID>110</ProductID>
+  <LinuxDeviceNumber>0</LinuxDeviceNumber>
+  <WindowsDeviceNumber>0</WindowsDeviceNumber>
+  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <Width>105.918</Width>
+  <Height>59.436</Height>
+  <MaxX>8340</MaxX>
+  <MaxY>4680</MaxY>
+  <MaxPressure>2047</MaxPressure>
+  <MinimumRange>128</MinimumRange>
+</Tablet>

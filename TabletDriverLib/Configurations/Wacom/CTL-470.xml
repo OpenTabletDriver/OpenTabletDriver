@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
+  <Name>Wacom CTL-470</Name>
+  <VendorID>1386</VendorID>
+  <ProductID>221</ProductID>
+  <LinuxDeviceNumber>0</LinuxDeviceNumber>
+  <WindowsDeviceNumber>0</WindowsDeviceNumber>
+  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <Width>147.2</Width>
+  <Height>92.0</Height>
+  <MaxX>14720</MaxX>
+  <MaxY>9200</MaxY>
+  <MaxPressure>1023</MaxPressure>
+  <MinimumRange>128</MinimumRange>
+</Tablet>
