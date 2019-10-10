@@ -4,8 +4,14 @@ using TabletDriverLib.Class;
 
 namespace TabletDriverLib.Tools.Native
 {
+    using CGEvent = IntPtr;
+    using CGDirectDisplayID = UInt32;
+
     internal class MacOSX
     {
+        private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
+        private const string Foundation = "/System/Library/Frameworks/Foundation.framework/Foundation";
+
         [StructLayout(LayoutKind.Sequential)]
         public struct CGPoint
         {
@@ -18,8 +24,8 @@ namespace TabletDriverLib.Tools.Native
             {
                 return new CGPoint
                 {
-                    X = (Single)point.X,
-                    Y = (Single)point.Y,
+                    X = point.X,
+                    Y = point.Y,
                 };
             }
 
@@ -29,7 +35,33 @@ namespace TabletDriverLib.Tools.Native
             }
         };
 
-        [DllImport("/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz")]
-        public extern static uint CGWarpMouseCursorPosition(CGPoint newCursorPosition);
+        [DllImport(Foundation)]
+        public static extern void CFRelease(IntPtr handle);
+
+        #region Cursor
+
+        [DllImport(Quartz)]
+        public extern static CGEvent CGEventCreate();
+
+        [DllImport(Quartz)]
+        public extern static CGPoint CGEventGetLocation(ref CGEvent eventRef);
+
+        [DllImport(Quartz)]
+        public extern static CGEvent CGWarpMouseCursorPosition(CGPoint newCursorPosition);
+        
+        #endregion
+
+        #region Display
+
+        [DllImport(Quartz)]
+        public extern static CGDirectDisplayID CGMainDisplayID();
+
+        [DllImport(Quartz)]
+        public extern static ulong CGDisplayPixelsWide(CGDirectDisplayID display);
+
+        [DllImport(Quartz)]
+        public extern static ulong CGDisplayPixelsHigh(CGDirectDisplayID display);
+
+        #endregion
     }
 }
