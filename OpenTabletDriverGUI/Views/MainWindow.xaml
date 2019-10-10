@@ -7,6 +7,7 @@
         x:Class="OpenTabletDriverGUI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Width="1280" Height="720"
+        MinWidth="640" MinHeight="480"
         Title="OpenTabletDriverGUI">
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -39,16 +40,24 @@
         <TabControl Grid.Row="1">
             <TabItem Header="Main Settings">
                 <Border BorderThickness="0,1,0,0" BorderBrush="Black">
-                    <Grid RowDefinitions="*,*" HorizontalAlignment="Stretch">
+                    <Grid RowDefinitions="*,*" HorizontalAlignment="Stretch" Margin="100,0">
                         <Grid.Styles>
                             <Style Selector="Border">
                                 <Setter Property="Margin" Value="5"/>
                                 <Setter Property="BorderThickness" Value="1"/>
                                 <Setter Property="BorderBrush" Value="Black"/>
+                                <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/>
+                                <Setter Property="CornerRadius" Value="5"/>
                             </Style>
                             <Style Selector="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
                                 <Setter Property="Margin" Value="0,5,0,0"/>
+                            </Style>
+                            <Style Selector="TextBlock.UnitLabel">
+                                <Setter Property="Margin" Value="0,0,10,10"/>
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                                <Setter Property="IsHitTestVisible" Value="False"/>
                             </Style>
                             <Style Selector="TextBox">
                                 <Setter Property="Margin" Value="1"/>
@@ -60,24 +69,28 @@
                                 <Grid RowDefinitions="*,Auto">
                                     <TextBlock Grid.Row="0" Text="Width (px)"/>
                                     <TextBox Grid.Row="1" Text="{Binding DisplayWidth}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="px"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
                                     <TextBlock Grid.Row="0" Text="Height (px)"/>
                                     <TextBox Grid.Row="1" Text="{Binding DisplayHeight}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="px"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
                                     <TextBlock Grid.Row="0" Text="X Offset"/>
                                     <TextBox Grid.Row="1" Text="{Binding DisplayX}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="px"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="3" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
                                     <TextBlock Grid.Row="0" Text="Y Offset"/>
                                     <TextBox Grid.Row="1" Text="{Binding DisplayY}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="px"/>
                                 </Grid>
                             </Border>
                         </Grid>
@@ -85,26 +98,30 @@
                             <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="Tablet Settings"/>
                             <Border Grid.Column="0" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
-                                    <TextBlock Grid.Row="0" Text="Width (mm)"/>
+                                    <TextBlock Grid.Row="0" Text="Width"/>
                                     <TextBox Grid.Row="1" Text="{Binding TabletWidth}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="mm"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="1" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
-                                    <TextBlock Grid.Row="0" Text="Height (mm)"/>
+                                    <TextBlock Grid.Row="0" Text="Height"/>
                                     <TextBox Grid.Row="1" Text="{Binding TabletHeight}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="mm"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="2" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
                                     <TextBlock Grid.Row="0" Text="X Offset"/>
                                     <TextBox Grid.Row="1" Text="{Binding TabletX}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="px"/>
                                 </Grid>
                             </Border>
                             <Border Grid.Column="3" Grid.Row="2">
                                 <Grid RowDefinitions="*,Auto">
                                     <TextBlock Grid.Row="0" Text="Y Offset"/>
                                     <TextBox Grid.Row="1" Text="{Binding TabletY}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="px"/>
                                 </Grid>
                             </Border>
                         </Grid>

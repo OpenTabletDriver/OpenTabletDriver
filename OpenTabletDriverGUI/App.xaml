@@ -6,43 +6,60 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
 
+    <Application.Resources>
+        <SolidColorBrush x:Key="LightThemeFG">#45a9ff</SolidColorBrush>
+        <SolidColorBrush x:Key="LightThemeBG">#e3f2ff</SolidColorBrush>
+        <SolidColorBrush x:Key="LightThemeFocusFG">#000000</SolidColorBrush>
+        <SolidColorBrush x:Key="LightThemeFocusBG">#5A92AF</SolidColorBrush>
+
+        <SolidColorBrush x:Key="DarkThemeFG">#ffffff</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkThemeBG">#404040</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkThemeFocusFG">#ffffff</SolidColorBrush>
+        <SolidColorBrush x:Key="DarkThemeFocusBG">#444444</SolidColorBrush>
+    </Application.Resources>
+
     <Application.Styles>
         <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
-        
-        <Style Selector="TabControl">
-            <!-- <Setter Property="Background" Value="#F0F0F0"/> -->
-        </Style>
-        <Style Selector="TabControl WrapPanel">
-            <Setter Property="Margin" Value="5,0"/>
+
+        <Style Selector="Button">
+            <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/>
+            <Setter Property="BorderBrush" Value="#000000"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="MinHeight" Value="24"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="Padding" Value="5,0"/>
         </Style>
 
+        <Style Selector="TabControl">
+        </Style>
+        <Style Selector="TabControl WrapPanel">
+            <Setter Property="Margin" Value="10,2,5,0"/>
+        </Style>
         <Style Selector="TabItem">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="MinHeight" Value="24"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,0,-5"/>
+            <Setter Property="Margin" Value="0,0,1,-5"/>
             <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderThickness" Value="1,1,1,0"/>
+            <Setter Property="BorderBrush" Value="Black"/>
         </Style>
         <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
         </Style>
 
         <Style Selector="TabItem:focus">
-            <Setter Property="Foreground" Value="#2B579A"/>
-            <Setter Property="Margin" Value="0,0,0,-5"/>
-            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Foreground" Value="{DynamicResource LightThemeFocusFG}"/>
         </Style>
         <Style Selector="TabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#f0f0f0"/>
+            <Setter Property="Background" Value="{DynamicResource LightThemeFocusBG}"/>
         </Style>
 
         <Style Selector="TabItem:selected">
-            <Setter Property="Foreground" Value="#2B579A"/>
-            <Setter Property="Margin" Value="0,0,0,-5"/>
-            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Foreground" Value="{DynamicResource LightThemeFocusFG}"/>
         </Style>
         <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="#f0f0f0"/>
+            <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/>
         </Style>
     </Application.Styles>
 </Application>
