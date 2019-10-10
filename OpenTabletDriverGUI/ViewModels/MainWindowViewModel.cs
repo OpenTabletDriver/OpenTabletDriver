@@ -207,10 +207,7 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 var directory = new DirectoryInfo(path);
                 if (directory.Exists)
-                {
-                    
-                    
-                }
+                    OpenConfigurations(directory);
             }
         }
 
