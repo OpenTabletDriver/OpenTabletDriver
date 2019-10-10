@@ -8,7 +8,6 @@ namespace TabletDriverLib
     {
         public Driver()
         {
-            SetPlatformSpecifics(Environment.OSVersion.Platform);
         }
 
         public InputManager InputManager { private set; get; } = new InputManager();
@@ -36,23 +35,5 @@ namespace TabletDriverLib
         }
         
         #endregion
-
-        private void SetPlatformSpecifics(PlatformID platform)
-        {
-            switch (platform)
-            {
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.Win32NT:
-                case PlatformID.WinCE:
-                    return;
-                case PlatformID.Unix:
-                    return;
-                case PlatformID.MacOSX:
-                    return;
-                default:
-                    return;
-            }
-        }
     }
 }

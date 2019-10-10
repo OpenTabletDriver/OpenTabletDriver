@@ -10,6 +10,7 @@ using OpenTabletDriverGUI.Models;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Class;
+using TabletDriverLib.Tools.Display;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
@@ -117,6 +118,15 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private bool _hooked;
 
+        [XmlIgnore]
+        private IDisplay Display
+        {
+            set => this.RaiseAndSetIfChanged(ref _disp, value);
+            get => _disp;
+        }
+        private IDisplay _disp;
+
+
         private void OpenConfigurations(DirectoryInfo directory)
         {
             List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
@@ -165,6 +175,7 @@ namespace OpenTabletDriverGUI.ViewModels
         public void Initialize()
         {
             Driver = new Driver();
+            SetPlatformSpecifics(Environment.OSVersion.Platform);
             
             var settings = new FileInfo("settings.xml");
             if (settings.Exists)
@@ -172,10 +183,53 @@ namespace OpenTabletDriverGUI.ViewModels
                 Deserialize(settings);
                 Log.Info("Loaded user settings");
             }
+            else
+            {
+                UseDefaultSettings();
+            }
             
             var configurationDir = new DirectoryInfo("Configurations");
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);
+        }
+
+        private void SetPlatformSpecifics(PlatformID platform)
+        {
+            switch (platform)
+            {
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.Win32NT:
+                case PlatformID.WinCE:
+                    Display = new WindowsDisplay();
+                    return;
+                case PlatformID.Unix:
+                    Display = new XDisplay();
+                    return;
+                case PlatformID.MacOSX:
+                    Display = new MacOSDisplay();
+                    return;
+                default:
+                    return;
+            }
+        }
+
+        public void UseDefaultSettings()
+        {
+            if (Driver.InputManager.Tablet != null)
+            {
+                TabletWidth = Driver.InputManager.TabletProperties.Width;
+                TabletHeight = Driver.InputManager.TabletProperties.Height;
+                TabletX = 0;
+                TabletY = 0;
+            }
+
+            DisplayWidth = Display.Width;
+            DisplayHeight = Display.Height;
+            DisplayX = 0;
+            DisplayY = 0;
+
+            UpdateSettings();
         }
 
         public async Task LoadTabletConfiguration()
