@@ -126,6 +126,22 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private IDisplay _disp;
 
+        [XmlIgnore]
+        private float FullTabletWidth
+        {
+            set => this.RaiseAndSetIfChanged(ref _fTabW, value);
+            get => _fTabW;
+        }
+        private float _fTabW;
+
+        [XmlIgnore]
+        private float FullTabletHeight
+        {
+            set => this.RaiseAndSetIfChanged(ref _fTabH, value);
+            get => _fTabH;
+        }
+        private float _fTabH;
+
 
         private void OpenConfigurations(DirectoryInfo directory)
         {
@@ -175,6 +191,12 @@ namespace OpenTabletDriverGUI.ViewModels
         public void Initialize()
         {
             Driver = new Driver();
+            Driver.InputManager.TabletSuccessfullyOpened += (sender, tablet) => 
+            {
+                FullTabletWidth = tablet.Width;
+                FullTabletHeight = tablet.Height;
+            };
+
             SetPlatformSpecifics(Environment.OSVersion.Platform);
             
             var settings = new FileInfo("settings.xml");

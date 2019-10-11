@@ -29,6 +29,19 @@
     </UserControl.Styles>
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*,*">
         <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="{Binding $parent[UserControl].Title}"/>
+        <Border Grid.ColumnSpan="4" Grid.Row="1" HorizontalAlignment="Center" Background="Transparent">
+            <Viewbox HorizontalAlignment="Center">
+                <Canvas Width="{Binding $parent[UserControl].BackgroundWidth}" Height="{Binding $parent[UserControl].BackgroundHeight}" HorizontalAlignment="Center">
+                    <Rectangle Name="FullAreaRect" 
+                        Width="{Binding $parent[UserControl].BackgroundWidth}" Height="{Binding $parent[UserControl].BackgroundHeight}"
+                        Fill="{DynamicResource LightThemeBG}"/>
+                    <Rectangle Name="ActiveAreaRect"
+                        Width="{Binding $parent[UserControl].AreaWidth}" Height="{Binding $parent[UserControl].AreaHeight}"
+                        Canvas.Left="{Binding $parent[UserControl].AreaXOffset}" Canvas.Top="{Binding $parent[UserControl].AreaYOffset}"
+                        Fill="{DynamicResource LightThemeFocusBG}"/>
+                </Canvas>
+            </Viewbox>
+        </Border>
         <Border Grid.Column="0" Grid.Row="2">
             <Grid RowDefinitions="*,Auto">
                 <TextBlock Grid.Row="0" Text="Width"/>

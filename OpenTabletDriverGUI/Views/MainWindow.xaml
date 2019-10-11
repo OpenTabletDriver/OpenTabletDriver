@@ -44,16 +44,22 @@
                     <Grid RowDefinitions="*,*" HorizontalAlignment="Stretch" Margin="100,0">
                         <ns:AreaSetter Grid.Row="0"
                             Title="Display Area"
+                            MeasurementUnit="px"
                             AreaWidth="{Binding DisplayWidth}"
                             AreaHeight="{Binding DisplayHeight}"
                             AreaXOffset="{Binding DisplayX}"
-                            AreaYOffset="{Binding DisplayY}"/>
+                            AreaYOffset="{Binding DisplayY}"
+                            BackgroundWidth="{Binding Display.Width}"
+                            BackgroundHeight="{Binding Display.Height}"/>
                         <ns:AreaSetter Grid.Row="1"
                             Title="Tablet Area"
+                            MeasurementUnit="mm"
                             AreaWidth="{Binding TabletWidth}"
                             AreaHeight="{Binding TabletHeight}"
                             AreaXOffset="{Binding TabletX}"
-                            AreaYOffset="{Binding TabletY}"/>
+                            AreaYOffset="{Binding TabletY}"
+                            BackgroundWidth="{Binding FullTabletWidth}"
+                            BackgroundHeight="{Binding FullTabletHeight}"/>
                     </Grid>
                 </Border>
             </TabItem>

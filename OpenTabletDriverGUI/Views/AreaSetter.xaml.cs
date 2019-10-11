@@ -70,5 +70,23 @@ namespace OpenTabletDriverGUI.Views
             set => SetValue(AreaYOffsetProperty, value);
             get => GetValue(AreaYOffsetProperty);
         }
+
+        public static readonly StyledProperty<float> BackgroundWidthProperty = 
+            AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundWidth));
+
+        public float BackgroundWidth
+        {
+            set => SetValue(BackgroundWidthProperty, value);
+            get => GetValue(BackgroundWidthProperty);
+        }
+
+        public static readonly StyledProperty<float> BackgroundHeightProperty = 
+        AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundHeight));
+        
+        public float BackgroundHeight
+        {
+            set => SetValue(BackgroundHeightProperty, value);
+            get => GetValue(BackgroundHeightProperty);
+        }
     }
 }

@@ -38,6 +38,8 @@ namespace TabletDriverLib.Tools
         public TabletProperties TabletProperties { set; get; }
         private ICursorHandler CursorHandler;
 
+        public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
+
         public TabletReader TabletReader { private set; get; }
 
         public IEnumerable<string> GetAllDeviceIdentifiers()
@@ -83,6 +85,8 @@ namespace TabletDriverLib.Tools
                 Log.Info($"Device path: {Tablet.DevicePath}");
                 TabletReader = new TabletReader(Tablet);
                 TabletReader.Start();
+                // Post tablet opened event
+                TabletSuccessfullyOpened?.Invoke(this, TabletProperties);
                 return true;
             }
             else
