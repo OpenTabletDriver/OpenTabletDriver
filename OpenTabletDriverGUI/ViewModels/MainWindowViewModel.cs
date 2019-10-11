@@ -14,13 +14,19 @@ using TabletDriverLib.Tools.Display;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
-    [XmlRoot("Configuration", DataType = "OpenTabletDriverCfg")]
     public class MainWindowViewModel : ViewModelBase
     {
         public MainWindowViewModel()
         {
             Trace.Listeners.Add(TraceListener);
         }
+
+        public Settings Settings
+        {
+            set => this.RaiseAndSetIfChanged(ref _settings, value);
+            get => _settings;
+        }
+        private Settings _settings;
         
         [XmlIgnore]
         private ReactiveTraceListener TraceListener
@@ -37,78 +43,6 @@ namespace OpenTabletDriverGUI.ViewModels
             get => _driver;
         }
         private Driver _driver;
-
-        private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
-
-        [XmlElement("DisplayWidth")]
-        public float DisplayWidth 
-        {
-            set => this.RaiseAndSetIfChanged(ref _dW, value);
-            get => _dW;
-        }
-
-        [XmlElement("DisplayHeight")]
-        public float DisplayHeight
-        {
-            set => this.RaiseAndSetIfChanged(ref _dH, value);
-            get => _dH;
-        }
-
-        [XmlElement("DisplayXOffset")]
-        public float DisplayX
-        {
-            set => this.RaiseAndSetIfChanged(ref _dX, value);
-            get => _dX;
-        }
-
-        [XmlElement("DisplayYOffset")]
-        public float DisplayY
-        {
-            set => this.RaiseAndSetIfChanged(ref _dY, value);
-            get => _dY;
-        }
-
-        [XmlElement("DisplayRotation")]
-        public float DisplayRotation
-        {
-            set => this.RaiseAndSetIfChanged(ref _dR, value);
-            get => _dR;
-        }
-
-        [XmlElement("TabletWidth")]
-        public float TabletWidth
-        {
-            set => this.RaiseAndSetIfChanged(ref _tW, value);
-            get => _tW;
-        }
-
-        [XmlElement("TabletHeight")]
-        public float TabletHeight
-        {
-            set => this.RaiseAndSetIfChanged(ref _tH, value);
-            get => _tH;
-        }
-
-        [XmlElement("TabletXOffset")]
-        public float TabletX
-        {
-            set => this.RaiseAndSetIfChanged(ref _tX, value);
-            get => _tX;
-        }
-
-        [XmlElement("TabletYOffset")]
-        public float TabletY
-        {
-            set => this.RaiseAndSetIfChanged(ref _tY, value);
-            get => _tY;
-        }
-
-        [XmlElement("TabletRotation")]
-        public float TabletRotation
-        {
-            set => this.RaiseAndSetIfChanged(ref _tR, value);
-            get => _tR;
-        }
 
         [XmlIgnore]
         public bool InputHooked 
@@ -171,20 +105,20 @@ namespace OpenTabletDriverGUI.ViewModels
         {
             Driver.InputManager.DisplayArea = new Area
             {
-                Width = DisplayWidth,
-                Height = DisplayHeight,
-                Position = new Point(DisplayX, DisplayY),
-                Rotation = DisplayRotation
+                Width = Settings.DisplayWidth,
+                Height = Settings.DisplayHeight,
+                Position = new Point(Settings.DisplayX, Settings.DisplayY),
+                Rotation = Settings.DisplayRotation
             };
-            Log.Info($"Set display area: [{DisplayWidth}x{DisplayHeight}@{DisplayX},{DisplayY};{DisplayRotation}°]");
+            Log.Info($"Set display area: " + Driver.InputManager.DisplayArea);
             Driver.InputManager.TabletArea = new Area
             {
-                Width = TabletWidth,
-                Height = TabletHeight,
-                Position = new Point(TabletX, TabletY),
-                Rotation = TabletRotation
+                Width = Settings.TabletWidth,
+                Height = Settings.TabletHeight,
+                Position = new Point(Settings.TabletX, Settings.TabletY),
+                Rotation = Settings.TabletRotation
             };
-            Log.Info($"Set tablet area:  [{TabletWidth}x{TabletHeight}@{TabletX},{TabletY};{TabletRotation}°]");
+            Log.Info($"Set tablet area:  " + Driver.InputManager.TabletArea);
             Log.Info("Applied all settings.");
         }
 
@@ -202,7 +136,7 @@ namespace OpenTabletDriverGUI.ViewModels
             var settings = new FileInfo("settings.xml");
             if (settings.Exists)
             {
-                Deserialize(settings);
+                Settings = Settings.Deserialize(settings);
                 Log.Info("Loaded user settings");
             }
             else
@@ -240,16 +174,16 @@ namespace OpenTabletDriverGUI.ViewModels
         {
             if (Driver.InputManager.Tablet != null)
             {
-                TabletWidth = Driver.InputManager.TabletProperties.Width;
-                TabletHeight = Driver.InputManager.TabletProperties.Height;
-                TabletX = 0;
-                TabletY = 0;
+                Settings.TabletWidth = Driver.InputManager.TabletProperties.Width;
+                Settings.TabletHeight = Driver.InputManager.TabletProperties.Height;
+                Settings.TabletX = 0;
+                Settings.TabletY = 0;
             }
 
-            DisplayWidth = Display.Width;
-            DisplayHeight = Display.Height;
-            DisplayX = 0;
-            DisplayY = 0;
+            Settings.DisplayWidth = Display.Width;
+            Settings.DisplayHeight = Display.Height;
+            Settings.DisplayX = 0;
+            Settings.DisplayY = 0;
 
             UpdateSettings();
         }
@@ -295,7 +229,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 var file = new FileInfo(path[0]);
                 try
                 {
-                    Deserialize(file);
+                    Settings = Settings.Deserialize(file);
                     Log.Info("Successfully read settings from file.");
                 }
                 catch (Exception ex)
@@ -314,7 +248,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 var file = new FileInfo(path);
                 try 
                 {
-                    Serialize(file);
+                    Settings.Serialize(file);
                     Log.Info("Wrote settings to file: " + path);
                 }
                 catch (Exception ex)
@@ -340,27 +274,5 @@ namespace OpenTabletDriverGUI.ViewModels
                 InputHooked = !InputHooked;
             }
         }
-
-        #region XML Serialization
-
-        private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(MainWindowViewModel));
-
-        public void Deserialize(FileInfo file)
-        {
-            using (var stream = file.OpenRead())
-            {
-                var data = (MainWindowViewModel)XmlSerializer.Deserialize(stream);
-                data.CopyPropertiesTo(this);
-                UpdateSettings();
-            }
-        }
-
-        public void Serialize(FileInfo file)
-        {
-            using (var stream = file.OpenWrite())
-                XmlSerializer.Serialize(stream, this);
-        }
-
-        #endregion
     }
 }

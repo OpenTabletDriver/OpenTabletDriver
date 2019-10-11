@@ -19,5 +19,8 @@ namespace TabletDriverLib.Class
         public Point Position { set; get; } = new Point();
 
         public float Rotation { set; get; } = 0;
+
+        public override string ToString() => $"[{Width}x{Height}@{Position}:{Rotation}°],";
+        public static implicit operator string(Area area) => area.ToString();
     }
 }
