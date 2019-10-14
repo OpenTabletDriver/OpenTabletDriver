@@ -275,5 +275,12 @@ namespace OpenTabletDriverGUI.ViewModels
                 InputHooked = !InputHooked;
             }
         }
+
+        private void SetTheme(string name)
+        {
+            Settings.Theme = name;
+            App.Current.MainWindow.Renderer.AddDirty((Avalonia.Visual)App.Current.MainWindow.Content);
+            Log.Info($"Using theme '{name}'.");
+        }
     }
 }

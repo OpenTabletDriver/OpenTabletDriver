@@ -7,15 +7,7 @@
     </Application.DataTemplates>
 
     <Application.Resources>
-        <SolidColorBrush x:Key="LightThemeFG">#45a9ff</SolidColorBrush>
-        <SolidColorBrush x:Key="LightThemeBG">#e3f2ff</SolidColorBrush>
-        <SolidColorBrush x:Key="LightThemeFocusFG">#000000</SolidColorBrush>
-        <SolidColorBrush x:Key="LightThemeFocusBG">#5A92AF</SolidColorBrush>
-
-        <SolidColorBrush x:Key="DarkThemeFG">#ffffff</SolidColorBrush>
-        <SolidColorBrush x:Key="DarkThemeBG">#404040</SolidColorBrush>
-        <SolidColorBrush x:Key="DarkThemeFocusFG">#ffffff</SolidColorBrush>
-        <SolidColorBrush x:Key="DarkThemeFocusBG">#444444</SolidColorBrush>
+        <SolidColorBrush x:Key="FocusedBrush">#5A92AF</SolidColorBrush>
     </Application.Resources>
 
     <Application.Styles>
@@ -23,7 +15,6 @@
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
 
         <Style Selector="Button">
-            <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/>
             <Setter Property="BorderBrush" Value="#000000"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="MinHeight" Value="24"/>
@@ -49,17 +40,13 @@
         </Style>
 
         <Style Selector="TabItem:focus">
-            <Setter Property="Foreground" Value="{DynamicResource LightThemeFocusFG}"/>
         </Style>
         <Style Selector="TabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource LightThemeFocusBG}"/>
         </Style>
 
         <Style Selector="TabItem:selected">
-            <Setter Property="Foreground" Value="{DynamicResource LightThemeFocusFG}"/>
         </Style>
         <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/>
         </Style>
     </Application.Styles>
 </Application>

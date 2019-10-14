@@ -10,7 +10,7 @@
             <Setter Property="Margin" Value="5"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/>
+            <!-- <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/> -->
             <Setter Property="CornerRadius" Value="5"/>
         </Style>
         <Style Selector="TextBlock">
@@ -35,11 +35,11 @@
                 <Canvas Width="{Binding $parent[ns:AreaSetter].BackgroundWidth}" Height="{Binding $parent[ns:AreaSetter].BackgroundHeight}" HorizontalAlignment="Center">
                     <Rectangle Name="FullAreaRect" 
                         Width="{Binding $parent[ns:AreaSetter].BackgroundWidth}" Height="{Binding $parent[ns:AreaSetter].BackgroundHeight}"
-                        Fill="{DynamicResource LightThemeBG}"/>
+                        Fill="#B6B6B6"/>
                     <Rectangle Name="ActiveAreaRect"
                         Width="{Binding $parent[ns:AreaSetter].AreaWidth}" Height="{Binding $parent[ns:AreaSetter].AreaHeight}"
                         Canvas.Left="{Binding $parent[ns:AreaSetter].AreaXOffset}" Canvas.Top="{Binding $parent[ns:AreaSetter].AreaYOffset}"
-                        Fill="{DynamicResource LightThemeFocusBG}"/>
+                        Fill="{DynamicResource FocusedBrush}"/>
                 </Canvas>
             </Viewbox>
         </Border>
