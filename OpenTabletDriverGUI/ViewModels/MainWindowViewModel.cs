@@ -279,8 +279,8 @@ namespace OpenTabletDriverGUI.ViewModels
         private void SetTheme(string name)
         {
             Settings.Theme = name;
-            App.Current.MainWindow.Renderer.AddDirty((Avalonia.Visual)App.Current.MainWindow.Content);
             Log.Info($"Using theme '{name}'.");
+            (App.Current as App).Restart(this);
         }
     }
 }
