@@ -1,22 +1,23 @@
 # OpenTabletDriver
-OpenTabletDriver is an open source tablet configurator. It replaces the need for the stock tablet's drivers.
+OpenTabletDriver is a driverless open source tablet configurator. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatability possible in a easily configurable graphical user interface.
 
-#
+## Releases
 
-# Requirements
+- None yet!
+
+# Build Dependencies
 The requirements depend entirely on the operating system you are running.
 
-### Windows (x64)
+### Windows (x64) [Actively Tested Platform]
   - .NET Core 3.0
 
-### Linux (x64)
+### Linux (x64) [Actively Tested Platform]
   - .NET Core 3.0
   - libx11
 
-### Mac OS X [Untested Platform]
+### Mac OS X (x64) [Untested Platform]
   - .NET Core 3.0
-
-#
+  - Quartz
 
 # Features
 - Absolute cursor positioning
