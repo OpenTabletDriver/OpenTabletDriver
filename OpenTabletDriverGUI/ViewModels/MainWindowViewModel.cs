@@ -172,6 +172,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void UseDefaultSettings()
         {
+            Settings = new Settings();
             if (Driver.InputManager.Tablet != null)
             {
                 Settings.TabletWidth = Driver.InputManager.TabletProperties.Width;
