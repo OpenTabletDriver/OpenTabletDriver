@@ -28,7 +28,8 @@ The requirements depend entirely on the operating system you are running.
 
 ## Planned features
 - Relative cursor positioning
-- Area rotation
+- Precise area rotation
+- Precise area offsets
 - Tablet configuration builder
 
 #
