@@ -10,11 +10,13 @@ namespace OpenTabletDriverGUI.Models
     {
         public Settings()
         {
+            Theme = "Light";
         }
 
         #region Properties
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
+        private string _theme;
 
         [XmlElement("DisplayWidth")]
         public float DisplayWidth 
@@ -84,6 +86,17 @@ namespace OpenTabletDriverGUI.Models
         {
             set => this.RaiseAndSetIfChanged(ref _tR, value);
             get => _tR;
+        }
+
+        [XmlElement("Theme")]
+        public string Theme
+        {
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _theme, value);
+                (App.Current as App).SetTheme(Themes.Parse(value));
+            }
+            get => _theme;
         }
         
         #endregion

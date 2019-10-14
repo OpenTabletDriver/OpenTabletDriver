@@ -31,6 +31,15 @@
                 <MenuItem Header="Reset to defaults" Command="{Binding UseDefaultSettings}"/>
                 <MenuItem Header="Load..." Command="{Binding LoadSettingsDialog}"/>
                 <MenuItem Header="Save..." Command="{Binding SaveSettingsDialog}"/>
+                <MenuItem Header="Themes">
+                    <MenuItem.Styles>
+                        <Style Selector="MenuItem">
+                            <Setter Property="Command" Value="{Binding SetTheme}"/>
+                        </Style>
+                    </MenuItem.Styles>
+                    <MenuItem Header="Light" CommandParameter="Light"/>
+                    <MenuItem Header="Dark" CommandParameter="Dark"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Tablets">
                 <MenuItem Header="Load directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
