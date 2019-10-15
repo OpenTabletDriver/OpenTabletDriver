@@ -34,7 +34,6 @@ namespace OpenTabletDriverGUI.Views
             get => GetValue(UnitProperty);
         }
 
-
         public static readonly StyledProperty<float> AreaWidthProperty =
             AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaWidth));
         

@@ -33,7 +33,7 @@ namespace TabletDriverLib.Tools.Native
             {
                 return new Point(point.X, point.Y);
             }
-        };
+        }
 
         [DllImport(Foundation)]
         public static extern void CFRelease(IntPtr handle);

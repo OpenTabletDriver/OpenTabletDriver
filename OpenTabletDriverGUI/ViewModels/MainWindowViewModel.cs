@@ -76,7 +76,6 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private float _fTabH;
 
-
         private void OpenConfigurations(DirectoryInfo directory)
         {
             List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
