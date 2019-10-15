@@ -45,29 +45,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public async Task SaveAs(TabletProperties tablet)
         {
-            var dialog = new SaveFileDialog()
-            {
-                Title = $"Saving tablet '{tablet.TabletName}'",
-                Filters = new List<FileDialogFilter>
-                {
-                    new FileDialogFilter
-                    {
-                        Name = "XML Document",
-                        Extensions = new List<string>
-                        {
-                            "xml"
-                        }
-                    },
-                    new FileDialogFilter
-                    {
-                        Name = "All files",
-                        Extensions = new List<string>
-                        {
-                            "*"
-                        }
-                    }
-                }
-            };
+            var dialog = DialogTools.CreateSaveFileDialog($"Saving tablet '{tablet.TabletName}'", "XML Document", "xml");
             var result = await dialog.ShowAsync(App.Current.MainWindow);
             if (result != null)
             {
