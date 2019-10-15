@@ -27,17 +27,17 @@
             <Setter Property="TextAlignment" Value="Left"/>
         </Style>
     </UserControl.Styles>
-    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*,*">
-        <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="{Binding $parent[ns:AreaSetter].Title}"/>
+    <Grid DataContext="{Binding $parent}" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*,*">
+        <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="{Binding Title}"/>
         <Border Grid.ColumnSpan="4" Grid.Row="1" HorizontalAlignment="Center" Background="Transparent">
             <Viewbox HorizontalAlignment="Center">
-                <Canvas Width="{Binding $parent[ns:AreaSetter].BackgroundWidth}" Height="{Binding $parent[ns:AreaSetter].BackgroundHeight}" HorizontalAlignment="Center">
+                <Canvas Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}" HorizontalAlignment="Center">
                     <Rectangle Name="FullAreaRect" 
-                        Width="{Binding $parent[ns:AreaSetter].BackgroundWidth}" Height="{Binding $parent[ns:AreaSetter].BackgroundHeight}"
+                        Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}"
                         Fill="#B6B6B6"/>
                     <Rectangle Name="ActiveAreaRect"
-                        Width="{Binding $parent[ns:AreaSetter].AreaWidth}" Height="{Binding $parent[ns:AreaSetter].AreaHeight}"
-                        Canvas.Left="{Binding $parent[ns:AreaSetter].AreaXOffset}" Canvas.Top="{Binding $parent[ns:AreaSetter].AreaYOffset}"
+                        Width="{Binding AreaWidth}" Height="{Binding AreaHeight}"
+                        Canvas.Left="{Binding AreaXOffset}" Canvas.Top="{Binding AreaYOffset}"
                         Fill="{DynamicResource FocusedBrush}"/>
                 </Canvas>
             </Viewbox>
@@ -45,27 +45,29 @@
         <Border Grid.Column="0" Grid.Row="2">
             <Grid RowDefinitions="*,Auto">
                 <TextBlock Grid.Row="0" Text="Width"/>
-                <TextBox Grid.Row="1" Text="{Binding $parent[ns:AreaSetter].AreaWidth}"/>
-                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding $parent[ns:AreaSetter].MeasurementUnit}"/>
+                <TextBox Grid.Row="1" Text="{Binding AreaWidth}"/>
+                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
             </Grid>
         </Border>
         <Border Grid.Column="1" Grid.Row="2">
             <Grid RowDefinitions="*,Auto">
                 <TextBlock Grid.Row="0" Text="Height"/>
-                <TextBox Grid.Row="1" Text="{Binding $parent[ns:AreaSetter].AreaHeight}"/>
-                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding $parent[ns:AreaSetter].MeasurementUnit}"/>
+                <TextBox Grid.Row="1" Text="{Binding AreaHeight}"/>
+                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
             </Grid>
         </Border>
         <Border Grid.Column="2" Grid.Row="2">
             <Grid RowDefinitions="*,Auto">
                 <TextBlock Grid.Row="0" Text="X Offset"/>
-                <TextBox Grid.Row="1" Text="{Binding $parent[ns:AreaSetter].AreaXOffset}"/>
+                <TextBox Grid.Row="1" Text="{Binding AreaXOffset}"/>
+                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
             </Grid>
         </Border>
         <Border Grid.Column="3" Grid.Row="2">
             <Grid RowDefinitions="*,Auto">
                 <TextBlock Grid.Row="0" Text="Y Offset"/>
-                <TextBox Grid.Row="1" Text="{Binding $parent[ns:AreaSetter].AreaYOffset}"/>
+                <TextBox Grid.Row="1" Text="{Binding AreaYOffset}"/>
+                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
             </Grid>
         </Border>
     </Grid>

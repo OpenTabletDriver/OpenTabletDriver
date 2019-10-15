@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 
 namespace OpenTabletDriverGUI.Views
@@ -17,7 +18,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<string> TitleProperty =
-            AvaloniaProperty.Register<AreaSetter, string>(nameof(Title));
+            AvaloniaProperty.Register<AreaSetter, string>(nameof(Title), defaultBindingMode: BindingMode.TwoWay);
 
         public string Title
         {
@@ -26,7 +27,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<string> UnitProperty = 
-            AvaloniaProperty.Register<AreaSetter, string>(nameof(MeasurementUnit));
+            AvaloniaProperty.Register<AreaSetter, string>(nameof(MeasurementUnit), defaultBindingMode: BindingMode.TwoWay);
 
         public string MeasurementUnit
         {
@@ -35,7 +36,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<float> AreaWidthProperty =
-            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaWidth));
+            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaWidth), defaultBindingMode: BindingMode.TwoWay);
         
         public float AreaWidth
         {
@@ -44,7 +45,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<float> AreaHeightProperty =
-            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaHeight));
+            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaHeight), defaultBindingMode: BindingMode.TwoWay);
 
         public float AreaHeight
         {
@@ -53,7 +54,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<float> AreaXOffsetProperty = 
-            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaXOffset));
+            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaXOffset), defaultBindingMode: BindingMode.TwoWay);
 
         public float AreaXOffset
         {
@@ -62,7 +63,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<float> AreaYOffsetProperty =
-            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaYOffset));
+            AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaYOffset), defaultBindingMode: BindingMode.TwoWay);
 
         public float AreaYOffset
         {
@@ -71,7 +72,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<float> BackgroundWidthProperty = 
-            AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundWidth));
+            AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundWidth), defaultBindingMode: BindingMode.TwoWay);
 
         public float BackgroundWidth
         {
@@ -80,7 +81,7 @@ namespace OpenTabletDriverGUI.Views
         }
 
         public static readonly StyledProperty<float> BackgroundHeightProperty = 
-        AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundHeight));
+        AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundHeight), defaultBindingMode: BindingMode.TwoWay);
         
         public float BackgroundHeight
         {
