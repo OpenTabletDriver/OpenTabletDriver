@@ -10,7 +10,6 @@
             <Setter Property="Margin" Value="5"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="BorderBrush" Value="Black"/>
-            <!-- <Setter Property="Background" Value="{DynamicResource LightThemeBG}"/> -->
             <Setter Property="CornerRadius" Value="5"/>
         </Style>
         <Style Selector="TextBlock">
