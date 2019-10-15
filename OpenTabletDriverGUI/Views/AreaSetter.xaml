@@ -9,7 +9,7 @@
         <Style Selector="Border">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
             <Setter Property="CornerRadius" Value="5"/>
         </Style>
         <Style Selector="TextBlock">
@@ -34,11 +34,11 @@
                 <Canvas Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}" HorizontalAlignment="Center">
                     <Rectangle Name="FullAreaRect" 
                         Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}"
-                        Fill="#B6B6B6"/>
+                        Fill="{DynamicResource ThemeControlMidBrush}"/>
                     <Rectangle Name="ActiveAreaRect"
                         Width="{Binding AreaWidth}" Height="{Binding AreaHeight}"
                         Canvas.Left="{Binding AreaXOffset}" Canvas.Top="{Binding AreaYOffset}"
-                        Fill="{DynamicResource FocusedBrush}"/>
+                        Fill="{DynamicResource ThemeAccentBrush2}"/>
                 </Canvas>
             </Viewbox>
         </Border>

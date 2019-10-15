@@ -6,10 +6,6 @@
         <local:ViewLocator/>
     </Application.DataTemplates>
 
-    <Application.Resources>
-        <SolidColorBrush x:Key="FocusedBrush">#5A92AF</SolidColorBrush>
-    </Application.Resources>
-
     <Application.Styles>
         <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
@@ -33,7 +29,7 @@
             <Setter Property="Margin" Value="0,0,1,-5"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="BorderThickness" Value="1,1,1,0"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
         </Style>
         <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
         </Style>
@@ -46,6 +42,7 @@
         <Style Selector="TabItem:selected">
         </Style>
         <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush2}"/>
         </Style>
     </Application.Styles>
 </Application>
