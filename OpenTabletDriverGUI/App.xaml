@@ -15,7 +15,6 @@
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
 
         <Style Selector="Button">
-            <Setter Property="BorderBrush" Value="#000000"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="MinHeight" Value="24"/>
             <Setter Property="MinWidth" Value="100"/>

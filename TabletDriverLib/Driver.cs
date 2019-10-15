@@ -64,7 +64,7 @@ namespace TabletDriverLib
 
         public bool OpenTablet(TabletProperties properties)
         {
-            Log.Info($"Searching for tablet: {properties.TabletName}");
+            Log.Info($"Searching for tablet '{properties.TabletName}'...");
             var matching = Devices.Where(d => d.ProductID == properties.ProductID && d.VendorID == properties.VendorID);
             var ordered = matching.OrderBy(d => d.GetFileSystemName());
             var device = ordered.ElementAtOrDefault(properties.DeviceNumber);
@@ -84,7 +84,7 @@ namespace TabletDriverLib
             Tablet = device;
             if (Tablet != null)
             {
-                Log.Info($"Opened tablet '{Tablet.GetFriendlyName()}'.");
+                Log.Write($" Found: {Tablet.GetFriendlyName()}.");
                 Log.Info($"Device path: {Tablet.DevicePath}");
                 TabletReader = new TabletReader(Tablet);
                 TabletReader.Start();
@@ -94,7 +94,7 @@ namespace TabletDriverLib
             }
             else
             {
-                Log.Fail("Failed to open tablet.");
+                Log.Write(" Not found");
                 return false;
             }
         }

@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace OpenTabletDriverGUI
@@ -17,6 +20,11 @@ namespace OpenTabletDriverGUI
                         property.SetValue(dest, sourceProp.GetValue(source, null), null);
                 }
             }
+        }
+
+        public static ObservableCollection<T> ToObservableCollection<T>(this ICollection<T> collection)
+        {
+            return new ObservableCollection<T>(collection);
         }
     }
 }

@@ -56,7 +56,7 @@ namespace TabletDriverLib.Tools
         private void Background()
         {
             var config = new OpenConfiguration();
-            config.SetOption(OpenOption.Priority, OpenPriority.High);
+            config.SetOption(OpenOption.Priority, OpenPriority.Low);
             for (int retries = 3; retries > 0; retries--)
             {
                 if (Tablet.TryOpen(config, out var stream, out var exception))
@@ -73,7 +73,7 @@ namespace TabletDriverLib.Tools
             
             if (ReportStream == null)
             {
-                Log.Fail("Failed to open tablet.");
+                Log.Fail("Failed to open tablet. Make sure you have required permissions to open device streams.");
                 return;
             }
 
@@ -115,7 +115,14 @@ namespace TabletDriverLib.Tools
 
         public void Dispose()
         {
-            Input.Received -= InputReceived;
+            try
+            {
+                Input.Received -= InputReceived;
+            }
+            catch
+            {
+                // Do nothing, the input was not being hooked.
+            }
         }
     }
 }
