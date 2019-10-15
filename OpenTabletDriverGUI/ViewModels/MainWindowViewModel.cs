@@ -91,21 +91,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 configRepository.AddRange(dir.EnumerateFiles());
 
             Tablets = configRepository.ConvertAll(file => TabletProperties.Read(file)).ToObservableCollection();
-            OpenConfigurations(Tablets);
-        }
-
-        private void OpenConfigurations(IEnumerable<TabletProperties> configs)
-        {
-            foreach (var config in configs)
-            {
-                if (Driver.OpenTablet(config))
-                    break;
-            }
-
-            if (Driver.Tablet == null)
-            {
-                Log.Fail("No configured tablets connected.");
-            }
+            Driver.OpenTablet(Tablets);
         }
 
         public void UpdateSettings()
@@ -197,6 +183,11 @@ namespace OpenTabletDriverGUI.ViewModels
             }
         }
 
+        public void DetectTablet()
+        {
+            Driver.OpenTablet(Tablets);
+        }
+
         public async Task OpenConfigurationManager()
         {
             var cfgMgr = new ConfigurationManager()
@@ -207,28 +198,13 @@ namespace OpenTabletDriverGUI.ViewModels
                 }
             };
             await cfgMgr.ShowDialog(App.Current.MainWindow);
-            OpenConfigurations(Tablets);
-        }
-
-        public void DetectTablet()
-        {
-            OpenConfigurations(Tablets);
-        }
-
-        public async Task LoadTabletConfiguration()
-        {
-            var result = await new OpenFileDialog().ShowAsync(App.Current.MainWindow);
-            if (result != null)
-            {
-                var files = result.ToList().ConvertAll(item => new FileInfo(item));
-                Tablets = files.ConvertAll(file => TabletProperties.Read(file)).ToObservableCollection();
-                OpenConfigurations(Tablets);
-            }
+            Driver.OpenTablet(Tablets);
         }
 
         public async Task OpenTabletConfigurationFolder()
         {
-            var path = await new OpenFolderDialog().ShowAsync(App.Current.MainWindow);
+            var fd = new OpenFolderDialog();
+            var path = await fd.ShowAsync(App.Current.MainWindow);
             if (path != null)
             {
                 var directory = new DirectoryInfo(path);
@@ -258,7 +234,30 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public async Task SaveSettingsDialog()
         {
-            var path = await new SaveFileDialog().ShowAsync(App.Current.MainWindow);
+            var fd = new SaveFileDialog()
+            {
+                Title = "Saving settings",
+                Filters = new List<FileDialogFilter>
+                {
+                    new FileDialogFilter
+                    {
+                        Name = "XML Document",
+                        Extensions = new List<string>
+                        {
+                            "xml"
+                        }
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "All files",
+                        Extensions = new List<string>
+                        {
+                            "*"
+                        }
+                    }
+                }
+            };
+            var path = await fd.ShowAsync(App.Current.MainWindow);
             if (path != null)
             {
                 var file = new FileInfo(path);

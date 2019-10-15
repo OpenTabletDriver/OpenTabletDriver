@@ -12,10 +12,7 @@
     </Design.DataContext>
     <Grid RowDefinitions="Auto,*">
         <Menu Grid.Row="0">
-            <MenuItem Header="File">
-                <MenuItem Header="Load configuration folder"/>
-                <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
-            </MenuItem>
+            <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
         </Menu>
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
             <Grid Grid.Column="0" RowDefinitions="*,Auto">

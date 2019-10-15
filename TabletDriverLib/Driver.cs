@@ -62,13 +62,13 @@ namespace TabletDriverLib
             return Open(device);
         }
 
-        public bool OpenTablet(TabletProperties properties)
+        public bool OpenTablet(TabletProperties tablet)
         {
-            Log.Info($"Searching for tablet '{properties.TabletName}'...");
-            var matching = Devices.Where(d => d.ProductID == properties.ProductID && d.VendorID == properties.VendorID);
+            Log.Info($"Searching for tablet '{tablet.TabletName}'...");
+            var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
             var ordered = matching.OrderBy(d => d.GetFileSystemName());
-            var device = ordered.ElementAtOrDefault(properties.DeviceNumber);
-            TabletProperties = properties;
+            var device = ordered.ElementAtOrDefault(tablet.DeviceNumber);
+            TabletProperties = tablet;
             if (TabletArea == null)
             {
                 TabletArea = new Area();
@@ -76,6 +76,19 @@ namespace TabletDriverLib
                 TabletArea.Height = TabletProperties.MaxY;
             }
             return Open(device);
+        }
+
+        public bool OpenTablet(IEnumerable<TabletProperties> tablets)
+        {
+            foreach (var tablet in tablets)
+            {
+                if (OpenTablet(tablet))
+                    return true;
+            }
+
+            if (Tablet == null)
+                Log.Fail("No configured tablets found.");
+            return false;
         }
 
         internal bool Open(HidDevice device)

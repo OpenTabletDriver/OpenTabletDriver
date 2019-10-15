@@ -23,7 +23,7 @@
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*,Auto,Auto">
-        <Menu Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="Black">
+        <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
             </MenuItem>
@@ -49,7 +49,7 @@
         </Menu>
         <TabControl Grid.Row="1">
             <TabItem Header="Main Settings">
-                <Border BorderThickness="0,1,0,0" BorderBrush="Black">
+                <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
                     <Grid RowDefinitions="*,*" HorizontalAlignment="Stretch" Margin="100,0">
                         <ns:AreaSetter Grid.Row="0"
                             Title="Display Area"
@@ -73,7 +73,7 @@
                 </Border>
             </TabItem>
             <TabItem Header="Console">
-                <Border BorderThickness="0,1,0,0" BorderBrush="Black">
+                <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
                     <Grid RowDefinitions="*,Auto">
                         <TextBox IsReadOnly="True" Margin="5" FontFamily="Ubuntu Mono, Lucida Console" FontSize="16"
                             Background="Black" Foreground="White" Text="{Binding TraceListener.Contents}"/>
@@ -90,7 +90,7 @@
                 <Button Content="Apply Settings" Command="{Binding UpdateSettings}"/>
             </StackPanel>
         </Grid>
-        <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="Black">
+        <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
             <TextBlock Text="{Binding TraceListener.Status}"/>
         </Border>
     </Grid>
