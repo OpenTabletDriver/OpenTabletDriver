@@ -23,7 +23,11 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public Settings Settings
         {
-            set => this.RaiseAndSetIfChanged(ref _settings, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _settings, value);
+                UpdateSettings();
+            }
             get => _settings;
         }
         private Settings _settings;
@@ -171,21 +175,22 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void UseDefaultSettings()
         {
-            Settings = new Settings();
+            Settings = new Settings()
+            {
+                DisplayWidth = Display.Width,
+                DisplayHeight = Display.Height,
+                DisplayX = 0,
+                DisplayY = 0
+            };
+
             if (Driver.Tablet != null)
             {
                 Settings.TabletWidth = Driver.TabletProperties.Width;
                 Settings.TabletHeight = Driver.TabletProperties.Height;
                 Settings.TabletX = 0;
                 Settings.TabletY = 0;
+                UpdateSettings();
             }
-
-            Settings.DisplayWidth = Display.Width;
-            Settings.DisplayHeight = Display.Height;
-            Settings.DisplayX = 0;
-            Settings.DisplayY = 0;
-
-            UpdateSettings();
         }
 
         public async Task LoadTabletConfiguration()
