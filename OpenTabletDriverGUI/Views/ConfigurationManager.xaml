@@ -1,0 +1,100 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:OpenTabletDriverGUI.ViewModels;assembly=OpenTabletDriverGUI"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="OpenTabletDriverGUI.Views.ConfigurationManager"
+        Width="1024" Height="768"
+        Title="Configuration Manager">
+    <Design.DataContext>
+        <vm:ConfigurationManagerViewModel/>
+    </Design.DataContext>
+    <Grid RowDefinitions="Auto,*">
+        <Menu Grid.Row="0">
+            <MenuItem Header="File">
+                <MenuItem Header="Load configuration folder"/>
+                <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+            <Grid Grid.Column="0" RowDefinitions="*,Auto">
+                <Grid.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Margin" Value="5,0,5,5"/>
+                        <Setter Property="MinHeight" Value="24"/>
+                    </Style>
+                </Grid.Styles>
+                <ListBox Grid.Row="0" Margin="5" Width="150"
+                    Items="{Binding Configurations}" SelectedItem="{Binding Selected}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TabletName}">
+                                <TextBlock.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Save as..."
+                                            Command="{Binding $parent[Window].DataContext.SaveAs}"
+                                            CommandParameter="{Binding}"/>
+                                        <MenuItem Header="Delete"
+                                            Command="{Binding $parent[Window].DataContext.Delete}"
+                                            CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                                </TextBlock.ContextMenu>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Grid.Row="1">
+                    <Button Content="New Configuration" Command="{Binding New}"/>
+                </StackPanel>
+            </Grid>
+            <StackPanel Grid.Column="1" DataContext="{Binding Selected}">
+                <StackPanel.Styles>
+                    <Style Selector="TextBlock">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Margin" Value="5,0"/>
+                    </Style>
+                    <Style Selector="TextBox">
+                        <Setter Property="Margin" Value="5"/>
+                    </Style>
+                </StackPanel.Styles>
+
+                <TextBlock Text="Name"/>
+                <TextBox Text="{Binding TabletName}"/>
+
+                <TextBlock Text="Vendor ID"/>
+                <TextBox Text="{Binding VendorID}"/>
+
+                <TextBlock Text="Product ID"/>
+                <TextBox Text="{Binding ProductID}"/>
+
+                <TextBlock Text="Device Number (Linux)"/>
+                <TextBox Text="{Binding LinuxDeviceNumber}"/>
+
+                <TextBlock Text="Device Number (Windows)"/>
+                <TextBox Text="{Binding WindowsDeviceNumber}"/>
+
+                <TextBlock Text="Device Number (Mac OS X)"/>
+                <TextBox Text="{Binding MacOSXDeviceNumber}"/>
+
+                <TextBlock Text="Width (mm)"/>
+                <TextBox Text="{Binding Width}"/>
+
+                <TextBlock Text="Height (mm)"/>
+                <TextBox Text="{Binding Height}"/>
+
+                <TextBlock Text="Maximum X Input (device px)"/>
+                <TextBox Text="{Binding MaxX}"/>
+
+                <TextBlock Text="Maximum Y Input (device px)"/>
+                <TextBox Text="{Binding MaxY}"/>
+
+                <TextBlock Text="Maximum Pressure Input"/>
+                <TextBox Text="{Binding MaxPressure}"/>
+
+                <TextBlock Text="Minimum Hover Distance"/>
+                <TextBox Text="{Binding MinimumRange}"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

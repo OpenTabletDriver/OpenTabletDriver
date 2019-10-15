@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Avalonia.Controls;
 using OpenTabletDriverGUI.Models;
+using OpenTabletDriverGUI.Views;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Class;
@@ -32,7 +35,6 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private Settings _settings;
         
-        [XmlIgnore]
         private ReactiveTraceListener TraceListener
         {
             set => this.RaiseAndSetIfChanged(ref _trace, value);
@@ -40,7 +42,6 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private ReactiveTraceListener _trace = new ReactiveTraceListener();
 
-        [XmlIgnore]
         private Driver Driver
         {
             set => this.RaiseAndSetIfChanged(ref _driver, value);
@@ -48,7 +49,6 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private Driver _driver;
 
-        [XmlIgnore]
         public bool InputHooked 
         {
             private set => this.RaiseAndSetIfChanged(ref _hooked, value);
@@ -56,7 +56,6 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private bool _hooked;
 
-        [XmlIgnore]
         private IDisplay Display
         {
             set => this.RaiseAndSetIfChanged(ref _disp, value);
@@ -64,7 +63,6 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private IDisplay _disp;
 
-        [XmlIgnore]
         private float FullTabletWidth
         {
             set => this.RaiseAndSetIfChanged(ref _fTabW, value);
@@ -72,7 +70,6 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private float _fTabW;
 
-        [XmlIgnore]
         private float FullTabletHeight
         {
             set => this.RaiseAndSetIfChanged(ref _fTabH, value);
@@ -80,14 +77,21 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private float _fTabH;
 
+        public ObservableCollection<TabletProperties> Tablets
+        {
+            set => this.RaiseAndSetIfChanged(ref _tablets, value);
+            get => _tablets;
+        }
+        private ObservableCollection<TabletProperties> _tablets;
+
         private void OpenConfigurations(DirectoryInfo directory)
         {
             List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
             foreach (var dir in directory.EnumerateDirectories())
                 configRepository.AddRange(dir.EnumerateFiles());
 
-            var configs = configRepository.ConvertAll(file => TabletProperties.Read(file));
-            OpenConfigurations(configs);
+            Tablets = configRepository.ConvertAll(file => TabletProperties.Read(file)).ToObservableCollection();
+            OpenConfigurations(Tablets);
         }
 
         private void OpenConfigurations(IEnumerable<TabletProperties> configs)
@@ -193,25 +197,32 @@ namespace OpenTabletDriverGUI.ViewModels
             }
         }
 
+        public async Task OpenConfigurationManager()
+        {
+            var cfgMgr = new ConfigurationManager()
+            {
+                DataContext = new ConfigurationManagerViewModel()
+                {
+                    Configurations = Tablets
+                }
+            };
+            await cfgMgr.ShowDialog(App.Current.MainWindow);
+            OpenConfigurations(Tablets);
+        }
+
+        public void DetectTablet()
+        {
+            OpenConfigurations(Tablets);
+        }
+
         public async Task LoadTabletConfiguration()
         {
             var result = await new OpenFileDialog().ShowAsync(App.Current.MainWindow);
             if (result != null)
             {
                 var files = result.ToList().ConvertAll(item => new FileInfo(item));
-                var configs = files.ConvertAll(file => TabletProperties.Read(file));
-                OpenConfigurations(configs);
-            }
-        }
-
-        public async Task SaveTabletConfiguration()
-        {
-            var result = await new SaveFileDialog().ShowAsync(App.Current.MainWindow);
-            if (result != null)
-            {
-                var file = new FileInfo(result);
-                Driver.TabletProperties.Write(file);
-                Log.Info($"Saved current tablet configuration to '{file.FullName}'.");
+                Tablets = files.ConvertAll(file => TabletProperties.Read(file)).ToObservableCollection();
+                OpenConfigurations(Tablets);
             }
         }
 

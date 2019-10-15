@@ -42,9 +42,9 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Tablets">
-                <MenuItem Header="Load directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
-                <MenuItem Header="Load configuration..." Command="{Binding LoadTabletConfiguration}"/>
-                <MenuItem Header="Save configuration as..." Command="{Binding SaveTabletConfiguration}"/>
+                <MenuItem Header="Detect tablet" Command="{Binding DetectTablet}"/>
+                <MenuItem Header="Open configuration manager..." Command="{Binding OpenConfigurationManager}"/>
+                <MenuItem Header="Load configuration directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
