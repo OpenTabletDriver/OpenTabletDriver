@@ -215,10 +215,11 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public async Task LoadSettingsDialog()
         {
-            var path = await new OpenFileDialog().ShowAsync(App.Current.MainWindow);
-            if (path != null)
+            var fd = FileDialogs.CreateOpenFileDialog("Open settings", "XML Document", "xml");
+            var result = await fd.ShowAsync(App.Current.MainWindow);
+            if (result != null)
             {
-                var file = new FileInfo(path[0]);
+                var file = new FileInfo(result[0]);
                 try
                 {
                     Settings = Settings.Deserialize(file);
@@ -227,36 +228,14 @@ namespace OpenTabletDriverGUI.ViewModels
                 catch (Exception ex)
                 {
                     Log.Exception(ex);
-                    Log.Fail("Unable to read settings from file: " + path[0]);
+                    Log.Fail("Unable to read settings from file: " + result[0]);
                 }
             }
         }
 
         public async Task SaveSettingsDialog()
         {
-            var fd = new SaveFileDialog()
-            {
-                Title = "Saving settings",
-                Filters = new List<FileDialogFilter>
-                {
-                    new FileDialogFilter
-                    {
-                        Name = "XML Document",
-                        Extensions = new List<string>
-                        {
-                            "xml"
-                        }
-                    },
-                    new FileDialogFilter
-                    {
-                        Name = "All files",
-                        Extensions = new List<string>
-                        {
-                            "*"
-                        }
-                    }
-                }
-            };
+            var fd = FileDialogs.CreateSaveFileDialog("Saving settings", "XML Document", "xml");
             var path = await fd.ShowAsync(App.Current.MainWindow);
             if (path != null)
             {
