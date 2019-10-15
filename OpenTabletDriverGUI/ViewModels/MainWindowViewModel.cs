@@ -90,11 +90,11 @@ namespace OpenTabletDriverGUI.ViewModels
         {
             foreach (var config in configs)
             {
-                if (Driver.InputManager.OpenTablet(config))
+                if (Driver.OpenTablet(config))
                     break;
             }
 
-            if (Driver.InputManager.Tablet == null)
+            if (Driver.Tablet == null)
             {
                 Log.Fail("No configured tablets connected.");
             }
@@ -102,29 +102,29 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void UpdateSettings()
         {
-            Driver.InputManager.DisplayArea = new Area
+            Driver.DisplayArea = new Area
             {
                 Width = Settings.DisplayWidth,
                 Height = Settings.DisplayHeight,
                 Position = new Point(Settings.DisplayX, Settings.DisplayY),
                 Rotation = Settings.DisplayRotation
             };
-            Log.Info($"Set display area: " + Driver.InputManager.DisplayArea);
-            Driver.InputManager.TabletArea = new Area
+            Log.Info($"Set display area: " + Driver.DisplayArea);
+            Driver.TabletArea = new Area
             {
                 Width = Settings.TabletWidth,
                 Height = Settings.TabletHeight,
                 Position = new Point(Settings.TabletX, Settings.TabletY),
                 Rotation = Settings.TabletRotation
             };
-            Log.Info($"Set tablet area:  " + Driver.InputManager.TabletArea);
+            Log.Info($"Set tablet area:  " + Driver.TabletArea);
             Log.Info("Applied all settings.");
         }
 
         public void Initialize()
         {
             Driver = new Driver();
-            Driver.InputManager.TabletSuccessfullyOpened += (sender, tablet) => 
+            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
             {
                 FullTabletWidth = tablet.Width;
                 FullTabletHeight = tablet.Height;
@@ -172,10 +172,10 @@ namespace OpenTabletDriverGUI.ViewModels
         public void UseDefaultSettings()
         {
             Settings = new Settings();
-            if (Driver.InputManager.Tablet != null)
+            if (Driver.Tablet != null)
             {
-                Settings.TabletWidth = Driver.InputManager.TabletProperties.Width;
-                Settings.TabletHeight = Driver.InputManager.TabletProperties.Height;
+                Settings.TabletWidth = Driver.TabletProperties.Width;
+                Settings.TabletHeight = Driver.TabletProperties.Height;
                 Settings.TabletX = 0;
                 Settings.TabletY = 0;
             }
@@ -205,7 +205,7 @@ namespace OpenTabletDriverGUI.ViewModels
             if (result != null)
             {
                 var file = new FileInfo(result);
-                Driver.InputManager.TabletProperties.Write(file);
+                Driver.TabletProperties.Write(file);
                 Log.Info($"Saved current tablet configuration to '{file.FullName}'.");
             }
         }
@@ -265,7 +265,7 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 InputHooked = !InputHooked;
                 Log.Info("Hooking inputs: " + InputHooked);
-                Driver.InputManager.BindPositions(InputHooked);
+                Driver.BindInput(InputHooked);
             }
             catch (Exception ex)
             {
