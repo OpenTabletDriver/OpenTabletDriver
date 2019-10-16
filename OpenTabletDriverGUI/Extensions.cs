@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,6 +26,15 @@ namespace OpenTabletDriverGUI
         public static ObservableCollection<T> ToObservableCollection<T>(this ICollection<T> collection)
         {
             return new ObservableCollection<T>(collection);
+        }
+
+        public static T Convert<T>(this object obj)
+        {
+            var result = System.Convert.ChangeType(obj, typeof(T));
+            if (result != null)
+                return (T)result;
+            else
+                throw new InvalidCastException($"Failed to cast '{obj.GetType().FullName}' to '{typeof(T).FullName}");
         }
     }
 }
