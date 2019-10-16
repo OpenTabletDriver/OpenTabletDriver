@@ -16,7 +16,7 @@ namespace OpenTabletDriverGUI.Models
             if (lines[0].StartsWith("HIDTablet"))
             {
                 // Tablet descriptors
-                var info = lines.FindValue<string>("HIDTablet").Split(' ');;
+                var info = lines.FindValue<string>("HIDTablet").Split(' ');
                 tablet.VendorID = int.Parse(info[0], NumberStyles.HexNumber);
                 tablet.ProductID = int.Parse(info[1], NumberStyles.HexNumber);
                 // Tablet properties
