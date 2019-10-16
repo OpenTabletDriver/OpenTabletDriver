@@ -14,84 +14,139 @@
         <Menu Grid.Row="0">
             <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
         </Menu>
-        <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
-            <Grid Grid.Column="0" RowDefinitions="*,Auto">
-                <Grid.Styles>
-                    <Style Selector="Button">
-                        <Setter Property="Margin" Value="5,0,5,5"/>
-                        <Setter Property="MinHeight" Value="24"/>
-                    </Style>
-                </Grid.Styles>
-                <ListBox Grid.Row="0" Margin="5" Width="150"
-                    Items="{Binding Configurations}" SelectedItem="{Binding Selected}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding TabletName}">
-                                <TextBlock.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Save as..."
-                                            Command="{Binding $parent[Window].DataContext.SaveAs}"
-                                            CommandParameter="{Binding}"/>
-                                        <MenuItem Header="Delete"
-                                            Command="{Binding $parent[Window].DataContext.Delete}"
-                                            CommandParameter="{Binding}"/>
-                                    </ContextMenu>
-                                </TextBlock.ContextMenu>
-                            </TextBlock>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <StackPanel Grid.Row="1">
-                    <Button Content="New Configuration" Command="{Binding New}"/>
-                </StackPanel>
-            </Grid>
-            <StackPanel Grid.Column="1" DataContext="{Binding Selected}">
-                <StackPanel.Styles>
-                    <Style Selector="TextBlock">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="Margin" Value="5,0"/>
-                    </Style>
-                    <Style Selector="TextBox">
-                        <Setter Property="Margin" Value="5"/>
-                    </Style>
-                </StackPanel.Styles>
+        <TabControl Grid.Row="1">
+            <TabItem Header="Configurations">
+                <Border Classes="Tab">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Grid Grid.Column="0" RowDefinitions="*,Auto">
+                            <Grid.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Margin" Value="5,0,5,5"/>
+                                    <Setter Property="MinHeight" Value="24"/>
+                                </Style>
+                            </Grid.Styles>
+                            <ListBox Grid.Row="0" Margin="5" MinWidth="150"
+                                Items="{Binding Configurations}" SelectedItem="{Binding Selected}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding TabletName}" FontWeight="Normal" Margin="0">
+                                            <TextBlock.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Save as..."
+                                                        Command="{Binding $parent[Window].DataContext.SaveAs}"
+                                                        CommandParameter="{Binding}"/>
+                                                    <MenuItem Header="Delete"
+                                                        Command="{Binding $parent[Window].DataContext.Delete}"
+                                                        CommandParameter="{Binding}"/>
+                                                </ContextMenu>
+                                            </TextBlock.ContextMenu>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <StackPanel Grid.Row="1">
+                                <Button Content="New Configuration" Command="{Binding New}"/>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel Grid.Column="1" Margin="0,5" DataContext="{Binding Selected}">
+                            <StackPanel.Styles>
+                                <Style Selector="TextBlock">
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Margin" Value="5,0"/>
+                                </Style>
+                                <Style Selector="TextBox">
+                                    <Setter Property="Margin" Value="5"/>
+                                </Style>
+                            </StackPanel.Styles>
 
-                <TextBlock Text="Name"/>
-                <TextBox Text="{Binding TabletName}"/>
+                            <TextBlock Text="Name"/>
+                            <TextBox Text="{Binding TabletName}"/>
 
-                <TextBlock Text="Vendor ID"/>
-                <TextBox Text="{Binding VendorID}"/>
+                            <TextBlock Text="Vendor ID"/>
+                            <TextBox Text="{Binding VendorID}"/>
 
-                <TextBlock Text="Product ID"/>
-                <TextBox Text="{Binding ProductID}"/>
+                            <TextBlock Text="Product ID"/>
+                            <TextBox Text="{Binding ProductID}"/>
 
-                <TextBlock Text="Device Number (Linux)"/>
-                <TextBox Text="{Binding LinuxDeviceNumber}"/>
+                            <TextBlock Text="Device Number (Linux)"/>
+                            <TextBox Text="{Binding LinuxDeviceNumber}"/>
 
-                <TextBlock Text="Device Number (Windows)"/>
-                <TextBox Text="{Binding WindowsDeviceNumber}"/>
+                            <TextBlock Text="Device Number (Windows)"/>
+                            <TextBox Text="{Binding WindowsDeviceNumber}"/>
 
-                <TextBlock Text="Device Number (Mac OS X)"/>
-                <TextBox Text="{Binding MacOSXDeviceNumber}"/>
+                            <TextBlock Text="Device Number (Mac OS X)"/>
+                            <TextBox Text="{Binding MacOSXDeviceNumber}"/>
 
-                <TextBlock Text="Width (mm)"/>
-                <TextBox Text="{Binding Width}"/>
+                            <TextBlock Text="Width (mm)"/>
+                            <TextBox Text="{Binding Width}"/>
 
-                <TextBlock Text="Height (mm)"/>
-                <TextBox Text="{Binding Height}"/>
+                            <TextBlock Text="Height (mm)"/>
+                            <TextBox Text="{Binding Height}"/>
 
-                <TextBlock Text="Maximum X Input (device px)"/>
-                <TextBox Text="{Binding MaxX}"/>
+                            <TextBlock Text="Maximum X Input (device px)"/>
+                            <TextBox Text="{Binding MaxX}"/>
 
-                <TextBlock Text="Maximum Y Input (device px)"/>
-                <TextBox Text="{Binding MaxY}"/>
+                            <TextBlock Text="Maximum Y Input (device px)"/>
+                            <TextBox Text="{Binding MaxY}"/>
 
-                <TextBlock Text="Maximum Pressure Input"/>
-                <TextBox Text="{Binding MaxPressure}"/>
+                            <TextBlock Text="Maximum Pressure Input"/>
+                            <TextBox Text="{Binding MaxPressure}"/>
 
-                <TextBlock Text="Minimum Hover Distance"/>
-                <TextBox Text="{Binding MinimumRange}"/>
-            </StackPanel>
-        </Grid>
+                            <TextBlock Text="Minimum Hover Distance"/>
+                            <TextBox Text="{Binding MinimumRange}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </TabItem>
+            <TabItem Header="Devices">
+                <Border Classes="Tab">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <ListBox Grid.Column="0" Margin="5" MinWidth="150"
+                            Items="{Binding Devices}" SelectedItem="{Binding SelectedDevice}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding ProductName}" FontWeight="Normal" Margin="0">
+                                        <TextBlock.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Create configuration"
+                                                    Command="{Binding $parent[Window].DataContext.CreateFrom}"
+                                                    CommandParameter="{Binding}"/>
+                                            </ContextMenu>
+                                        </TextBlock.ContextMenu>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <StackPanel Grid.Column="1" Margin="0,5" DataContext="{Binding SelectedDevice}">
+                            <StackPanel.Styles>
+                                <Style Selector="TextBlock">
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Margin" Value="5,0"/>
+                                </Style>
+                                <Style Selector="TextBox">
+                                    <Setter Property="Margin" Value="5"/>
+                                    <Setter Property="IsReadOnly" Value="True"/>
+                                </Style>
+                            </StackPanel.Styles>
+
+                            <TextBlock Text="FriendlyName"/>
+                            <TextBox Text="{Binding ProductName}"/>
+
+                            <TextBlock Text="Vendor ID"/>
+                            <TextBox Text="{Binding VendorID}"/>
+                            
+                            <TextBlock Text="Product ID"/>
+                            <TextBox Text="{Binding ProductID}"/>
+
+                            <TextBlock Text="Manufacturer"/>
+                            <TextBox Text="{Binding Manufacturer}"/>
+                            
+                            <TextBlock Text="Max Input Report Length"/>
+                            <TextBox Text="{Binding MaxInputReportLength}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

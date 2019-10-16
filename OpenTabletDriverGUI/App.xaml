@@ -44,5 +44,10 @@
         <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush2}"/>
         </Style>
+
+        <Style Selector="Border.Tab">
+            <Setter Property="BorderThickness" Value="0,1,0,0"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/>
+        </Style>
     </Application.Styles>
 </Application>

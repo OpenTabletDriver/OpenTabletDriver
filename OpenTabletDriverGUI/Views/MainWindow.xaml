@@ -49,7 +49,7 @@
         </Menu>
         <TabControl Grid.Row="1">
             <TabItem Header="Main Settings">
-                <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
+                <Border Classes="Tab">
                     <Grid RowDefinitions="*,*" HorizontalAlignment="Stretch" Margin="100,0">
                         <ns:AreaSetter Grid.Row="0"
                             Title="Display Area"
@@ -73,7 +73,7 @@
                 </Border>
             </TabItem>
             <TabItem Header="Console">
-                <Border BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+                <Border Classes="Tab">
                     <Grid RowDefinitions="*,Auto">
                         <TextBox IsReadOnly="True" Margin="5" FontFamily="Ubuntu Mono, Lucida Console" FontSize="16"
                             Background="Black" Foreground="White" Text="{Binding TraceListener.Contents}"/>

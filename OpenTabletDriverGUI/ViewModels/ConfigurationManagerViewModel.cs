@@ -5,11 +5,19 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using System.IO;
+using HidSharp;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
     public class ConfigurationManagerViewModel : ViewModelBase
     {
+        private ObservableCollection<HidDevice> _devices;
+        public ObservableCollection<HidDevice> Devices
+        {
+            set => this.RaiseAndSetIfChanged(ref _devices, value);
+            get => _devices;
+        }
+
         private ObservableCollection<TabletProperties> _cfgs;
         public ObservableCollection<TabletProperties> Configurations
         {
@@ -24,6 +32,13 @@ namespace OpenTabletDriverGUI.ViewModels
             get => _selected;
         }
 
+        private HidDevice _device;
+        public HidDevice SelectedDevice
+        {
+            set => this.RaiseAndSetIfChanged(ref _device, value);
+            get => _device;
+        }
+
         public void New()
         {
             if (Configurations == null)
@@ -31,6 +46,18 @@ namespace OpenTabletDriverGUI.ViewModels
             var config = new TabletProperties()
             {
                 TabletName = "Tablet"
+            };
+            Configurations.Add(config);
+            Selected = config;
+        }
+        
+        public void CreateFrom(HidDevice device)
+        {
+            var config = new TabletProperties()
+            {
+                TabletName = $"{device.GetManufacturer()} {device.GetFriendlyName()}".Trim(),
+                VendorID = device.VendorID,
+                ProductID = device.ProductID,
             };
             Configurations.Add(config);
             Selected = config;

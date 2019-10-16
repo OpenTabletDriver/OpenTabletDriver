@@ -194,7 +194,8 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 DataContext = new ConfigurationManagerViewModel()
                 {
-                    Configurations = Tablets
+                    Configurations = Tablets,
+                    Devices = Driver.Devices.ToList().ToObservableCollection()
                 }
             };
             await cfgMgr.ShowDialog(App.Current.MainWindow);
