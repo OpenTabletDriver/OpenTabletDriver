@@ -12,19 +12,20 @@ namespace OpenTabletDriverGUI.Models
         {
             var tablet = new TabletProperties();
             var lines = hawkuConfigLines.ToList();
-            tablet.TabletName = lines.FindValue<string>("Name");
+            tablet.TabletName = lines.FindValue<string>("Name").Replace("\"", "");
             if (lines[0].StartsWith("HIDTablet"))
             {
                 // Tablet descriptors
                 var info = lines.FindValue<string>("HIDTablet").Split(' ');
-                tablet.VendorID = int.Parse(info[0], NumberStyles.HexNumber);
-                tablet.ProductID = int.Parse(info[1], NumberStyles.HexNumber);
+                tablet.VendorID = int.Parse(info[0].Replace("0x", ""), NumberStyles.HexNumber);
+                tablet.ProductID = int.Parse(info[1].Replace("0x", ""), NumberStyles.HexNumber);
                 // Tablet properties
-                tablet.Width = lines.FindValue<int>("Width");
-                tablet.Height = lines.FindValue<int>("Height");
-                tablet.MaxX = lines.FindValue<int>("MaxX");
-                tablet.MaxY = lines.FindValue<int>("MaxY");
+                tablet.Width = lines.FindValue<float>("Width");
+                tablet.Height = lines.FindValue<float>("Height");
+                tablet.MaxX = lines.FindValue<float>("MaxX");
+                tablet.MaxY = lines.FindValue<float>("MaxY");
                 tablet.MaxPressure = lines.FindValue<uint>("MaxPressure");
+                Log.Info("Converted HIDTablet configuration: " + tablet.TabletName);
             }
             else if (lines[0].StartsWith("USBTablet"))
             {
@@ -44,7 +45,7 @@ namespace OpenTabletDriverGUI.Models
             if (searchResult != null)
             {
                 var value = searchResult.Replace(key + valSplitter, string.Empty);
-                return lines.Convert<T>();
+                return value.Convert<T>();
             }
             else
                 throw new KeyNotFoundException($"Failed to find key '{key}'.");

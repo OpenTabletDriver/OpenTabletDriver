@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using System.IO;
 using HidSharp;
+using OpenTabletDriverGUI.Models;
+using System;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
@@ -80,6 +82,40 @@ namespace OpenTabletDriverGUI.ViewModels
                 tablet.Write(file);
                 Log.Info($"Saved tablet configuration to '{file.FullName}'.");
             }
+        }
+
+        private string _hawku;
+
+        public string HawkuString
+        {
+            set => this.RaiseAndSetIfChanged(ref _hawku, value);
+            get => _hawku;
+        }
+
+        public async Task LoadHawkuDialog(Window window)
+        {
+            var fd = FileDialogs.CreateOpenFileDialog("Open Hawku Configuration", "Hawku Configuration", "cfg");
+            var result = await fd.ShowAsync(window);
+            if (result != null)
+            {
+                var fileInfo = new FileInfo(result[0]);
+                if (fileInfo.Exists)
+                {
+                    using (var fs = fileInfo.OpenRead())
+                    using (var sr = new StreamReader(fs))
+                    {
+                        HawkuString = await sr.ReadToEndAsync();
+                    }
+                }
+            }
+        }
+
+        public void ConvertHawku(string input)
+        {
+            var lines = input.Split(Environment.NewLine, StringSplitOptions.None);
+            // TODO: Automatically split each configuration
+            var convertedConfig = ConfigurationConverter.ConvertHawku(lines);
+            Configurations.Add(convertedConfig);
         }
     }
 }
