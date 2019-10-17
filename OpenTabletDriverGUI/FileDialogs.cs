@@ -27,7 +27,7 @@ namespace OpenTabletDriverGUI
         {
             return new List<FileDialogFilter>()
             {
-                CreateFilter($"{type} (.{extension}", extension),
+                CreateFilter($"{type} (.{extension})", extension),
                 CreateFilter("All files", "*")
             };
         }
