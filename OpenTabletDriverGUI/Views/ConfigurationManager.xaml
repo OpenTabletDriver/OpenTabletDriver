@@ -152,7 +152,7 @@
                     <Grid RowDefinitions="*,Auto">
                         <TextBox Grid.Row="0" Margin="5" Text="{Binding HawkuString}"/>
                         <StackPanel Grid.Row="1" Margin="5,0,5,5" Orientation="Horizontal">
-                            <Button Content="Load File..." Command="LoadHawkuDialog" CommandParameter="{Binding $parent[Window]}"/>
+                            <Button Content="Load File..." Command="{Binding LoadHawkuDialog}" CommandParameter="{Binding $parent[Window]}"/>
                             <Button Content="Convert" Command="{Binding ConvertHawku}" CommandParameter="{Binding HawkuString}"/>
                         </StackPanel>
                     </Grid>
