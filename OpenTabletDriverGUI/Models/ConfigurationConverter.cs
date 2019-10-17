@@ -23,9 +23,7 @@ namespace OpenTabletDriverGUI.Models
 
                 if (lines.Count > 1)
                     yield return ConvertHawku(lines);
-                else if(lines.Any(line => line.StartsWith("HIDTablet")))
-                    continue;
-                else if (lines.Any(line => line.StartsWith("USBTablet")))
+                else if(lines.Any(line => line.StartsWith("HIDTablet")) || lines.Any(line => line.StartsWith("USBTablet")))
                     continue;
                 else
                     throw new Exception("Configuration did not match any supported configurations.");
