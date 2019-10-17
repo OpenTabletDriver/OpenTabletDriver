@@ -3,11 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using TabletDriverLib.Class;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace OpenTabletDriverGUI.Models
 {
     public static class ConfigurationConverter
     {
+        public static IEnumerable<TabletProperties> ConvertHawkuConfigurationFile(IList<string> contents)
+        {
+            var tablets = new List<TabletProperties>();
+            var fileConfigs = contents.Where(l => l.StartsWith("HIDTablet") || l.StartsWith("USBTablet")).ToList();
+            var queue = new Queue<int>(fileConfigs.ConvertAll(e => contents.IndexOf(e)));
+
+            while (queue.TryDequeue(out var index))
+            {
+                if (!queue.TryPeek(out var nextIndex))
+                    nextIndex = contents.Count;
+                var lines = contents.Skip(index).Take(nextIndex - index).ToList();
+
+                if (lines.Count > 1)
+                    yield return ConvertHawku(lines);
+                else if(lines.Any(line => line.StartsWith("HIDTablet")))
+                    continue;
+                else if (lines.Any(line => line.StartsWith("USBTablet")))
+                    continue;
+                else
+                    throw new Exception("Configuration did not match any supported configurations.");
+            }
+        }
+
         public static TabletProperties ConvertHawku(IEnumerable<string> hawkuConfigLines)
         {
             var tablet = new TabletProperties();
@@ -50,5 +74,11 @@ namespace OpenTabletDriverGUI.Models
             else
                 throw new KeyNotFoundException($"Failed to find key '{key}'.");
         }
+
+        public static readonly IEnumerable<string> SupportedConfigurations = new List<string>
+        {
+            "HIDTablet",
+            "USBTablet"
+        };
     }
 }

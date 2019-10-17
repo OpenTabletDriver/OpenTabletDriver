@@ -8,6 +8,8 @@ using System.IO;
 using HidSharp;
 using OpenTabletDriverGUI.Models;
 using System;
+using System.Linq;
+using Avalonia.Input;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
@@ -70,12 +72,10 @@ namespace OpenTabletDriverGUI.ViewModels
             Configurations.Remove(tablet);
         }
 
-        public void DeleteSelected() => Delete(Selected);
-
-        public async Task SaveAs(TabletProperties tablet)
+        public async void SaveAs(TabletProperties tablet)
         {
             var dialog = FileDialogs.CreateSaveFileDialog($"Saving tablet '{tablet.TabletName}'", "XML Document", "xml");
-            var result = await dialog.ShowAsync(App.Current.MainWindow);
+            var result = await dialog.ShowAsync(App.Current.Windows[1]);
             if (result != null)
             {
                 var file = new FileInfo(result);
@@ -113,9 +113,9 @@ namespace OpenTabletDriverGUI.ViewModels
         public void ConvertHawku(string input)
         {
             var lines = input.Split(Environment.NewLine, StringSplitOptions.None);
-            // TODO: Automatically split each configuration
-            var convertedConfig = ConfigurationConverter.ConvertHawku(lines);
-            Configurations.Add(convertedConfig);
+            var configs = ConfigurationConverter.ConvertHawkuConfigurationFile(lines);
+            foreach (var config in configs)
+                Configurations.Add(config);
         }
     }
 }
