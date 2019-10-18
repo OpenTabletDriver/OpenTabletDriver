@@ -16,6 +16,7 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="MessageBox.Avalonia" Version="0.8.3" />
     <ProjectReference Include="..\TabletDriverLib\TabletDriverLib.csproj" />
     <PackageReference Include="Avalonia" Version="0.8.3" />
     <PackageReference Include="Avalonia.Desktop" Version="0.8.3" />
