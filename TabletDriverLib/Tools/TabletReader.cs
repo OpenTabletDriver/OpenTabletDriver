@@ -96,10 +96,17 @@ namespace TabletDriverLib.Tools
 
             InputReportLength = Tablet.GetMaxInputReportLength();
 
-            var descriptor = Tablet.GetReportDescriptor();
-            Input = descriptor.CreateHidDeviceInputReceiver();
-            Input.Start(ReportStream);
-            ReadingInput = true;
+            try
+            {
+                var descriptor = Tablet.GetReportDescriptor();
+                Input = descriptor.CreateHidDeviceInputReceiver();
+                Input.Start(ReportStream);
+                ReadingInput = true;
+            }
+            catch (Exception ex)
+            {
+                Log.WriteException(ex);
+            }
         }
 
         private void OnInputReceived(object sender, EventArgs e)
