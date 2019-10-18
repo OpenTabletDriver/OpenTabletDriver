@@ -95,6 +95,10 @@ namespace TabletDriverLib.Tools
             }
 
             InputReportLength = Tablet.GetMaxInputReportLength();
+            if (Driver.Debugging)
+            {
+                Log.Info("InputReportLength: " + InputReportLength);
+            }
 
             try
             {
