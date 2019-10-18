@@ -23,6 +23,8 @@ namespace OpenTabletDriverGUI.Models
             get => _l;
         }
 
+        public event EventHandler<string> StatusChanged;
+
         public void RaisePropertyChanged(PropertyChangedEventArgs args)
         {
             PropertyChanged?.Invoke(this, args);
@@ -37,6 +39,7 @@ namespace OpenTabletDriverGUI.Models
         {
             Contents += message;
             Status = message;
+            StatusChanged?.Invoke(this, message);
         }
 
         public override void WriteLine(string message)
@@ -46,6 +49,7 @@ namespace OpenTabletDriverGUI.Models
             else
                 Contents += Environment.NewLine + message;
             Status = message;
+            StatusChanged?.Invoke(this, message);
         }
     }
 }

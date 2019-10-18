@@ -47,6 +47,8 @@ namespace OpenTabletDriverGUI.Models
                 tablet.MaxX = lines.FindValue<float>("MaxX");
                 tablet.MaxY = lines.FindValue<float>("MaxY");
                 tablet.MaxPressure = lines.FindValue<uint>("MaxPressure");
+                var mask = lines.FindValue<string>("DetectMask");
+                tablet.MinimumRange = uint.Parse(mask.Replace("0x", ""), NumberStyles.HexNumber);
                 Log.Info("Converted HIDTablet configuration: " + tablet.TabletName);
             }
             else if (lines[0].StartsWith("USBTablet"))

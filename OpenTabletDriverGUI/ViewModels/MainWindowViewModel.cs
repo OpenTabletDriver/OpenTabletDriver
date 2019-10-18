@@ -84,6 +84,17 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private ObservableCollection<TabletProperties> _tablets;
 
+        public bool Debugging
+        {
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _debugging, value);
+                Driver.Debugging = value;
+            } 
+            get => _debugging;
+        }
+        private bool _debugging;
+
         private void OpenConfigurations(DirectoryInfo directory)
         {
             List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
@@ -140,6 +151,8 @@ namespace OpenTabletDriverGUI.ViewModels
             var configurationDir = new DirectoryInfo("Configurations");
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);
+            else
+                Tablets = new ObservableCollection<TabletProperties>();
         }
 
         private void SetPlatformSpecifics(PlatformID platform)

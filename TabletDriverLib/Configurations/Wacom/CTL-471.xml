@@ -11,5 +11,5 @@
   <MaxX>15200</MaxX>
   <MaxY>9500</MaxY>
   <MaxPressure>1023</MaxPressure>
-  <MinimumRange>128</MinimumRange>
+  <MinimumRange>64</MinimumRange>
 </Tablet>

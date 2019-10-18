@@ -3,13 +3,12 @@ using System.Linq;
 
 namespace TabletDriverLib.Class
 {
-    public class TabletReport
+    public struct TabletReport
     {
         internal TabletReport(byte[] report)
         {
             Raw = report;
-            InRange = report[0] == 0x02;
-            Lift = report[1];
+            Lift = (uint) report[1] / report[0];
             var x = BitConverter.ToUInt16(report, 2);
             var y = BitConverter.ToUInt16(report, 4);
             Position = new Point(x,y);
@@ -17,7 +16,6 @@ namespace TabletDriverLib.Class
         }
 
         public byte[] Raw { private set; get; }
-        public bool InRange { private set; get; }
         public uint Lift { private set; get; }
         public Point Position { private set; get; }
         public uint Pressure { private set; get; }
@@ -29,7 +27,7 @@ namespace TabletDriverLib.Class
             if (raw)
                 return BitConverter.ToString(Raw).Replace('-', ' ');
             else
-                return $"InRange:{InRange}, Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}";
+                return $"Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}";
         }
     }
 }

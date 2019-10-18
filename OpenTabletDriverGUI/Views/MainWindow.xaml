@@ -75,8 +75,15 @@
             <TabItem Header="Console">
                 <Border Classes="Tab">
                     <Grid RowDefinitions="*,Auto">
-                        <TextBox IsReadOnly="True" Margin="5" FontFamily="Ubuntu Mono, Lucida Console" FontSize="16"
-                            Background="Black" Foreground="White" Text="{Binding TraceListener.Contents}"/>
+                        <ns:TraceDisplay TraceListener="{Binding TraceListener}"/>
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
+                            <StackPanel.Styles>
+                                <Style Selector="CheckBox">
+                                    <Setter Property="Margin" Value="5,0,0,0"/>
+                                </Style>
+                            </StackPanel.Styles>
+                            <CheckBox Content="Debugging" IsChecked="{Binding Debugging}"/>
+                        </StackPanel>
                     </Grid>
                 </Border>
             </TabItem>

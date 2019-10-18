@@ -16,7 +16,6 @@ namespace TabletDriverLib.Tools
         public TabletReader(HidDevice tablet)
         {
             Tablet = tablet;
-
             WorkerThread = new Thread(Background)
             {
                 Name = "TabletDriver Tablet Reader",
@@ -37,15 +36,33 @@ namespace TabletDriverLib.Tools
         
         private int InputReportLength { set; get; }
 
+        private bool _handled;
+        public bool ReadingInput
+        {
+            set
+            {
+                if (value && !_handled)
+                {
+                    Input.Received += OnInputReceived;
+                    _handled = true;
+                }
+                else if (!value && _handled)
+                {
+                    Input.Received -= OnInputReceived;
+                    _handled = false;
+                }
+            }
+            get => _handled;
+        }
+
         public void Start()
         {
-            Working = true;
             WorkerThread.Start();
         }
 
         public void Stop()
         {
-            Working = false;
+            ReadingInput = false;
         }
         
         internal void Abort()
@@ -82,10 +99,10 @@ namespace TabletDriverLib.Tools
             var descriptor = Tablet.GetReportDescriptor();
             Input = descriptor.CreateHidDeviceInputReceiver();
             Input.Start(ReportStream);
-            Input.Received += InputReceived;
+            ReadingInput = true;
         }
 
-        private void InputReceived(object sender, EventArgs e)
+        private void OnInputReceived(object sender, EventArgs e)
         {
             var buffer = new byte[InputReportLength];
             if (Input.TryRead(buffer, 0, out var dataReport))
@@ -95,7 +112,7 @@ namespace TabletDriverLib.Tools
                 // Logging
                 if (Driver.Debugging)
                     Log.WriteLine($"<{GetFormattedTime()}> TABLETREPORT", report.ToString());
-            }   
+            }
         }
 
         private static string GetFormattedTime()
@@ -115,14 +132,7 @@ namespace TabletDriverLib.Tools
 
         public void Dispose()
         {
-            try
-            {
-                Input.Received -= InputReceived;
-            }
-            catch
-            {
-                // Do nothing, the input was not being hooked.
-            }
+            ReadingInput = false;
         }
     }
 }

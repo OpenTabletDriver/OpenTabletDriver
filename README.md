@@ -44,9 +44,24 @@ These tablets are fully configured and confirmed functional.
 ## Configured Tablets
 These tablets are configured but may be missing features, and are untested.
 - Wacom
-  - CTH-480
-  - CTL-470
+  - CTE-440
   - CTH-470
+  - CTH-480
+  - CTH-490
+  - CTH-670
+  - CTH-680
+  - CTH-690
+  - CTL-470
   - CTL-471
-- Huion
-  - H420
+  - CTL-472
+  - CTL-490
+  - CTL-671
+  - CTL-672
+  - CTL-680
+  - CTL-690
+  - CTL-4100
+  - CTL-4100 Bluetooth
+  - CTL-6100
+  - PTH-451
+  - PTH-660
+  - PTH-850
