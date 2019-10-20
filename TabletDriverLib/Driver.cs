@@ -98,7 +98,11 @@ namespace TabletDriverLib
             if (Tablet != null)
             {
                 Log.Write($" Found: {Tablet.GetFriendlyName()}.");
-                Log.Info($"Device path: {Tablet.DevicePath}");
+                if (Debugging)
+                {
+                    Log.Info($"Device path: {Tablet.DevicePath}");
+                }
+                
                 TabletReader = new TabletReader(Tablet);
                 TabletReader.Start();
                 // Post tablet opened event
