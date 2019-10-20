@@ -1,4 +1,4 @@
-namespace TabletDriverLib.Class
+namespace TabletDriverLib.Component
 {
     public class Area
     {

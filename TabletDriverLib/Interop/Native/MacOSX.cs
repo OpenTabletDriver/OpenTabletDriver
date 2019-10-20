@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
-using TabletDriverLib.Class;
+using TabletDriverLib.Component;
 
-namespace TabletDriverLib.Tools.Native
+namespace TabletDriverLib.Interop.Native
 {
     using CGEvent = IntPtr;
     using CGDirectDisplayID = UInt32;

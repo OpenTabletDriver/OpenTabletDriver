@@ -1,6 +1,6 @@
 using System;
 
-namespace TabletDriverLib.Tools.Display
+namespace TabletDriverLib.Interop.Display
 {
     public class XDisplay : IDisplay, IDisposable
     {

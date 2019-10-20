@@ -1,7 +1,7 @@
 using System;
-using TabletDriverLib.Class;
+using TabletDriverLib.Component;
 
-namespace TabletDriverLib.Tools.Cursor
+namespace TabletDriverLib.Interop.Cursor
 {
     using Display = IntPtr;
     using Window = IntPtr;

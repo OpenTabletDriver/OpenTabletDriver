@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using TabletDriverLib.Class;
+using TabletDriverLib.Component;
 
-namespace TabletDriverLib.Tools.Native
+namespace TabletDriverLib.Interop.Native
 {
     internal static class Windows
     {

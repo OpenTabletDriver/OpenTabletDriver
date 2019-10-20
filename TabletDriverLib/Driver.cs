@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
-using TabletDriverLib.Class;
-using TabletDriverLib.Tools;
-using TabletDriverLib.Tools.Cursor;
+using TabletDriverLib.Component;
+using TabletDriverLib.Interop.Cursor;
 
 namespace TabletDriverLib
 {

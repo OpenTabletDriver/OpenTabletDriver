@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace TabletDriverLib.Class
+namespace TabletDriverLib.Component
 {
     [XmlRoot(Namespace = "TabletDriverLib", ElementName = "Tablet")]
     public class TabletProperties

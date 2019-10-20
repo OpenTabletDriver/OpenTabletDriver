@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace TabletDriverLib.Class
+namespace TabletDriverLib.Component
 {
     public class Point
     {
@@ -37,7 +37,7 @@ namespace TabletDriverLib.Class
         #region Operators
 
         /// <summary>
-        /// Returns the sum of two <see cref="TabletDriverLib.Class.Point"/> objects.
+        /// Returns the sum of two <see cref="TabletDriverLib.Component.Point"/> objects.
         /// </summary>
         /// <param name="a">Augend</param>
         /// <param name="b">Addend</param>
@@ -49,7 +49,7 @@ namespace TabletDriverLib.Class
         }
 
         /// <summary>
-        /// Returns the difference of two <see cref="TabletDriverLib.Class.Point"/> objects.
+        /// Returns the difference of two <see cref="TabletDriverLib.Component.Point"/> objects.
         /// </summary>
         /// <param name="a">Minuend</param>
         /// <param name="b">Subtrahend</param>

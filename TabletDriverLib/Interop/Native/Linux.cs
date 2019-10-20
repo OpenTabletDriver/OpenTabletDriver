@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TabletDriverLib.Tools.Native
+namespace TabletDriverLib.Interop.Native
 {
     using XPointer = System.IntPtr;
     using Display = System.IntPtr;

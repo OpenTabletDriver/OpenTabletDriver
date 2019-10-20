@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace TabletDriverLib.Tools.Display
+namespace TabletDriverLib.Interop.Display
 {
     public class WindowsDisplay : IDisplay
     {

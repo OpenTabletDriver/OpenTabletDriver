@@ -1,6 +1,6 @@
-using TabletDriverLib.Class;
+using TabletDriverLib.Component;
 
-namespace TabletDriverLib.Tools.Cursor
+namespace TabletDriverLib.Interop.Cursor
 {
     public class MacOSCursorHandler : ICursorHandler
     {

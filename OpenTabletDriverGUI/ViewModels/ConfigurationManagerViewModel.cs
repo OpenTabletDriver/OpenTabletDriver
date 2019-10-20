@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using TabletDriverLib.Class;
+using TabletDriverLib.Component;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;

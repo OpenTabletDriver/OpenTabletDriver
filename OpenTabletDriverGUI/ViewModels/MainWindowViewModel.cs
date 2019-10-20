@@ -6,14 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 using Avalonia.Controls;
 using OpenTabletDriverGUI.Models;
 using OpenTabletDriverGUI.Views;
 using ReactiveUI;
 using TabletDriverLib;
-using TabletDriverLib.Class;
-using TabletDriverLib.Tools.Display;
+using TabletDriverLib.Component;
+using TabletDriverLib.Interop.Display;
 
 namespace OpenTabletDriverGUI.ViewModels
 {

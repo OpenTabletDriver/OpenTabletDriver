@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace TabletDriverLib.Class
+namespace TabletDriverLib.Component
 {
     public struct TabletReport
     {

@@ -7,9 +7,9 @@ using System.Threading;
 using HidSharp;
 using HidSharp.Reports;
 using HidSharp.Reports.Input;
-using TabletDriverLib.Class;
+using TabletDriverLib.Component;
 
-namespace TabletDriverLib.Tools
+namespace TabletDriverLib
 {
     public class TabletReader : IDisposable
     {

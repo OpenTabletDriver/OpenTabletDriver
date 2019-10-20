@@ -1,4 +1,4 @@
-namespace TabletDriverLib.Tools.Display
+namespace TabletDriverLib.Interop.Display
 {
     public interface IDisplay
     {
