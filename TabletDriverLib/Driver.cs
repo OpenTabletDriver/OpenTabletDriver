@@ -155,27 +155,35 @@ namespace TabletDriverLib
         {
             if (report.Lift > TabletProperties.MinimumRange)
             {
-                var scaleX = (DisplayArea.Width * TabletProperties.Width) / (TabletArea.Width * TabletProperties.MaxX);
-                var scaleY = (DisplayArea.Height * TabletProperties.Height) / (TabletArea.Height * TabletProperties.MaxY);
-                var pos = new Point(
-                    (scaleX * report.Position.X),
-                    (scaleY * report.Position.Y)
-                );
-                if (Clipping)
-                {
-                    // X position clipping
-                    if (pos.X > DisplayArea.Width + DisplayArea.Position.X)
-                        pos.X = DisplayArea.Width;
-                    else if (pos.X < DisplayArea.Position.X)
-                        pos.X = DisplayArea.Position.X;
-                    // Y position clipping
-                    if (pos.Y > DisplayArea.Height + DisplayArea.Position.Y)
-                        pos.Y = DisplayArea.Height;
-                    else if (pos.Y < DisplayArea.Position.Y)
-                        pos.Y = DisplayArea.Position.Y;
-                }
-                CursorHandler.SetCursorPosition(pos);
+                // This allows more than one input type in the future
+                Absolute(report);
             }
+        }
+
+        private void Absolute(TabletReport report)
+        {
+            var scaleX = (DisplayArea.Width * TabletProperties.Width) / (TabletArea.Width * TabletProperties.MaxX);
+            var scaleY = (DisplayArea.Height * TabletProperties.Height) / (TabletArea.Height * TabletProperties.MaxY);
+            var tabletAreaOffsetX = (TabletProperties.MaxX / TabletProperties.Width) * TabletArea.Position.X;
+            var tabletAreaOffsetY = (TabletProperties.MaxY / TabletProperties.Height) * TabletArea.Position.Y;
+            var pos = new Point(
+                (scaleX * (report.Position.X - tabletAreaOffsetX)) + DisplayArea.Position.X,
+                (scaleY * (report.Position.Y - tabletAreaOffsetY)) + DisplayArea.Position.Y
+            );
+            if (Clipping)
+            {
+                // X position clipping
+                if (pos.X > DisplayArea.Width + DisplayArea.Position.X)
+                    pos.X = DisplayArea.Width + DisplayArea.Position.X;
+                else if (pos.X < DisplayArea.Position.X)
+                    pos.X = DisplayArea.Position.X;
+                // Y position clipping
+                if (pos.Y > DisplayArea.Height + DisplayArea.Position.Y)
+                    pos.Y = DisplayArea.Height + DisplayArea.Position.Y;
+                else if (pos.Y < DisplayArea.Position.Y)
+                    pos.Y = DisplayArea.Position.Y;
+            }
+            CursorHandler.SetCursorPosition(pos);
         }
 
         #endregion
