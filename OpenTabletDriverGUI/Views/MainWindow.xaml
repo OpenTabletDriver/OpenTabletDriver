@@ -50,7 +50,14 @@
         <TabControl Grid.Row="1">
             <TabItem Header="Main Settings">
                 <Border Classes="Tab">
-                    <Grid RowDefinitions="*,*" HorizontalAlignment="Stretch" Margin="100,0">
+                    <Grid RowDefinitions="*,*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
+                        <Grid.Styles>
+                            <Style Selector="Border">
+                                <Setter Property="BorderThickness" Value="1"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Grid.Styles>
                         <ns:AreaSetter Grid.Row="0"
                             Title="Display Area"
                             MeasurementUnit="px"
@@ -69,6 +76,11 @@
                             AreaYOffset="{Binding Settings.TabletY}"
                             BackgroundWidth="{Binding FullTabletWidth}"
                             BackgroundHeight="{Binding FullTabletHeight}"/>
+                        <Border Grid.Row="2" Margin="5">
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <CheckBox Content="Enable clipping" IsChecked="{Binding Settings.EnableClipping}"/>
+                            </StackPanel>
+                        </Border>
                     </Grid>
                 </Border>
             </TabItem>

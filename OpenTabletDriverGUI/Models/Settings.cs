@@ -16,6 +16,7 @@ namespace OpenTabletDriverGUI.Models
         #region Properties
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
+        private bool _clipping;
         private string _theme;
 
         [XmlElement("DisplayWidth")]
@@ -97,6 +98,13 @@ namespace OpenTabletDriverGUI.Models
                 (App.Current as App).SetTheme(Themes.Parse(value));
             }
             get => _theme;
+        }
+
+        [XmlElement("EnableClipping")]
+        public bool EnableClipping
+        {
+            set => this.RaiseAndSetIfChanged(ref _clipping, value);
+            get => _clipping;
         }
         
         #endregion

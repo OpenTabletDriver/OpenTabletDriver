@@ -122,6 +122,8 @@ namespace OpenTabletDriverGUI.ViewModels
                 Rotation = Settings.TabletRotation
             };
             Log.Info($"Set tablet area:  " + Driver.TabletArea);
+            Driver.Clipping = Settings.EnableClipping;
+            Log.Info("Clipping is " + (Driver.Clipping ? "enabled" : "disabled"));
             Log.Info("Applied all settings.");
         }
 
