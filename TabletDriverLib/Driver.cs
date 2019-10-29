@@ -141,6 +141,7 @@ namespace TabletDriverLib
 
         public Area DisplayArea { set; get; } = new Area();
         public Area TabletArea { set; get; } = new Area();
+        public bool Clipping { set; get; } = true;
 
         public void BindInput(bool enabled)
         {
@@ -160,6 +161,19 @@ namespace TabletDriverLib
                     (scaleX * report.Position.X),
                     (scaleY * report.Position.Y)
                 );
+                if (Clipping)
+                {
+                    // X position clipping
+                    if (pos.X > DisplayArea.Width + DisplayArea.Position.X)
+                        pos.X = DisplayArea.Width;
+                    else if (pos.X < DisplayArea.Position.X)
+                        pos.X = DisplayArea.Position.X;
+                    // Y position clipping
+                    if (pos.Y > DisplayArea.Height + DisplayArea.Position.Y)
+                        pos.Y = DisplayArea.Height;
+                    else if (pos.Y < DisplayArea.Position.Y)
+                        pos.Y = DisplayArea.Position.Y;
+                }
                 CursorHandler.SetCursorPosition(pos);
             }
         }
