@@ -68,7 +68,7 @@ namespace TabletDriverLib
             var ordered = matching.OrderBy(d => d.GetFileSystemName());
             var device = ordered.ElementAtOrDefault(tablet.DeviceNumber);
             TabletProperties = tablet;
-            if (TabletArea == null)
+            if (TabletArea == null || TabletArea.Equals(new Area(0, 0, new Point(0, 0), 0)))
             {
                 TabletArea = new Area();
                 TabletArea.Width = TabletProperties.MaxX;
@@ -164,11 +164,11 @@ namespace TabletDriverLib
         {
             var scaleX = (DisplayArea.Width * TabletProperties.Width) / (TabletArea.Width * TabletProperties.MaxX);
             var scaleY = (DisplayArea.Height * TabletProperties.Height) / (TabletArea.Height * TabletProperties.MaxY);
-            var tabletAreaOffsetX = (TabletProperties.MaxX / TabletProperties.Width) * TabletArea.Position.X;
-            var tabletAreaOffsetY = (TabletProperties.MaxY / TabletProperties.Height) * TabletArea.Position.Y;
+            var reportXOffset = (TabletProperties.MaxX / TabletProperties.Width) * TabletArea.Position.X;
+            var reportYOffset = (TabletProperties.MaxY / TabletProperties.Height) * TabletArea.Position.Y;
             var pos = new Point(
-                (scaleX * (report.Position.X - tabletAreaOffsetX)) + DisplayArea.Position.X,
-                (scaleY * (report.Position.Y - tabletAreaOffsetY)) + DisplayArea.Position.Y
+                (scaleX * (report.Position.X - reportXOffset)) + DisplayArea.Position.X,
+                (scaleY * (report.Position.Y - reportYOffset)) + DisplayArea.Position.Y
             );
             if (Clipping)
             {
