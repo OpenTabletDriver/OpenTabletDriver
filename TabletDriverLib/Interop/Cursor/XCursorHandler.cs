@@ -34,5 +34,20 @@ namespace TabletDriverLib.Interop.Cursor
             Native.Linux.XWarpPointer(Display, RootWindow, new IntPtr(0), 0, 0, 0, 0, (int)pos.X - x, (int)pos.Y - y);
             Native.Linux.XFlush(Display);
         }
+
+        public void MouseDown(MouseButton button)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void MouseUp(MouseButton button)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetMouseButtonState(MouseButton button)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

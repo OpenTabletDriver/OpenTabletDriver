@@ -16,5 +16,20 @@ namespace TabletDriverLib.Interop.Cursor
         {
             Native.MacOSX.CGWarpMouseCursorPosition((Native.MacOSX.CGPoint)pos);
         }
+
+        public void MouseDown(MouseButton button)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void MouseUp(MouseButton button)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public bool GetMouseButtonState(MouseButton button)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

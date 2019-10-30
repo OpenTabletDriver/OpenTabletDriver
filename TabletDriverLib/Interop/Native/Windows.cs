@@ -7,6 +7,8 @@ namespace TabletDriverLib.Interop.Native
 {
     internal static class Windows
     {
+        private const string User32 = "user32.dll";
+        
         [StructLayout(LayoutKind.Sequential)]
         public struct POINT
         {
@@ -50,13 +52,38 @@ namespace TabletDriverLib.Interop.Native
 
         #region Cursor
 
-        [DllImport("user32.dll")]
+        [DllImport(User32)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetCursorPos(int x, int y);
 
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport(User32, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetCursorPos(out POINT lpPoint);
+
+        [DllImport(User32,CharSet=CharSet.Auto, CallingConvention=CallingConvention.StdCall)]
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+        
+        public enum MOUSEEVENTF : uint
+        {
+            LEFTDOWN = 0x02,
+            LEFTUP = 0x04,
+            MIDDLEDOWN = 0x0020,
+            MIDDLEUP = 0x0040,
+            RIGHTDOWN = 0x08,
+            RIGHTUP = 0x10,
+        }
+
+        [DllImport(User32)]
+        public static extern short GetKeyState(VirtualKeyStates nVirtKey);
+
+        public enum VirtualKeyStates : int
+        {
+            VK_LBUTTON = 0x01,
+            VK_RBUTTON = 0x02,
+            VK_MBUTTON = 0x04,
+        }
+
+        public const int KEY_PRESSED = 0x8000;
 
         #endregion
 
