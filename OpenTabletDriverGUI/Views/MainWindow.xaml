@@ -1,9 +1,11 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namesplace:System"
         xmlns:vm="clr-namespace:OpenTabletDriverGUI.ViewModels;assembly=OpenTabletDriverGUI"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ns="clr-namespace:OpenTabletDriverGUI.Views;assembly=OpenTabletDriverGUI"
+        xmlns:cursor="clr-namespace:TabletDriverLib.Interop.Cursor;assembly=TabletDriverLib"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenTabletDriverGUI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -19,6 +21,11 @@
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style Selector="Border.r">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
+            <Setter Property="CornerRadius" Value="5"/>
         </Style>
     </Window.Styles>
 
@@ -48,16 +55,9 @@
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
-            <TabItem Header="Main Settings">
+            <TabItem Header="Area Settings">
                 <Border Classes="Tab">
                     <Grid RowDefinitions="*,*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
-                        <Grid.Styles>
-                            <Style Selector="Border">
-                                <Setter Property="BorderThickness" Value="1"/>
-                                <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
-                                <Setter Property="CornerRadius" Value="5"/>
-                            </Style>
-                        </Grid.Styles>
                         <ns:AreaSetter Grid.Row="0"
                             Title="Display Area"
                             MeasurementUnit="px"
@@ -76,12 +76,42 @@
                             AreaYOffset="{Binding Settings.TabletY}"
                             BackgroundWidth="{Binding FullTabletWidth}"
                             BackgroundHeight="{Binding FullTabletHeight}"/>
-                        <Border Grid.Row="2" Margin="5">
+                        <Border Classes="r" Grid.Row="2" Margin="5">
                             <StackPanel Orientation="Horizontal" Margin="5">
                                 <CheckBox Content="Enable clipping" IsChecked="{Binding Settings.EnableClipping}"/>
                             </StackPanel>
                         </Border>
                     </Grid>
+                </Border>
+            </TabItem>
+            <TabItem Header="Input Bindings">
+                <Border Classes="Tab">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="5">
+                            <Border Classes="r">
+                                <Grid RowDefinitions="Auto,Auto,Auto" Margin="5">
+                                    <TextBlock Grid.Row="0" Text="Tip Button Activation Pressure"/>
+                                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="5">
+                                        <Border Classes="r" BorderBrush="{DynamicResource ThemeControlHighBrush}" Grid.Column="0" Margin="0,0,5,0">
+                                            <Slider Margin="1"
+                                                Minimum="0" Maximum="100"
+                                                TickFrequency="1" IsSnapToTickEnabled="True"
+                                                Value="{Binding Settings.TipActivationPressure}"/>
+                                        </Border>
+                                        <TextBox Grid.Column="1" MinWidth="100"
+                                            Text="{Binding Settings.TipActivationPressure}"/>
+                                        <TextBlock Grid.Column="1" Margin="5"
+                                            IsHitTestVisible="False" HorizontalAlignment="Right" Text="%"/>
+                                    </Grid>
+                                    <Grid Grid.Row="2" RowDefinitions="Auto,Auto">
+                                        <TextBlock Grid.Row="0" Text="Tip Button"/>
+                                        <ComboBox Name="MouseButtonsBox" Grid.Row="1" Margin="5"
+                                            SelectedItem="{Binding Settings.TipButton}"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
                 </Border>
             </TabItem>
             <TabItem Header="Console">

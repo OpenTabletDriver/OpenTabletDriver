@@ -1,7 +1,9 @@
-using System.ComponentModel;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using ReactiveUI;
+using TabletDriverLib.Interop.Cursor;
 
 namespace OpenTabletDriverGUI.Models
 {
@@ -107,6 +109,28 @@ namespace OpenTabletDriverGUI.Models
             get => _clipping;
         }
         
+        #endregion
+
+        #region Button Bindings
+
+        private float _tipPressure;
+
+        [XmlElement("TipActivationPressure")]
+        public float TipActivationPressure
+        {
+            set => this.RaiseAndSetIfChanged(ref _tipPressure, (float)Math.Round(value, 3));
+            get => _tipPressure;
+        }
+
+        private MouseButton _tipButton;
+
+        [XmlElement("TipButton")]
+        public MouseButton TipButton
+        {
+            set => this.RaiseAndSetIfChanged(ref _tipButton, value);
+            get => _tipButton;
+        }
+
         #endregion
 
         #region XML Serialization
