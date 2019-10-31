@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 
 namespace TabletDriverLib.Interop.Native
@@ -11,15 +11,72 @@ namespace TabletDriverLib.Interop.Native
     {
         private const string libX11 = "libX11";
 
+        #region Native Structs
+
         private static object Lock = new object();
 
-        #region Cursor
+        [StructLayout(LayoutKind.Sequential, Size = (24 * sizeof(long)))]
+        public struct XEvent
+        {
+            public int type;
+            public ulong serial;
+            public bool send_event;
+            public IntPtr display;
+            public Window window;
+        }
+
+        [StructLayout(LayoutKind.Sequential, Size = (24 * sizeof(long)))]
+        public struct XButtonEvent
+        {
+            public int type;
+            public ulong serial;
+            public bool send_event;
+            public Display display;
+            public Window window;
+            public Window root;
+            public Window subwindow;
+            public ulong time;
+            public int x, y;
+            public int x_root, y_root;
+            public uint state;
+            public Button button;
+            public bool same_screen;
+        }
+
+        #endregion
+
+        #region Enums
+
+        public enum Button : uint
+        {
+            LEFT = 1,
+            MIDDLE = 2,
+            RIGHT = 3,
+            FOUR = 4,
+            FIVE = 5
+        }
+
+        public enum EventMask : long
+        {
+            NoEventMask = 0L,
+            KeyPressMask = (1L << 0),
+            KeyReleaseMask = (1L << 1),
+            ButtonPressMask = (1L << 2),
+            ButtonReleaseMask = (1L << 3)
+        }
+
+        #endregion
+
+        #region Input
 
         [DllImport(libX11, EntryPoint = "XQueryPointer")]
-        public extern static bool XQueryPointer(IntPtr display, IntPtr window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
+        public extern static bool XQueryPointer(Display display, Window window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
 
         [DllImport(libX11, EntryPoint = "XWarpPointer")]
-        public extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
+        public extern static uint XWarpPointer(Display display, Window src_w, Window dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
+
+        [DllImport(libX11, EntryPoint = "XSendEvent")]
+        public static extern int XSendEvent(IntPtr display, Window window, bool propagate, long event_mask, object event_send);
 
         #endregion
 

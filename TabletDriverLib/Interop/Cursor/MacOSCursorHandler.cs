@@ -1,35 +1,38 @@
+using System;
 using TabletDriverLib.Component;
 
 namespace TabletDriverLib.Interop.Cursor
 {
+    using static Native.MacOSX;
+
     public class MacOSCursorHandler : ICursorHandler
     {
         public Point GetCursorPosition()
         {
-            var eventRef = Native.MacOSX.CGEventCreate();
-            var cursor = Native.MacOSX.CGEventGetLocation(ref eventRef);
-            Native.MacOSX.CFRelease(eventRef);
+            IntPtr eventRef = CGEventCreate();
+            CGPoint cursor = CGEventGetLocation(ref eventRef);
+            CFRelease(eventRef);
             return (Point)cursor;
         }
 
         public void SetCursorPosition(Point pos)
         {
-            Native.MacOSX.CGWarpMouseCursorPosition((Native.MacOSX.CGPoint)pos);
+            CGWarpMouseCursorPosition((CGPoint)pos);
         }
-
+ 
         public void MouseDown(MouseButton button)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void MouseUp(MouseButton button)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool GetMouseButtonState(MouseButton button)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
