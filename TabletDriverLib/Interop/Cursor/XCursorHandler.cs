@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TabletDriverLib.Component;
@@ -8,11 +7,11 @@ using TabletDriverLib.Component;
 namespace TabletDriverLib.Interop.Cursor
 {
     using static Native.Linux;
-    
+
     using IntPtr = IntPtr;
     using Display = IntPtr;
     using Window = IntPtr;
-    
+
     public class XCursorHandler : ICursorHandler, IDisposable
     {
         public unsafe XCursorHandler()
@@ -48,7 +47,8 @@ namespace TabletDriverLib.Interop.Cursor
             var xButtonEvent = new XButtonEvent()
             {
                 display = Display,
-                window = RootWindow
+                window = RootWindow,
+                same_screen = true
             };
             switch (button)
             {
