@@ -87,14 +87,12 @@ namespace TabletDriverLib.Interop.Cursor
                 var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(xevent));
                 Marshal.StructureToPtr(xevent, ptr, false);
                 
-                XGrabKeyboard(Display, RootWindow, false, 1, 1, 0);
                 if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonPressMask, ptr) != 0)
                     UpdateButtonState(button, true);
                 else
                     Log.Error($"Failed to send XButtonEvent for {button}");
                 
                 XFlush(Display);
-                XUngrabKeyboard(Display, 0);
                 Marshal.FreeHGlobal(ptr);
             }
         }
@@ -108,14 +106,12 @@ namespace TabletDriverLib.Interop.Cursor
                 var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(xevent));
                 Marshal.StructureToPtr(xevent, ptr, false);
 
-                XGrabKeyboard(Display, RootWindow, false, 1, 1, 0);
                 if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonReleaseMask, ptr) != 0)
                     UpdateButtonState(button, false);
                 else
                     Log.Error($"Failed to send XButtonEvent for {button}");
                 
                 XFlush(Display);
-                XUngrabKeyboard(Display, 0);
                 Marshal.FreeHGlobal(ptr);
             }
         }
