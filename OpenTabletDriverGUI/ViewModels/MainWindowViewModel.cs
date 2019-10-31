@@ -124,6 +124,13 @@ namespace OpenTabletDriverGUI.ViewModels
             Log.Info($"Set tablet area:  " + Driver.TabletArea);
             Driver.Clipping = Settings.EnableClipping;
             Log.Info("Clipping is " + (Driver.Clipping ? "enabled" : "disabled"));
+            if (Settings.TipButton != 0)
+            {
+                Driver.BindingsEnabled = true;
+                Driver.TipButton = Settings.TipButton;
+                Driver.TipActivationPressure = Settings.TipActivationPressure;
+            }
+            Log.Info($"Bindings set: Tip='{Driver.TipButton}'@{Driver.TipActivationPressure}%");
             Log.Info("Applied all settings.");
         }
 

@@ -75,8 +75,14 @@ namespace TabletDriverLib.Interop.Native
         [DllImport(libX11, EntryPoint = "XWarpPointer")]
         public extern static uint XWarpPointer(Display display, Window src_w, Window dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
 
+        [DllImport(libX11, EntryPoint = "XGrabKeyboard")]
+        public extern static int XGrabKeyboard(Display display, Window grab_window, bool owner_events, int pointer_mode, int keyboard_mode, ulong time);
+
+        [DllImport(libX11, EntryPoint= "XUngrabKeyboard")]
+        public extern static int XUngrabKeyboard(Display display, ulong time);
+
         [DllImport(libX11, EntryPoint = "XSendEvent")]
-        public static extern int XSendEvent(IntPtr display, Window window, bool propagate, long event_mask, object event_send);
+        public static extern int XSendEvent(IntPtr display, Window window, bool propagate, long event_mask, IntPtr event_send);
 
         #endregion
 

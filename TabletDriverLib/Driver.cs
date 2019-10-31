@@ -142,6 +142,10 @@ namespace TabletDriverLib
         public Area DisplayArea { set; get; } = new Area();
         public Area TabletArea { set; get; } = new Area();
         public bool Clipping { set; get; } = true;
+        
+        public bool BindingsEnabled { set; get; } = false;
+        public float TipActivationPressure { set; get; }
+        public MouseButton TipButton { set; get; }
 
         public void BindInput(bool enabled)
         {
@@ -170,6 +174,7 @@ namespace TabletDriverLib
                 (scaleX * (report.Position.X - reportXOffset)) + DisplayArea.Position.X,
                 (scaleY * (report.Position.Y - reportYOffset)) + DisplayArea.Position.Y
             );
+
             if (Clipping)
             {
                 // X position clipping
@@ -183,6 +188,20 @@ namespace TabletDriverLib
                 else if (pos.Y < DisplayArea.Position.Y)
                     pos.Y = DisplayArea.Position.Y;
             }
+
+            if (BindingsEnabled)
+            {
+                float pressurePercent = report.Pressure / TabletProperties.MaxPressure * 100f;
+                if (pressurePercent >= TipActivationPressure && !CursorHandler.GetMouseButtonState(TipButton))
+                {
+                    CursorHandler.MouseDown(TipButton);
+                }
+                else if (CursorHandler.GetMouseButtonState(TipButton))
+                {
+                    CursorHandler.MouseUp(TipButton);
+                }
+            }
+
             CursorHandler.SetCursorPosition(pos);
         }
 
