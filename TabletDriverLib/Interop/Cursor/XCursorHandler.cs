@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using TabletDriverLib.Component;
 
 namespace TabletDriverLib.Interop.Cursor
 {
     using static Native.Linux;
     
+    using IntPtr = IntPtr;
     using Display = IntPtr;
     using Window = IntPtr;
     
@@ -81,12 +83,19 @@ namespace TabletDriverLib.Interop.Cursor
             if (button != MouseButton.None)
             {
                 var xevent = ParseXButtonEvent(button);
-                if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonPressMask, xevent) != 0)
+                // Marshal XEvent to IntPtr
+                var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(xevent));
+                Marshal.StructureToPtr(xevent, ptr, false);
+                
+                XGrabKeyboard(Display, RootWindow, false, 1, 1, 0);
+                if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonPressMask, ptr) != 0)
                     UpdateButtonState(button, true);
                 else
                     Log.Error($"Failed to send XButtonEvent for {button}");
                 
                 XFlush(Display);
+                XUngrabKeyboard(Display, 0);
+                Marshal.FreeHGlobal(ptr);
             }
         }
 
@@ -95,12 +104,19 @@ namespace TabletDriverLib.Interop.Cursor
             if (button != MouseButton.None)
             {
                 var xevent = ParseXButtonEvent(button);
-                if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonReleaseMask, xevent) != 0)
+                // Marshal XEvent to IntPtr
+                var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(xevent));
+                Marshal.StructureToPtr(xevent, ptr, false);
+
+                XGrabKeyboard(Display, RootWindow, false, 1, 1, 0);
+                if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonReleaseMask, ptr) != 0)
                     UpdateButtonState(button, false);
                 else
                     Log.Error($"Failed to send XButtonEvent for {button}");
                 
                 XFlush(Display);
+                XUngrabKeyboard(Display, 0);
+                Marshal.FreeHGlobal(ptr);
             }
         }
 
