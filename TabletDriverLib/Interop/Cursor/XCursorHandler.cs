@@ -42,30 +42,19 @@ namespace TabletDriverLib.Interop.Cursor
             XFlush(Display);
         }
 
-        private XButtonEvent ParseXButtonEvent(MouseButton button)
+        private Button ParseButton(MouseButton button)
         {
-            var xButtonEvent = new XButtonEvent()
-            {
-                display = Display,
-                window = RootWindow,
-                same_screen = true
-            };
             switch (button)
             {
                 case MouseButton.Left:
-                    xButtonEvent.button = Button.LEFT;
-                    break;
+                    return Button.LEFT;
                 case MouseButton.Middle:
-                    xButtonEvent.button = Button.MIDDLE;
-                    break;
+                    return Button.MIDDLE;
                 case MouseButton.Right:
-                    xButtonEvent.button = Button.RIGHT;
-                    break;
+                    return Button.RIGHT;
                 default:
-                    xButtonEvent.button = 0;
-                    break;
+                    return 0;
             }
-            return xButtonEvent;
         }
 
         private Dictionary<MouseButton, bool> ButtonStateDictionary { set; get; } = new Dictionary<MouseButton, bool>();
@@ -79,40 +68,30 @@ namespace TabletDriverLib.Interop.Cursor
         }
 
         public void MouseDown(MouseButton button)
-        {
-            if (button != MouseButton.None)
+        {   
+            if (!ButtonStateDictionary.TryGetValue(button, out var isPressed))
+                isPressed = false;
+            
+            if (button != MouseButton.None && !isPressed)
             {
-                var xevent = ParseXButtonEvent(button);
-                // Marshal XEvent to IntPtr
-                var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(xevent));
-                Marshal.StructureToPtr(xevent, ptr, false);
-                
-                if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonPressMask, ptr) != 0)
-                    UpdateButtonState(button, true);
-                else
-                    Log.Error($"Failed to send XButtonEvent for {button}");
-                
+                var xButton = ParseButton(button);
+                XTestFakeButtonEvent(Display, xButton, true, 0L);
+                UpdateButtonState(button, true);
                 XFlush(Display);
-                Marshal.FreeHGlobal(ptr);
             }
         }
 
         public void MouseUp(MouseButton button)
         {
-            if (button != MouseButton.None)
-            {
-                var xevent = ParseXButtonEvent(button);
-                // Marshal XEvent to IntPtr
-                var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(xevent));
-                Marshal.StructureToPtr(xevent, ptr, false);
+            if (!ButtonStateDictionary.TryGetValue(button, out var isPressed))
+                isPressed = false;
 
-                if (XSendEvent(Display, RootWindow, true, (long)EventMask.ButtonReleaseMask, ptr) != 0)
-                    UpdateButtonState(button, false);
-                else
-                    Log.Error($"Failed to send XButtonEvent for {button}");
-                
+            if (button != MouseButton.None && isPressed)
+            {
+                var xButton = ParseButton(button);
+                XTestFakeButtonEvent(Display, xButton, false, 0L);
+                UpdateButtonState(button, false);
                 XFlush(Display);
-                Marshal.FreeHGlobal(ptr);
             }
         }
 

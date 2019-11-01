@@ -3,13 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace TabletDriverLib.Interop.Native
 {
-    using XPointer = System.IntPtr;
-    using Display = System.IntPtr;
-    using Window = System.IntPtr;
+    using IntPtr = IntPtr;
+    using Display = IntPtr;
+    using Window = IntPtr;
     
     internal class Linux
     {
         private const string libX11 = "libX11";
+        private const string libXtst = "libXtst";
 
         #region Native Structs
 
@@ -76,7 +77,13 @@ namespace TabletDriverLib.Interop.Native
         public extern static uint XWarpPointer(Display display, Window src_w, Window dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
 
         [DllImport(libX11, EntryPoint = "XSendEvent")]
-        public static extern int XSendEvent(IntPtr display, Window window, bool propagate, long event_mask, IntPtr event_send);
+        public static extern int XSendEvent(Display display, Window window, bool propagate, long event_mask, IntPtr event_send);
+
+        [DllImport(libXtst, EntryPoint = "XTestFakeButtonEvent")]
+        public static extern int XTestFakeButtonEvent(Display display, Button button, bool is_press, ulong delay);
+
+        [DllImport(libXtst, EntryPoint = "XTestFakeKeyEvent")]
+        public static extern int XTestFakeKeyEvent(Display display, uint keycode, bool is_press, ulong delay);
 
         #endregion
 
