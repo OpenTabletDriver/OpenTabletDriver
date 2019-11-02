@@ -191,12 +191,12 @@ namespace TabletDriverLib
 
             if (BindingsEnabled)
             {
-                float pressurePercent = report.Pressure / TabletProperties.MaxPressure * 100f;
+                float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
                 if (pressurePercent >= TipActivationPressure && !CursorHandler.GetMouseButtonState(TipButton))
                 {
                     CursorHandler.MouseDown(TipButton);
                 }
-                else if (CursorHandler.GetMouseButtonState(TipButton))
+                else if (pressurePercent < TipActivationPressure && CursorHandler.GetMouseButtonState(TipButton))
                 {
                     CursorHandler.MouseUp(TipButton);
                 }

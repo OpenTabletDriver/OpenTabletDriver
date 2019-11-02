@@ -23,24 +23,12 @@ namespace TabletDriverLib.Interop.Cursor
         public void Dispose()
         {
             XCloseDisplay(Display);
-            ButtonStateDictionary = null;
+            InputDictionary = null;
         }
 
         private Display Display;
         private Window RootWindow;
-
-        public Point GetCursorPosition()
-        {
-            XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
-                return new Point((int)x, (int)y);
-        }
-
-        public void SetCursorPosition(Point pos)
-        {
-            XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
-            XWarpPointer(Display, RootWindow, new IntPtr(0), 0, 0, 0, 0, (int)pos.X - x, (int)pos.Y - y);
-            XFlush(Display);
-        }
+        private InputDictionary InputDictionary { set; get; } = new InputDictionary();
 
         private Button ParseButton(MouseButton button)
         {
@@ -57,47 +45,42 @@ namespace TabletDriverLib.Interop.Cursor
             }
         }
 
-        private Dictionary<MouseButton, bool> ButtonStateDictionary { set; get; } = new Dictionary<MouseButton, bool>();
-
-        private void UpdateButtonState(MouseButton button, bool isPressed)
+        public Point GetCursorPosition()
         {
-            if (ButtonStateDictionary.Keys.Contains(button))
-                ButtonStateDictionary[button] = isPressed;
-            else
-                ButtonStateDictionary.Add(button, isPressed);
+            XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
+                return new Point((int)x, (int)y);
+        }
+
+        public void SetCursorPosition(Point pos)
+        {
+            XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
+            XWarpPointer(Display, RootWindow, new IntPtr(0), 0, 0, 0, 0, (int)pos.X - x, (int)pos.Y - y);
+            XFlush(Display);
+        }
+
+        private void UpdateMouseButtonState(MouseButton button, bool isPressed)
+        {
+            var xButton = ParseButton(button);
+            InputDictionary.UpdateState(button, isPressed);
+            XTestFakeButtonEvent(Display, xButton, isPressed, 0L);
+            XFlush(Display);
         }
 
         public void MouseDown(MouseButton button)
         {   
-            if (!ButtonStateDictionary.TryGetValue(button, out var isPressed))
-                isPressed = false;
-            
-            if (button != MouseButton.None && !isPressed)
-            {
-                var xButton = ParseButton(button);
-                XTestFakeButtonEvent(Display, xButton, true, 0L);
-                UpdateButtonState(button, true);
-                XFlush(Display);
-            }
+            if (button != MouseButton.None && !GetMouseButtonState(button))
+                UpdateMouseButtonState(button, true);
         }
 
         public void MouseUp(MouseButton button)
         {
-            if (!ButtonStateDictionary.TryGetValue(button, out var isPressed))
-                isPressed = false;
-
-            if (button != MouseButton.None && isPressed)
-            {
-                var xButton = ParseButton(button);
-                XTestFakeButtonEvent(Display, xButton, false, 0L);
-                UpdateButtonState(button, false);
-                XFlush(Display);
-            }
+            if (button != MouseButton.None && GetMouseButtonState(button))
+                UpdateMouseButtonState(button, false);
         }
 
         public bool GetMouseButtonState(MouseButton button)
         {
-            return ButtonStateDictionary.TryGetValue(button, out var value) ? value : false;
+            return InputDictionary.TryGetValue(button, out var state) ? state : false;
         }
     }
 }
