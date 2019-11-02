@@ -52,7 +52,9 @@ namespace TabletDriverLib.Interop.Native
         {
             kCGMouseButtonLeft = 0,
             kCGMouseButtonRight = 1,
-            kCGMouseButtonCenter = 2
+            kCGMouseButtonCenter = 2,
+            kCGMouseButtonBackward = 3,
+            kCGMouseButtonForward = 4,
         }
 
         [DllImport(Foundation)]

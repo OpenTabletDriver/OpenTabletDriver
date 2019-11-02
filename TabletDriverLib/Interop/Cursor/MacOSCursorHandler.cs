@@ -50,6 +50,14 @@ namespace TabletDriverLib.Interop.Cursor
                     type = CGEventType.kCGEventRightMouseDown;
                     cgButton = CGMouseButton.kCGMouseButtonRight;
                     break;
+                case MouseButton.Backward:
+                    type = CGEventType.kCGEventOtherMouseDown;
+                    cgButton = CGMouseButton.kCGMouseButtonBackward;
+                    break;
+                case MouseButton.Forward:
+                    type = CGEventType.kCGEventOtherMouseDown;
+                    cgButton = CGMouseButton.kCGMouseButtonForward;
+                    break;
                 default:
                     return;
             }
@@ -74,6 +82,14 @@ namespace TabletDriverLib.Interop.Cursor
                 case MouseButton.Right:
                     type = CGEventType.kCGEventRightMouseUp;
                     cgButton = CGMouseButton.kCGMouseButtonRight;
+                    break;
+                case MouseButton.Backward:
+                    type = CGEventType.kCGEventOtherMouseUp;
+                    cgButton = CGMouseButton.kCGMouseButtonBackward;
+                    break;
+                case MouseButton.Forward:
+                    type = CGEventType.kCGEventOtherMouseUp;
+                    cgButton = CGMouseButton.kCGMouseButtonForward;
                     break;
                 default:
                     return;
