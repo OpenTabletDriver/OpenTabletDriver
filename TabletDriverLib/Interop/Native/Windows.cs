@@ -65,12 +65,21 @@ namespace TabletDriverLib.Interop.Native
         
         public enum MOUSEEVENTF : uint
         {
-            LEFTDOWN = 0x02,
-            LEFTUP = 0x04,
+            LEFTDOWN = 0x0002,
+            LEFTUP = 0x0004,
             MIDDLEDOWN = 0x0020,
             MIDDLEUP = 0x0040,
-            RIGHTDOWN = 0x08,
-            RIGHTUP = 0x10,
+            RIGHTDOWN = 0x0008,
+            RIGHTUP = 0x0010,
+            XDOWN = 0x0080,
+            XUP = 0x0100
+        }
+
+        public enum XBUTTON : uint
+        {
+            NONE = 0x0000,
+            XBUTTON1 = 0x0001,
+            XBUTTON2 = 0x0002
         }
 
         [DllImport(User32)]
@@ -81,6 +90,8 @@ namespace TabletDriverLib.Interop.Native
             VK_LBUTTON = 0x01,
             VK_RBUTTON = 0x02,
             VK_MBUTTON = 0x04,
+            VK_XBUTTON1 = 0x05,
+            VK_XBUTTON2 = 0x06,
         }
 
         public const int KEY_PRESSED = 0x8000;

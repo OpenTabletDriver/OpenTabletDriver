@@ -5,6 +5,8 @@ namespace TabletDriverLib.Interop.Cursor
 {
     public class InputDictionary : IDictionary<MouseButton, bool>
     {
+        #region MouseButton Implementation
+
         private Dictionary<MouseButton, bool> _mouse = new Dictionary<MouseButton, bool>();
         
         public bool this[MouseButton key]
@@ -83,5 +85,7 @@ namespace TabletDriverLib.Interop.Cursor
             else
                 _mouse.Add(button, isPressed);
         }
+
+        #endregion
     }
 }

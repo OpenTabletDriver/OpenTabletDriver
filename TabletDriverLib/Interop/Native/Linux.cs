@@ -53,8 +53,8 @@ namespace TabletDriverLib.Interop.Native
             LEFT = 1,
             MIDDLE = 2,
             RIGHT = 3,
-            FOUR = 4,
-            FIVE = 5
+            BACKWARD = 8,
+            FORWARD = 9
         }
 
         public enum EventMask : long

@@ -18,10 +18,10 @@ namespace TabletDriverLib.Interop.Cursor
             SetCursorPos((int)pos.X, (int)pos.Y);
         }
 
-        private void MouseEvent(MOUSEEVENTF arg)
+        private void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
             var pos = GetCursorPosition();
-            mouse_event((uint)arg, (uint)pos.X, (uint)pos.Y, 0, 0);
+            mouse_event((uint)arg, (uint)pos.X, (uint)pos.Y, dwData, 0);
         }
 
         public void MouseDown(MouseButton button)
@@ -37,7 +37,11 @@ namespace TabletDriverLib.Interop.Cursor
                 case MouseButton.Right:
                     MouseEvent(MOUSEEVENTF.RIGHTDOWN);
                     return;
-                default:
+                case MouseButton.Backward:
+                    MouseEvent(MOUSEEVENTF.XDOWN, (uint)XBUTTON.XBUTTON1);
+                    return;
+                case MouseButton.Forward:
+                    MouseEvent(MOUSEEVENTF.XDOWN, (uint)XBUTTON.XBUTTON2);
                     return;
             }
         }
@@ -55,6 +59,12 @@ namespace TabletDriverLib.Interop.Cursor
                 case MouseButton.Right:
                     MouseEvent(MOUSEEVENTF.RIGHTUP);
                     return;
+                case MouseButton.Backward:
+                    MouseEvent(MOUSEEVENTF.XUP, (uint)XBUTTON.XBUTTON1);
+                    return;
+                case MouseButton.Forward:
+                    MouseEvent(MOUSEEVENTF.XUP, (uint)XBUTTON.XBUTTON2);
+                    return;
             }
         }
 
@@ -68,6 +78,10 @@ namespace TabletDriverLib.Interop.Cursor
                     return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_MBUTTON) & KEY_PRESSED);
                 case MouseButton.Right:
                     return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_RBUTTON) & KEY_PRESSED);
+                case MouseButton.Backward:
+                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_XBUTTON1) & KEY_PRESSED);
+                case MouseButton.Forward:
+                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_XBUTTON2) & KEY_PRESSED);
                 default:
                     return false;
             }

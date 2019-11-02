@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using TabletDriverLib.Component;
+using TabletDriverLib.Interop.Converters;
 
 namespace TabletDriverLib.Interop.Cursor
 {
@@ -28,22 +29,8 @@ namespace TabletDriverLib.Interop.Cursor
 
         private Display Display;
         private Window RootWindow;
-        private InputDictionary InputDictionary { set; get; } = new InputDictionary();
-
-        private Button ParseButton(MouseButton button)
-        {
-            switch (button)
-            {
-                case MouseButton.Left:
-                    return Button.LEFT;
-                case MouseButton.Middle:
-                    return Button.MIDDLE;
-                case MouseButton.Right:
-                    return Button.RIGHT;
-                default:
-                    return 0;
-            }
-        }
+        private InputDictionary InputDictionary = new InputDictionary();
+        private static XButtonConverter Converter = new XButtonConverter();
 
         public Point GetCursorPosition()
         {
@@ -60,7 +47,7 @@ namespace TabletDriverLib.Interop.Cursor
 
         private void UpdateMouseButtonState(MouseButton button, bool isPressed)
         {
-            var xButton = ParseButton(button);
+            var xButton = Converter.Convert(button);
             InputDictionary.UpdateState(button, isPressed);
             XTestFakeButtonEvent(Display, xButton, isPressed, 0L);
             XFlush(Display);
