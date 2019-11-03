@@ -35,6 +35,28 @@ namespace TabletDriverLib.Interop.Native
             }
         }
 
+        public enum CGEventType : uint
+        {
+            kCGEventNull = 0,
+            kCGEventLeftMouseDown = 1,
+            kCGEventLeftMouseUp = 2,
+            kCGEventRightMouseDown = 3,
+            kCGEventRightMouseUp = 4,
+            kCGEventKeyDown = 10,
+            kCGEventKeyUp = 11,
+            kCGEventOtherMouseDown = 16, // Likely incorrect
+            kCGEventOtherMouseUp = 17, // ^
+        }
+
+        public enum CGMouseButton : uint
+        {
+            kCGMouseButtonLeft = 0,
+            kCGMouseButtonRight = 1,
+            kCGMouseButtonCenter = 2,
+            kCGMouseButtonBackward = 3,
+            kCGMouseButtonForward = 4,
+        }
+
         [DllImport(Foundation)]
         public static extern void CFRelease(IntPtr handle);
 
@@ -48,6 +70,13 @@ namespace TabletDriverLib.Interop.Native
 
         [DllImport(Quartz)]
         public extern static CGEvent CGWarpMouseCursorPosition(CGPoint newCursorPosition);
+
+        [DllImport(Quartz)]
+        public extern static CGEvent CGEventCreateMouseEvent(ref CGEvent source, CGEventType mouseType,
+            CGPoint mouseCursorPosition, CGMouseButton mouseButton);
+        
+        [DllImport(Quartz)]
+        public extern static CGEvent CGEventPost(ref CGEvent source, CGEventType mouseType, CGPoint mouseCursorPosition, CGMouseButton mouseButton);
         
         #endregion
 

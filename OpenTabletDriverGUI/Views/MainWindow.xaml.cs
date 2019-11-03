@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -17,6 +18,8 @@ namespace OpenTabletDriverGUI.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            var mouseButtonsBox = this.Find<ComboBox>("MouseButtonsBox");
+            mouseButtonsBox.Items = Enum.GetValues(typeof(TabletDriverLib.Interop.Cursor.MouseButton));
         }
     }
 }
