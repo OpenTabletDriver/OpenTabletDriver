@@ -4,10 +4,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using TabletDriverLib.Component;
 using TabletDriverLib.Interop.Converters;
+using NativeLib.Linux;
 
 namespace TabletDriverLib.Interop.Cursor
 {
-    using static Native.Linux;
+    using static Linux;
 
     using IntPtr = IntPtr;
     using Display = IntPtr;

@@ -1,16 +1,18 @@
 using System;
 using TabletDriverLib.Component;
+using NativeLib.Windows;
+using NativeLib.Windows.Input;
 
 namespace TabletDriverLib.Interop.Cursor
 {
-    using static Native.Windows;
+    using static Windows;
 
     public class WindowsCursorHandler : ICursorHandler
     {
         public Point GetCursorPosition()
         {
             GetCursorPos(out POINT pt);
-            return (Point)pt;
+            return new Point(pt.X, pt.Y);
         }
 
         public void SetCursorPosition(Point pos)
@@ -73,15 +75,15 @@ namespace TabletDriverLib.Interop.Cursor
             switch (button)
             {
                 case MouseButton.Left:
-                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_LBUTTON) & KEY_PRESSED);
+                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_LBUTTON) & (int)KEYSTATE.KEY_PRESSED);
                 case MouseButton.Middle:
-                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_MBUTTON) & KEY_PRESSED);
+                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_MBUTTON) & (int)KEYSTATE.KEY_PRESSED);
                 case MouseButton.Right:
-                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_RBUTTON) & KEY_PRESSED);
+                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_RBUTTON) & (int)KEYSTATE.KEY_PRESSED);
                 case MouseButton.Backward:
-                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_XBUTTON1) & KEY_PRESSED);
+                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_XBUTTON1) & (int)KEYSTATE.KEY_PRESSED);
                 case MouseButton.Forward:
-                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_XBUTTON2) & KEY_PRESSED);
+                    return Convert.ToBoolean(GetKeyState(VirtualKeyStates.VK_XBUTTON2) & (int)KEYSTATE.KEY_PRESSED);
                 default:
                     return false;
             }
