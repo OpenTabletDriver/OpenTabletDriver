@@ -1,6 +1,6 @@
 ﻿namespace NativeLib.Linux.Input
 {
-    public enum XKeySymDef
+    public enum XKeySymDef : uint
     {
         XK_BackSpace = 0xff08,
         XK_Tab = 0xff09,

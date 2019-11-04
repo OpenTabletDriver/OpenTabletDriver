@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using NativeLib.Linux.Input;
 
 namespace NativeLib.Linux
 {
@@ -23,10 +24,10 @@ namespace NativeLib.Linux
         public static extern int XSendEvent(Display display, Window window, bool propagate, long event_mask, IntPtr event_send);
 
         [DllImport(libXtst, EntryPoint = "XTestFakeButtonEvent")]
-        public static extern int XTestFakeButtonEvent(Display display, Button button, bool is_press, ulong delay);
+        public static extern int XTestFakeButtonEvent(Display display, XMouseButton button, bool is_press, ulong delay);
 
         [DllImport(libXtst, EntryPoint = "XTestFakeKeyEvent")]
-        public static extern int XTestFakeKeyEvent(Display display, uint keycode, bool is_press, ulong delay);
+        public static extern int XTestFakeKeyEvent(Display display, XKeySymDef keycode, bool is_press, ulong delay);
 
         [DllImport(libX11, EntryPoint = "XOpenDisplay")]
         private extern unsafe static IntPtr sys_XOpenDisplay(char* display);

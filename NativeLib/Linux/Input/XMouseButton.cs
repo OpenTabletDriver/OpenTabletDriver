@@ -1,6 +1,6 @@
 ﻿namespace NativeLib.Linux
 {
-    public enum Button : uint
+    public enum XMouseButton : uint
     {
         LEFT = 1,
         MIDDLE = 2,
