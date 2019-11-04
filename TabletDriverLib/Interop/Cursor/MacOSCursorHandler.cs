@@ -1,10 +1,10 @@
 using System;
 using TabletDriverLib.Component;
+using NativeLib.OSX;
 
 namespace TabletDriverLib.Interop.Cursor
 {
-    using static Native.MacOSX;
-
+    using static NativeLib.OSX.OSX;
     public class MacOSCursorHandler : ICursorHandler
     {
         private InputDictionary InputDictionary = new InputDictionary();
@@ -14,20 +14,21 @@ namespace TabletDriverLib.Interop.Cursor
             IntPtr eventRef = CGEventCreate();
             CGPoint cursor = CGEventGetLocation(ref eventRef);
             CFRelease(eventRef);
-            return (Point)cursor;
+            return new Point(cursor.X, cursor.Y);
         }
 
         public void SetCursorPosition(Point pos)
         {
-            CGWarpMouseCursorPosition((CGPoint)pos);
+            CGWarpMouseCursorPosition(new CGPoint(pos.X, pos.Y));
         }
 
         private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
         {
             var eventRef = CGEventCreate();
-            var curPos = (CGPoint)GetCursorPosition();
-            var mouseEventRef = CGEventCreateMouseEvent(ref eventRef, type, curPos, cgButton);
-            CGEventPost(ref mouseEventRef, type, curPos, cgButton);
+            var curPos = GetCursorPosition();
+            var cgPos = new CGPoint(curPos.X, curPos.Y);
+            var mouseEventRef = CGEventCreateMouseEvent(ref eventRef, type, cgPos, cgButton);
+            CGEventPost(ref mouseEventRef, type, cgPos, cgButton);
             CFRelease(eventRef);
             CFRelease(mouseEventRef);
         }

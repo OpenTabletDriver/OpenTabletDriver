@@ -1,31 +1,36 @@
 using System;
+using NativeLib.Linux;
 
 namespace TabletDriverLib.Interop.Display
 {
+    using Display = IntPtr;
+    using Window = IntPtr;
+    using static Linux;
+
     public class XDisplay : IDisplay, IDisposable
     {
         public unsafe XDisplay()
         {
-            Display = Native.Linux.XOpenDisplay(null);
-            RootWindow = Native.Linux.XDefaultRootWindow(Display);
+            Display = XOpenDisplay(null);
+            RootWindow = XDefaultRootWindow(Display);
         }
 
-        private IntPtr Display;
-        private IntPtr RootWindow;
+        private Display Display;
+        private Window RootWindow;
 
         public float Width
         {
-            get => Native.Linux.XDisplayWidth(Display, 0);
+            get => XDisplayWidth(Display, 0);
         }
 
         public float Height
         {
-            get => Native.Linux.XDisplayHeight(Display, 0);
+            get => XDisplayHeight(Display, 0);
         }
 
         public void Dispose()
         {
-            Native.Linux.XCloseDisplay(Display);
+            XCloseDisplay(Display);
         }
     }
 }

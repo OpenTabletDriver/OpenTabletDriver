@@ -1,5 +1,5 @@
+using NativeLib.Linux;
 using TabletDriverLib.Interop.Cursor;
-using static TabletDriverLib.Interop.Native.Linux;
 
 namespace TabletDriverLib.Interop.Converters
 {

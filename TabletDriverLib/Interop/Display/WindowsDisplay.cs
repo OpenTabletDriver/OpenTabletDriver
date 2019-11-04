@@ -1,10 +1,14 @@
+using System.Collections.Generic;
 using System.Linq;
+using NativeLib.Windows;
 
 namespace TabletDriverLib.Interop.Display
 {
+    using static Windows;
+
     public class WindowsDisplay : IDisplay
     {
-        private static Native.Windows.DisplayInfoCollection Displays => Native.Windows.GetDisplays();
+        private static IEnumerable<DisplayInfo> Displays => GetDisplays();
         
         public float Width
         {
