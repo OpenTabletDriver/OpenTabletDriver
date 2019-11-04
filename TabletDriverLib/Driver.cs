@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
 using TabletDriverLib.Component;
-using TabletDriverLib.Interop.Cursor;
+using TabletDriverLib.Interop.Input;
 
 namespace TabletDriverLib
 {
@@ -17,19 +17,19 @@ namespace TabletDriverLib
                 case PlatformID.Win32Windows:
                 case PlatformID.Win32NT:
                 case PlatformID.WinCE:
-                    CursorHandler = new WindowsCursorHandler();
-                    Log.Info("Using Windows cursor handler.");
+                    InputHandler = new WindowsInputHandler();
+                    Log.Info("Using Windows input handler.");
                     return;
                 case PlatformID.Unix:
-                    CursorHandler = new XCursorHandler();
-                    Log.Info("Using X Window System cursor handler.");
+                    InputHandler = new XInputHandler();
+                    Log.Info("Using X Window System input handler.");
                     return;
                 case PlatformID.MacOSX:
-                    Log.Info("Using MacOSX cursor handler.");
-                    CursorHandler = new MacOSCursorHandler();
+                    Log.Info("Using MacOSX input handler.");
+                    InputHandler = new MacOSInputHandler();
                     return;
                 default:
-                    Log.Fail($"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).");
+                    Log.Fail($"Failed to create a input handler for this platform ({Environment.OSVersion.Platform}).");
                     return;
             }
         }
@@ -38,7 +38,7 @@ namespace TabletDriverLib
        
         public HidDevice Tablet { private set; get; }
         public TabletProperties TabletProperties { set; get; }
-        private ICursorHandler CursorHandler;
+        private IInputHandler InputHandler;
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
 
@@ -192,17 +192,17 @@ namespace TabletDriverLib
             if (BindingsEnabled)
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                if (pressurePercent >= TipActivationPressure && !CursorHandler.GetMouseButtonState(TipButton))
+                if (pressurePercent >= TipActivationPressure && !InputHandler.GetMouseButtonState(TipButton))
                 {
-                    CursorHandler.MouseDown(TipButton);
+                    InputHandler.MouseDown(TipButton);
                 }
-                else if (pressurePercent < TipActivationPressure && CursorHandler.GetMouseButtonState(TipButton))
+                else if (pressurePercent < TipActivationPressure && InputHandler.GetMouseButtonState(TipButton))
                 {
-                    CursorHandler.MouseUp(TipButton);
+                    InputHandler.MouseUp(TipButton);
                 }
             }
 
-            CursorHandler.SetCursorPosition(pos);
+            InputHandler.SetCursorPosition(pos);
         }
 
         #endregion

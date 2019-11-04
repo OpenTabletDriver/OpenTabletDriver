@@ -19,7 +19,7 @@ namespace OpenTabletDriverGUI.Views
         {
             AvaloniaXamlLoader.Load(this);
             var mouseButtonsBox = this.Find<ComboBox>("MouseButtonsBox");
-            mouseButtonsBox.Items = Enum.GetValues(typeof(TabletDriverLib.Interop.Cursor.MouseButton));
+            mouseButtonsBox.Items = Enum.GetValues(typeof(TabletDriverLib.Interop.Input.MouseButton));
         }
     }
 }

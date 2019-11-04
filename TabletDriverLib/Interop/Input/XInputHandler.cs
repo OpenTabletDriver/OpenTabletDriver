@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -6,7 +6,7 @@ using TabletDriverLib.Component;
 using TabletDriverLib.Interop.Converters;
 using NativeLib.Linux;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Input
 {
     using static Linux;
 
@@ -14,9 +14,9 @@ namespace TabletDriverLib.Interop.Cursor
     using Display = IntPtr;
     using Window = IntPtr;
 
-    public class XCursorHandler : ICursorHandler, IDisposable
+    public class XInputHandler : IInputHandler, IDisposable
     {
-        public unsafe XCursorHandler()
+        public unsafe XInputHandler()
         {
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);

@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using TabletDriverLib.Component;
 using NativeLib.OSX;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Input
 {
     using static NativeLib.OSX.OSX;
-    public class MacOSCursorHandler : ICursorHandler
+    public class MacOSInputHandler : IInputHandler
     {
         private InputDictionary InputDictionary = new InputDictionary();
 

@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Input
 {
     public class InputDictionary : IDictionary<MouseButton, bool>
     {

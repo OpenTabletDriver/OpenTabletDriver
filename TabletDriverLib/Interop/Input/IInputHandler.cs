@@ -1,8 +1,8 @@
-using TabletDriverLib.Component;
+﻿using TabletDriverLib.Component;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Input
 {
-    public interface ICursorHandler
+    public interface IInputHandler
     {
         Point GetCursorPosition();
         void SetCursorPosition(Point pos);

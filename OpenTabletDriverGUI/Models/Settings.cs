@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using ReactiveUI;
-using TabletDriverLib.Interop.Cursor;
+using TabletDriverLib.Interop.Input;
 
 namespace OpenTabletDriverGUI.Models
 {

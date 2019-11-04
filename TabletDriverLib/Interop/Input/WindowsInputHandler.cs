@@ -1,13 +1,13 @@
-using System;
+﻿using System;
 using TabletDriverLib.Component;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Input
 {
     using static Windows;
 
-    public class WindowsCursorHandler : ICursorHandler
+    public class WindowsInputHandler : IInputHandler
     {
         public Point GetCursorPosition()
         {

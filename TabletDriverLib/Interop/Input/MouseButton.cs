@@ -1,4 +1,4 @@
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Input
 {
     public enum MouseButton
     {
