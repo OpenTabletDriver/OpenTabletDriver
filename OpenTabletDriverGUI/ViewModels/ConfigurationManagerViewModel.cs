@@ -62,6 +62,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 TabletName = $"{device.GetManufacturer()} {device.GetFriendlyName()}".Trim(),
                 VendorID = device.VendorID,
                 ProductID = device.ProductID,
+                InputReportLength = (uint)device.GetMaxInputReportLength()
             };
             Configurations.Add(config);
             Selected = config;
