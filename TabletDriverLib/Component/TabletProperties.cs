@@ -78,19 +78,15 @@ namespace TabletDriverLib.Component
         [XmlElement("MinimumRange")]
         public uint MinimumRange { set; get; } = 0;
 
-        #region Math
-
-        public float ProportionX => MaxX / Width;
-        public float ProportionY => MaxY / Width;
-
-        #endregion
-
         #region XML Serialization
 
         private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));
 
         public void Write(FileInfo file)
         {
+            if (file.Exists)
+                file.Delete();
+            
             using (var fs = file.OpenWrite())
                 XmlSerializer.Serialize(fs, this);
         }
