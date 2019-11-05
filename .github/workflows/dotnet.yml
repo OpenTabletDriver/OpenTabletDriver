@@ -1,0 +1,41 @@
+name: .NET Core
+
+on: [push]
+
+jobs:
+  linuxpublish:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.0.0
+    - name: Linux Publish
+      run: dotnet publish --configuration Release --runtime linux-x64
+
+  windowspublish:
+    runs-on: windows-latest
+    
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.0
+      - name: Windows Publish
+        run: dotnet publish --configuration Release --runtime win-x64
+  
+  osxpublish:
+    runs-on: macOS-latest
+    
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.0.0
+      - name: Mac OS X Publish
+        run: dotnet publish --configuration Release --runtime osx-x64
