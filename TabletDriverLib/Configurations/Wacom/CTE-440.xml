@@ -3,9 +3,7 @@
   <Name>Wacom CTE-440</Name>
   <VendorID>1386</VendorID>
   <ProductID>21</ProductID>
-  <LinuxDeviceNumber>0</LinuxDeviceNumber>
-  <WindowsDeviceNumber>0</WindowsDeviceNumber>
-  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <InputReportLength>9</InputReportLength>
   <Width>102.08</Width>
   <Height>74.24</Height>
   <MaxX>10208</MaxX>

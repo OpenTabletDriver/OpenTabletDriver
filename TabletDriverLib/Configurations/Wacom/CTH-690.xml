@@ -3,9 +3,7 @@
   <Name>Wacom CTH-690</Name>
   <VendorID>1386</VendorID>
   <ProductID>830</ProductID>
-  <LinuxDeviceNumber>0</LinuxDeviceNumber>
-  <WindowsDeviceNumber>0</WindowsDeviceNumber>
-  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <InputReportLength>10</InputReportLength>
   <Width>216</Width>
   <Height>135</Height>
   <MaxX>21600</MaxX>
