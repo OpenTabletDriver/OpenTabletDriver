@@ -3,9 +3,7 @@
   <Name>Wacom CTL-671</Name>
   <VendorID>1386</VendorID>
   <ProductID>769</ProductID>
-  <LinuxDeviceNumber>0</LinuxDeviceNumber>
-  <WindowsDeviceNumber>0</WindowsDeviceNumber>
-  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <InputReportLength>10</InputReportLength>
   <Width>216.48</Width>
   <Height>135.3</Height>
   <MaxX>21648</MaxX>

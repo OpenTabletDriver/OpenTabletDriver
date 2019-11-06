@@ -3,9 +3,7 @@
   <Name>Wacom CTL-480</Name>
   <VendorID>1386</VendorID>
   <ProductID>782</ProductID>
-  <LinuxDeviceNumber>0</LinuxDeviceNumber>
-  <WindowsDeviceNumber>0</WindowsDeviceNumber>
-  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <InputReportLength>10</InputReportLength>
   <Width>152</Width>
   <Height>95</Height>
   <MaxX>15200</MaxX>

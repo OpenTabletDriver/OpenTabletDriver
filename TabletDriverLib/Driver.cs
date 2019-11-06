@@ -65,8 +65,7 @@ namespace TabletDriverLib
         {
             Log.Info($"Searching for tablet '{tablet.TabletName}'...");
             var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
-            var ordered = matching.OrderBy(d => d.GetFileSystemName());
-            var device = ordered.ElementAtOrDefault(tablet.DeviceNumber);
+            var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
             TabletProperties = tablet;
             if (TabletArea == null || TabletArea.Equals(new Area(0, 0, new Point(0, 0), 0)))
             {
