@@ -68,14 +68,8 @@
                             <TextBlock Text="Product ID"/>
                             <TextBox Text="{Binding ProductID}"/>
 
-                            <TextBlock Text="Device Number (Linux)"/>
-                            <TextBox Text="{Binding LinuxDeviceNumber}"/>
-
-                            <TextBlock Text="Device Number (Windows)"/>
-                            <TextBox Text="{Binding WindowsDeviceNumber}"/>
-
-                            <TextBlock Text="Device Number (Mac OS X)"/>
-                            <TextBox Text="{Binding MacOSXDeviceNumber}"/>
+                            <TextBlock Text="Input Report Length"/>
+                            <TextBox Text="{Binding InputReportLength}"/>
 
                             <TextBlock Text="Width (mm)"/>
                             <TextBox Text="{Binding Width}"/>

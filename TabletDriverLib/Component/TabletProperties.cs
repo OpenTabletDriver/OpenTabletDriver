@@ -29,73 +29,12 @@ namespace TabletDriverLib.Component
         [XmlElement("ProductID")]
         public int ProductID { set; get; } = 0;
 
+        [XmlElement("InputReportLength")]
         /// <summary>
-        /// The device number. 
-        /// Tablets can have multiple devices associated with it, depending on your platform.
+        /// The device's report length.
         /// </summary>
         /// <value></value>
-        [XmlIgnore]
-        public int DeviceNumber 
-        {
-            get
-            {
-                switch (Environment.OSVersion.Platform)
-                {
-                    case PlatformID.Win32S:
-                    case PlatformID.Win32Windows:
-                    case PlatformID.Win32NT:
-                    case PlatformID.WinCE:
-                        return WindowsDeviceNumber;
-                    case PlatformID.Unix:
-                        return LinuxDeviceNumber;
-                    case PlatformID.MacOSX:
-                        return MacOSXDeviceNumber;
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-            set
-            {
-                switch (Environment.OSVersion.Platform)
-                {
-                    case PlatformID.Win32S:
-                    case PlatformID.Win32Windows:
-                    case PlatformID.Win32NT:
-                    case PlatformID.WinCE:
-                        WindowsDeviceNumber = value;
-                        return;
-                    case PlatformID.Unix:
-                        LinuxDeviceNumber = value;
-                        return;
-                    case PlatformID.MacOSX:
-                        MacOSXDeviceNumber = value;
-                        return;
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-        }
-
-        /// <summary>
-        /// The device number on the Linux platform.
-        /// </summary>
-        /// <value></value>
-        [XmlElement("LinuxDeviceNumber")]
-        public int LinuxDeviceNumber { set; get; } = 0; 
-
-        /// <summary>
-        /// The device number on the Windows platform.
-        /// </summary>
-        /// <value></value>
-        [XmlElement("WindowsDeviceNumber")]
-        public int WindowsDeviceNumber { set; get; } = 0;
-
-        /// <summary>
-        /// The device number on the Mac OS X platform.
-        /// </summary>
-        /// <value></value>
-        [XmlElement("MacOSXDeviceNumber")]
-        public int MacOSXDeviceNumber { set; get; } = 0;
+        public uint InputReportLength { set; get; } = 0;
 
         /// <summary>
         /// The device's horizontal active area in millimeters.
@@ -139,19 +78,15 @@ namespace TabletDriverLib.Component
         [XmlElement("MinimumRange")]
         public uint MinimumRange { set; get; } = 0;
 
-        #region Math
-
-        public float ProportionX => MaxX / Width;
-        public float ProportionY => MaxY / Width;
-
-        #endregion
-
         #region XML Serialization
 
         private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));
 
         public void Write(FileInfo file)
         {
+            if (file.Exists)
+                file.Delete();
+            
             using (var fs = file.OpenWrite())
                 XmlSerializer.Serialize(fs, this);
         }

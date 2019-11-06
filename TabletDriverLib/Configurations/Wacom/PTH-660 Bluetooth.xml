@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
-  <Name>Wacom CTL-4100 Bluetooth (Experimental)</Name>
+  <Name>Wacom PTH-660 Bluetooth (Experimental)</Name>
   <VendorID>1386</VendorID>
-  <ProductID>887</ProductID>
+  <ProductID>864</ProductID>
   <InputReportLength>361</InputReportLength>
-  <Width>152</Width>
-  <Height>95</Height>
-  <MaxX>15200</MaxX>
-  <MaxY>9500</MaxY>
-  <MaxPressure>4095</MaxPressure>
+  <Width>226</Width>
+  <Height>150</Height>
+  <MaxX>44800</MaxX>
+  <MaxY>29600</MaxY>
+  <MaxPressure>8191</MaxPressure>
   <MinimumRange>224</MinimumRange>
 </Tablet>

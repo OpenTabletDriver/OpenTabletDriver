@@ -41,6 +41,7 @@ namespace OpenTabletDriverGUI.Models
                 var info = lines.FindValue<string>("HIDTablet").Split(' ');
                 tablet.VendorID = int.Parse(info[0].Replace("0x", ""), NumberStyles.HexNumber);
                 tablet.ProductID = int.Parse(info[1].Replace("0x", ""), NumberStyles.HexNumber);
+                tablet.InputReportLength = lines.FindValue<uint>("ReportLength");
                 // Tablet properties
                 tablet.Width = lines.FindValue<float>("Width");
                 tablet.Height = lines.FindValue<float>("Height");

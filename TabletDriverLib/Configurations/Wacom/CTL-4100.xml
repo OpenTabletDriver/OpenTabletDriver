@@ -3,9 +3,7 @@
   <Name>Wacom CTL-4100</Name>
   <VendorID>1386</VendorID>
   <ProductID>884</ProductID>
-  <LinuxDeviceNumber>0</LinuxDeviceNumber>
-  <WindowsDeviceNumber>0</WindowsDeviceNumber>
-  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <InputReportLength>192</InputReportLength>
   <Width>152</Width>
   <Height>95</Height>
   <MaxX>15200</MaxX>
