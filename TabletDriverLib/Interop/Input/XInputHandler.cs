@@ -31,7 +31,8 @@ namespace TabletDriverLib.Interop.Input
         private Display Display;
         private Window RootWindow;
         private InputDictionary InputDictionary = new InputDictionary();
-        private static XButtonConverter Converter = new XButtonConverter();
+        private static XButtonConverter ButtonConverter = new XButtonConverter();
+        private static XKeyConverter KeyConverter = new XKeyConverter();
 
         public Point GetCursorPosition()
         {
@@ -48,7 +49,7 @@ namespace TabletDriverLib.Interop.Input
 
         private void UpdateMouseButtonState(MouseButton button, bool isPressed)
         {
-            var xButton = Converter.Convert(button);
+            var xButton = ButtonConverter.Convert(button);
             InputDictionary.UpdateState(button, isPressed);
             XTestFakeButtonEvent(Display, xButton, isPressed, 0L);
             XFlush(Display);
@@ -69,6 +70,31 @@ namespace TabletDriverLib.Interop.Input
         public bool GetMouseButtonState(MouseButton button)
         {
             return InputDictionary.TryGetValue(button, out var state) ? state : false;
+        }
+
+        private void UpdateKeyState(Key key, bool isPressed)
+        {
+            var xkey = KeyConverter.Convert(key);
+            InputDictionary.UpdateState(key, isPressed);
+            XTestFakeKeyEvent(Display, xkey, isPressed, 0);
+            XFlush(Display);
+        }
+
+        public void KeyDown(Key key)
+        {
+            if (!GetKeyState(key))
+                UpdateKeyState(key, true);
+        }
+
+        public void KeyUp(Key key)
+        {
+            if (GetKeyState(key))
+                UpdateKeyState(key, false);
+        }
+
+        public bool GetKeyState(Key key)
+        {
+            return InputDictionary.TryGetValue(key, out var state) ? state : false;
         }
     }
 }

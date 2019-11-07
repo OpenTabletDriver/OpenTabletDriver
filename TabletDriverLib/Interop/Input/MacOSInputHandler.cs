@@ -103,5 +103,20 @@ namespace TabletDriverLib.Interop.Input
         {
             return InputDictionary.TryGetValue(button, out var state) ? state : false;
         }
+
+        public void KeyDown(Key key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void KeyUp(Key key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool GetKeyState(Key key)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

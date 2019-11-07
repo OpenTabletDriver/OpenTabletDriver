@@ -10,5 +10,9 @@ namespace TabletDriverLib.Interop.Input
         void MouseDown(MouseButton button);
         void MouseUp(MouseButton button);
         bool GetMouseButtonState(MouseButton button);
+
+        void KeyDown(Key key);
+        void KeyUp(Key key);
+        bool GetKeyState(Key key);
     }
 }
