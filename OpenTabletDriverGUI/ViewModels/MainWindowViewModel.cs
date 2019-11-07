@@ -144,8 +144,10 @@ namespace OpenTabletDriverGUI.ViewModels
             };
 
             SetPlatformSpecifics(Environment.OSVersion.Platform);
+
+            Log.Info($"Current directory is '{Environment.CurrentDirectory}'.");
             
-            var settings = new FileInfo("settings.xml");
+            var settings = new FileInfo(Path.Combine(Environment.CurrentDirectory, "settings.xml"));
             if (settings.Exists)
             {
                 Settings = Settings.Deserialize(settings);
@@ -156,7 +158,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 UseDefaultSettings();
             }
             
-            var configurationDir = new DirectoryInfo("Configurations");
+            var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);
             else

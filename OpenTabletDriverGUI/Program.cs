@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Avalonia;
 using Avalonia.Logging.Serilog;
 using MessageBox.Avalonia;
@@ -26,6 +27,11 @@ namespace OpenTabletDriverGUI
         // container, etc.
         private static void AppMain(Application app, string[] args)
         {
+            if (args.Length > 0)
+                Environment.CurrentDirectory = args[0];
+            else
+                Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
 
             var viewModel = new MainWindowViewModel();
