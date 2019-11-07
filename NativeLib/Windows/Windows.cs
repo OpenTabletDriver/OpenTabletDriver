@@ -17,20 +17,21 @@ namespace NativeLib.Windows
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetCursorPos(out POINT lpPoint);
 
-        [DllImport(User32,CharSet=CharSet.Auto, CallingConvention=CallingConvention.StdCall)]
+        [DllImport(User32, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+
+        [DllImport(User32)]
+        public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
         
         [DllImport(User32)]
-        public static extern short GetKeyState(VirtualKeyStates nVirtKey);
-
-        #region Display
+        public static extern short GetKeyState(int nVirtKey);
 
         public delegate bool MonitorEnumDelegate(IntPtr hMonitor,IntPtr hdcMonitor,ref Rect lprcMonitor, IntPtr dwData);
 
-        [DllImport("user32.dll")]
+        [DllImport(User32)]
         public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
 
-        [DllImport("user32.dll")]
+        [DllImport(User32)]
         public static extern bool GetMonitorInfo(IntPtr hmon, ref MonitorInfo mi);
 
         public static List<DisplayInfo> GetDisplays()
@@ -57,7 +58,5 @@ namespace NativeLib.Windows
                 }, IntPtr.Zero );
             return col;
         }
-
-        #endregion
     }
 }
