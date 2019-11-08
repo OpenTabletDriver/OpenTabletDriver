@@ -14,8 +14,6 @@ namespace TabletDriverLib.Interop.Input
         Clear = 0x0C,
         [Description("Return")]
         Return = 0x0D,
-        [Description("Menu")]
-        Menu = 0x12,
         [Description("PauseBreak")]
         PauseBreak = 0x13,
         [Description("CapsLock")]
@@ -117,6 +115,28 @@ namespace TabletDriverLib.Interop.Input
         Y = 0x59,
         [Description("Z")]
         Z = 0x5A,
+        [Description(";")]
+        Semicolon = 0xBA,
+        [Description("=")]
+        PlusEqual = 0xBB,
+        [Description(",")]
+        Comma = 0xBC,
+        [Description("-")]
+        Minus = 0xBD,
+        [Description(".")]
+        Period = 0xBE,
+        [Description("/")]
+        ForwardSlash = 0xBF,
+        [Description("~")]
+        Grave = 0xC0,
+        [Description("[")]
+        LeftBracket = 0xDB,
+        [Description("\\")]
+        Backslash = 0xDC,
+        [Description("]")]
+        RightBracket = 0xDD,
+        [Description("\"")]
+        Quote = 0xDE,
         // Character Control Keys
         [Description("LeftShift")]
         LeftShift = 0xA0,
@@ -126,9 +146,9 @@ namespace TabletDriverLib.Interop.Input
         LeftControl = 0xA2,
         [Description("RightControl")]
         RightControl = 0xA3,
-        [Description("LeftMenu")]
+        [Description("LeftAlt")]
         LeftMenu = 0xA4,
-        [Description("RightMenu")]
+        [Description("RightAlt")]
         RightMenu = 0xA5,
         [Description("LeftSuper")]
         LeftSuper = 0x5B, // Windows Key, Tux Key, Apple Key

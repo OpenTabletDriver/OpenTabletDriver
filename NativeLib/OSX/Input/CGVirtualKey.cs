@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace NativeLib.OSX.Input
 {
@@ -11,7 +11,6 @@ namespace NativeLib.OSX.Input
         [Description("Clear")]
         kVK_ANSI_KeypadClear = 0x47,
         [Description("Return")]
-        // [Description("Menu")]
         // [Description("PauseBreak")]
         kVK_Return = 0x24,
         [Description("CapsLock")]
@@ -110,6 +109,28 @@ namespace NativeLib.OSX.Input
         kVK_ANSI_Y = 0x10,
         [Description("Z")]
         kVK_ANSI_Z = 0x06,
+        [Description(";")]
+        kVK_ANSI_Semicolon = 0x29,
+        [Description("=")]
+        kVK_ANSI_Equal = 0x18,
+        [Description(",")]
+        kVK_ANSI_Comma = 0x2B,
+        [Description("-")]
+        kVK_ANSI_Minus = 0x1B,
+        [Description(".")]
+        kVK_ANSI_Period = 0x2F,
+        [Description("/")]
+        kVK_ANSI_Slash = 0x2C,
+        [Description("~")]
+        kVK_ANSI_Grave = 0x32,
+        [Description("[")]
+        kVK_ANSI_LeftBracket = 0x21,
+        [Description("\\")]
+        kVK_ANSI_Backslash = 0x2A,
+        [Description("]")]
+        kVK_ANSI_RightBracket = 0x1E,
+        [Description("\"")]
+        kVK_ANSI_Quote = 0x27,
         [Description("LeftShift")]
         kVK_Shift = 0x38,
         [Description("RightShift")]
@@ -117,11 +138,13 @@ namespace NativeLib.OSX.Input
         [Description("LeftControl")]
         kVK_Control = 0x3B,
         [Description("RightControl")]
-        // [Description("LeftMenu")]
-        // [Description("RightMenu")]
+        kVK_RightControl = 0x3E,
+        [Description("LeftAlt")]
+        kVK_Option = 0x3A,
+        [Description("RightAlt")]
+        kVK_RightOption = 0x3D,
         // [Description("LeftSuper")]
         // [Description("RightSuper")]
-        kVK_RightControl = 0x3E,
         [Description("VolumeMute")]
         kVK_Mute = 0x4A,
         [Description("VolumeDown")]
@@ -207,23 +230,10 @@ namespace NativeLib.OSX.Input
         // [Description("F23")]
         // [Description("F24")]
         // The rest are left over, missing an equal representative.
-        kVK_ANSI_Equal = 0x18,
-        kVK_ANSI_Minus = 0x1B,
-        kVK_ANSI_RightBracket = 0x1E,
-        kVK_ANSI_Quote = 0x27,
-        kVK_ANSI_LeftBracket = 0x21,
-        kVK_ANSI_Semicolon = 0x29,
-        kVK_ANSI_Backslash = 0x2A,
-        kVK_ANSI_Comma = 0x2B,
-        kVK_ANSI_Slash = 0x2C,
-        kVK_ANSI_Period = 0x2F,
-        kVK_ANSI_Grave = 0x32,
         kVK_ANSI_KeypadEnter = 0x4C,
         kVK_ANSI_KeypadEquals = 0x51,
         kVK_Command = 0x37,
         kVK_Function = 0x3F,
         kVK_Help = 0x72,
-        kVK_Option = 0x3A,
-        kVK_RightOption = 0x3D,
-    };
+    }
 }

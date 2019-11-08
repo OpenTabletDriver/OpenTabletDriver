@@ -63,7 +63,6 @@ namespace NativeLib.Linux.Input
         XK_8 = 0x38,
         [Description("9")]
         XK_9 = 0x39,
-        // Standard letters are equal
         [Description("A")]
         XK_A = 0x41,
         [Description("B")]
@@ -116,6 +115,28 @@ namespace NativeLib.Linux.Input
         XK_Y = 0x59,
         [Description("Z")]
         XK_Z = 0x5A,
+        [Description(";")]
+        XK_OEM_102 = 0xE2,
+        [Description("=")]
+        XK_OEM_PLUS = 0xBB,
+        [Description(",")]
+        XK_OEM_COMMA = 0xBC,
+        [Description("-")]
+        XK_OEM_MINUS = 0xBD,
+        [Description(".")]
+        XK_OEM_PERIOD = 0xBE,
+        [Description("/")]
+        XK_OEM_2 = 0xBF,
+        [Description("~")]
+        XK_OEM_3 = 0xC0,
+        [Description("[")]
+        XK_OEM_4 = 0xDB,
+        [Description("\\")]
+        XK_OEM_5 = 0xDC,
+        [Description("]")]
+        XK_OEM_6 = 0xDD,
+        [Description("\"")]
+        XK_OEM_7 = 0xDE,
         // Character Control Keys
         [Description("LeftShift")]
         XK_Shift_Left = 0xffe1,
@@ -125,14 +146,28 @@ namespace NativeLib.Linux.Input
         XK_Control_Left = 0xffe3,
         [Description("RightControl")]
         XK_Control_Right = 0xffe4,
-        [Description("LeftMenu")]
+        [Description("LeftAlt")]
         XK_Meta_L = 0xffe7,
-        [Description("RightMenu")]
+        [Description("RightAlt")]
         XK_Meta_R = 0xffe8,
         [Description("LeftSuper")]
         XK_Super_L = 0xffeb, // Tux Key
         [Description("RightSuper")]
         XK_Super_R = 0xffec, // ^
+        [Description("VolumeMute")]
+        XK_Volume_Mute = 0x00af,
+        [Description("VolumeDown")]
+        XK_Volume_Down = 0x00ae,
+        [Description("VolumeUp")]
+        XK_Volume_Up = 0x00ad,
+        [Description("NextTrack")]
+        XK_Media_Next_Track = 0x00b0,
+        [Description("PreviousTrack")]
+        XK_Media_Prev_Track = 0x00b1,
+        [Description("Stop")]
+        XK_Media_Stop = 0x00b2,
+        [Description("PlayPause")]
+        XK_Media_Play_Pause = 0x00b3,
         // Numpad
         [Description("Numpad0")]
         XK_KP_0 = 0xffb0,
