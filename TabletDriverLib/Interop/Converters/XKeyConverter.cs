@@ -10,7 +10,7 @@ namespace TabletDriverLib.Interop.Converters
         public Key Convert(XKeySymDef obj)
         {
             var name = obj.GetDescription().Description;
-            return ConversionTools.GetEnumValues<Key>().First(
+            return ConversionTools.GetEnumValues<Key>().FirstOrDefault(
                 key => key.GetDescription().Description == name
             );
         }
@@ -18,7 +18,7 @@ namespace TabletDriverLib.Interop.Converters
         public XKeySymDef Convert(Key obj)
         {
             var name = Enum.GetName(typeof(Key), obj);
-            return ConversionTools.GetEnumValues<XKeySymDef>().First(
+            return ConversionTools.GetEnumValues<XKeySymDef>().FirstOrDefault(
                 key => key.GetDescription().Description == name
             );
         }

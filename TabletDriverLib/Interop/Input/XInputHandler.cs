@@ -75,9 +75,12 @@ namespace TabletDriverLib.Interop.Input
         private void UpdateKeyState(Key key, bool isPressed)
         {
             var xkey = KeyConverter.Convert(key);
-            InputDictionary.UpdateState(key, isPressed);
-            XTestFakeKeyEvent(Display, xkey, isPressed, 0);
-            XFlush(Display);
+            if (xkey != default)
+            {
+                InputDictionary.UpdateState(key, isPressed);
+                XTestFakeKeyEvent(Display, xkey, isPressed, 0);
+                XFlush(Display);
+            }
         }
 
         public void KeyDown(Key key)
