@@ -29,11 +29,11 @@ namespace TabletDriverLib.Component
         [XmlElement("ProductID")]
         public int ProductID { set; get; } = 0;
 
-        [XmlElement("InputReportLength")]
         /// <summary>
         /// The device's report length.
         /// </summary>
         /// <value></value>
+        [XmlElement("InputReportLength")]
         public uint InputReportLength { set; get; } = 0;
 
         /// <summary>
