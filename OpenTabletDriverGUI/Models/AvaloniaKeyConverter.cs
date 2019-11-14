@@ -7,13 +7,12 @@ namespace OpenTabletDriverGUI.Models
 {
     public class AvaloniaKeyConverter : IConverter<AvaloniaKey, NativeKey>
     {
-        private const int Alphabet = 21;
-        private const int Number = 14;
-        private const int NumpadNumber = 22;
+        private const int AlphabetOffset = 21;
+        private const int NumberOffset = 14;
+        private const int NumpadNumberOffset = 22;
 
         public AvaloniaKey Convert(NativeKey obj)
         {
-            AvaloniaKey key;
             switch (obj)
             {
                 case NativeKey.A:
@@ -42,8 +41,7 @@ namespace OpenTabletDriverGUI.Models
                 case NativeKey.X:
                 case NativeKey.Y:
                 case NativeKey.Z:
-                    key = (AvaloniaKey)obj - Alphabet;
-                    break;
+                    return ConvertAlphabet(obj);
                 case NativeKey.Zero:
                 case NativeKey.One:
                 case NativeKey.Two:
@@ -54,8 +52,7 @@ namespace OpenTabletDriverGUI.Models
                 case NativeKey.Seven:
                 case NativeKey.Eight:
                 case NativeKey.Nine:
-                    key = (AvaloniaKey)obj - Number;
-                    break;
+                    return ConvertNumber(obj);
                 case NativeKey.Numpad0:
                 case NativeKey.Numpad1:
                 case NativeKey.Numpad2:
@@ -66,92 +63,63 @@ namespace OpenTabletDriverGUI.Models
                 case NativeKey.Numpad7:
                 case NativeKey.Numpad8:
                 case NativeKey.Numpad9:
-                    key = (AvaloniaKey)obj - NumpadNumber;
-                    break;
                 case NativeKey.Backspace:
-                    key = AvaloniaKey.Back;
-                    break;
+                    return AvaloniaKey.Back;
                 case NativeKey.PauseBreak:
-                    key = AvaloniaKey.Pause;
-                    break;
+                    return AvaloniaKey.Pause;
                 case NativeKey.LeftControl:
-                    key = AvaloniaKey.LeftCtrl;
-                    break;
+                    return AvaloniaKey.LeftCtrl;
                 case NativeKey.RightControl:
-                    key = AvaloniaKey.RightCtrl;
-                    break;
+                    return AvaloniaKey.RightCtrl;
                 case NativeKey.LeftMenu:
-                    key = AvaloniaKey.LeftAlt;
-                    break;
+                    return AvaloniaKey.LeftAlt;
                 case NativeKey.RightMenu:
-                    key = AvaloniaKey.RightAlt;
-                    break;
+                    return AvaloniaKey.RightAlt;
                 case NativeKey.LeftSuper:
-                    key = AvaloniaKey.LWin;
-                    break;
+                    return AvaloniaKey.LWin;
                 case NativeKey.RightSuper:
-                    key = AvaloniaKey.RWin;
-                    break;
+                    return AvaloniaKey.RWin;
                 case NativeKey.NextTrack:
-                    key = AvaloniaKey.MediaNextTrack;
-                    break;
+                    return AvaloniaKey.MediaNextTrack;
                 case NativeKey.PreviousTrack:
-                    key = AvaloniaKey.MediaPreviousTrack;
-                    break;
+                    return AvaloniaKey.MediaPreviousTrack;
                 case NativeKey.Stop:
-                    key = AvaloniaKey.MediaStop;
-                    break;
+                    return AvaloniaKey.MediaStop;
                 case NativeKey.PlayPause:
-                    key = AvaloniaKey.MediaPlayPause;
-                    break;
+                    return AvaloniaKey.MediaPlayPause;
                 case NativeKey.Semicolon:
-                    key = AvaloniaKey.OemSemicolon;
-                    break;
+                    return AvaloniaKey.OemSemicolon;
                 case NativeKey.PlusEqual:
-                    key = AvaloniaKey.OemPlus;
-                    break;
+                    return AvaloniaKey.OemPlus;
                 case NativeKey.Comma:
-                    key = AvaloniaKey.OemComma;
-                    break;
+                    return AvaloniaKey.OemComma;
                 case NativeKey.Minus:
-                    key = AvaloniaKey.OemMinus;
-                    break;
+                    return AvaloniaKey.OemMinus;
                 case NativeKey.Period:
-                    key = AvaloniaKey.OemPeriod;
-                    break;
+                    return AvaloniaKey.OemPeriod;
                 case NativeKey.ForwardSlash:
-                    key = AvaloniaKey.OemQuestion;
-                    break;
+                    return AvaloniaKey.OemQuestion;
                 case NativeKey.Grave:
-                    key = AvaloniaKey.OemTilde;
-                    break;
+                    return AvaloniaKey.OemTilde;
                 case NativeKey.LeftBracket:
-                    key = AvaloniaKey.OemOpenBrackets;
-                    break;
+                    return AvaloniaKey.OemOpenBrackets;
                 case NativeKey.Backslash:
-                    key = AvaloniaKey.OemBackslash;
-                    break;
+                    return AvaloniaKey.OemBackslash;
                 case NativeKey.RightBracket:
-                    key = AvaloniaKey.OemCloseBrackets;
-                    break;
+                    return AvaloniaKey.OemCloseBrackets;
                 case NativeKey.Quote:
-                    key = AvaloniaKey.OemQuotes;
-                    break;
+                    return AvaloniaKey.OemQuotes;
                 default:
-                    key = Enum.Parse<AvaloniaKey>(obj.GetType().Name);
-                    break;
+                    return Enum.Parse<AvaloniaKey>(obj.GetType().Name);
             }
-            return key;
         }
 
         public NativeKey Convert(AvaloniaKey obj)
         {
-            NativeKey key;
             switch (obj)
             {
                 case AvaloniaKey.None:
-                    key = 0;
-                    break;
+                    return 0;
                 case AvaloniaKey.A:
                 case AvaloniaKey.B:
                 case AvaloniaKey.C:
@@ -178,8 +146,7 @@ namespace OpenTabletDriverGUI.Models
                 case AvaloniaKey.X:
                 case AvaloniaKey.Y:
                 case AvaloniaKey.Z:
-                    key = (NativeKey)obj + Alphabet;
-                    break;
+                    return ConvertAlphabet(obj);
                 case AvaloniaKey.D0:
                 case AvaloniaKey.D1:
                 case AvaloniaKey.D2:
@@ -190,8 +157,7 @@ namespace OpenTabletDriverGUI.Models
                 case AvaloniaKey.D7:
                 case AvaloniaKey.D8:
                 case AvaloniaKey.D9:
-                    key = (NativeKey)obj + Number;
-                    break;
+                    return ConvertNumber(obj);
                 case AvaloniaKey.NumPad0:
                 case AvaloniaKey.NumPad1:
                 case AvaloniaKey.NumPad2:
@@ -202,78 +168,54 @@ namespace OpenTabletDriverGUI.Models
                 case AvaloniaKey.NumPad7:
                 case AvaloniaKey.NumPad8:
                 case AvaloniaKey.NumPad9:
-                    key = (NativeKey)obj + NumpadNumber;
-                    break;
+                    return ConvertNumpadNumber(obj);
                 case AvaloniaKey.Back:
-                    key = NativeKey.Backspace;
-                    break;
+                    return NativeKey.Backspace;
                 case AvaloniaKey.Pause:
-                    key = NativeKey.PauseBreak;
-                    break;
+                    return NativeKey.PauseBreak;
                 case AvaloniaKey.LeftCtrl:
-                    key = NativeKey.LeftControl;
-                    break;
+                    return NativeKey.LeftControl;
                 case AvaloniaKey.RightCtrl:
-                    key = NativeKey.RightControl;
-                    break;
+                    return NativeKey.RightControl;
                 case AvaloniaKey.LeftAlt:
-                    key = NativeKey.LeftMenu;
-                    break;
+                    return NativeKey.LeftMenu;
                 case AvaloniaKey.RightAlt:
-                    key = NativeKey.RightMenu;
-                    break;
+                    return NativeKey.RightMenu;
                 case AvaloniaKey.LWin:
-                    key = NativeKey.LeftSuper;
-                    break;
+                    return NativeKey.LeftSuper;
                 case AvaloniaKey.RWin:
-                    key = NativeKey.RightSuper;
-                    break;
+                    return NativeKey.RightSuper;
                 case AvaloniaKey.MediaNextTrack:
-                    key = NativeKey.NextTrack;
-                    break;
+                    return NativeKey.NextTrack;
                 case AvaloniaKey.MediaPreviousTrack:
-                    key = NativeKey.PreviousTrack;
-                    break;
+                    return NativeKey.PreviousTrack;
                 case AvaloniaKey.MediaStop:
-                    key = NativeKey.Stop;
-                    break;
+                    return NativeKey.Stop;
                 case AvaloniaKey.MediaPlayPause:
-                    key = NativeKey.PlayPause;
-                    break;
+                    return NativeKey.PlayPause;
                 case AvaloniaKey.OemSemicolon:
-                    key = NativeKey.Semicolon;
-                    break;
+                    return NativeKey.Semicolon;
                 case AvaloniaKey.OemPlus:
-                    key = NativeKey.PlusEqual;
-                    break;
+                    return NativeKey.PlusEqual;
                 case AvaloniaKey.OemComma:
-                    key = NativeKey.Comma;
-                    break;
+                    return NativeKey.Comma;
                 case AvaloniaKey.OemMinus:
-                    key = NativeKey.Minus;
-                    break;
+                    return NativeKey.Minus;
                 case AvaloniaKey.OemPeriod:
-                    key = NativeKey.Period;
-                    break;
+                    return NativeKey.Period;
                 case AvaloniaKey.OemQuestion:
-                    key = NativeKey.ForwardSlash;
-                    break;
+                    return NativeKey.ForwardSlash;
                 case AvaloniaKey.OemTilde:
-                    key = NativeKey.Grave;
-                    break;
+                    return NativeKey.Grave;
                 case AvaloniaKey.OemOpenBrackets:
-                    key = NativeKey.LeftBracket;
-                    break;
+                    return NativeKey.LeftBracket;
                 case AvaloniaKey.OemPipe: // TODO: Verify
                 case AvaloniaKey.OemBackslash:
-                    key = NativeKey.Backslash;
-                    break;
+                    return NativeKey.Backslash;
                 case AvaloniaKey.OemCloseBrackets:
-                    key = NativeKey.RightBracket;
-                    break;
+                    return NativeKey.RightBracket;
                 case AvaloniaKey.OemQuotes:
-                    key = NativeKey.Quote;
-                    break;
+                    return NativeKey.Quote;
                 // Disabled keys
                 case AvaloniaKey.Help:
                 case AvaloniaKey.PrintScreen:
@@ -316,10 +258,38 @@ namespace OpenTabletDriverGUI.Models
                     throw new InvalidCastException();
                 default:
                     // Names are the same, should parse without issue.
-                    key = Enum.Parse<NativeKey>(obj.GetType().Name);
-                    break;
+                    return Enum.Parse<NativeKey>(obj.GetType().Name);
             }
-            return key;
+        }
+
+        private AvaloniaKey ConvertAlphabet(NativeKey key)
+        {
+            return (AvaloniaKey)key - AlphabetOffset;
+        }
+
+        private NativeKey ConvertAlphabet(AvaloniaKey key)
+        {
+            return (NativeKey)key + AlphabetOffset;
+        }
+
+        private AvaloniaKey ConvertNumber(NativeKey key)
+        {
+            return (AvaloniaKey)key - NumberOffset;
+        }
+
+        private NativeKey ConvertNumber(AvaloniaKey key)
+        {
+            return (NativeKey)key + NumberOffset;
+        }
+
+        private AvaloniaKey ConvertNumpadNumber(NativeKey key)
+        {
+            return (AvaloniaKey)key - NumpadNumberOffset;
+        }
+
+        private NativeKey ConvertNumpadNumber(AvaloniaKey key)
+        {
+            return (NativeKey)key + NumpadNumberOffset;
         }
     }
 }
