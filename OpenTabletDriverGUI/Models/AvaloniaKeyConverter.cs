@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using TabletDriverLib.Interop.Converters;
 using AvaloniaKey = Avalonia.Input.Key;
 using NativeKey = TabletDriverLib.Interop.Input.Key;
@@ -13,57 +14,16 @@ namespace OpenTabletDriverGUI.Models
 
         public AvaloniaKey Convert(NativeKey obj)
         {
+            var name = Enum.GetName(typeof(NativeKey), obj);
+            if (name.Length == 1 && Regex.IsMatch(name, @"[A-Z]"))
+                return ConvertAlphabet(obj);
+            else if (Regex.IsMatch(name, @"D[0-9]"))
+                return ConvertNumber(obj);
+            else if (Regex.IsMatch(name, @"Num[Pp]ad\d"))
+                return ConvertNumpadNumber(obj);
+            
             switch (obj)
             {
-                case NativeKey.A:
-                case NativeKey.B:
-                case NativeKey.C:
-                case NativeKey.D:
-                case NativeKey.E:
-                case NativeKey.F:
-                case NativeKey.G:
-                case NativeKey.H:
-                case NativeKey.I:
-                case NativeKey.J:
-                case NativeKey.K:
-                case NativeKey.L:
-                case NativeKey.M:
-                case NativeKey.N:
-                case NativeKey.O:
-                case NativeKey.P:
-                case NativeKey.Q:
-                case NativeKey.R:
-                case NativeKey.S:
-                case NativeKey.T:
-                case NativeKey.U:
-                case NativeKey.V:
-                case NativeKey.W:
-                case NativeKey.X:
-                case NativeKey.Y:
-                case NativeKey.Z:
-                    return ConvertAlphabet(obj);
-                case NativeKey.Zero:
-                case NativeKey.One:
-                case NativeKey.Two:
-                case NativeKey.Three:
-                case NativeKey.Four:
-                case NativeKey.Five:
-                case NativeKey.Six:
-                case NativeKey.Seven:
-                case NativeKey.Eight:
-                case NativeKey.Nine:
-                    return ConvertNumber(obj);
-                case NativeKey.Numpad0:
-                case NativeKey.Numpad1:
-                case NativeKey.Numpad2:
-                case NativeKey.Numpad3:
-                case NativeKey.Numpad4:
-                case NativeKey.Numpad5:
-                case NativeKey.Numpad6:
-                case NativeKey.Numpad7:
-                case NativeKey.Numpad8:
-                case NativeKey.Numpad9:
-                    return ConvertNumpadNumber(obj);
                 case NativeKey.Backspace:
                     return AvaloniaKey.Back;
                 case NativeKey.PauseBreak:
@@ -117,59 +77,18 @@ namespace OpenTabletDriverGUI.Models
 
         public NativeKey Convert(AvaloniaKey obj)
         {
+            var name = Enum.GetName(typeof(NativeKey), obj);
+            if (name.Length == 1 && Regex.IsMatch(name, @"[A-Z]{0-1}"))
+                return ConvertAlphabet(obj);
+            else if (Regex.IsMatch(name, @"D[0-9]"))
+                return ConvertNumber(obj);
+            else if (Regex.IsMatch(name, @"Num[Pp]ad\d"))
+                return ConvertNumpadNumber(obj);
+
             switch (obj)
             {
                 case AvaloniaKey.None:
                     return 0;
-                case AvaloniaKey.A:
-                case AvaloniaKey.B:
-                case AvaloniaKey.C:
-                case AvaloniaKey.D:
-                case AvaloniaKey.E:
-                case AvaloniaKey.F:
-                case AvaloniaKey.G:
-                case AvaloniaKey.H:
-                case AvaloniaKey.I:
-                case AvaloniaKey.J:
-                case AvaloniaKey.K:
-                case AvaloniaKey.L:
-                case AvaloniaKey.M:
-                case AvaloniaKey.N:
-                case AvaloniaKey.O:
-                case AvaloniaKey.P:
-                case AvaloniaKey.Q:
-                case AvaloniaKey.R:
-                case AvaloniaKey.S:
-                case AvaloniaKey.T:
-                case AvaloniaKey.U:
-                case AvaloniaKey.V:
-                case AvaloniaKey.W:
-                case AvaloniaKey.X:
-                case AvaloniaKey.Y:
-                case AvaloniaKey.Z:
-                    return ConvertAlphabet(obj);
-                case AvaloniaKey.D0:
-                case AvaloniaKey.D1:
-                case AvaloniaKey.D2:
-                case AvaloniaKey.D3:
-                case AvaloniaKey.D4:
-                case AvaloniaKey.D5:
-                case AvaloniaKey.D6:
-                case AvaloniaKey.D7:
-                case AvaloniaKey.D8:
-                case AvaloniaKey.D9:
-                    return ConvertNumber(obj);
-                case AvaloniaKey.NumPad0:
-                case AvaloniaKey.NumPad1:
-                case AvaloniaKey.NumPad2:
-                case AvaloniaKey.NumPad3:
-                case AvaloniaKey.NumPad4:
-                case AvaloniaKey.NumPad5:
-                case AvaloniaKey.NumPad6:
-                case AvaloniaKey.NumPad7:
-                case AvaloniaKey.NumPad8:
-                case AvaloniaKey.NumPad9:
-                    return ConvertNumpadNumber(obj);
                 case AvaloniaKey.Back:
                     return NativeKey.Backspace;
                 case AvaloniaKey.Pause:
