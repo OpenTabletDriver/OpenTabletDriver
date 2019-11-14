@@ -12,6 +12,7 @@ using OpenTabletDriverGUI.Views;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Component;
+using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Output;
@@ -150,7 +151,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 Driver.OutputMode.TabletProperties = tablet;
             };
 
-            SetPlatformSpecifics(Environment.OSVersion.Platform);
+            Display = Platform.Display;
 
             Log.Info($"Current directory is '{Environment.CurrentDirectory}'.");
             
@@ -170,27 +171,6 @@ namespace OpenTabletDriverGUI.ViewModels
                 OpenConfigurations(configurationDir);
             else
                 Tablets = new ObservableCollection<TabletProperties>();
-        }
-
-        private void SetPlatformSpecifics(PlatformID platform)
-        {
-            switch (platform)
-            {
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.Win32NT:
-                case PlatformID.WinCE:
-                    Display = new WindowsDisplay();
-                    return;
-                case PlatformID.Unix:
-                    Display = new XDisplay();
-                    return;
-                case PlatformID.MacOSX:
-                    Display = new MacOSDisplay();
-                    return;
-                default:
-                    return;
-            }
         }
 
         public void UseDefaultSettings()

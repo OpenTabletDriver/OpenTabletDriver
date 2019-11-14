@@ -48,10 +48,8 @@ namespace TabletDriverLib
         public bool OpenTablet(IEnumerable<TabletProperties> tablets)
         {
             foreach (var tablet in tablets)
-            {
                 if (OpenTablet(tablet))
                     return true;
-            }
 
             if (Tablet == null)
                 Log.Fail("No configured tablets found.");

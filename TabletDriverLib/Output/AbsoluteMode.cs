@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using TabletDriverLib.Component;
+using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 
 namespace TabletDriverLib.Output
@@ -11,24 +12,7 @@ namespace TabletDriverLib.Output
     {
         public AbsoluteMode(TabletProperties tabletProperties) : base(tabletProperties)
         {
-            switch (Environment.OSVersion.Platform)
-            {
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.Win32NT:
-                case PlatformID.WinCE:
-                    CursorHandler = new WindowsCursorHandler();
-                    return;
-                case PlatformID.Unix:
-                    CursorHandler = new XCursorHandler();
-                    return;
-                case PlatformID.MacOSX:
-                    CursorHandler = new MacOSCursorHandler();
-                    return;
-                default:
-                    Log.Fail($"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).");
-                    return;
-            }
+            CursorHandler = Platform.CursorHandler;
         }
 
         private ICursorHandler CursorHandler { set; get; }
