@@ -17,7 +17,6 @@ namespace TabletDriverLib
        
         public HidDevice Tablet { private set; get; }
         public TabletProperties TabletProperties { set; get; }
-        private IInputHandler InputHandler;
         public OutputMode OutputMode { set; get; }
         public TabletReader TabletReader { private set; get; }
 

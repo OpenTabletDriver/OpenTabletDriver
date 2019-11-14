@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using TabletDriverLib.Component;
 using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.Cursor;
+using TabletDriverLib.Interop.Input;
 
 namespace TabletDriverLib.Output
 {
     public class AbsoluteMode : OutputMode
     {
-        private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
+        private IInputHandler InputHandler { set; get; } = Platform.InputHandler;
         public Area DisplayArea { set; get; }
         public Area TabletArea { set; get; }
         public bool Clipping { set; get; }
@@ -46,7 +46,7 @@ namespace TabletDriverLib.Output
                     pos.Y = DisplayArea.Position.Y;
             }
 
-            CursorHandler.SetCursorPosition(pos);
+            InputHandler.SetCursorPosition(pos);
             HandleButton(report);
         }
 
@@ -55,10 +55,10 @@ namespace TabletDriverLib.Output
             if (BindingsEnabled)
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                if (pressurePercent >= TipActivationPressure && !CursorHandler.GetMouseButtonState(MouseButtonBindings[0]))
-                    CursorHandler.MouseDown(MouseButtonBindings[0]);
-                else if (pressurePercent < TipActivationPressure && CursorHandler.GetMouseButtonState(MouseButtonBindings[0]))
-                    CursorHandler.MouseUp(MouseButtonBindings[0]);
+                if (pressurePercent >= TipActivationPressure && !InputHandler.GetMouseButtonState(MouseButtonBindings[0]))
+                    InputHandler.MouseDown(MouseButtonBindings[0]);
+                else if (pressurePercent < TipActivationPressure && InputHandler.GetMouseButtonState(MouseButtonBindings[0]))
+                    InputHandler.MouseUp(MouseButtonBindings[0]);
             }
         }
     }

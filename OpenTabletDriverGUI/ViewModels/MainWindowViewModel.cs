@@ -13,8 +13,8 @@ using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Component;
 using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
+using TabletDriverLib.Interop.Input;
 using TabletDriverLib.Output;
 
 namespace OpenTabletDriverGUI.ViewModels

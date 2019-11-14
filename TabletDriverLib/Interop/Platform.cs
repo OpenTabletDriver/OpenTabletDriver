@@ -1,12 +1,12 @@
 using System;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
+using TabletDriverLib.Interop.Input;
 
 namespace TabletDriverLib.Interop
 {
     public static class Platform
     {
-        public static ICursorHandler CursorHandler
+        public static IInputHandler InputHandler
         {
             get
             {
@@ -16,13 +16,13 @@ namespace TabletDriverLib.Interop
                     case PlatformID.Win32Windows:
                     case PlatformID.Win32NT:
                     case PlatformID.WinCE:
-                        return new WindowsCursorHandler();
+                        return new WindowsInputHandler();
                     case PlatformID.Unix:
-                        return new XCursorHandler();
+                        return new XInputHandler();
                     case PlatformID.MacOSX:
-                        return new MacOSCursorHandler();
+                        return new MacOSInputHandler();
                     default:
-                        Log.Fail($"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).");
+                        Log.Fail($"Failed to create an input handler for this platform ({Environment.OSVersion.Platform}).");
                         return null;
                 }
             }
