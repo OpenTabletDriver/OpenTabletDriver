@@ -42,7 +42,7 @@ jobs:
       - name: Windows Publish
         run: dotnet publish --configuration Release --runtime win-x64
       - name: Copy configurations
-        run: xcopy ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish/Configurations
+        run: \& xcopy.exe /C /Y ./TabletDriverLib/Configurations/* ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish/Configurations/*
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
