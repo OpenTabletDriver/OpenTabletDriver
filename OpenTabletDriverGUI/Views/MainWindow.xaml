@@ -53,6 +53,14 @@
                 <MenuItem Header="Open configuration manager..." Command="{Binding OpenConfigurationManager}"/>
                 <MenuItem Header="Load configuration directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
             </MenuItem>
+            <MenuItem Header="Output Mode">
+                <MenuItem.Styles>
+                    <Style Selector="MenuItem">
+                        <Setter Property="Command" Value="{Binding SetMode}"/>
+                    </Style>
+                </MenuItem.Styles>
+                <MenuItem Header="Absolute" CommandParameter="Absolute"/>
+            </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
             <TabItem Header="Area Settings">

@@ -10,12 +10,7 @@ namespace TabletDriverLib.Output
 {
     public class AbsoluteMode : OutputMode
     {
-        public AbsoluteMode(TabletProperties tabletProperties) : base(tabletProperties)
-        {
-            CursorHandler = Platform.CursorHandler;
-        }
-
-        private ICursorHandler CursorHandler { set; get; }
+        private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         public Area DisplayArea { set; get; }
         public Area TabletArea { set; get; }
         public bool Clipping { set; get; }

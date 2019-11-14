@@ -109,7 +109,11 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void UpdateSettings()
         {
-            Driver.OutputMode = new AbsoluteMode(Driver.TabletProperties);
+            Log.Info($"Using output mode '{Settings.OutputMode}'");
+            if (Driver.OutputMode is OutputMode outputMode)
+            {
+                outputMode.TabletProperties = Driver.TabletProperties;
+            }
             if (Driver.OutputMode is AbsoluteMode absolute)
             {
                 absolute.DisplayArea = new Area
@@ -166,6 +170,8 @@ namespace OpenTabletDriverGUI.ViewModels
                 UseDefaultSettings();
             }
             
+            SetMode(Settings.OutputMode);
+
             var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);
@@ -285,6 +291,20 @@ namespace OpenTabletDriverGUI.ViewModels
             Settings.Theme = name;
             Log.Info($"Using theme '{name}'.");
             (App.Current as App).Restart(this);
+        }
+
+        private void SetMode(string name)
+        {
+            Settings.OutputMode = name;
+            switch (Settings.OutputMode)
+            {
+                case "Absolute":
+                    Driver.OutputMode = new AbsoluteMode();
+                    if (Driver.TabletProperties != null)
+                        Driver.TabletProperties = Driver.TabletProperties;
+                    break;
+            }
+            UpdateSettings();
         }
     }
 }
