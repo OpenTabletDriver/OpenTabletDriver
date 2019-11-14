@@ -1,4 +1,4 @@
-[![CodeFactor](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/badge/master)](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/overview/master)
+[![Actions Status](https://github.com/InfinityGhost/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/InfinityGhost/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/badge/master)](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/overview/master)
 
 # OpenTabletDriver
 OpenTabletDriver is a driverless open source tablet configurator. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatability possible in a easily configurable graphical user interface.

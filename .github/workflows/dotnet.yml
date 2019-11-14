@@ -3,7 +3,7 @@ name: .NET Core
 on: [push]
 
 jobs:
-  linuxpublish:
+  unixpublish:
 
     runs-on: ubuntu-latest
 
@@ -15,6 +15,20 @@ jobs:
         dotnet-version: 3.0.100
     - name: Linux Publish
       run: dotnet publish --configuration Release --runtime linux-x64
+    - name: Mac OS X Publish
+      run: dotnet publish --configuration Release --runtime osx-x64
+    - name: Copy configurations
+      run: cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish && cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/osx-x64/publish
+    - name: Upload Linux artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: OpenTabletDriver linux-x64
+        path: OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish
+    - name: Upload Mac OS X artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: OpenTabletDriver osx-x64
+        path: OpenTabletDriverGUI/bin/Release/netcoreapp3.0/osx-x64/publish
 
   windowspublish:
     runs-on: windows-latest
@@ -27,15 +41,10 @@ jobs:
           dotnet-version: 3.0.100
       - name: Windows Publish
         run: dotnet publish --configuration Release --runtime win-x64
-
-  osxpublish:
-    runs-on: macOS-latest
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+      - name: Copy configurations
+        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/win-x64/publish/Configurations/" -Recurse
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@master
         with:
-          dotnet-version: 3.0.100
-      - name: Mac OS X Publish
-        run: dotnet publish --configuration Release --runtime osx-x64
+          name: OpenTabletDriver win-x64
+          path: OpenTabletDriverGUI/bin/Release/netcoreapp3.0/win-x64/publish
