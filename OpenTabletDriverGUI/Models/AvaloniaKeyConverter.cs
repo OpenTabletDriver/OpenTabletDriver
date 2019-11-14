@@ -78,7 +78,7 @@ namespace OpenTabletDriverGUI.Models
         public NativeKey Convert(AvaloniaKey obj)
         {
             var name = Enum.GetName(typeof(NativeKey), obj);
-            if (name.Length == 1 && Regex.IsMatch(name, @"[A-Z]{0-1}"))
+            if (name.Length == 1 && Regex.IsMatch(name, @"[A-Z]"))
                 return ConvertAlphabet(obj);
             else if (Regex.IsMatch(name, @"D[0-9]"))
                 return ConvertNumber(obj);
