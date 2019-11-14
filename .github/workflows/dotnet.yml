@@ -17,6 +17,9 @@ jobs:
       run: dotnet publish --configuration Release --runtime linux-x64
     - name: Mac OS X Publish
       run: dotnet publish --configuration Release --runtime osx-x64
+    - name: Copy configurations
+      run: cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish
+      run: cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/osx-x64/publish
     - name: Upload Linux artifacts
       uses: actions/upload-artifact@master
       with:
@@ -39,6 +42,8 @@ jobs:
           dotnet-version: 3.0.100
       - name: Windows Publish
         run: dotnet publish --configuration Release --runtime win-x64
+      - name: Copy configurations
+        run: xcopy ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish/Configurations
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
