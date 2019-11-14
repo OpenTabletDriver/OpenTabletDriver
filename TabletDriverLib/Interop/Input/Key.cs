@@ -44,25 +44,25 @@ namespace TabletDriverLib.Interop.Input
         Delete = 0x2E,
         // Letter and Number Keys
         [Description("0")]
-        Zero = 0x30,
+        D0 = 0x30,
         [Description("1")]
-        One = 0x31,
+        D1 = 0x31,
         [Description("2")]
-        Two = 0x32,
+        D2 = 0x32,
         [Description("3")]
-        Three = 0x33,
+        D3 = 0x33,
         [Description("4")]
-        Four = 0x34,
+        D4 = 0x34,
         [Description("5")]
-        Five = 0x35,
+        D5 = 0x35,
         [Description("6")]
-        Six = 0x36,
+        D6 = 0x36,
         [Description("7")]
-        Seven = 0x37,
+        D7 = 0x37,
         [Description("8")]
-        Eight = 0x38,
+        D8 = 0x38,
         [Description("9")]
-        Nine = 0x39,
+        D9 = 0x39,
         [Description("A")]
         A = 0x41,
         [Description("B")]
