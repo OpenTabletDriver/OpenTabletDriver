@@ -12,7 +12,9 @@ using OpenTabletDriverGUI.Views;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Component;
+using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
+using TabletDriverLib.Output;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
@@ -106,31 +108,35 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void UpdateSettings()
         {
-            Driver.DisplayArea = new Area
+            Driver.OutputMode = new AbsoluteMode(Driver.TabletProperties);
+            if (Driver.OutputMode is AbsoluteMode absolute)
             {
-                Width = Settings.DisplayWidth,
-                Height = Settings.DisplayHeight,
-                Position = new Point(Settings.DisplayX, Settings.DisplayY),
-                Rotation = Settings.DisplayRotation
-            };
-            Log.Info($"Set display area: " + Driver.DisplayArea);
-            Driver.TabletArea = new Area
-            {
-                Width = Settings.TabletWidth,
-                Height = Settings.TabletHeight,
-                Position = new Point(Settings.TabletX, Settings.TabletY),
-                Rotation = Settings.TabletRotation
-            };
-            Log.Info($"Set tablet area:  " + Driver.TabletArea);
-            Driver.Clipping = Settings.EnableClipping;
-            Log.Info("Clipping is " + (Driver.Clipping ? "enabled" : "disabled"));
-            if (Settings.TipButton != 0)
-            {
-                Driver.BindingsEnabled = true;
-                Driver.TipButton = Settings.TipButton;
-                Driver.TipActivationPressure = Settings.TipActivationPressure;
+                absolute.DisplayArea = new Area
+                {
+                    Width = Settings.DisplayWidth,
+                    Height = Settings.DisplayHeight,
+                    Position = new Point(Settings.DisplayX, Settings.DisplayY),
+                    Rotation = Settings.DisplayRotation
+                };
+                Log.Info($"Set display area: " + absolute.DisplayArea);
+                
+                absolute.TabletArea = new Area
+                {
+                    Width = Settings.TabletWidth,
+                    Height = Settings.TabletHeight,
+                    Position = new Point(Settings.TabletX, Settings.TabletY),
+                    Rotation = Settings.TabletRotation
+                };
+                Log.Info($"Set tablet area:  " + absolute.TabletArea);
+                
+                absolute.Clipping = Settings.EnableClipping;
+                Log.Info("Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
+                
+                absolute.MouseButtonBindings[0] = Settings.TipButton;
+                absolute.TipActivationPressure = Settings.TipActivationPressure;
+                absolute.BindingsEnabled = !absolute.MouseButtonBindings.All(btn => btn.Value == MouseButton.None);
+                Log.Info($"Bindings set: Tip='{absolute.MouseButtonBindings[0]}'@{absolute.TipActivationPressure}%");
             }
-            Log.Info($"Bindings set: Tip='{Driver.TipButton}'@{Driver.TipActivationPressure}%");
             Log.Info("Applied all settings.");
         }
 
@@ -141,6 +147,7 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 FullTabletWidth = tablet.Width;
                 FullTabletHeight = tablet.Height;
+                Driver.OutputMode.TabletProperties = tablet;
             };
 
             SetPlatformSpecifics(Environment.OSVersion.Platform);
