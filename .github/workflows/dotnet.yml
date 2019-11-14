@@ -42,7 +42,7 @@ jobs:
       - name: Windows Publish
         run: dotnet publish --configuration Release --runtime win-x64
       - name: Copy configurations
-        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish/Configurations/" -Recurse
+        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/win-x64/publish/Configurations/" -Recurse
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
