@@ -13,13 +13,14 @@ namespace OpenTabletDriverGUI.Models
         public Settings()
         {
             Theme = "Light";
+            OutputMode = "Absolute";
         }
 
         #region Properties
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
         private bool _clipping;
-        private string _theme;
+        private string _theme, _outputMode;
 
         [XmlElement("DisplayWidth")]
         public float DisplayWidth 
@@ -100,6 +101,13 @@ namespace OpenTabletDriverGUI.Models
                 (App.Current as App).SetTheme(Themes.Parse(value));
             }
             get => _theme;
+        }
+
+        [XmlElement("OutputMode")]
+        public string OutputMode
+        {
+            set => this.RaiseAndSetIfChanged(ref _outputMode, value);
+            get => _outputMode;
         }
 
         [XmlElement("EnableClipping")]

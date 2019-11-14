@@ -12,7 +12,10 @@ using OpenTabletDriverGUI.Views;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Component;
+using TabletDriverLib.Interop;
+using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
+using TabletDriverLib.Output;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
@@ -106,31 +109,39 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void UpdateSettings()
         {
-            Driver.DisplayArea = new Area
+            Log.Info($"Using output mode '{Settings.OutputMode}'");
+            if (Driver.OutputMode is OutputMode outputMode)
             {
-                Width = Settings.DisplayWidth,
-                Height = Settings.DisplayHeight,
-                Position = new Point(Settings.DisplayX, Settings.DisplayY),
-                Rotation = Settings.DisplayRotation
-            };
-            Log.Info($"Set display area: " + Driver.DisplayArea);
-            Driver.TabletArea = new Area
-            {
-                Width = Settings.TabletWidth,
-                Height = Settings.TabletHeight,
-                Position = new Point(Settings.TabletX, Settings.TabletY),
-                Rotation = Settings.TabletRotation
-            };
-            Log.Info($"Set tablet area:  " + Driver.TabletArea);
-            Driver.Clipping = Settings.EnableClipping;
-            Log.Info("Clipping is " + (Driver.Clipping ? "enabled" : "disabled"));
-            if (Settings.TipButton != 0)
-            {
-                Driver.BindingsEnabled = true;
-                Driver.TipButton = Settings.TipButton;
-                Driver.TipActivationPressure = Settings.TipActivationPressure;
+                outputMode.TabletProperties = Driver.TabletProperties;
             }
-            Log.Info($"Bindings set: Tip='{Driver.TipButton}'@{Driver.TipActivationPressure}%");
+            if (Driver.OutputMode is AbsoluteMode absolute)
+            {
+                absolute.DisplayArea = new Area
+                {
+                    Width = Settings.DisplayWidth,
+                    Height = Settings.DisplayHeight,
+                    Position = new Point(Settings.DisplayX, Settings.DisplayY),
+                    Rotation = Settings.DisplayRotation
+                };
+                Log.Info($"Set display area: " + absolute.DisplayArea);
+                
+                absolute.TabletArea = new Area
+                {
+                    Width = Settings.TabletWidth,
+                    Height = Settings.TabletHeight,
+                    Position = new Point(Settings.TabletX, Settings.TabletY),
+                    Rotation = Settings.TabletRotation
+                };
+                Log.Info($"Set tablet area:  " + absolute.TabletArea);
+                
+                absolute.Clipping = Settings.EnableClipping;
+                Log.Info("Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
+                
+                absolute.MouseButtonBindings[0] = Settings.TipButton;
+                absolute.TipActivationPressure = Settings.TipActivationPressure;
+                absolute.BindingsEnabled = !absolute.MouseButtonBindings.All(btn => btn.Value == MouseButton.None);
+                Log.Info($"Bindings set: Tip='{absolute.MouseButtonBindings[0]}'@{absolute.TipActivationPressure}%");
+            }
             Log.Info("Applied all settings.");
         }
 
@@ -141,9 +152,10 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 FullTabletWidth = tablet.Width;
                 FullTabletHeight = tablet.Height;
+                Driver.OutputMode.TabletProperties = tablet;
             };
 
-            SetPlatformSpecifics(Environment.OSVersion.Platform);
+            Display = Platform.Display;
 
             Log.Info($"Current directory is '{Environment.CurrentDirectory}'.");
             
@@ -158,32 +170,13 @@ namespace OpenTabletDriverGUI.ViewModels
                 UseDefaultSettings();
             }
             
+            SetMode(Settings.OutputMode);
+
             var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);
             else
                 Tablets = new ObservableCollection<TabletProperties>();
-        }
-
-        private void SetPlatformSpecifics(PlatformID platform)
-        {
-            switch (platform)
-            {
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.Win32NT:
-                case PlatformID.WinCE:
-                    Display = new WindowsDisplay();
-                    return;
-                case PlatformID.Unix:
-                    Display = new XDisplay();
-                    return;
-                case PlatformID.MacOSX:
-                    Display = new MacOSDisplay();
-                    return;
-                default:
-                    return;
-            }
         }
 
         public void UseDefaultSettings()
@@ -298,6 +291,20 @@ namespace OpenTabletDriverGUI.ViewModels
             Settings.Theme = name;
             Log.Info($"Using theme '{name}'.");
             (App.Current as App).Restart(this);
+        }
+
+        private void SetMode(string name)
+        {
+            Settings.OutputMode = name;
+            switch (Settings.OutputMode)
+            {
+                case "Absolute":
+                    Driver.OutputMode = new AbsoluteMode();
+                    if (Driver.TabletProperties != null)
+                        Driver.TabletProperties = Driver.TabletProperties;
+                    break;
+            }
+            UpdateSettings();
         }
     }
 }
