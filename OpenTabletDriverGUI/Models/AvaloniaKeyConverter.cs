@@ -63,6 +63,7 @@ namespace OpenTabletDriverGUI.Models
                 case NativeKey.Numpad7:
                 case NativeKey.Numpad8:
                 case NativeKey.Numpad9:
+                    return ConvertNumpadNumber(obj);
                 case NativeKey.Backspace:
                     return AvaloniaKey.Back;
                 case NativeKey.PauseBreak:
