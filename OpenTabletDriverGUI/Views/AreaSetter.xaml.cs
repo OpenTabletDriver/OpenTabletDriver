@@ -1,5 +1,8 @@
+using System;
 using Avalonia;
+using Avalonia.Input;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 
@@ -15,6 +18,51 @@ namespace OpenTabletDriverGUI.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+
+            var ctrl = this.Find<Control>("AreaGrid");
+            ctrl.PointerPressed += AreaPointerPressed;
+            ctrl.PointerReleased += AreaPointerReleased;
+            ctrl.PointerMoved += AreaPointerMoved;
+            ctrl.PointerLeave += AreaLeave;
+        }
+
+        private bool IsDragging { set; get; }
+        private Nullable<Point> LastPosition { set; get; }
+
+        public void AreaPointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            if (e.MouseButton == MouseButton.Left)
+                IsDragging = true;
+        }
+
+        public void AreaPointerReleased(object sender, PointerReleasedEventArgs e)
+        {
+            if (e.MouseButton == MouseButton.Left)
+                IsDragging = false;
+        }
+
+        public void AreaLeave(object sender, PointerEventArgs e)
+        {
+            if (IsDragging)
+                IsDragging = false;
+        }
+
+        public void AreaPointerMoved(object sender, PointerEventArgs e)
+        {
+            if (IsDragging)
+            {
+                if (LastPosition is Point lastPos)
+                {
+                    var currentPos = e.GetPosition(this);
+                    var dX = lastPos.X - currentPos.X;
+                    var dY = lastPos.Y - currentPos.Y;
+                    AreaXOffset -= (float)dX;
+                    AreaYOffset -= (float)dY;
+                }
+                LastPosition = e.GetPosition(this);
+            }
+            else if (LastPosition != null)
+                LastPosition = null;
         }
 
         public static readonly StyledProperty<string> TitleProperty =
