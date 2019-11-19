@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using Avalonia.VisualTree;
 
 namespace OpenTabletDriverGUI.Views
 {
@@ -51,18 +52,34 @@ namespace OpenTabletDriverGUI.Views
         {
             if (IsDragging)
             {
+                var currentPos = e.GetPosition(this);
                 if (LastPosition is Point lastPos)
                 {
-                    var currentPos = e.GetPosition(this);
                     var dX = lastPos.X - currentPos.X;
                     var dY = lastPos.Y - currentPos.Y;
-                    AreaXOffset -= (float)dX;
-                    AreaYOffset -= (float)dY;
+                    var scale = GetScale();
+                    AreaXOffset -= (float)(dX * scale.Item1);
+                    AreaYOffset -= (float)(dY * scale.Item2);
                 }
-                LastPosition = e.GetPosition(this);
+                LastPosition = currentPos;
             }
             else if (LastPosition != null)
                 LastPosition = null;
+        }
+
+        private (double, double) GetScale()
+        {
+            var obj = this.Find<Control>("AreaViewbox");
+            if (obj.Bounds is Rect bounds)
+            {
+                var scaleX = BackgroundWidth / bounds.Width;
+                var scaleY = BackgroundHeight / bounds.Height;
+                return (scaleX, scaleY);
+            }
+            else
+            {
+                return (0, 0);
+            }
         }
 
         public static readonly StyledProperty<string> TitleProperty =
