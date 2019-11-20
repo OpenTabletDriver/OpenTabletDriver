@@ -30,25 +30,25 @@ namespace OpenTabletDriverGUI.Views
         private bool IsDragging { set; get; }
         private Nullable<Point> LastPosition { set; get; }
 
-        public void AreaPointerPressed(object sender, PointerPressedEventArgs e)
+        private void AreaPointerPressed(object sender, PointerPressedEventArgs e)
         {
             if (e.MouseButton == MouseButton.Left)
                 IsDragging = true;
         }
 
-        public void AreaPointerReleased(object sender, PointerReleasedEventArgs e)
+        private void AreaPointerReleased(object sender, PointerReleasedEventArgs e)
         {
             if (e.MouseButton == MouseButton.Left)
                 IsDragging = false;
         }
 
-        public void AreaLeave(object sender, PointerEventArgs e)
+        private void AreaLeave(object sender, PointerEventArgs e)
         {
             if (IsDragging)
                 IsDragging = false;
         }
 
-        public void AreaPointerMoved(object sender, PointerEventArgs e)
+        private void AreaPointerMoved(object sender, PointerEventArgs e)
         {
             if (IsDragging)
             {
@@ -80,6 +80,30 @@ namespace OpenTabletDriverGUI.Views
             {
                 return (0, 0);
             }
+        }
+
+        private void CenterArea()
+        {
+            AreaXOffset = (BackgroundWidth - AreaWidth) / 2;
+            AreaYOffset = (BackgroundHeight - AreaHeight) / 2;
+        }
+
+        private void AlignVertical(bool isTop)
+        {
+            AreaYOffset = isTop ? 0 : BackgroundHeight - AreaHeight;
+        }
+
+        private void AlignHorizontal(bool isLeft)
+        {
+            AreaXOffset = isLeft ? 0 : BackgroundWidth - AreaWidth;
+        }
+
+        private void ResetArea()
+        {
+            AreaWidth = BackgroundWidth;
+            AreaHeight = BackgroundHeight;
+            AreaXOffset = 0;
+            AreaYOffset = 0;
         }
 
         public static readonly StyledProperty<string> TitleProperty =

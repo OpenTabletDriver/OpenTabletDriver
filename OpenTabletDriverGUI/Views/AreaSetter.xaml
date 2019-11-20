@@ -38,7 +38,30 @@
                     <Rectangle Name="ActiveAreaRect"
                         Width="{Binding AreaWidth}" Height="{Binding AreaHeight}"
                         Canvas.Left="{Binding AreaXOffset}" Canvas.Top="{Binding AreaYOffset}"
-                        Fill="{DynamicResource ThemeAccentBrush2}"/>
+                        Fill="{DynamicResource ThemeAccentBrush2}">
+                        <Rectangle.ContextMenu>
+                            <ContextMenu>
+                                <ContextMenu.Styles>
+                                    <Style Selector="Border">
+                                        <Setter Property="Margin" Value="0"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                        <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
+                                        <Setter Property="CornerRadius" Value="0"/>
+                                    </Style>
+                                </ContextMenu.Styles>
+                                <MenuItem Header="Align">
+                                    <MenuItem Header="Center" Command="{Binding CenterArea}"/>
+                                    <MenuItem Header="Top" Command="{Binding AlignVertical}" CommandParameter="True"/>
+                                    <MenuItem Header="Bottom" Command="{Binding AlignVertical}" CommandParameter="False"/>
+                                    <MenuItem Header="Left" Command="{Binding AlignHorizontal}" CommandParameter="True"/>
+                                    <MenuItem Header="Right" Command="{Binding AlignHorizontal}" CommandParameter="False"/>                                
+                                </MenuItem>
+                                <MenuItem Header="Size">
+                                    <MenuItem Header="Full" Command="{Binding ResetArea}"/>
+                                </MenuItem>
+                            </ContextMenu>
+                        </Rectangle.ContextMenu>
+                    </Rectangle>
                 </Canvas>
             </Viewbox>
         </Border>
