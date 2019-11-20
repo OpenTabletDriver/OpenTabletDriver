@@ -1,7 +1,11 @@
+using System;
 using Avalonia;
+using Avalonia.Input;
 using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
+using Avalonia.VisualTree;
 
 namespace OpenTabletDriverGUI.Views
 {
@@ -15,6 +19,67 @@ namespace OpenTabletDriverGUI.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+
+            var ctrl = this.Find<Control>("AreaGrid");
+            ctrl.PointerPressed += AreaPointerPressed;
+            ctrl.PointerReleased += AreaPointerReleased;
+            ctrl.PointerMoved += AreaPointerMoved;
+            ctrl.PointerLeave += AreaLeave;
+        }
+
+        private bool IsDragging { set; get; }
+        private Nullable<Point> LastPosition { set; get; }
+
+        public void AreaPointerPressed(object sender, PointerPressedEventArgs e)
+        {
+            if (e.MouseButton == MouseButton.Left)
+                IsDragging = true;
+        }
+
+        public void AreaPointerReleased(object sender, PointerReleasedEventArgs e)
+        {
+            if (e.MouseButton == MouseButton.Left)
+                IsDragging = false;
+        }
+
+        public void AreaLeave(object sender, PointerEventArgs e)
+        {
+            if (IsDragging)
+                IsDragging = false;
+        }
+
+        public void AreaPointerMoved(object sender, PointerEventArgs e)
+        {
+            if (IsDragging)
+            {
+                var currentPos = e.GetPosition(this);
+                if (LastPosition is Point lastPos)
+                {
+                    var dX = lastPos.X - currentPos.X;
+                    var dY = lastPos.Y - currentPos.Y;
+                    var scale = GetScale();
+                    AreaXOffset -= (float)(dX * scale.Item1);
+                    AreaYOffset -= (float)(dY * scale.Item2);
+                }
+                LastPosition = currentPos;
+            }
+            else if (LastPosition != null)
+                LastPosition = null;
+        }
+
+        private (double, double) GetScale()
+        {
+            var obj = this.Find<Control>("AreaViewbox");
+            if (obj.Bounds is Rect bounds)
+            {
+                var scaleX = BackgroundWidth / bounds.Width;
+                var scaleY = BackgroundHeight / bounds.Height;
+                return (scaleX, scaleY);
+            }
+            else
+            {
+                return (0, 0);
+            }
         }
 
         public static readonly StyledProperty<string> TitleProperty =
