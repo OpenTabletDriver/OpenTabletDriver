@@ -106,6 +106,12 @@ namespace OpenTabletDriverGUI.Views
             AreaYOffset = 0;
         }
 
+        private void ResizeArea(float percent)
+        {
+            AreaWidth = BackgroundWidth * percent;
+            AreaHeight = BackgroundHeight * percent;
+        }
+
         public static readonly StyledProperty<string> TitleProperty =
             AvaloniaProperty.Register<AreaSetter, string>(nameof(Title), defaultBindingMode: BindingMode.TwoWay);
 

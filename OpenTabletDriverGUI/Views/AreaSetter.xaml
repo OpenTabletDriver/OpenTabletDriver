@@ -58,6 +58,8 @@
                                 </MenuItem>
                                 <MenuItem Header="Size">
                                     <MenuItem Header="Full" Command="{Binding ResetArea}"/>
+                                    <MenuItem Header="Half" Command="{Binding ResizeArea}" CommandParameter="0.5"/>
+                                    <MenuItem Header="Quarter" Command="{Binding ResizeArea}" CommandParameter="0.25"/>
                                 </MenuItem>
                             </ContextMenu>
                         </Rectangle.ContextMenu>
