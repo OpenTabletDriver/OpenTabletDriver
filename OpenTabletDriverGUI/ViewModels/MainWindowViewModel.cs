@@ -300,10 +300,9 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 case "Absolute":
                     Driver.OutputMode = new AbsoluteMode();
-                    if (Driver.TabletProperties != null)
-                        Driver.TabletProperties = Driver.TabletProperties;
                     break;
             }
+            Driver.OutputMode.TabletProperties = Driver.TabletProperties ?? null;
             UpdateSettings();
         }
     }
