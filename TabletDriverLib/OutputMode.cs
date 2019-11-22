@@ -1,20 +1,15 @@
-using System;
-using TabletDriverLib.Component;
+using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib
 {
     public abstract class OutputMode
     {
-        public virtual void Read(TabletReport report)
+        public virtual void Read(ITabletReport report)
         {
-            try
-            {
-                Position(report);
-            }
-            catch {}
+            Position(report);
         }
 
-        public abstract void Position(TabletReport report);
+        public abstract void Position(ITabletReport report);
         public virtual TabletProperties TabletProperties { set; get; }
     }
 }

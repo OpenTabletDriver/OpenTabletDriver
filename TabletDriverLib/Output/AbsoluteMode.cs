@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using TabletDriverLib.Component;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
+using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib.Output
 {
@@ -65,7 +63,7 @@ namespace TabletDriverLib.Output
             }
         }
 
-        public override void Position(TabletReport report)
+        public override void Position(ITabletReport report)
         {
             var pos = new Point(
                 (scaleX * (report.Position.X - reportXOffset)) + DisplayArea.Position.X,
@@ -90,7 +88,7 @@ namespace TabletDriverLib.Output
             HandleButton(report);
         }
 
-        public void HandleButton(TabletReport report)
+        public void HandleButton(ITabletReport report)
         {
             if (BindingsEnabled)
             {

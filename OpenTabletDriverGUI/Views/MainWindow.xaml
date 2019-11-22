@@ -144,7 +144,7 @@
                 <Button Content="Disable input hook" Command="{Binding ToggleHook}" IsVisible="{Binding InputHooked}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5">
-                <Button Content="Apply Settings" Command="{Binding UpdateSettings}"/>
+                <Button Content="Apply Settings" Command="{Binding ApplySettings}"/>
             </StackPanel>
         </Grid>
         <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
