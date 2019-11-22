@@ -11,8 +11,39 @@ namespace TabletDriverLib.Output
     public class AbsoluteMode : OutputMode
     {
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
-        public Area DisplayArea { set; get; }
-        public Area TabletArea { set; get; }
+        private Area _display, _tablet;
+        private TabletProperties _properties;
+
+        public Area DisplayArea
+        {
+            set
+            {
+                _display = value;
+                UpdateCache();
+            }
+            get => _display;
+        }
+
+        public Area TabletArea
+        {
+            set
+            {
+                _tablet = value;
+                UpdateCache();
+            }
+            get => _tablet;
+        }
+
+        public override TabletProperties TabletProperties
+        {
+            set
+            {
+                _properties = value;
+                UpdateCache();
+            }
+            get => _properties;
+        }
+
         public bool Clipping { set; get; }
         public bool BindingsEnabled { set; get; }
         public float TipActivationPressure { set; get; }
@@ -21,12 +52,21 @@ namespace TabletDriverLib.Output
             { 0, MouseButton.None }
         };
 
+        private float scaleX, scaleY, reportXOffset, reportYOffset;
+
+        public void UpdateCache()
+        {
+            if (DisplayArea != null && TabletArea != null && TabletProperties != null)
+            {
+                scaleX = (DisplayArea.Width * TabletProperties.Width) / (TabletArea.Width * TabletProperties.MaxX);
+                scaleY = (DisplayArea.Height * TabletProperties.Height) / (TabletArea.Height * TabletProperties.MaxY);
+                reportXOffset = (TabletProperties.MaxX / TabletProperties.Width) * TabletArea.Position.X;
+                reportYOffset = (TabletProperties.MaxY / TabletProperties.Height) * TabletArea.Position.Y;
+            }
+        }
+
         public override void Position(TabletReport report)
         {
-            var scaleX = (DisplayArea.Width * TabletProperties.Width) / (TabletArea.Width * TabletProperties.MaxX);
-            var scaleY = (DisplayArea.Height * TabletProperties.Height) / (TabletArea.Height * TabletProperties.MaxY);
-            var reportXOffset = (TabletProperties.MaxX / TabletProperties.Width) * TabletArea.Position.X;
-            var reportYOffset = (TabletProperties.MaxY / TabletProperties.Height) * TabletArea.Position.Y;
             var pos = new Point(
                 (scaleX * (report.Position.X - reportXOffset)) + DisplayArea.Position.X,
                 (scaleY * (report.Position.Y - reportYOffset)) + DisplayArea.Position.Y
