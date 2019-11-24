@@ -79,7 +79,7 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 var file = new FileInfo(result);
                 tablet.Write(file);
-                Log.Info($"Saved tablet configuration to '{file.FullName}'.");
+                Log.Write("Configuration Manager", $"Saved tablet configuration to '{file.FullName}'.");
             }
         }
 
