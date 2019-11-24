@@ -16,6 +16,7 @@ using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Output;
+using TabletDriverLib.Tablet;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
@@ -26,12 +27,53 @@ namespace OpenTabletDriverGUI.ViewModels
             Trace.Listeners.Add(TraceListener);
         }
 
+        public void Initialize()
+        {
+            // Create new instance of the driver
+            Driver = new Driver();
+            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
+            {
+                FullTabletWidth = tablet.Width;
+                FullTabletHeight = tablet.Height;
+                Driver.OutputMode.TabletProperties = tablet;
+                Driver.BindInput(InputHooked);
+            };
+
+            // Use platform specific display
+            Display = Platform.Display;
+
+            Log.Info($"Current directory is '{Environment.CurrentDirectory}'.");
+            
+            var settings = new FileInfo(Path.Combine(Environment.CurrentDirectory, "settings.xml"));
+            if (settings.Exists)
+            {
+                Settings = Settings.Deserialize(settings);
+                Log.Info("Loaded user settings.");
+            }
+            else
+            {
+                UseDefaultSettings();
+            }
+            
+            // Update output mode from settings
+            SetMode(Settings.OutputMode);
+
+            // Find tablet configurations and try to open a tablet
+            var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
+            if (configurationDir.Exists)
+                OpenConfigurations(configurationDir);
+            else
+                Tablets = new ObservableCollection<TabletProperties>();
+        }
+
+        #region Bindable Properties
+
         public Settings Settings
         {
             set
             {
                 this.RaiseAndSetIfChanged(ref _settings, value);
-                UpdateSettings();
+                ApplySettings();
             }
             get => _settings;
         }
@@ -97,6 +139,10 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private bool _debugging;
 
+        #endregion
+
+        #region Buttons
+
         private void OpenConfigurations(DirectoryInfo directory)
         {
             List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
@@ -107,7 +153,7 @@ namespace OpenTabletDriverGUI.ViewModels
             Driver.OpenTablet(Tablets);
         }
 
-        public void UpdateSettings()
+        public void ApplySettings()
         {
             Log.Info($"Using output mode '{Settings.OutputMode}'");
             if (Driver.OutputMode is OutputMode outputMode)
@@ -145,40 +191,6 @@ namespace OpenTabletDriverGUI.ViewModels
             Log.Info("Applied all settings.");
         }
 
-        public void Initialize()
-        {
-            Driver = new Driver();
-            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
-            {
-                FullTabletWidth = tablet.Width;
-                FullTabletHeight = tablet.Height;
-                Driver.OutputMode.TabletProperties = tablet;
-            };
-
-            Display = Platform.Display;
-
-            Log.Info($"Current directory is '{Environment.CurrentDirectory}'.");
-            
-            var settings = new FileInfo(Path.Combine(Environment.CurrentDirectory, "settings.xml"));
-            if (settings.Exists)
-            {
-                Settings = Settings.Deserialize(settings);
-                Log.Info("Loaded user settings");
-            }
-            else
-            {
-                UseDefaultSettings();
-            }
-            
-            SetMode(Settings.OutputMode);
-
-            var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
-            if (configurationDir.Exists)
-                OpenConfigurations(configurationDir);
-            else
-                Tablets = new ObservableCollection<TabletProperties>();
-        }
-
         public void UseDefaultSettings()
         {
             Settings = new Settings()
@@ -195,7 +207,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 Settings.TabletHeight = Driver.TabletProperties.Height;
                 Settings.TabletX = 0;
                 Settings.TabletY = 0;
-                UpdateSettings();
+                ApplySettings();
             }
         }
 
@@ -300,11 +312,12 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 case "Absolute":
                     Driver.OutputMode = new AbsoluteMode();
-                    if (Driver.TabletProperties != null)
-                        Driver.TabletProperties = Driver.TabletProperties;
                     break;
             }
-            UpdateSettings();
+            Driver.OutputMode.TabletProperties = Driver.TabletProperties ?? null;
+            ApplySettings();
         }
+
+        #endregion
     }
 }

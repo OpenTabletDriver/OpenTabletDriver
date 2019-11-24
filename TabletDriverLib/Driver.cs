@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
-using TabletDriverLib.Component;
-using TabletDriverLib.Interop.Cursor;
+using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib
 {
@@ -33,7 +32,7 @@ namespace TabletDriverLib
         public bool OpenTablet(string devicePath)
         {
             var device = Devices.FirstOrDefault(d => d.DevicePath == devicePath);
-            return Open(device);
+            return OpenTablet(device);
         }
 
         public bool OpenTablet(TabletProperties tablet)
@@ -42,7 +41,7 @@ namespace TabletDriverLib
             var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
             var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
             TabletProperties = tablet;
-            return Open(device);
+            return OpenTablet(device);
         }
 
         public bool OpenTablet(IEnumerable<TabletProperties> tablets)
@@ -56,7 +55,7 @@ namespace TabletDriverLib
             return false;
         }
 
-        internal bool Open(HidDevice device)
+        internal bool OpenTablet(HidDevice device)
         {
             CloseTablet();
             Tablet = device;

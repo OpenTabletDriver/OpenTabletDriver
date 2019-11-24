@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TabletDriverLib.Component;
 using System.Globalization;
-using System.Threading.Tasks;
+using TabletDriverLib.Tablet;
+using TabletDriverLib;
 
 namespace OpenTabletDriverGUI.Models
 {

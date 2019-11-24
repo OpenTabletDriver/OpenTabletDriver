@@ -1,14 +1,9 @@
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using HidSharp;
-using HidSharp.Reports;
 using HidSharp.Reports.Input;
-using TabletDriverLib.Component;
+using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib
 {
@@ -98,7 +93,7 @@ namespace TabletDriverLib
             InputReportLength = Tablet.GetMaxInputReportLength();
             if (Driver.Debugging)
             {
-                Log.Info("InputReportLength: " + InputReportLength);
+                Log.Debug("InputReportLength: " + InputReportLength);
             }
 
             try
@@ -110,7 +105,7 @@ namespace TabletDriverLib
             }
             catch (Exception ex)
             {
-                Log.WriteException(ex);
+                Log.Exception(ex);
             }
         }
 
@@ -123,7 +118,7 @@ namespace TabletDriverLib
                 Report?.Invoke(this, report);
                 // Logging
                 if (Driver.Debugging)
-                    Log.WriteLine($"<{GetFormattedTime()}> TABLETREPORT", report.ToString());
+                    Log.Debug($"TABLET-REPORT {report}");
             }
         }
 

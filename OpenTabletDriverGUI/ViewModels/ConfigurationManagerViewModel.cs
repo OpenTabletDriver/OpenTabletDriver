@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using TabletDriverLib.Component;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -8,8 +6,8 @@ using System.IO;
 using HidSharp;
 using OpenTabletDriverGUI.Models;
 using System;
-using System.Linq;
-using Avalonia.Input;
+using TabletDriverLib;
+using TabletDriverLib.Tablet;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
