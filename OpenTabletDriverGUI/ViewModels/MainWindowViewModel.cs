@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using OpenTabletDriverGUI.Models;
 using OpenTabletDriverGUI.Views;
 using ReactiveUI;
@@ -26,7 +27,7 @@ namespace OpenTabletDriverGUI.ViewModels
         public void Initialize()
         {
             // Start logging
-            Log.Output += (sender, message) => Messages = Messages.Append(message);
+            Log.Output += (sender, message) => Dispatcher.UIThread.Post(() => Messages.Add(message));
             
             // Create new instance of the driver
             Driver = new Driver();
@@ -78,12 +79,12 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private Settings _settings;
         
-        public IEnumerable<LogMessage> Messages
+        public ObservableCollection<LogMessage> Messages
         {
             set => this.RaiseAndSetIfChanged(ref _messages, value);
             get => _messages;
         }
-        private IEnumerable<LogMessage> _messages = new List<LogMessage>();
+        private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();
 
         private Driver Driver
         {
