@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using OpenTabletDriverGUI.Models;
 using OpenTabletDriverGUI.Views;
 using ReactiveUI;
@@ -22,13 +24,11 @@ namespace OpenTabletDriverGUI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public MainWindowViewModel()
-        {
-            Trace.Listeners.Add(TraceListener);
-        }
-
         public void Initialize()
         {
+            // Start logging
+            Log.Output += (sender, message) => Dispatcher.UIThread.Post(() => Messages.Add(message));
+            
             // Create new instance of the driver
             Driver = new Driver();
             Driver.TabletSuccessfullyOpened += (sender, tablet) => 
@@ -42,13 +42,13 @@ namespace OpenTabletDriverGUI.ViewModels
             // Use platform specific display
             Display = Platform.Display;
 
-            Log.Info($"Current directory is '{Environment.CurrentDirectory}'.");
+            Log.Write("Settings", $"Current directory is '{Environment.CurrentDirectory}'.");
             
             var settings = new FileInfo(Path.Combine(Environment.CurrentDirectory, "settings.xml"));
             if (settings.Exists)
             {
                 Settings = Settings.Deserialize(settings);
-                Log.Info("Loaded user settings.");
+                Log.Write("Settings", "Loaded user settings.");
             }
             else
             {
@@ -79,12 +79,12 @@ namespace OpenTabletDriverGUI.ViewModels
         }
         private Settings _settings;
         
-        private ReactiveTraceListener TraceListener
+        public ObservableCollection<LogMessage> Messages
         {
-            set => this.RaiseAndSetIfChanged(ref _trace, value);
-            get => _trace;
+            set => this.RaiseAndSetIfChanged(ref _messages, value);
+            get => _messages;
         }
-        private ReactiveTraceListener _trace = new ReactiveTraceListener();
+        private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();
 
         private Driver Driver
         {
@@ -155,7 +155,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void ApplySettings()
         {
-            Log.Info($"Using output mode '{Settings.OutputMode}'");
+            Log.Write("Settings", $"Using output mode '{Settings.OutputMode}'");
             if (Driver.OutputMode is OutputMode outputMode)
             {
                 outputMode.TabletProperties = Driver.TabletProperties;
@@ -169,7 +169,7 @@ namespace OpenTabletDriverGUI.ViewModels
                     Position = new Point(Settings.DisplayX, Settings.DisplayY),
                     Rotation = Settings.DisplayRotation
                 };
-                Log.Info($"Set display area: " + absolute.DisplayArea);
+                Log.Write("Settings", $"Set display area: " + absolute.DisplayArea);
                 
                 absolute.TabletArea = new Area
                 {
@@ -178,17 +178,17 @@ namespace OpenTabletDriverGUI.ViewModels
                     Position = new Point(Settings.TabletX, Settings.TabletY),
                     Rotation = Settings.TabletRotation
                 };
-                Log.Info($"Set tablet area:  " + absolute.TabletArea);
+                Log.Write("Settings", $"Set tablet area:  " + absolute.TabletArea);
                 
                 absolute.Clipping = Settings.EnableClipping;
-                Log.Info("Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
+                Log.Write("Settings", "Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
                 
                 absolute.MouseButtonBindings[0] = Settings.TipButton;
                 absolute.TipActivationPressure = Settings.TipActivationPressure;
                 absolute.BindingsEnabled = !absolute.MouseButtonBindings.All(btn => btn.Value == MouseButton.None);
-                Log.Info($"Bindings set: Tip='{absolute.MouseButtonBindings[0]}'@{absolute.TipActivationPressure}%");
+                Log.Write("Settings", $"Bindings set: Tip='{absolute.MouseButtonBindings[0]}'@{absolute.TipActivationPressure}%");
             }
-            Log.Info("Applied all settings.");
+            Log.Write("Settings", "Applied all settings.");
         }
 
         public void UseDefaultSettings()
@@ -226,14 +226,14 @@ namespace OpenTabletDriverGUI.ViewModels
                     Devices = Driver.Devices.ToList().ToObservableCollection()
                 }
             };
-            await cfgMgr.ShowDialog(App.Current.MainWindow);
+            await cfgMgr.ShowDialog(App.MainWindow);
             Driver.OpenTablet(Tablets);
         }
 
         public async Task OpenTabletConfigurationFolder()
         {
             var fd = new OpenFolderDialog();
-            var path = await fd.ShowAsync(App.Current.MainWindow);
+            var path = await fd.ShowAsync(App.MainWindow);
             if (path != null)
             {
                 var directory = new DirectoryInfo(path);
@@ -245,19 +245,19 @@ namespace OpenTabletDriverGUI.ViewModels
         public async Task LoadSettingsDialog()
         {
             var fd = FileDialogs.CreateOpenFileDialog("Open settings", "XML Document", "xml");
-            var result = await fd.ShowAsync(App.Current.MainWindow);
+            var result = await fd.ShowAsync(App.MainWindow);
             if (result != null)
             {
                 var file = new FileInfo(result[0]);
                 try
                 {
                     Settings = Settings.Deserialize(file);
-                    Log.Info("Successfully read settings from file.");
+                    Log.Write("Settings", "Successfully read settings from file.");
                 }
                 catch (Exception ex)
                 {
                     Log.Exception(ex);
-                    Log.Fail("Unable to read settings from file: " + result[0]);
+                    Log.Write("Settings", "Unable to read settings from file: " + result[0], true);
                 }
             }
         }
@@ -265,19 +265,19 @@ namespace OpenTabletDriverGUI.ViewModels
         public async Task SaveSettingsDialog()
         {
             var fd = FileDialogs.CreateSaveFileDialog("Saving settings", "XML Document", "xml");
-            var path = await fd.ShowAsync(App.Current.MainWindow);
+            var path = await fd.ShowAsync(App.MainWindow);
             if (path != null)
             {
                 var file = new FileInfo(path);
                 try 
                 {
                     Settings.Serialize(file);
-                    Log.Info("Wrote settings to file: " + path);
+                    Log.Write("Settings", "Wrote settings to file: " + path);
                 }
                 catch (Exception ex)
                 {
                     Log.Exception(ex);
-                    Log.Fail("Unable to write settings to file: " + path);
+                    Log.Write("Settings", "Unable to write settings to file: " + path);
                 }
             }
         }
@@ -287,13 +287,13 @@ namespace OpenTabletDriverGUI.ViewModels
             try
             {
                 InputHooked = !InputHooked;
-                Log.Info("Hooking inputs: " + InputHooked);
+                Log.Write("Driver", "Hooking inputs: " + InputHooked);
                 Driver.BindInput(InputHooked);
             }
             catch (Exception ex)
             {
                 Log.Exception(ex);
-                Log.Fail("Unable to hook input.");
+                Log.Write("Driver", "Unable to hook input.", true);
                 InputHooked = !InputHooked;
             }
         }
@@ -301,7 +301,7 @@ namespace OpenTabletDriverGUI.ViewModels
         private void SetTheme(string name)
         {
             Settings.Theme = name;
-            Log.Info($"Using theme '{name}'.");
+            Log.Write("Theme", $"Using theme '{name}'.");
             (App.Current as App).Restart(this);
         }
 

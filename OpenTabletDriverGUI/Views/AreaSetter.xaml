@@ -29,7 +29,7 @@
     </UserControl.Styles>
     <Grid Name="AreaGrid" DataContext="{Binding $parent}" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*,*">
         <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="{Binding Title}"/>
-        <Border Grid.ColumnSpan="4" Grid.Row="1" HorizontalAlignment="Center" Background="Transparent">
+        <Border Grid.ColumnSpan="4" Grid.Row="1" HorizontalAlignment="Stretch" Background="Transparent">
             <Viewbox Name="AreaViewbox" HorizontalAlignment="Center">
                 <Canvas Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}" HorizontalAlignment="Center">
                     <Rectangle Name="FullAreaRect" 

@@ -1,49 +1,29 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using TabletDriverLib.Component;
 
 namespace TabletDriverLib
 {
     public static class Log
     {
-        public static void Write(string text)
-        {
-            Trace.Write(text);
-        }
+        public static event EventHandler<LogMessage> Output;
 
-        public static void WriteLine(string text)
+        public static void Write(string group, string text, bool isError = false)
         {
-            Trace.WriteLine(text);
-        }
-
-        public static void WriteLine(string prefix, string text)
-        {
-            WriteLine($"[{prefix.ToUpper()}] {text}");
-        }
-        
-        public static void Exception(Exception ex)
-        {
-            WriteLine(ex.GetType().Name, ex.Message);
-        }
-
-        public static void Info(string text)
-        {
-            WriteLine("INFO", text);
-        }
-
-        public static void Fail(string text)
-        {
-            WriteLine("FAIL", text);
-        }
-
-        public static void Error(string text)
-        {
-            WriteLine("ERROR", text);
+            var logMessage = new LogMessage(group, text, isError);
+            Output?.Invoke(null, logMessage);
+            Console.WriteLine($"[{group}:{(isError ? "Error" : "Normal")}]\t{text}");
         }
 
         public static void Debug(string text)
         {
-            WriteLine("DEBUG", text);
+            Write("Debug", text);
+        }
+
+        public static void Exception(Exception ex)
+        {
+            Write(ex.GetType().Name, ex.Message, true);
         }
     }
 }

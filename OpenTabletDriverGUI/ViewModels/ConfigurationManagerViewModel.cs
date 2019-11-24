@@ -74,12 +74,12 @@ namespace OpenTabletDriverGUI.ViewModels
         public async void SaveAs(TabletProperties tablet)
         {
             var dialog = FileDialogs.CreateSaveFileDialog($"Saving tablet '{tablet.TabletName}'", "XML Document", "xml");
-            var result = await dialog.ShowAsync(App.Current.Windows[1]);
+            var result = await dialog.ShowAsync(App.Windows[1]);
             if (result != null)
             {
                 var file = new FileInfo(result);
                 tablet.Write(file);
-                Log.Info($"Saved tablet configuration to '{file.FullName}'.");
+                Log.Write("Configuration Manager", $"Saved tablet configuration to '{file.FullName}'.");
             }
         }
 

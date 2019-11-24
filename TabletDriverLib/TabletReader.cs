@@ -79,14 +79,14 @@ namespace TabletDriverLib
                 }
                 else
                 {                    
-                    Log.Fail($"{exception.Message} {retries} more retries.");
+                    Log.Write("Detect", $"{exception}; Retrying {retries} more times", true);
                     Thread.Sleep(1000);
                 }
             }
             
             if (ReportStream == null)
             {
-                Log.Fail("Failed to open tablet. Make sure you have required permissions to open device streams.");
+                Log.Write("Detect", "Failed to open tablet. Make sure you have required permissions to open device streams.", true);
                 return;
             }
 
@@ -118,7 +118,7 @@ namespace TabletDriverLib
                 Report?.Invoke(this, report);
                 // Logging
                 if (Driver.Debugging)
-                    Log.Debug($"TABLET-REPORT {report}");
+                    Log.Write("Report", report.ToString());
             }
         }
 

@@ -22,7 +22,7 @@ namespace TabletDriverLib.Interop
                     case PlatformID.MacOSX:
                         return new MacOSCursorHandler();
                     default:
-                        Log.Fail($"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).");
+                        Log.Write("Cursor Handler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);
                         return null;
                 }
             }
@@ -44,7 +44,7 @@ namespace TabletDriverLib.Interop
                     case PlatformID.MacOSX:
                         return new MacOSDisplay();
                     default:
-                        Log.Fail($"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).");
+                        Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
                         return null;
                 }
             }

@@ -8,10 +8,6 @@ namespace TabletDriverLib
 {
     public class Driver : IDisposable
     {
-        public Driver()
-        {
-        }
-
         public static bool Debugging { set; get; }
        
         public HidDevice Tablet { private set; get; }
@@ -37,7 +33,7 @@ namespace TabletDriverLib
 
         public bool OpenTablet(TabletProperties tablet)
         {
-            Log.Info($"Searching for tablet '{tablet.TabletName}'...");
+            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'...");
             var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
             var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
             TabletProperties = tablet;
@@ -51,7 +47,7 @@ namespace TabletDriverLib
                     return true;
 
             if (Tablet == null)
-                Log.Fail("No configured tablets found.");
+                Log.Write("Detect", "No tablets found.", true);
             return false;
         }
 
@@ -61,10 +57,10 @@ namespace TabletDriverLib
             Tablet = device;
             if (Tablet != null)
             {
-                Log.Write($" Found: {Tablet.GetFriendlyName()}.");
+                Log.Write("Detect", $"Found device '{Tablet.GetFriendlyName()}'.");
                 if (Debugging)
                 {
-                    Log.Info($"Device path: {Tablet.DevicePath}");
+                    Log.Debug($"Device path: {Tablet.DevicePath}");
                 }
                 
                 TabletReader = new TabletReader(Tablet);
@@ -75,7 +71,7 @@ namespace TabletDriverLib
             }
             else
             {
-                Log.Write(" Not found");
+                Log.Write("Detect", "Tablet not found.", true);
                 return false;
             }
         }
