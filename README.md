@@ -1,48 +1,59 @@
 [![Actions Status](https://github.com/InfinityGhost/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/InfinityGhost/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/badge/master)](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/overview/master)
 
 # OpenTabletDriver
-OpenTabletDriver is a driverless open source tablet configurator. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatability possible in a easily configurable graphical user interface.
+OpenTabletDriver is an open source tablet configurator. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatability possible in an easily configurable graphical user interface.
 
 ## Releases
 
 - None yet!
 
 # Build Dependencies
-The requirements depend entirely on the operating system you are running.
+The requirements to build OpenTabletDriver are consistent across all platforms. Running OpenTabletDriver on each platform requires different dependencies.
 
-### Windows (x64) [Actively Tested Platform]
-  - .NET Core 3.0
+## All platforms
+- .NET Core 3.0 SDK
 
-### Linux (x64) [Actively Tested Platform]
-  - .NET Core 3.0
-  - libx11
+### Linux
+- Xlib
 
-### Mac OS X (x64) [Untested Platform]
-  - .NET Core 3.0
-  - Quartz
+### Windows [Currently broken, [see issue #2](https://github.com/InfinityGhost/OpenTabletDriver/issues/2)]
+> No special dependencies as of now.
+> The program will still build and run on Windows, but you may not be able to hook device input.
+
+### Mac OS X [Unsupported]
+> Code is written for Mac OS X, but zero testing has been done to test if it works.
+- Quartz
 
 # Features
 - Absolute cursor positioning
 - Precise areas
   - Screen area and tablet area
+  - Area offsets
+- Pen bindings
+  - Tip to Mouse Button binding
 - Saving and loading settings
-  - Auto-load user settings (settings.xml in the installation folder)
+  - Auto-loads user settings via `settings.xml` in the active directory
+- Tablet Configuration Manager
+  - Can convert [TabletDriver](https://github.com/hawku/TabletDriver) configuration files (.cfg)
 
 ## Planned features
 - Relative cursor positioning
 - Precise area rotation
-- Precise area offsets
-- Tablet configuration builder
+- Keyboard bindings
+- Auxilary button bindings
 
-#
+# Improving OpenTabletDriver
+If you wish to help improve OpenTabletDriver, first [check out the pinned issues](https://github.com/InfinityGhost/OpenTabletDriver/issues).
 
 # Supported Tablets
 These tablets are fully configured and confirmed functional.
 - Wacom
   - CTL-480
+- Gaomon
+  - S620
 
 ## Configured Tablets
-These tablets are configured but may be missing features, and are untested.
+These tablets are configured but may not function as expected.
 - Wacom
   - CTE-440
   - CTH-470
