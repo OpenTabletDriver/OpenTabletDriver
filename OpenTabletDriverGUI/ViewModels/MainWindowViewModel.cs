@@ -29,6 +29,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void Initialize()
         {
+            // Create new instance of the driver
             Driver = new Driver();
             Driver.TabletSuccessfullyOpened += (sender, tablet) => 
             {
@@ -38,6 +39,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 Driver.BindInput(InputHooked);
             };
 
+            // Use platform specific display
             Display = Platform.Display;
 
             Log.Info($"Current directory is '{Environment.CurrentDirectory}'.");
@@ -46,15 +48,17 @@ namespace OpenTabletDriverGUI.ViewModels
             if (settings.Exists)
             {
                 Settings = Settings.Deserialize(settings);
-                Log.Info("Loaded user settings");
+                Log.Info("Loaded user settings.");
             }
             else
             {
                 UseDefaultSettings();
             }
             
+            // Update output mode from settings
             SetMode(Settings.OutputMode);
 
+            // Find tablet configurations and try to open a tablet
             var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);

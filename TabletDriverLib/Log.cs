@@ -21,7 +21,7 @@ namespace TabletDriverLib
             WriteLine($"[{prefix.ToUpper()}] {text}");
         }
         
-        public static void WriteException(Exception ex)
+        public static void Exception(Exception ex)
         {
             WriteLine(ex.GetType().Name, ex.Message);
         }
@@ -39,6 +39,11 @@ namespace TabletDriverLib
         public static void Error(string text)
         {
             WriteLine("ERROR", text);
+        }
+
+        public static void Debug(string text)
+        {
+            WriteLine("DEBUG", text);
         }
     }
 }

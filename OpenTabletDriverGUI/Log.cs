@@ -39,5 +39,10 @@ namespace OpenTabletDriverGUI
         {
             WriteLine("ERROR", text);
         }
+
+        public static void Debug(string text)
+        {
+            WriteLine("DEBUG", text);
+        }
     }
 }
