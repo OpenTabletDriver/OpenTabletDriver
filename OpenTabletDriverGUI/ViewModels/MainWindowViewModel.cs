@@ -225,14 +225,14 @@ namespace OpenTabletDriverGUI.ViewModels
                     Devices = Driver.Devices.ToList().ToObservableCollection()
                 }
             };
-            await cfgMgr.ShowDialog(App.Current.MainWindow);
+            await cfgMgr.ShowDialog(App.MainWindow);
             Driver.OpenTablet(Tablets);
         }
 
         public async Task OpenTabletConfigurationFolder()
         {
             var fd = new OpenFolderDialog();
-            var path = await fd.ShowAsync(App.Current.MainWindow);
+            var path = await fd.ShowAsync(App.MainWindow);
             if (path != null)
             {
                 var directory = new DirectoryInfo(path);
@@ -244,7 +244,7 @@ namespace OpenTabletDriverGUI.ViewModels
         public async Task LoadSettingsDialog()
         {
             var fd = FileDialogs.CreateOpenFileDialog("Open settings", "XML Document", "xml");
-            var result = await fd.ShowAsync(App.Current.MainWindow);
+            var result = await fd.ShowAsync(App.MainWindow);
             if (result != null)
             {
                 var file = new FileInfo(result[0]);
@@ -264,7 +264,7 @@ namespace OpenTabletDriverGUI.ViewModels
         public async Task SaveSettingsDialog()
         {
             var fd = FileDialogs.CreateSaveFileDialog("Saving settings", "XML Document", "xml");
-            var path = await fd.ShowAsync(App.Current.MainWindow);
+            var path = await fd.ShowAsync(App.MainWindow);
             if (path != null)
             {
                 var file = new FileInfo(path);

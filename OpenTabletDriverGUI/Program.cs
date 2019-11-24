@@ -1,7 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Logging.Serilog;
+using Avalonia.ReactiveUI;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.DTO;
 using OpenTabletDriverGUI.ViewModels;
@@ -11,40 +15,22 @@ namespace OpenTabletDriverGUI
 {
     class Program
     {
-        // Initialization code. Don't use any Avalonia, third-party APIs or any
-        // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
-        // yet and stuff might break.
-        public static void Main(string[] args) => BuildAvaloniaApp().Start(AppMain, args);
-
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToDebug()
                 .UseReactiveUI();
-
-        // Your application's entry point. Here you can initialize your MVVM framework, DI
-        // container, etc.
-        private static void AppMain(Application app, string[] args)
+        
+        public static void Main(string[] args) 
         {
             if (args.Length > 0)
                 Environment.CurrentDirectory = args[0];
-            else
-                Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledException);
-
-            var viewModel = new MainWindowViewModel();
-            viewModel.Initialize();
-            var window = new MainWindow
-            {
-                DataContext = viewModel
-            };
-
-            app.Run(window);
+            
+            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, ShutdownMode.OnLastWindowClose);
         }
 
-        private static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        internal static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = (Exception)e.ExceptionObject ?? default;
             var msgbox = MessageBoxWindow.CreateCustomWindow(new MessageBoxCustomParams

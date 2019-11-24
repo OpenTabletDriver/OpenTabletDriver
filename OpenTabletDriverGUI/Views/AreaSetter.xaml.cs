@@ -32,14 +32,12 @@ namespace OpenTabletDriverGUI.Views
 
         private void AreaPointerPressed(object sender, PointerPressedEventArgs e)
         {
-            if (e.MouseButton == MouseButton.Left)
-                IsDragging = true;
+            IsDragging = true;
         }
 
         private void AreaPointerReleased(object sender, PointerReleasedEventArgs e)
         {
-            if (e.MouseButton == MouseButton.Left)
-                IsDragging = false;
+            IsDragging = false;
         }
 
         private void AreaLeave(object sender, PointerEventArgs e)
