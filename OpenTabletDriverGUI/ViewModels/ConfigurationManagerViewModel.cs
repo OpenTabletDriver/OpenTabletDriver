@@ -6,6 +6,7 @@ using System.IO;
 using HidSharp;
 using OpenTabletDriverGUI.Models;
 using System;
+using TabletDriverLib;
 using TabletDriverLib.Tablet;
 
 namespace OpenTabletDriverGUI.ViewModels

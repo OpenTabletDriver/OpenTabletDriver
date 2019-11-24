@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
 using TabletDriverLib.Tablet;
+using TabletDriverLib;
 
 namespace OpenTabletDriverGUI.Models
 {

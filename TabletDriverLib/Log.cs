@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TabletDriverLib
 {
-    internal static class Log
+    public static class Log
     {
         public static void Write(string text)
         {
