@@ -33,7 +33,7 @@ namespace TabletDriverLib
 
         public bool OpenTablet(TabletProperties tablet)
         {
-            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'...");
+            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
             var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
             var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
             TabletProperties = tablet;
@@ -71,7 +71,8 @@ namespace TabletDriverLib
             }
             else
             {
-                Log.Write("Detect", "Tablet not found.", true);
+                if (Debugging)
+                    Log.Write("Detect", "Tablet not found.", true);
                 return false;
             }
         }
