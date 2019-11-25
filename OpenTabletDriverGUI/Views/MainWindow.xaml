@@ -146,7 +146,7 @@
             </StackPanel>
         </Grid>
         <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
-            <!-- <TextBlock Text="{Binding TraceListener.Status}"/> -->
+            <ns:StatusBar CurrentStatus="{Binding StatusMessage}"/>
         </Border>
     </Grid>
 
