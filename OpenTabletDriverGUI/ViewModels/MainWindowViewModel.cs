@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -27,7 +27,11 @@ namespace OpenTabletDriverGUI.ViewModels
         public void Initialize()
         {
             // Start logging
-            Log.Output += (sender, message) => Dispatcher.UIThread.Post(() => Messages.Add(message));
+            Log.Output += (sender, message) =>
+            {
+                Dispatcher.UIThread.Post(() => Messages.Add(message));
+                StatusMessage = message;
+            };
             
             // Create new instance of the driver
             Driver = new Driver();
@@ -85,6 +89,13 @@ namespace OpenTabletDriverGUI.ViewModels
             get => _messages;
         }
         private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();
+
+        public LogMessage StatusMessage
+        {
+            set => this.RaiseAndSetIfChanged(ref _status, value);
+            get => _status;
+        }
+        private LogMessage _status;
 
         private Driver Driver
         {
