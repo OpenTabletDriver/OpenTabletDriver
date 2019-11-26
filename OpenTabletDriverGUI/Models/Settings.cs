@@ -19,7 +19,7 @@ namespace OpenTabletDriverGUI.Models
         #region Properties
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
-        private bool _clipping;
+        private bool _clipping, _autohook;
         private string _theme, _outputMode;
 
         [XmlElement("DisplayWidth")]
@@ -115,6 +115,13 @@ namespace OpenTabletDriverGUI.Models
         {
             set => this.RaiseAndSetIfChanged(ref _clipping, value);
             get => _clipping;
+        }
+
+        [XmlElement("AutoHook")]
+        public bool AutoHook
+        {
+            set => this.RaiseAndSetIfChanged(ref _autohook, value);
+            get => _autohook;
         }
         
         #endregion
