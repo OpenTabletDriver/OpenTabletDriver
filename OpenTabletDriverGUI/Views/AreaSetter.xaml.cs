@@ -98,16 +98,16 @@ namespace OpenTabletDriverGUI.Views
 
         private void ResetArea()
         {
-            AreaWidth = BackgroundWidth;
             AreaHeight = BackgroundHeight;
+            AreaWidth = BackgroundWidth;
             AreaXOffset = 0;
             AreaYOffset = 0;
         }
 
         private void ResizeArea(float percent)
         {
-            AreaWidth = BackgroundWidth * percent;
             AreaHeight = BackgroundHeight * percent;
+            AreaWidth = BackgroundWidth * percent;
         }
 
         public static readonly StyledProperty<string> TitleProperty =

@@ -93,6 +93,7 @@
                                 </StackPanel.Styles>
                                 <CheckBox Content="Auto Hook Input" IsChecked="{Binding Settings.AutoHook}"/>
                                 <CheckBox Content="Enable clipping" IsChecked="{Binding Settings.EnableClipping}"/>
+                                <CheckBox Content="Lock Aspect Ratio" IsChecked="{Binding Settings.LockAspectRatio}"/>
                             </StackPanel>
                         </Border>
                     </Grid>

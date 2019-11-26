@@ -16,23 +16,35 @@ namespace OpenTabletDriverGUI.Models
             OutputMode = "Absolute";
         }
 
+        private bool _sizeChanging;
+
         #region Properties
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
-        private bool _clipping, _autohook;
+        private bool _clipping, _autohook, _lockar;
         private string _theme, _outputMode;
 
         [XmlElement("DisplayWidth")]
         public float DisplayWidth 
         {
-            set => this.RaiseAndSetIfChanged(ref _dW, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _dW, value);
+                if (LockAspectRatio)
+                    TabletHeight = (DisplayHeight / DisplayWidth) * TabletWidth;
+            }
             get => _dW;
         }
 
         [XmlElement("DisplayHeight")]
         public float DisplayHeight
         {
-            set => this.RaiseAndSetIfChanged(ref _dH, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _dH, value);
+                if (LockAspectRatio)
+                    TabletWidth = (DisplayWidth / DisplayHeight) * TabletHeight;
+            }
             get => _dH;
         }
 
@@ -60,14 +72,32 @@ namespace OpenTabletDriverGUI.Models
         [XmlElement("TabletWidth")]
         public float TabletWidth
         {
-            set => this.RaiseAndSetIfChanged(ref _tW, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _tW, value);
+                if (LockAspectRatio && !_sizeChanging)
+                {
+                    _sizeChanging = true;
+                    TabletHeight = (DisplayHeight / DisplayWidth) * value;
+                    _sizeChanging = false;
+                }
+            }
             get => _tW;
         }
 
         [XmlElement("TabletHeight")]
         public float TabletHeight
         {
-            set => this.RaiseAndSetIfChanged(ref _tH, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _tH, value);
+                if (LockAspectRatio && !_sizeChanging)
+                {
+                    _sizeChanging = true;
+                    TabletWidth = (DisplayWidth / DisplayHeight) * value; 
+                    _sizeChanging = false;
+                }
+            }
             get => _tH;
         }
 
@@ -115,6 +145,18 @@ namespace OpenTabletDriverGUI.Models
         {
             set => this.RaiseAndSetIfChanged(ref _clipping, value);
             get => _clipping;
+        }
+
+        [XmlElement("LockAspectRatio")]
+        public bool LockAspectRatio
+        {
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _lockar, value);
+                if (value)
+                    TabletHeight = (DisplayHeight / DisplayWidth) * TabletWidth;
+            }
+            get => _lockar;
         }
 
         [XmlElement("AutoHook")]
