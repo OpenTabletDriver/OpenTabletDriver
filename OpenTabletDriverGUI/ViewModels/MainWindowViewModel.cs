@@ -59,15 +59,14 @@ namespace OpenTabletDriverGUI.ViewModels
                 UseDefaultSettings();
             }
             
-            // Update output mode from settings
-            SetMode(Settings.OutputMode);
-
             // Find tablet configurations and try to open a tablet
             var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);
             else
                 Tablets = new ObservableCollection<TabletProperties>();
+
+            ApplySettings();
         }
 
         #region Bindable Properties
@@ -106,7 +105,11 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public bool InputHooked 
         {
-            private set => this.RaiseAndSetIfChanged(ref _hooked, value);
+            private set
+            {
+                Driver.BindInput(value);
+                this.RaiseAndSetIfChanged(ref _hooked, value);
+            }
             get => _hooked;
         }
         private bool _hooked;
@@ -154,6 +157,13 @@ namespace OpenTabletDriverGUI.ViewModels
 
         #region Buttons
 
+        public void DetectTablet()
+        {
+            Driver.OpenTablet(Tablets);
+            if (Settings.AutoHook && Driver.Tablet != null)
+                InputHooked = true;
+        }
+
         private void OpenConfigurations(DirectoryInfo directory)
         {
             List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
@@ -161,12 +171,19 @@ namespace OpenTabletDriverGUI.ViewModels
                 configRepository.AddRange(dir.EnumerateFiles());
 
             Tablets = configRepository.ConvertAll(file => TabletProperties.Read(file)).ToObservableCollection();
-            Driver.OpenTablet(Tablets);
+            DetectTablet();
         }
 
         public void ApplySettings()
         {
+            switch (Settings.OutputMode)
+            {
+                case "Absolute":
+                    Driver.OutputMode = new AbsoluteMode();
+                    break;
+            }
             Log.Write("Settings", $"Using output mode '{Settings.OutputMode}'");
+
             if (Driver.OutputMode is OutputMode outputMode)
             {
                 outputMode.TabletProperties = Driver.TabletProperties;
@@ -218,13 +235,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 Settings.TabletHeight = Driver.TabletProperties.Height;
                 Settings.TabletX = 0;
                 Settings.TabletY = 0;
-                ApplySettings();
             }
-        }
-
-        public void DetectTablet()
-        {
-            Driver.OpenTablet(Tablets);
         }
 
         public async Task OpenConfigurationManager()
@@ -238,7 +249,7 @@ namespace OpenTabletDriverGUI.ViewModels
                 }
             };
             await cfgMgr.ShowDialog(App.MainWindow);
-            Driver.OpenTablet(Tablets);
+            DetectTablet();
         }
 
         public async Task OpenTabletConfigurationFolder()
@@ -298,14 +309,12 @@ namespace OpenTabletDriverGUI.ViewModels
             try
             {
                 InputHooked = !InputHooked;
-                Log.Write("Driver", "Hooking inputs: " + InputHooked);
-                Driver.BindInput(InputHooked);
+                Log.Write("Driver", $"Input hook is {(InputHooked ? "enabled" : "disabled")}.");
             }
             catch (Exception ex)
             {
                 Log.Exception(ex);
-                Log.Write("Driver", "Unable to hook input.", true);
-                InputHooked = !InputHooked;
+                Log.Write("Driver", "Unable to toggle input hook.", true);
             }
         }
 
@@ -319,13 +328,6 @@ namespace OpenTabletDriverGUI.ViewModels
         private void SetMode(string name)
         {
             Settings.OutputMode = name;
-            switch (Settings.OutputMode)
-            {
-                case "Absolute":
-                    Driver.OutputMode = new AbsoluteMode();
-                    break;
-            }
-            Driver.OutputMode.TabletProperties = Driver.TabletProperties ?? null;
             ApplySettings();
         }
 
