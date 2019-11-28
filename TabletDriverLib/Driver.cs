@@ -34,10 +34,29 @@ namespace TabletDriverLib
         public bool OpenTablet(TabletProperties tablet)
         {
             Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
-            var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
-            var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
-            TabletProperties = tablet;
-            return OpenTablet(device);
+            try
+            {
+                var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
+                var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
+                TabletProperties = tablet;
+                return OpenTablet(device);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                if (Debugging)
+                    Log.Exception(ex);
+                if (Environment.OSVersion.Platform == PlatformID.Unix && VendorInfo.UCLogic.VendorIDs.Contains(tablet.VendorID))
+                {
+                    Log.Write("Detect", "Failed to get device input report length. "
+                        + "Ensure the 'hid-uclogic' module is disabled.", true);
+                }
+                else
+                {
+                    Log.Write("Detect", "Failed to get device input report length. "
+                        + "Visit the wiki (https://github.com/InfinityGhost/OpenTabletDriver/wiki) for more information.", true);
+                }
+                return false;
+            }
         }
 
         public bool OpenTablet(IEnumerable<TabletProperties> tablets)

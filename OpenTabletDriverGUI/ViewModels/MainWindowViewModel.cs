@@ -32,19 +32,6 @@ namespace OpenTabletDriverGUI.ViewModels
                 Dispatcher.UIThread.Post(() => Messages.Add(message));
                 StatusMessage = message;
             };
-            
-            // Create new instance of the driver
-            Driver = new Driver();
-            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
-            {
-                FullTabletWidth = tablet.Width;
-                FullTabletHeight = tablet.Height;
-                Driver.OutputMode.TabletProperties = tablet;
-                Driver.BindInput(InputHooked);
-            };
-
-            // Use platform specific display
-            Display = Platform.Display;
 
             Log.Write("Settings", $"Current directory is '{Environment.CurrentDirectory}'.");
             
@@ -59,6 +46,18 @@ namespace OpenTabletDriverGUI.ViewModels
                 UseDefaultSettings();
             }
             
+            // Create new instance of the driver
+            Driver = new Driver();
+            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
+            {
+                FullTabletWidth = tablet.Width;
+                FullTabletHeight = tablet.Height;
+                Driver.BindInput(InputHooked);
+            };
+
+            // Use platform specific display
+            Display = Platform.Display;
+
             // Find tablet configurations and try to open a tablet
             var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
             if (configurationDir.Exists)
@@ -76,7 +75,6 @@ namespace OpenTabletDriverGUI.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref _settings, value);
-                ApplySettings();
             }
             get => _settings;
         }
