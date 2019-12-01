@@ -91,13 +91,13 @@ namespace TabletDriverLib
                         Log.Write("Report", report.ToString());
                 }
             }
+            catch (ObjectDisposedException)
+            {
+                // Ignore, this is due to re-detecting tablets
+            }
             catch (Exception ex)
             {
                 Log.Exception(ex);
-            }
-            finally
-            {
-                ReadingInput = false;
             }
         }
 
