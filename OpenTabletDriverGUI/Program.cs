@@ -25,6 +25,8 @@ namespace OpenTabletDriverGUI
         
         public static void Main(string[] args) 
         {
+            Thread.CurrentThread.Name = "OpenTabletDriverGUI";
+            
             if (args.Length > 0)
                 Environment.CurrentDirectory = args[0];
             
