@@ -12,9 +12,9 @@ namespace TabletDriverLib
         public TabletReader(HidDevice tablet)
         {
             Tablet = tablet;
-            WorkerThread = new Thread(Background)
+            WorkerThread = new Thread(Main)
             {
-                Name = "TabletDriver Tablet Reader",
+                Name = "OpenTabletDriver Tablet Reader",
                 IsBackground = true,
                 Priority = ThreadPriority.BelowNormal,
             };
@@ -28,31 +28,11 @@ namespace TabletDriverLib
         private Thread WorkerThread;
         public bool Working { protected set; get; }
 
-        private HidDeviceInputReceiver Input;
-        
-        private int InputReportLength { set; get; }
-
-        private bool _handled;
-        public bool ReadingInput
-        {
-            set
-            {
-                if (value && !_handled)
-                {
-                    Input.Received += OnInputReceived;
-                    _handled = true;
-                }
-                else if (!value && _handled)
-                {
-                    Input.Received -= OnInputReceived;
-                    _handled = false;
-                }
-            }
-            get => _handled;
-        }
+        public bool ReadingInput { set; get; }
 
         public void Start()
         {
+            Setup();
             WorkerThread.Start();
         }
 
@@ -66,7 +46,7 @@ namespace TabletDriverLib
             WorkerThread.Abort();
         }
 
-        private void Background()
+        private void Setup()
         {
             var config = new OpenConfiguration();
             config.SetOption(OpenOption.Priority, OpenPriority.Low);
@@ -90,35 +70,34 @@ namespace TabletDriverLib
                 return;
             }
 
-            InputReportLength = Tablet.GetMaxInputReportLength();
             if (Driver.Debugging)
             {
-                Log.Debug("InputReportLength: " + InputReportLength);
+                Log.Debug("InputReportLength: " + Tablet.GetMaxInputReportLength());
             }
+        }
 
+        private void Main()
+        {
             try
             {
-                var descriptor = Tablet.GetReportDescriptor();
-                Input = descriptor.CreateHidDeviceInputReceiver();
-                Input.Start(ReportStream);
                 ReadingInput = true;
+                while (ReadingInput)
+                {
+                    var data = ReportStream.Read();
+                    var report = new TabletReport(data);
+                    Report?.Invoke(this, report);
+                    // Logging
+                    if (Driver.Debugging)
+                        Log.Write("Report", report.ToString());
+                }
             }
             catch (Exception ex)
             {
                 Log.Exception(ex);
             }
-        }
-
-        private void OnInputReceived(object sender, EventArgs e)
-        {
-            var buffer = new byte[InputReportLength];
-            if (Input.TryRead(buffer, 0, out var dataReport))
+            finally
             {
-                var report = new TabletReport(buffer);
-                Report?.Invoke(this, report);
-                // Logging
-                if (Driver.Debugging)
-                    Log.Write("Report", report.ToString());
+                ReadingInput = false;
             }
         }
 
@@ -140,6 +119,7 @@ namespace TabletDriverLib
         public void Dispose()
         {
             ReadingInput = false;
+            ReportStream.Dispose();
         }
     }
 }
