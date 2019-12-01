@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
+  <Name>XP-Pen G540 Pro</Name>
+  <VendorID>10429</VendorID>
+  <ProductID>97</ProductID>
+  <InputReportLength>8</InputReportLength>
+  <Width>147</Width>
+  <Height>101.6</Height>
+  <MaxX>45720</MaxX>
+  <MaxY>29210</MaxY>
+  <MaxPressure>8191</MaxPressure>
+  <MinimumRange>128</MinimumRange>
+</Tablet>

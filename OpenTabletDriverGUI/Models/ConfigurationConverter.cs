@@ -22,11 +22,13 @@ namespace OpenTabletDriverGUI.Models
                 var lines = contents.Skip(index).Take(nextIndex - index).ToList();
 
                 if (lines.Count > 1)
-                    yield return ConvertHawku(lines);
+                {
+                    var config = ConvertHawku(lines);
+                    if (config != null)
+                        yield return config;
+                }
                 else if(lines.Any(line => line.StartsWith("HIDTablet")) || lines.Any(line => line.StartsWith("USBTablet")))
                     continue;
-                else
-                    throw new Exception("Configuration did not match any supported configurations.");
             }
         }
 
@@ -54,8 +56,7 @@ namespace OpenTabletDriverGUI.Models
             }
             else if (lines[0].StartsWith("USBTablet"))
             {
-                // TODO: USBTablet conversion
-                throw new NotImplementedException("USBTablet conversion not supported.");
+                return null;
             }
             else
             {

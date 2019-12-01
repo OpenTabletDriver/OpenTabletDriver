@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
+  <Name>XP-Pen Deco 01 v2</Name>
+  <VendorID>10429</VendorID>
+  <ProductID>2306</ProductID>
+  <InputReportLength>10</InputReportLength>
+  <Width>254</Width>
+  <Height>158.75</Height>
+  <MaxX>25400</MaxX>
+  <MaxY>15875</MaxY>
+  <MaxPressure>8191</MaxPressure>
+  <MinimumRange>128</MinimumRange>
+</Tablet>
