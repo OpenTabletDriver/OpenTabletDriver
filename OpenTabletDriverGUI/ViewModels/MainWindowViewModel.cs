@@ -45,23 +45,24 @@ namespace OpenTabletDriverGUI.ViewModels
             // Use platform specific display
             Display = Platform.Display;
             
-            Log.Write("Settings", $"Current directory is '{Environment.CurrentDirectory}'.");
-            
-            var settings = new FileInfo(Path.Combine(Environment.CurrentDirectory, "settings.xml"));
+            var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
+            var settings = new FileInfo(settingsPath);
             if (settings.Exists)
             {
                 Settings = Settings.Deserialize(settings);
-                Log.Write("Settings", "Loaded user settings.");
-            }
+                Log.Write("Settings", $"Loaded user settings from '{settingsPath}'");
+            } 
             else
             {
                 UseDefaultSettings();
             }
 
             // Find tablet configurations and try to open a tablet
-            var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
-            if (configurationDir.Exists)
-                OpenConfigurations(configurationDir);
+            var configurationsPath = Path.Combine(Environment.CurrentDirectory, "Configurations");
+            var configurations = new DirectoryInfo(configurationsPath);
+            Log.Write("Settings", $"Configuration directory is '{configurationsPath}'.");
+            if (configurations.Exists)
+                OpenConfigurations(configurations);
             else
                 Tablets = new ObservableCollection<TabletProperties>();
 
@@ -270,6 +271,8 @@ namespace OpenTabletDriverGUI.ViewModels
                 {
                     Settings = Settings.Deserialize(file);
                     Log.Write("Settings", "Successfully read settings from file.");
+                    ApplySettings();
+                    SetTheme(Settings.Theme);
                 }
                 catch (Exception ex)
                 {
@@ -296,6 +299,21 @@ namespace OpenTabletDriverGUI.ViewModels
                     Log.Exception(ex);
                     Log.Write("Settings", "Unable to write settings to file: " + path);
                 }
+            }
+        }
+
+        public void SaveSettings()
+        {
+            var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
+            var settings = new FileInfo(settingsPath);
+            try
+            {
+                Settings.Serialize(settings);
+                Log.Write("Settings", $"Saved settings to '{settingsPath}'.");
+            }
+            catch
+            {
+                Log.Write("Settings", $"Failed to write settings to '{settingsPath}'.", true);
             }
         }
 

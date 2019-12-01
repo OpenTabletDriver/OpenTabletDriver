@@ -57,6 +57,11 @@ namespace TabletDriverLib
                 }
                 return false;
             }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                return false;
+            }
         }
 
         public bool OpenTablet(IEnumerable<TabletProperties> tablets)
