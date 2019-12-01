@@ -1,4 +1,6 @@
 ﻿using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -26,9 +28,26 @@ namespace OpenTabletDriverGUI
         public static void Main(string[] args) 
         {
             Thread.CurrentThread.Name = "OpenTabletDriverGUI";
+            var rootCommand = new RootCommand("OpenTabletDriver")
+            {
+                new Option(new string[] { "--settingsDir", "-s" }, "Settings directory")
+                {
+                    Argument = new Argument<DirectoryInfo>("settingsDir")
+                },
+                new Option(new string[] { "--configDir", "-c" }, "Configuration directory")
+                {
+                    Argument = new Argument<DirectoryInfo> ("configurationDir")
+                }
+            };
             
-            if (args.Length > 0)
-                Environment.CurrentDirectory = args[0];
+            rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((settingsDir, configurationDir) => 
+            {
+                if (settingsDir != null)
+                    SettingsDirectory = settingsDir;
+                if (configurationDir != null)
+                    ConfigurationDirectory = configurationDir;
+            });
+            rootCommand.Invoke(args);
             
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, ShutdownMode.OnLastWindowClose);
         }
@@ -47,28 +66,34 @@ namespace OpenTabletDriverGUI
             msgbox.Show();
         }
 
-        internal static DirectoryInfo SettingsDirectory
+        
+        internal static DirectoryInfo SettingsDirectory { private set; get; } = GetDefaultSettingsDirectory();
+        private static DirectoryInfo GetDefaultSettingsDirectory()
         {
-            get
+            switch (Environment.OSVersion.Platform)
             {
-                switch (Environment.OSVersion.Platform)
-                {
-                    case PlatformID.Win32S:
-                    case PlatformID.Win32Windows:
-                    case PlatformID.Win32NT:
-                    case PlatformID.WinCE:
-                        var appdata = Environment.GetEnvironmentVariable("LOCALAPPDATA");
-                        return new DirectoryInfo(Path.Join(appdata, "OpenTabletDriver"));
-                    case PlatformID.Unix:
-                        var home = Environment.GetEnvironmentVariable("HOME");
-                        return new DirectoryInfo(Path.Join(home, ".config", "OpenTabletDriver"));
-                    case PlatformID.MacOSX:
-                        var macHome = Environment.GetEnvironmentVariable("HOME");
-                        return new DirectoryInfo(Path.Join(macHome, "Library", "Application Support", "OpenTabletDriver"));
-                    default:
-                        return null;
-                }
+                case PlatformID.Win32S:
+                case PlatformID.Win32Windows:
+                case PlatformID.Win32NT:
+                case PlatformID.WinCE:
+                    var appdata = Environment.GetEnvironmentVariable("LOCALAPPDATA");
+                    return new DirectoryInfo(Path.Join(appdata, "OpenTabletDriver"));
+                case PlatformID.Unix:
+                    var home = Environment.GetEnvironmentVariable("HOME");
+                    return new DirectoryInfo(Path.Join(home, ".config", "OpenTabletDriver"));
+                case PlatformID.MacOSX:
+                    var macHome = Environment.GetEnvironmentVariable("HOME");
+                    return new DirectoryInfo(Path.Join(macHome, "Library", "Application Support", "OpenTabletDriver"));
+                default:
+                    return null;
             }
+        }
+
+        internal static DirectoryInfo ConfigurationDirectory { private set; get; } = GetDefaultConfigurationDirectory();
+        private static DirectoryInfo GetDefaultConfigurationDirectory()
+        {
+            var path = Path.Join(Environment.CurrentDirectory, "Configurations");
+            return new DirectoryInfo(path);
         }
     }
 }

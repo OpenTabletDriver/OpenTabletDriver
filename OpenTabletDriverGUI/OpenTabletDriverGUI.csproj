@@ -17,6 +17,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MessageBox.Avalonia" Version="0.8.3" />
+    <PackageReference Include="System.CommandLine.Experimental" Version="0.3.0-alpha.19577.1" />
     <ProjectReference Include="..\TabletDriverLib\TabletDriverLib.csproj" />
     <PackageReference Include="Avalonia" Version="0.9.0-preview9" />
     <PackageReference Include="Avalonia.Desktop" Version="0.9.0-preview9" />
