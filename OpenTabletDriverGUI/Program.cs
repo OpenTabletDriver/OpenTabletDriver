@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
@@ -42,6 +43,30 @@ namespace OpenTabletDriverGUI
                 CanResize = false,
             });
             msgbox.Show();
+        }
+
+        internal static DirectoryInfo SettingsDirectory
+        {
+            get
+            {
+                switch (Environment.OSVersion.Platform)
+                {
+                    case PlatformID.Win32S:
+                    case PlatformID.Win32Windows:
+                    case PlatformID.Win32NT:
+                    case PlatformID.WinCE:
+                        var appdata = Environment.GetEnvironmentVariable("LOCALAPPDATA");
+                        return new DirectoryInfo(Path.Join(appdata, "OpenTabletDriver"));
+                    case PlatformID.Unix:
+                        var home = Environment.GetEnvironmentVariable("HOME");
+                        return new DirectoryInfo(Path.Join(home, ".config", "OpenTabletDriver"));
+                    case PlatformID.MacOSX:
+                        var macHome = Environment.GetEnvironmentVariable("HOME");
+                        return new DirectoryInfo(Path.Join(macHome, "Library", "Application Support", "OpenTabletDriver"));
+                    default:
+                        return null;
+                }
+            }
         }
     }
 }

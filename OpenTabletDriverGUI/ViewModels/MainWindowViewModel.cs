@@ -45,14 +45,13 @@ namespace OpenTabletDriverGUI.ViewModels
             // Use platform specific display
             Display = Platform.Display;
             
-            Log.Write("Settings", $"Current directory is '{Environment.CurrentDirectory}'.");
-            
-            var settings = new FileInfo(Path.Combine(Environment.CurrentDirectory, "settings.xml"));
+            var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
+            var settings = new FileInfo(settingsPath);
             if (settings.Exists)
             {
                 Settings = Settings.Deserialize(settings);
-                Log.Write("Settings", "Loaded user settings.");
-            }
+                Log.Write("Settings", $"Loaded user settings from '{settingsPath}'");
+            } 
             else
             {
                 UseDefaultSettings();
@@ -60,6 +59,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
             // Find tablet configurations and try to open a tablet
             var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
+            Log.Write("Settings", $"Configuration directory is '{configurationDir.FullName}'.");
             if (configurationDir.Exists)
                 OpenConfigurations(configurationDir);
             else
