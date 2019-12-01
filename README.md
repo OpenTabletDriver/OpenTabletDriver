@@ -13,12 +13,11 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 ## All platforms
 - .NET Core 3.0 SDK
 
+### Windows
+No special dependencies.
+
 ### Linux
 - Xlib
-
-### Windows [Currently broken, [see issue #2](https://github.com/InfinityGhost/OpenTabletDriver/issues/2)]
-> No special dependencies as of now.
-> The program will still build and run on Windows, but you may not be able to hook device input.
 
 ### Mac OS X [Unsupported]
 > Code is written for Mac OS X, but zero testing has been done to test if it works.

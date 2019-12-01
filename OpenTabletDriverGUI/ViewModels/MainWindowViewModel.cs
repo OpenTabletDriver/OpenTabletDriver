@@ -304,6 +304,8 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void SaveSettings()
         {
+            if (!Program.SettingsDirectory.Exists)
+                Program.SettingsDirectory.Create();
             var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
             var settings = new FileInfo(settingsPath);
             try
@@ -311,8 +313,10 @@ namespace OpenTabletDriverGUI.ViewModels
                 Settings.Serialize(settings);
                 Log.Write("Settings", $"Saved settings to '{settingsPath}'.");
             }
-            catch
+            catch (Exception ex)
             {
+                if (Debugging)
+                    Log.Exception(ex);
                 Log.Write("Settings", $"Failed to write settings to '{settingsPath}'.", true);
             }
         }
