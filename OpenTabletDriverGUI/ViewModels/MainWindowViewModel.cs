@@ -33,6 +33,18 @@ namespace OpenTabletDriverGUI.ViewModels
                 StatusMessage = message;
             };
 
+            // Create new instance of the driver
+            Driver = new Driver();
+            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
+            {
+                FullTabletWidth = tablet.Width;
+                FullTabletHeight = tablet.Height;
+                Driver.BindInput(InputHooked);
+            };
+
+            // Use platform specific display
+            Display = Platform.Display;
+            
             Log.Write("Settings", $"Current directory is '{Environment.CurrentDirectory}'.");
             
             var settings = new FileInfo(Path.Combine(Environment.CurrentDirectory, "settings.xml"));
@@ -45,18 +57,6 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 UseDefaultSettings();
             }
-            
-            // Create new instance of the driver
-            Driver = new Driver();
-            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
-            {
-                FullTabletWidth = tablet.Width;
-                FullTabletHeight = tablet.Height;
-                Driver.BindInput(InputHooked);
-            };
-
-            // Use platform specific display
-            Display = Platform.Display;
 
             // Find tablet configurations and try to open a tablet
             var configurationDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Configurations"));
@@ -72,10 +72,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public Settings Settings
         {
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _settings, value);
-            }
+            set => this.RaiseAndSetIfChanged(ref _settings, value);
             get => _settings;
         }
         private Settings _settings;
