@@ -58,7 +58,6 @@ namespace OpenTabletDriverGUI.ViewModels
             }
 
             // Find tablet configurations and try to open a tablet
-            
             Log.Write("Settings", $"Configuration directory is '{Program.ConfigurationDirectory.FullName}'.");
             if (Program.ConfigurationDirectory.Exists)
                 OpenConfigurations(Program.ConfigurationDirectory);

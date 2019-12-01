@@ -65,7 +65,6 @@ namespace OpenTabletDriverGUI
             });
             msgbox.Show();
         }
-
         
         internal static DirectoryInfo SettingsDirectory { private set; get; } = GetDefaultSettingsDirectory();
         private static DirectoryInfo GetDefaultSettingsDirectory()
