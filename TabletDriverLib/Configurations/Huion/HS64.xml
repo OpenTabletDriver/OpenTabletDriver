@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
+  <Name>Huion HS64</Name>
+  <VendorID>9580</VendorID>
+  <ProductID>109</ProductID>
+  <InputReportLength>8</InputReportLength>
+  <Width>160</Width>
+  <Height>102</Height>
+  <MaxX>32000</MaxX>
+  <MaxY>20400</MaxY>
+  <MaxPressure>8191</MaxPressure>
+  <MinimumRange>128</MinimumRange>
+</Tablet>

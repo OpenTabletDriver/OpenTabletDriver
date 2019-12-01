@@ -75,4 +75,18 @@ These tablets are configured but may not function as expected.
   - CTL-6100
   - PTH-451
   - PTH-660
+  - PTH-660 Bluetooth
   - PTH-850
+- Huion
+  - H420
+  - HS64
+- XP-Pen
+  - Deco 01
+  - Deco 01 v2
+  - Deco 02
+  - G430S_B
+  - G430S
+  - G540 Pro
+  - G640
+  - G640s
+  - Star 03v2

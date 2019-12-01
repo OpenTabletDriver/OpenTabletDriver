@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
+  <Name>XP-Pen G430S_B</Name>
+  <VendorID>10429</VendorID>
+  <ProductID>2323</ProductID>
+  <InputReportLength>12</InputReportLength>
+  <Width>101.6</Width>
+  <Height>76.2</Height>
+  <MaxX>10160</MaxX>
+  <MaxY>7620</MaxY>
+  <MaxPressure>8191</MaxPressure>
+  <MinimumRange>128</MinimumRange>
+</Tablet>

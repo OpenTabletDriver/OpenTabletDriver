@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
-  <Name>Wacom PTH-660 Bluetooth (Experimental)</Name>
+  <Name>Wacom PTH-660 Bluetooth</Name>
   <VendorID>1386</VendorID>
   <ProductID>864</ProductID>
   <InputReportLength>361</InputReportLength>
