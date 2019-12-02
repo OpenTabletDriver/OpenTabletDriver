@@ -81,6 +81,7 @@ namespace TabletDriverLib
             try
             {
                 ReadingInput = true;
+                ReportStream.ReadTimeout = int.MaxValue;
                 while (ReadingInput)
                 {
                     var data = ReportStream.Read();

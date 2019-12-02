@@ -58,11 +58,9 @@ namespace OpenTabletDriverGUI.ViewModels
             }
 
             // Find tablet configurations and try to open a tablet
-            var configurationsPath = Path.Combine(Environment.CurrentDirectory, "Configurations");
-            var configurations = new DirectoryInfo(configurationsPath);
-            Log.Write("Settings", $"Configuration directory is '{configurationsPath}'.");
-            if (configurations.Exists)
-                OpenConfigurations(configurations);
+            Log.Write("Settings", $"Configuration directory is '{Program.ConfigurationDirectory.FullName}'.");
+            if (Program.ConfigurationDirectory.Exists)
+                OpenConfigurations(Program.ConfigurationDirectory);
             else
                 Tablets = new ObservableCollection<TabletProperties>();
 
