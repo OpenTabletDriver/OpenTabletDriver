@@ -38,8 +38,5 @@ namespace NativeLib.OSX
 
         [DllImport(Quartz)]
         public extern static ulong CGDisplayPixelsHigh(CGDirectDisplayID display);
-
-        [DllImport(Quartz)]
-        public extern static CGPoint CGPointMake(float x, float y);
     }
 }
