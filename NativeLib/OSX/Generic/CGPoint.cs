@@ -6,9 +6,7 @@ namespace NativeLib.OSX
     [StructLayout(LayoutKind.Sequential)]
     public struct CGPoint
     {
-        [MarshalAs(UnmanagedType.SysUInt)]
         public Single x;
-        [MarshalAs(UnmanagedType.SysUInt)]
         public Single y;
 
         public CGPoint(Single x, Single y)
