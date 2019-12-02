@@ -8,11 +8,5 @@ namespace NativeLib.OSX
     {
         public Single x;
         public Single y;
-
-        public CGPoint(Single x, Single y)
-        {
-            this.x = x;
-            this.y = y;
-        }
     }
 }
