@@ -9,8 +9,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.DTO;
 using OpenTabletDriverGUI.ViewModels;
 using OpenTabletDriverGUI.Views;
 
@@ -27,6 +25,7 @@ namespace OpenTabletDriverGUI
         
         public static void Main(string[] args) 
         {
+            AppDomain.CurrentDomain.UnhandledException += UnhandledException;
             Thread.CurrentThread.Name = "OpenTabletDriverGUI";
             var rootCommand = new RootCommand("OpenTabletDriver")
             {
@@ -55,15 +54,8 @@ namespace OpenTabletDriverGUI
         internal static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = (Exception)e.ExceptionObject ?? default;
-            var msgbox = MessageBoxWindow.CreateCustomWindow(new MessageBoxCustomParams
-            {
-                ContentTitle = "Fatal Exception",
-                ContentHeader = exception.GetType().FullName,
-                ContentMessage = exception.ToString(),
-                ShowInCenter = true,
-                CanResize = false,
-            });
-            msgbox.Show();
+            var crashPath = Path.Join(SettingsDirectory.FullName, "crash.log");
+            File.AppendAllText(crashPath, string.Format("{0}: {1}", DateTime.Now, exception));
         }
         
         internal static DirectoryInfo SettingsDirectory { private set; get; } = GetDefaultSettingsDirectory();
