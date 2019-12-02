@@ -55,7 +55,6 @@ namespace TabletDriverLib
                 if (Tablet.TryOpen(config, out var stream, out var exception))
                 {
                     ReportStream = (HidStream)stream;
-                    ReportStream.ReadTimeout = int.MaxValue;
                     break;
                 }
                 else
@@ -82,6 +81,7 @@ namespace TabletDriverLib
             try
             {
                 ReadingInput = true;
+                ReportStream.ReadTimeout = int.MaxValue;
                 while (ReadingInput)
                 {
                     var data = ReportStream.Read();
