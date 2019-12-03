@@ -151,6 +151,12 @@ namespace OpenTabletDriverGUI.ViewModels
 
         #region Buttons
 
+        public async Task ShowAbout()
+        {
+            var about = new About();
+            await about.ShowDialog(App.MainWindow);
+        }
+
         public void DetectTablet()
         {
             Driver.OpenTablet(Tablets);

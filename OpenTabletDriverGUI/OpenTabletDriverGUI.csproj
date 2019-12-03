@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>true</PublishSingleFile>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Company>InfinityGhost</Company>
+    <Product>OpenTabletDriver</Product>
+    <Description />
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Models\" />

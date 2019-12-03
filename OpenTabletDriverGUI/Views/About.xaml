@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="OpenTabletDriverGUI.Views.About"
+        Width="500" Height="300"
+        Title="About OpenTabletDriver">
+    <Window.Styles>
+        <Style Selector="Border.r">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+        <Style Selector="TextBlock">
+            <Setter Property="Margin" Value="5,0"/>
+        </Style>
+        <Style Selector="TextBlock.h">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+    </Window.Styles>
+    <Grid DataContext="{Binding $parent[Window]}" RowDefinitions="Auto,*" ColumnDefinitions="*,*" Margin="5">
+        <TextBlock Grid.ColumnSpan="2" Margin="0,5"
+            FontWeight="Light" FontSize="24"
+            HorizontalAlignment="Center"
+            Text="OpenTabletDriver"/>
+        <Image Grid.Column="0" Grid.Row="1" Source="avares://OpenTabletDriverGUI/Assets/otd.png"/>
+        <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
+            <Border Classes="r">
+                <StackPanel Margin="5">
+                    <TextBlock Classes="h" Text="Author"/>
+                    <TextBlock Text="{Binding Author}"/>
+                </StackPanel>
+            </Border>
+            <Border Classes="r">
+                <StackPanel Margin="5">
+                    <TextBlock Classes="h" Text="Version"/>
+                    <TextBlock Text="{Binding Version}"/>
+                </StackPanel>
+            </Border>
+            <Border Classes="r">
+                <StackPanel Margin="5">
+                    <TextBlock Classes="h" Text="Repository"/>
+                    <TextBlock Text="InfinityGhost/OpenTabletDriver" Name="RepoBlock"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</Window>
