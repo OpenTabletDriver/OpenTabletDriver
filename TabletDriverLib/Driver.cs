@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
+using NativeLib;
 using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib
@@ -45,7 +46,7 @@ namespace TabletDriverLib
             {
                 if (Debugging)
                     Log.Exception(ex);
-                if (Environment.OSVersion.Platform == PlatformID.Unix && VendorInfo.UCLogic.VendorIDs.Contains(tablet.VendorID))
+                if (PlatformInfo.IsLinux && VendorInfo.UCLogic.VendorIDs.Contains(tablet.VendorID))
                 {
                     Log.Write("Detect", "Failed to get device input report length. "
                         + "Ensure the 'hid-uclogic' module is disabled.", true);

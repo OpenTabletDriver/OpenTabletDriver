@@ -6,15 +6,13 @@ namespace NativeLib.OSX
     [StructLayout(LayoutKind.Sequential)]
     public struct CGPoint
     {
-        [MarshalAs(UnmanagedType.SysUInt)]
-        public Single X;
-        [MarshalAs(UnmanagedType.SysUInt)]
-        public Single Y;
+        public Single x;
+        public Single y;
 
         public CGPoint(Single x, Single y)
         {
-            X = x;
-            Y = y;
+            this.x = x;
+            this.y = y;
         }
     }
 }

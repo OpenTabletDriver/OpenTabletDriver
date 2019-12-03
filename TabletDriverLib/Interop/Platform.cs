@@ -1,4 +1,5 @@
 using System;
+using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 
@@ -10,21 +11,15 @@ namespace TabletDriverLib.Interop
         {
             get
             {
-                switch (Environment.OSVersion.Platform)
-                {
-                    case PlatformID.Win32S:
-                    case PlatformID.Win32Windows:
-                    case PlatformID.Win32NT:
-                    case PlatformID.WinCE:
-                        return new WindowsCursorHandler();
-                    case PlatformID.Unix:
-                        return new XCursorHandler();
-                    case PlatformID.MacOSX:
-                        return new MacOSCursorHandler();
-                    default:
-                        Log.Write("Cursor Handler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);
-                        return null;
-                }
+                if (PlatformInfo.IsWindows)
+                    return new WindowsCursorHandler();
+                else if (PlatformInfo.IsLinux)
+                    return new XCursorHandler();
+                else if (PlatformInfo.IsOSX)
+                    return new MacOSCursorHandler();
+                
+                Log.Write("Cursor Handler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);
+                return null;
             }
         }
 
@@ -32,21 +27,15 @@ namespace TabletDriverLib.Interop
         {
             get
             {
-                switch (Environment.OSVersion.Platform)
-                {
-                    case PlatformID.Win32S:
-                    case PlatformID.Win32Windows:
-                    case PlatformID.Win32NT:
-                    case PlatformID.WinCE:
-                        return new WindowsDisplay();
-                    case PlatformID.Unix:
-                        return new XDisplay();
-                    case PlatformID.MacOSX:
-                        return new MacOSDisplay();
-                    default:
-                        Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
-                        return null;
-                }
+                if (PlatformInfo.IsWindows)
+                    return new WindowsDisplay();
+                else if (PlatformInfo.IsLinux)
+                    return new XDisplay();
+                else if (PlatformInfo.IsOSX)
+                    return new MacOSDisplay();
+                    
+                Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
+                return null;
             }
         }
     }

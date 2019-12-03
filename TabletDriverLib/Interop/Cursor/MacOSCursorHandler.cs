@@ -14,7 +14,7 @@ namespace TabletDriverLib.Interop.Cursor
             IntPtr eventRef = CGEventCreate();
             CGPoint cursor = CGEventGetLocation(ref eventRef);
             CFRelease(eventRef);
-            return new Point(cursor.X, cursor.Y);
+            return new Point(cursor.x, cursor.y);
         }
 
         public void SetCursorPosition(Point pos)

@@ -2,15 +2,12 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
-using OpenTabletDriverGUI.ViewModels;
-using OpenTabletDriverGUI.Views;
+using NativeLib;
 
 namespace OpenTabletDriverGUI
 {
@@ -61,22 +58,24 @@ namespace OpenTabletDriverGUI
         internal static DirectoryInfo SettingsDirectory { private set; get; } = GetDefaultSettingsDirectory();
         private static DirectoryInfo GetDefaultSettingsDirectory()
         {
-            switch (Environment.OSVersion.Platform)
+            if (PlatformInfo.IsWindows)
             {
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.Win32NT:
-                case PlatformID.WinCE:
-                    var appdata = Environment.GetEnvironmentVariable("LOCALAPPDATA");
-                    return new DirectoryInfo(Path.Join(appdata, "OpenTabletDriver"));
-                case PlatformID.Unix:
-                    var home = Environment.GetEnvironmentVariable("HOME");
-                    return new DirectoryInfo(Path.Join(home, ".config", "OpenTabletDriver"));
-                case PlatformID.MacOSX:
-                    var macHome = Environment.GetEnvironmentVariable("HOME");
-                    return new DirectoryInfo(Path.Join(macHome, "Library", "Application Support", "OpenTabletDriver"));
-                default:
-                    return null;
+                var appdata = Environment.GetEnvironmentVariable("LOCALAPPDATA");
+                return new DirectoryInfo(Path.Join(appdata, "OpenTabletDriver"));
+            }
+            else if (PlatformInfo.IsLinux)
+            {
+                var home = Environment.GetEnvironmentVariable("HOME");
+                return new DirectoryInfo(Path.Join(home, ".config", "OpenTabletDriver"));
+            }
+            else if (PlatformInfo.IsOSX)
+            {
+                var macHome = Environment.GetEnvironmentVariable("HOME");
+                return new DirectoryInfo(Path.Join(macHome, "Library", "Application Support", "OpenTabletDriver"));
+            }
+            else
+            {
+                return null;
             }
         }
 
