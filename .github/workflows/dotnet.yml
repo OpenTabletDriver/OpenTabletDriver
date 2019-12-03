@@ -42,7 +42,7 @@ jobs:
         with:
           dotnet-version: 3.0.100
       - name: Parse variables
-        run: $git_hash = $(get rev-parse --short $GITHUB_SHA)
+        run: $git_hash = $(git rev-parse --short $GITHUB_SHA)
       - name: Windows Publish
         run: dotnet publish --configuration Release --runtime win-x64 --version-suffix "$git_hash"
       - name: Copy configurations
