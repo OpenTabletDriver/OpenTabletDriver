@@ -202,6 +202,8 @@ namespace OpenTabletDriverGUI.Models
 
         public void Serialize(FileInfo file)
         {
+            if (file.Exists)
+                file.Delete();
             using (var stream = file.OpenWrite())
                 XmlSerializer.Serialize(stream, this);
         }
