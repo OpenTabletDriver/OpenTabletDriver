@@ -13,10 +13,12 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.0.100
+    - name: Parse variables
+      run: git_hash=$(git rev-parse --short $GITHUB_SHA)
     - name: Linux Publish
-      run: dotnet publish --configuration Release --runtime linux-x64
+      run: dotnet publish --configuration Release --runtime linux-x64 --version-suffix "$git_hash"
     - name: Mac OS X Publish
-      run: dotnet publish --configuration Release --runtime osx-x64
+      run: dotnet publish --configuration Release --runtime osx-x64 --version-suffix "$git_hash"
     - name: Copy configurations
       run: cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/linux-x64/publish && cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/osx-x64/publish
     - name: Upload Linux artifacts
@@ -39,8 +41,10 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.0.100
+      - name: Parse variables
+        run: $git_hash = $(get rev-parse --short $GITHUB_SHA)
       - name: Windows Publish
-        run: dotnet publish --configuration Release --runtime win-x64
+        run: dotnet publish --configuration Release --runtime win-x64 --version-suffix "$git_hash"
       - name: Copy configurations
         run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/win-x64/publish/Configurations/" -Recurse
       - name: Upload Windows artifacts
