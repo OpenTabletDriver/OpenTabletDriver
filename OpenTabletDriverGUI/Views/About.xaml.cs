@@ -23,14 +23,7 @@ namespace OpenTabletDriverGUI.Views
 
         private void OpenRepoUrl()
         {
-            if (PlatformInfo.IsWindows)
-                Process.Start(RepoURL);
-            else if (PlatformInfo.IsLinux)
-                Process.Start("xdg-open", RepoURL);
-            else if (PlatformInfo.IsOSX)
-                Process.Start("open", RepoURL);
-            else
-                throw new InvalidOperationException("Unable to open the URL, as platform wasn't detected.");
+            NativeLib.Tools.OpenUrl(RepoURL);
         }
 
         public string Author => Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyCompanyAttribute>().Company;
