@@ -47,8 +47,7 @@ jobs:
           dotnet-version: 3.0.100
       - name: Windows Publish
         run: |
-          $GIT_HASH = $(git rev-parse --short $GITHUB_SHA)
-          Get-Variable
+          $GIT_HASH = $(git rev-parse --short ${ENV:GITHUB_SHA})
           dotnet publish --configuration Release --runtime win-x64 --version-suffix "$GIT_HASH"
       - name: Copy configurations
         run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriverGUI/bin/Release/netcoreapp3.0/win-x64/publish/Configurations/" -Recurse
