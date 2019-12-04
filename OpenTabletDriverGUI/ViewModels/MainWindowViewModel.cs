@@ -236,6 +236,9 @@ namespace OpenTabletDriverGUI.ViewModels
                 Settings.TabletX = 0;
                 Settings.TabletY = 0;
             }
+
+            SetTheme(Settings.Theme);
+            ApplySettings();
         }
 
         public async Task OpenConfigurationManager()
