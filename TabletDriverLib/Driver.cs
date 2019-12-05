@@ -45,9 +45,7 @@ namespace TabletDriverLib
                 if (device == null && tablet.CustomInputReportLength.HasValue)
                 {
                     device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
-                    var parserType = System.Reflection.Assembly.GetCallingAssembly().GetType(tablet.CustomReportParserName);
-                    var parserObject = parserType.GetConstructors().FirstOrDefault().Invoke(new object[]{});
-                    parser = parserObject as ITabletReportParser;
+                    parser = GetTabletReportParser(tablet.CustomReportParserName);
                 }
                 TabletProperties = tablet;
                 return OpenTablet(device, parser);
@@ -93,6 +91,7 @@ namespace TabletDriverLib
             if (Tablet != null)
             {
                 Log.Write("Detect", $"Found device '{Tablet.GetFriendlyName()}'.");
+                Log.Write("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
                 if (Debugging)
                 {
                     Log.Debug($"Device path: {Tablet.DevicePath}");
@@ -111,6 +110,20 @@ namespace TabletDriverLib
                     Log.Write("Detect", "Tablet not found.", true);
                 return false;
             }
+        }
+
+        private ITabletReportParser GetTabletReportParser(string fullName)
+        {
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == fullName);
+                if (type != null)
+                {
+                    var ctorResult = type.GetConstructors().FirstOrDefault().Invoke(new object[]{});
+                    return ctorResult as ITabletReportParser;
+                }
+            }
+            return null;
         }
 
         public bool CloseTablet()
@@ -146,7 +159,7 @@ namespace TabletDriverLib
         private void Translate(object sender, ITabletReport report)
         {
             if (report.Lift > TabletProperties.MinimumRange)
-                OutputMode.Read(report);
+                OutputMode?.Read(report);
         }
     }
 }
