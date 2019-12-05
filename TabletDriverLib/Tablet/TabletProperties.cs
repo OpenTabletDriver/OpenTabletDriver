@@ -29,12 +29,26 @@ namespace TabletDriverLib.Tablet
         [XmlElement("ProductID")]
         public int ProductID { set; get; } = 0;
 
-        [XmlElement("InputReportLength")]
         /// <summary>
         /// The device's report length.
         /// </summary>
         /// <value></value>
+        [XmlElement("InputReportLength")]
         public uint InputReportLength { set; get; } = 0;
+
+        /// <summary>
+        /// The device's input report length when a custom report parser is needed.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("CustomInputReportLength")]
+        public uint? CustomInputReportLength { set; get; }
+
+        /// <summary>
+        /// The type path of the custom report parser to be used.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("CustomReportParser")]
+        public string CustomReportParserName { set; get; }
 
         /// <summary>
         /// The device's horizontal active area in millimeters.

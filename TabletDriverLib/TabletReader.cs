@@ -22,8 +22,9 @@ namespace TabletDriverLib
 
         public HidDevice Tablet { private set; get; }
         public HidStream ReportStream { private set; get; }
+        public ITabletReportParser ReportParser { set; get; }
 
-        public event EventHandler<TabletReport> Report;
+        public event EventHandler<ITabletReport> Report;
 
         private Thread WorkerThread;
         public bool Working { protected set; get; }
@@ -85,7 +86,7 @@ namespace TabletDriverLib
                 while (ReadingInput)
                 {
                     var data = ReportStream.Read();
-                    var report = new TabletReport(data);
+                    var report = ReportParser.Parse(data);
                     Report?.Invoke(this, report);
                     // Logging
                     if (Driver.Debugging)

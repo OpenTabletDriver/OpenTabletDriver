@@ -4,6 +4,7 @@ using System.Linq;
 using HidSharp;
 using NativeLib;
 using TabletDriverLib.Tablet;
+using TabletDriverLib.VendorInfo;
 
 namespace TabletDriverLib
 {
@@ -15,6 +16,7 @@ namespace TabletDriverLib
         public TabletProperties TabletProperties { set; get; }
         public OutputMode OutputMode { set; get; }
         public TabletReader TabletReader { private set; get; }
+        public ITabletReportParser TabletReportParser { private set; get; }
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
 
@@ -29,7 +31,7 @@ namespace TabletDriverLib
         public bool OpenTablet(string devicePath)
         {
             var device = Devices.FirstOrDefault(d => d.DevicePath == devicePath);
-            return OpenTablet(device);
+            return OpenTablet(device, new TabletReportParser());
         }
 
         public bool OpenTablet(TabletProperties tablet)
@@ -37,16 +39,24 @@ namespace TabletDriverLib
             Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
             try
             {
+                ITabletReportParser parser = new TabletReportParser();
                 var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
                 var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
+                if (device == null && tablet.CustomInputReportLength.HasValue)
+                {
+                    device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
+                    var parserType = System.Reflection.Assembly.GetCallingAssembly().GetType(tablet.CustomReportParserName);
+                    var parserObject = parserType.GetConstructors().FirstOrDefault().Invoke(new object[]{});
+                    parser = parserObject as ITabletReportParser;
+                }
                 TabletProperties = tablet;
-                return OpenTablet(device);
+                return OpenTablet(device, parser);
             }
             catch (ArgumentOutOfRangeException ex)
             {
                 if (Debugging)
                     Log.Exception(ex);
-                if (PlatformInfo.IsLinux && VendorInfo.UCLogic.VendorIDs.Contains(tablet.VendorID))
+                if (PlatformInfo.IsLinux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.VendorID))
                 {
                     Log.Write("Detect", "Failed to get device input report length. "
                         + "Ensure the 'hid-uclogic' module is disabled.", true);
@@ -76,7 +86,7 @@ namespace TabletDriverLib
             return false;
         }
 
-        internal bool OpenTablet(HidDevice device)
+        internal bool OpenTablet(HidDevice device, ITabletReportParser reportParser)
         {
             CloseTablet();
             Tablet = device;
@@ -89,6 +99,7 @@ namespace TabletDriverLib
                 }
                 
                 TabletReader = new TabletReader(Tablet);
+                TabletReader.ReportParser = reportParser;
                 TabletReader.Start();
                 // Post tablet opened event
                 TabletSuccessfullyOpened?.Invoke(this, TabletProperties);
@@ -132,7 +143,7 @@ namespace TabletDriverLib
                 TabletReader.Report -= Translate;
         }
 
-        private void Translate(object sender, TabletReport report)
+        private void Translate(object sender, ITabletReport report)
         {
             if (report.Lift > TabletProperties.MinimumRange)
                 OutputMode.Read(report);
