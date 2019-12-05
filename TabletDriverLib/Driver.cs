@@ -4,7 +4,7 @@ using System.Linq;
 using HidSharp;
 using NativeLib;
 using TabletDriverLib.Tablet;
-using TabletDriverLib.VendorInfo;
+using TabletDriverLib.Vendors;
 
 namespace TabletDriverLib
 {

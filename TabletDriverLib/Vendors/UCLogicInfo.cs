@@ -1,4 +1,4 @@
-﻿namespace TabletDriverLib.VendorInfo
+﻿namespace TabletDriverLib.Vendors
 {
     public static class UCLogicInfo
     {
