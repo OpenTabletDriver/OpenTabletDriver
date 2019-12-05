@@ -45,7 +45,8 @@ namespace TabletDriverLib
                 if (device == null && tablet.CustomInputReportLength.HasValue)
                 {
                     device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
-                    parser = GetTabletReportParser(tablet.CustomReportParserName);
+                    if (device != null)
+                        parser = GetTabletReportParser(tablet.CustomReportParserName);
                 }
                 TabletProperties = tablet;
                 return OpenTablet(device, parser);
