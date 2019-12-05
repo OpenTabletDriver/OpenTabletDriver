@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
 using NativeLib;
+using TabletDriverLib.Compatibility;
 using TabletDriverLib.Tablet;
+using TabletDriverLib.VendorInfo;
 
 namespace TabletDriverLib
 {
@@ -15,6 +17,7 @@ namespace TabletDriverLib
         public TabletProperties TabletProperties { set; get; }
         public OutputMode OutputMode { set; get; }
         public TabletReader TabletReader { private set; get; }
+        public bool RequiresCompatibilityLayer { private set; get; } = false;
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
 
@@ -39,6 +42,13 @@ namespace TabletDriverLib
             {
                 var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
                 var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
+                if (device == null && tablet.DriverInputReportLength is uint len)
+                {
+                    device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == len);
+                    RequiresCompatibilityLayer = device != null;
+                }
+                else
+                    RequiresCompatibilityLayer = false;
                 TabletProperties = tablet;
                 return OpenTablet(device);
             }
@@ -46,7 +56,7 @@ namespace TabletDriverLib
             {
                 if (Debugging)
                     Log.Exception(ex);
-                if (PlatformInfo.IsLinux && VendorInfo.UCLogic.VendorIDs.Contains(tablet.VendorID))
+                if (PlatformInfo.IsLinux && Tools.GetEnumValues<int>(typeof(UCLogic.VendorIDs)).Any(id => tablet.VendorID == id))
                 {
                     Log.Write("Detect", "Failed to get device input report length. "
                         + "Ensure the 'hid-uclogic' module is disabled.", true);
@@ -88,7 +98,10 @@ namespace TabletDriverLib
                     Log.Debug($"Device path: {Tablet.DevicePath}");
                 }
                 
-                TabletReader = new TabletReader(Tablet);
+                TabletReader = new TabletReader(Tablet)
+                {
+                    CompatibilityLayer = RequiresCompatibilityLayer ? GetCompatibilityLayer(Tablet.GetMaxInputReportLength()) : null
+                };
                 TabletReader.Start();
                 // Post tablet opened event
                 TabletSuccessfullyOpened?.Invoke(this, TabletProperties);
@@ -132,7 +145,18 @@ namespace TabletDriverLib
                 TabletReader.Report -= Translate;
         }
 
-        private void Translate(object sender, TabletReport report)
+        private ICompatibilityLayer<ITabletReport> GetCompatibilityLayer(int vendorId)
+        {
+            switch (vendorId)
+            {
+                case Wacom.VendorID:
+                    return new WacomCompatibilityLayer();
+                default:
+                    return null;
+            }
+        }
+
+        private void Translate(object sender, ITabletReport report)
         {
             if (report.Lift > TabletProperties.MinimumRange)
                 OutputMode.Read(report);

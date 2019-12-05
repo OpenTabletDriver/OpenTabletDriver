@@ -4,9 +4,9 @@ namespace TabletDriverLib.VendorInfo
 {
     public static class UCLogic
     {
-        public static readonly IEnumerable<int> VendorIDs = new List<int>
+        public enum VendorIDs
         {
-            0x256C, // Gaomon
+            Gaomon = 0x256C
         };
     }
 }

@@ -36,6 +36,13 @@ namespace TabletDriverLib.Tablet
         /// <value></value>
         public uint InputReportLength { set; get; } = 0;
 
+        [XmlElement("DriverInputReportLength")]
+        /// <summary>
+        /// The device's report length when a the native driver is installed.
+        /// </summary>
+        /// <value></value>
+        public uint? DriverInputReportLength { set; get; } = null;
+
         /// <summary>
         /// The device's horizontal active area in millimeters.
         /// </summary>

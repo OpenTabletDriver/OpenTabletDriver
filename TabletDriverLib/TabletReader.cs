@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using HidSharp;
 using HidSharp.Reports.Input;
+using TabletDriverLib.Compatibility;
 using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib
@@ -22,8 +23,9 @@ namespace TabletDriverLib
 
         public HidDevice Tablet { private set; get; }
         public HidStream ReportStream { private set; get; }
+        public ICompatibilityLayer<ITabletReport> CompatibilityLayer { set; get; }
 
-        public event EventHandler<TabletReport> Report;
+        public event EventHandler<ITabletReport> Report;
 
         private Thread WorkerThread;
         public bool Working { protected set; get; }
@@ -85,7 +87,11 @@ namespace TabletDriverLib
                 while (ReadingInput)
                 {
                     var data = ReportStream.Read();
-                    var report = new TabletReport(data);
+                    ITabletReport report;
+                    if (CompatibilityLayer != null)
+                        report = CompatibilityLayer.Fix(data);
+                    else
+                        report = new TabletReport(data);
                     Report?.Invoke(this, report);
                     // Logging
                     if (Driver.Debugging)
