@@ -40,14 +40,15 @@ namespace OpenTabletDriverGUI
             Styles[1] = style;
         }
 
-        public void Restart(MainWindowViewModel vm)
+        public static void Restart(MainWindowViewModel vm)
         {
             MainWindow = new MainWindow()
             {
                 DataContext = vm
             };
             MainWindow.Show();
-            if (Windows.FirstOrDefault(w => w != MainWindow) is Window window)
+            
+            foreach (Window window in Windows.Where(w => w != MainWindow))
                 window.Close();
             
             MainWindow.Focus();

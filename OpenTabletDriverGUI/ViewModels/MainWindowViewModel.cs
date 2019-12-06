@@ -54,7 +54,7 @@ namespace OpenTabletDriverGUI.ViewModels
             } 
             else
             {
-                UseDefaultSettings();
+                Defaults();
             }
 
             // Find tablet configurations and try to open a tablet
@@ -221,6 +221,12 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void UseDefaultSettings()
         {
+            Defaults();
+            SetTheme(Settings.Theme);
+        }
+
+        private void Defaults()
+        {
             Settings = new Settings()
             {
                 DisplayWidth = Display.Width,
@@ -237,7 +243,6 @@ namespace OpenTabletDriverGUI.ViewModels
                 Settings.TabletY = 0;
             }
 
-            SetTheme(Settings.Theme);
             ApplySettings();
         }
 
@@ -346,7 +351,7 @@ namespace OpenTabletDriverGUI.ViewModels
         {
             Settings.Theme = name;
             Log.Write("Theme", $"Using theme '{name}'.");
-            (App.Current as App).Restart(this);
+            App.Restart(this);
         }
 
         private void SetMode(string name)
