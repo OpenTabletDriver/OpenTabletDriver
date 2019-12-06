@@ -41,7 +41,7 @@ namespace TabletDriverLib.Tablet
         /// </summary>
         /// <value></value>
         [XmlElement("CustomInputReportLength")]
-        public uint? CustomInputReportLength { set; get; }
+        public uint CustomInputReportLength { set; get; } = 0;
 
         /// <summary>
         /// The type path of the custom report parser to be used.

@@ -4,7 +4,8 @@
     {
         public enum VendorIDs
         {
-            Gaomon = 0x256C
+            Gaomon = 0x256C,
+            Huion = 0x256C
         }
     }
 }

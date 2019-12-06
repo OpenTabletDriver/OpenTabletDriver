@@ -42,7 +42,7 @@ namespace TabletDriverLib
                 ITabletReportParser parser = new TabletReportParser();
                 var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
                 var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
-                if (device == null && tablet.CustomInputReportLength.HasValue)
+                if (device == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
                 {
                     device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
                     if (device != null)

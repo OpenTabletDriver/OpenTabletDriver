@@ -88,6 +88,12 @@
 
                             <TextBlock Text="Minimum Hover Distance"/>
                             <TextBox Text="{Binding MinimumRange}"/>
+
+                            <TextBlock Text="Custom Report Parser"/>
+                            <TextBox Text="{Binding CustomReportParserName}"/>
+
+                            <TextBlock Text="Custom Input Report Length"/>
+                            <TextBox Text="{Binding CustomInputReportLength}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
