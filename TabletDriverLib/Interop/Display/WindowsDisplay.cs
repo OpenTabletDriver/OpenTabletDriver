@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NativeLib.Windows;
 
@@ -18,7 +19,7 @@ namespace TabletDriverLib.Interop.Display
                 {
                     if (display.MonitorArea.left < 0)
                     {
-                        value += display.MonitorWidth;
+                        value += Math.Abs(display.MonitorArea.right - display.MonitorArea.left);
                     }
                     else
                     {
@@ -39,7 +40,7 @@ namespace TabletDriverLib.Interop.Display
                 {
                     if (display.MonitorArea.top < 0)
                     {
-                        result += display.MonitorHeight;
+                        result += Math.Abs(display.MonitorArea.bottom - display.MonitorArea.top);
                     }
                     else
                     {
