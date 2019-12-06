@@ -16,8 +16,15 @@ namespace TabletDriverLib.Interop.Display
                 int value = 0;
                 foreach (var display in Displays)
                 {
-                    var offset = value - display.MonitorArea.left;
-                    value += display.MonitorWidth - offset;
+                    if (display.MonitorArea.left < 0)
+                    {
+                        value += display.MonitorWidth;
+                    }
+                    else
+                    {
+                        var offset = value - display.MonitorArea.left;
+                        value += display.MonitorWidth - offset;
+                    }
                 }
                 return value;
             }
@@ -27,13 +34,20 @@ namespace TabletDriverLib.Interop.Display
         {
             get
             {
-                int value = 0;
+                int result = 0;
                 foreach (var display in Displays)
                 {
-                    var offset = value - display.MonitorArea.top;
-                    value += display.MonitorHeight - offset;
+                    if (display.MonitorArea.top < 0)
+                    {
+                        result += display.MonitorHeight;
+                    }
+                    else
+                    {
+                        var offset = result - display.MonitorArea.top;
+                        result += display.MonitorHeight - offset;
+                    }
                 }
-                return value;
+                return result;
             }
         }
     }
