@@ -10,4 +10,6 @@
   <MaxY>9500</MaxY>
   <MaxPressure>2047</MaxPressure>
   <MinimumRange>64</MinimumRange>
+  <CustomInputReportLength>11</CustomInputReportLength>
+  <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverReportParser</CustomReportParser>
 </Tablet>
