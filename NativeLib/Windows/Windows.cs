@@ -25,7 +25,7 @@ namespace NativeLib.Windows
 
         #region Display
 
-        public delegate bool MonitorEnumDelegate(IntPtr hMonitor,IntPtr hdcMonitor,ref Rect lprcMonitor, IntPtr dwData);
+        public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData);
 
         [DllImport("user32.dll")]
         public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
@@ -40,8 +40,7 @@ namespace NativeLib.Windows
             {
                 MonitorInfo monitorInfo = new MonitorInfo();
                 monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
-                bool success = GetMonitorInfo(hMonitor, ref monitorInfo);
-                if (success)
+                if (GetMonitorInfo(hMonitor, ref monitorInfo))
                 {
                     DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work);
                     displayCollection.Add(displayInfo);
