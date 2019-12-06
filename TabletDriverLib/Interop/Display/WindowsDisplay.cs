@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using NativeLib.Windows;
 
 namespace TabletDriverLib.Interop.Display
@@ -12,12 +12,44 @@ namespace TabletDriverLib.Interop.Display
         
         public float Width
         {
-            get => Displays.Sum(d => d.ScreenWidth);
+            get
+            {
+                int value = 0;
+                foreach (var display in Displays)
+                {
+                    if (display.MonitorArea.left < 0)
+                    {
+                        value += Math.Abs(display.MonitorArea.right - display.MonitorArea.left);
+                    }
+                    else
+                    {
+                        var offset = value - display.MonitorArea.left;
+                        value += display.MonitorWidth - offset;
+                    }
+                }
+                return value;
+            }
         }
 
         public float Height 
         {
-            get => Displays.Sum(d => d.ScreenHeight);
+            get
+            {
+                int result = 0;
+                foreach (var display in Displays)
+                {
+                    if (display.MonitorArea.top < 0)
+                    {
+                        result += Math.Abs(display.MonitorArea.bottom - display.MonitorArea.top);
+                    }
+                    else
+                    {
+                        var offset = result - display.MonitorArea.top;
+                        result += display.MonitorHeight - offset;
+                    }
+                }
+                return result;
+            }
         }
     }
 }

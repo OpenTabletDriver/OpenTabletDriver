@@ -25,7 +25,7 @@ namespace NativeLib.Windows
 
         #region Display
 
-        public delegate bool MonitorEnumDelegate(IntPtr hMonitor,IntPtr hdcMonitor,ref Rect lprcMonitor, IntPtr dwData);
+        public delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData);
 
         [DllImport("user32.dll")]
         public static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
@@ -35,27 +35,20 @@ namespace NativeLib.Windows
 
         public static List<DisplayInfo> GetDisplays()
         {
-            List<DisplayInfo> col = new List<DisplayInfo>();
-
-            EnumDisplayMonitors( IntPtr.Zero, IntPtr.Zero,
-                delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor,  IntPtr dwData)
+            List<DisplayInfo> displayCollection = new List<DisplayInfo>();
+            MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor,  IntPtr dwData)
+            {
+                MonitorInfo monitorInfo = new MonitorInfo();
+                monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
+                if (GetMonitorInfo(hMonitor, ref monitorInfo))
                 {
-                    MonitorInfo mi = new MonitorInfo();
-                    mi.size = (uint)Marshal.SizeOf(mi);
-                    bool success = GetMonitorInfo(hMonitor, ref mi);
-                    if (success)
-                    {
-                        DisplayInfo di = new DisplayInfo();
-                        di.ScreenWidth = mi.monitor.right - mi.monitor.left;
-                        di.ScreenHeight = mi.monitor.bottom - mi.monitor.top;
-                        di.MonitorArea = mi.monitor;
-                        di.WorkArea = mi.work;
-                        di.Availability = mi.flags.ToString();
-                        col.Add(di);
-                    }
+                    DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work);
+                    displayCollection.Add(displayInfo);
+                }
                 return true;
-                }, IntPtr.Zero );
-            return col;
+            };
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, monitorDelegate, IntPtr.Zero);
+            return displayCollection;
         }
 
         #endregion
