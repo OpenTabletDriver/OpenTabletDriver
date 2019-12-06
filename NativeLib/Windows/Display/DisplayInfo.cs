@@ -2,10 +2,16 @@
 {
     public class DisplayInfo
     {
-        public string Availability { get; set; }
-        public float ScreenHeight { get; set; }
-        public float ScreenWidth { get; set; }
+        public DisplayInfo(Rect monitorArea, Rect workingArea)
+        {
+            MonitorArea = monitorArea;
+            WorkingArea = workingArea;
+        }
+
         public Rect MonitorArea { get; set; }
-        public Rect WorkArea { get; set; }
+        public Rect WorkingArea { get; set; }
+
+        public int MonitorWidth => MonitorArea.right - MonitorArea.left;
+        public int MonitorHeight => MonitorArea.bottom - MonitorArea.top;
     }
 }
