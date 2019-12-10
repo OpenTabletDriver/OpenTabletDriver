@@ -112,8 +112,8 @@ namespace TabletDriverLib.Output
             {
                 var tempCopy = new Point(pos.X, pos.Y);
                 var rotateMatrix = TabletArea.GetRotationMatrix();
-                pos.X = tempCopy.X * rotateMatrix[0] + tempCopy.Y * rotateMatrix[1];
-                pos.Y = tempCopy.X * rotateMatrix[2] + tempCopy.Y * rotateMatrix[3];
+                pos.X = (tempCopy.X * rotateMatrix[0]) + (tempCopy.Y * rotateMatrix[1]);
+                pos.Y = (tempCopy.X * rotateMatrix[2]) + (tempCopy.Y * rotateMatrix[3]);
             }
 
             // Setting cursor position
