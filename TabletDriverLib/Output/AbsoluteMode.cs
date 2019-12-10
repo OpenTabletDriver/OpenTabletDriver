@@ -9,38 +9,11 @@ namespace TabletDriverLib.Output
     public class AbsoluteMode : OutputMode
     {
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
-        private Area _display, _tablet;
-        private TabletProperties _properties;
 
-        public Area DisplayArea
-        {
-            set
-            {
-                _display = value;
-                UpdateCache();
-            }
-            get => _display;
-        }
+        public Area DisplayArea { set; get; }
+        public Area TabletArea { set; get; }
 
-        public Area TabletArea
-        {
-            set
-            {
-                _tablet = value;
-                UpdateCache();
-            }
-            get => _tablet;
-        }
-
-        public override TabletProperties TabletProperties
-        {
-            set
-            {
-                _properties = value;
-                UpdateCache();
-            }
-            get => _properties;
-        }
+        public override TabletProperties TabletProperties { set; get;}
 
         public bool Clipping { set; get; }
         public bool BindingsEnabled { set; get; }
@@ -49,19 +22,6 @@ namespace TabletDriverLib.Output
         {
             { 0, MouseButton.None }
         };
-
-        private float scaleX, scaleY, reportXOffset, reportYOffset;
-
-        public void UpdateCache()
-        {
-            if (DisplayArea != null && TabletArea != null && TabletProperties != null)
-            {
-                scaleX = (DisplayArea.Width * TabletProperties.Width) / (TabletArea.Width * TabletProperties.MaxX);
-                scaleY = (DisplayArea.Height * TabletProperties.Height) / (TabletArea.Height * TabletProperties.MaxY);
-                reportXOffset = (TabletProperties.MaxX / TabletProperties.Width) * TabletArea.Position.X;
-                reportYOffset = (TabletProperties.MaxY / TabletProperties.Height) * TabletArea.Position.Y;
-            }
-        }
 
         public override void Position(ITabletReport report)
         {
