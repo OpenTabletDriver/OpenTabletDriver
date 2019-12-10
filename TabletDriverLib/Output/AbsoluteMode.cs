@@ -43,11 +43,11 @@ namespace TabletDriverLib.Output
         }
 
         public bool Clipping { set; get; }
-        public bool BindingsEnabled { set; get; }
+        public bool TipEnabled { set; get; }
         public float TipActivationPressure { set; get; }
-        public Dictionary<int, MouseButton> MouseButtonBindings { set; get; } = new Dictionary<int, MouseButton>()
+        public Dictionary<(BindingType type, int index), MouseButton> Bindings { set; get; } = new Dictionary<(BindingType type, int index), MouseButton>()
         {
-            { 0, MouseButton.None }
+            { (BindingType.Tip, 0), MouseButton.None }
         };
 
         private float scaleX, scaleY, reportXOffset, reportYOffset;
@@ -90,14 +90,16 @@ namespace TabletDriverLib.Output
 
         public void HandleButton(ITabletReport report)
         {
-            if (BindingsEnabled)
+            if (TipEnabled)
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                if (pressurePercent >= TipActivationPressure && !CursorHandler.GetMouseButtonState(MouseButtonBindings[0]))
-                    CursorHandler.MouseDown(MouseButtonBindings[0]);
-                else if (pressurePercent < TipActivationPressure && CursorHandler.GetMouseButtonState(MouseButtonBindings[0]))
-                    CursorHandler.MouseUp(MouseButtonBindings[0]);
+                if (pressurePercent >= TipActivationPressure && !CursorHandler.GetMouseButtonState(Bindings[(BindingType.Pen, 0)]))
+                    CursorHandler.MouseDown(Bindings[(BindingType.Pen, 0)]);
+                else if (pressurePercent < TipActivationPressure && CursorHandler.GetMouseButtonState(Bindings[(BindingType.Pen, 0)]))
+                    CursorHandler.MouseUp(Bindings[(BindingType.Pen, 0)]);
             }
+
+            
         }
     }
 }

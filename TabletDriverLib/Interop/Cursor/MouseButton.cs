@@ -9,4 +9,11 @@ namespace TabletDriverLib.Interop.Cursor
         Backward = 4,
         Forward = 5
     }
+
+    public enum BindingType
+    {
+        Tip = 0,
+        Pen = 1,
+        Pad = 2
+    }
 }

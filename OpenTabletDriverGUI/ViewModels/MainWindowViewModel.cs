@@ -211,10 +211,28 @@ namespace OpenTabletDriverGUI.ViewModels
                 absolute.Clipping = Settings.EnableClipping;
                 Log.Write("Settings", "Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
                 
-                absolute.MouseButtonBindings[0] = Settings.TipButton;
+                absolute.Bindings[(BindingType.Tip, 0)] = Settings.TipButton;
+                // Log.Write("Settings", "Pen Buttons are " + String.Join(", ", Settings.PenButtons));
+                // Log.Write("Settings", "Pad Buttons are " + String.Join(", ", Settings.PadButtons));
+
                 absolute.TipActivationPressure = Settings.TipActivationPressure;
-                absolute.BindingsEnabled = !absolute.MouseButtonBindings.All(btn => btn.Value == MouseButton.None);
-                Log.Write("Settings", $"Bindings set: Tip='{absolute.MouseButtonBindings[0]}'@{absolute.TipActivationPressure}%");
+                absolute.TipEnabled = absolute.Bindings[(BindingType.Tip, 0)] != MouseButton.None;
+                Log.Write("Settings", $"Tip Binding: '{absolute.Bindings[(BindingType.Tip, 0)]}'@{absolute.TipActivationPressure}%");
+
+                if (Settings.PenButtons != null)
+                {
+                    for (int count = 0; count < Settings.PenButtons.Count(); count++)
+                        absolute.Bindings[(BindingType.Pen, count)] = Settings.PenButtons[count];
+                    
+                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Pen).Select(keypair => keypair.Value)));
+                }
+                if (Settings.PadButtons != null)
+                {
+                    for (int count = 0; count < Settings.PadButtons.Count(); count++)
+                        absolute.Bindings[(BindingType.Pad, count)] = Settings.PadButtons[count];
+                    
+                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Pad).Select(keypair => keypair.Value)));
+                }
             }
             Log.Write("Settings", "Applied all settings.");
         }

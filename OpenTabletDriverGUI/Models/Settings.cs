@@ -188,6 +188,26 @@ namespace OpenTabletDriverGUI.Models
             get => _tipButton;
         }
 
+        private MouseButton[] _penButtons;
+
+        [XmlArray("PenButtons")]
+        [XmlArrayItem("key")]
+        public MouseButton[] PenButtons
+        {
+            set => this.RaiseAndSetIfChanged(ref _penButtons, value);
+            get => _penButtons;
+        }
+
+        private MouseButton[] _padButtons;
+
+        [XmlArray("PadButtons")]
+        [XmlArrayItem("key")]
+        public MouseButton[] PadButtons
+        {
+            set => this.RaiseAndSetIfChanged(ref _padButtons, value);
+            get => _padButtons;
+        }
+
         #endregion
 
         #region XML Serialization

@@ -92,6 +92,20 @@ namespace TabletDriverLib.Tablet
         [XmlElement("MinimumRange")]
         public uint MinimumRange { set; get; } = 0;
 
+        /// <summary>
+        /// The number of buttons on the device's pen.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("PenButtons")]
+        public uint PenButtons { set; get; } = 0;
+
+        /// <summary>
+        /// The number of buttons on the device's pad.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("PadButtons")]
+        public uint PadButtons { set; get; } = 0;
+
         #region XML Serialization
 
         private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));

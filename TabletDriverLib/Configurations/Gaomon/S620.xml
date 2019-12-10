@@ -13,4 +13,6 @@
   <MaxPressure>8191</MaxPressure>
   <MinimumRange>10</MinimumRange>
   <InputReportLength>12</InputReportLength>
+  <PenButtons>2</PenButtons>
+  <PadButtons>4</PadButtons>
 </Tablet>

@@ -89,6 +89,12 @@
                             <TextBlock Text="Minimum Hover Distance"/>
                             <TextBox Text="{Binding MinimumRange}"/>
 
+                            <TextBlock Text="Pen Buttons"/>
+                            <TextBox Text="{Binding PenButtons}"/>
+
+                            <TextBlock Text="Pad Buttons"/>
+                            <TextBox Text="{Binding PadButtons}"/>
+
                             <TextBlock Text="Custom Report Parser"/>
                             <TextBox Text="{Binding CustomReportParserName}"/>
 
