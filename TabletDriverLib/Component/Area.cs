@@ -23,19 +23,16 @@ namespace TabletDriverLib.Component
         public Point Position { set; get; } = new Point();
         public float Rotation { set; get; } = 0;
 
-        public IList<float> RotationMatrix
+        public float[] GetRotationMatrix()
         {
-            get 
+            var angle = Rotation * (Math.PI / 180);
+            return new float[4]
             {
-                float angle = Rotation * (float)(Math.PI / 180f);
-                return new float[]
-                {
-                    (float)Math.Cos(angle),
-                    (float)-Math.Sin(angle),
-                    (float)Math.Sin(angle),
-                    (float)Math.Cos(angle)
-                };
-            }
+                (float)Math.Cos(angle),
+                (float)-Math.Sin(angle),
+                (float)Math.Sin(angle),
+                (float)Math.Cos(angle)
+            };
         }
 
         public override string ToString() => $"[{Width}x{Height}@{Position}:{Rotation}°],";

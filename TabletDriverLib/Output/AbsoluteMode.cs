@@ -66,24 +66,57 @@ namespace TabletDriverLib.Output
         public override void Position(ITabletReport report)
         {
             var pos = new Point(
-                (scaleX * (report.Position.X - reportXOffset)) + DisplayArea.Position.X,
-                (scaleY * (report.Position.Y - reportYOffset)) + DisplayArea.Position.Y
+                report.Position.X,
+                report.Position.Y
             );
 
+            // Normalize (ratio of 1)
+            pos.X /= TabletProperties.MaxX;
+            pos.Y /= TabletProperties.MaxY;
+
+            // Scale to tablet dimensions (mm)
+            pos.X *= TabletProperties.Width;
+            pos.Y *= TabletProperties.Height;
+
+            // Adjust tablet offset by center
+            pos.X -= TabletArea.Position.X - (TabletArea.Width / 2);
+            pos.Y -= TabletArea.Position.Y - (TabletArea.Height / 2);
+
+            // Scale to tablet area (ratio of 1)
+            pos.X /= TabletArea.Width;
+            pos.Y /= TabletArea.Height;
+
+            // Scale to display area
+            pos.X *= DisplayArea.Width;
+            pos.Y *= DisplayArea.Height;
+
+            // Adjust display offset by center
+            pos.X -= DisplayArea.Position.X - (DisplayArea.Width / 2);
+            pos.Y -= DisplayArea.Position.Y - (DisplayArea.Height / 2);
+
+            // Clipping to display bounds
             if (Clipping)
             {
-                // X position clipping
-                if (pos.X > DisplayArea.Width + DisplayArea.Position.X)
-                    pos.X = DisplayArea.Width + DisplayArea.Position.X;
-                else if (pos.X < DisplayArea.Position.X)
-                    pos.X = DisplayArea.Position.X;
-                // Y position clipping
-                if (pos.Y > DisplayArea.Height + DisplayArea.Position.Y)
-                    pos.Y = DisplayArea.Height + DisplayArea.Position.Y;
-                else if (pos.Y < DisplayArea.Position.Y)
-                    pos.Y = DisplayArea.Position.Y;
+                if (pos.X < DisplayArea.Position.X - (DisplayArea.Width / 2))
+                    pos.X = DisplayArea.Position.X - (DisplayArea.Width / 2);
+                if (pos.X > DisplayArea.Position.X + DisplayArea.Width - (DisplayArea.Width / 2))
+                    pos.X = DisplayArea.Position.X + DisplayArea.Width - (DisplayArea.Width / 2);
+                if (pos.Y < DisplayArea.Position.Y - (DisplayArea.Height / 2))
+                    pos.Y = DisplayArea.Position.Y - (DisplayArea.Height / 2);
+                if (pos.Y > DisplayArea.Position.Y + DisplayArea.Height - (DisplayArea.Height / 2))
+                    pos.Y = DisplayArea.Position.Y + DisplayArea.Height - (DisplayArea.Height / 2);
             }
 
+            // Rotation
+            if (TabletArea.Rotation != 0f)
+            {
+                var tempCopy = new Point(pos.X, pos.Y);
+                var rotateMatrix = TabletArea.GetRotationMatrix();
+                pos.X = tempCopy.X * rotateMatrix[0] + tempCopy.Y * rotateMatrix[1];
+                pos.Y = tempCopy.X * rotateMatrix[2] + tempCopy.Y * rotateMatrix[3];
+            }
+
+            // Setting cursor position
             CursorHandler.SetCursorPosition(pos);
             HandleButton(report);
         }
