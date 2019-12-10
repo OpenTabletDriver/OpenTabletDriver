@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace TabletDriverLib.Component
 {
     public class Area
@@ -17,8 +21,22 @@ namespace TabletDriverLib.Component
         public float Width { set; get; } = 0;
         public float Height { set; get; } = 0;
         public Point Position { set; get; } = new Point();
-
         public float Rotation { set; get; } = 0;
+
+        public IList<float> RotationMatrix
+        {
+            get 
+            {
+                float angle = Rotation * (float)(Math.PI / 180f);
+                return new float[]
+                {
+                    (float)Math.Cos(angle),
+                    (float)-Math.Sin(angle),
+                    (float)Math.Sin(angle),
+                    (float)Math.Cos(angle)
+                };
+            }
+        }
 
         public override string ToString() => $"[{Width}x{Height}@{Position}:{Rotation}°],";
         public static implicit operator string(Area area) => area.ToString();

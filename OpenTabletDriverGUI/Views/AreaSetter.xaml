@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ns="clr-namespace:OpenTabletDriverGUI.Views;assembly=OpenTabletDriverGUI"
+             xmlns:cvt="clr-namespace:OpenTabletDriverGUI.Converters;assembly=OpenTabletDriverGUI"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="OpenTabletDriverGUI.Views.AreaSetter">
     <UserControl.Styles>
@@ -27,9 +28,13 @@
             <Setter Property="TextAlignment" Value="Left"/>
         </Style>
     </UserControl.Styles>
-    <Grid Name="AreaGrid" DataContext="{Binding $parent}" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,*,*,*">
-        <TextBlock Grid.ColumnSpan="4" Classes="h1" Text="{Binding Title}"/>
-        <Border Grid.ColumnSpan="4" Grid.Row="1" HorizontalAlignment="Stretch" Background="Transparent">
+    <UserControl.Resources>
+        <cvt:CanvasCenterConverter x:Key="CenterConvert"/>
+    </UserControl.Resources>
+
+    <Grid Name="AreaGrid" DataContext="{Binding $parent}" RowDefinitions="Auto,*,Auto">
+        <TextBlock Classes="h1" Text="{Binding Title}"/>
+        <Border Grid.Row="1" HorizontalAlignment="Stretch" Background="Transparent">
             <Viewbox Name="AreaViewbox" HorizontalAlignment="Center">
                 <Canvas Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}" HorizontalAlignment="Center">
                     <Rectangle Name="FullAreaRect" 
@@ -37,8 +42,22 @@
                         Fill="{DynamicResource ThemeControlMidBrush}"/>
                     <Rectangle Name="ActiveAreaRect"
                         Width="{Binding AreaWidth}" Height="{Binding AreaHeight}"
-                        Canvas.Left="{Binding AreaXOffset}" Canvas.Top="{Binding AreaYOffset}"
                         Fill="{DynamicResource ThemeAccentBrush2}">
+                        <Canvas.Left>
+                            <MultiBinding Converter="{StaticResource CenterConvert}">
+                                <Binding Path="AreaXOffset"/>
+                                <Binding Path="AreaWidth"/>
+                            </MultiBinding>
+                        </Canvas.Left>
+                        <Canvas.Top>
+                            <MultiBinding Converter="{StaticResource CenterConvert}">
+                                <Binding Path="AreaYOffset"/>
+                                <Binding Path="AreaHeight"/>
+                            </MultiBinding>
+                        </Canvas.Top>
+                        <Rectangle.RenderTransform>
+                            <RotateTransform Angle="{Binding RotationAngle}"/>
+                        </Rectangle.RenderTransform>
                         <Rectangle.ContextMenu>
                             <ContextMenu>
                                 <ContextMenu.Styles>
@@ -67,33 +86,42 @@
                 </Canvas>
             </Viewbox>
         </Border>
-        <Border Grid.Column="0" Grid.Row="2">
-            <Grid RowDefinitions="*,Auto">
-                <TextBlock Grid.Row="0" Text="Width"/>
-                <TextBox Grid.Row="1" Text="{Binding AreaWidth}"/>
-                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
-            </Grid>
-        </Border>
-        <Border Grid.Column="1" Grid.Row="2">
-            <Grid RowDefinitions="*,Auto">
-                <TextBlock Grid.Row="0" Text="Height"/>
-                <TextBox Grid.Row="1" Text="{Binding AreaHeight}"/>
-                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
-            </Grid>
-        </Border>
-        <Border Grid.Column="2" Grid.Row="2">
-            <Grid RowDefinitions="*,Auto">
-                <TextBlock Grid.Row="0" Text="X Offset"/>
-                <TextBox Grid.Row="1" Text="{Binding AreaXOffset}"/>
-                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
-            </Grid>
-        </Border>
-        <Border Grid.Column="3" Grid.Row="2">
-            <Grid RowDefinitions="*,Auto">
-                <TextBlock Grid.Row="0" Text="Y Offset"/>
-                <TextBox Grid.Row="1" Text="{Binding AreaYOffset}"/>
-                <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
-            </Grid>
-        </Border>
+        <UniformGrid Grid.Row="2" VerticalAlignment="Stretch" Rows="1">
+            <Border>
+                <Grid RowDefinitions="*,Auto">
+                    <TextBlock Grid.Row="0" Text="Width"/>
+                    <TextBox Grid.Row="1" Text="{Binding AreaWidth}"/>
+                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
+                </Grid>
+            </Border>
+            <Border>
+                <Grid RowDefinitions="*,Auto">
+                    <TextBlock Grid.Row="0" Text="Height"/>
+                    <TextBox Grid.Row="1" Text="{Binding AreaHeight}"/>
+                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
+                </Grid>
+            </Border>
+            <Border>
+                <Grid RowDefinitions="*,Auto">
+                    <TextBlock Grid.Row="0" Text="X Offset"/>
+                    <TextBox Grid.Row="1" Text="{Binding AreaXOffset}"/>
+                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
+                </Grid>
+            </Border>
+            <Border>
+                <Grid RowDefinitions="*,Auto">
+                    <TextBlock Grid.Row="0" Text="Y Offset"/>
+                    <TextBox Grid.Row="1" Text="{Binding AreaYOffset}"/>
+                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="{Binding MeasurementUnit}"/>
+                </Grid>
+            </Border>
+            <Border IsVisible="{Binding EnableRotation}">
+                <Grid RowDefinitions="*,Auto">
+                    <TextBlock Grid.Row="0" Text="Rotation"/>
+                    <TextBox Grid.Row="1" Text="{Binding RotationAngle}"/>
+                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="°"/>
+                </Grid>
+            </Border>
+        </UniformGrid>
     </Grid>
 </UserControl>

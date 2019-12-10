@@ -181,5 +181,23 @@ namespace OpenTabletDriverGUI.Views
             set => SetValue(BackgroundHeightProperty, value);
             get => GetValue(BackgroundHeightProperty);
         }
+
+        public static readonly StyledProperty<bool> EnableRotationProperty =
+        AvaloniaProperty.Register<AreaSetter, bool>(nameof(EnableRotation), defaultBindingMode: BindingMode.TwoWay);
+        
+        public bool EnableRotation
+        {
+            set => SetValue(EnableRotationProperty, value);
+            get => GetValue(EnableRotationProperty);
+        }
+
+        public static readonly StyledProperty<float> RotationAngleProperty =
+        AvaloniaProperty.Register<AreaSetter, float>(nameof(RotationAngle), defaultBindingMode: BindingMode.TwoWay);
+        
+        public float RotationAngle
+        {
+            set => SetValue(RotationAngleProperty, value);
+            get => GetValue(RotationAngleProperty);
+        }
     }
 }
