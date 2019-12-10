@@ -223,14 +223,14 @@ namespace OpenTabletDriverGUI.ViewModels
                 {
                     for (int count = 0; count < Settings.PenButtons.Count(); count++)
                         absolute.Bindings[(BindingType.Pen, count)] = Settings.PenButtons[count];
-                    
+
                     Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Pen).Select(keypair => keypair.Value)));
                 }
                 if (Settings.PadButtons != null)
                 {
                     for (int count = 0; count < Settings.PadButtons.Count(); count++)
                         absolute.Bindings[(BindingType.Pad, count)] = Settings.PadButtons[count];
-                    
+
                     Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Pad).Select(keypair => keypair.Value)));
                 }
             }

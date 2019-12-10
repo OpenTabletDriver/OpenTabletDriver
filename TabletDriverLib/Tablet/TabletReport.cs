@@ -8,7 +8,7 @@ namespace TabletDriverLib.Tablet
         internal TabletReport(byte[] report)
         {
             Raw = report;
-            
+
             Lift = (uint) report[1] / report[0];
             var x = BitConverter.ToUInt16(report, 2);
             var y = BitConverter.ToUInt16(report, 4);

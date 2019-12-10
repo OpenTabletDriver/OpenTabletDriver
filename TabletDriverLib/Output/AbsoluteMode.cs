@@ -98,8 +98,6 @@ namespace TabletDriverLib.Output
                 else if (pressurePercent < TipActivationPressure && CursorHandler.GetMouseButtonState(Bindings[(BindingType.Pen, 0)]))
                     CursorHandler.MouseUp(Bindings[(BindingType.Pen, 0)]);
             }
-
-            
         }
     }
 }
