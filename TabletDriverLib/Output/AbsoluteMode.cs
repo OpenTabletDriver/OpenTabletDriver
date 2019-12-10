@@ -13,7 +13,7 @@ namespace TabletDriverLib.Output
         public Area DisplayArea { set; get; }
         public Area TabletArea { set; get; }
 
-        public override TabletProperties TabletProperties { set; get;}
+        public override TabletProperties TabletProperties { set; get; }
 
         public bool Clipping { set; get; }
         public bool BindingsEnabled { set; get; }
