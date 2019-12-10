@@ -94,6 +94,15 @@ namespace TabletDriverLib.Output
             pos.X -= DisplayArea.Position.X - (DisplayArea.Width / 2);
             pos.Y -= DisplayArea.Position.Y - (DisplayArea.Height / 2);
 
+            // Rotation
+            if (TabletArea.Rotation != 0f)
+            {
+                var tempCopy = new Point(pos.X, pos.Y);
+                var rotateMatrix = TabletArea.GetRotationMatrix();
+                pos.X = (tempCopy.X * rotateMatrix[0]) + (tempCopy.Y * rotateMatrix[1]);
+                pos.Y = (tempCopy.X * rotateMatrix[2]) + (tempCopy.Y * rotateMatrix[3]);
+            }
+
             // Clipping to display bounds
             if (Clipping)
             {
@@ -105,15 +114,6 @@ namespace TabletDriverLib.Output
                     pos.Y = DisplayArea.Position.Y - (DisplayArea.Height / 2);
                 if (pos.Y > DisplayArea.Position.Y + DisplayArea.Height - (DisplayArea.Height / 2))
                     pos.Y = DisplayArea.Position.Y + DisplayArea.Height - (DisplayArea.Height / 2);
-            }
-
-            // Rotation
-            if (TabletArea.Rotation != 0f)
-            {
-                var tempCopy = new Point(pos.X, pos.Y);
-                var rotateMatrix = TabletArea.GetRotationMatrix();
-                pos.X = (tempCopy.X * rotateMatrix[0]) + (tempCopy.Y * rotateMatrix[1]);
-                pos.Y = (tempCopy.X * rotateMatrix[2]) + (tempCopy.Y * rotateMatrix[3]);
             }
 
             // Setting cursor position
