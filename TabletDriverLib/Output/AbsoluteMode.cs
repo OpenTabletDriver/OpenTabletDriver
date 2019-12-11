@@ -38,9 +38,22 @@ namespace TabletDriverLib.Output
             pos.X *= TabletProperties.Width;
             pos.Y *= TabletProperties.Height;
 
-            // Adjust tablet offset by center
-            pos.X -= TabletArea.Position.X - (TabletArea.Width / 2);
-            pos.Y -= TabletArea.Position.Y - (TabletArea.Height / 2);
+            // Adjust area to set origin to 0,0
+            pos.X -= TabletArea.Position.X;
+            pos.Y -= TabletArea.Position.Y;
+
+            // Rotation
+            if (TabletArea.Rotation != 0f)
+            {
+                var tempCopy = new Point(pos.X, pos.Y);
+                var rotateMatrix = TabletArea.GetRotationMatrix();
+                pos.X = (tempCopy.X * rotateMatrix[0]) + (tempCopy.Y * rotateMatrix[1]);
+                pos.Y = (tempCopy.X * rotateMatrix[2]) + (tempCopy.Y * rotateMatrix[3]);
+            }
+
+            // Move area back
+            pos.X += TabletArea.Width / 2;
+            pos.Y += TabletArea.Height / 2;
 
             // Scale to tablet area (ratio of 1)
             pos.X /= TabletArea.Width;
@@ -53,15 +66,6 @@ namespace TabletDriverLib.Output
             // Adjust display offset by center
             pos.X -= DisplayArea.Position.X - (DisplayArea.Width / 2);
             pos.Y -= DisplayArea.Position.Y - (DisplayArea.Height / 2);
-
-            // Rotation
-            if (TabletArea.Rotation != 0f)
-            {
-                var tempCopy = new Point(pos.X, pos.Y);
-                var rotateMatrix = TabletArea.GetRotationMatrix();
-                pos.X = (tempCopy.X * rotateMatrix[0]) + (tempCopy.Y * rotateMatrix[1]);
-                pos.Y = (tempCopy.X * rotateMatrix[2]) + (tempCopy.Y * rotateMatrix[3]);
-            }
 
             // Clipping to display bounds
             if (Clipping)

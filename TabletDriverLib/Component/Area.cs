@@ -25,7 +25,7 @@ namespace TabletDriverLib.Component
 
         public float[] GetRotationMatrix()
         {
-            var angle = Rotation * (Math.PI / 180);
+            var angle = -Rotation * (Math.PI / 180);
             return new float[4]
             {
                 (float)Math.Cos(angle),
