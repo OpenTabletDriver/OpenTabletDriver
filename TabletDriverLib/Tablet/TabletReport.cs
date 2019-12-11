@@ -22,14 +22,14 @@ namespace TabletDriverLib.Tablet
                 (report[1] & (1 << 3)) != 0,
                 (report[1] & (1 << 3)) != 0
             };
-            PadButtons = new bool[]
+            AuxButtons = new bool[]
             {
                 (report[4] & (1 << 0)) != 0,
                 (report[4] & (1 << 1)) != 0,
                 (report[4] & (1 << 2)) != 0,
                 (report[4] & (1 << 3)) != 0
             };
-            IsPadReport = ((report[1] & (1 << 5)) != 0) & ((report[1] & (1 << 6)) != 0);
+            IsAuxReport = ((report[1] & (1 << 5)) != 0) & ((report[1] & (1 << 6)) != 0);
         }
 
         public byte[] Raw { private set; get; }
@@ -38,8 +38,8 @@ namespace TabletDriverLib.Tablet
         public uint Pressure { private set; get; }
 
         public bool[] PenButtons { private set; get; }
-        public bool[] PadButtons { private set; get; }
-        public bool IsPadReport { private set; get; }
+        public bool[] AuxButtons { private set; get; }
+        public bool IsAuxReport { private set; get; }
 
         public override string ToString() => ToString(true);
 
@@ -48,7 +48,7 @@ namespace TabletDriverLib.Tablet
             if (raw)
                 return BitConverter.ToString(Raw).Replace('-', ' ');
             else
-                return $"Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}, PenButtons:[{String.Join(" ", PenButtons)}], PadButtons:[{String.Join(" ", PadButtons)}], IsPadReport:{IsPadReport}";
+                return $"Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}, PenButtons:[{String.Join(" ", PenButtons)}], AuxButtons:[{String.Join(" ", AuxButtons)}], IsAuxReport:{IsAuxReport}";
         }
     }
 }

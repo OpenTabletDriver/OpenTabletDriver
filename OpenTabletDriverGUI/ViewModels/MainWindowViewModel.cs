@@ -212,8 +212,6 @@ namespace OpenTabletDriverGUI.ViewModels
                 Log.Write("Settings", "Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
                 
                 absolute.Bindings[(BindingType.Tip, 0)] = Settings.TipButton;
-                // Log.Write("Settings", "Pen Buttons are " + String.Join(", ", Settings.PenButtons));
-                // Log.Write("Settings", "Pad Buttons are " + String.Join(", ", Settings.PadButtons));
 
                 absolute.TipActivationPressure = Settings.TipActivationPressure;
                 absolute.TipEnabled = absolute.Bindings[(BindingType.Tip, 0)] != MouseButton.None;
@@ -226,12 +224,12 @@ namespace OpenTabletDriverGUI.ViewModels
 
                     Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Pen).Select(keypair => keypair.Value)));
                 }
-                if (Settings.PadButtons != null)
+                if (Settings.AuxButtons != null)
                 {
-                    for (int count = 0; count < Settings.PadButtons.Count(); count++)
-                        absolute.Bindings[(BindingType.Pad, count)] = Settings.PadButtons[count];
+                    for (int count = 0; count < Settings.AuxButtons.Count(); count++)
+                        absolute.Bindings[(BindingType.Aux, count)] = Settings.AuxButtons[count];
 
-                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Pad).Select(keypair => keypair.Value)));
+                    Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Aux).Select(keypair => keypair.Value)));
                 }
             }
             Log.Write("Settings", "Applied all settings.");

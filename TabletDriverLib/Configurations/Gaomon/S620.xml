@@ -14,5 +14,5 @@
   <MinimumRange>10</MinimumRange>
   <InputReportLength>12</InputReportLength>
   <PenButtons>2</PenButtons>
-  <PadButtons>4</PadButtons>
+  <AuxButtons>4</AuxButtons>
 </Tablet>

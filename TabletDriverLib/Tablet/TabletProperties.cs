@@ -100,11 +100,11 @@ namespace TabletDriverLib.Tablet
         public uint PenButtons { set; get; } = 0;
 
         /// <summary>
-        /// The number of buttons on the device's pad.
+        /// The number of buttons on the device's auxiliary keys (also known as Express Keys).
         /// </summary>
         /// <value></value>
-        [XmlElement("PadButtons")]
-        public uint PadButtons { set; get; } = 0;
+        [XmlElement("AuxButtons")]
+        public uint AuxButtons { set; get; } = 0;
 
         #region XML Serialization
 

@@ -14,6 +14,6 @@ namespace TabletDriverLib.Interop.Cursor
     {
         Tip = 0,
         Pen = 1,
-        Pad = 2
+        Aux = 2
     }
 }
