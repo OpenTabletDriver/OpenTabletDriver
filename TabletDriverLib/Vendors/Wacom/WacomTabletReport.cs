@@ -14,11 +14,16 @@ namespace TabletDriverLib.Vendors.Wacom
             var y = BitConverter.ToUInt16(report, 5);
             Position = new Point(x, y);
             Pressure = BitConverter.ToUInt16(report, 7);
+            //TODO: buttons
         }
 
         public byte[] Raw { private set; get; }
         public uint Lift { private set; get; }
         public Point Position { private set; get; }
         public uint Pressure { private set; get; }
+
+        public bool[] PenButtons { private set; get; }
+        public bool[] AuxButtons { private set; get; }
+        public bool IsAuxReport { private set; get; }
     }
 }

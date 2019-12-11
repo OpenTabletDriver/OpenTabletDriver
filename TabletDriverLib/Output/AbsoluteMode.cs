@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TabletDriverLib.Component;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
@@ -65,6 +66,12 @@ namespace TabletDriverLib.Output
 
         public override void Position(ITabletReport report)
         {
+            if (report.IsAuxReport)
+            {
+                HandleAux(report);
+                return;
+            }
+
             var pos = new Point(
                 (scaleX * (report.Position.X - reportXOffset)) + DisplayArea.Position.X,
                 (scaleY * (report.Position.Y - reportYOffset)) + DisplayArea.Position.Y
@@ -93,10 +100,40 @@ namespace TabletDriverLib.Output
             if (TipEnabled)
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                if (pressurePercent >= TipActivationPressure && !CursorHandler.GetMouseButtonState(Bindings[(BindingType.Pen, 0)]))
-                    CursorHandler.MouseDown(Bindings[(BindingType.Pen, 0)]);
-                else if (pressurePercent < TipActivationPressure && CursorHandler.GetMouseButtonState(Bindings[(BindingType.Pen, 0)]))
-                    CursorHandler.MouseUp(Bindings[(BindingType.Pen, 0)]);
+                MouseButton binding = Bindings[(BindingType.Tip, 0)];
+                bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
+
+                if (pressurePercent >= TipActivationPressure && !isButtonPressed)
+                    CursorHandler.MouseDown(binding);
+                else if (pressurePercent < TipActivationPressure && isButtonPressed)
+                    CursorHandler.MouseUp(binding);
+            }
+
+            for (var penButton = 0; penButton < TabletProperties.PenButtons; penButton++)
+            {
+                MouseButton binding;
+                Bindings.TryGetValue((BindingType.Pen, penButton), out binding);
+                bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
+
+                if (report.PenButtons[penButton] && !isButtonPressed)
+                    CursorHandler.MouseDown(binding);
+                else if (!report.PenButtons[penButton] && isButtonPressed)
+                    CursorHandler.MouseUp(binding);
+            }
+        }
+
+        public void HandleAux(ITabletReport report)
+        {
+            for (var auxButton = 0; auxButton < TabletProperties.AuxButtons; auxButton++)
+            {
+                MouseButton binding;
+                Bindings.TryGetValue((BindingType.Aux, auxButton), out binding);
+                bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
+
+                if (report.AuxButtons[auxButton] && !isButtonPressed)
+                    CursorHandler.MouseDown(binding);
+                else if (!report.AuxButtons[auxButton] && isButtonPressed)
+                    CursorHandler.MouseUp(binding);
             }
         }
     }

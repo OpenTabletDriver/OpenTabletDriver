@@ -41,7 +41,7 @@ namespace TabletDriverLib.Tablet
         public bool[] AuxButtons { private set; get; }
         public bool IsAuxReport { private set; get; }
 
-        public override string ToString() => ToString(true);
+        public override string ToString() => ToString(false);
 
         public string ToString(bool raw)
         {
