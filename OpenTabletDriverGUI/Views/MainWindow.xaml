@@ -75,15 +75,18 @@
                             AreaHeight="{Binding Settings.DisplayHeight}"
                             AreaXOffset="{Binding Settings.DisplayX}"
                             AreaYOffset="{Binding Settings.DisplayY}"
+                            RotationAngle="{Binding Settings.DisplayRotation}"
                             BackgroundWidth="{Binding Display.Width}"
                             BackgroundHeight="{Binding Display.Height}"/>
                         <ns:AreaSetter Grid.Row="1"
                             Title="Tablet Area"
                             MeasurementUnit="mm"
+                            EnableRotation="True"
                             AreaWidth="{Binding Settings.TabletWidth}"
                             AreaHeight="{Binding Settings.TabletHeight}"
                             AreaXOffset="{Binding Settings.TabletX}"
                             AreaYOffset="{Binding Settings.TabletY}"
+                            RotationAngle="{Binding Settings.TabletRotation}"
                             BackgroundWidth="{Binding FullTabletWidth}"
                             BackgroundHeight="{Binding FullTabletHeight}"/>
                         <Border Classes="r" Grid.Row="2" Margin="5">

@@ -82,26 +82,26 @@ namespace OpenTabletDriverGUI.Views
 
         private void CenterArea()
         {
-            AreaXOffset = (BackgroundWidth - AreaWidth) / 2;
-            AreaYOffset = (BackgroundHeight - AreaHeight) / 2;
-        }
-
-        private void AlignVertical(bool isTop)
-        {
-            AreaYOffset = isTop ? 0 : BackgroundHeight - AreaHeight;
+            AreaXOffset = BackgroundWidth / 2;
+            AreaYOffset = BackgroundHeight / 2;
         }
 
         private void AlignHorizontal(bool isLeft)
         {
-            AreaXOffset = isLeft ? 0 : BackgroundWidth - AreaWidth;
+            AreaXOffset = isLeft ? AreaWidth / 2 : BackgroundWidth - (AreaWidth / 2);
+        }
+
+        private void AlignVertical(bool isTop)
+        {
+            AreaYOffset = isTop ? AreaHeight / 2 : BackgroundHeight - (AreaHeight / 2);
         }
 
         private void ResetArea()
         {
             AreaHeight = BackgroundHeight;
             AreaWidth = BackgroundWidth;
-            AreaXOffset = 0;
-            AreaYOffset = 0;
+            AreaXOffset = BackgroundWidth / 2;
+            AreaYOffset = BackgroundHeight / 2;
         }
 
         private void ResizeArea(float percent)
@@ -180,6 +180,24 @@ namespace OpenTabletDriverGUI.Views
         {
             set => SetValue(BackgroundHeightProperty, value);
             get => GetValue(BackgroundHeightProperty);
+        }
+
+        public static readonly StyledProperty<bool> EnableRotationProperty =
+        AvaloniaProperty.Register<AreaSetter, bool>(nameof(EnableRotation), defaultBindingMode: BindingMode.TwoWay);
+        
+        public bool EnableRotation
+        {
+            set => SetValue(EnableRotationProperty, value);
+            get => GetValue(EnableRotationProperty);
+        }
+
+        public static readonly StyledProperty<float> RotationAngleProperty =
+        AvaloniaProperty.Register<AreaSetter, float>(nameof(RotationAngle), defaultBindingMode: BindingMode.TwoWay);
+        
+        public float RotationAngle
+        {
+            set => SetValue(RotationAngleProperty, value);
+            get => GetValue(RotationAngleProperty);
         }
     }
 }
