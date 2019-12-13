@@ -7,7 +7,7 @@ namespace TabletDriverLib.Vendors.Wacom
     {
         public IDeviceReport Parse(byte[] data)
         {
-            return new WacomTabletReport(data);
+            return new TabletReport(data.Skip(1).ToArray());
         }
     }
 }
