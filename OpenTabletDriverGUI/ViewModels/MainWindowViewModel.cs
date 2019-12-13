@@ -211,25 +211,25 @@ namespace OpenTabletDriverGUI.ViewModels
                 absolute.Clipping = Settings.EnableClipping;
                 Log.Write("Settings", "Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
                 
-                absolute.Bindings[(BindingType.Tip, 0)] = Settings.TipButton;
+                absolute.MouseBindings[0] = Settings.TipButton;
 
                 absolute.TipActivationPressure = Settings.TipActivationPressure;
-                absolute.TipEnabled = absolute.Bindings[(BindingType.Tip, 0)] != MouseButton.None;
-                Log.Write("Settings", $"Tip Binding: '{absolute.Bindings[(BindingType.Tip, 0)]}'@{absolute.TipActivationPressure}%");
+                absolute.TipEnabled = absolute.MouseBindings[0] != MouseButton.None;
+                Log.Write("Settings", $"Tip Binding: '{absolute.MouseBindings[0]}'@{absolute.TipActivationPressure}%");
 
                 if (Settings.PenButtons != null)
                 {
-                    for (int count = 0; count < Settings.PenButtons.Count(); count++)
-                        absolute.Bindings[(BindingType.Pen, count)] = Settings.PenButtons[count];
+                    for (int index = 0; index < Settings.PenButtons.Length; index++)
+                        absolute.MouseBindings[index] = Settings.PenButtons[index];
 
-                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Pen).Select(keypair => keypair.Value)));
+                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.PenButtonBindings));
                 }
                 if (Settings.AuxButtons != null)
                 {
-                    for (int count = 0; count < Settings.AuxButtons.Count(); count++)
-                        absolute.Bindings[(BindingType.Aux, count)] = Settings.AuxButtons[count];
+                    for (int index = 0; index < Settings.AuxButtons.Length; index++)
+                        absolute.MouseBindings[index] = Settings.AuxButtons[index];
 
-                    Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", absolute.Bindings.Where(keypair => keypair.Key.type == BindingType.Aux).Select(keypair => keypair.Value)));
+                    Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", absolute.AuxButtonBindings));
                 }
             }
             Log.Write("Settings", "Applied all settings.");

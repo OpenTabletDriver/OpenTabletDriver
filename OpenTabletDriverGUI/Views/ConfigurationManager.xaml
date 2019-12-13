@@ -71,6 +71,9 @@
                             <TextBlock Text="Input Report Length"/>
                             <TextBox Text="{Binding InputReportLength}"/>
 
+                            <TextBlock Text="Report Parser"/>
+                            <TextBox Text="{Binding ReportParserName}"/>
+
                             <TextBlock Text="Width (mm)"/>
                             <TextBox Text="{Binding Width}"/>
 

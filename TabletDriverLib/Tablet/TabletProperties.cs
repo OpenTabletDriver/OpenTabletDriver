@@ -37,6 +37,13 @@ namespace TabletDriverLib.Tablet
         public uint InputReportLength { set; get; } = 0;
 
         /// <summary>
+        /// The device's report parser type.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("ReportParser")]
+        public string ReportParserName { set; get; }
+        
+        /// <summary>
         /// The device's input report length when a custom report parser is needed.
         /// </summary>
         /// <value></value>

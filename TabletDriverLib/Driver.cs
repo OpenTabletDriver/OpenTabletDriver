@@ -16,7 +16,7 @@ namespace TabletDriverLib
         public TabletProperties TabletProperties { set; get; }
         public OutputMode OutputMode { set; get; }
         public TabletReader TabletReader { private set; get; }
-        public ITabletReportParser TabletReportParser { private set; get; }
+        public IDeviceReportParser ReportParser { private set; get; }
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
 
@@ -39,14 +39,14 @@ namespace TabletDriverLib
             Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
             try
             {
-                ITabletReportParser parser = new TabletReportParser();
                 var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
                 var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
+                var parser = tablet.GetReportParser() ?? new TabletReportParser();
                 if (device == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
                 {
                     device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
                     if (device != null)
-                        parser = GetTabletReportParser(tablet.CustomReportParserName);
+                        parser = tablet.GetCustomReportParser();
                 }
                 TabletProperties = tablet;
                 return OpenTablet(device, parser);
@@ -85,7 +85,7 @@ namespace TabletDriverLib
             return false;
         }
 
-        internal bool OpenTablet(HidDevice device, ITabletReportParser reportParser)
+        internal bool OpenTablet(HidDevice device, IDeviceReportParser reportParser)
         {
             CloseTablet();
             Tablet = device;
@@ -111,20 +111,6 @@ namespace TabletDriverLib
                     Log.Write("Detect", "Tablet not found.", true);
                 return false;
             }
-        }
-
-        private ITabletReportParser GetTabletReportParser(string fullName)
-        {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == fullName);
-                if (type != null)
-                {
-                    var ctorResult = type.GetConstructors().FirstOrDefault().Invoke(new object[]{});
-                    return ctorResult as ITabletReportParser;
-                }
-            }
-            return null;
         }
 
         public bool CloseTablet()
@@ -157,10 +143,9 @@ namespace TabletDriverLib
                 TabletReader.Report -= Translate;
         }
 
-        private void Translate(object sender, ITabletReport report)
+        private void Translate(object sender, IDeviceReport report)
         {
-            if (report.Lift > TabletProperties.MinimumRange)
-                OutputMode?.Read(report);
+            OutputMode?.Read(report);
         }
     }
 }

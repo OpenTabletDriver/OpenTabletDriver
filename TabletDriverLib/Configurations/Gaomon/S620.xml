@@ -15,4 +15,5 @@
   <InputReportLength>12</InputReportLength>
   <PenButtons>2</PenButtons>
   <AuxButtons>4</AuxButtons>
+  <ReportParser>TabletDriverLib.Vendors.Gaomon.GaomonReportParser</ReportParser>
 </Tablet>

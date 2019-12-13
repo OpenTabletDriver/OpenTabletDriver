@@ -22,9 +22,9 @@ namespace TabletDriverLib
 
         public HidDevice Tablet { private set; get; }
         public HidStream ReportStream { private set; get; }
-        public ITabletReportParser ReportParser { set; get; }
+        public IDeviceReportParser ReportParser { set; get; }
 
-        public event EventHandler<ITabletReport> Report;
+        public event EventHandler<IDeviceReport> Report;
 
         private Thread WorkerThread;
         public bool Working { protected set; get; }
