@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
 using ReactiveUI;
@@ -188,21 +189,21 @@ namespace OpenTabletDriverGUI.Models
             get => _tipButton;
         }
 
-        private MouseButton[] _penButtons;
+        private ObservableCollection<MouseButton> _penButtons;
 
         [XmlArray("PenButtons")]
         [XmlArrayItem("key")]
-        public MouseButton[] PenButtons
+        public ObservableCollection<MouseButton> PenButtons
         {
             set => this.RaiseAndSetIfChanged(ref _penButtons, value);
             get => _penButtons;
         }
 
-        private MouseButton[] _auxButtons;
+        private ObservableCollection<MouseButton> _auxButtons;
 
         [XmlArray("AuxButtons")]
         [XmlArrayItem("key")]
-        public MouseButton[] AuxButtons
+        public ObservableCollection<MouseButton> AuxButtons
         {
             set => this.RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;

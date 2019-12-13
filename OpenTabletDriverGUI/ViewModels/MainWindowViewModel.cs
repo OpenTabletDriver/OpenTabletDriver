@@ -218,14 +218,14 @@ namespace OpenTabletDriverGUI.ViewModels
 
                 if (Settings.PenButtons != null)
                 {
-                    for (int index = 0; index < Settings.PenButtons.Length; index++)
+                    for (int index = 0; index < Settings.PenButtons.Count; index++)
                         absolute.PenButtonBindings[index] = Settings.PenButtons[index];
 
                     Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.PenButtonBindings));
                 }
                 if (Settings.AuxButtons != null)
                 {
-                    for (int index = 0; index < Settings.AuxButtons.Length; index++)
+                    for (int index = 0; index < Settings.AuxButtons.Count; index++)
                         absolute.AuxButtonBindings[index] = Settings.AuxButtons[index];
 
                     Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", absolute.AuxButtonBindings));
@@ -247,7 +247,9 @@ namespace OpenTabletDriverGUI.ViewModels
                 DisplayWidth = Display.Width,
                 DisplayHeight = Display.Height,
                 DisplayX = 0,
-                DisplayY = 0
+                DisplayY = 0,
+                PenButtons = new ObservableCollection<MouseButton>(new MouseButton[4]),
+                AuxButtons = new ObservableCollection<MouseButton>(new MouseButton[4])
             };
 
             if (Driver.Tablet != null)
