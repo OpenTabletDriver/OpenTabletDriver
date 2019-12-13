@@ -15,8 +15,8 @@ namespace TabletDriverLib
         public HidDevice Tablet { private set; get; }
         public TabletProperties TabletProperties { set; get; }
         public OutputMode OutputMode { set; get; }
-        public TabletReader TabletReader { private set; get; }
-        public AuxReader AuxReader { private set; get; }
+        public DeviceReader<IDeviceReport> TabletReader { private set; get; }
+        public DeviceReader<IDeviceReport> AuxReader { private set; get; }
         public bool BindingEnabled { set; get; }
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
@@ -100,7 +100,7 @@ namespace TabletDriverLib
                     Log.Debug($"Device path: {Tablet.DevicePath}");
                 }
                 
-                TabletReader = new TabletReader(Tablet);
+                TabletReader = new DeviceReader<IDeviceReport>(Tablet);
                 TabletReader.Parser = reportParser;
                 TabletReader.Start();
                 TabletReader.Report += HandleReport;
@@ -126,7 +126,7 @@ namespace TabletDriverLib
                     Log.Debug($"Device path: {auxDevice.DevicePath}");
                 }
                 
-                AuxReader = new AuxReader(auxDevice);
+                AuxReader = new DeviceReader<IDeviceReport>(auxDevice);
                 AuxReader.Parser = reportParser;
                 AuxReader.Start();
                 AuxReader.Report += HandleReport;
