@@ -102,7 +102,7 @@ namespace TabletDriverLib.Output
                     CursorHandler.MouseUp(binding);
             }
 
-            for (var penButton = 0; penButton < TabletProperties.PenButtons; penButton++)
+            for (var penButton = 0; penButton < 4; penButton++)
             {
                 MouseButton binding = PenButtonBindings[penButton];
                 bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
@@ -116,7 +116,7 @@ namespace TabletDriverLib.Output
 
         public override void Aux(IAuxReport report)
         {
-            for (var auxButton = 0; auxButton < TabletProperties.AuxButtons; auxButton++)
+            for (var auxButton = 0; auxButton < 4; auxButton++)
             {
                 MouseButton binding = AuxButtonBindings[auxButton];
                 bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);

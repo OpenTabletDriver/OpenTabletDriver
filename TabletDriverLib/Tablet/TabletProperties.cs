@@ -100,20 +100,6 @@ namespace TabletDriverLib.Tablet
         public uint MinimumRange { set; get; } = 0;
 
         /// <summary>
-        /// The number of buttons on the device's pen.
-        /// </summary>
-        /// <value></value>
-        [XmlElement("PenButtons")]
-        public uint PenButtons { set; get; } = 0;
-
-        /// <summary>
-        /// The number of buttons on the device's auxiliary keys (also known as Express Keys).
-        /// </summary>
-        /// <value></value>
-        [XmlElement("AuxButtons")]
-        public uint AuxButtons { set; get; } = 0;
-
-        /// <summary>
         /// The report length of the device's auxiliary hid device, if it has one.
         /// </summary>
         /// <value></value>
