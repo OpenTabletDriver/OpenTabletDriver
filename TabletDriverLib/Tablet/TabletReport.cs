@@ -9,7 +9,7 @@ namespace TabletDriverLib.Tablet
         {
             Raw = report;
 
-            Lift = (uint) report[1] / report[0];
+            Lift = (uint)report[1] >> 1;
             var x = BitConverter.ToUInt16(report, 2);
             var y = BitConverter.ToUInt16(report, 4);
             Position = new Point(x, y);
