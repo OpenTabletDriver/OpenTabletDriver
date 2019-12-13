@@ -93,7 +93,7 @@ namespace TabletDriverLib.Output
             if (TipEnabled)
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                MouseButton binding = PenButtonBindings[0];
+                var binding = TipBinding;
                 bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
 
                 if (pressurePercent >= TipActivationPressure && !isButtonPressed)
