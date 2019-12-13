@@ -19,10 +19,7 @@ namespace TabletDriverLib.Output
         public bool Clipping { set; get; }
         public bool TipEnabled { set; get; }
         public float TipActivationPressure { set; get; }
-        public BindingDictionary MouseBindings { set; get; } = new BindingDictionary()
-        {
-            { 0, MouseButton.None }
-        };
+        public MouseButton TipBinding { set; get; } = 0;
         public BindingDictionary PenButtonBindings { set; get; } = new BindingDictionary();
         public BindingDictionary AuxButtonBindings { set; get; } = new BindingDictionary();
 
@@ -96,7 +93,7 @@ namespace TabletDriverLib.Output
             if (TipEnabled)
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                MouseButton binding = MouseBindings[0];
+                MouseButton binding = PenButtonBindings[0];
                 bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
 
                 if (pressurePercent >= TipActivationPressure && !isButtonPressed)
@@ -107,7 +104,7 @@ namespace TabletDriverLib.Output
 
             for (var penButton = 0; penButton < TabletProperties.PenButtons; penButton++)
             {
-                MouseButton binding = MouseBindings[penButton];
+                MouseButton binding = PenButtonBindings[penButton];
                 bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
 
                 if (report.PenButtons[penButton] && !isButtonPressed)

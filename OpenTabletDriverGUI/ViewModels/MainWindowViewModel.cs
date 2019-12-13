@@ -211,23 +211,22 @@ namespace OpenTabletDriverGUI.ViewModels
                 absolute.Clipping = Settings.EnableClipping;
                 Log.Write("Settings", "Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
                 
-                absolute.MouseBindings[0] = Settings.TipButton;
-
+                absolute.TipBinding = Settings.TipButton;
                 absolute.TipActivationPressure = Settings.TipActivationPressure;
-                absolute.TipEnabled = absolute.MouseBindings[0] != MouseButton.None;
-                Log.Write("Settings", $"Tip Binding: '{absolute.MouseBindings[0]}'@{absolute.TipActivationPressure}%");
+                absolute.TipEnabled = absolute.TipBinding != MouseButton.None;
+                Log.Write("Settings", $"Tip Binding: '{absolute.TipBinding}'@{absolute.TipActivationPressure}%");
 
                 if (Settings.PenButtons != null)
                 {
                     for (int index = 0; index < Settings.PenButtons.Length; index++)
-                        absolute.MouseBindings[index] = Settings.PenButtons[index];
+                        absolute.PenButtonBindings[index] = Settings.PenButtons[index];
 
                     Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.PenButtonBindings));
                 }
                 if (Settings.AuxButtons != null)
                 {
                     for (int index = 0; index < Settings.AuxButtons.Length; index++)
-                        absolute.MouseBindings[index] = Settings.AuxButtons[index];
+                        absolute.AuxButtonBindings[index] = Settings.AuxButtons[index];
 
                     Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", absolute.AuxButtonBindings));
                 }
