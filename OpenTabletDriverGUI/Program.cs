@@ -26,22 +26,20 @@ namespace OpenTabletDriverGUI
             Thread.CurrentThread.Name = "OpenTabletDriverGUI";
             var rootCommand = new RootCommand("OpenTabletDriver")
             {
-                new Option(new string[] { "--settingsDir", "-s" }, "Settings directory")
+                new Option(new string[] { "--settings", "-s" }, "Settings directory")
                 {
-                    Argument = new Argument<DirectoryInfo>("settingsDir")
+                    Argument = new Argument<DirectoryInfo>("settings")
                 },
-                new Option(new string[] { "--configDir", "-c" }, "Configuration directory")
+                new Option(new string[] { "--config", "-c" }, "Configuration directory")
                 {
-                    Argument = new Argument<DirectoryInfo> ("configurationDir")
+                    Argument = new Argument<DirectoryInfo> ("config")
                 }
             };
             
-            rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((settingsDir, configurationDir) => 
+            rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((settings, config) => 
             {
-                if (settingsDir != null)
-                    SettingsDirectory = settingsDir;
-                if (configurationDir != null)
-                    ConfigurationDirectory = configurationDir;
+                SettingsDirectory = settings ?? GetDefaultSettingsDirectory();
+                ConfigurationDirectory = config ?? GetDefaultConfigurationDirectory();
             });
             rootCommand.Invoke(args);
             
@@ -79,7 +77,7 @@ namespace OpenTabletDriverGUI
             }
         }
 
-        internal static DirectoryInfo ConfigurationDirectory { private set; get; } = GetDefaultConfigurationDirectory();
+        internal static DirectoryInfo ConfigurationDirectory { private set; get; }
         private static DirectoryInfo GetDefaultConfigurationDirectory()
         {
             var path = Path.Join(Environment.CurrentDirectory, "Configurations");
