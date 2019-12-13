@@ -39,7 +39,7 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 FullTabletWidth = tablet.Width;
                 FullTabletHeight = tablet.Height;
-                Driver.BindInput(InputHooked);
+                Driver.BindingEnabled = InputHooked;
             };
 
             // Use platform specific display
@@ -101,7 +101,7 @@ namespace OpenTabletDriverGUI.ViewModels
         {
             private set
             {
-                Driver.BindInput(value);
+                Driver.BindingEnabled = value;
                 this.RaiseAndSetIfChanged(ref _hooked, value);
             }
             get => _hooked;
@@ -159,7 +159,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void DetectTablet()
         {
-            Driver.OpenTablet(Tablets);
+            Driver.Open(Tablets);
             if (Settings.AutoHook && Driver.Tablet != null)
                 InputHooked = true;
         }

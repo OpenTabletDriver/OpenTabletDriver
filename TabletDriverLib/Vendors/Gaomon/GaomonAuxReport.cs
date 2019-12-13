@@ -2,7 +2,7 @@ using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib.Vendors.Gaomon
 {
-    public class GaomonAuxReport : IAuxReport
+    public struct GaomonAuxReport : IAuxReport
     {
         public GaomonAuxReport(byte[] report)
         {

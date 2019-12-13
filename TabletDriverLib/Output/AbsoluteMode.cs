@@ -28,7 +28,7 @@ namespace TabletDriverLib.Output
 
         public override void Position(ITabletReport report)
         {
-            if (report.Lift < TabletProperties.MinimumRange)
+            if (report.Lift <= TabletProperties.MinimumRange)
                 return;
             
             var pos = new Point(

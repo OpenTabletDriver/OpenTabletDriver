@@ -113,6 +113,13 @@ namespace TabletDriverLib.Tablet
         [XmlElement("AuxButtons")]
         public uint AuxButtons { set; get; } = 0;
 
+        /// <summary>
+        /// The report length of the device's auxiliary hid device, if it has one.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("AuxReportLength")]
+        public uint AuxReportLength { set; get; } = 0;
+
         #region XML Serialization
 
         private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));

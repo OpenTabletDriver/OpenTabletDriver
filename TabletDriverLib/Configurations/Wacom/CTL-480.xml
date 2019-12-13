@@ -12,4 +12,5 @@
   <MinimumRange>64</MinimumRange>
   <CustomInputReportLength>11</CustomInputReportLength>
   <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverReportParser</CustomReportParser>
+  <AuxReportLength>64</AuxReportLength>
 </Tablet>

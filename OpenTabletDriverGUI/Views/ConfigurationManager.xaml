@@ -48,62 +48,85 @@
                                 <Button Content="New Configuration" Command="{Binding New}"/>
                             </StackPanel>
                         </Grid>
-                        <StackPanel Grid.Column="1" Margin="0,5" DataContext="{Binding Selected}">
-                            <StackPanel.Styles>
-                                <Style Selector="TextBlock">
-                                    <Setter Property="FontWeight" Value="Bold"/>
-                                    <Setter Property="Margin" Value="5,0"/>
-                                </Style>
-                                <Style Selector="TextBox">
-                                    <Setter Property="Margin" Value="5"/>
-                                </Style>
-                            </StackPanel.Styles>
+                        <ScrollViewer Grid.Column="1" Margin="0,5"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Auto">
+                            <StackPanel DataContext="{Binding Selected}">
+                                <StackPanel.Styles>
+                                    <Style Selector="TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Margin" Value="5,0"/>
+                                    </Style>
+                                    <Style Selector="TextBox">
+                                        <Setter Property="Margin" Value="5"/>
+                                    </Style>
+                                </StackPanel.Styles>
 
-                            <TextBlock Text="Name"/>
-                            <TextBox Text="{Binding TabletName}"/>
+                                <Expander Header="Tablet Information" IsExpanded="True">  
+                                    <StackPanel>
+                                        <TextBlock Text="Name"/>
+                                        <TextBox Text="{Binding TabletName}"/>
 
-                            <TextBlock Text="Vendor ID"/>
-                            <TextBox Text="{Binding VendorID}"/>
+                                        <TextBlock Text="Vendor ID"/>
+                                        <TextBox Text="{Binding VendorID}"/>
 
-                            <TextBlock Text="Product ID"/>
-                            <TextBox Text="{Binding ProductID}"/>
+                                        <TextBlock Text="Product ID"/>
+                                        <TextBox Text="{Binding ProductID}"/>
 
-                            <TextBlock Text="Input Report Length"/>
-                            <TextBox Text="{Binding InputReportLength}"/>
+                                        <TextBlock Text="Input Report Length"/>
+                                        <TextBox Text="{Binding InputReportLength}"/>
+                                    </StackPanel>
+                                </Expander>
 
-                            <TextBlock Text="Report Parser"/>
-                            <TextBox Text="{Binding ReportParserName}"/>
+                                <Expander Header="Physical Properties" IsExpanded="True">
+                                    <StackPanel>
+                                        <TextBlock Text="Width (mm)"/>
+                                        <TextBox Text="{Binding Width}"/>
 
-                            <TextBlock Text="Width (mm)"/>
-                            <TextBox Text="{Binding Width}"/>
+                                        <TextBlock Text="Height (mm)"/>
+                                        <TextBox Text="{Binding Height}"/>
 
-                            <TextBlock Text="Height (mm)"/>
-                            <TextBox Text="{Binding Height}"/>
+                                        <TextBlock Text="Maximum X Input (device px)"/>
+                                        <TextBox Text="{Binding MaxX}"/>
 
-                            <TextBlock Text="Maximum X Input (device px)"/>
-                            <TextBox Text="{Binding MaxX}"/>
+                                        <TextBlock Text="Maximum Y Input (device px)"/>
+                                        <TextBox Text="{Binding MaxY}"/>
 
-                            <TextBlock Text="Maximum Y Input (device px)"/>
-                            <TextBox Text="{Binding MaxY}"/>
+                                        <TextBlock Text="Maximum Pressure Input"/>
+                                        <TextBox Text="{Binding MaxPressure}"/>
 
-                            <TextBlock Text="Maximum Pressure Input"/>
-                            <TextBox Text="{Binding MaxPressure}"/>
+                                        <TextBlock Text="Minimum Hover Distance"/>
+                                        <TextBox Text="{Binding MinimumRange}"/>
+                                    </StackPanel>
+                                </Expander>
 
-                            <TextBlock Text="Minimum Hover Distance"/>
-                            <TextBox Text="{Binding MinimumRange}"/>
+                                <Expander Header="Buttons and Express Keys">
+                                    <StackPanel>
+                                        <TextBlock Text="Pen Buttons"/>
+                                        <TextBox Text="{Binding PenButtons}"/>
 
-                            <TextBlock Text="Pen Buttons"/>
-                            <TextBox Text="{Binding PenButtons}"/>
+                                        <TextBlock Text="Express Keys"/>
+                                        <TextBox Text="{Binding AuxButtons}"/>
 
-                            <TextBlock Text="Express Keys"/>
-                            <TextBox Text="{Binding AuxButtons}"/>
+                                        <TextBlock Text="Aux Device Report Length"/>
+                                        <TextBox Text="{Binding AuxReportLength}"/>
+                                    </StackPanel>
+                                </Expander>
 
-                            <TextBlock Text="Custom Report Parser"/>
-                            <TextBox Text="{Binding CustomReportParserName}"/>
+                                <Expander Header="Advanced">
+                                    <StackPanel>
+                                        <TextBlock Text="Report Parser"/>
+                                        <TextBox Text="{Binding ReportParserName}"/>
+                                        
+                                        <TextBlock Text="Custom Input Report Length"/>
+                                        <TextBox Text="{Binding CustomInputReportLength}"/>
 
-                            <TextBlock Text="Custom Input Report Length"/>
-                            <TextBox Text="{Binding CustomInputReportLength}"/>
-                        </StackPanel>
+                                        <TextBlock Text="Custom Report Parser"/>
+                                        <TextBox Text="{Binding CustomReportParserName}"/>
+                                    </StackPanel>
+                                </Expander>
+                            </StackPanel>
+                        </ScrollViewer>
                     </Grid>
                 </Border>
             </TabItem>
