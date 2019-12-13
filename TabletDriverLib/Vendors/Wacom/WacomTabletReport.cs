@@ -4,7 +4,7 @@ using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib.Vendors.Wacom
 {
-    public class WacomTabletReport : ITabletReport
+    public struct WacomTabletReport : ITabletReport
     {
         public WacomTabletReport(byte[] report)
         {
@@ -28,9 +28,6 @@ namespace TabletDriverLib.Vendors.Wacom
         public uint Lift { private set; get; }
         public Point Position { private set; get; }
         public uint Pressure { private set; get; }
-
         public bool[] PenButtons { private set; get; }
-        public bool[] AuxButtons { private set; get; }
-        public bool IsAuxReport { private set; get; }
     }
 }
