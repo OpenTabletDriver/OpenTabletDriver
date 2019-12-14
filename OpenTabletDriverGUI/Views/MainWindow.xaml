@@ -137,28 +137,32 @@
                         <Border Classes="r">
                             <Grid RowDefinitions="Auto,*" Margin="5">
                                 <TextBlock Grid.Row="0" Text="Pen Buttons"/>
-                                <ItemsControl Grid.Row="1" Items="{Binding Settings.PenButtons}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <ComboBox Grid.Row="1" Margin="5"
-                                                Items="{Binding #MouseButtonsBox.Items}"
-                                                SelectedItem="{Binding, Mode=TwoWay}"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
+                                <ItemsControl Grid.Row="1">
+                                    <ItemsControl.Styles>
+                                        <Style Selector="ComboBox">
+                                            <Setter Property="Items" Value="{Binding #MouseButtonsBox.Items}"/>
+                                        </Style>
+                                    </ItemsControl.Styles>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[0], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[1], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[2], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[3], Mode=TwoWay}"/>
                                 </ItemsControl>
                             </Grid>
                         </Border>
                         <Border Classes="r">
                             <Grid RowDefinitions="Auto,*" Margin="5">
                                 <TextBlock Grid.Row="0" Text="Express Keys"/>
-                                <ItemsControl Grid.Row="1" Items="{Binding Settings.AuxButtons}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <ComboBox Grid.Row="1" Margin="5"
-                                                Items="{Binding #MouseButtonsBox.Items}"
-                                                SelectedItem="{Binding, Mode=TwoWay}"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
+                                <ItemsControl Grid.Row="1">
+                                    <ItemsControl.Styles>
+                                        <Style Selector="ComboBox">
+                                            <Setter Property="Items" Value="{Binding #MouseButtonsBox.Items}"/>
+                                        </Style>
+                                    </ItemsControl.Styles>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[0], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[1], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[2], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[3], Mode=TwoWay}"/>
                                 </ItemsControl>
                             </Grid>
                         </Border>
