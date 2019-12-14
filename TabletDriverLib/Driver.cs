@@ -12,19 +12,15 @@ namespace TabletDriverLib
     {
         public static bool Debugging { set; get; }
         public bool BindingEnabled { set; get; }
+        
         public HidDevice Tablet { private set; get; }
         public TabletProperties TabletProperties { set; get; }
+
         public OutputMode OutputMode { set; get; }
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
-
-        public IEnumerable<string> GetAllDeviceIdentifiers()
-        {
-            return Devices.ToList().ConvertAll(
-                (device) => $"{device.GetFriendlyName()}: {device.DevicePath}");
-        }
 
         public IEnumerable<HidDevice> Devices => DeviceList.Local.GetHidDevices();
 
