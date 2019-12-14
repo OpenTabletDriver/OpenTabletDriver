@@ -11,13 +11,12 @@ namespace TabletDriverLib
     public class Driver : IDisposable
     {
         public static bool Debugging { set; get; }
-       
+        public bool BindingEnabled { set; get; }
         public HidDevice Tablet { private set; get; }
         public TabletProperties TabletProperties { set; get; }
         public OutputMode OutputMode { set; get; }
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
-        public bool BindingEnabled { set; get; }
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
 
@@ -45,13 +44,13 @@ namespace TabletDriverLib
                 }
                 TabletProperties = tablet;
 
-                var openResult = Open(tabletDevice, parser);
-                if (openResult && tablet.AuxReportLength > 0)
+                var tabletOpened = Open(tabletDevice, parser);
+                if (tabletOpened && tablet.AuxReportLength > 0)
                 {
                     var aux = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
                     OpenAux(aux, new AuxReportParser());
                 }
-                return openResult;
+                return tabletOpened;
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -142,20 +141,15 @@ namespace TabletDriverLib
 
         public bool Close()
         {
-            if (Tablet != null)
-            {
-                Tablet = null;
-                TabletReader?.Dispose();
-            }
+            Tablet = null;
+            TabletReader?.Dispose();
             AuxReader?.Dispose();
             return true;
         }
 
         public void Dispose()
         {
-            Tablet = null;
-            TabletReader?.Dispose();
-            AuxReader?.Dispose();
+            Close();
             TabletReader.Report -= HandleReport;
             AuxReader.Report -= HandleReport;
         }

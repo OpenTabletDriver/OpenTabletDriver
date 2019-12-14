@@ -23,6 +23,8 @@ namespace TabletDriverLib.Output
         public BindingDictionary PenButtonBindings { set; get; } = new BindingDictionary();
         public BindingDictionary AuxButtonBindings { set; get; } = new BindingDictionary();
 
+        private IList<bool> PenButtonStates = new bool[4];
+
         public override void Position(ITabletReport report)
         {
             if (report.Lift <= TabletProperties.MinimumRange)
@@ -106,11 +108,13 @@ namespace TabletDriverLib.Output
             {
                 MouseButton binding = PenButtonBindings[penButton];
                 bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
-
-                if (report.PenButtons[penButton] && !isButtonPressed)
+                
+                if (report.PenButtons[penButton] && !PenButtonStates[penButton] && !isButtonPressed)
                     CursorHandler.MouseDown(binding);
-                else if (!report.PenButtons[penButton] && isButtonPressed)
+                else if (!report.PenButtons[penButton] && PenButtonStates[penButton] && isButtonPressed)
                     CursorHandler.MouseUp(binding);
+                
+                PenButtonStates[penButton] = report.PenButtons[penButton];
             }
         }
 

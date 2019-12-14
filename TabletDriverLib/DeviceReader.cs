@@ -40,7 +40,7 @@ namespace TabletDriverLib
 
         public virtual void Dispose()
         {
-            Reading = false;
+            Stop();
             ReportStream.Dispose();
         }
 
@@ -98,21 +98,6 @@ namespace TabletDriverLib
             {
                 Log.Exception(ex);
             }
-        }
-
-        private static string GetFormattedTime()
-        {
-            var hr = string.Format(GetNumberFormat(2), DateTime.Now.Hour);
-            var min = string.Format(GetNumberFormat(2), DateTime.Now.Minute);
-            var sec = string.Format(GetNumberFormat(2), DateTime.Now.Second);
-            var ms = string.Format(GetNumberFormat(3), DateTime.Now.Millisecond);
-            return $"{hr}:{min}:{sec}.{ms}";
-        }
-
-        private static string GetNumberFormat(int digits)
-        {
-            var zeros = Enumerable.Repeat('0', digits).ToArray();
-            return "{0:" + new string(zeros) + "}";
         }
     }
 }
