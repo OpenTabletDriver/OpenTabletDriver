@@ -4,12 +4,13 @@
   <VendorID>1386</VendorID>
   <ProductID>788</ProductID>
   <InputReportLength>10</InputReportLength>
+  <CustomInputReportLength>11</CustomInputReportLength>
+  <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverReportParser</CustomReportParser>
   <Width>157</Width>
   <Height>98</Height>
   <MaxX>31496</MaxX>
   <MaxY>19685</MaxY>
   <MaxPressure>2047</MaxPressure>
   <MinimumRange>224</MinimumRange>
-  <CustomInputReportLength>11</CustomInputReportLength>
-  <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverReportParser</CustomReportParser>
+  <AuxReportLength>0</AuxReportLength>
 </Tablet>
