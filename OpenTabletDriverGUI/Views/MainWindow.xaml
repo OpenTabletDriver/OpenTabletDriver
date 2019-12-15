@@ -106,7 +106,7 @@
             </TabItem>
             <TabItem Header="Input Bindings">
                 <Border Classes="Tab">
-                    <UniformGrid>
+                    <UniformGrid Rows="1">
                         <UniformGrid.Styles>
                             <Style Selector="UniformGrid > Border">
                                 <Setter Property="Margin" Value="5"/>
