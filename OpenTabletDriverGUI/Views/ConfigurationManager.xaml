@@ -12,7 +12,10 @@
     </Design.DataContext>
     <Grid RowDefinitions="Auto,*">
         <Menu Grid.Row="0">
-            <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
+            <MenuItem Header="File">
+                <MenuItem Header="Save all..." Command="{Binding SaveAll}"/>
+                <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
+            </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
             <TabItem Header="Configurations">
@@ -29,8 +32,8 @@
                                 Items="{Binding Configurations}" SelectedItem="{Binding Selected}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding TabletName}" FontWeight="Normal" Margin="0">
-                                            <TextBlock.ContextMenu>
+                                        <Grid>
+                                            <Grid.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Save as..."
                                                         Command="{Binding $parent[Window].DataContext.SaveAs}"
@@ -39,8 +42,9 @@
                                                         Command="{Binding $parent[Window].DataContext.Delete}"
                                                         CommandParameter="{Binding}"/>
                                                 </ContextMenu>
-                                            </TextBlock.ContextMenu>
-                                        </TextBlock>
+                                            </Grid.ContextMenu>
+                                            <TextBlock Text="{Binding TabletName}" FontWeight="Normal" Margin="0"/>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
@@ -100,23 +104,13 @@
                                     </StackPanel>
                                 </Expander>
 
-                                <Expander Header="Buttons and Express Keys">
-                                    <StackPanel>
-                                        <TextBlock Text="Pen Buttons"/>
-                                        <TextBox Text="{Binding PenButtons}"/>
-
-                                        <TextBlock Text="Express Keys"/>
-                                        <TextBox Text="{Binding AuxButtons}"/>
-
-                                        <TextBlock Text="Aux Device Report Length"/>
-                                        <TextBox Text="{Binding AuxReportLength}"/>
-                                    </StackPanel>
-                                </Expander>
-
                                 <Expander Header="Advanced">
                                     <StackPanel>
                                         <TextBlock Text="Report Parser"/>
                                         <TextBox Text="{Binding ReportParserName}"/>
+
+                                        <TextBlock Text="Aux Device Report Length"/>
+                                        <TextBox Text="{Binding AuxReportLength}"/>
                                         
                                         <TextBlock Text="Custom Input Report Length"/>
                                         <TextBox Text="{Binding CustomInputReportLength}"/>
