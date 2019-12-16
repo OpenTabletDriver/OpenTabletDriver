@@ -106,32 +106,67 @@
             </TabItem>
             <TabItem Header="Input Bindings">
                 <Border Classes="Tab">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="5">
-                            <Border Classes="r">
-                                <Grid RowDefinitions="Auto,Auto,Auto" Margin="5">
-                                    <TextBlock Grid.Row="0" Text="Tip Button Activation Pressure"/>
-                                    <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="5">
-                                        <Border Classes="r" BorderBrush="{DynamicResource ThemeControlHighBrush}" Grid.Column="0" Margin="0,0,5,0">
-                                            <Slider Margin="1"
-                                                Minimum="0" Maximum="100"
-                                                TickFrequency="1" IsSnapToTickEnabled="True"
-                                                Value="{Binding Settings.TipActivationPressure}"/>
-                                        </Border>
-                                        <TextBox Grid.Column="1" MinWidth="100"
-                                            Text="{Binding Settings.TipActivationPressure}"/>
-                                        <TextBlock Grid.Column="1" Margin="5"
-                                            IsHitTestVisible="False" HorizontalAlignment="Right" Text="%"/>
-                                    </Grid>
-                                    <Grid Grid.Row="2" RowDefinitions="Auto,Auto">
-                                        <TextBlock Grid.Row="0" Text="Tip Button"/>
-                                        <ComboBox Name="MouseButtonsBox" Grid.Row="1" Margin="5"
-                                            SelectedItem="{Binding Settings.TipButton}"/>
-                                    </Grid>
+                    <UniformGrid Rows="1">
+                        <UniformGrid.Styles>
+                            <Style Selector="UniformGrid > Border">
+                                <Setter Property="Margin" Value="5"/>
+                            </Style>
+                        </UniformGrid.Styles>
+                        <Border Classes="r">
+                            <Grid RowDefinitions="Auto,Auto,Auto" Margin="5">
+                                <TextBlock Grid.Row="0" Text="Tip Button Activation Pressure"/>
+                                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="5">
+                                    <Border Classes="r" BorderBrush="{DynamicResource ThemeControlHighBrush}" Grid.Column="0" Margin="0,0,5,0">
+                                        <Slider Margin="1"
+                                            Minimum="0" Maximum="100"
+                                            TickFrequency="1" IsSnapToTickEnabled="True"
+                                            Value="{Binding Settings.TipActivationPressure}"/>
+                                    </Border>
+                                    <TextBox Grid.Column="1" MinWidth="100"
+                                        Text="{Binding Settings.TipActivationPressure}"/>
+                                    <TextBlock Grid.Column="1" Margin="5"
+                                        IsHitTestVisible="False" HorizontalAlignment="Right" Text="%"/>
                                 </Grid>
-                            </Border>
-                        </StackPanel>
-                    </ScrollViewer>
+                                <Grid Grid.Row="2" RowDefinitions="Auto,Auto">
+                                    <TextBlock Grid.Row="0" Text="Tip Button"/>
+                                    <ComboBox Name="MouseButtonsBox" Grid.Row="1" Margin="5"
+                                        SelectedItem="{Binding Settings.TipButton}"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                        <Border Classes="r">
+                            <Grid RowDefinitions="Auto,*" Margin="5">
+                                <TextBlock Grid.Row="0" Text="Pen Buttons"/>
+                                <ItemsControl Grid.Row="1">
+                                    <ItemsControl.Styles>
+                                        <Style Selector="ComboBox">
+                                            <Setter Property="Items" Value="{Binding #MouseButtonsBox.Items}"/>
+                                        </Style>
+                                    </ItemsControl.Styles>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[0], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[1], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[2], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[3], Mode=TwoWay}"/>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                        <Border Classes="r">
+                            <Grid RowDefinitions="Auto,*" Margin="5">
+                                <TextBlock Grid.Row="0" Text="Express Keys"/>
+                                <ItemsControl Grid.Row="1">
+                                    <ItemsControl.Styles>
+                                        <Style Selector="ComboBox">
+                                            <Setter Property="Items" Value="{Binding #MouseButtonsBox.Items}"/>
+                                        </Style>
+                                    </ItemsControl.Styles>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[0], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[1], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[2], Mode=TwoWay}"/>
+                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.AuxButtons[3], Mode=TwoWay}"/>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
                 </Border>
             </TabItem>
             <TabItem Header="Console">

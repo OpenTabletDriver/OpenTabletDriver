@@ -1,6 +1,6 @@
 name: .NET Core
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   unixpublish:

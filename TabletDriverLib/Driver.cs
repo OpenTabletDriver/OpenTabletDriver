@@ -11,45 +11,42 @@ namespace TabletDriverLib
     public class Driver : IDisposable
     {
         public static bool Debugging { set; get; }
-       
+        public bool BindingEnabled { set; get; }
+        
         public HidDevice Tablet { private set; get; }
         public TabletProperties TabletProperties { set; get; }
+
         public OutputMode OutputMode { set; get; }
-        public TabletReader TabletReader { private set; get; }
-        public ITabletReportParser TabletReportParser { private set; get; }
+        public DeviceReader<IDeviceReport> TabletReader { private set; get; }
+        public DeviceReader<IDeviceReport> AuxReader { private set; get; }
 
         public event EventHandler<TabletProperties> TabletSuccessfullyOpened;
 
-        public IEnumerable<string> GetAllDeviceIdentifiers()
-        {
-            return Devices.ToList().ConvertAll(
-                (device) => $"{device.GetFriendlyName()}: {device.DevicePath}");
-        }
-
         public IEnumerable<HidDevice> Devices => DeviceList.Local.GetHidDevices();
 
-        public bool OpenTablet(string devicePath)
-        {
-            var device = Devices.FirstOrDefault(d => d.DevicePath == devicePath);
-            return OpenTablet(device, new TabletReportParser());
-        }
-
-        public bool OpenTablet(TabletProperties tablet)
+        public bool Open(TabletProperties tablet)
         {
             Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
             try
             {
-                ITabletReportParser parser = new TabletReportParser();
                 var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
-                var device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
-                if (device == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
+                var tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
+                var parser = tablet.GetReportParser() ?? new TabletReportParser();
+                if (tabletDevice == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
                 {
-                    device = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
-                    if (device != null)
-                        parser = GetTabletReportParser(tablet.CustomReportParserName);
+                    tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
+                    if (tabletDevice != null)
+                        parser = tablet.GetCustomReportParser();
                 }
                 TabletProperties = tablet;
-                return OpenTablet(device, parser);
+
+                var tabletOpened = Open(tabletDevice, parser);
+                if (tabletOpened && tablet.AuxReportLength > 0)
+                {
+                    var aux = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
+                    OpenAux(aux, new AuxReportParser());
+                }
+                return tabletOpened;
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -74,10 +71,10 @@ namespace TabletDriverLib
             }
         }
 
-        public bool OpenTablet(IEnumerable<TabletProperties> tablets)
+        public bool Open(IEnumerable<TabletProperties> tablets)
         {
             foreach (var tablet in tablets)
-                if (OpenTablet(tablet))
+                if (Open(tablet))
                     return true;
 
             if (Tablet == null)
@@ -85,9 +82,9 @@ namespace TabletDriverLib
             return false;
         }
 
-        internal bool OpenTablet(HidDevice device, ITabletReportParser reportParser)
+        internal bool Open(HidDevice device, IDeviceReportParser reportParser)
         {
-            CloseTablet();
+            Close();
             Tablet = device;
             if (Tablet != null)
             {
@@ -98,9 +95,10 @@ namespace TabletDriverLib
                     Log.Debug($"Device path: {Tablet.DevicePath}");
                 }
                 
-                TabletReader = new TabletReader(Tablet);
-                TabletReader.ReportParser = reportParser;
+                TabletReader = new DeviceReader<IDeviceReport>(Tablet);
+                TabletReader.Parser = reportParser;
                 TabletReader.Start();
+                TabletReader.Report += HandleReport;
                 // Post tablet opened event
                 TabletSuccessfullyOpened?.Invoke(this, TabletProperties);
                 return true;
@@ -113,53 +111,48 @@ namespace TabletDriverLib
             }
         }
 
-        private ITabletReportParser GetTabletReportParser(string fullName)
+        internal bool OpenAux(HidDevice auxDevice, IDeviceReportParser reportParser)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            if (auxDevice != null)
             {
-                var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == fullName);
-                if (type != null)
+                if (Debugging)
                 {
-                    var ctorResult = type.GetConstructors().FirstOrDefault().Invoke(new object[]{});
-                    return ctorResult as ITabletReportParser;
+                    Log.Debug($"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
+                    Log.Debug($"Device path: {auxDevice.DevicePath}");
                 }
-            }
-            return null;
-        }
-
-        public bool CloseTablet()
-        {
-            if (Tablet != null)
-            {
-                Tablet = null;
-                TabletReader?.Stop();
-                TabletReader?.Dispose();
+                
+                AuxReader = new DeviceReader<IDeviceReport>(auxDevice);
+                AuxReader.Parser = reportParser;
+                AuxReader.Start();
+                AuxReader.Report += HandleReport;
                 return true;
             }
             else
             {
+                if (Debugging)
+                    Log.Write("Detect", "Failed to open aux device.");
                 return false;
             }
         }
 
-        public void Dispose()
+        public bool Close()
         {
             Tablet = null;
-            TabletReader?.Abort();
             TabletReader?.Dispose();
+            AuxReader?.Dispose();
+            return true;
         }
 
-        public void BindInput(bool enabled)
+        public void Dispose()
         {
-            if (enabled)
-                TabletReader.Report += Translate;
-            else
-                TabletReader.Report -= Translate;
+            Close();
+            TabletReader.Report -= HandleReport;
+            AuxReader.Report -= HandleReport;
         }
 
-        private void Translate(object sender, ITabletReport report)
+        private void HandleReport(object sender, IDeviceReport report)
         {
-            if (report.Lift > TabletProperties.MinimumRange)
+            if (BindingEnabled)
                 OutputMode?.Read(report);
         }
     }

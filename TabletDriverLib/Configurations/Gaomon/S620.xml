@@ -3,14 +3,14 @@
   <Name>Gaomon S620</Name>
   <VendorID>9580</VendorID>
   <ProductID>109</ProductID>
-  <LinuxDeviceNumber>0</LinuxDeviceNumber>
-  <WindowsDeviceNumber>0</WindowsDeviceNumber>
-  <MacOSXDeviceNumber>0</MacOSXDeviceNumber>
+  <InputReportLength>12</InputReportLength>
+  <ReportParser>TabletDriverLib.Vendors.Gaomon.GaomonReportParser</ReportParser>
+  <CustomInputReportLength>0</CustomInputReportLength>
   <Width>165.1</Width>
   <Height>101.6</Height>
   <MaxX>33020</MaxX>
   <MaxY>20320</MaxY>
   <MaxPressure>8191</MaxPressure>
   <MinimumRange>10</MinimumRange>
-  <InputReportLength>12</InputReportLength>
+  <AuxReportLength>0</AuxReportLength>
 </Tablet>

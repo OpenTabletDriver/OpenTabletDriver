@@ -37,6 +37,13 @@ namespace TabletDriverLib.Tablet
         public uint InputReportLength { set; get; } = 0;
 
         /// <summary>
+        /// The device's report parser type.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("ReportParser")]
+        public string ReportParserName { set; get; }
+        
+        /// <summary>
         /// The device's input report length when a custom report parser is needed.
         /// </summary>
         /// <value></value>
@@ -91,6 +98,13 @@ namespace TabletDriverLib.Tablet
         /// <value></value>
         [XmlElement("MinimumRange")]
         public uint MinimumRange { set; get; } = 0;
+
+        /// <summary>
+        /// The report length of the device's auxiliary hid device, if it has one.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("AuxReportLength")]
+        public uint AuxReportLength { set; get; } = 0;
 
         #region XML Serialization
 

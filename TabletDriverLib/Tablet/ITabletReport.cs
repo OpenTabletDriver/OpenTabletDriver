@@ -7,5 +7,6 @@ namespace TabletDriverLib.Tablet
         uint Lift { get; }
         Point Position { get; }
         uint Pressure { get; }
+        bool[] PenButtons { get; }
     }
 }

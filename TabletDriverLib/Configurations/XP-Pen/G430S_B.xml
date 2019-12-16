@@ -4,10 +4,12 @@
   <VendorID>10429</VendorID>
   <ProductID>2323</ProductID>
   <InputReportLength>12</InputReportLength>
+  <CustomInputReportLength>0</CustomInputReportLength>
   <Width>101.6</Width>
   <Height>76.2</Height>
   <MaxX>10160</MaxX>
   <MaxY>7620</MaxY>
   <MaxPressure>8191</MaxPressure>
   <MinimumRange>128</MinimumRange>
+  <AuxReportLength>0</AuxReportLength>
 </Tablet>

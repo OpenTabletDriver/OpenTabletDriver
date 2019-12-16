@@ -3,11 +3,11 @@ using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib.Vendors.Wacom
 {
-    public class WacomDriverReportParser : ITabletReportParser
+    public class WacomDriverReportParser : IDeviceReportParser
     {
-        public ITabletReport Parse(byte[] data)
+        public IDeviceReport Parse(byte[] data)
         {
-            return new WacomTabletReport(data);
+            return new TabletReport(data.Skip(1).ToArray());
         }
     }
 }

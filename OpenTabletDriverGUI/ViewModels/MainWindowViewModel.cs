@@ -39,7 +39,7 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 FullTabletWidth = tablet.Width;
                 FullTabletHeight = tablet.Height;
-                Driver.BindInput(InputHooked);
+                Driver.BindingEnabled = InputHooked;
             };
 
             // Use platform specific display
@@ -101,7 +101,7 @@ namespace OpenTabletDriverGUI.ViewModels
         {
             private set
             {
-                Driver.BindInput(value);
+                Driver.BindingEnabled = value;
                 this.RaiseAndSetIfChanged(ref _hooked, value);
             }
             get => _hooked;
@@ -159,7 +159,7 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public void DetectTablet()
         {
-            Driver.OpenTablet(Tablets);
+            Driver.Open(Tablets);
             if (Settings.AutoHook && Driver.Tablet != null)
                 InputHooked = true;
         }
@@ -211,10 +211,25 @@ namespace OpenTabletDriverGUI.ViewModels
                 absolute.Clipping = Settings.EnableClipping;
                 Log.Write("Settings", "Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
                 
-                absolute.MouseButtonBindings[0] = Settings.TipButton;
+                absolute.TipBinding = Settings.TipButton;
                 absolute.TipActivationPressure = Settings.TipActivationPressure;
-                absolute.BindingsEnabled = !absolute.MouseButtonBindings.All(btn => btn.Value == MouseButton.None);
-                Log.Write("Settings", $"Bindings set: Tip='{absolute.MouseButtonBindings[0]}'@{absolute.TipActivationPressure}%");
+                absolute.TipEnabled = absolute.TipBinding != MouseButton.None;
+                Log.Write("Settings", $"Tip Binding: '{absolute.TipBinding}'@{absolute.TipActivationPressure}%");
+
+                if (Settings.PenButtons != null)
+                {
+                    for (int index = 0; index < Settings.PenButtons.Count; index++)
+                        absolute.PenButtonBindings[index] = Settings.PenButtons[index];
+
+                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.PenButtonBindings));
+                }
+                if (Settings.AuxButtons != null)
+                {
+                    for (int index = 0; index < Settings.AuxButtons.Count; index++)
+                        absolute.AuxButtonBindings[index] = Settings.AuxButtons[index];
+
+                    Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", absolute.AuxButtonBindings));
+                }
             }
             Log.Write("Settings", "Applied all settings.");
         }
@@ -232,7 +247,9 @@ namespace OpenTabletDriverGUI.ViewModels
                 DisplayWidth = Display.Width,
                 DisplayHeight = Display.Height,
                 DisplayX = 0,
-                DisplayY = 0
+                DisplayY = 0,
+                PenButtons = new ObservableCollection<MouseButton>(new MouseButton[4]),
+                AuxButtons = new ObservableCollection<MouseButton>(new MouseButton[4])
             };
 
             if (Driver.Tablet != null)

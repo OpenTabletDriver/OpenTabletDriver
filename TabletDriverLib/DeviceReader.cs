@@ -1,50 +1,47 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using HidSharp;
-using HidSharp.Reports.Input;
 using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib
 {
-    public class TabletReader : IDisposable
+    public class DeviceReader<T> : IDisposable where T : IDeviceReport
     {
-        public TabletReader(HidDevice tablet)
+        public DeviceReader(HidDevice device)
         {
-            Tablet = tablet;
+            Device = device;
             WorkerThread = new Thread(Main)
             {
-                Name = "OpenTabletDriver Tablet Reader",
+                Name = "OpenTabletDriver Device Reader",
                 IsBackground = true,
                 Priority = ThreadPriority.BelowNormal,
             };
         }
 
-        public HidDevice Tablet { private set; get; }
-        public HidStream ReportStream { private set; get; }
-        public ITabletReportParser ReportParser { set; get; }
-
-        public event EventHandler<ITabletReport> Report;
+        public virtual HidDevice Device { protected set; get; }
+        public virtual HidStream ReportStream { protected set; get; }
+        public bool Reading { protected set; get; }
+        public IReportParser<T> Parser { set; get; }
+        public virtual event EventHandler<T> Report;
 
         private Thread WorkerThread;
-        public bool Working { protected set; get; }
 
-        public bool ReadingInput { set; get; }
-
-        public void Start()
+        public virtual void Start()
         {
             Setup();
             WorkerThread.Start();
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
-            ReadingInput = false;
+            Reading = false;
         }
-        
-        internal void Abort()
+
+        public virtual void Dispose()
         {
-            WorkerThread.Abort();
+            Stop();
+            ReportStream.Dispose();
         }
 
         private void Setup()
@@ -53,7 +50,7 @@ namespace TabletDriverLib
             config.SetOption(OpenOption.Priority, OpenPriority.Low);
             for (int retries = 3; retries > 0; retries--)
             {
-                if (Tablet.TryOpen(config, out var stream, out var exception))
+                if (Device.TryOpen(config, out var stream, out var exception))
                 {
                     ReportStream = (HidStream)stream;
                     break;
@@ -73,20 +70,20 @@ namespace TabletDriverLib
 
             if (Driver.Debugging)
             {
-                Log.Debug("InputReportLength: " + Tablet.GetMaxInputReportLength());
+                Log.Debug("InputReportLength: " + Device.GetMaxInputReportLength());
             }
         }
 
-        private void Main()
+        protected void Main()
         {
             try
             {
-                ReadingInput = true;
+                Reading = true;
                 ReportStream.ReadTimeout = int.MaxValue;
-                while (ReadingInput)
+                while (Reading)
                 {
                     var data = ReportStream.Read();
-                    var report = ReportParser.Parse(data);
+                    var report = Parser.Parse(data);
                     Report?.Invoke(this, report);
                     // Logging
                     if (Driver.Debugging)
@@ -101,27 +98,6 @@ namespace TabletDriverLib
             {
                 Log.Exception(ex);
             }
-        }
-
-        private static string GetFormattedTime()
-        {
-            var hr = string.Format(GetNumberFormat(2), DateTime.Now.Hour);
-            var min = string.Format(GetNumberFormat(2), DateTime.Now.Minute);
-            var sec = string.Format(GetNumberFormat(2), DateTime.Now.Second);
-            var ms = string.Format(GetNumberFormat(3), DateTime.Now.Millisecond);
-            return $"{hr}:{min}:{sec}.{ms}";
-        }
-
-        private static string GetNumberFormat(int digits)
-        {
-            var zeros = Enumerable.Repeat('0', digits).ToArray();
-            return "{0:" + new string(zeros) + "}";
-        }
-
-        public void Dispose()
-        {
-            ReadingInput = false;
-            ReportStream.Dispose();
         }
     }
 }

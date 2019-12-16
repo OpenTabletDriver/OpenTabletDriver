@@ -8,11 +8,15 @@ using OpenTabletDriverGUI.Models;
 using System;
 using TabletDriverLib;
 using TabletDriverLib.Tablet;
+using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace OpenTabletDriverGUI.ViewModels
 {
     public class ConfigurationManagerViewModel : ViewModelBase
     {
+        private static DirectoryInfo LastDirectory;
+        
         private ObservableCollection<HidDevice> _devices;
         public ObservableCollection<HidDevice> Devices
         {
@@ -73,13 +77,41 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public async void SaveAs(TabletProperties tablet)
         {
-            var dialog = FileDialogs.CreateSaveFileDialog($"Saving tablet '{tablet.TabletName}'", "XML Document", "xml");
+            var dialog = FileDialogs.CreateSaveFileDialog(
+                $"Saving tablet '{tablet.TabletName}'",
+                "XML Document",
+                "xml",
+                LastDirectory);
             var result = await dialog.ShowAsync(App.Windows[1]);
             if (result != null)
             {
                 var file = new FileInfo(result);
                 tablet.Write(file);
                 Log.Write("Configuration Manager", $"Saved tablet configuration to '{file.FullName}'.");
+                LastDirectory = file.Directory;
+            }
+        }
+
+        public async void SaveAll()
+        {
+            var dialog = FileDialogs.CreateOpenFolderDialog(
+                "Saving all tablets to selected directory",
+                LastDirectory);
+            var result = await dialog.ShowAsync(App.Windows[1]);
+            if (result != null)
+            {
+                var directory = new DirectoryInfo(result);
+                var regex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
+                foreach (var configuration in Configurations)
+                {
+                    var match = regex.Match(configuration.TabletName);
+                    var manufacturer = match.Groups["Manufacturer"].Value;
+                    var tabletName = match.Groups["TabletName"].Value;
+                    
+                    var path = Path.Join(directory.FullName, manufacturer, string.Format("{0}.xml", tabletName));
+                    var file = new FileInfo(path);
+                    configuration.Write(file);
+                }
             }
         }
 
@@ -93,7 +125,11 @@ namespace OpenTabletDriverGUI.ViewModels
 
         public async Task LoadHawkuDialog(Window window)
         {
-            var fd = FileDialogs.CreateOpenFileDialog("Open Hawku Configuration", "Hawku Configuration", "cfg");
+            var fd = FileDialogs.CreateOpenFileDialog(
+                "Open Hawku Configuration",
+                "Hawku Configuration",
+                "cfg",
+                LastDirectory);
             var result = await fd.ShowAsync(window);
             if (result != null)
             {
@@ -105,8 +141,10 @@ namespace OpenTabletDriverGUI.ViewModels
                     {
                         HawkuString = await sr.ReadToEndAsync();
                     }
+                    LastDirectory = fileInfo.Directory;
                 }
             }
+            LastDirectory = new DirectoryInfo(fd.Directory);
         }
 
         public void ConvertHawku(string input)

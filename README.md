@@ -29,7 +29,9 @@ No special dependencies.
   - Screen area and tablet area
   - Area offsets
 - Pen bindings
-  - Tip to Mouse Button binding
+  - Tip by pressure bindings
+  - Express key bindings
+  - Pen button bindings
 - Saving and loading settings
   - Auto-loads user settings via `settings.xml` in the active directory
 - Tablet Configuration Manager
@@ -39,7 +41,6 @@ No special dependencies.
 - Relative cursor positioning
 - Precise area rotation
 - Keyboard bindings
-- Auxilary button bindings
 
 # Improving OpenTabletDriver
 If you wish to help improve OpenTabletDriver, first [check out the pinned issues](https://github.com/InfinityGhost/OpenTabletDriver/issues).
