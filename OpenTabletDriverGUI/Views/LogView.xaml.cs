@@ -49,5 +49,11 @@ namespace OpenTabletDriverGUI.Views
             set => SetValue(MessagesProperty, value);
             get => GetValue(MessagesProperty);
         }
+
+        private async Task CopyMessage(LogMessage message)
+        {
+            var text = string.Format("[{0}:{1}] {2}", message.Group, message.IsError ? "Error" : "Normal", message.Message);
+            await App.Current.Clipboard.SetTextAsync(text);
+        }
     }
 }

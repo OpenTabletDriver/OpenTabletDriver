@@ -37,13 +37,17 @@
             <Border Classes="r">
                 <StackPanel Margin="5">
                     <TextBlock Classes="h" Text="Version"/>
-                    <TextBlock Text="{Binding Version}"/>
+                    <TextBlock Name="VersionBlock" Cursor="Hand"
+                        Text="{Binding Version}"
+                        ToolTip.Tip="Copy"/>
                 </StackPanel>
             </Border>
             <Border Classes="r">
                 <StackPanel Margin="5">
                     <TextBlock Classes="h" Text="Repository"/>
-                    <TextBlock Text="InfinityGhost/OpenTabletDriver" Name="RepoBlock"/>
+                    <TextBlock Name="RepoBlock" Cursor="Hand"
+                        Text="InfinityGhost/OpenTabletDriver"
+                        ToolTip.Tip="Open the OpenTabletDriver GitHub repository"/>
                 </StackPanel>
             </Border>
         </StackPanel>

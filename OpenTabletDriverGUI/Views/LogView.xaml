@@ -25,6 +25,11 @@
                             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
                         </Style>
                     </Grid.Styles>
+                    <Grid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Copy" Command="{Binding $parent[UserControl].CopyMessage}" CommandParameter="{Binding}"/>
+                        </ContextMenu>
+                    </Grid.ContextMenu>
                     <Border Grid.Column="0">
                         <TextBlock Text="{Binding Time}"/>
                     </Border>

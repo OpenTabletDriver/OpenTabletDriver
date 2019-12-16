@@ -11,9 +11,9 @@ namespace TabletDriverLib
 
         public static void Write(string group, string text, bool isError = false)
         {
-            var logMessage = new LogMessage(group, text, isError);
-            Output?.Invoke(null, logMessage);
-            Console.WriteLine($"[{group}:{(isError ? "Error" : "Normal")}]\t{text}");
+            var message = new LogMessage(group, text, isError);
+            Output?.Invoke(null, message);
+            Console.WriteLine(string.Format("[{0}:{1}]\t{2}", message.IsError ? "Error" : "Normal", message.Group, message.Message));
         }
 
         public static void Debug(string text)
