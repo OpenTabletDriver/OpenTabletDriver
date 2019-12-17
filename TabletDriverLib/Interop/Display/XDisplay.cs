@@ -39,15 +39,18 @@ namespace TabletDriverLib.Interop.Display
         {
             get
             {
-                ICollection<IDisplay> displays = new List<IDisplay>();
+                ICollection<XRRMonitorInfo> monitors = new List<XRRMonitorInfo>();
                 var xRandrMonitors = XRRGetMonitors(Display, RootWindow, true, out var count);
                 for (int i = 0; i < count; i++)
+                    monitors.Add(xRandrMonitors[i]);
+
+                ICollection<IDisplay> displays = new List<IDisplay>();
+                var primary = monitors.FirstOrDefault(d => d.Primary != 0);
+                foreach (var monitor in monitors)
                 {
-                    var monitor = xRandrMonitors[i];
-                    displays.Add(new ManualDisplay(
-                        monitor.Width,
-                        monitor.Height,
-                        new Point(monitor.X, monitor.Y)));
+                    var pos = new Point(monitor.X - primary.X, monitor.Y - primary.Y);
+                    var display = new ManualDisplay(monitor.Width, monitor.Height, pos);
+                    displays.Add(display);
                 }
                 return displays;
             }
