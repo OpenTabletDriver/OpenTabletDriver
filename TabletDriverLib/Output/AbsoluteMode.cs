@@ -9,13 +9,40 @@ namespace TabletDriverLib.Output
 {
     public class AbsoluteMode : OutputMode
     {
+        private Area _displayArea, _tabletArea;
+        private TabletProperties _tabletProperties;
+        
+        public Area DisplayArea
+        {
+            set
+            {
+                _displayArea = value;
+                UpdateCache();
+            }
+            get => _displayArea;
+        }
+
+        public Area TabletArea
+        {
+            set
+            {
+                _tabletArea = value;
+                UpdateCache();
+            }
+            get => _tabletArea;
+        }
+
+        public override TabletProperties TabletProperties
+        {
+            set
+            {
+                _tabletProperties = value;
+                UpdateCache();
+            }
+            get => _tabletProperties;
+        }
+
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
-
-        public Area DisplayArea { set; get; }
-        public Area TabletArea { set; get; }
-
-        public override TabletProperties TabletProperties { set; get; }
-
         public bool Clipping { set; get; }
         public bool TipEnabled { set; get; }
         public float TipActivationPressure { set; get; }
@@ -25,15 +52,31 @@ namespace TabletDriverLib.Output
 
         private IList<bool> PenButtonStates = new bool[4];
 
+        private void UpdateCache()
+        {
+            _rotationMatrix = TabletArea?.GetRotationMatrix();
+            
+            _halfDisplayWidth = DisplayArea?.Width / 2 ?? 0;
+            _halfDisplayHeight = DisplayArea?.Height / 2 ?? 0;
+            _halfTabletWidth = TabletArea?.Width / 2 ?? 0;
+            _halfTabletHeight = TabletArea?.Height / 2 ?? 0;
+
+            _minX = DisplayArea?.Position.X - _halfDisplayWidth ?? 0;
+            _maxX = DisplayArea?.Position.X + DisplayArea?.Width - _halfDisplayWidth ?? 0;
+            _minY = DisplayArea?.Position.Y - _halfDisplayHeight ?? 0;
+            _maxY = DisplayArea?.Position.Y + DisplayArea?.Height - _halfDisplayHeight ?? 0;
+        }
+
+        private float[] _rotationMatrix;
+        private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
+        private float _minX, _maxX, _minY, _maxY;
+
         public override void Position(ITabletReport report)
         {
             if (report.Lift <= TabletProperties.MinimumRange)
                 return;
             
-            var pos = new Point(
-                report.Position.X,
-                report.Position.Y
-            );
+            var pos = report.Position;
 
             // Normalize (ratio of 1)
             pos.X /= TabletProperties.MaxX;
@@ -51,14 +94,13 @@ namespace TabletDriverLib.Output
             if (TabletArea.Rotation != 0f)
             {
                 var tempCopy = new Point(pos.X, pos.Y);
-                var rotateMatrix = TabletArea.GetRotationMatrix();
-                pos.X = (tempCopy.X * rotateMatrix[0]) + (tempCopy.Y * rotateMatrix[1]);
-                pos.Y = (tempCopy.X * rotateMatrix[2]) + (tempCopy.Y * rotateMatrix[3]);
+                pos.X = (tempCopy.X * _rotationMatrix[0]) + (tempCopy.Y * _rotationMatrix[1]);
+                pos.Y = (tempCopy.X * _rotationMatrix[2]) + (tempCopy.Y * _rotationMatrix[3]);
             }
 
             // Move area back
-            pos.X += TabletArea.Width / 2;
-            pos.Y += TabletArea.Height / 2;
+            pos.X += _halfTabletWidth;
+            pos.Y += _halfTabletHeight;
 
             // Scale to tablet area (ratio of 1)
             pos.X /= TabletArea.Width;
@@ -69,20 +111,20 @@ namespace TabletDriverLib.Output
             pos.Y *= DisplayArea.Height;
 
             // Adjust display offset by center
-            pos.X -= DisplayArea.Position.X - (DisplayArea.Width / 2);
-            pos.Y -= DisplayArea.Position.Y - (DisplayArea.Height / 2);
+            pos.X -= DisplayArea.Position.X - _halfDisplayWidth;
+            pos.Y -= DisplayArea.Position.Y - _halfDisplayHeight;
 
             // Clipping to display bounds
             if (Clipping)
             {
-                if (pos.X < DisplayArea.Position.X - (DisplayArea.Width / 2))
-                    pos.X = DisplayArea.Position.X - (DisplayArea.Width / 2);
-                if (pos.X > DisplayArea.Position.X + DisplayArea.Width - (DisplayArea.Width / 2))
-                    pos.X = DisplayArea.Position.X + DisplayArea.Width - (DisplayArea.Width / 2);
-                if (pos.Y < DisplayArea.Position.Y - (DisplayArea.Height / 2))
-                    pos.Y = DisplayArea.Position.Y - (DisplayArea.Height / 2);
-                if (pos.Y > DisplayArea.Position.Y + DisplayArea.Height - (DisplayArea.Height / 2))
-                    pos.Y = DisplayArea.Position.Y + DisplayArea.Height - (DisplayArea.Height / 2);
+                if (pos.X < _minX)
+                    pos.X = _minX;
+                if (pos.X > _maxX)
+                    pos.X = _maxX;
+                if (pos.Y < _minY)
+                    pos.Y = _minY;
+                if (pos.Y > _maxY)
+                    pos.Y = _maxY;
             }
 
             // Setting cursor position
