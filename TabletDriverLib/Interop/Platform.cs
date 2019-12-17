@@ -23,7 +23,7 @@ namespace TabletDriverLib.Interop
             }
         }
 
-        public static IDisplay Display
+        public static IVirtualScreen Display
         {
             get
             {

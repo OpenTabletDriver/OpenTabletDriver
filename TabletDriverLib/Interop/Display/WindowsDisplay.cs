@@ -2,21 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NativeLib.Windows;
+using TabletDriverLib.Component;
 
 namespace TabletDriverLib.Interop.Display
 {
     using static Windows;
 
-    public class WindowsDisplay : IDisplay
+    public class WindowsDisplay : IVirtualScreen
     {
-        private static IEnumerable<DisplayInfo> Displays => GetDisplays().OrderBy(e => e.Left);
+        private IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
         
         public float Width
         {
             get
             {
-                var left = Displays.Min(d => d.Left);
-                var right = Displays.Max(d => d.Right);
+                var left = InternalDisplays.Min(d => d.Left);
+                var right = InternalDisplays.Max(d => d.Right);
                 return right - left;
             }
         }
@@ -25,9 +26,23 @@ namespace TabletDriverLib.Interop.Display
         {
             get
             {
-                var top = Displays.Min(d => d.Top);
-                var bottom = Displays.Max(d => d.Bottom);
+                var top = InternalDisplays.Min(d => d.Top);
+                var bottom = InternalDisplays.Max(d => d.Bottom);
                 return bottom - top;
+            }
+        }
+
+        public Point Position => new Point(0, 0);
+
+        public IEnumerable<IDisplay> Displays
+        {
+            get
+            {
+                foreach (var display in GetDisplays().OrderBy(e => e.Left))
+                    yield return new ManualDisplay(
+                        display.Width,
+                        display.Height,
+                        new Point(display.Top, display.Left));
             }
         }
     }
