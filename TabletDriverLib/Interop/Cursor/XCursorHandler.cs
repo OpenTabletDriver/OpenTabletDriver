@@ -20,8 +20,8 @@ namespace TabletDriverLib.Interop.Cursor
         {
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);
-            _offsetX = (int)Platform.Display.Displays.Min(d => d.Position.X);
-            _offsetY = (int)Platform.Display.Displays.Max(d => d.Position.Y);
+            _offsetX = (int)Platform.Display.Position.X;
+            _offsetY = (int)Platform.Display.Position.Y;
         }
 
         public void Dispose()
@@ -40,13 +40,13 @@ namespace TabletDriverLib.Interop.Cursor
         public Point GetCursorPosition()
         {
             XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
-                return new Point((int)x - _offsetX, (int)y - _offsetY);
+                return new Point((int)x + _offsetX, (int)y + _offsetY);
         }
 
         public void SetCursorPosition(Point pos)
         {
             XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
-            XWarpPointer(Display, RootWindow, new IntPtr(0), 0, 0, 0, 0, (int)pos.X - x - _offsetX, (int)pos.Y - y - _offsetY);
+            XWarpPointer(Display, RootWindow, new IntPtr(0), 0, 0, 0, 0, (int)pos.X - x, (int)pos.Y - y);
             XFlush(Display);
         }
 
