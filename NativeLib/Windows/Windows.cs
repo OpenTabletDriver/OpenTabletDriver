@@ -42,7 +42,7 @@ namespace NativeLib.Windows
                 monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
                 if (GetMonitorInfo(hMonitor, ref monitorInfo))
                 {
-                    DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work);
+                    DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work, monitorInfo.flags);
                     displayCollection.Add(displayInfo);
                 }
                 return true;

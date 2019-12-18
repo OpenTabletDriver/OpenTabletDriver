@@ -10,6 +10,14 @@ namespace TabletDriverLib.Interop.Display
 
     public class WindowsDisplay : IVirtualScreen
     {
+        public WindowsDisplay()
+        {
+            var displays = GetDisplays();
+            var left = displays.Min(d => d.Left);
+            var top = displays.Min(d => d.Top);
+            Position = new Point(left, top);
+        }
+
         private IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
         
         public float Width
@@ -32,7 +40,7 @@ namespace TabletDriverLib.Interop.Display
             }
         }
 
-        public Point Position => new Point(0, 0);
+        public Point Position { private set; get; }
 
         public IEnumerable<IDisplay> Displays
         {

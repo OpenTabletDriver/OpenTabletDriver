@@ -1,11 +1,14 @@
-﻿namespace NativeLib.Windows
+﻿using NativeLib.Windows.Display;
+
+namespace NativeLib.Windows
 {
     public class DisplayInfo
     {
-        public DisplayInfo(Rect monitorArea, Rect workingArea)
+        public DisplayInfo(Rect monitorArea, Rect workingArea, uint flags)
         {
             MonitorArea = monitorArea;
             WorkingArea = workingArea;
+            IsPrimary = ((MONITORINFOF)flags).HasFlag(MONITORINFOF.PRIMARY);
         }
 
         public Rect MonitorArea { private set; get; }
@@ -17,10 +20,11 @@
         public int Left => MonitorArea.left;
         public int Bottom => MonitorArea.bottom;
         public int Right => MonitorArea.right;
+        public bool IsPrimary { private set; get; }
 
         public override string ToString()
         {
-            return string.Format("{0}x{1}@{2},{3}", Width, Height, Top, Left);
+            return string.Format("{0}x{1}@{2},{3}", Width, Height, Left, Top);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace TabletDriverLib.Interop.Cursor
     {
         public WindowsCursorHandler()
         {
-            _offsetX = Platform.Display.Displays.Min(d => d.Position.X);
-            _offsetY = Platform.Display.Displays.Max(d => d.Position.Y);
+            _offsetX = Platform.Display.Position.X;
+            _offsetY = Platform.Display.Position.Y;
         }
 
         private float _offsetX, _offsetY;
@@ -21,18 +21,18 @@ namespace TabletDriverLib.Interop.Cursor
         public Point GetCursorPosition()
         {
             GetCursorPos(out POINT pt);
-            return new Point(pt.X - _offsetX, pt.Y - _offsetY);
+            return new Point(pt.X + _offsetX, pt.Y + _offsetY);
         }
 
         public void SetCursorPosition(Point pos)
         {
-            SetCursorPos((int)(pos.X - _offsetX), (int)(pos.Y - _offsetY));
+            SetCursorPos((int)(pos.X + _offsetX), (int)(pos.Y + _offsetY));
         }
 
         private void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
             var pos = GetCursorPosition();
-            mouse_event((uint)arg, (uint)(pos.X - _offsetX), (uint)(pos.Y - _offsetY), dwData, 0);
+            mouse_event((uint)arg, (uint)(pos.X + _offsetX), (uint)(pos.Y + _offsetY), dwData, 0);
         }
 
         public void MouseDown(MouseButton button)
