@@ -246,8 +246,8 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 DisplayWidth = Display.Width,
                 DisplayHeight = Display.Height,
-                DisplayX = 0,
-                DisplayY = 0,
+                DisplayX = Display.Width / 2,
+                DisplayY = Display.Height / 2,
                 PenButtons = new ObservableCollection<MouseButton>(new MouseButton[4]),
                 AuxButtons = new ObservableCollection<MouseButton>(new MouseButton[4])
             };
@@ -256,8 +256,8 @@ namespace OpenTabletDriverGUI.ViewModels
             {
                 Settings.TabletWidth = Driver.TabletProperties.Width;
                 Settings.TabletHeight = Driver.TabletProperties.Height;
-                Settings.TabletX = 0;
-                Settings.TabletY = 0;
+                Settings.TabletX = Driver.TabletProperties.Width / 2;
+                Settings.TabletY = Driver.TabletProperties.Height / 2;
             }
 
             ApplySettings();

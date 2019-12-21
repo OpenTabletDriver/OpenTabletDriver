@@ -17,7 +17,9 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 No special dependencies.
 
 ### Linux
-- Xlib
+- libx11-dev
+- libxrandr-dev
+- libxtst-dev
 
 ### Mac OS X [Unsupported]
 > Code is written for Mac OS X, but zero testing has been done to test if it works.

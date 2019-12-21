@@ -11,6 +11,7 @@
                     <Grid.Styles>
                         <Style Selector="TextBlock">
                             <Setter Property="Margin" Value="5,0"/>
+                            <Setter Property="TextWrapping" Value="Wrap"/>
                             <Setter Property="FontFamily">
                                 <Setter.Value>
                                     <FontFamily>

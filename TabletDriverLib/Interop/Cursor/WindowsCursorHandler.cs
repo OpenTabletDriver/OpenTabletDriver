@@ -2,6 +2,7 @@ using System;
 using TabletDriverLib.Component;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
+using System.Linq;
 
 namespace TabletDriverLib.Interop.Cursor
 {
@@ -9,21 +10,29 @@ namespace TabletDriverLib.Interop.Cursor
 
     public class WindowsCursorHandler : ICursorHandler
     {
+        public WindowsCursorHandler()
+        {
+            _offsetX = Platform.Display.Position.X;
+            _offsetY = Platform.Display.Position.Y;
+        }
+
+        private float _offsetX, _offsetY;
+
         public Point GetCursorPosition()
         {
             GetCursorPos(out POINT pt);
-            return new Point(pt.X, pt.Y);
+            return new Point(pt.X + _offsetX, pt.Y + _offsetY);
         }
 
         public void SetCursorPosition(Point pos)
         {
-            SetCursorPos((int)pos.X, (int)pos.Y);
+            SetCursorPos((int)(pos.X + _offsetX), (int)(pos.Y + _offsetY));
         }
 
         private void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
             var pos = GetCursorPosition();
-            mouse_event((uint)arg, (uint)pos.X, (uint)pos.Y, dwData, 0);
+            mouse_event((uint)arg, (uint)(pos.X + _offsetX), (uint)(pos.Y + _offsetY), dwData, 0);
         }
 
         public void MouseDown(MouseButton button)

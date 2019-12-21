@@ -8,7 +8,7 @@ using NativeLib.Linux;
 
 namespace TabletDriverLib.Interop.Cursor
 {
-    using static Linux;
+    using static XLib;
 
     using IntPtr = IntPtr;
     using Display = IntPtr;
@@ -20,6 +20,8 @@ namespace TabletDriverLib.Interop.Cursor
         {
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);
+            _offsetX = (int)Platform.Display.Position.X;
+            _offsetY = (int)Platform.Display.Position.Y;
         }
 
         public void Dispose()
@@ -27,6 +29,8 @@ namespace TabletDriverLib.Interop.Cursor
             XCloseDisplay(Display);
             InputDictionary = null;
         }
+
+        private int _offsetX, _offsetY;
 
         private Display Display;
         private Window RootWindow;
@@ -36,7 +40,7 @@ namespace TabletDriverLib.Interop.Cursor
         public Point GetCursorPosition()
         {
             XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
-                return new Point((int)x, (int)y);
+                return new Point((int)x + _offsetX, (int)y + _offsetY);
         }
 
         public void SetCursorPosition(Point pos)

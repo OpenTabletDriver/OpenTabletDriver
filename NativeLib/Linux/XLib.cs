@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace NativeLib.Linux
@@ -7,12 +7,12 @@ namespace NativeLib.Linux
     using Display = IntPtr;
     using Window = IntPtr;
     
-    public class Linux
+    public class XLib
     {
         private const string libX11 = "libX11";
         private const string libXtst = "libXtst";
         private static object Lock = new object();
-
+        
         [DllImport(libX11, EntryPoint = "XQueryPointer")]
         public extern static bool XQueryPointer(Display display, Window window, out IntPtr root, out IntPtr child, out int root_x, out int root_y, out int win_x, out int win_y, out int keys_buttons);
 

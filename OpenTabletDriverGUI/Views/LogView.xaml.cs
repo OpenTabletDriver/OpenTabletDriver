@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using TabletDriverLib;
@@ -22,7 +23,14 @@ namespace OpenTabletDriverGUI.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            AsyncInit();
+        }
+
+        private async void AsyncInit()
+        {
             Log.Output += (s, msg) => ScrollToBottom();
+            var sv = await GetScrollViewerAsync();
+            sv.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
         }
 
         public void ScrollToBottom()
