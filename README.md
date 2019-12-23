@@ -29,7 +29,8 @@ No special dependencies.
 - Absolute cursor positioning
 - Precise areas
   - Screen area and tablet area
-  - Area offsets
+  - Center-anchored offsets
+  - Precise area rotation
 - Pen bindings
   - Tip by pressure bindings
   - Express key bindings
@@ -41,7 +42,6 @@ No special dependencies.
 
 ## Planned features
 - Relative cursor positioning
-- Precise area rotation
 - Keyboard bindings
 
 # Improving OpenTabletDriver
