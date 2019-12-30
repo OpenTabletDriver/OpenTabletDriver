@@ -5,7 +5,7 @@ using System.Globalization;
 using TabletDriverLib.Tablet;
 using TabletDriverLib;
 
-namespace OpenTabletDriverGUI.Models
+namespace OpenTabletDriver.Models
 {
     public static class ConfigurationConverter
     {

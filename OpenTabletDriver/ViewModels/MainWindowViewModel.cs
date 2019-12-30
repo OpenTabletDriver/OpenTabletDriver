@@ -9,8 +9,8 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
-using OpenTabletDriverGUI.Models;
-using OpenTabletDriverGUI.Views;
+using OpenTabletDriver.Models;
+using OpenTabletDriver.Views;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Component;
@@ -20,7 +20,7 @@ using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Output;
 using TabletDriverLib.Tablet;
 
-namespace OpenTabletDriverGUI.ViewModels
+namespace OpenTabletDriver.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {

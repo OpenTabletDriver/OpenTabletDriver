@@ -2,7 +2,7 @@
 using System.IO;
 using Avalonia.Controls;
 
-namespace OpenTabletDriverGUI
+namespace OpenTabletDriver
 {
     internal static class FileDialogs
     {

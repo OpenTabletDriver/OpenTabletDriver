@@ -6,7 +6,7 @@ using Avalonia;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
 
-namespace OpenTabletDriverGUI.Converters
+namespace OpenTabletDriver.Converters
 {
     public class CanvasCenterConverter : IMultiValueConverter
     {

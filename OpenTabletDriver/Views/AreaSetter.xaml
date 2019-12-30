@@ -2,10 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:ns="clr-namespace:OpenTabletDriverGUI.Views;assembly=OpenTabletDriverGUI"
-             xmlns:cvt="clr-namespace:OpenTabletDriverGUI.Converters;assembly=OpenTabletDriverGUI"
+             xmlns:ns="clr-namespace:OpenTabletDriver.Views;assembly=OpenTabletDriver"
+             xmlns:cvt="clr-namespace:OpenTabletDriver.Converters;assembly=OpenTabletDriver"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="OpenTabletDriverGUI.Views.AreaSetter">
+             x:Class="OpenTabletDriver.Views.AreaSetter">
     <UserControl.Styles>
         <Style Selector="Border">
             <Setter Property="Margin" Value="5"/>

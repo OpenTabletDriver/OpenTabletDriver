@@ -1,7 +1,7 @@
 using System;
 using Avalonia.Markup.Xaml.Styling;
 
-namespace OpenTabletDriverGUI
+namespace OpenTabletDriver
 {
     public class Themes
     {

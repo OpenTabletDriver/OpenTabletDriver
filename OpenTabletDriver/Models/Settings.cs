@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 using ReactiveUI;
 using TabletDriverLib.Interop.Cursor;
 
-namespace OpenTabletDriverGUI.Models
+namespace OpenTabletDriver.Models
 {
     [XmlRoot("Configuration", DataType = "OpenTabletDriverCfg")]
     public class Settings : ReactiveObject
