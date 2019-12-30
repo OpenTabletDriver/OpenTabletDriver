@@ -111,8 +111,8 @@ namespace TabletDriverLib.Output
             pos.Y *= DisplayArea.Height;
 
             // Adjust display offset by center
-            pos.X -= DisplayArea.Position.X - _halfDisplayWidth;
-            pos.Y -= DisplayArea.Position.Y - _halfDisplayHeight;
+            pos.X += DisplayArea.Position.X - _halfDisplayWidth;
+            pos.Y += DisplayArea.Position.Y - _halfDisplayHeight;
 
             // Clipping to display bounds
             if (Clipping)

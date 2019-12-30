@@ -77,7 +77,7 @@ namespace OpenTabletDriverGUI
             }
         }
 
-        internal static DirectoryInfo ConfigurationDirectory { private set; get; }
+        internal static DirectoryInfo ConfigurationDirectory { private set; get; } = GetDefaultConfigurationDirectory();
         private static DirectoryInfo GetDefaultConfigurationDirectory()
         {
             var path = Path.Join(Environment.CurrentDirectory, "Configurations");
