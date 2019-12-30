@@ -9,7 +9,7 @@ using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
 using NativeLib;
 
-namespace OpenTabletDriverGUI
+namespace OpenTabletDriver
 {
     class Program
     {
@@ -23,7 +23,7 @@ namespace OpenTabletDriverGUI
         public static void Main(string[] args) 
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledException;
-            Thread.CurrentThread.Name = "OpenTabletDriverGUI";
+            Thread.CurrentThread.Name = "OpenTabletDriver";
             var rootCommand = new RootCommand("OpenTabletDriver")
             {
                 new Option(new string[] { "--settings", "-s" }, "Settings directory")

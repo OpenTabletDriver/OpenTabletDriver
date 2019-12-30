@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 using TabletDriverLib;
 using TabletDriverLib.Component;
 
-namespace OpenTabletDriverGUI.Views
+namespace OpenTabletDriver.Views
 {
     public class StatusBar : UserControl
     {

@@ -4,9 +4,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
-using OpenTabletDriverGUI.ViewModels;
+using OpenTabletDriver.ViewModels;
 
-namespace OpenTabletDriverGUI.Views
+namespace OpenTabletDriver.Views
 {
     public class MainWindow : Window
     {

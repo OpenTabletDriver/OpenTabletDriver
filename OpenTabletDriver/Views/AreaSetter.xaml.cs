@@ -7,7 +7,7 @@ using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Avalonia.VisualTree;
 
-namespace OpenTabletDriverGUI.Views
+namespace OpenTabletDriver.Views
 {
     public class AreaSetter : UserControl
     {

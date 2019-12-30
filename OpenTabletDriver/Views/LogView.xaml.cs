@@ -11,7 +11,7 @@ using Avalonia.Threading;
 using TabletDriverLib;
 using TabletDriverLib.Component;
 
-namespace OpenTabletDriverGUI.Views
+namespace OpenTabletDriver.Views
 {
     public class LogView : UserControl
     {

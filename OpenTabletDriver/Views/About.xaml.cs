@@ -6,7 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NativeLib;
 
-namespace OpenTabletDriverGUI.Views
+namespace OpenTabletDriver.Views
 {
     public class About : Window
     {

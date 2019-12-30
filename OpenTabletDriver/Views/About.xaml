@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="OpenTabletDriverGUI.Views.About"
+        x:Class="OpenTabletDriver.Views.About"
         Width="500" Height="300"
         Title="About OpenTabletDriver">
     <Window.Styles>
@@ -26,7 +26,7 @@
             FontWeight="Light" FontSize="24"
             HorizontalAlignment="Center"
             Text="OpenTabletDriver"/>
-        <Image Grid.Column="0" Grid.Row="1" Source="avares://OpenTabletDriverGUI/Assets/otd.png"/>
+        <Image Grid.Column="0" Grid.Row="1" Source="avares://OpenTabletDriver/Assets/otd.png"/>
         <StackPanel Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">
             <Border Classes="r">
                 <StackPanel Margin="5">

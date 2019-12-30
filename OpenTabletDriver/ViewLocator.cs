@@ -4,9 +4,9 @@
 using System;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using OpenTabletDriverGUI.ViewModels;
+using OpenTabletDriver.ViewModels;
 
-namespace OpenTabletDriverGUI
+namespace OpenTabletDriver
 {
     public class ViewLocator : IDataTemplate
     {

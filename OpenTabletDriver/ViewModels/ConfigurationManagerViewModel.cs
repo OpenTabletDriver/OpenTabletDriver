@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using System.IO;
 using HidSharp;
-using OpenTabletDriverGUI.Models;
+using OpenTabletDriver.Models;
 using System;
 using TabletDriverLib;
 using TabletDriverLib.Tablet;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-namespace OpenTabletDriverGUI.ViewModels
+namespace OpenTabletDriver.ViewModels
 {
     public class ConfigurationManagerViewModel : ViewModelBase
     {
