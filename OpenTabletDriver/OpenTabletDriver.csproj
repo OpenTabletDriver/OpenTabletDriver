@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <PublishTrimmed>true</PublishTrimmed>
-    <PublishSingleFile>true</PublishSingleFile>
+    <PublishSingleFile>false</PublishSingleFile>
     <VersionPrefix>0.1.0</VersionPrefix>
     <Company>InfinityGhost</Company>
     <Product>OpenTabletDriver</Product>
