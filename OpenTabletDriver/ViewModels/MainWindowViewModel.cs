@@ -39,7 +39,17 @@ namespace OpenTabletDriver.ViewModels
             {
                 FullTabletWidth = tablet.Width;
                 FullTabletHeight = tablet.Height;
+                
+                if (Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
+                {
+                    Settings.TabletWidth = tablet.Width;
+                    Settings.TabletHeight = tablet.Height;
+                    Settings.TabletX = tablet.Width / 2;
+                    Settings.TabletY = tablet.Height / 2;
+                }
+
                 Driver.BindingEnabled = InputHooked;
+                ApplySettings();
             };
 
             // Use platform specific display
