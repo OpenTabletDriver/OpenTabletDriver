@@ -20,8 +20,8 @@ namespace TabletDriverLib.Interop.Cursor
         {
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);
-            _offsetX = (int)Platform.Display.Position.X;
-            _offsetY = (int)Platform.Display.Position.Y;
+            _offsetX = (int)Platform.VirtualScreen.Position.X;
+            _offsetY = (int)Platform.VirtualScreen.Position.Y;
         }
 
         public void Dispose()

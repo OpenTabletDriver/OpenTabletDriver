@@ -12,8 +12,8 @@ namespace TabletDriverLib.Interop.Cursor
     {
         public WindowsCursorHandler()
         {
-            _offsetX = Platform.Display.Position.X;
-            _offsetY = Platform.Display.Position.Y;
+            _offsetX = Platform.VirtualScreen.Position.X;
+            _offsetY = Platform.VirtualScreen.Position.Y;
         }
 
         private float _offsetX, _offsetY;

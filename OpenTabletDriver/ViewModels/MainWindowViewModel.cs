@@ -52,8 +52,8 @@ namespace OpenTabletDriver.ViewModels
                 ApplySettings();
             };
 
-            // Use platform specific display
-            Display = Platform.Display;
+            // Use platform specific virtual screen
+            VirtualScreen = Platform.VirtualScreen;
             
             var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
             var settings = new FileInfo(settingsPath);
@@ -118,9 +118,20 @@ namespace OpenTabletDriver.ViewModels
         }
         private bool _hooked;
 
-        private IDisplay Display
+        public IVirtualScreen VirtualScreen
         {
-            set => this.RaiseAndSetIfChanged(ref _disp, value);
+            set => this.RaiseAndSetIfChanged(ref _scr, value);
+            get => _scr;
+        }
+        public IVirtualScreen _scr;
+
+        private IDisplay SelectedDisplay
+        {
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _disp, value);
+                SelectDisplay(SelectedDisplay);
+            }
             get => _disp;
         }
         private IDisplay _disp;
@@ -254,10 +265,10 @@ namespace OpenTabletDriver.ViewModels
         {
             Settings = new Settings()
             {
-                DisplayWidth = Display.Width,
-                DisplayHeight = Display.Height,
-                DisplayX = Display.Width / 2,
-                DisplayY = Display.Height / 2,
+                DisplayWidth = VirtualScreen.Width,
+                DisplayHeight = VirtualScreen.Height,
+                DisplayX = VirtualScreen.Width / 2,
+                DisplayY = VirtualScreen.Height / 2,
                 PenButtons = new ObservableCollection<MouseButton>(new MouseButton[4]),
                 AuxButtons = new ObservableCollection<MouseButton>(new MouseButton[4])
             };
@@ -385,6 +396,14 @@ namespace OpenTabletDriver.ViewModels
         {
             Settings.OutputMode = name;
             ApplySettings();
+        }
+
+        private void SelectDisplay(IDisplay display)
+        {
+            Settings.DisplayWidth = display.Width;
+            Settings.DisplayHeight = display.Height;
+            Settings.DisplayX = display.Width / 2 + display.Position.X;
+            Settings.DisplayY = display.Height / 2 + display.Position.Y;
         }
 
         #endregion

@@ -18,8 +18,24 @@ namespace TabletDriverLib.Interop.Display
         {
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);
-            var primary = GetXRandrDisplays().FirstOrDefault(d => d.Primary != 0);
-            Position = new Point(primary.X, primary.Y);
+            
+            var monitors = GetXRandrDisplays().ToList();
+            var primary = monitors.FirstOrDefault(d => d.Primary != 0);
+            
+            var displays = new List<IDisplay>();
+            displays.Add(this);
+            foreach (var monitor in monitors)
+            {
+                var display = new ManualDisplay(
+                    monitor.Width,
+                    monitor.Height,
+                    new Point(monitor.X - primary.X, monitor.Y - primary.Y),
+                    monitors.IndexOf(monitor) + 1); 
+                displays.Add(display);
+            }
+            
+            Displays = displays;
+            Position = new Point(primary.X, primary.Y);            
         }
 
         private Display Display;
@@ -46,21 +62,13 @@ namespace TabletDriverLib.Interop.Display
             return monitors;
         }
 
-        public IEnumerable<IDisplay> Displays
+        public IEnumerable<IDisplay> Displays { private set; get; }
+
+        public int Index => 0;
+
+        public override string ToString()
         {
-            get
-            {
-                var monitors = GetXRandrDisplays();
-                ICollection<IDisplay> displays = new List<IDisplay>();
-                var primary = monitors.FirstOrDefault(d => d.Primary != 0);
-                foreach (var monitor in monitors)
-                {
-                    var pos = new Point(monitor.X - primary.X, monitor.Y - primary.Y);
-                    var display = new ManualDisplay(monitor.Width, monitor.Height, pos);
-                    displays.Add(display);
-                }
-                return displays;
-            }
+            return $"X Screen {Index} ({Width}x{Height}@{Position})";
         }
 
         public void Dispose()

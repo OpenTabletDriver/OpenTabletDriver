@@ -27,6 +27,11 @@
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
             <Setter Property="CornerRadius" Value="5"/>
         </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="MinWidth" Value="225"/>
+            <Setter Property="MinHeight" Value="20"/>
+            <Setter Property="Margin" Value="5,4"/>
+        </Style>
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*,Auto,Auto">
@@ -67,8 +72,8 @@
         <TabControl Grid.Row="1">
             <TabItem Header="Area Settings">
                 <Border Classes="Tab">
-                    <Grid RowDefinitions="*,*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
-                        <ns:AreaSetter Grid.Row="0"
+                    <Grid RowDefinitions="*,*,Auto" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
+                        <ns:AreaSetter Grid.Row="0" Grid.ColumnSpan="2"
                             Title="Display Area"
                             MeasurementUnit="px"
                             AreaWidth="{Binding Settings.DisplayWidth}"
@@ -76,9 +81,17 @@
                             AreaXOffset="{Binding Settings.DisplayX}"
                             AreaYOffset="{Binding Settings.DisplayY}"
                             RotationAngle="{Binding Settings.DisplayRotation}"
-                            BackgroundWidth="{Binding Display.Width}"
-                            BackgroundHeight="{Binding Display.Height}"/>
-                        <ns:AreaSetter Grid.Row="1"
+                            BackgroundWidth="{Binding VirtualScreen.Width}"
+                            BackgroundHeight="{Binding VirtualScreen.Height}"/>
+                        <Grid Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" ColumnDefinitions="Auto,Auto">
+                            <TextBlock Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Text="Display Select"/>
+                            <ComboBox Grid.Column="1"
+                                Items="{Binding VirtualScreen.Displays}"
+                                SelectedItem="{Binding SelectedDisplay, Mode=TwoWay}"/>
+                        </Grid>
+                        <ns:AreaSetter Grid.Row="1" Grid.ColumnSpan="2" MinWidth="100"
                             Title="Tablet Area"
                             MeasurementUnit="mm"
                             EnableRotation="True"
@@ -89,7 +102,7 @@
                             RotationAngle="{Binding Settings.TabletRotation}"
                             BackgroundWidth="{Binding FullTabletWidth}"
                             BackgroundHeight="{Binding FullTabletHeight}"/>
-                        <Border Classes="r" Grid.Row="2" Margin="5">
+                        <Border Classes="r" Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
                             <StackPanel Orientation="Horizontal" Margin="5">
                                 <StackPanel.Styles>
                                     <Style Selector="CheckBox">
