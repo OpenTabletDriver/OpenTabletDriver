@@ -402,8 +402,8 @@ namespace OpenTabletDriver.ViewModels
         {
             Settings.DisplayWidth = display.Width;
             Settings.DisplayHeight = display.Height;
-            Settings.DisplayX = display.Width / 2 + display.Position.X;
-            Settings.DisplayY = display.Height / 2 + display.Position.Y;
+            Settings.DisplayX = display.Position.X + (display.Width / 2);
+            Settings.DisplayY = display.Position.Y + (display.Height / 2);
         }
 
         #endregion
