@@ -10,7 +10,7 @@
         x:Class="OpenTabletDriver.Views.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
         Width="1280" Height="720"
-        MinWidth="640" MinHeight="480"
+        MinWidth="960" MinHeight="720"
         Title="OpenTabletDriver">
     <Design.DataContext>
         <vm:MainWindowViewModel/>
@@ -29,8 +29,7 @@
         </Style>
         <Style Selector="ComboBox">
             <Setter Property="MinWidth" Value="225"/>
-            <Setter Property="MinHeight" Value="20"/>
-            <Setter Property="Margin" Value="5,4"/>
+            <Setter Property="Height" Value="23"/>
         </Style>
     </Window.Styles>
 
@@ -83,10 +82,16 @@
                             RotationAngle="{Binding Settings.DisplayRotation}"
                             BackgroundWidth="{Binding VirtualScreen.Width}"
                             BackgroundHeight="{Binding VirtualScreen.Height}"/>
-                        <Grid Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" ColumnDefinitions="Auto,Auto">
+                        <Grid Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" ColumnDefinitions="Auto,Auto" Margin="5,3">
+                            <Grid.Styles>
+                                <Style Selector="Border">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                </Style>
+                            </Grid.Styles>
                             <TextBlock Grid.Column="0"
+                                Margin="5,0"
                                 VerticalAlignment="Center"
-                                Text="Display Select"/>
+                                Text="Move area to"/>
                             <ComboBox Grid.Column="1"
                                 Items="{Binding VirtualScreen.Displays}"
                                 SelectedItem="{Binding SelectedDisplay, Mode=TwoWay}"/>

@@ -60,7 +60,7 @@ namespace TabletDriverLib.Interop.Display
 
         public override string ToString()
         {
-            return $"VirtualDisplay {Index} ({Width}x{Height}@{Position})";
+            return $"Virtual Display {Index} ({Width}x{Height}@{Position})";
         }
     }
 }

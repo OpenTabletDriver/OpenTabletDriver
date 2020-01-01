@@ -4,7 +4,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="OpenTabletDriver.Views.LogView">
-    <ListBox Items="{Binding Messages, Mode=TwoWay}">
+    <ListBox Items="{Binding Messages, Mode=TwoWay}" BorderThickness="0,1">
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <Grid ColumnDefinitions="Auto, 100, *" MinHeight="18">
