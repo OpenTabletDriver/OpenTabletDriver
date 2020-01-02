@@ -20,8 +20,9 @@ namespace TabletDriverLib.Interop.Display
                 var display = new ManualDisplay(
                     monitor.Width,
                     monitor.Height,
-                    new Point(monitor.Top, monitor.Left),
+                    new Point(monitor.Left, monitor.Top),
                     monitors.IndexOf(monitor) + 1);
+                displays.Add(display);
             }
             Displays = displays;
 
