@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -12,9 +12,9 @@ namespace TabletDriverLib.Interop.Display
     using Display = IntPtr;
     using Window = IntPtr;
 
-    public class XDisplay : IVirtualScreen, IDisposable
+    public class XScreen : IVirtualScreen, IDisposable
     {
-        public unsafe XDisplay()
+        public unsafe XScreen()
         {
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);
