@@ -13,6 +13,8 @@ namespace TabletDriverLib.Interop.Display
         public WindowsDisplay()
         {
             var monitors = GetDisplays().OrderBy(e => e.Left).ToList();
+            var primary = monitors.FirstOrDefault(m => m.IsPrimary);
+
             var displays = new List<IDisplay>();
             displays.Add(this);
             foreach (var monitor in monitors)
@@ -24,11 +26,12 @@ namespace TabletDriverLib.Interop.Display
                     monitors.IndexOf(monitor) + 1);
                 displays.Add(display);
             }
-            Displays = displays;
 
-            var left = monitors.Min(d => d.Left);
-            var top = monitors.Min(d => d.Top);
-            Position = new Point(left, top);
+            var x = primary.Left - monitors.Min(m => m.Left);
+            var y = primary.Top - monitors.Min(m => m.Top);
+
+            Displays = displays;
+            Position = new Point(x, y);
         }
 
         private IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
