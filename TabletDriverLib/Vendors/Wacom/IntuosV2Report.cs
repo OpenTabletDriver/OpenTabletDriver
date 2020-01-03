@@ -11,8 +11,8 @@ namespace TabletDriverLib.Vendors.Wacom
             Raw = report;
 
             Lift = (uint)report[9] >> 2;
-            var x = (report[2] * 0x100 + report[3]) << 1;
-            var y = (report[4] * 0x100 + report[5]) << 1;
+            var x = ((report[2] * 0x100) + report[3]) << 1;
+            var y = ((report[4] * 0x100) + report[5]) << 1;
             Position = new Point(x, y);
             Pressure = (uint)(report[6] << 3);
             
