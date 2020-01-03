@@ -6,7 +6,7 @@
   <InputReportLength>10</InputReportLength>
   <ReportParser>TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser</ReportParser>
   <CustomInputReportLength>11</CustomInputReportLength>
-  <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverReportParser</CustomReportParser>
+  <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser</CustomReportParser>
   <Width>157</Width>
   <Height>98</Height>
   <MaxX>31496</MaxX>
