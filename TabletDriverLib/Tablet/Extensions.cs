@@ -28,5 +28,13 @@ namespace TabletDriverLib.Tablet
             }
             return null;
         }
+
+        public static string GetData(this ITabletReport report, bool raw)
+        {
+            if (raw)
+                return BitConverter.ToString(report.Raw).Replace('-', ' ');
+            else
+                return $"Lift:{report.Lift}, Position:[{report.Position}], Pressure:{report.Pressure}, PenButtons:[{String.Join(" ", report.PenButtons)}]";
+        }
     }
 }

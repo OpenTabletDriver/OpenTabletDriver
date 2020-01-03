@@ -11,7 +11,6 @@ namespace TabletDriverLib.Vendors.Wacom
             Raw = report;
 
             Lift = (uint)report[9] >> 2;
-
             var x = (report[2] * 0x100 + report[3]) << 1;
             var y = (report[4] * 0x100 + report[5]) << 1;
             Position = new Point(x, y);
@@ -32,14 +31,6 @@ namespace TabletDriverLib.Vendors.Wacom
         public uint Pressure { private set; get; }
         public bool[] PenButtons { private set; get; }
 
-        public override string ToString() => ToString(false);
-
-        public string ToString(bool raw)
-        {
-            if (raw)
-                return BitConverter.ToString(Raw).Replace('-', ' ');
-            else
-                return $"Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}, PenButtons:[{String.Join(" ", PenButtons)}]";
-        }
+        public override string ToString() => Extensions.GetData(this, false);
     }
 }

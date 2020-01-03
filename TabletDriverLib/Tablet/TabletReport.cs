@@ -30,14 +30,6 @@ namespace TabletDriverLib.Tablet
         public uint Pressure { private set; get; }
         public bool[] PenButtons { private set; get; }
 
-        public override string ToString() => ToString(false);
-
-        public string ToString(bool raw)
-        {
-            if (raw)
-                return BitConverter.ToString(Raw).Replace('-', ' ');
-            else
-                return $"Lift:{Lift}, Position:[{Position}], Pressure:{Pressure}, PenButtons:[{String.Join(" ", PenButtons)}]";
-        }
+        public override string ToString() => Extensions.GetData(this, false);
     }
 }
