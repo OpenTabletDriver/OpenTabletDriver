@@ -23,14 +23,14 @@ namespace TabletDriverLib.Interop
             }
         }
 
-        public static IVirtualScreen Display
+        public static IVirtualScreen VirtualScreen
         {
             get
             {
                 if (PlatformInfo.IsWindows)
                     return new WindowsDisplay();
                 else if (PlatformInfo.IsLinux)
-                    return new XDisplay();
+                    return new XScreen();
                 else if (PlatformInfo.IsOSX)
                     return new MacOSDisplay();
                     

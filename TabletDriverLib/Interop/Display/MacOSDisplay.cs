@@ -30,5 +30,12 @@ namespace TabletDriverLib.Interop.Display
                 yield return this;
             }
         }
+
+        public int Index => 0;
+
+        public override string ToString()
+        {
+            return $"VirtualDisplay {Index} ({Width}x{Height}@{Position})";
+        }
     }
 }

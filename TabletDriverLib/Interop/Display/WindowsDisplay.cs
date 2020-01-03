@@ -12,10 +12,26 @@ namespace TabletDriverLib.Interop.Display
     {
         public WindowsDisplay()
         {
-            var displays = GetDisplays();
-            var left = displays.Min(d => d.Left);
-            var top = displays.Min(d => d.Top);
-            Position = new Point(left, top);
+            var monitors = GetDisplays().OrderBy(e => e.Left).ToList();
+            var primary = monitors.FirstOrDefault(m => m.IsPrimary);
+
+            var displays = new List<IDisplay>();
+            displays.Add(this);
+            foreach (var monitor in monitors)
+            {
+                var display = new ManualDisplay(
+                    monitor.Width,
+                    monitor.Height,
+                    new Point(monitor.Left, monitor.Top),
+                    monitors.IndexOf(monitor) + 1);
+                displays.Add(display);
+            }
+
+            var x = primary.Left - monitors.Min(m => m.Left);
+            var y = primary.Top - monitors.Min(m => m.Top);
+
+            Displays = displays;
+            Position = new Point(x, y);
         }
 
         private IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
@@ -42,16 +58,13 @@ namespace TabletDriverLib.Interop.Display
 
         public Point Position { private set; get; }
 
-        public IEnumerable<IDisplay> Displays
+        public IEnumerable<IDisplay> Displays { private set; get; }
+
+        public int Index => 0;
+
+        public override string ToString()
         {
-            get
-            {
-                foreach (var display in GetDisplays().OrderBy(e => e.Left))
-                    yield return new ManualDisplay(
-                        display.Width,
-                        display.Height,
-                        new Point(display.Top, display.Left));
-            }
+            return $"Virtual Display {Index} ({Width}x{Height}@{Position})";
         }
     }
 }

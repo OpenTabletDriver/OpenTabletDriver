@@ -33,7 +33,7 @@
     </UserControl.Resources>
 
     <Grid Name="AreaGrid" DataContext="{Binding $parent}" RowDefinitions="Auto,*,Auto">
-        <TextBlock Classes="h1" Text="{Binding Title}"/>
+        <TextBlock Classes="h1" Margin="0,7,0,3" Text="{Binding Title}"/>
         <Border Grid.Row="1" HorizontalAlignment="Stretch" Background="Transparent">
             <Viewbox Name="AreaViewbox" HorizontalAlignment="Center">
                 <Canvas Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}" HorizontalAlignment="Center">
