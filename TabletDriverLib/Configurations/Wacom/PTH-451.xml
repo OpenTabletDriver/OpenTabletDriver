@@ -4,6 +4,7 @@
   <VendorID>1386</VendorID>
   <ProductID>788</ProductID>
   <InputReportLength>10</InputReportLength>
+  <ReportParser>TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser</ReportParser>
   <CustomInputReportLength>11</CustomInputReportLength>
   <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverReportParser</CustomReportParser>
   <Width>157</Width>
