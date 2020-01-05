@@ -30,7 +30,7 @@ namespace TabletDriverLib.Tablet
         public uint Pressure { private set; get; }
         public bool[] PenButtons { private set; get; }
 
-        public override string ToString() => ToString(false);
+        public override string ToString() => ToString(Driver.RawReports);
 
         public string ToString(bool raw)
         {
