@@ -168,6 +168,17 @@ namespace OpenTabletDriver.ViewModels
         }
         private bool _debugging;
 
+        public bool RawReports
+        {
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _rawReports, value);
+                Driver.RawReports = value;
+            }
+            get => _rawReports;
+        }
+        private bool _rawReports;
+
         #endregion
 
         #region Buttons
