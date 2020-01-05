@@ -19,7 +19,7 @@ namespace TabletDriverLib.Tablet
         public byte[] Raw { private set; get; }
         public bool[] AuxButtons { private set; get; }
 
-        public override string ToString() => ToString(false);
+        public override string ToString() => ToString(Driver.RawReports);
 
         public string ToString(bool isRaw)
         {
