@@ -197,6 +197,7 @@
                             </Style>
                         </StackPanel.Styles>
                         <CheckBox Content="Debugging" IsChecked="{Binding Debugging}"/>
+                        <CheckBox Content="Raw Reports" IsChecked="{Binding RawReports}" IsVisible="{Binding Debugging}"/>
                     </StackPanel>
                 </Grid>
             </TabItem>

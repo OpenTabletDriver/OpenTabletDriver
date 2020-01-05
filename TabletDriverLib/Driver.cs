@@ -11,6 +11,7 @@ namespace TabletDriverLib
     public class Driver : IDisposable
     {
         public static bool Debugging { set; get; }
+        public static bool RawReports { set; get; }
         public bool BindingEnabled { set; get; }
         
         public HidDevice Tablet { private set; get; }
