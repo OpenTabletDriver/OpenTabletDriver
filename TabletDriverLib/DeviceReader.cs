@@ -87,7 +87,7 @@ namespace TabletDriverLib
                     Report?.Invoke(this, report);
                     // Logging
                     if (Driver.Debugging)
-                        Log.Write("Report", report.ToString());
+                        Log.Write("Report", report.StringFormat(Driver.RawReports));
                 }
             }
             catch (ObjectDisposedException)

@@ -30,7 +30,5 @@ namespace TabletDriverLib.Vendors.Wacom
         public Point Position { private set; get; }
         public uint Pressure { private set; get; }
         public bool[] PenButtons { private set; get; }
-
-        public override string ToString() => Extensions.GetData(this, false);
     }
 }
