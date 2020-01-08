@@ -114,9 +114,9 @@
                                         <Setter Property="Margin" Value="0,0,5,0"/>
                                     </Style>
                                 </StackPanel.Styles>
-                                <CheckBox Content="Auto Hook Input" IsChecked="{Binding Settings.AutoHook}"/>
-                                <CheckBox Content="Enable clipping" IsChecked="{Binding Settings.EnableClipping}"/>
-                                <CheckBox Content="Lock Aspect Ratio" IsChecked="{Binding Settings.LockAspectRatio}"/>
+                                <CheckBox Content="Enable on startup" IsChecked="{Binding Settings.AutoHook}"/>
+                                <CheckBox Content="Area clipping" IsChecked="{Binding Settings.EnableClipping}"/>
+                                <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"/>
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -204,10 +204,16 @@
         </TabControl>
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5">
-                <Button Content="Enable input hook" Command="{Binding ToggleHook}" IsVisible="{Binding !InputHooked}"/>
-                <Button Content="Disable input hook" Command="{Binding ToggleHook}" IsVisible="{Binding InputHooked}"/>
+                <Button Content="Enable Driver" Command="{Binding ToggleHook}" IsVisible="{Binding !InputHooked}"/>
+                <Button Content="Disable Driver" Command="{Binding ToggleHook}" IsVisible="{Binding InputHooked}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5">
+                <StackPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Margin" Value="5,0,0,0"/>
+                    </Style>
+                </StackPanel.Styles>
+                <Button Content="Save Settings" Command="{Binding SaveSettings}"/>
                 <Button Content="Apply Settings" Command="{Binding ApplySettings}"/>
             </StackPanel>
         </Grid>

@@ -60,11 +60,12 @@ namespace OpenTabletDriver.ViewModels
             if (settings.Exists)
             {
                 Settings = Settings.Deserialize(settings);
-                Log.Write("Settings", $"Loaded user settings from '{settingsPath}'");
+                Log.Write("Settings", $"Loaded saved user settings from '{settingsPath}'");
             } 
             else
             {
                 Defaults();
+                Log.Write("Settings", "Using default settings.");
             }
 
             // Find tablet configurations and try to open a tablet
@@ -328,18 +329,7 @@ namespace OpenTabletDriver.ViewModels
             if (result != null)
             {
                 var file = new FileInfo(result[0]);
-                try
-                {
-                    Settings = Settings.Deserialize(file);
-                    Log.Write("Settings", "Successfully read settings from file.");
-                    ApplySettings();
-                    SetTheme(Settings.Theme);
-                }
-                catch (Exception ex)
-                {
-                    Log.Exception(ex);
-                    Log.Write("Settings", "Unable to read settings from file: " + result[0], true);
-                }
+                Load(file);
             }
         }
 
@@ -350,35 +340,52 @@ namespace OpenTabletDriver.ViewModels
             if (path != null)
             {
                 var file = new FileInfo(path);
-                try 
-                {
-                    Settings.Serialize(file);
-                    Log.Write("Settings", "Wrote settings to file: " + path);
-                }
-                catch (Exception ex)
-                {
-                    Log.Exception(ex);
-                    Log.Write("Settings", "Unable to write settings to file: " + path);
-                }
+                Save(file);
             }
         }
 
         public void SaveSettings()
         {
+            ApplySettings();
             if (!Program.SettingsDirectory.Exists)
                 Program.SettingsDirectory.Create();
             var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-            var settings = new FileInfo(settingsPath);
+            var file = new FileInfo(settingsPath);
+            Save(file);
+        }
+
+        private bool Load(FileInfo file)
+        {
             try
             {
-                Settings.Serialize(settings);
-                Log.Write("Settings", $"Saved settings to '{settingsPath}'.");
+                Settings = Settings.Deserialize(file);
+                Log.Write("Settings", $"Read settings from '{file.FullName}'.");
+                ApplySettings();
+                SetTheme(Settings.Theme);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                Log.Write("Settings", $"Unable to read settings from file '{file.FullName}'", true);
+                return false;
+            }
+        }
+
+        private bool Save(FileInfo file)
+        {
+            try
+            {
+                Settings.Serialize(file);
+                Log.Write("Settings", $"Saved settings to '{file.FullName}'.");
+                return true;
             }
             catch (Exception ex)
             {
                 if (Debugging)
                     Log.Exception(ex);
-                Log.Write("Settings", $"Failed to write settings to '{settingsPath}'.", true);
+                Log.Write("Settings", $"Failed to write settings to '{file.FullName}'.", true);
+                return false;
             }
         }
 
