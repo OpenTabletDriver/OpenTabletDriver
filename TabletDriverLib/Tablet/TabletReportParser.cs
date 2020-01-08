@@ -2,7 +2,7 @@
 {
     public class TabletReportParser : IDeviceReportParser
     {
-        public IDeviceReport Parse(byte[] data)
+        public virtual IDeviceReport Parse(byte[] data)
         {
             return new TabletReport(data);
         }

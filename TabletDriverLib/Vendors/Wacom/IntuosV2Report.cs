@@ -1,20 +1,21 @@
 using System;
 using TabletDriverLib.Component;
+using TabletDriverLib.Tablet;
 
-namespace TabletDriverLib.Tablet
+namespace TabletDriverLib.Vendors.Wacom
 {
-    public struct TabletReport : ITabletReport
+    public struct IntuosV2TabletReport : ITabletReport
     {
-        internal TabletReport(byte[] report)
+        public IntuosV2TabletReport(byte[] report)
         {
             Raw = report;
 
-            Lift = (uint)report[1] >> 1;
-            var x = BitConverter.ToUInt16(report, 2);
-            var y = BitConverter.ToUInt16(report, 4);
+            Lift = (uint)report[9] >> 2;
+            var x = ((report[2] * 0x100) + report[3]) << 1;
+            var y = ((report[4] * 0x100) + report[5]) << 1;
             Position = new Point(x, y);
-            Pressure = BitConverter.ToUInt16(report, 6);
-
+            Pressure = (uint)(report[6] << 3);
+            
             PenButtons = new bool[]
             {
                 (report[1] & (1 << 1)) != 0,

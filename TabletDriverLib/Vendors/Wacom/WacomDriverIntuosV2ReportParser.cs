@@ -1,9 +1,9 @@
-using System.Linq;
+﻿using System.Linq;
 using TabletDriverLib.Tablet;
 
 namespace TabletDriverLib.Vendors.Wacom
 {
-    public class WacomDriverReportParser : TabletReportParser
+    public class WacomDriverIntuosV2ReportParser : IntuosV2ReportParser
     {
         public override IDeviceReport Parse(byte[] data)
         {
