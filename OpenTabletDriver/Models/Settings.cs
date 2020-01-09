@@ -14,6 +14,8 @@ namespace OpenTabletDriver.Models
         {
             Theme = "Light";
             OutputMode = "Absolute";
+            WindowWidth = 1280;
+            WindowHeight = 720;
         }
 
         private bool _sizeChanging;

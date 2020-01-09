@@ -10,7 +10,6 @@
         x:Class="OpenTabletDriver.Views.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
         Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=1280}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=720}"
-        WindowStartupLocation="CenterScreen"
         MinWidth="960" MinHeight="720"
         Title="OpenTabletDriver">
     <Design.DataContext>
