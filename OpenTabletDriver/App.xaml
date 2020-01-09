@@ -19,9 +19,11 @@
 
         <Style Selector="TabControl">
         </Style>
+        
         <Style Selector="TabControl WrapPanel">
-            <Setter Property="Margin" Value="10,2,5,0"/>
+            <Setter Property="Margin" Value="5,2,5,0"/>
         </Style>
+        
         <Style Selector="TabItem">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="MinHeight" Value="24"/>
@@ -31,6 +33,7 @@
             <Setter Property="BorderThickness" Value="1,1,1,0"/>
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
         </Style>
+
         <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
         </Style>
 
@@ -45,7 +48,7 @@
             <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush2}"/>
         </Style>
 
-        <Style Selector="Border.Tab">
+        <Style Selector="TabItem > Border">
             <Setter Property="BorderThickness" Value="0,1,0,0"/>
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}"/>
         </Style>

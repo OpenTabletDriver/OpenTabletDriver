@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
@@ -15,6 +14,8 @@ namespace OpenTabletDriver.Models
         {
             Theme = "Light";
             OutputMode = "Absolute";
+            WindowWidth = 1280;
+            WindowHeight = 720;
         }
 
         private bool _sizeChanging;
@@ -209,6 +210,24 @@ namespace OpenTabletDriver.Models
             get => _auxButtons;
         }
 
+        #endregion
+
+        #region Window Properties
+        
+        private int _windowWidth, _windowHeight;
+
+        public int WindowWidth
+        {
+            set => this.RaiseAndSetIfChanged(ref _windowWidth, value);
+            get => _windowWidth;
+        }
+
+        public int WindowHeight
+        {
+            set => this.RaiseAndSetIfChanged(ref _windowHeight, value);
+            get => _windowHeight;
+        }
+        
         #endregion
 
         #region XML Serialization

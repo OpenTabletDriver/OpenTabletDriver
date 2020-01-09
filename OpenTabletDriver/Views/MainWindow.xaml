@@ -9,7 +9,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenTabletDriver.Views.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
-        Width="1280" Height="720"
+        Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=1280}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=720}"
         MinWidth="960" MinHeight="720"
         Title="OpenTabletDriver">
     <Design.DataContext>
@@ -41,6 +41,7 @@
             </MenuItem>
             <MenuItem Header="Settings">
                 <MenuItem Header="Reset to defaults" Command="{Binding UseDefaultSettings}"/>
+                <MenuItem Header="Reset window size" Command="{Binding ResetWindowSize}"/>
                 <MenuItem Header="Load..." Command="{Binding LoadSettingsDialog}"/>
                 <MenuItem Header="Save" Command="{Binding SaveSettings}"/>
                 <MenuItem Header="Save as..." Command="{Binding SaveSettingsDialog}"/>
@@ -70,7 +71,7 @@
         </Menu>
         <TabControl Grid.Row="1">
             <TabItem Header="Area Settings">
-                <Border Classes="Tab">
+                <Border>
                     <Grid RowDefinitions="*,*,Auto" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
                         <ns:AreaSetter Grid.Row="0" Grid.ColumnSpan="2"
                             Title="Display Area"
@@ -114,16 +115,16 @@
                                         <Setter Property="Margin" Value="0,0,5,0"/>
                                     </Style>
                                 </StackPanel.Styles>
-                                <CheckBox Content="Auto Hook Input" IsChecked="{Binding Settings.AutoHook}"/>
-                                <CheckBox Content="Enable clipping" IsChecked="{Binding Settings.EnableClipping}"/>
-                                <CheckBox Content="Lock Aspect Ratio" IsChecked="{Binding Settings.LockAspectRatio}"/>
+                                <CheckBox Content="Enable on startup" IsChecked="{Binding Settings.AutoHook}"/>
+                                <CheckBox Content="Area clipping" IsChecked="{Binding Settings.EnableClipping}"/>
+                                <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"/>
                             </StackPanel>
                         </Border>
                     </Grid>
                 </Border>
             </TabItem>
             <TabItem Header="Input Bindings">
-                <Border Classes="Tab">
+                <Border>
                     <UniformGrid Rows="1">
                         <UniformGrid.Styles>
                             <Style Selector="UniformGrid > Border">
@@ -204,10 +205,16 @@
         </TabControl>
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5">
-                <Button Content="Enable input hook" Command="{Binding ToggleHook}" IsVisible="{Binding !InputHooked}"/>
-                <Button Content="Disable input hook" Command="{Binding ToggleHook}" IsVisible="{Binding InputHooked}"/>
+                <Button Content="Enable Driver" Command="{Binding ToggleHook}" IsVisible="{Binding !InputHooked}"/>
+                <Button Content="Disable Driver" Command="{Binding ToggleHook}" IsVisible="{Binding InputHooked}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5">
+                <StackPanel.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Margin" Value="5,0,0,0"/>
+                    </Style>
+                </StackPanel.Styles>
+                <Button Content="Save Settings" Command="{Binding SaveSettings}"/>
                 <Button Content="Apply Settings" Command="{Binding ApplySettings}"/>
             </StackPanel>
         </Grid>
