@@ -293,6 +293,7 @@ namespace OpenTabletDriver.ViewModels
                 Settings.TabletY = Driver.TabletProperties.Height / 2;
             }
 
+            ResetWindowSize();
             ApplySettings();
         }
 
@@ -394,13 +395,19 @@ namespace OpenTabletDriver.ViewModels
             try
             {
                 InputHooked = !InputHooked;
-                Log.Write("Driver", $"Input hook is {(InputHooked ? "enabled" : "disabled")}.");
+                Log.Write("Driver", $"Driver is {(InputHooked ? "enabled" : "disabled")}.");
             }
             catch (Exception ex)
             {
                 Log.Exception(ex);
                 Log.Write("Driver", "Unable to toggle input hook.", true);
             }
+        }
+
+        public void ResetWindowSize()
+        {
+            Settings.WindowWidth = 1280;
+            Settings.WindowHeight = 720;
         }
 
         private void SetTheme(string name)

@@ -9,7 +9,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenTabletDriver.Views.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
-        Width="1280" Height="720"
+        Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=1280}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=720}"
+        WindowStartupLocation="CenterScreen"
         MinWidth="960" MinHeight="720"
         Title="OpenTabletDriver">
     <Design.DataContext>
@@ -41,6 +42,7 @@
             </MenuItem>
             <MenuItem Header="Settings">
                 <MenuItem Header="Reset to defaults" Command="{Binding UseDefaultSettings}"/>
+                <MenuItem Header="Reset window size" Command="{Binding ResetWindowSize}"/>
                 <MenuItem Header="Load..." Command="{Binding LoadSettingsDialog}"/>
                 <MenuItem Header="Save" Command="{Binding SaveSettings}"/>
                 <MenuItem Header="Save as..." Command="{Binding SaveSettingsDialog}"/>
