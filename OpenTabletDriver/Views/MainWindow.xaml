@@ -72,7 +72,7 @@
         </Menu>
         <TabControl Grid.Row="1">
             <TabItem Header="Area Settings">
-                <Border Classes="Tab">
+                <Border>
                     <Grid RowDefinitions="*,*,Auto" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
                         <ns:AreaSetter Grid.Row="0" Grid.ColumnSpan="2"
                             Title="Display Area"
@@ -125,7 +125,7 @@
                 </Border>
             </TabItem>
             <TabItem Header="Input Bindings">
-                <Border Classes="Tab">
+                <Border>
                     <UniformGrid Rows="1">
                         <UniformGrid.Styles>
                             <Style Selector="UniformGrid > Border">
