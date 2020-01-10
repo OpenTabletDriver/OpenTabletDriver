@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using HidSharp;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Tablet;
@@ -18,9 +17,7 @@ namespace OpenTabletDriver.ViewModels
                 select r;
 
             foreach (var reader in _readers)
-            {
                 reader.Report += HandleReport;
-            }
         }
 
         private IEnumerable<DeviceReader<IDeviceReport>> _readers;
@@ -28,9 +25,7 @@ namespace OpenTabletDriver.ViewModels
         public void Dispose()
         {
             foreach (var reader in _readers)
-            {
                 reader.Report -= HandleReport;
-            }
         }
 
         private void HandleReport(object sender, IDeviceReport report)
@@ -61,8 +56,7 @@ namespace OpenTabletDriver.ViewModels
             get => _auxRaw;
         }
 
-        private ObservableCollection<string> _tprops = new ObservableCollection<string>();
-        private ObservableCollection<string> _auxprops = new ObservableCollection<string>();
+        private ObservableCollection<string> _tprops, _auxprops = new ObservableCollection<string>();
 
         public ObservableCollection<string> TabletProperties
         {

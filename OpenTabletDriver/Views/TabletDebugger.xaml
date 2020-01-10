@@ -5,7 +5,7 @@
     xmlns:vm="clr-namespace:OpenTabletDriver.ViewModels;assembly=OpenTabletDriver"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="OpenTabletDriver.Views.TabletDebugger"
-    Width="800" Height="250"
+    Width="800" Height="260"
     Title="Tablet Debugger">
     <Window.Styles>
         <Style Selector="TextBlock.h1">
@@ -31,9 +31,9 @@
                 <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
             </MenuItem>
         </Menu>
-        <Grid Grid.Row="1" ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
-            <Grid.Styles>
-                <Style Selector="Grid > Border">
+        <UniformGrid Grid.Row="1" Rows="2" Columns="2">
+            <UniformGrid.Styles>
+                <Style Selector="UniformGrid > Border">
                     <Setter Property="BorderThickness" Value="1"/>
                     <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
                     <Setter Property="Margin" Value="5"/>
@@ -42,14 +42,14 @@
                 <Style Selector="Border > Grid">
                     <Setter Property="Margin" Value="5"/>
                 </Style>
-            </Grid.Styles>
-            <Border Grid.Column="0" Grid.Row="0">
+            </UniformGrid.Styles>
+            <Border>
                 <Grid RowDefinitions="Auto,*">
                     <TextBlock Grid.Row="0" Text="Tablet Raw" Classes="h1"/>
                     <TextBlock Grid.Row="1" Text="{Binding RawTabletReport}" Classes="d"/>
                 </Grid>
             </Border>
-            <Border Grid.Column="1" Grid.Row="0">
+            <Border>
                 <Grid RowDefinitions="Auto,*">
                     <TextBlock Grid.Row="0" Text="Tablet Properties" Classes="h1"/>
                     <ListBox Grid.Row="1" Items="{Binding TabletProperties}" BorderThickness="0">
@@ -61,13 +61,13 @@
                     </ListBox>
                 </Grid>
             </Border>
-            <Border Grid.Column="0" Grid.Row="1">
+            <Border>
                 <Grid RowDefinitions="Auto,*">
                     <TextBlock Grid.Row="0" Text="Aux Raw" Classes="h1"/>
                     <TextBlock Grid.Row="1" Text="{Binding RawAuxReport}" Classes="d"/>
                 </Grid>
             </Border>
-            <Border Grid.Column="1" Grid.Row="1">
+            <Border>
                 <Grid RowDefinitions="Auto,*">
                     <TextBlock Grid.Row="0" Text="Aux Properties" Classes="h1"/>
                     <ListBox Grid.Row="1" Items="{Binding AuxProperties}" BorderThickness="0">
@@ -79,6 +79,6 @@
                     </ListBox>
                 </Grid>
             </Border>
-        </Grid>
+        </UniformGrid>
     </Grid>
 </Window>
