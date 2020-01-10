@@ -10,34 +10,37 @@ namespace OpenTabletDriver.ViewModels
 {
     public class TabletDebuggerViewModel : ViewModelBase, IDisposable
     {
-        public TabletDebuggerViewModel(DeviceReader<IDeviceReport> tabletReader, DeviceReader<IDeviceReport> auxReader)
+        public TabletDebuggerViewModel(params DeviceReader<IDeviceReport>[] deviceReaders)
         {
-            _tReader = tabletReader;
-            _tReader.Report += HandleTabletReport;
-            _auxReader = auxReader;
-            _auxReader.Report += HandleAuxReport;
+            _readers = deviceReaders;
+            foreach (var reader in _readers)
+            {
+                reader.Report += HandleReport;
+            }
         }
 
-        private DeviceReader<IDeviceReport> _tReader, _auxReader;
+        private DeviceReader<IDeviceReport>[] _readers;
 
         public void Dispose()
         {
-            _tReader.Report -= HandleTabletReport;
-            _auxReader.Report -= HandleAuxReport;
+            foreach (var reader in _readers)
+            {
+                reader.Report -= HandleReport;
+            }
         }
 
-        private void HandleTabletReport(object sender, IDeviceReport report)
+        private void HandleReport(object sender, IDeviceReport report)
         {
-            RawTabletReport = report.StringFormat(true);
-            var fmt = report.StringFormat(false);
-            TabletProperties = fmt.Split(", ", StringSplitOptions.None).ToObservableCollection();
-        }
-
-        private void HandleAuxReport(object sender, IDeviceReport report)
-        {
-            RawAuxReport = report.StringFormat(true);
-            var fmt = report.StringFormat(false);
-            AuxProperties = fmt.Split(", ", StringSplitOptions.None).ToObservableCollection();
+            if (report is ITabletReport tabletReport)
+            {
+                RawTabletReport = tabletReport.StringFormat(true);
+                TabletProperties = tabletReport.StringFormat(false).Split(", ", StringSplitOptions.None).ToObservableCollection();
+            }
+            if (report is IAuxReport auxReport)
+            {
+                RawAuxReport = auxReport.StringFormat(true);
+                AuxProperties = auxReport.StringFormat(false).Split(", ", StringSplitOptions.None).ToObservableCollection();
+            }
         }
 
         private string _traw, _auxRaw;
