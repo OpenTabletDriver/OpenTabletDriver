@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using HidSharp;
 using ReactiveUI;
 using TabletDriverLib;
@@ -12,14 +13,17 @@ namespace OpenTabletDriver.ViewModels
     {
         public TabletDebuggerViewModel(params DeviceReader<IDeviceReport>[] deviceReaders)
         {
-            _readers = deviceReaders;
+            _readers = from r in deviceReaders
+                where r != null
+                select r;
+
             foreach (var reader in _readers)
             {
                 reader.Report += HandleReport;
             }
         }
 
-        private DeviceReader<IDeviceReport>[] _readers;
+        private IEnumerable<DeviceReader<IDeviceReport>> _readers;
 
         public void Dispose()
         {
