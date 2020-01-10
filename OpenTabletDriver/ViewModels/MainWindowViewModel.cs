@@ -281,7 +281,7 @@ namespace OpenTabletDriver.ViewModels
                 DisplayHeight = VirtualScreen.Height,
                 DisplayX = VirtualScreen.Width / 2,
                 DisplayY = VirtualScreen.Height / 2,
-                PenButtons = new ObservableCollection<MouseButton>(new MouseButton[4]),
+                PenButtons = new ObservableCollection<MouseButton>(new MouseButton[2]),
                 AuxButtons = new ObservableCollection<MouseButton>(new MouseButton[4])
             };
 
