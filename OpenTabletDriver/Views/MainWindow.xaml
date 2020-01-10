@@ -165,8 +165,6 @@
                                     </ItemsControl.Styles>
                                     <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[0], Mode=TwoWay}"/>
                                     <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[1], Mode=TwoWay}"/>
-                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[2], Mode=TwoWay}"/>
-                                    <ComboBox Margin="5" SelectedItem="{Binding Settings.PenButtons[3], Mode=TwoWay}"/>
                                 </ItemsControl>
                             </Grid>
                         </Border>
