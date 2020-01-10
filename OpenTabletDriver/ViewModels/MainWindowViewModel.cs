@@ -297,6 +297,15 @@ namespace OpenTabletDriver.ViewModels
             ApplySettings();
         }
 
+        public void OpenTabletDebugger()
+        {
+            var debugger = new TabletDebugger
+            {
+                DataContext = new TabletDebuggerViewModel(Driver.TabletReader, Driver.AuxReader)
+            };
+            debugger.Show();
+        }
+
         public async Task OpenConfigurationManager()
         {
             var cfgMgr = new ConfigurationManager()

@@ -57,6 +57,7 @@
             </MenuItem>
             <MenuItem Header="Tablets">
                 <MenuItem Header="Detect tablet" Command="{Binding DetectTablet}"/>
+                <MenuItem Header="Open tablet debugger..." Command="{Binding OpenTabletDebugger}"/>
                 <MenuItem Header="Open configuration manager..." Command="{Binding OpenConfigurationManager}"/>
                 <MenuItem Header="Load configuration directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
             </MenuItem>

@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace TabletDriverLib.Tablet
 {
-    internal static class Extensions
+    public static class Extensions
     {
-        public static IDeviceReportParser GetReportParser(this TabletProperties tablet)
+        internal static IDeviceReportParser GetReportParser(this TabletProperties tablet)
         {
             return GetReportParser(tablet.ReportParserName);
         }
 
-        public static IDeviceReportParser GetCustomReportParser(this TabletProperties tablet)
+        internal static IDeviceReportParser GetCustomReportParser(this TabletProperties tablet)
         {
             return GetReportParser(tablet.CustomReportParserName);
         }
