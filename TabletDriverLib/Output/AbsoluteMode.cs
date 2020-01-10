@@ -50,7 +50,7 @@ namespace TabletDriverLib.Output
         public BindingDictionary PenButtonBindings { set; get; } = new BindingDictionary();
         public BindingDictionary AuxButtonBindings { set; get; } = new BindingDictionary();
 
-        private IList<bool> PenButtonStates = new bool[4];
+        private IList<bool> PenButtonStates = new bool[2];
 
         private void UpdateCache()
         {
@@ -146,7 +146,7 @@ namespace TabletDriverLib.Output
                     CursorHandler.MouseUp(binding);
             }
 
-            for (var penButton = 0; penButton < 4; penButton++)
+            for (var penButton = 0; penButton < 2; penButton++)
             {
                 MouseButton binding = PenButtonBindings[penButton];
                 bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
