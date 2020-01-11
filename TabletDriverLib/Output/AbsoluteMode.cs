@@ -76,7 +76,7 @@ namespace TabletDriverLib.Output
             if (report.Lift <= TabletProperties.MinimumRange)
                 return;
             
-            var pos = report.Position;
+            var pos = new Point(report.Position.X, report.Position.Y);
 
             // Normalize (ratio of 1)
             pos.X /= TabletProperties.MaxX;
