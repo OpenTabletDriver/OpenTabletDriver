@@ -4,6 +4,7 @@
   <VendorID>12267</VendorID>
   <ProductID>1</ProductID>
   <InputReportLength>9</InputReportLength>
+  <ReportParser>TabletDriverLib.Vendors.SkipByteTabletReportParser</ReportParser>
   <CustomInputReportLength>0</CustomInputReportLength>
   <Width>152.4</Width>
   <Height>101.6</Height>
