@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Tablet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="TabletDriverLib">
+  <Name>VEIKK S640</Name>
+  <VendorID>12267</VendorID>
+  <ProductID>1</ProductID>
+  <InputReportLength>9</InputReportLength>
+  <CustomInputReportLength>0</CustomInputReportLength>
+  <Width>152.4</Width>
+  <Height>101.6</Height>
+  <MaxX>30480</MaxX>
+  <MaxY>20320</MaxY>
+  <MaxPressure>8191</MaxPressure>
+  <MinimumRange>128</MinimumRange>
+  <AuxReportLength>0</AuxReportLength>
+</Tablet>
