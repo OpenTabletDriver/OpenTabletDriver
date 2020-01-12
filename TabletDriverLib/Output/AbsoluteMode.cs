@@ -1,14 +1,23 @@
 using System.Collections.Generic;
-using System.Linq;
 using TabletDriverLib.Component;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Tablet;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Output
 {
-    public class AbsoluteMode : OutputMode
+    public class AbsoluteMode : IOutputMode
     {
+        public void Read(IDeviceReport report)
+        {
+            if (report is ITabletReport tabletReport)
+                Position(tabletReport);
+            if (report is IAuxReport auxReport)
+                Aux(auxReport);
+        }
+        
         private Area _displayArea, _tabletArea;
         private TabletProperties _tabletProperties;
         
@@ -32,7 +41,7 @@ namespace TabletDriverLib.Output
             get => _tabletArea;
         }
 
-        public override TabletProperties TabletProperties
+        public TabletProperties TabletProperties
         {
             set
             {
@@ -71,7 +80,7 @@ namespace TabletDriverLib.Output
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
         private float _minX, _maxX, _minY, _maxY;
 
-        public override void Position(ITabletReport report)
+        public void Position(ITabletReport report)
         {
             if (report.Lift <= TabletProperties.MinimumRange)
                 return;
@@ -160,7 +169,7 @@ namespace TabletDriverLib.Output
             }
         }
 
-        public override void Aux(IAuxReport report)
+        public void Aux(IAuxReport report)
         {
             for (var auxButton = 0; auxButton < 4; auxButton++)
             {

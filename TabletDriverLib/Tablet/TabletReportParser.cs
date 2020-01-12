@@ -1,4 +1,6 @@
-﻿namespace TabletDriverLib.Tablet
+﻿using TabletDriverPlugin.Tablet;
+
+namespace TabletDriverLib.Tablet
 {
     public class TabletReportParser : IDeviceReportParser
     {

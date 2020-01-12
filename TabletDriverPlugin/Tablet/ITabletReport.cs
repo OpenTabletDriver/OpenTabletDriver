@@ -1,6 +1,6 @@
-using TabletDriverLib.Component;
+using TabletDriverPlugin;
 
-namespace TabletDriverLib.Tablet
+namespace TabletDriverPlugin.Tablet
 {
     public interface ITabletReport : IDeviceReport
     {

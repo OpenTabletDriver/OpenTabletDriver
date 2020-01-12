@@ -2,6 +2,7 @@ using System;
 using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop
 {

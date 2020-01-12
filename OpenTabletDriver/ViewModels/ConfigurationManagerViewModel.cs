@@ -10,6 +10,7 @@ using TabletDriverLib;
 using TabletDriverLib.Tablet;
 using System.Text.RegularExpressions;
 using System.Linq;
+using TabletDriverPlugin;
 
 namespace OpenTabletDriver.ViewModels
 {

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TabletDriverLib.Component;
 using TabletDriverLib.Interop.Converters;
 using NativeLib.Linux;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Cursor
 {

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using HidSharp;
 using TabletDriverLib.Tablet;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib
 {

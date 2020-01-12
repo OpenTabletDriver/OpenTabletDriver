@@ -1,5 +1,6 @@
 using System;
-using TabletDriverLib.Component;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Tablet
 {

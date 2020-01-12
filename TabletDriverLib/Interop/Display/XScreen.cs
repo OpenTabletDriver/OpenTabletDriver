@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using NativeLib.Linux;
-using TabletDriverLib.Component;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Display
 {

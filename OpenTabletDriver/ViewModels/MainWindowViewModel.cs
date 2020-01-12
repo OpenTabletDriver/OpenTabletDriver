@@ -19,6 +19,8 @@ using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Output;
 using TabletDriverLib.Tablet;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Logging;
 
 namespace OpenTabletDriver.ViewModels
 {
@@ -217,12 +219,10 @@ namespace OpenTabletDriver.ViewModels
             }
             Log.Write("Settings", $"Using output mode '{Settings.OutputMode}'");
 
-            if (Driver.OutputMode is OutputMode outputMode)
-            {
-                outputMode.TabletProperties = Driver.TabletProperties;
-            }
             if (Driver.OutputMode is AbsoluteMode absolute)
             {
+                absolute.TabletProperties = Driver.TabletProperties;
+
                 absolute.DisplayArea = new Area
                 {
                     Width = Settings.DisplayWidth,

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
@@ -8,8 +7,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using TabletDriverLib;
-using TabletDriverLib.Component;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Logging;
 
 namespace OpenTabletDriver.Views
 {

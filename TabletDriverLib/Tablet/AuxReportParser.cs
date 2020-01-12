@@ -1,3 +1,5 @@
+using TabletDriverPlugin.Tablet;
+
 namespace TabletDriverLib.Tablet
 {
     public class AuxReportParser : IDeviceReportParser

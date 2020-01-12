@@ -1,8 +1,8 @@
 using System;
-using TabletDriverLib.Component;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using System.Linq;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Cursor
 {

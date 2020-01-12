@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using TabletDriverLib.Component;
+using TabletDriverPlugin.Logging;
 
-namespace TabletDriverLib
+namespace TabletDriverPlugin
 {
     public static class Log
     {

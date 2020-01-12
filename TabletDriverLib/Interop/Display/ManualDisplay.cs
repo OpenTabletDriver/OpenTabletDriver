@@ -1,4 +1,4 @@
-﻿using TabletDriverLib.Component;
+﻿using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Display
 {
