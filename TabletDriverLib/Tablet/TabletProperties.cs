@@ -105,6 +105,13 @@ namespace TabletDriverLib.Tablet
         /// <value></value>
         [XmlElement("AuxReportLength")]
         public uint AuxReportLength { set; get; } = 0;
+        
+        /// <summary>
+        /// The report parser used by the auxiliary hid device.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("AuxReportParser")]
+        public string AuxReportParserName { set; get; }
 
         #region XML Serialization
 

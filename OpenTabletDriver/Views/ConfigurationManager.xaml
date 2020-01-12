@@ -111,6 +111,9 @@
 
                                         <TextBlock Text="Aux Device Report Length"/>
                                         <TextBox Text="{Binding AuxReportLength}"/>
+
+                                        <TextBlock Text="Aux Device Report Parser"/>
+                                        <TextBox Text="{Binding AuxReportParserName}"/>
                                         
                                         <TextBlock Text="Custom Input Report Length"/>
                                         <TextBox Text="{Binding CustomInputReportLength}"/>

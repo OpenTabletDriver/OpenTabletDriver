@@ -46,8 +46,9 @@ namespace TabletDriverLib
                 var tabletOpened = Open(tabletDevice, parser);
                 if (tabletOpened && tablet.AuxReportLength > 0)
                 {
-                    var aux = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
-                    OpenAux(aux, new AuxReportParser()); // TODO: Custom Aux Report Parser
+                    var auxDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
+                    var auxReportParser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.AuxReportParserName) ?? new AuxReportParser();
+                    OpenAux(auxDevice, auxReportParser);
                 }
                 return tabletOpened;
             }
