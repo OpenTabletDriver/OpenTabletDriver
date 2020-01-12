@@ -34,12 +34,12 @@ namespace TabletDriverLib
             {
                 var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
                 var tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
-                var parser = tablet.GetReportParser() ?? new TabletReportParser();
+                var parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.ReportParserName) ?? new TabletReportParser();
                 if (tabletDevice == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
                 {
                     tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
                     if (tabletDevice != null)
-                        parser = tablet.GetCustomReportParser();
+                        parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.CustomReportParserName);
                 }
                 TabletProperties = tablet;
 
@@ -47,7 +47,7 @@ namespace TabletDriverLib
                 if (tabletOpened && tablet.AuxReportLength > 0)
                 {
                     var aux = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
-                    OpenAux(aux, new AuxReportParser());
+                    OpenAux(aux, new AuxReportParser()); // TODO: Custom Aux Report Parser
                 }
                 return tabletOpened;
             }

@@ -70,8 +70,11 @@ namespace OpenTabletDriver.ViewModels
                 Log.Write("Settings", "Using default settings.");
             }
 
-            // Find tablet configurations and try to open a tablet
             Log.Write("Settings", $"Configuration directory is '{Program.ConfigurationDirectory.FullName}'.");
+            Log.Write("Settings", $"Plugin directory is '{Program.PluginDirectory.FullName}'");
+            LoadPlugins(Program.PluginDirectory);
+
+            // Find tablet configurations and try to open a tablet
             if (Program.ConfigurationDirectory.Exists)
                 OpenConfigurations(Program.ConfigurationDirectory);
             else
@@ -396,6 +399,19 @@ namespace OpenTabletDriver.ViewModels
                     Log.Exception(ex);
                 Log.Write("Settings", $"Failed to write settings to '{file.FullName}'.", true);
                 return false;
+            }
+        }
+
+        public async void LoadPlugins(DirectoryInfo directory)
+        {
+            if (!directory.Exists)
+                directory.Create();
+            
+            var files = directory.GetFiles();
+            foreach (var plugin in files)
+            {
+                if (await PluginManager.AddPlugin(plugin))
+                    Log.Write("Plugin", $"Loaded plugin '{plugin.Name}'.");
             }
         }
 

@@ -83,5 +83,7 @@ namespace OpenTabletDriver
             var path = Path.Join(Environment.CurrentDirectory, "Configurations");
             return new DirectoryInfo(path);
         }
+
+        internal static DirectoryInfo PluginDirectory => new DirectoryInfo(Path.Join(SettingsDirectory.FullName, "Plugins"));
     }
 }
