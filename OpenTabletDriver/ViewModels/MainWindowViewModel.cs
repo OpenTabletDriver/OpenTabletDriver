@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -21,6 +19,7 @@ using TabletDriverLib.Output;
 using TabletDriverLib.Tablet;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
+using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.ViewModels
 {
@@ -185,6 +184,13 @@ namespace OpenTabletDriver.ViewModels
         }
         private bool _rawReports;
 
+        public bool BackgroundTaskActive
+        {
+            set => this.RaiseAndSetIfChanged(ref _pluginsLoading, value);
+            get => _pluginsLoading;
+        }
+        private bool _pluginsLoading = true;
+
         #endregion
 
         #region Buttons
@@ -212,8 +218,11 @@ namespace OpenTabletDriver.ViewModels
             DetectTablet();
         }
 
-        public void ApplySettings()
+        public async void ApplySettings()
         {
+            while (BackgroundTaskActive)
+                await Task.Delay(100);
+            
             switch (Settings.OutputMode)
             {
                 case "Absolute":
@@ -221,7 +230,14 @@ namespace OpenTabletDriver.ViewModels
                     break;
             }
             Log.Write("Settings", $"Using output mode '{Settings.OutputMode}'");
-
+            if (Driver.OutputMode is IOutputMode mode)
+            {
+                mode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
+                if (mode.Filter == null)
+                    Log.Write("Filter", $"Failed to get filter '{Settings.ActiveFilterName}'.");
+                else
+                    Log.Write("Filter", $"Using filter '{mode.Filter.GetType().FullName}'.");
+            }
             if (Driver.OutputMode is AbsoluteMode absolute)
             {
                 absolute.TabletProperties = Driver.TabletProperties;
@@ -404,6 +420,7 @@ namespace OpenTabletDriver.ViewModels
 
         public async void LoadPlugins(DirectoryInfo directory)
         {
+            BackgroundTaskActive = true;
             if (!directory.Exists)
                 directory.Create();
             
@@ -413,6 +430,7 @@ namespace OpenTabletDriver.ViewModels
                 if (await PluginManager.AddPlugin(plugin))
                     Log.Write("Plugin", $"Loaded plugin '{plugin.Name}'.");
             }
+            BackgroundTaskActive = false;
         }
 
         public void ToggleHook()

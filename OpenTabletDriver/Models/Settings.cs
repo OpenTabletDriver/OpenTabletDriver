@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Models
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
         private bool _clipping, _autohook, _lockar;
-        private string _theme, _outputMode;
+        private string _theme, _outputMode, _activeFilter;
 
         [XmlElement("DisplayWidth")]
         public float DisplayWidth 
@@ -208,6 +208,13 @@ namespace OpenTabletDriver.Models
         {
             set => this.RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;
+        }
+
+        [XmlElement("ActiveFilter")]
+        public string ActiveFilterName
+        {
+            set => this.RaiseAndSetIfChanged(ref _activeFilter, value);
+            get => _activeFilter;
         }
 
         #endregion

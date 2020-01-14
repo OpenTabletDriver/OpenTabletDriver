@@ -55,6 +55,7 @@ namespace TabletDriverLib.Output
         public bool Clipping { set; get; }
         public bool TipEnabled { set; get; }
         public float TipActivationPressure { set; get; }
+        public IFilter Filter { set; get; }
         public MouseButton TipBinding { set; get; } = 0;
         public BindingDictionary PenButtonBindings { set; get; } = new BindingDictionary();
         public BindingDictionary AuxButtonBindings { set; get; } = new BindingDictionary();
@@ -135,6 +136,9 @@ namespace TabletDriverLib.Output
                 if (pos.Y > _maxY)
                     pos.Y = _maxY;
             }
+            
+            if (Filter is IFilter filter)
+                pos = filter.Filter(pos);
 
             // Setting cursor position
             CursorHandler.SetCursorPosition(pos);
