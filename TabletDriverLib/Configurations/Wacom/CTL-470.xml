@@ -5,7 +5,7 @@
   <ProductID>221</ProductID>
   <InputReportLength>10</InputReportLength>
   <CustomInputReportLength>11</CustomInputReportLength>
-  <CustomReportParser>TabletDriverLib.Vendors.Wacom.WacomDriverReportParser</CustomReportParser>
+  <CustomReportParser>TabletDriverLib.Vendors.SkipByteTabletReportParser</CustomReportParser>
   <Width>147.2</Width>
   <Height>92</Height>
   <MaxX>14720</MaxX>

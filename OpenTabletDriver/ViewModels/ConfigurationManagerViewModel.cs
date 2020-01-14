@@ -84,7 +84,7 @@ namespace OpenTabletDriver.ViewModels
                 "xml",
                 LastDirectory);
             var result = await dialog.ShowAsync(App.Windows[1]);
-            if (result != null)
+            if (!string.IsNullOrWhiteSpace(result))
             {
                 var file = new FileInfo(result);
                 tablet.Write(file);
@@ -99,7 +99,7 @@ namespace OpenTabletDriver.ViewModels
                 "Saving all tablets to selected directory",
                 LastDirectory);
             var result = await dialog.ShowAsync(App.Windows[1]);
-            if (result != null)
+            if (!string.IsNullOrWhiteSpace(result))
             {
                 var directory = new DirectoryInfo(result);
                 var regex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");

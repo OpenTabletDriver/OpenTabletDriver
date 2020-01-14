@@ -121,6 +121,9 @@ namespace TabletDriverLib.Tablet
         {
             if (file.Exists)
                 file.Delete();
+
+            if (!file.Directory.Exists)
+                file.Directory.Create();
             
             using (var fs = file.OpenWrite())
                 XmlSerializer.Serialize(fs, this);
