@@ -7,10 +7,10 @@ using HidSharp;
 using OpenTabletDriver.Models;
 using System;
 using TabletDriverLib;
-using TabletDriverLib.Tablet;
 using System.Text.RegularExpressions;
 using System.Linq;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.ViewModels
 {

@@ -11,12 +11,10 @@ using OpenTabletDriver.Models;
 using OpenTabletDriver.Views;
 using ReactiveUI;
 using TabletDriverLib;
-using TabletDriverLib.Component;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Output;
-using TabletDriverLib.Tablet;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
@@ -78,8 +76,6 @@ namespace OpenTabletDriver.ViewModels
                 OpenConfigurations(Program.ConfigurationDirectory);
             else
                 Tablets = new ObservableCollection<TabletProperties>();
-
-            ApplySettings();
         }
 
         #region Bindable Properties
@@ -223,66 +219,70 @@ namespace OpenTabletDriver.ViewModels
             while (BackgroundTaskActive)
                 await Task.Delay(100);
             
-            switch (Settings.OutputMode)
-            {
-                case "Absolute":
-                    Driver.OutputMode = new AbsoluteMode();
-                    break;
-            }
-            Log.Write("Settings", $"Using output mode '{Settings.OutputMode}'");
+            Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
+            
             if (Driver.OutputMode is IOutputMode mode)
             {
+                Log.Write("Settings", $"Using output mode '{Driver.OutputMode.GetType().FullName}'");
                 mode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
-                if (mode.Filter == null)
-                    Log.Write("Filter", $"Failed to get filter '{Settings.ActiveFilterName}'.");
-                else
-                    Log.Write("Filter", $"Using filter '{mode.Filter.GetType().FullName}'.");
+                if (mode.Filter != null)
+                    Log.Write("Settings", $"Using filter '{mode.Filter.GetType().FullName}'.");
+                else if (!string.IsNullOrWhiteSpace(Settings.ActiveFilterName))
+                    Log.Write("Settings", $"Failed to get filter '{Settings.ActiveFilterName}'.", true);
             }
-            if (Driver.OutputMode is AbsoluteMode absolute)
+            else
+            {
+                Log.Write("Settings", $"Error: Failed to get output mode '{Settings.OutputMode}'.", true);
+            }
+
+            if (Driver.OutputMode is IAbsoluteMode absolute)
             {
                 absolute.TabletProperties = Driver.TabletProperties;
 
-                absolute.DisplayArea = new Area
+                absolute.Output = new Area
                 {
                     Width = Settings.DisplayWidth,
                     Height = Settings.DisplayHeight,
                     Position = new Point(Settings.DisplayX, Settings.DisplayY),
                     Rotation = Settings.DisplayRotation
                 };
-                Log.Write("Settings", $"Set display area: " + absolute.DisplayArea);
+                Log.Write("Settings", $"Set display area: " + absolute.Output);
                 
-                absolute.TabletArea = new Area
+                absolute.Input = new Area
                 {
                     Width = Settings.TabletWidth,
                     Height = Settings.TabletHeight,
                     Position = new Point(Settings.TabletX, Settings.TabletY),
                     Rotation = Settings.TabletRotation
                 };
-                Log.Write("Settings", $"Set tablet area:  " + absolute.TabletArea);
+                Log.Write("Settings", $"Set tablet area:  " + absolute.Input);
                 
-                absolute.Clipping = Settings.EnableClipping;
-                Log.Write("Settings", "Clipping is " + (absolute.Clipping ? "enabled" : "disabled"));
-                
-                absolute.TipBinding = Settings.TipButton;
-                absolute.TipActivationPressure = Settings.TipActivationPressure;
-                absolute.TipEnabled = absolute.TipBinding != MouseButton.None;
-                Log.Write("Settings", $"Tip Binding: '{absolute.TipBinding}'@{absolute.TipActivationPressure}%");
+                absolute.AreaClipping = Settings.EnableClipping;
+                Log.Write("Settings", "Clipping is " + (absolute.AreaClipping ? "enabled" : "disabled"));
+            }
+
+            if (Driver.OutputMode is IBindingHandler<MouseButton> bindingHandler)
+            {
+                bindingHandler.TipBinding = Settings.TipButton;
+                bindingHandler.TipActivationPressure = Settings.TipActivationPressure;
+                Log.Write("Settings", $"Tip Binding: '{bindingHandler.TipBinding}'@{bindingHandler.TipActivationPressure}%");
 
                 if (Settings.PenButtons != null)
                 {
                     for (int index = 0; index < Settings.PenButtons.Count; index++)
-                        absolute.PenButtonBindings[index] = Settings.PenButtons[index];
+                        bindingHandler.PenButtonBindings[index] = Settings.PenButtons[index];
 
-                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", absolute.PenButtonBindings));
+                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", bindingHandler.PenButtonBindings));
                 }
                 if (Settings.AuxButtons != null)
                 {
                     for (int index = 0; index < Settings.AuxButtons.Count; index++)
-                        absolute.AuxButtonBindings[index] = Settings.AuxButtons[index];
+                        bindingHandler.AuxButtonBindings[index] = Settings.AuxButtons[index];
 
-                    Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", absolute.AuxButtonBindings));
+                    Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", bindingHandler.AuxButtonBindings));
                 }
             }
+
             Log.Write("Settings", "Applied all settings.");
         }
 

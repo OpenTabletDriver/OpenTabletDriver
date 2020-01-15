@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace TabletDriverLib.Tablet
+namespace TabletDriverPlugin.Tablet
 {
     [XmlRoot(Namespace = "TabletDriverLib", ElementName = "Tablet")]
     public class TabletProperties
@@ -42,7 +42,7 @@ namespace TabletDriverLib.Tablet
         /// <value></value>
         [XmlElement("ReportParser")]
         public string ReportParserName { set; get; }
-        
+
         /// <summary>
         /// The device's input report length when a custom report parser is needed.
         /// </summary>
@@ -105,7 +105,7 @@ namespace TabletDriverLib.Tablet
         /// <value></value>
         [XmlElement("AuxReportLength")]
         public uint AuxReportLength { set; get; } = 0;
-        
+
         /// <summary>
         /// The report parser used by the auxiliary hid device.
         /// </summary>
@@ -124,7 +124,7 @@ namespace TabletDriverLib.Tablet
 
             if (!file.Directory.Exists)
                 file.Directory.Create();
-            
+
             using (var fs = file.OpenWrite())
                 XmlSerializer.Serialize(fs, this);
         }

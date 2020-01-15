@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
 using NativeLib;
+using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Tablet;
 using TabletDriverLib.Vendors;
 using TabletDriverPlugin;
@@ -157,7 +158,11 @@ namespace TabletDriverLib
         private void HandleReport(object sender, IDeviceReport report)
         {
             if (BindingEnabled)
+            {
                 OutputMode?.Read(report);
+                if (OutputMode is IBindingHandler<MouseButton> binding)
+                    binding.HandleBinding(report);
+            }
         }
     }
 }

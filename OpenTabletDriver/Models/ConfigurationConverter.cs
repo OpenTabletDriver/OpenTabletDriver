@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
-using TabletDriverLib.Tablet;
 using TabletDriverLib;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Models
 {

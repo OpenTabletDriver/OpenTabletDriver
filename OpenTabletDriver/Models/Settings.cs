@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Models
         public Settings()
         {
             Theme = "Light";
-            OutputMode = "Absolute";
+            OutputMode = nameof(TabletDriverLib.Output.AbsoluteMode);
             WindowWidth = 1280;
             WindowHeight = 720;
         }

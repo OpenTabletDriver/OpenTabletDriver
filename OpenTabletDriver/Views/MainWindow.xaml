@@ -67,7 +67,7 @@
                         <Setter Property="Command" Value="{Binding SetMode}"/>
                     </Style>
                 </MenuItem.Styles>
-                <MenuItem Header="Absolute" CommandParameter="Absolute"/>
+                <MenuItem Header="Absolute" CommandParameter="TabletDriverLib.Output.AbsoluteMode"/>
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
