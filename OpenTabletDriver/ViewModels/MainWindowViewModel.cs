@@ -229,6 +229,8 @@ namespace OpenTabletDriver.ViewModels
                     Log.Write("Settings", $"Using filter '{mode.Filter.GetType().FullName}'.");
                 else if (!string.IsNullOrWhiteSpace(Settings.ActiveFilterName))
                     Log.Write("Settings", $"Failed to get filter '{Settings.ActiveFilterName}'.", true);
+                
+                mode.TabletProperties = Driver.TabletProperties;
             }
             else
             {
@@ -237,8 +239,6 @@ namespace OpenTabletDriver.ViewModels
 
             if (Driver.OutputMode is IAbsoluteMode absolute)
             {
-                absolute.TabletProperties = Driver.TabletProperties;
-
                 absolute.Output = new Area
                 {
                     Width = Settings.DisplayWidth,
