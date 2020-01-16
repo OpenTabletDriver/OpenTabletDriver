@@ -138,8 +138,15 @@ namespace OpenTabletDriver.Models
         [XmlElement("OutputMode")]
         public string OutputMode
         {
-            set => this.RaiseAndSetIfChanged(ref _outputMode, value);
+            set => this.RaiseAndSetIfChanged(ref _outputMode, value != "{Disable}" ? value : null);
             get => _outputMode;
+        }
+
+        [XmlElement("ActiveFilter")]
+        public string ActiveFilterName
+        {
+            set => this.RaiseAndSetIfChanged(ref _activeFilter, value != "{Disable}" ? value : null);
+            get => _activeFilter;
         }
 
         [XmlElement("EnableClipping")]
@@ -208,13 +215,6 @@ namespace OpenTabletDriver.Models
         {
             set => this.RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;
-        }
-
-        [XmlElement("ActiveFilter")]
-        public string ActiveFilterName
-        {
-            set => this.RaiseAndSetIfChanged(ref _activeFilter, value);
-            get => _activeFilter;
         }
 
         #endregion

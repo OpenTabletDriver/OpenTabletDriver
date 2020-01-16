@@ -16,35 +16,55 @@ namespace OpenTabletDriver.ViewModels
 {
     public class ConfigurationManagerViewModel : ViewModelBase
     {
+        public ConfigurationManagerViewModel()
+        {
+            var reportParsers = from parser in PluginManager.GetChildTypes<IDeviceReportParser>()
+                where !parser.IsInterface
+                select parser.FullName;
+            ReportParsers = new ObservableCollection<string>(reportParsers);
+        }
+
+        #region Properties
+        
         private static DirectoryInfo LastDirectory;
         
         private ObservableCollection<HidDevice> _devices;
+        private ObservableCollection<TabletProperties> _cfgs;
+        private TabletProperties _tabletProperties;
+        private HidDevice _device;
+        private ObservableCollection<string> _reportHandlers;
+
         public ObservableCollection<HidDevice> Devices
         {
             set => this.RaiseAndSetIfChanged(ref _devices, value);
             get => _devices;
         }
 
-        private ObservableCollection<TabletProperties> _cfgs;
         public ObservableCollection<TabletProperties> Configurations
         {
             set => this.RaiseAndSetIfChanged(ref _cfgs, value);
             get => _cfgs;
         }
 
-        private TabletProperties _selected;
         public TabletProperties Selected
         {
-            set => this.RaiseAndSetIfChanged(ref _selected, value);
-            get => _selected;
+            set => this.RaiseAndSetIfChanged(ref _tabletProperties, value);
+            get => _tabletProperties;
         }
 
-        private HidDevice _device;
         public HidDevice SelectedDevice
         {
             set => this.RaiseAndSetIfChanged(ref _device, value);
             get => _device;
         }
+
+        public ObservableCollection<string> ReportParsers
+        {
+            set => this.RaiseAndSetIfChanged(ref _reportHandlers, value);
+            get => _reportHandlers;
+        }
+            
+        #endregion
 
         public void New()
         {

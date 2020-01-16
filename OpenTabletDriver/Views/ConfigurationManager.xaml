@@ -57,11 +57,14 @@
                             VerticalScrollBarVisibility="Auto">
                             <StackPanel DataContext="{Binding Selected}">
                                 <StackPanel.Styles>
-                                    <Style Selector="TextBlock">
+                                    <Style Selector="Expander > TextBlock">
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </Style>
+                                    <Style Selector="StackPanel > TextBlock">
                                         <Setter Property="FontWeight" Value="Bold"/>
                                         <Setter Property="Margin" Value="5,0"/>
                                     </Style>
-                                    <Style Selector="TextBox">
+                                    <Style Selector="StackPanel > TextBox">
                                         <Setter Property="Margin" Value="5"/>
                                     </Style>
                                 </StackPanel.Styles>

@@ -70,6 +70,7 @@ namespace OpenTabletDriver.ViewModels
             Log.Write("Settings", $"Configuration directory is '{Program.ConfigurationDirectory.FullName}'.");
             Log.Write("Settings", $"Plugin directory is '{Program.PluginDirectory.FullName}'");
             LoadPlugins(Program.PluginDirectory);
+            InitializePlugins();
 
             // Find tablet configurations and try to open a tablet
             if (Program.ConfigurationDirectory.Exists)
@@ -78,35 +79,60 @@ namespace OpenTabletDriver.ViewModels
                 Tablets = new ObservableCollection<TabletProperties>();
         }
 
+        private async void InitializePlugins()
+        {
+            while (BackgroundTaskActive)
+                await Task.Delay(100);
+
+            var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
+                where !mode.IsInterface
+                select mode.FullName;
+            OutputModes = new ObservableCollection<string>(outputModes);
+
+            var filters = from filter in PluginManager.GetChildTypes<IFilter>()
+                where !filter.IsInterface
+                select filter.FullName;
+            Filters = new ObservableCollection<string>(filters);
+            Filters.Insert(0, "{Disable}");
+        }
+
         #region Bindable Properties
 
+        private Settings _settings;
+        private LogMessage _status;
+        private Driver _driver;
+        private bool _hooked, _debugging, _rawReports;
+        public IVirtualScreen _scr;
+        private IDisplay _disp;
+        private float _fTabW, _fTabH;
+        private bool _pluginsLoading = true;
+        private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();
+        private ObservableCollection<TabletProperties> _tablets;
+        private ObservableCollection<string> _filters, _outputs;
+        
         public Settings Settings
         {
             set => this.RaiseAndSetIfChanged(ref _settings, value);
             get => _settings;
         }
-        private Settings _settings;
         
         public ObservableCollection<LogMessage> Messages
         {
             set => this.RaiseAndSetIfChanged(ref _messages, value);
             get => _messages;
         }
-        private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();
 
         public LogMessage StatusMessage
         {
             set => this.RaiseAndSetIfChanged(ref _status, value);
             get => _status;
         }
-        private LogMessage _status;
 
         private Driver Driver
         {
             set => this.RaiseAndSetIfChanged(ref _driver, value);
             get => _driver;
         }
-        private Driver _driver;
 
         public bool InputHooked 
         {
@@ -117,14 +143,12 @@ namespace OpenTabletDriver.ViewModels
             }
             get => _hooked;
         }
-        private bool _hooked;
 
         public IVirtualScreen VirtualScreen
         {
             set => this.RaiseAndSetIfChanged(ref _scr, value);
             get => _scr;
         }
-        public IVirtualScreen _scr;
 
         private IDisplay SelectedDisplay
         {
@@ -135,28 +159,24 @@ namespace OpenTabletDriver.ViewModels
             }
             get => _disp;
         }
-        private IDisplay _disp;
 
         private float FullTabletWidth
         {
             set => this.RaiseAndSetIfChanged(ref _fTabW, value);
             get => _fTabW;
         }
-        private float _fTabW;
 
         private float FullTabletHeight
         {
             set => this.RaiseAndSetIfChanged(ref _fTabH, value);
             get => _fTabH;
         }
-        private float _fTabH;
 
         public ObservableCollection<TabletProperties> Tablets
         {
             set => this.RaiseAndSetIfChanged(ref _tablets, value);
             get => _tablets;
         }
-        private ObservableCollection<TabletProperties> _tablets;
 
         public bool Debugging
         {
@@ -167,7 +187,6 @@ namespace OpenTabletDriver.ViewModels
             } 
             get => _debugging;
         }
-        private bool _debugging;
 
         public bool RawReports
         {
@@ -178,14 +197,24 @@ namespace OpenTabletDriver.ViewModels
             }
             get => _rawReports;
         }
-        private bool _rawReports;
 
         public bool BackgroundTaskActive
         {
             set => this.RaiseAndSetIfChanged(ref _pluginsLoading, value);
             get => _pluginsLoading;
         }
-        private bool _pluginsLoading = true;
+
+        public ObservableCollection<string> OutputModes
+        {
+            set => this.RaiseAndSetIfChanged(ref _outputs, value);
+            get => _outputs;
+        }
+
+        public ObservableCollection<string> Filters
+        {
+            set => this.RaiseAndSetIfChanged(ref _filters, value);
+            get => _filters;
+        }
 
         #endregion
 
@@ -221,16 +250,22 @@ namespace OpenTabletDriver.ViewModels
             
             Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
             
-            if (Driver.OutputMode is IOutputMode mode)
+            if (Driver.OutputMode is IOutputMode mode)  
             {
                 Log.Write("Settings", $"Using output mode '{Driver.OutputMode.GetType().FullName}'");
                 mode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
                 if (mode.Filter != null)
                     Log.Write("Settings", $"Using filter '{mode.Filter.GetType().FullName}'.");
-                else if (!string.IsNullOrWhiteSpace(Settings.ActiveFilterName))
+                else if (string.IsNullOrWhiteSpace(Settings.ActiveFilterName))
+                    Log.Write("Settings", $"No filter selected.");
+                else 
                     Log.Write("Settings", $"Failed to get filter '{Settings.ActiveFilterName}'.", true);
                 
                 mode.TabletProperties = Driver.TabletProperties;
+            }
+            else if (string.IsNullOrWhiteSpace(Settings.OutputMode))
+            {
+                Log.Write("Settings", $"Error: No output mode has been selected.", true);
             }
             else
             {

@@ -157,7 +157,7 @@ namespace TabletDriverLib
 
         private void HandleReport(object sender, IDeviceReport report)
         {
-            if (BindingEnabled)
+            if (BindingEnabled && OutputMode?.TabletProperties != null)
             {
                 OutputMode?.Read(report);
                 if (OutputMode is IBindingHandler<MouseButton> binding)

@@ -31,6 +31,12 @@
             <Setter Property="MinWidth" Value="225"/>
             <Setter Property="Height" Value="23"/>
         </Style>
+        <Style Selector="ComboBox > Border">
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
+        <Style Selector="TextBox > Border">
+            <Setter Property="CornerRadius" Value="5"/>
+        </Style>
     </Window.Styles>
 
     <Grid RowDefinitions="Auto,*,Auto,Auto">
@@ -61,13 +67,13 @@
                 <MenuItem Header="Open configuration manager..." Command="{Binding OpenConfigurationManager}"/>
                 <MenuItem Header="Load configuration directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
             </MenuItem>
-            <MenuItem Header="Output Mode">
+            <MenuItem Header="Output Mode" Items="{Binding OutputModes}">
                 <MenuItem.Styles>
-                    <Style Selector="MenuItem">
-                        <Setter Property="Command" Value="{Binding SetMode}"/>
+                    <Style Selector="MenuItem > MenuItem">
+                        <Setter Property="Command" Value="{Binding $parent[Window].DataContext.SetMode}"/>
+                        <Setter Property="CommandParameter" Value="{Binding}"/>
                     </Style>
                 </MenuItem.Styles>
-                <MenuItem Header="Absolute" CommandParameter="TabletDriverLib.Output.AbsoluteMode"/>
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
@@ -85,11 +91,6 @@
                             BackgroundWidth="{Binding VirtualScreen.Width}"
                             BackgroundHeight="{Binding VirtualScreen.Height}"/>
                         <Grid Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" ColumnDefinitions="Auto,Auto" Margin="5,3">
-                            <Grid.Styles>
-                                <Style Selector="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                </Style>
-                            </Grid.Styles>
                             <TextBlock Grid.Column="0"
                                 Margin="5,0"
                                 VerticalAlignment="Center"
@@ -124,7 +125,7 @@
                     </Grid>
                 </Border>
             </TabItem>
-            <TabItem Header="Input Bindings">
+            <TabItem Header="Bindings">
                 <Border>
                     <UniformGrid Rows="1">
                         <UniformGrid.Styles>
@@ -185,6 +186,28 @@
                             </Grid>
                         </Border>
                     </UniformGrid>
+                </Border>
+            </TabItem>
+            <TabItem Header="Filter">
+                <Border>
+                    <Grid RowDefinitions="Auto,*">
+                        <Grid.Styles>
+                            <Style Selector="Grid > Border">
+                                <Setter Property="Margin" Value="5"/>
+                            </Style>
+                        </Grid.Styles>
+                        <Border Grid.Row="0" Classes="r">
+                            <Grid RowDefinitions="Auto,*" Margin="5">
+                                <TextBlock Grid.Row="0" Text="Filter"/>
+                                <ComboBox Grid.Row="1" Margin="5"
+                                    Items="{Binding Filters}"
+                                    SelectedItem="{Binding Settings.ActiveFilterName}"/>
+                            </Grid>
+                        </Border>
+                        <ItemsControl Grid.Row="1">
+                            <TextBlock Text="TODO: Add filter settings"/>
+                        </ItemsControl>
+                    </Grid>
                 </Border>
             </TabItem>
             <TabItem Header="Console">
