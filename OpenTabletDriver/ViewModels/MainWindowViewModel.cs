@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using OpenTabletDriver.Models;
@@ -14,10 +15,11 @@ using TabletDriverLib;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
-using TabletDriverLib.Output;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
+
+using Point = TabletDriverPlugin.Point;
 
 namespace OpenTabletDriver.ViewModels
 {
@@ -215,6 +217,18 @@ namespace OpenTabletDriver.ViewModels
             set => this.RaiseAndSetIfChanged(ref _filters, value);
             get => _filters;
         }
+        
+        #region Control Collections
+        
+        private ObservableCollection<AvaloniaObject> _filterControls = new ObservableCollection<AvaloniaObject>();
+
+        public ObservableCollection<AvaloniaObject> FilterControls
+        {
+            set => this.RaiseAndSetIfChanged(ref _filterControls, value);
+            get => _filterControls;
+        }
+
+        #endregion
 
         #endregion
 
@@ -250,7 +264,7 @@ namespace OpenTabletDriver.ViewModels
             
             Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
             
-            if (Driver.OutputMode is IOutputMode mode)  
+            if (Driver.OutputMode is IOutputMode mode)
             {
                 Log.Write("Settings", $"Using output mode '{Driver.OutputMode.GetType().FullName}'");
                 mode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
@@ -258,9 +272,12 @@ namespace OpenTabletDriver.ViewModels
                     Log.Write("Settings", $"Using filter '{mode.Filter.GetType().FullName}'.");
                 else if (string.IsNullOrWhiteSpace(Settings.ActiveFilterName))
                     Log.Write("Settings", $"No filter selected.");
-                else 
+                else
                     Log.Write("Settings", $"Failed to get filter '{Settings.ActiveFilterName}'.", true);
-                
+
+                var controls = PropertyTools.GetPropertyControls(mode.Filter, "Driver.OutputMode.Filter");
+                FilterControls = new ObservableCollection<AvaloniaObject>(controls);
+
                 mode.TabletProperties = Driver.TabletProperties;
             }
             else if (string.IsNullOrWhiteSpace(Settings.OutputMode))

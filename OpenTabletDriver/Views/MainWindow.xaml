@@ -204,8 +204,13 @@
                                     SelectedItem="{Binding Settings.ActiveFilterName}"/>
                             </Grid>
                         </Border>
-                        <ItemsControl Grid.Row="1">
-                            <TextBlock Text="TODO: Add filter settings"/>
+                        <ItemsControl Grid.Row="1" Items="{Binding FilterControls}">
+                            <ItemsControl.Styles>
+                                <Style Selector="ItemsControl > Border">
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
+                                </Style>
+                            </ItemsControl.Styles>
                         </ItemsControl>
                     </Grid>
                 </Border>
