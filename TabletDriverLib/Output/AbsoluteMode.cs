@@ -49,14 +49,8 @@ namespace TabletDriverLib.Output
 
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         public bool AreaClipping { set; get; }
-        public float TipActivationPressure { set; get; }
         public IFilter Filter { set; get; }
-        public MouseButton TipBinding { set; get; } = 0;
-        public Dictionary<int, MouseButton> PenButtonBindings { set; get; } = new Dictionary<int, MouseButton>();
-        public Dictionary<int, MouseButton> AuxButtonBindings { set; get; } = new Dictionary<int, MouseButton>();
-
-        private IList<bool> PenButtonStates = new bool[2];
-
+        
         private void UpdateCache()
         {
             _rotationMatrix = Input?.GetRotationMatrix();
@@ -137,6 +131,13 @@ namespace TabletDriverLib.Output
             // Setting cursor position
             CursorHandler.SetCursorPosition(pos);
         }
+
+        public float TipActivationPressure { set; get; }
+        public MouseButton TipBinding { set; get; } = 0;
+        public Dictionary<int, MouseButton> PenButtonBindings { set; get; } = new Dictionary<int, MouseButton>();
+        public Dictionary<int, MouseButton> AuxButtonBindings { set; get; } = new Dictionary<int, MouseButton>();
+
+        private IList<bool> PenButtonStates = new bool[2];
 
         public void HandleBinding(IDeviceReport report)
         {
