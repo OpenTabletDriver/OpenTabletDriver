@@ -40,7 +40,7 @@ namespace TabletDriverLib.Interop.Cursor
         public Point GetCursorPosition()
         {
             XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
-                return new Point((int)x + _offsetX, (int)y + _offsetY);
+                return new Point((int)x, (int)y);
         }
 
         public void SetCursorPosition(Point pos)

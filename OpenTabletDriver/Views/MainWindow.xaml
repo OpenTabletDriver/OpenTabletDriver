@@ -77,7 +77,7 @@
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1">
-            <TabItem Header="Area Settings">
+            <TabItem Header="Absolute Mode Settings">
                 <Border>
                     <Grid RowDefinitions="*,*,Auto" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
                         <ns:AreaSetter Grid.Row="0" Grid.ColumnSpan="2"
@@ -122,6 +122,57 @@
                                 <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"/>
                             </StackPanel>
                         </Border>
+                    </Grid>
+                </Border>
+            </TabItem>
+            <TabItem Header="Relative Mode Settings">
+                <Border>
+                    <Border.Styles>
+                        <Style Selector="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="0,5,0,0"/>
+                        </Style>
+                        <Style Selector="TextBlock.UnitLabel">
+                            <Setter Property="Margin" Value="0,0,10,10"/>
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="VerticalAlignment" Value="Bottom"/>
+                            <Setter Property="IsHitTestVisible" Value="False"/>
+                        </Style>
+                        <Style Selector="UniformGrid > Border">
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
+                            <Setter Property="CornerRadius" Value="5"/>
+                        </Style>
+                        <Style Selector="TextBox">
+                            <Setter Property="Margin" Value="5"/>
+                            <Setter Property="TextAlignment" Value="Left"/>
+                        </Style>
+                    </Border.Styles>
+                    <Grid Margin="100,0">
+                        <UniformGrid Margin="0,5" Rows="1" VerticalAlignment="Bottom">
+                            <Border>
+                                <Grid RowDefinitions="*,Auto">
+                                    <TextBlock Grid.Row="0" Text="Horizontal Sensitivity"/>
+                                    <TextBox Grid.Row="1" Text="{Binding Settings.XSensitivity}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="mm/px"/>
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Grid RowDefinitions="Auto,*">
+                                    <TextBlock Grid.Row="0" Text="Vertical Sensitivity"/>
+                                    <TextBox Grid.Row="1" Text="{Binding Settings.YSensitivity}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="mm/px"/>
+                                </Grid>
+                            </Border>
+                            <Border>
+                                <Grid RowDefinitions="Auto,*">
+                                    <TextBlock Grid.Row="0" Text="Reset time"/>
+                                    <TextBox Grid.Row="1" Text="{Binding Settings.ResetTime.TotalMilliseconds}"/>
+                                    <TextBlock Grid.Row="1" Classes="UnitLabel" Text="ms"/>
+                                </Grid>
+                            </Border>
+                        </UniformGrid>
                     </Grid>
                 </Border>
             </TabItem>

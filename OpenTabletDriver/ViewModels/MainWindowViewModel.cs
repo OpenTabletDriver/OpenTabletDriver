@@ -313,6 +313,15 @@ namespace OpenTabletDriver.ViewModels
                 Log.Write("Settings", "Clipping is " + (absolute.AreaClipping ? "enabled" : "disabled"));
             }
 
+            if (Driver.OutputMode is IRelativeMode relative)
+            {
+                relative.XSensitivity = Settings.XSensitivity;
+                relative.YSensitivity = Settings.YSensitivity;
+                Log.Write("Settings", $"Set sensitivity: {relative.XSensitivity}px/mm,{relative.YSensitivity}px/mm");
+                relative.ResetTime = Settings.ResetTime;
+                Log.Write("Settings", $"Set reset time to {relative.ResetTime}");
+            }
+
             if (Driver.OutputMode is IBindingHandler<MouseButton> bindingHandler)
             {
                 bindingHandler.TipBinding = Settings.TipButton;

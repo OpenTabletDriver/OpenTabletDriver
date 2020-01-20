@@ -92,8 +92,7 @@ namespace TabletDriverLib.Output
             pos.Y *= TabletProperties.Height;
 
             // Adjust area to set origin to 0,0
-            pos.X -= Input.Position.X;
-            pos.Y -= Input.Position.Y;
+            pos -= Input.Position;
 
             // Rotation
             if (Input.Rotation != 0f)

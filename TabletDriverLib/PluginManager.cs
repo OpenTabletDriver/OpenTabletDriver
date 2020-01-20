@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib
 {
@@ -40,6 +41,7 @@ namespace TabletDriverLib
             }
             catch (ReflectionTypeLoadException e)
             {
+                Log.Write("Plugin", "Failed to get one or more types. This plugin is likely out of date.", true);
                 return e.Types.Where(t => t != null);
             }
         }

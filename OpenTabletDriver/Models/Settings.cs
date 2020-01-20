@@ -16,15 +16,51 @@ namespace OpenTabletDriver.Models
             OutputMode = nameof(TabletDriverLib.Output.AbsoluteMode);
             WindowWidth = 1280;
             WindowHeight = 720;
+            ResetTime = TimeSpan.FromMilliseconds(100);
         }
 
-        private bool _sizeChanging;
-
-        #region Properties
-
-        private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR;
-        private bool _clipping, _autohook, _lockar;
+        private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens;
+        private bool _clipping, _autohook, _lockar, _sizeChanging;
         private string _theme, _outputMode, _activeFilter;
+        private TimeSpan _resetTime;
+
+        #region General Settings
+
+        [XmlElement("Theme")]
+        public string Theme
+        {
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _theme, value);
+                (App.Current as App).SetTheme(Themes.Parse(value));
+            }
+            get => _theme;
+        }
+
+        [XmlElement("OutputMode")]
+        public string OutputMode
+        {
+            set => this.RaiseAndSetIfChanged(ref _outputMode, value != "{Disable}" ? value : null);
+            get => _outputMode;
+        }
+
+        [XmlElement("ActiveFilter")]
+        public string ActiveFilterName
+        {
+            set => this.RaiseAndSetIfChanged(ref _activeFilter, value != "{Disable}" ? value : null);
+            get => _activeFilter;
+        }
+
+        [XmlElement("AutoHook")]
+        public bool AutoHook
+        {
+            set => this.RaiseAndSetIfChanged(ref _autohook, value);
+            get => _autohook;
+        }
+        
+        #endregion
+
+        #region Absolute Mode Settings
 
         [XmlElement("DisplayWidth")]
         public float DisplayWidth 
@@ -124,31 +160,6 @@ namespace OpenTabletDriver.Models
             get => _tR;
         }
 
-        [XmlElement("Theme")]
-        public string Theme
-        {
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _theme, value);
-                (App.Current as App).SetTheme(Themes.Parse(value));
-            }
-            get => _theme;
-        }
-
-        [XmlElement("OutputMode")]
-        public string OutputMode
-        {
-            set => this.RaiseAndSetIfChanged(ref _outputMode, value != "{Disable}" ? value : null);
-            get => _outputMode;
-        }
-
-        [XmlElement("ActiveFilter")]
-        public string ActiveFilterName
-        {
-            set => this.RaiseAndSetIfChanged(ref _activeFilter, value != "{Disable}" ? value : null);
-            get => _activeFilter;
-        }
-
         [XmlElement("EnableClipping")]
         public bool EnableClipping
         {
@@ -168,13 +179,31 @@ namespace OpenTabletDriver.Models
             get => _lockar;
         }
 
-        [XmlElement("AutoHook")]
-        public bool AutoHook
-        {
-            set => this.RaiseAndSetIfChanged(ref _autohook, value);
-            get => _autohook;
-        }
+        #endregion
+
+        #region Relative Mode Settings
         
+        [XmlElement("XSensitivity")]
+        public float XSensitivity
+        {
+            set => this.RaiseAndSetIfChanged(ref _xsens, value);
+            get => _xsens;
+        }
+
+        [XmlElement("YSensitivity")]
+        public float YSensitivity
+        {
+            set => this.RaiseAndSetIfChanged(ref _ysens, value);
+            get => _ysens;
+        }
+
+        [XmlElement("RelativeResetDelay")]
+        public TimeSpan ResetTime
+        {
+            set => this.RaiseAndSetIfChanged(ref _resetTime, value);
+            get => _resetTime;
+        }
+
         #endregion
 
         #region Button Bindings
