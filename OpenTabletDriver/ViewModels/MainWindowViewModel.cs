@@ -217,6 +217,58 @@ namespace OpenTabletDriver.ViewModels
             set => this.RaiseAndSetIfChanged(ref _filters, value);
             get => _filters;
         }
+
+        #endregion
+
+        #region Control Visibility
+
+        private bool _isAbsolute, _isRelative, _canFilter, _canBind;
+        private int _tabIndex;
+
+        public int TabIndex
+        {
+            set => this.RaiseAndSetIfChanged(ref _tabIndex, value);
+            get => _tabIndex;
+        }
+
+        public bool IsAbsolute
+        {
+            set => this.RaiseAndSetIfChanged(ref _isAbsolute, value);
+            get => _isAbsolute;
+        }
+
+        public bool IsRelative
+        {
+            set => this.RaiseAndSetIfChanged(ref _isRelative, value);
+            get => _isRelative;
+        }
+
+        public bool CanFilter
+        {
+            set => this.RaiseAndSetIfChanged(ref _canFilter, value);
+            get => _canFilter;
+        }
+
+        public bool CanBind
+        {
+            set => this.RaiseAndSetIfChanged(ref _canBind, value);
+            get => _canBind;
+        }
+
+        private void UpdateVisibility()
+        {
+            CanBind = Driver.OutputMode is IBindingHandler<MouseButton>;
+            CanFilter = Driver.OutputMode is IOutputMode;
+            IsAbsolute = Driver.OutputMode is IAbsoluteMode;
+            IsRelative = Driver.OutputMode is IRelativeMode;
+
+            if (IsAbsolute)
+                TabIndex = 0;
+            else if (IsRelative)
+                TabIndex = 1;
+        }
+
+        #endregion
         
         #region Control Collections
         
@@ -227,8 +279,6 @@ namespace OpenTabletDriver.ViewModels
             set => this.RaiseAndSetIfChanged(ref _filterControls, value);
             get => _filterControls;
         }
-
-        #endregion
 
         #endregion
 
@@ -343,6 +393,8 @@ namespace OpenTabletDriver.ViewModels
                     Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", bindingHandler.AuxButtonBindings));
                 }
             }
+
+            UpdateVisibility();
 
             Log.Write("Settings", "Applied all settings.");
         }

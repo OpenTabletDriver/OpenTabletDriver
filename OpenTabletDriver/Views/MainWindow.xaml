@@ -76,8 +76,8 @@
                 </MenuItem.Styles>
             </MenuItem>
         </Menu>
-        <TabControl Grid.Row="1">
-            <TabItem Header="Absolute Mode Settings">
+        <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}">
+            <TabItem Header="Absolute Mode Settings" IsVisible="{Binding IsAbsolute}">
                 <Border>
                     <Grid RowDefinitions="*,*,Auto" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
                         <ns:AreaSetter Grid.Row="0" Grid.ColumnSpan="2"
@@ -125,7 +125,7 @@
                     </Grid>
                 </Border>
             </TabItem>
-            <TabItem Header="Relative Mode Settings">
+            <TabItem Header="Relative Mode Settings" IsVisible="{Binding IsRelative}">
                 <Border>
                     <Border.Styles>
                         <Style Selector="TextBlock">
@@ -176,7 +176,7 @@
                     </Grid>
                 </Border>
             </TabItem>
-            <TabItem Header="Bindings">
+            <TabItem Header="Bindings" IsVisible="{Binding CanBind}">
                 <Border>
                     <UniformGrid Rows="1">
                         <UniformGrid.Styles>
@@ -239,7 +239,7 @@
                     </UniformGrid>
                 </Border>
             </TabItem>
-            <TabItem Header="Filter">
+            <TabItem Header="Filter" IsVisible="{Binding CanFilter}">
                 <Border>
                     <Grid RowDefinitions="Auto,*">
                         <Grid.Styles>
