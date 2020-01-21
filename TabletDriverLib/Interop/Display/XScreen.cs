@@ -18,27 +18,27 @@ namespace TabletDriverLib.Interop.Display
         {
             Display = XOpenDisplay(null);
             RootWindow = XDefaultRootWindow(Display);
-            
+
             var monitors = GetXRandrDisplays().ToList();
             var primary = monitors.FirstOrDefault(d => d.Primary != 0);
-            
+
             var displays = new List<IDisplay>();
             displays.Add(this);
             foreach (var monitor in monitors)
             {
-                var display = new ManualDisplay(
+                var display = new Interop.Display.Display(
                     monitor.Width,
                     monitor.Height,
                     new Point(monitor.X - primary.X, monitor.Y - primary.Y),
-                    monitors.IndexOf(monitor) + 1); 
+                    monitors.IndexOf(monitor) + 1);
                 displays.Add(display);
             }
-            
+
             Displays = displays;
-            Position = new Point(primary.X, primary.Y);            
+            Position = new Point(primary.X, primary.Y);
         }
 
-        private Display Display;
+        private Window Display;
         private Window RootWindow;
 
         public float Width

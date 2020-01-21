@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using NativeLib.Windows;
 using TabletDriverPlugin;
 
@@ -19,7 +20,7 @@ namespace TabletDriverLib.Interop.Display
             displays.Add(this);
             foreach (var monitor in monitors)
             {
-                var display = new ManualDisplay(
+                var display = new Display(
                     monitor.Width,
                     monitor.Height,
                     new Point(monitor.Left, monitor.Top),
@@ -34,8 +35,26 @@ namespace TabletDriverLib.Interop.Display
             Position = new Point(x, y);
         }
 
+        private static List<DisplayInfo> GetDisplays()
+        {
+            List<DisplayInfo> displayCollection = new List<DisplayInfo>();
+            MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor,  IntPtr dwData)
+            {
+                MonitorInfo monitorInfo = new MonitorInfo();
+                monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
+                if (GetMonitorInfo(hMonitor, ref monitorInfo))
+                {
+                    DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work, monitorInfo.flags);
+                    displayCollection.Add(displayInfo);
+                }
+                return true;
+            };
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, monitorDelegate, IntPtr.Zero);
+            return displayCollection;
+        }
+
         private IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
-        
+
         public float Width
         {
             get
@@ -46,7 +65,7 @@ namespace TabletDriverLib.Interop.Display
             }
         }
 
-        public float Height 
+        public float Height
         {
             get
             {

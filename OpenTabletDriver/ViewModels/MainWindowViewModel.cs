@@ -26,7 +26,7 @@ namespace OpenTabletDriver.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public void Initialize()
+        public async void Initialize()
         {
             // Start logging
             Log.Output += (sender, message) =>
@@ -54,9 +54,6 @@ namespace OpenTabletDriver.ViewModels
                 ApplySettings();
             };
 
-            // Use platform specific virtual screen
-            VirtualScreen = Platform.VirtualScreen;
-            
             var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
             var settings = new FileInfo(settingsPath);
             if (settings.Exists)
@@ -75,9 +72,13 @@ namespace OpenTabletDriver.ViewModels
             LoadPlugins(Program.PluginDirectory);
             InitializePlugins();
 
+            // Use platform specific virtual screen
+            VirtualScreen = Platform.VirtualScreen;
+            Log.Write("Display", $"Detected displays: {string.Join(", ", VirtualScreen.Displays)}");
+
             // Find tablet configurations and try to open a tablet
             if (Program.ConfigurationDirectory.Exists)
-                OpenConfigurations(Program.ConfigurationDirectory);
+                await OpenConfigurations(Program.ConfigurationDirectory).ConfigureAwait(false);
             else
                 Tablets = new ObservableCollection<TabletProperties>();
         }
@@ -265,10 +266,13 @@ namespace OpenTabletDriver.ViewModels
             IsAbsolute = Driver.OutputMode is IAbsoluteMode;
             IsRelative = Driver.OutputMode is IRelativeMode;
 
-            if (IsAbsolute)
-                TabIndex = 0;
-            else if (IsRelative)
-                TabIndex = 1;
+            if (TabIndex <= 1)
+            {
+                if (IsAbsolute)
+                    TabIndex = 0;
+                else if (IsRelative)
+                    TabIndex = 1;
+            }
         }
 
         #endregion
@@ -300,14 +304,14 @@ namespace OpenTabletDriver.ViewModels
                 InputHooked = true;
         }
 
-        private void OpenConfigurations(DirectoryInfo directory)
+        private async Task OpenConfigurations(DirectoryInfo directory)
         {
             List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
             foreach (var dir in directory.EnumerateDirectories())
                 configRepository.AddRange(dir.EnumerateFiles());
 
             Tablets = configRepository.ConvertAll(file => TabletProperties.Read(file)).ToObservableCollection();
-            DetectTablet();
+            await Task.Run(DetectTablet);
         }
 
         public async void ApplySettings()
@@ -463,7 +467,7 @@ namespace OpenTabletDriver.ViewModels
             {
                 var directory = new DirectoryInfo(path);
                 if (directory.Exists)
-                    OpenConfigurations(directory);
+                    await OpenConfigurations(directory);
             }
         }
 
