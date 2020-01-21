@@ -50,7 +50,7 @@ namespace TabletDriverLib
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
-                var type = Types.FirstOrDefault(t => t.FullName == name);               
+                var type = Types.FirstOrDefault(t => t.FullName == name);
                 var ctor = type?.GetConstructors().FirstOrDefault(c => c.GetParameters().Length == 0);
                 var parameters = new object[] {};
                 return (T)ctor?.Invoke(parameters) ?? null;

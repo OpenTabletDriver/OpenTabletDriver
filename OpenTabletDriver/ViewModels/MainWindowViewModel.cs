@@ -16,6 +16,7 @@ using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
 
@@ -88,11 +89,13 @@ namespace OpenTabletDriver.ViewModels
 
             var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
                 where !mode.IsInterface
+                where !mode.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
                 select mode.FullName;
             OutputModes = new ObservableCollection<string>(outputModes);
 
             var filters = from filter in PluginManager.GetChildTypes<IFilter>()
                 where !filter.IsInterface
+                where !filter.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
                 select filter.FullName;
             Filters = new ObservableCollection<string>(filters);
             Filters.Insert(0, "{Disable}");
