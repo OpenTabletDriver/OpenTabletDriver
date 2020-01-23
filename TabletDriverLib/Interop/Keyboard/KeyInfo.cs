@@ -1,4 +1,6 @@
-﻿namespace TabletDriverLib.Interop.Keyboard
+﻿using System.Collections.Generic;
+
+namespace TabletDriverLib.Interop.Keyboard
 {
     public static class KeyInfo
     {
