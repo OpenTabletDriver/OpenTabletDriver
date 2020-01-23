@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Tablet;
@@ -8,18 +6,17 @@ using TabletDriverPlugin.Tablet;
 namespace TabletDriverLib.Output
 {
     [PluginIgnore]
-    public class BindingHandler : IOutputMode, IBindingHandler<MouseButton>
-    {
-        public virtual IFilter Filter { set; get; }
+    public class BindingHandler : IBindingHandler<IBinding>
+    {               
         public virtual TabletProperties TabletProperties { set; get; }
 
         public float TipActivationPressure { set; get; }
-        public MouseButton TipBinding { set; get; } = 0;
-        public Dictionary<int, MouseButton> PenButtonBindings { set; get; } = new Dictionary<int, MouseButton>();
-        public Dictionary<int, MouseButton> AuxButtonBindings { set; get; } = new Dictionary<int, MouseButton>();
+        public IBinding TipBinding { set; get; } = null;
+        public Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
+        public Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
 
         private IList<bool> PenButtonStates = new bool[2];
-        protected ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
+        private IList<bool> AuxButtonStates = new bool[4];
 
         public void HandleBinding(IDeviceReport report)
         {
@@ -31,28 +28,24 @@ namespace TabletDriverLib.Output
 
         private void HandlePenBinding(ITabletReport report)
         {
-            if (TipBinding != MouseButton.None)
+            if (TipBinding != null && TipActivationPressure != 0)
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                var binding = TipBinding;
-                bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
 
-                if (pressurePercent >= TipActivationPressure && !isButtonPressed)
-                    CursorHandler.MouseDown(binding);
-                else if (pressurePercent < TipActivationPressure && isButtonPressed)
-                    CursorHandler.MouseUp(binding);
+                if (pressurePercent >= TipActivationPressure)
+                    TipBinding.Press();
+                else if (pressurePercent < TipActivationPressure)
+                    TipBinding.Release();
             }
 
             for (var penButton = 0; penButton < 2; penButton++)
             {
-                if (PenButtonBindings.TryGetValue(penButton, out var binding) && binding != MouseButton.None)
+                if (PenButtonBindings.TryGetValue(penButton, out var binding) && binding != null)
                 {
-                    bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
-                
-                    if (report.PenButtons[penButton] && !PenButtonStates[penButton] && !isButtonPressed)
-                        CursorHandler.MouseDown(binding);
-                    else if (!report.PenButtons[penButton] && PenButtonStates[penButton] && isButtonPressed)
-                        CursorHandler.MouseUp(binding);
+                    if (report.PenButtons[penButton] && !PenButtonStates[penButton])
+                        binding.Press();
+                    else if (!report.PenButtons[penButton] && PenButtonStates[penButton])
+                        binding.Release();
                 }
                 PenButtonStates[penButton] = report.PenButtons[penButton];
             }
@@ -62,20 +55,14 @@ namespace TabletDriverLib.Output
         {
             for (var auxButton = 0; auxButton < 4; auxButton++)
             {
-                if (AuxButtonBindings.TryGetValue(auxButton, out var binding) && binding != MouseButton.None)
+                if (AuxButtonBindings.TryGetValue(auxButton, out var binding) && binding != null)
                 {
-                    bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
-
-                    if (report.AuxButtons[auxButton] && !isButtonPressed)
-                        CursorHandler.MouseDown(binding);
-                    else if (!report.AuxButtons[auxButton] && isButtonPressed)
-                        CursorHandler.MouseUp(binding);
+                    if (report.AuxButtons[auxButton] && !AuxButtonStates[auxButton])
+                        binding.Press();
+                    else if (!report.AuxButtons[auxButton] && AuxButtonStates[auxButton])
+                        binding.Release();
                 }
             }
-        }
-
-        public virtual void Read(IDeviceReport report)
-        {
         }
     }
 }

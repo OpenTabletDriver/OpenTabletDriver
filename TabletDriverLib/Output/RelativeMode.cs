@@ -1,4 +1,6 @@
 using System;
+using TabletDriverLib.Interop;
+using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
@@ -9,12 +11,14 @@ namespace TabletDriverLib.Output
         public float XSensitivity { set; get; }
         public float YSensitivity { set; get; }
         public TimeSpan ResetTime { set; get; } = TimeSpan.FromMilliseconds(100);
+        public IFilter Filter { set; get; }
 
+        private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private ITabletReport _lastReport;
         private DateTime _lastReceived;
         private Point _lastPosition;
 
-        public override void Read(IDeviceReport report)
+        public void Read(IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
                 Position(tabletReport);

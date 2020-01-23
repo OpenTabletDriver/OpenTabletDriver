@@ -54,6 +54,10 @@ namespace OpenTabletDriver.ViewModels
                 ApplySettings();
             };
 
+            // Use platform specific virtual screen
+            VirtualScreen = Platform.VirtualScreen;
+            Log.Write("Display", $"Detected displays: {string.Join(", ", VirtualScreen.Displays)}");
+
             var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
             var settings = new FileInfo(settingsPath);
             if (settings.Exists)
@@ -71,10 +75,6 @@ namespace OpenTabletDriver.ViewModels
             Log.Write("Settings", $"Plugin directory is '{Program.PluginDirectory.FullName}'");
             LoadPlugins(Program.PluginDirectory);
             InitializePlugins();
-
-            // Use platform specific virtual screen
-            VirtualScreen = Platform.VirtualScreen;
-            Log.Write("Display", $"Detected displays: {string.Join(", ", VirtualScreen.Displays)}");
 
             // Find tablet configurations and try to open a tablet
             if (Program.ConfigurationDirectory.Exists)
@@ -261,7 +261,7 @@ namespace OpenTabletDriver.ViewModels
 
         private void UpdateVisibility()
         {
-            CanBind = Driver.OutputMode is IBindingHandler<MouseButton>;
+            CanBind = Driver.OutputMode is IBindingHandler<IBinding>;
             CanFilter = Driver.OutputMode is IOutputMode;
             IsAbsolute = Driver.OutputMode is IAbsoluteMode;
             IsRelative = Driver.OutputMode is IRelativeMode;
@@ -379,27 +379,42 @@ namespace OpenTabletDriver.ViewModels
                 Log.Write("Settings", $"Set reset time to {relative.ResetTime}");
             }
 
-            if (Driver.OutputMode is IBindingHandler<MouseButton> bindingHandler)
+            if (Driver.OutputMode is IBindingHandler<IBinding> bindingHandler)
             {
-                bindingHandler.TipBinding = Settings.TipButton;
+                bindingHandler.TipBinding = Tools.BindingTool.GetBinding(Settings.TipButton);
                 bindingHandler.TipActivationPressure = Settings.TipActivationPressure;
-                Log.Write("Settings", $"Tip Binding: '{bindingHandler.TipBinding}'@{bindingHandler.TipActivationPressure}%");
+                Log.Write("Settings", $"Tip Binding: '{bindingHandler.TipBinding?.Name ?? "None"}'@{bindingHandler.TipActivationPressure}%");
 
                 if (Settings.PenButtons != null)
                 {
-                    for (int index = 0; index < Settings.PenButtons.Count; index++)
-                        bindingHandler.PenButtonBindings[index] = Settings.PenButtons[index];
-
-                    Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", bindingHandler.PenButtonBindings));
-                }
-                if (Settings.AuxButtons != null)
-                {
-                    for (int index = 0; index < Settings.AuxButtons.Count; index++)
-                        bindingHandler.AuxButtonBindings[index] = Settings.AuxButtons[index];
-
-                    Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", bindingHandler.AuxButtonBindings));
+                    for (int index = 0; index < Settings.PenButtons.Count; index ++)
+                        bindingHandler.PenButtonBindings[index] = Tools.BindingTool.GetBinding(Settings.PenButtons[index]);
+                    
+                    Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
                 }
             }
+
+            // if (Driver.OutputMode is IBindingHandler<IBinding> mouseBindingHandler)
+            // {
+            //     mouseBindingHandler.TipBinding = Settings.TipButton;
+            //     mouseBindingHandler.TipActivationPressure = Settings.TipActivationPressure;
+            //     Log.Write("Settings", $"Tip Binding: '{mouseBindingHandler.TipBinding}'@{mouseBindingHandler.TipActivationPressure}%");
+
+            //     if (Settings.PenButtons != null)
+            //     {
+            //         for (int index = 0; index < Settings.PenButtons.Count; index++)
+            //             mouseBindingHandler.PenButtonBindings[index] = Settings.PenButtons[index];
+
+            //         Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", mouseBindingHandler.PenButtonBindings));
+            //     }
+            //     if (Settings.AuxButtons != null)
+            //     {
+            //         for (int index = 0; index < Settings.AuxButtons.Count; index++)
+            //             mouseBindingHandler.AuxButtonBindings[index] = Settings.AuxButtons[index];
+
+            //         Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", mouseBindingHandler.AuxButtonBindings));
+            //     }
+            // }
 
             UpdateVisibility();
 
@@ -420,8 +435,8 @@ namespace OpenTabletDriver.ViewModels
                 DisplayHeight = VirtualScreen.Height,
                 DisplayX = VirtualScreen.Width / 2,
                 DisplayY = VirtualScreen.Height / 2,
-                PenButtons = new ObservableCollection<MouseButton>(new MouseButton[2]),
-                AuxButtons = new ObservableCollection<MouseButton>(new MouseButton[4])
+                PenButtons = new ObservableCollection<string>(new string[2]),
+                AuxButtons = new ObservableCollection<string>(new string[4])
             };
 
             if (Driver.Tablet != null)
@@ -431,6 +446,12 @@ namespace OpenTabletDriver.ViewModels
                 Settings.TabletX = Driver.TabletProperties.Width / 2;
                 Settings.TabletY = Driver.TabletProperties.Height / 2;
             }
+
+            Settings.TipButton = $"TabletDriverLib.Binding.MouseBinding, Left";
+            for (int i = 0; i < Settings.PenButtons.Count; i++)
+                Settings.PenButtons[i] = $"TabletDriverLib.Binding.MouseBinding, Left";
+            for (int i = 0; i < Settings.AuxButtons.Count; i++)
+                Settings.AuxButtons[i] = $"TabletDriverLib.Binding.MouseBinding, Left";
 
             ResetWindowSize();
             ApplySettings();

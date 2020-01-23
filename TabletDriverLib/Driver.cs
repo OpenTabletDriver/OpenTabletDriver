@@ -160,7 +160,7 @@ namespace TabletDriverLib
             if (BindingEnabled && OutputMode?.TabletProperties != null)
             {
                 OutputMode?.Read(report);
-                if (OutputMode is IBindingHandler<MouseButton> binding)
+                if (OutputMode is IBindingHandler<IBinding> binding)
                     binding.HandleBinding(report);
             }
         }

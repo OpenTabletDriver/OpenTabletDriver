@@ -1,3 +1,5 @@
+using TabletDriverLib.Interop;
+using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
@@ -5,15 +7,16 @@ namespace TabletDriverLib.Output
 {
     public class AbsoluteMode : BindingHandler, IAbsoluteMode
     {
-        public override void Read(IDeviceReport report)
+        public void Read(IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
                 Position(tabletReport);
         }
         
+        private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private Area _displayArea, _tabletArea;
         private TabletProperties _tabletProperties;
-        
+
         public Area Output
         {
             set
@@ -43,6 +46,8 @@ namespace TabletDriverLib.Output
             }
             get => _tabletProperties;
         }
+
+        public IFilter Filter { set; get; }
 
         public bool AreaClipping { set; get; }
         

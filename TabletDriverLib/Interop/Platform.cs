@@ -8,19 +8,26 @@ namespace TabletDriverLib.Interop
 {
     public static class Platform
     {
+        private static ICursorHandler _cursorHandler;
         public static ICursorHandler CursorHandler
         {
             get
             {
-                if (PlatformInfo.IsWindows)
-                    return new WindowsCursorHandler();
-                else if (PlatformInfo.IsLinux)
-                    return new XCursorHandler();
-                else if (PlatformInfo.IsOSX)
-                    return new MacOSCursorHandler();
-                
-                Log.Write("Cursor Handler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);
-                return null;
+                if (_cursorHandler == null)
+                {
+                    if (PlatformInfo.IsWindows)
+                        _cursorHandler = new WindowsCursorHandler();
+                    else if (PlatformInfo.IsLinux)
+                        _cursorHandler = new XCursorHandler();
+                    else if (PlatformInfo.IsOSX)
+                        _cursorHandler = new MacOSCursorHandler();
+                    else
+                    {
+                        Log.Write("Cursor Handler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);  
+                        return null;
+                    }
+                }
+                return _cursorHandler;
             }
         }
 
