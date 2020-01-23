@@ -206,7 +206,7 @@ namespace OpenTabletDriver.Models
 
         #endregion
 
-        #region Button Bindings
+        #region Bindings
 
         private float _tipPressure;
 

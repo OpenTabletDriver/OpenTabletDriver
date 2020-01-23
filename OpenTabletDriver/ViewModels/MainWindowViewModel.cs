@@ -387,34 +387,20 @@ namespace OpenTabletDriver.ViewModels
 
                 if (Settings.PenButtons != null)
                 {
-                    for (int index = 0; index < Settings.PenButtons.Count; index ++)
+                    for (int index = 0; index < Settings.PenButtons.Count; index++)
                         bindingHandler.PenButtonBindings[index] = Tools.BindingTool.GetBinding(Settings.PenButtons[index]);
                     
                     Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
                 }
+
+                if (Settings.AuxButtons != null)
+                {
+                    for (int index = 0; index < Settings.AuxButtons.Count; index++)
+                        bindingHandler.AuxButtonBindings[index] = Tools.BindingTool.GetBinding(Settings.AuxButtons[index]);
+                    
+                    Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
+                }
             }
-
-            // if (Driver.OutputMode is IBindingHandler<IBinding> mouseBindingHandler)
-            // {
-            //     mouseBindingHandler.TipBinding = Settings.TipButton;
-            //     mouseBindingHandler.TipActivationPressure = Settings.TipActivationPressure;
-            //     Log.Write("Settings", $"Tip Binding: '{mouseBindingHandler.TipBinding}'@{mouseBindingHandler.TipActivationPressure}%");
-
-            //     if (Settings.PenButtons != null)
-            //     {
-            //         for (int index = 0; index < Settings.PenButtons.Count; index++)
-            //             mouseBindingHandler.PenButtonBindings[index] = Settings.PenButtons[index];
-
-            //         Log.Write("Settings", $"Pen Bindings: " + String.Join(", ", mouseBindingHandler.PenButtonBindings));
-            //     }
-            //     if (Settings.AuxButtons != null)
-            //     {
-            //         for (int index = 0; index < Settings.AuxButtons.Count; index++)
-            //             mouseBindingHandler.AuxButtonBindings[index] = Settings.AuxButtons[index];
-
-            //         Log.Write("Settings", $"Express Key Bindings: " + String.Join(", ", mouseBindingHandler.AuxButtonBindings));
-            //     }
-            // }
 
             UpdateVisibility();
 

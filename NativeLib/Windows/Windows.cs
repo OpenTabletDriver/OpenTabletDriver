@@ -34,5 +34,12 @@ namespace NativeLib.Windows
         public static extern bool GetMonitorInfo(IntPtr hmon, ref MonitorInfo mi);
         
         #endregion
+
+        #region Keyboard
+        
+        [DllImport("user32.dll")]
+        public static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs, int cbSize);
+
+        #endregion
     }
 }

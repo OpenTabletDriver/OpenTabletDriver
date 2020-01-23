@@ -62,6 +62,7 @@ namespace TabletDriverLib.Output
                     else if (!report.AuxButtons[auxButton] && AuxButtonStates[auxButton])
                         binding.Release();
                 }
+                AuxButtonStates[auxButton] = report.AuxButtons[auxButton];
             }
         }
     }

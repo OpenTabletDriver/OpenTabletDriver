@@ -2,6 +2,7 @@ using System;
 using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
+using TabletDriverLib.Interop.Keyboard;
 using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop
@@ -23,11 +24,34 @@ namespace TabletDriverLib.Interop
                         _cursorHandler = new MacOSCursorHandler();
                     else
                     {
-                        Log.Write("Cursor Handler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);  
+                        Log.Write("CursorHandler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);  
                         return null;
                     }
                 }
                 return _cursorHandler;
+            }
+        }
+
+        private static IKeyboardHandler _keyboardHandler;
+        public static IKeyboardHandler KeyboardHandler
+        {
+            get
+            {
+                if (_keyboardHandler == null)
+                {
+                    if (PlatformInfo.IsWindows)
+                        _keyboardHandler = new WindowsKeyboardHandler(); // TODO: Windows keyboard handler
+                    else if (PlatformInfo.IsLinux)
+                        _keyboardHandler = new XKeyboardHandler();
+                    else if (PlatformInfo.IsOSX)
+                        _keyboardHandler = null;
+                    else
+                    {
+                        Log.Write("KeyboardHandler", $"Failed to create a keyboard handler for this platform ({Environment.OSVersion.Platform}).", true);
+                        return null;
+                    }
+                }
+                return _keyboardHandler;
             }
         }
 
