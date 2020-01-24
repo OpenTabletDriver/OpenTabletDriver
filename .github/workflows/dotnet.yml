@@ -26,18 +26,18 @@ jobs:
         dotnet publish --configuration Release --runtime osx-x64 --version-suffix "$GIT_HASH"
     - name: Copy configurations
       run: |
-        cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriver/bin/Release/netcoreapp3.0/linux-x64/publish
-        cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriver/bin/Release/netcoreapp3.0/osx-x64/publish
+        cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriver/bin/Release/netcoreapp3.1/linux-x64/publish
+        cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriver/bin/Release/netcoreapp3.1/osx-x64/publish
     - name: Upload Linux artifacts
       uses: actions/upload-artifact@master
       with:
         name: OpenTabletDriver linux-x64
-        path: OpenTabletDriver/bin/Release/netcoreapp3.0/linux-x64/publish
+        path: OpenTabletDriver/bin/Release/netcoreapp3.1/linux-x64/publish
     - name: Upload Mac OS X artifacts
       uses: actions/upload-artifact@master
       with:
         name: OpenTabletDriver osx-x64
-        path: OpenTabletDriver/bin/Release/netcoreapp3.0/osx-x64/publish
+        path: OpenTabletDriver/bin/Release/netcoreapp3.1/osx-x64/publish
 
   windowspublish:
     runs-on: windows-latest
@@ -53,9 +53,9 @@ jobs:
           $GIT_HASH = $(git rev-parse --short ${ENV:GITHUB_SHA})
           dotnet publish --configuration Release --runtime win-x64 --version-suffix "$GIT_HASH"
       - name: Copy configurations
-        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriver/bin/Release/netcoreapp3.0/win-x64/publish/Configurations/" -Recurse
+        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriver/bin/Release/netcoreapp3.1/win-x64/publish/Configurations/" -Recurse
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
           name: OpenTabletDriver win-x64
-          path: OpenTabletDriver/bin/Release/netcoreapp3.0/win-x64/publish
+          path: OpenTabletDriver/bin/Release/netcoreapp3.1/win-x64/publish
