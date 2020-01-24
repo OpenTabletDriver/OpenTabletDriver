@@ -4,4 +4,12 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>TabletDriverPlugin</PackageId>
+    <Version>0.2.0</Version>
+    <Authors>InfinityGhost</Authors>
+    <Description>Library used to create OpenTabletDriver plugins.</Description>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
+
 </Project>
