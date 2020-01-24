@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
 using ReactiveUI;
-using TabletDriverLib.Interop.Cursor;
 
 namespace OpenTabletDriver.Models
 {
@@ -17,6 +16,7 @@ namespace OpenTabletDriver.Models
             WindowWidth = 1280;
             WindowHeight = 720;
             ResetTime = TimeSpan.FromMilliseconds(100);
+            TipButton = "TabletDriverLib.Binding.MouseBinding, Left";
         }
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens;
@@ -206,7 +206,7 @@ namespace OpenTabletDriver.Models
 
         #endregion
 
-        #region Button Bindings
+        #region Bindings
 
         private float _tipPressure;
 
@@ -217,30 +217,30 @@ namespace OpenTabletDriver.Models
             get => _tipPressure;
         }
 
-        private MouseButton _tipButton;
+        private string _tipButton;
 
         [XmlElement("TipButton")]
-        public MouseButton TipButton
+        public string TipButton
         {
             set => this.RaiseAndSetIfChanged(ref _tipButton, value);
             get => _tipButton;
         }
 
-        private ObservableCollection<MouseButton> _penButtons;
+        private ObservableCollection<string> _penButtons;
 
         [XmlArray("PenButtons")]
-        [XmlArrayItem("key")]
-        public ObservableCollection<MouseButton> PenButtons
+        [XmlArrayItem("Binding")]
+        public ObservableCollection<string> PenButtons
         {
             set => this.RaiseAndSetIfChanged(ref _penButtons, value);
             get => _penButtons;
         }
 
-        private ObservableCollection<MouseButton> _auxButtons;
+        private ObservableCollection<string> _auxButtons;
 
         [XmlArray("AuxButtons")]
-        [XmlArrayItem("key")]
-        public ObservableCollection<MouseButton> AuxButtons
+        [XmlArrayItem("Binding")]
+        public ObservableCollection<string> AuxButtons
         {
             set => this.RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;

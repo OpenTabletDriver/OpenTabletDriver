@@ -9,6 +9,5 @@ namespace TabletDriverLib.Interop.Cursor
 
         void MouseDown(MouseButton button);
         void MouseUp(MouseButton button);
-        bool GetMouseButtonState(MouseButton button);
     }
 }
