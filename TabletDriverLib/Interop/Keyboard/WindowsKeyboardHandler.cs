@@ -30,7 +30,6 @@ namespace TabletDriverLib.Interop.Keyboard
 
             var inputs = new INPUT[] { input };
             SendInput((uint)inputs.Length, inputs, INPUT.Size);
-            TabletDriverPlugin.Log.Debug($"Set keystate for key '{key}'({vk}) {(isPress ? "down" : "up")}");
         }
 
         public void Press(string key)

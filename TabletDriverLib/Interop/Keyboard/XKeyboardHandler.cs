@@ -25,7 +25,6 @@ namespace TabletDriverLib.Interop.Keyboard
             var keyCode = XKeysymToKeycode(Display, keySym);
             XTestFakeKeyEvent(Display, keyCode, isPress, 0UL);
             XFlush(Display);
-            TabletDriverPlugin.Log.Debug($"Set keystate for key '{key}'({keyCode}) {(isPress ? "down" : "up")}");
         }
 
         public void Press(string key)

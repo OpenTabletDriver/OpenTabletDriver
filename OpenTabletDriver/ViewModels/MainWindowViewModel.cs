@@ -13,7 +13,6 @@ using OpenTabletDriver.Views;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
@@ -606,6 +605,66 @@ namespace OpenTabletDriver.ViewModels
             {
                 Settings.DisplayX = display.Position.X + (display.Width / 2) + VirtualScreen.Position.X;
                 Settings.DisplayY = display.Position.Y + (display.Height / 2) + VirtualScreen.Position.Y;
+            }
+        }
+
+        private async Task SetBinding(string bindingSource)
+        {
+            var binding = GetBinding(bindingSource);
+            var bindingConfig = new BindingConfig(binding);
+            await bindingConfig.ShowDialog(App.MainWindow);
+            SetBinding(bindingSource, bindingConfig.Binding);
+        }
+
+        private void ClearBinding(string bindingSource)
+        {
+            SetBinding(bindingSource, string.Empty);
+        }
+
+        private string GetBinding(string source)
+        {
+            switch (source)
+            {
+                case "TipButton":
+                    return Settings.TipButton;
+                case "PenButtons[0]":
+                case "PenButtons[1]":
+                    var penIndex = source.Split('[', 2)[1].Trim(']').Convert<int>();
+                    return Settings.PenButtons[penIndex];
+                case "AuxButtons[0]":
+                case "AuxButtons[1]":
+                case "AuxButtons[2]":
+                case "AuxButtons[3]":
+                    var auxIndex = source.Split("[", 2)[1].Trim(']').Convert<int>();
+                    return Settings.AuxButtons[auxIndex];
+                default:
+                    throw new ArgumentException("Invalid binding source");
+            }
+        }
+
+        private void SetBinding(string source, string binding)
+        {
+            if (binding == ", ")
+                binding = string.Empty;
+            switch (source)
+            {
+                case "TipButton":
+                    Settings.TipButton = binding;
+                    return;
+                case "PenButtons[0]":
+                case "PenButtons[1]":
+                    var penIndex = source.Split('[', 2)[1].Trim(']').Convert<int>();
+                    Settings.PenButtons[penIndex] = binding;
+                    return;
+                case "AuxButtons[0]":
+                case "AuxButtons[1]":
+                case "AuxButtons[2]":
+                case "AuxButtons[3]":
+                    var auxIndex = source.Split("[", 2)[1].Trim(']').Convert<int>();
+                    Settings.AuxButtons[auxIndex] = binding;
+                    return;
+                default:
+                    throw new ArgumentException("Invalid binding source");
             }
         }
 
