@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Avalonia;
@@ -12,7 +11,7 @@ namespace OpenTabletDriver
 {
     internal static class PropertyTools
     {
-        public static IEnumerable<AvaloniaObject> GetPropertyControls(object obj, string bindingPath)
+        public static IEnumerable<AvaloniaObject> GetPropertyControls(object obj, string bindingPath, Dictionary<string, string> pluginSettings = null)
         {
             if (obj != null)
             {
@@ -21,6 +20,9 @@ namespace OpenTabletDriver
                     var attributes = from attr in property.GetCustomAttributes(false)
                         where attr is PropertyAttribute
                         select attr as PropertyAttribute;
+
+                    if (pluginSettings != null || pluginSettings?.Count == 0)
+                        SetValue(obj, property, pluginSettings);
 
                     foreach (var attr in attributes)
                     {
@@ -86,6 +88,16 @@ namespace OpenTabletDriver
                 {
                     [!TextBox.TextProperty] = new Binding(path, BindingMode.TwoWay)
                 };
+            }
+        }
+
+        private static void SetValue(object obj, PropertyInfo property, Dictionary<string, string> pluginSettings)
+        {
+            if (pluginSettings.TryGetValue(property.Name, out var val))
+            {
+                var type = property.PropertyType;
+                var converted = Convert.ChangeType(val, type);
+                property.SetValue(obj, converted);
             }
         }
     }

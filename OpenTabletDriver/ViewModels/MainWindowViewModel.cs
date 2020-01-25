@@ -317,6 +317,8 @@ namespace OpenTabletDriver.ViewModels
         {
             while (BackgroundTaskActive)
                 await Task.Delay(100);
+
+            UpdatePluginSettings();
             
             Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
             
@@ -331,8 +333,11 @@ namespace OpenTabletDriver.ViewModels
                 else
                     Log.Write("Settings", $"Failed to get filter '{Settings.ActiveFilterName}'.", true);
 
-                var controls = PropertyTools.GetPropertyControls(mode.Filter, "Driver.OutputMode.Filter");
-                FilterControls = new ObservableCollection<AvaloniaObject>(controls);
+                Dispatcher.UIThread.Post(() => 
+                {
+                    var controls = PropertyTools.GetPropertyControls(mode.Filter, "Driver.OutputMode.Filter", Settings.PluginSettings);
+                    FilterControls = new ObservableCollection<AvaloniaObject>(controls);
+                });
 
                 mode.TabletProperties = Driver.TabletProperties;
             }
@@ -495,6 +500,7 @@ namespace OpenTabletDriver.ViewModels
             if (path != null)
             {
                 var file = new FileInfo(path);
+                ApplySettings();
                 Save(file);
             }
         }
@@ -557,6 +563,34 @@ namespace OpenTabletDriver.ViewModels
                     Log.Write("Plugin", $"Loaded plugin '{plugin.Name}'.");
             }
             BackgroundTaskActive = false;
+        }
+
+        private void UpdatePluginSettings()
+        {
+            var filterSettings = GetPluginSettings(Driver.OutputMode?.Filter);
+            foreach (var pair in filterSettings)
+            {
+                if (Settings.PluginSettings.ContainsKey(pair.Item1))
+                    Settings.PluginSettings[pair.Item1] = pair.Item2;
+                else
+                    Settings.PluginSettings.Add(pair.Item1, pair.Item2);
+            }
+        }
+
+        private IEnumerable<(string, string)> GetPluginSettings(object obj)
+        {
+            if (obj != null)
+            {
+                foreach (var property in obj.GetType().GetProperties())
+                {
+                    var attributes = from attr in property.GetCustomAttributes(false)
+                        where attr is PropertyAttribute
+                        select attr as PropertyAttribute;
+                    
+                    if (attributes.Count() > 0)
+                        yield return (property.Name, property.GetValue(obj).ToString());
+                }
+            }
         }
 
         public void ToggleHook()

@@ -246,6 +246,14 @@ namespace OpenTabletDriver.Models
             get => _auxButtons;
         }
 
+        private SerializableDictionary<string, string> _pluginSettings = new SerializableDictionary<string, string>();
+        [XmlElement("PluginSettings")]
+        public SerializableDictionary<string, string> PluginSettings
+        {
+            set => this.RaiseAndSetIfChanged(ref _pluginSettings, value);
+            get => _pluginSettings;
+        }
+
         #endregion
 
         #region Window Properties
