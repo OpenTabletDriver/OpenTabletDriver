@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>false</PublishSingleFile>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.1.1</VersionPrefix>
     <Company>InfinityGhost</Company>
     <Product>OpenTabletDriver</Product>
     <Description />
