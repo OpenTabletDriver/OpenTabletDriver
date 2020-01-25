@@ -95,6 +95,7 @@ namespace OpenTabletDriver.ViewModels
         public void RefreshTypes()
         {
             var types = from type in PluginManager.GetChildTypes<IBinding>()
+                where !type.IsInterface
                 where !type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
                 where type != typeof(MouseBinding)
                 where type != typeof(KeyBinding)
