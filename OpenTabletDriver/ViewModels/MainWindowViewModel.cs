@@ -58,12 +58,10 @@ namespace OpenTabletDriver.ViewModels
             Log.Write("Display", $"Detected displays: {string.Join(", ", VirtualScreen.Displays)}");
 
             var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-            var settings = new FileInfo(settingsPath);
-            if (settings.Exists)
+            if (Load(new FileInfo(settingsPath)))
             {
-                Settings = Settings.Deserialize(settings);
                 Log.Write("Settings", $"Loaded saved user settings from '{settingsPath}'");
-            } 
+            }
             else
             {
                 Defaults();
@@ -437,14 +435,7 @@ namespace OpenTabletDriver.ViewModels
                 Settings.TabletY = Driver.TabletProperties.Height / 2;
             }
 
-            Settings.TipButton = $"TabletDriverLib.Binding.MouseBinding, Left";
-            for (int i = 0; i < Settings.PenButtons.Count; i++)
-                Settings.PenButtons[i] = $"TabletDriverLib.Binding.MouseBinding, Left";
-            for (int i = 0; i < Settings.AuxButtons.Count; i++)
-                Settings.AuxButtons[i] = $"TabletDriverLib.Binding.MouseBinding, Left";
-
             ResetWindowSize();
-            ApplySettings();
         }
 
         public void OpenTabletDebugger()
@@ -517,6 +508,8 @@ namespace OpenTabletDriver.ViewModels
 
         private bool Load(FileInfo file)
         {
+            if (!file.Exists)
+                return false;
             try
             {
                 Settings = Settings.Deserialize(file);
@@ -524,6 +517,13 @@ namespace OpenTabletDriver.ViewModels
                 ApplySettings();
                 SetTheme(Settings.Theme);
                 return true;
+            }
+            catch (InvalidOperationException ioex)
+            {
+                Log.Write("Settings", $"The settings file is either out of date or corrupt.");
+                if (Debugging)
+                    Log.Exception(ioex);
+                return false;
             }
             catch (Exception ex)
             {

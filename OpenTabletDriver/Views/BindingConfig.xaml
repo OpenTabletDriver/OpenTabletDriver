@@ -48,8 +48,8 @@
         </Style>
     </Window.Styles>
     <Grid RowDefinitions="*,Auto">
-        <TabControl>
-            <TabItem Header="Mouse Binding">
+        <TabControl Name="TabCtrl">
+            <TabItem Name="MousebindTab" Header="Mouse Binding">
                 <Border>
                     <Border Classes="ctrl">
                         <Grid RowDefinitions="Auto,*">
@@ -59,17 +59,17 @@
                     </Border>
                 </Border>
             </TabItem>
-            <TabItem Header="Key Binding">
+            <TabItem Name="KeybindTab" Header="Key Binding">
                 <Border>
                     <Border Classes="ctrl">
                         <Grid RowDefinitions="Auto,*">
                             <TextBlock Text="Press a key to bind"/>
-                            <Border Grid.Row="1" Child="{Binding KeyBindingControl}"/>
+                            <Border Name="KeybindCtrl" Grid.Row="1" Child="{Binding KeyBindingControl}"/>
                         </Grid>
                     </Border>
                 </Border>
             </TabItem>
-            <TabItem Header="Other">
+            <TabItem Name="OtherTab" Header="Other">
                 <Border>
                     <Grid RowDefinitions="Auto,Auto">
                         <Grid.Styles>

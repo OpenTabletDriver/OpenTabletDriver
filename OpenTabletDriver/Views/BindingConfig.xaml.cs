@@ -21,6 +21,16 @@ namespace OpenTabletDriver.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            
+            // Focus keybinding setup on tab change
+            var tabctrl = this.Find<TabControl>("TabCtrl");
+            var keybindTab = this.Find<TabItem>("KeybindTab");
+            var keybindCtrl = this.Find<Border>("KeybindCtrl");
+            tabctrl.SelectionChanged += (a, b) =>
+            {
+                if (b.AddedItems.Contains(keybindTab))
+                    keybindCtrl.Child.Focus();
+            };
         }
 
         public string Binding

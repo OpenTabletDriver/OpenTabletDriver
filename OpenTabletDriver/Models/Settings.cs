@@ -6,17 +6,22 @@ using ReactiveUI;
 
 namespace OpenTabletDriver.Models
 {
-    [XmlRoot("Configuration", DataType = "OpenTabletDriverCfg")]
+    [XmlRoot("Settings", DataType = "v0.2.x")]
     public class Settings : ReactiveObject
     {
         public Settings()
         {
             Theme = "Light";
-            OutputMode = nameof(TabletDriverLib.Output.AbsoluteMode);
+            OutputMode = typeof(TabletDriverLib.Output.AbsoluteMode).FullName;
             WindowWidth = 1280;
             WindowHeight = 720;
             ResetTime = TimeSpan.FromMilliseconds(100);
+            XSensitivity = 10;
+            YSensitivity = 10;
             TipButton = "TabletDriverLib.Binding.MouseBinding, Left";
+            TipActivationPressure = 1;
+            AutoHook = true;
+            EnableClipping = true;
         }
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens;
