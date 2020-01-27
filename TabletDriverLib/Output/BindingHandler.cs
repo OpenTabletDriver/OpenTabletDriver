@@ -15,6 +15,7 @@ namespace TabletDriverLib.Output
         public Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
         public Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
 
+        private bool TipState = false;
         private IList<bool> PenButtonStates = new bool[2];
         private IList<bool> AuxButtonStates = new bool[4];
 
@@ -32,10 +33,11 @@ namespace TabletDriverLib.Output
             {
                 float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
 
-                if (pressurePercent >= TipActivationPressure)
+                if (pressurePercent >= TipActivationPressure && !TipState)
                     TipBinding.Press();
-                else if (pressurePercent < TipActivationPressure)
+                else if (pressurePercent < TipActivationPressure && TipState)
                     TipBinding.Release();
+                TipState = pressurePercent >= TipActivationPressure;
             }
 
             for (var penButton = 0; penButton < 2; penButton++)
