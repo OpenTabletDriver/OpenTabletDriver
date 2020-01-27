@@ -515,7 +515,6 @@ namespace OpenTabletDriver.ViewModels
                 Settings = Settings.Deserialize(file);
                 Log.Write("Settings", $"Read settings from '{file.FullName}'.");
                 ApplySettings();
-                SetTheme(Settings.Theme);
                 return true;
             }
             catch (InvalidOperationException ioex)
