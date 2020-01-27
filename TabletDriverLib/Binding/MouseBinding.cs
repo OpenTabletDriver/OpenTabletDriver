@@ -2,9 +2,11 @@ using System;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 
 namespace TabletDriverLib.Binding
 {
+    [PluginName("Mouse Button Binding")]
     public class MouseBinding : IBinding
     {
         public string Name

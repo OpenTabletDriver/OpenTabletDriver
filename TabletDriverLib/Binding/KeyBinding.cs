@@ -2,9 +2,11 @@ using System;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Keyboard;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 
 namespace TabletDriverLib.Binding
 {
+    [PluginName("Key Binding")]
     public class KeyBinding : IBinding
     {
         public string Name

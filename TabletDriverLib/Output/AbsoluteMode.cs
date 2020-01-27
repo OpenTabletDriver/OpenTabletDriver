@@ -1,10 +1,12 @@
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Output
 {
+    [PluginName("Absolute Mode")]
     public class AbsoluteMode : BindingHandler, IAbsoluteMode
     {
         public void Read(IDeviceReport report)

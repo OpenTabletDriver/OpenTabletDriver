@@ -2,10 +2,12 @@ using System;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Output
 {
+    [PluginName("Relative Mode")]
     public class RelativeMode : BindingHandler, IRelativeMode
     {
         public float XSensitivity { set; get; }
