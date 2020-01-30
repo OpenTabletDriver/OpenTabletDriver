@@ -1,4 +1,4 @@
-namespace TabletDriverLib.Tablet
+namespace TabletDriverPlugin.Tablet
 {
     public interface IReportParser<T> where T : IDeviceReport
     {

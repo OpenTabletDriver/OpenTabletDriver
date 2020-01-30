@@ -5,6 +5,7 @@ using System.Linq;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Tablet;
+using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.ViewModels
 {

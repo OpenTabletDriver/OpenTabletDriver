@@ -32,24 +32,13 @@ namespace NativeLib.Windows
 
         [DllImport("user32.dll")]
         public static extern bool GetMonitorInfo(IntPtr hmon, ref MonitorInfo mi);
+        
+        #endregion
 
-        public static List<DisplayInfo> GetDisplays()
-        {
-            List<DisplayInfo> displayCollection = new List<DisplayInfo>();
-            MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor,  IntPtr dwData)
-            {
-                MonitorInfo monitorInfo = new MonitorInfo();
-                monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
-                if (GetMonitorInfo(hMonitor, ref monitorInfo))
-                {
-                    DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work, monitorInfo.flags);
-                    displayCollection.Add(displayInfo);
-                }
-                return true;
-            };
-            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, monitorDelegate, IntPtr.Zero);
-            return displayCollection;
-        }
+        #region Keyboard
+        
+        [DllImport("user32.dll")]
+        public static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs, int cbSize);
 
         #endregion
     }

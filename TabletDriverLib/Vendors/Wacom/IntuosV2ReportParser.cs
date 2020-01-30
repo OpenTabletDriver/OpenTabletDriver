@@ -1,4 +1,4 @@
-﻿using TabletDriverLib.Tablet;
+﻿using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Vendors.Wacom
 {

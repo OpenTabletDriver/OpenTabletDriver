@@ -2,24 +2,56 @@ using System;
 using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
+using TabletDriverLib.Interop.Keyboard;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop
 {
     public static class Platform
     {
+        private static ICursorHandler _cursorHandler;
         public static ICursorHandler CursorHandler
         {
             get
             {
-                if (PlatformInfo.IsWindows)
-                    return new WindowsCursorHandler();
-                else if (PlatformInfo.IsLinux)
-                    return new XCursorHandler();
-                else if (PlatformInfo.IsOSX)
-                    return new MacOSCursorHandler();
-                
-                Log.Write("Cursor Handler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);
-                return null;
+                if (_cursorHandler == null)
+                {
+                    if (PlatformInfo.IsWindows)
+                        _cursorHandler = new WindowsCursorHandler();
+                    else if (PlatformInfo.IsLinux)
+                        _cursorHandler = new XCursorHandler();
+                    else if (PlatformInfo.IsOSX)
+                        _cursorHandler = new MacOSCursorHandler();
+                    else
+                    {
+                        Log.Write("CursorHandler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);  
+                        return null;
+                    }
+                }
+                return _cursorHandler;
+            }
+        }
+
+        private static IKeyboardHandler _keyboardHandler;
+        public static IKeyboardHandler KeyboardHandler
+        {
+            get
+            {
+                if (_keyboardHandler == null)
+                {
+                    if (PlatformInfo.IsWindows)
+                        _keyboardHandler = new WindowsKeyboardHandler(); // TODO: Windows keyboard handler
+                    else if (PlatformInfo.IsLinux)
+                        _keyboardHandler = new XKeyboardHandler();
+                    else if (PlatformInfo.IsOSX)
+                        _keyboardHandler = null;
+                    else
+                    {
+                        Log.Write("KeyboardHandler", $"Failed to create a keyboard handler for this platform ({Environment.OSVersion.Platform}).", true);
+                        return null;
+                    }
+                }
+                return _keyboardHandler;
             }
         }
 

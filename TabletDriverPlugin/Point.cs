@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace TabletDriverLib.Component
+namespace TabletDriverPlugin
 {
     public class Point
     {
@@ -20,8 +20,8 @@ namespace TabletDriverLib.Component
 
         public float DistanceFrom(Point value)
         {
-            double x = this.X - value.X;
-            double y = this.Y - value.Y;
+            double x = X - value.X;
+            double y = Y - value.Y;
             return (float)Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
         }
 
@@ -37,7 +37,7 @@ namespace TabletDriverLib.Component
         #region Operators
 
         /// <summary>
-        /// Returns the sum of two <see cref="TabletDriverLib.Component.Point"/> objects.
+        /// Returns the sum of two <see cref="Point"/> objects.
         /// </summary>
         /// <param name="a">Augend</param>
         /// <param name="b">Addend</param>
@@ -45,11 +45,11 @@ namespace TabletDriverLib.Component
         {
             var x = a.X + b.X;
             var y = a.Y + b.Y;
-            return new Point(x,y);
+            return new Point(x, y);
         }
 
         /// <summary>
-        /// Returns the difference of two <see cref="TabletDriverLib.Component.Point"/> objects.
+        /// Returns the difference of two <see cref="Point"/> objects.
         /// </summary>
         /// <param name="a">Minuend</param>
         /// <param name="b">Subtrahend</param>
@@ -58,7 +58,7 @@ namespace TabletDriverLib.Component
         {
             var x = a.X - b.X;
             var y = a.Y - b.Y;
-            return new Point(x,y);
+            return new Point(x, y);
         }
 
         public static implicit operator Point(Vector2 vector)
@@ -73,7 +73,7 @@ namespace TabletDriverLib.Component
 
         public static implicit operator Point(System.Drawing.Point pt)
         {
-            return new Point((float)pt.X, (float)pt.Y);
+            return new Point(pt.X, pt.Y);
         }
 
         public static implicit operator System.Drawing.Point(Point point)

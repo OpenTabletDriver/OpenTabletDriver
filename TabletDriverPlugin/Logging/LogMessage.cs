@@ -1,6 +1,6 @@
 using System;
 
-namespace TabletDriverLib.Component
+namespace TabletDriverPlugin.Logging
 {
     public struct LogMessage
     {

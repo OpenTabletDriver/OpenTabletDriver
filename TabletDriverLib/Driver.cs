@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
 using NativeLib;
+using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Tablet;
 using TabletDriverLib.Vendors;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib
 {
@@ -17,7 +20,7 @@ namespace TabletDriverLib
         public HidDevice Tablet { private set; get; }
         public TabletProperties TabletProperties { set; get; }
 
-        public OutputMode OutputMode { set; get; }
+        public IOutputMode OutputMode { set; get; }
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
 
@@ -32,20 +35,21 @@ namespace TabletDriverLib
             {
                 var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
                 var tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
-                var parser = tablet.GetReportParser() ?? new TabletReportParser();
+                var parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.ReportParserName) ?? new TabletReportParser();
                 if (tabletDevice == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
                 {
                     tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
                     if (tabletDevice != null)
-                        parser = tablet.GetCustomReportParser();
+                        parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.CustomReportParserName);
                 }
                 TabletProperties = tablet;
 
                 var tabletOpened = Open(tabletDevice, parser);
                 if (tabletOpened && tablet.AuxReportLength > 0)
                 {
-                    var aux = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
-                    OpenAux(aux, new AuxReportParser());
+                    var auxDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
+                    var auxReportParser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.AuxReportParserName) ?? new AuxReportParser();
+                    OpenAux(auxDevice, auxReportParser);
                 }
                 return tabletOpened;
             }
@@ -153,8 +157,12 @@ namespace TabletDriverLib
 
         private void HandleReport(object sender, IDeviceReport report)
         {
-            if (BindingEnabled)
+            if (BindingEnabled && OutputMode?.TabletProperties != null)
+            {
                 OutputMode?.Read(report);
+                if (OutputMode is IBindingHandler<IBinding> binding)
+                    binding.HandleBinding(report);
+            }
         }
     }
 }

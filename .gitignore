@@ -5,6 +5,7 @@
 # Build Artifacts
 **/obj
 **/bin
+**/nupkg
 /Build
 
 # User Preferences

@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NativeLib\NativeLib.csproj" />
+    <ProjectReference Include="..\TabletDriverPlugin\TabletDriverPlugin.csproj" />
   </ItemGroup>
 
 </Project>

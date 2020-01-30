@@ -1,18 +1,25 @@
-using System.Collections.Generic;
-using System.Linq;
-using TabletDriverLib.Component;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
-using TabletDriverLib.Tablet;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
+using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Output
 {
-    public class AbsoluteMode : OutputMode
+    [PluginName("Absolute Mode")]
+    public class AbsoluteMode : BindingHandler, IAbsoluteMode
     {
+        public void Read(IDeviceReport report)
+        {
+            if (report is ITabletReport tabletReport)
+                Position(tabletReport);
+        }
+        
+        private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private Area _displayArea, _tabletArea;
         private TabletProperties _tabletProperties;
-        
-        public Area DisplayArea
+
+        public Area Output
         {
             set
             {
@@ -22,7 +29,7 @@ namespace TabletDriverLib.Output
             get => _displayArea;
         }
 
-        public Area TabletArea
+        public Area Input
         {
             set
             {
@@ -42,36 +49,30 @@ namespace TabletDriverLib.Output
             get => _tabletProperties;
         }
 
-        private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
-        public bool Clipping { set; get; }
-        public bool TipEnabled { set; get; }
-        public float TipActivationPressure { set; get; }
-        public MouseButton TipBinding { set; get; } = 0;
-        public BindingDictionary PenButtonBindings { set; get; } = new BindingDictionary();
-        public BindingDictionary AuxButtonBindings { set; get; } = new BindingDictionary();
+        public IFilter Filter { set; get; }
 
-        private IList<bool> PenButtonStates = new bool[2];
-
+        public bool AreaClipping { set; get; }
+        
         private void UpdateCache()
         {
-            _rotationMatrix = TabletArea?.GetRotationMatrix();
+            _rotationMatrix = Input?.GetRotationMatrix();
             
-            _halfDisplayWidth = DisplayArea?.Width / 2 ?? 0;
-            _halfDisplayHeight = DisplayArea?.Height / 2 ?? 0;
-            _halfTabletWidth = TabletArea?.Width / 2 ?? 0;
-            _halfTabletHeight = TabletArea?.Height / 2 ?? 0;
+            _halfDisplayWidth = Output?.Width / 2 ?? 0;
+            _halfDisplayHeight = Output?.Height / 2 ?? 0;
+            _halfTabletWidth = Input?.Width / 2 ?? 0;
+            _halfTabletHeight = Input?.Height / 2 ?? 0;
 
-            _minX = DisplayArea?.Position.X - _halfDisplayWidth ?? 0;
-            _maxX = DisplayArea?.Position.X + DisplayArea?.Width - _halfDisplayWidth ?? 0;
-            _minY = DisplayArea?.Position.Y - _halfDisplayHeight ?? 0;
-            _maxY = DisplayArea?.Position.Y + DisplayArea?.Height - _halfDisplayHeight ?? 0;
+            _minX = Output?.Position.X - _halfDisplayWidth ?? 0;
+            _maxX = Output?.Position.X + Output?.Width - _halfDisplayWidth ?? 0;
+            _minY = Output?.Position.Y - _halfDisplayHeight ?? 0;
+            _maxY = Output?.Position.Y + Output?.Height - _halfDisplayHeight ?? 0;
         }
 
         private float[] _rotationMatrix;
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
         private float _minX, _maxX, _minY, _maxY;
 
-        public override void Position(ITabletReport report)
+        public void Position(ITabletReport report)
         {
             if (report.Lift <= TabletProperties.MinimumRange)
                 return;
@@ -87,11 +88,10 @@ namespace TabletDriverLib.Output
             pos.Y *= TabletProperties.Height;
 
             // Adjust area to set origin to 0,0
-            pos.X -= TabletArea.Position.X;
-            pos.Y -= TabletArea.Position.Y;
+            pos -= Input.Position;
 
             // Rotation
-            if (TabletArea.Rotation != 0f)
+            if (Input.Rotation != 0f)
             {
                 var tempCopy = new Point(pos.X, pos.Y);
                 pos.X = (tempCopy.X * _rotationMatrix[0]) + (tempCopy.Y * _rotationMatrix[1]);
@@ -103,19 +103,19 @@ namespace TabletDriverLib.Output
             pos.Y += _halfTabletHeight;
 
             // Scale to tablet area (ratio of 1)
-            pos.X /= TabletArea.Width;
-            pos.Y /= TabletArea.Height;
+            pos.X /= Input.Width;
+            pos.Y /= Input.Height;
 
             // Scale to display area
-            pos.X *= DisplayArea.Width;
-            pos.Y *= DisplayArea.Height;
+            pos.X *= Output.Width;
+            pos.Y *= Output.Height;
 
             // Adjust display offset by center
-            pos.X += DisplayArea.Position.X - _halfDisplayWidth;
-            pos.Y += DisplayArea.Position.Y - _halfDisplayHeight;
+            pos.X += Output.Position.X - _halfDisplayWidth;
+            pos.Y += Output.Position.Y - _halfDisplayHeight;
 
             // Clipping to display bounds
-            if (Clipping)
+            if (AreaClipping)
             {
                 if (pos.X < _minX)
                     pos.X = _minX;
@@ -126,52 +126,12 @@ namespace TabletDriverLib.Output
                 if (pos.Y > _maxY)
                     pos.Y = _maxY;
             }
+            
+            if (Filter is IFilter filter)
+                pos = filter.Filter(pos);
 
             // Setting cursor position
             CursorHandler.SetCursorPosition(pos);
-            HandleButton(report);
-        }
-
-        public void HandleButton(ITabletReport report)
-        {
-            if (TipEnabled)
-            {
-                float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
-                var binding = TipBinding;
-                bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
-
-                if (pressurePercent >= TipActivationPressure && !isButtonPressed)
-                    CursorHandler.MouseDown(binding);
-                else if (pressurePercent < TipActivationPressure && isButtonPressed)
-                    CursorHandler.MouseUp(binding);
-            }
-
-            for (var penButton = 0; penButton < 2; penButton++)
-            {
-                MouseButton binding = PenButtonBindings[penButton];
-                bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
-                
-                if (report.PenButtons[penButton] && !PenButtonStates[penButton] && !isButtonPressed)
-                    CursorHandler.MouseDown(binding);
-                else if (!report.PenButtons[penButton] && PenButtonStates[penButton] && isButtonPressed)
-                    CursorHandler.MouseUp(binding);
-                
-                PenButtonStates[penButton] = report.PenButtons[penButton];
-            }
-        }
-
-        public override void Aux(IAuxReport report)
-        {
-            for (var auxButton = 0; auxButton < 4; auxButton++)
-            {
-                MouseButton binding = AuxButtonBindings[auxButton];
-                bool isButtonPressed = CursorHandler.GetMouseButtonState(binding);
-
-                if (report.AuxButtons[auxButton] && !isButtonPressed)
-                    CursorHandler.MouseDown(binding);
-                else if (!report.AuxButtons[auxButton] && isButtonPressed)
-                    CursorHandler.MouseUp(binding);
-            }
         }
     }
 }

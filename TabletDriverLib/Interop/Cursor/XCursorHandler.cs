@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using TabletDriverLib.Component;
 using TabletDriverLib.Interop.Converters;
 using NativeLib.Linux;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Cursor
 {
@@ -27,20 +27,18 @@ namespace TabletDriverLib.Interop.Cursor
         public void Dispose()
         {
             XCloseDisplay(Display);
-            InputDictionary = null;
         }
 
         private int _offsetX, _offsetY;
 
         private Display Display;
         private Window RootWindow;
-        private InputDictionary InputDictionary = new InputDictionary();
         private static XButtonConverter Converter = new XButtonConverter();
 
         public Point GetCursorPosition()
         {
             XQueryPointer(Display, RootWindow, out var root, out var child, out var x, out var y, out var winX, out var winY, out var mask);
-                return new Point((int)x + _offsetX, (int)y + _offsetY);
+                return new Point((int)x, (int)y);
         }
 
         public void SetCursorPosition(Point pos)
@@ -53,26 +51,20 @@ namespace TabletDriverLib.Interop.Cursor
         private void UpdateMouseButtonState(MouseButton button, bool isPressed)
         {
             var xButton = Converter.Convert(button);
-            InputDictionary.UpdateState(button, isPressed);
             XTestFakeButtonEvent(Display, xButton, isPressed, 0L);
             XFlush(Display);
         }
 
         public void MouseDown(MouseButton button)
         {   
-            if (button != MouseButton.None && !GetMouseButtonState(button))
+            if (button != MouseButton.None)
                 UpdateMouseButtonState(button, true);
         }
 
         public void MouseUp(MouseButton button)
         {
-            if (button != MouseButton.None && GetMouseButtonState(button))
+            if (button != MouseButton.None)
                 UpdateMouseButtonState(button, false);
-        }
-
-        public bool GetMouseButtonState(MouseButton button)
-        {
-            return InputDictionary.TryGetValue(button, out var state) ? state : false;
         }
     }
 }

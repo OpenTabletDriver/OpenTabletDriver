@@ -6,6 +6,7 @@ namespace NativeLib.Linux
     using IntPtr = IntPtr;
     using Display = IntPtr;
     using Window = IntPtr;
+    using KeySym = IntPtr;
     
     public class XLib
     {
@@ -27,6 +28,12 @@ namespace NativeLib.Linux
 
         [DllImport(libXtst, EntryPoint = "XTestFakeKeyEvent")]
         public static extern int XTestFakeKeyEvent(Display display, uint keycode, bool is_press, ulong delay);
+
+        [DllImport(libX11, EntryPoint = "XStringToKeysym")]
+        public static extern KeySym XStringToKeysym(string keyname);
+
+        [DllImport(libX11, EntryPoint = "XKeysymToKeycode")]
+        public static extern uint XKeysymToKeycode(Display display, KeySym keysym);
 
         [DllImport(libX11, EntryPoint = "XOpenDisplay")]
         private extern unsafe static IntPtr sys_XOpenDisplay(char* display);

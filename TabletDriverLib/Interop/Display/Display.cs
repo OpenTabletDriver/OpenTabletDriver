@@ -1,10 +1,10 @@
-﻿using TabletDriverLib.Component;
+﻿using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Display
 {
-    internal class ManualDisplay : IDisplay
+    internal class Display : IDisplay
     {
-        internal ManualDisplay(float width, float height, Point position, int index = 0)
+        internal Display(float width, float height, Point position, int index = 0)
         {
             Width = width;
             Height = height;
