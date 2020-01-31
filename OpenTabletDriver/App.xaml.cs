@@ -4,10 +4,9 @@ using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Controls.ApplicationLifetimes;
-using OpenTabletDriver.ViewModels;
-using OpenTabletDriver.Views;
 using Avalonia.Controls;
 using System.Collections.Generic;
+using OpenTabletDriver.Windows;
 
 namespace OpenTabletDriver
 {

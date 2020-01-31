@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace OpenTabletDriver.ViewModels
+namespace OpenTabletDriver
 {
     public class ViewModelBase : ReactiveObject
     {

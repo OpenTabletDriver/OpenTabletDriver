@@ -1,13 +1,10 @@
-using System;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Controls;
-using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Markup.Xaml;
-using Avalonia.VisualTree;
 
-namespace OpenTabletDriver.Views
+namespace OpenTabletDriver.Controls
 {
     public class AreaSetter : UserControl
     {
@@ -28,7 +25,7 @@ namespace OpenTabletDriver.Views
         }
 
         private bool IsDragging { set; get; }
-        private Nullable<Point> LastPosition { set; get; }
+        private Point? LastPosition { set; get; }
 
         private void AreaPointerPressed(object sender, PointerPressedEventArgs e)
         {
@@ -88,12 +85,12 @@ namespace OpenTabletDriver.Views
 
         private void AlignHorizontal(bool isLeft)
         {
-            AreaXOffset = isLeft ? AreaWidth / 2 : BackgroundWidth - (AreaWidth / 2);
+            AreaXOffset = isLeft ? AreaWidth / 2 : BackgroundWidth - AreaWidth / 2;
         }
 
         private void AlignVertical(bool isTop)
         {
-            AreaYOffset = isTop ? AreaHeight / 2 : BackgroundHeight - (AreaHeight / 2);
+            AreaYOffset = isTop ? AreaHeight / 2 : BackgroundHeight - AreaHeight / 2;
         }
 
         private void ResetArea()
@@ -119,7 +116,7 @@ namespace OpenTabletDriver.Views
             get => GetValue(TitleProperty);
         }
 
-        public static readonly StyledProperty<string> UnitProperty = 
+        public static readonly StyledProperty<string> UnitProperty =
             AvaloniaProperty.Register<AreaSetter, string>(nameof(MeasurementUnit), defaultBindingMode: BindingMode.TwoWay);
 
         public string MeasurementUnit
@@ -130,7 +127,7 @@ namespace OpenTabletDriver.Views
 
         public static readonly StyledProperty<float> AreaWidthProperty =
             AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaWidth), defaultBindingMode: BindingMode.TwoWay);
-        
+
         public float AreaWidth
         {
             set => SetValue(AreaWidthProperty, value);
@@ -146,7 +143,7 @@ namespace OpenTabletDriver.Views
             get => GetValue(AreaHeightProperty);
         }
 
-        public static readonly StyledProperty<float> AreaXOffsetProperty = 
+        public static readonly StyledProperty<float> AreaXOffsetProperty =
             AvaloniaProperty.Register<AreaSetter, float>(nameof(AreaXOffset), defaultBindingMode: BindingMode.TwoWay);
 
         public float AreaXOffset
@@ -164,7 +161,7 @@ namespace OpenTabletDriver.Views
             get => GetValue(AreaYOffsetProperty);
         }
 
-        public static readonly StyledProperty<float> BackgroundWidthProperty = 
+        public static readonly StyledProperty<float> BackgroundWidthProperty =
             AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundWidth), defaultBindingMode: BindingMode.TwoWay);
 
         public float BackgroundWidth
@@ -173,9 +170,9 @@ namespace OpenTabletDriver.Views
             get => GetValue(BackgroundWidthProperty);
         }
 
-        public static readonly StyledProperty<float> BackgroundHeightProperty = 
+        public static readonly StyledProperty<float> BackgroundHeightProperty =
         AvaloniaProperty.Register<AreaSetter, float>(nameof(BackgroundHeight), defaultBindingMode: BindingMode.TwoWay);
-        
+
         public float BackgroundHeight
         {
             set => SetValue(BackgroundHeightProperty, value);
@@ -184,7 +181,7 @@ namespace OpenTabletDriver.Views
 
         public static readonly StyledProperty<bool> EnableRotationProperty =
         AvaloniaProperty.Register<AreaSetter, bool>(nameof(EnableRotation), defaultBindingMode: BindingMode.TwoWay);
-        
+
         public bool EnableRotation
         {
             set => SetValue(EnableRotationProperty, value);
@@ -193,7 +190,7 @@ namespace OpenTabletDriver.Views
 
         public static readonly StyledProperty<float> RotationAngleProperty =
         AvaloniaProperty.Register<AreaSetter, float>(nameof(RotationAngle), defaultBindingMode: BindingMode.TwoWay);
-        
+
         public float RotationAngle
         {
             set => SetValue(RotationAngleProperty, value);

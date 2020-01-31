@@ -9,7 +9,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using OpenTabletDriver.Models;
-using OpenTabletDriver.Views;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Interop;
@@ -21,7 +20,7 @@ using TabletDriverPlugin.Tablet;
 
 using Point = TabletDriverPlugin.Point;
 
-namespace OpenTabletDriver.ViewModels
+namespace OpenTabletDriver.Windows
 {
     public class MainWindowViewModel : ViewModelBase
     {
@@ -36,11 +35,11 @@ namespace OpenTabletDriver.ViewModels
 
             // Create new instance of the driver
             Driver = new Driver();
-            Driver.TabletSuccessfullyOpened += (sender, tablet) => 
+            Driver.TabletSuccessfullyOpened += (sender, tablet) =>
             {
                 FullTabletWidth = tablet.Width;
                 FullTabletHeight = tablet.Height;
-                
+
                 if (Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
                 {
                     Settings.TabletWidth = tablet.Width;
@@ -86,15 +85,15 @@ namespace OpenTabletDriver.ViewModels
                 await Task.Delay(100);
 
             var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
-                where !mode.IsInterface
-                where !mode.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
-                select mode.FullName;
+                              where !mode.IsInterface
+                              where !mode.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
+                              select mode.FullName;
             OutputModes = new ObservableCollection<string>(outputModes);
 
             var filters = from filter in PluginManager.GetChildTypes<IFilter>()
-                where !filter.IsInterface
-                where !filter.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
-                select filter.FullName;
+                          where !filter.IsInterface
+                          where !filter.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
+                          select filter.FullName;
             Filters = new ObservableCollection<string>(filters);
             Filters.Insert(0, "{Disable}");
         }
@@ -112,13 +111,13 @@ namespace OpenTabletDriver.ViewModels
         private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();
         private ObservableCollection<TabletProperties> _tablets;
         private ObservableCollection<string> _filters, _outputs;
-        
+
         public Settings Settings
         {
             set => this.RaiseAndSetIfChanged(ref _settings, value);
             get => _settings;
         }
-        
+
         public ObservableCollection<LogMessage> Messages
         {
             set => this.RaiseAndSetIfChanged(ref _messages, value);
@@ -137,7 +136,7 @@ namespace OpenTabletDriver.ViewModels
             get => _driver;
         }
 
-        public bool InputHooked 
+        public bool InputHooked
         {
             private set
             {
@@ -187,7 +186,7 @@ namespace OpenTabletDriver.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref _debugging, value);
                 Driver.Debugging = value;
-            } 
+            }
             get => _debugging;
         }
 
@@ -273,9 +272,9 @@ namespace OpenTabletDriver.ViewModels
         }
 
         #endregion
-        
+
         #region Control Collections
-        
+
         private ObservableCollection<AvaloniaObject> _filterControls = new ObservableCollection<AvaloniaObject>();
 
         public ObservableCollection<AvaloniaObject> FilterControls
@@ -317,9 +316,9 @@ namespace OpenTabletDriver.ViewModels
                 await Task.Delay(100);
 
             UpdatePluginSettings();
-            
+
             Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
-            
+
             if (Driver.OutputMode is IOutputMode mode)
             {
                 Log.Write("Settings", $"Using output mode '{Driver.OutputMode.GetType().FullName}'");
@@ -331,7 +330,7 @@ namespace OpenTabletDriver.ViewModels
                 else
                     Log.Write("Settings", $"Failed to get filter '{Settings.ActiveFilterName}'.", true);
 
-                Dispatcher.UIThread.Post(() => 
+                Dispatcher.UIThread.Post(() =>
                 {
                     var controls = PropertyTools.GetPropertyControls(mode.Filter, "Driver.OutputMode.Filter", Settings.PluginSettings);
                     FilterControls = new ObservableCollection<AvaloniaObject>(controls);
@@ -358,7 +357,7 @@ namespace OpenTabletDriver.ViewModels
                     Rotation = Settings.DisplayRotation
                 };
                 Log.Write("Settings", $"Set display area: " + absolute.Output);
-                
+
                 absolute.Input = new Area
                 {
                     Width = Settings.TabletWidth,
@@ -367,7 +366,7 @@ namespace OpenTabletDriver.ViewModels
                     Rotation = Settings.TabletRotation
                 };
                 Log.Write("Settings", $"Set tablet area:  " + absolute.Input);
-                
+
                 absolute.AreaClipping = Settings.EnableClipping;
                 Log.Write("Settings", "Clipping is " + (absolute.AreaClipping ? "enabled" : "disabled"));
             }
@@ -391,7 +390,7 @@ namespace OpenTabletDriver.ViewModels
                 {
                     for (int index = 0; index < Settings.PenButtons.Count; index++)
                         bindingHandler.PenButtonBindings[index] = Tools.BindingTool.GetBinding(Settings.PenButtons[index]);
-                    
+
                     Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
                 }
 
@@ -399,7 +398,7 @@ namespace OpenTabletDriver.ViewModels
                 {
                     for (int index = 0; index < Settings.AuxButtons.Count; index++)
                         bindingHandler.AuxButtonBindings[index] = Tools.BindingTool.GetBinding(Settings.AuxButtons[index]);
-                    
+
                     Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
                 }
             }
@@ -554,7 +553,7 @@ namespace OpenTabletDriver.ViewModels
             BackgroundTaskActive = true;
             if (!directory.Exists)
                 directory.Create();
-            
+
             var files = directory.GetFiles();
             foreach (var plugin in files)
             {
@@ -583,9 +582,9 @@ namespace OpenTabletDriver.ViewModels
                 foreach (var property in obj.GetType().GetProperties())
                 {
                     var attributes = from attr in property.GetCustomAttributes(false)
-                        where attr is PropertyAttribute
-                        select attr as PropertyAttribute;
-                    
+                                     where attr is PropertyAttribute
+                                     select attr as PropertyAttribute;
+
                     if (attributes.Count() > 0)
                         yield return (property.Name, property.GetValue(obj).ToString());
                 }
@@ -636,8 +635,8 @@ namespace OpenTabletDriver.ViewModels
             }
             else
             {
-                Settings.DisplayX = display.Position.X + (display.Width / 2) + VirtualScreen.Position.X;
-                Settings.DisplayY = display.Position.Y + (display.Height / 2) + VirtualScreen.Position.Y;
+                Settings.DisplayX = display.Position.X + display.Width / 2 + VirtualScreen.Position.X;
+                Settings.DisplayY = display.Position.Y + display.Height / 2 + VirtualScreen.Position.Y;
             }
         }
 

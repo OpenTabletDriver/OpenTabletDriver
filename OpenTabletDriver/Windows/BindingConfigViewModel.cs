@@ -12,7 +12,7 @@ using TabletDriverPlugin.Attributes;
 using AvaloniaKey = Avalonia.Input.Key;
 using AvaloniaMouse = Avalonia.Input.MouseButton;
 
-namespace OpenTabletDriver.ViewModels
+namespace OpenTabletDriver.Windows
 {
     public class BindingConfigViewModel : ViewModelBase
     {
@@ -76,7 +76,7 @@ namespace OpenTabletDriver.ViewModels
             set
             {
                 var type = this.RaiseAndSetIfChanged(ref _custom, value);
-                Binding = (type?.FullName + ", " + Property) ?? string.Empty;
+                Binding = type?.FullName + ", " + Property ?? string.Empty;
             }
             get => _custom;
         }
@@ -87,7 +87,7 @@ namespace OpenTabletDriver.ViewModels
             set
             {
                 var property = this.RaiseAndSetIfChanged(ref _property, value);
-                Binding = (SelectedCustom?.FullName + ", " + property) ?? string.Empty;
+                Binding = SelectedCustom?.FullName + ", " + property ?? string.Empty;
             }
             get => _property;
         }
@@ -95,15 +95,15 @@ namespace OpenTabletDriver.ViewModels
         public void RefreshTypes()
         {
             var types = from type in PluginManager.GetChildTypes<IBinding>()
-                where !type.IsInterface
-                where !type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
-                where type != typeof(MouseBinding)
-                where type != typeof(KeyBinding)
-                select type;
+                        where !type.IsInterface
+                        where !type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
+                        where type != typeof(MouseBinding)
+                        where type != typeof(KeyBinding)
+                        select type;
             BindingTypes = new ObservableCollection<Type>(types);
         }
 
-        #pragma warning disable 618
+#pragma warning disable 618
 
         public void CreateMouseBindingView()
         {
@@ -119,7 +119,7 @@ namespace OpenTabletDriver.ViewModels
             }
         }
 
-        #pragma warning restore 618
+#pragma warning restore 618
 
         public void CreateKeyBindingView()
         {

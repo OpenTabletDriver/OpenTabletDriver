@@ -1,20 +1,16 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namesplace:System"
-        xmlns:vm="clr-namespace:OpenTabletDriver.ViewModels;assembly=OpenTabletDriver"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ns="clr-namespace:OpenTabletDriver.Views;assembly=OpenTabletDriver"
+        xmlns:ns="clr-namespace:OpenTabletDriver.Controls;assembly=OpenTabletDriver"
         xmlns:cursor="clr-namespace:TabletDriverLib.Interop.Cursor;assembly=TabletDriverLib"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="OpenTabletDriver.Views.MainWindow"
+        x:Class="OpenTabletDriver.Windows.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
         Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=1280}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=720}"
         MinWidth="960" MinHeight="720"
         Title="OpenTabletDriver">
-    <Design.DataContext>
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
     <Window.Styles>
         <Style Selector="TextBlock.h1">
             <Setter Property="VerticalAlignment" Value="Top"/>

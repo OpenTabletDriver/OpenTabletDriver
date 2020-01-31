@@ -5,7 +5,7 @@
              xmlns:ns="clr-namespace:OpenTabletDriver.Views;assembly=OpenTabletDriver"
              xmlns:cvt="clr-namespace:OpenTabletDriver.Converters;assembly=OpenTabletDriver"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="OpenTabletDriver.Views.AreaSetter">
+             x:Class="OpenTabletDriver.Controls.AreaSetter">
     <UserControl.Styles>
         <Style Selector="Border">
             <Setter Property="Margin" Value="5"/>

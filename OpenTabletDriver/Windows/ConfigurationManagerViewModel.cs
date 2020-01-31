@@ -12,22 +12,22 @@ using System.Linq;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
-namespace OpenTabletDriver.ViewModels
+namespace OpenTabletDriver.Windows
 {
     public class ConfigurationManagerViewModel : ViewModelBase
     {
         public ConfigurationManagerViewModel()
         {
             var reportParsers = from parser in PluginManager.GetChildTypes<IDeviceReportParser>()
-                where !parser.IsInterface
-                select parser.FullName;
+                                where !parser.IsInterface
+                                select parser.FullName;
             ReportParsers = new ObservableCollection<string>(reportParsers);
         }
 
         #region Properties
-        
+
         private static DirectoryInfo LastDirectory;
-        
+
         private ObservableCollection<HidDevice> _devices;
         private ObservableCollection<TabletProperties> _cfgs;
         private TabletProperties _tabletProperties;
@@ -63,7 +63,7 @@ namespace OpenTabletDriver.ViewModels
             set => this.RaiseAndSetIfChanged(ref _reportHandlers, value);
             get => _reportHandlers;
         }
-            
+
         #endregion
 
         public void New()
@@ -77,7 +77,7 @@ namespace OpenTabletDriver.ViewModels
             Configurations.Add(config);
             Selected = config;
         }
-        
+
         public void CreateFrom(HidDevice device)
         {
             var config = new TabletProperties()
@@ -128,7 +128,7 @@ namespace OpenTabletDriver.ViewModels
                     var match = regex.Match(configuration.TabletName);
                     var manufacturer = match.Groups["Manufacturer"].Value;
                     var tabletName = match.Groups["TabletName"].Value;
-                    
+
                     var path = Path.Join(directory.FullName, manufacturer, string.Format("{0}.xml", tabletName));
                     var file = new FileInfo(path);
                     configuration.Write(file);

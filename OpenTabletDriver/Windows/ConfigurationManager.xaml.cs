@@ -1,11 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace OpenTabletDriver.Views
+namespace OpenTabletDriver.Windows
 {
-    public class MainWindow : Window
+    public class ConfigurationManager : Window
     {
-        public MainWindow()
+        public ConfigurationManager()
         {
             InitializeComponent();
         }

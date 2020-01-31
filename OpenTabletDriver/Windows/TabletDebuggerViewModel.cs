@@ -7,15 +7,15 @@ using TabletDriverLib;
 using TabletDriverLib.Tablet;
 using TabletDriverPlugin.Tablet;
 
-namespace OpenTabletDriver.ViewModels
+namespace OpenTabletDriver.Windows
 {
     public class TabletDebuggerViewModel : ViewModelBase, IDisposable
     {
         public TabletDebuggerViewModel(params DeviceReader<IDeviceReport>[] deviceReaders)
         {
             _readers = from r in deviceReaders
-                where r != null
-                select r;
+                       where r != null
+                       select r;
 
             foreach (var reader in _readers)
                 reader.Report += HandleReport;

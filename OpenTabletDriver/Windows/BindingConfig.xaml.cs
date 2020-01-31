@@ -1,8 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using OpenTabletDriver.ViewModels;
 
-namespace OpenTabletDriver.Views
+namespace OpenTabletDriver.Windows
 {
     public class BindingConfig : Window
     {
@@ -21,7 +20,7 @@ namespace OpenTabletDriver.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            
+
             // Focus keybinding setup on tab change
             var tabctrl = this.Find<TabControl>("TabCtrl");
             var keybindTab = this.Find<TabItem>("KeybindTab");
