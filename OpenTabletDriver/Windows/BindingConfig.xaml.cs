@@ -3,17 +3,16 @@ using Avalonia.Markup.Xaml;
 
 namespace OpenTabletDriver.Windows
 {
-    public class BindingConfig : Window
+    public class BindingConfig : Window, IViewModelRoot<BindingConfigViewModel>
     {
-        public BindingConfig(string binding)
+        public BindingConfig(string binding) : this()
         {
-            DataContext = new BindingConfigViewModel(binding);
-            InitializeComponent();
+            ViewModel = new BindingConfigViewModel(binding);
         }
 
         public BindingConfig()
         {
-            DataContext = new BindingConfigViewModel();
+            ViewModel = new BindingConfigViewModel();
             InitializeComponent();
         }
 

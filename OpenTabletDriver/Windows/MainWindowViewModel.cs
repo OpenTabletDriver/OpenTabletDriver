@@ -290,7 +290,7 @@ namespace OpenTabletDriver.Windows
         public async Task ShowAbout()
         {
             var about = new About();
-            await about.ShowDialog(App.MainWindow);
+            await about.ShowDialog(this.GetRootWindow());
         }
 
         public void DetectTablet()
@@ -456,14 +456,14 @@ namespace OpenTabletDriver.Windows
                     Devices = Driver.Devices.ToList().ToObservableCollection()
                 }
             };
-            await cfgMgr.ShowDialog(App.MainWindow);
+            await cfgMgr.ShowDialog(this.GetRootWindow());
             DetectTablet();
         }
 
         public async Task OpenTabletConfigurationFolder()
         {
             var fd = new OpenFolderDialog();
-            var path = await fd.ShowAsync(App.MainWindow);
+            var path = await fd.ShowAsync(this.GetRootWindow());
             if (path != null)
             {
                 var directory = new DirectoryInfo(path);
@@ -475,7 +475,7 @@ namespace OpenTabletDriver.Windows
         public async Task LoadSettingsDialog()
         {
             var fd = FileDialogs.CreateOpenFileDialog("Open settings", "XML Document", "xml");
-            var result = await fd.ShowAsync(App.MainWindow);
+            var result = await fd.ShowAsync(this.GetRootWindow());
             if (result != null)
             {
                 var file = new FileInfo(result[0]);
@@ -486,7 +486,7 @@ namespace OpenTabletDriver.Windows
         public async Task SaveSettingsDialog()
         {
             var fd = FileDialogs.CreateSaveFileDialog("Saving settings", "XML Document", "xml");
-            var path = await fd.ShowAsync(App.MainWindow);
+            var path = await fd.ShowAsync(this.GetRootWindow());
             if (path != null)
             {
                 var file = new FileInfo(path);
@@ -644,7 +644,7 @@ namespace OpenTabletDriver.Windows
         {
             var binding = GetBinding(bindingSource);
             var bindingConfig = new BindingConfig(binding);
-            await bindingConfig.ShowDialog(App.MainWindow);
+            await bindingConfig.ShowDialog(this.GetRootWindow());
             SetBinding(bindingSource, bindingConfig.Binding);
         }
 

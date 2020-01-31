@@ -5,7 +5,7 @@ using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Windows
 {
-    public class TabletDebugger : Window
+    public class TabletDebugger : Window, IViewModelRoot<TabletDebuggerViewModel>
     {
         public TabletDebugger(params DeviceReader<IDeviceReport>[] deviceReaders) : this()
         {
@@ -20,6 +20,12 @@ namespace OpenTabletDriver.Windows
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        public TabletDebuggerViewModel ViewModel
+        {
+            set => DataContext = value;
+            get => (TabletDebuggerViewModel)DataContext;
         }
     }
 }

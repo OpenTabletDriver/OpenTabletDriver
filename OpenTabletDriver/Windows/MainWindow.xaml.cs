@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 
 namespace OpenTabletDriver.Windows
 {
-    public class MainWindow : Window
+    public class MainWindow : Window, IViewModelRoot<MainWindowViewModel>
     {
         public MainWindow()
         {
@@ -13,6 +13,12 @@ namespace OpenTabletDriver.Windows
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        public MainWindowViewModel ViewModel
+        {
+            set => DataContext = value;
+            get => (MainWindowViewModel)DataContext;
         }
     }
 }
