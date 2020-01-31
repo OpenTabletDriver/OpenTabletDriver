@@ -22,9 +22,9 @@
   <ItemGroup>
     <ProjectReference Include="..\TabletDriverLib\TabletDriverLib.csproj" />
     <PackageReference Include="System.CommandLine.Experimental" Version="0.3.0-alpha.19577.1" />
-    <PackageReference Include="Avalonia" Version="0.9.1" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.1" />
+    <PackageReference Include="Avalonia" Version="0.9.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.9.2" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.2" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="mscorlib" />

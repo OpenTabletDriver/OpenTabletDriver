@@ -85,12 +85,12 @@ namespace OpenTabletDriver.Controls
 
         private void AlignHorizontal(bool isLeft)
         {
-            AreaXOffset = isLeft ? AreaWidth / 2 : BackgroundWidth - AreaWidth / 2;
+            AreaXOffset = isLeft ? AreaWidth / 2 : BackgroundWidth - (AreaWidth / 2);
         }
 
         private void AlignVertical(bool isTop)
         {
-            AreaYOffset = isTop ? AreaHeight / 2 : BackgroundHeight - AreaHeight / 2;
+            AreaYOffset = isTop ? AreaHeight / 2 : BackgroundHeight - (AreaHeight / 2);
         }
 
         private void ResetArea()

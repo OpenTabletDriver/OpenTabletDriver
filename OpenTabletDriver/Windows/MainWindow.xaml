@@ -318,9 +318,8 @@
                             </Grid>
                         </Border>
                         <ItemsControl Grid.Row="1" Items="{Binding FilterControls}">
-                                <!-- TODO: Fix filter controls -->
                             <ItemsControl.Styles>
-                                <Style Selector="ItemsControl > Border">
+                                <Style Selector="Border">
                                     <Setter Property="BorderThickness" Value="1"/>
                                     <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
                                 </Style>

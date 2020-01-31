@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using OpenTabletDriver.Models;
 using OpenTabletDriver.Plugins;
 using OpenTabletDriver.Tools;
@@ -13,7 +14,6 @@ using TabletDriverLib;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Display;
 using TabletDriverPlugin;
-using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
 
@@ -212,6 +212,7 @@ namespace OpenTabletDriver.Windows
                 if (value == PluginReference.Disable)
                     value = null;
                 Settings.ActiveFilterName = value?.Path;
+                FilterTemplate = value?.Construct<IFilter>();
                 this.RaiseAndSetIfChanged(ref _filter, value);
             }
             get => _filter;
@@ -224,8 +225,20 @@ namespace OpenTabletDriver.Windows
             get => _outputModes;
         }
 
-        private ObservableCollection<Control> _filterControls = new ObservableCollection<Control>();
-        public ObservableCollection<Control> FilterControls
+        private IFilter _filterTemplate;
+        public IFilter FilterTemplate
+        {
+            set
+            {
+                var controls = PropertyTools.GetPropertyControls(value, "FilterTemplate", Settings.PluginSettings);
+                FilterControls = new ObservableCollection<IControl>(controls);
+                this.RaiseAndSetIfChanged(ref _filterTemplate, value);
+            }
+            get => _filterTemplate;
+        }
+
+        private ObservableCollection<IControl> _filterControls = new ObservableCollection<IControl>();
+        public ObservableCollection<IControl> FilterControls
         {
             set => this.RaiseAndSetIfChanged(ref _filterControls, value);
             get => _filterControls;
@@ -263,8 +276,11 @@ namespace OpenTabletDriver.Windows
 
         private void LogOutput(LogMessage message)
         {
-            Messages.Add(message);
-            StatusMessage = message;
+            Dispatcher.UIThread.Post(() => 
+            {
+                Messages.Add(message);
+                StatusMessage = message;
+            });
         }
 
         #endregion
@@ -366,6 +382,7 @@ namespace OpenTabletDriver.Windows
             if (Driver.OutputMode is IOutputMode outputMode)
             {                
                 outputMode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
+                FilterTemplate.CopyPropertiesTo(outputMode.Filter);
                 if (outputMode.Filter != null)
                     Log.Write("Settings", $"Filter: {outputMode.Filter.GetType().FullName}");
                 
@@ -664,8 +681,8 @@ namespace OpenTabletDriver.Windows
             }
             else
             {
-                Settings.DisplayX = display.Position.X + display.Width / 2 + VirtualScreen.Position.X;
-                Settings.DisplayY = display.Position.Y + display.Height / 2 + VirtualScreen.Position.Y;
+                Settings.DisplayX = display.Position.X + VirtualScreen.Position.X + (display.Width / 2);
+                Settings.DisplayY = display.Position.Y + VirtualScreen.Position.Y + (display.Height / 2);
             }
         }
 
