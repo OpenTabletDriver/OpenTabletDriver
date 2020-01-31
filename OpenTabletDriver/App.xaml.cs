@@ -17,33 +17,29 @@ namespace OpenTabletDriver
             AvaloniaXamlLoader.Load(this);
         }
 
-        public override void OnFrameworkInitializationCompleted()
+        public override async void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Program.UnhandledException);
 
-                var viewModel = new MainWindowViewModel();
-                viewModel.Initialize();
-                MainWindow = new MainWindow
-                {
-                    DataContext = viewModel
-                };
+                MainWindow = new MainWindow();
+                await MainWindow.ViewModel.Initialize();
                 MainWindow.Show();
             }
             base.OnFrameworkInitializationCompleted();
         }
 
-        public void SetTheme(StyleInclude style)
+        public static void SetTheme(StyleInclude style)
         {
-            Styles[1] = style;
+            App.Current.Styles[1] = style;
         }
 
         public static void Restart(MainWindowViewModel vm)
         {
-            MainWindow = new MainWindow()
+            MainWindow = new MainWindow
             {
-                DataContext = vm
+                ViewModel = vm
             };
             MainWindow.Show();
             

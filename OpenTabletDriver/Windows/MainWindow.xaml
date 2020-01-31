@@ -42,7 +42,7 @@
                 <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
             </MenuItem>
             <MenuItem Header="Settings">
-                <MenuItem Header="Reset to defaults" Command="{Binding UseDefaultSettings}"/>
+                <MenuItem Header="Reset to defaults" Command="{Binding ResetToDefaults}"/>
                 <MenuItem Header="Reset window size" Command="{Binding ResetWindowSize}"/>
                 <MenuItem Header="Load..." Command="{Binding LoadSettingsDialog}"/>
                 <MenuItem Header="Save" Command="{Binding SaveSettings}"/>
@@ -50,7 +50,7 @@
                 <MenuItem Header="Themes">
                     <MenuItem.Styles>
                         <Style Selector="MenuItem">
-                            <Setter Property="Command" Value="{Binding SetTheme}"/>
+                            <Setter Property="Command" Value="{Binding UpdateTheme}"/>
                         </Style>
                     </MenuItem.Styles>
                     <MenuItem Header="Light" CommandParameter="Light"/>
@@ -58,15 +58,20 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="Tablets">
-                <MenuItem Header="Detect tablet" Command="{Binding DetectTablet}"/>
+                <MenuItem Header="Detect tablet" Command="{Binding DetectTablets}"/>
                 <MenuItem Header="Open tablet debugger..." Command="{Binding OpenTabletDebugger}"/>
                 <MenuItem Header="Open configuration manager..." Command="{Binding OpenConfigurationManager}"/>
                 <MenuItem Header="Load configuration directory..." Command="{Binding OpenTabletConfigurationFolder}"/>
             </MenuItem>
             <MenuItem Header="Output Mode" Items="{Binding OutputModes}">
+                <MenuItem.ItemTemplate>
+                    <DataTemplate>
+                        <MenuItem Header="{Binding Name}" CommandParameter="{Binding Path}"/>
+                    </DataTemplate>
+                </MenuItem.ItemTemplate>
                 <MenuItem.Styles>
                     <Style Selector="MenuItem > MenuItem">
-                        <Setter Property="Command" Value="{Binding $parent[Window].DataContext.SetMode}"/>
+                        <Setter Property="Command" Value="{Binding $parent[Window].DataContext.SetOutputMode}"/>
                         <Setter Property="CommandParameter" Value="{Binding}"/>
                     </Style>
                 </MenuItem.Styles>
@@ -104,8 +109,8 @@
                             AreaXOffset="{Binding Settings.TabletX}"
                             AreaYOffset="{Binding Settings.TabletY}"
                             RotationAngle="{Binding Settings.TabletRotation}"
-                            BackgroundWidth="{Binding FullTabletWidth}"
-                            BackgroundHeight="{Binding FullTabletHeight}"/>
+                            BackgroundWidth="{Binding Tablet.Width}"
+                            BackgroundHeight="{Binding Tablet.Height}"/>
                         <Border Classes="r" Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
                             <StackPanel Orientation="Horizontal" Margin="5">
                                 <StackPanel.Styles>
@@ -172,7 +177,7 @@
                     </Grid>
                 </Border>
             </TabItem>
-            <TabItem Header="Bindings" IsVisible="{Binding CanBind}">
+            <TabItem Header="Bindings" IsVisible="{Binding IsBindable}">
                 <Border>
                     <UniformGrid Rows="1">
                         <UniformGrid.Styles>
@@ -187,8 +192,8 @@
                             </Style>
                             <Style Selector="ItemsControl > Border > Grid">
                             </Style>
-                            <Style Selector="Border > Grid > Button">
-                                <Setter Property="Command" Value="{Binding SetBinding}"/>
+                            <Style Selector="Button.bind">
+                                <Setter Property="Command" Value="{Binding UpdateBinding}"/>
                                 <Setter Property="Margin" Value="5"/>
                             </Style>
                             <Style Selector="ItemsControl > Border > Grid > TextBlock">
@@ -223,7 +228,9 @@
                                     <Border>
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Grid.Row="0" Text="Tip Button"/>
-                                            <Button Grid.Row="1" Content="{Binding Settings.TipButton}" Command="{Binding SetBinding}" CommandParameter="TipButton"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.TipButton}"
+                                                CommandParameter="TipButton"/>
                                         </Grid>
                                     </Border>
                                 </ItemsControl>
@@ -236,13 +243,17 @@
                                     <Border>
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Pen Button 1"/>
-                                            <Button Grid.Row="1" Content="{Binding Settings.PenButtons[0]}" CommandParameter="PenButtons[0]"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.PenButtons[0]}"
+                                                CommandParameter="PenButtons[0]"/>
                                         </Grid>
                                     </Border>
                                     <Border>
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Pen Button 2"/>
-                                            <Button Grid.Row="1" Content="{Binding Settings.PenButtons[1]}" CommandParameter="PenButtons[1]"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.PenButtons[1]}"
+                                                CommandParameter="PenButtons[1]"/>
                                         </Grid>
                                     </Border>
                                 </ItemsControl>
@@ -252,33 +263,36 @@
                             <Grid RowDefinitions="Auto,*" Margin="5">
                                 <TextBlock Grid.Row="0" Text="Express Keys"/>
                                 <ItemsControl Grid.Row="1">
-                                    <ItemsControl.Styles>
-                                        <Style Selector="Button">
-                                            <Setter Property="Command" Value="{Binding SetBinding}"/>
-                                        </Style>
-                                    </ItemsControl.Styles>
                                     <Border>
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Express Key 1"/>
-                                            <Button Grid.Row="1" Content="{Binding Settings.AuxButtons[0]}" CommandParameter="AuxButtons[0]"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.AuxButtons[0]}"
+                                                CommandParameter="AuxButtons[0]"/>
                                         </Grid>
                                     </Border>
                                     <Border>
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Express Key 2"/>
-                                            <Button Grid.Row="1" Content="{Binding Settings.AuxButtons[1]}" CommandParameter="AuxButtons[1]"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.AuxButtons[1]}"
+                                                CommandParameter="AuxButtons[1]"/>
                                         </Grid>
                                     </Border>
                                     <Border>
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Express Key 3"/>
-                                            <Button Grid.Row="1" Content="{Binding Settings.AuxButtons[2]}" CommandParameter="AuxButtons[2]"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.AuxButtons[2]}"
+                                                CommandParameter="AuxButtons[2]"/>
                                         </Grid>
                                     </Border>
                                     <Border>
                                         <Grid RowDefinitions="Auto,*">
-                                            <TextBlock Text="Express Key 3"/>
-                                            <Button Grid.Row="1" Content="{Binding Settings.AuxButtons[3]}" CommandParameter="AuxButtons[3]"/>
+                                            <TextBlock Text="Express Key 4"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.AuxButtons[3]}"
+                                                CommandParameter="AuxButtons[3]"/>
                                         </Grid>
                                     </Border>
                                 </ItemsControl>
@@ -287,7 +301,7 @@
                     </UniformGrid>
                 </Border>
             </TabItem>
-            <TabItem Header="Filter" IsVisible="{Binding CanFilter}">
+            <TabItem Header="Filter" IsVisible="{Binding IsFilterable}">
                 <Border>
                     <Grid RowDefinitions="Auto,*">
                         <Grid.Styles>
@@ -299,11 +313,12 @@
                             <Grid RowDefinitions="Auto,*" Margin="5">
                                 <TextBlock Grid.Row="0" Text="Filter"/>
                                 <ComboBox Grid.Row="1" Margin="5"
-                                    Items="{Binding Filters}"
-                                    SelectedItem="{Binding Settings.ActiveFilterName}"/>
+                                    Items="{Binding PluginFilters}"
+                                    SelectedItem="{Binding CurrentFilter}"/>
                             </Grid>
                         </Border>
                         <ItemsControl Grid.Row="1" Items="{Binding FilterControls}">
+                                <!-- TODO: Fix filter controls -->
                             <ItemsControl.Styles>
                                 <Style Selector="ItemsControl > Border">
                                     <Setter Property="BorderThickness" Value="1"/>
@@ -323,16 +338,15 @@
                                 <Setter Property="Margin" Value="5,0,0,0"/>
                             </Style>
                         </StackPanel.Styles>
-                        <CheckBox Content="Debugging" IsChecked="{Binding Debugging}"/>
-                        <CheckBox Content="Raw Reports" IsChecked="{Binding RawReports}" IsVisible="{Binding Debugging}"/>
+                        <CheckBox Content="Debugging" IsChecked="{Binding Driver.Debugging}"/>
                     </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
         <Grid Grid.Row="2">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5">
-                <Button Content="Enable Driver" Command="{Binding ToggleHook}" IsVisible="{Binding !InputHooked}"/>
-                <Button Content="Disable Driver" Command="{Binding ToggleHook}" IsVisible="{Binding InputHooked}"/>
+                <Button Content="Enable Driver" Command="{Binding ToggleDriverEnabled}" IsVisible="{Binding !DriverEnabled}"/>
+                <Button Content="Disable Driver" Command="{Binding ToggleDriverEnabled}" IsVisible="{Binding DriverEnabled}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5">
                 <StackPanel.Styles>
@@ -340,8 +354,8 @@
                         <Setter Property="Margin" Value="5,0,0,0"/>
                     </Style>
                 </StackPanel.Styles>
-                <Button Content="Save Settings" Command="{Binding SaveSettings}"/>
-                <Button Content="Apply Settings" Command="{Binding ApplySettings}"/>
+                <Button Content="Save Settings" Command="{Binding SaveSettingsDefault}"/>
+                <Button Content="Apply Settings" Command="{Binding ApplySettings}" CommandParameter="{Binding $parent[Window].DataContext.Settings}"/>
             </StackPanel>
         </Grid>
         <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderMidBrush}">

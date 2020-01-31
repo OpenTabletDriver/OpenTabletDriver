@@ -6,9 +6,9 @@ namespace OpenTabletDriver
 {
     public class ViewModelBase : ReactiveObject
     {
-        public Window GetRootWindow() => GetRootWindow<Window>();
+        public Window GetParentWindow() => GetParentWindow<Window>();
 
-        public T GetRootWindow<T>() where T : Window
+        public T GetParentWindow<T>() where T : Window
         {
             var matching = from window in App.Windows
                 where window.DataContext == this

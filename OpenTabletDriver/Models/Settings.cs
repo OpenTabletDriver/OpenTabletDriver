@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
+using OpenTabletDriver.Plugins.Xml;
 using ReactiveUI;
 
 namespace OpenTabletDriver.Models
@@ -22,6 +23,7 @@ namespace OpenTabletDriver.Models
             TipActivationPressure = 1;
             AutoHook = true;
             EnableClipping = true;
+            PluginSettings = new SerializableDictionary<string, string>();
         }
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens;
@@ -34,11 +36,7 @@ namespace OpenTabletDriver.Models
         [XmlElement("Theme")]
         public string Theme
         {
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _theme, value);
-                (App.Current as App).SetTheme(Themes.Parse(value));
-            }
+            set => this.RaiseAndSetIfChanged(ref _theme, value);
             get => _theme;
         }
 

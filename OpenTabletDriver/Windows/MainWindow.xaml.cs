@@ -7,6 +7,7 @@ namespace OpenTabletDriver.Windows
     {
         public MainWindow()
         {
+            ViewModel = new MainWindowViewModel();
             InitializeComponent();
         }
 

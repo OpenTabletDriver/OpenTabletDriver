@@ -2,9 +2,9 @@ using System;
 
 namespace TabletDriverPlugin.Logging
 {
-    public struct LogMessage
+    public class LogMessage
     {
-        internal LogMessage(string group, string message, bool isError)
+        public LogMessage(string group, string message, bool isError)
         {
             Time = DateTime.Now;
             Group = group;

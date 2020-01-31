@@ -10,6 +10,11 @@ namespace OpenTabletDriver.Windows
             InitializeComponent();
         }
 
+        public ConfigurationManager(ConfigurationManagerViewModel viewModel) : this()
+        {
+            ViewModel = viewModel;
+        }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

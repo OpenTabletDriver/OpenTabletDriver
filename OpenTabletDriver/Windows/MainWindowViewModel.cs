@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Threading;
 using OpenTabletDriver.Models;
+using OpenTabletDriver.Plugins;
+using OpenTabletDriver.Tools;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Interop;
@@ -18,266 +17,215 @@ using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
 
-using Point = TabletDriverPlugin.Point;
-
 namespace OpenTabletDriver.Windows
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public async void Initialize()
+        public MainWindowViewModel()
         {
-            // Start logging
-            Log.Output += (sender, message) =>
-            {
-                Dispatcher.UIThread.Post(() => Messages.Add(message));
-                StatusMessage = message;
-            };
+        }
 
-            // Create new instance of the driver
+        public async Task Initialize()
+        {
+            Log.Output += HandleLogOutput;
+
             Driver = new Driver();
-            Driver.TabletSuccessfullyOpened += (sender, tablet) =>
-            {
-                FullTabletWidth = tablet.Width;
-                FullTabletHeight = tablet.Height;
 
-                if (Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
-                {
-                    Settings.TabletWidth = tablet.Width;
-                    Settings.TabletHeight = tablet.Height;
-                    Settings.TabletX = tablet.Width / 2;
-                    Settings.TabletY = tablet.Height / 2;
-                }
-
-                Driver.BindingEnabled = InputHooked;
-                ApplySettings();
-            };
-
-            // Use platform specific virtual screen
             VirtualScreen = Platform.VirtualScreen;
             Log.Write("Display", $"Detected displays: {string.Join(", ", VirtualScreen.Displays)}");
 
-            var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-            if (Load(new FileInfo(settingsPath)))
-            {
-                Log.Write("Settings", $"Loaded saved user settings from '{settingsPath}'");
-            }
-            else
-            {
-                Defaults();
-                Log.Write("Settings", "Using default settings.");
-            }
-
-            Log.Write("Settings", $"Configuration directory is '{Program.ConfigurationDirectory.FullName}'.");
-            Log.Write("Settings", $"Plugin directory is '{Program.PluginDirectory.FullName}'");
-            LoadPlugins(Program.PluginDirectory);
-            InitializePlugins();
-
-            // Find tablet configurations and try to open a tablet
             if (Program.ConfigurationDirectory.Exists)
-                await OpenConfigurations(Program.ConfigurationDirectory).ConfigureAwait(false);
+            {
+                Log.Write("Detect", $"Configuration directory: {Program.ConfigurationDirectory.FullName}");
+                var tablets = LoadTablets(Program.ConfigurationDirectory);
+                Tablets = new ObservableCollection<TabletProperties>(tablets);
+                DetectTablets();
+            }
+
+            if (Program.PluginDirectory.Exists)
+            {
+                Log.Write("Plugins", $"Plugin directory: {Program.PluginDirectory.FullName}");
+                await LoadPlugins(Program.PluginDirectory);
+            }
+
+            if (Program.SettingsDirectory.Exists)
+            {
+                var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
+                var settingsFile = new FileInfo(settingsPath);
+                if (settingsFile.Exists)
+                {
+                    var settings = LoadSettings(settingsFile);
+                    if (settings != null)
+                        ApplySettings(settings);
+                }
+                else
+                    ApplySettings(DefaultSettings);
+            }
             else
-                Tablets = new ObservableCollection<TabletProperties>();
+                ApplySettings(DefaultSettings);
+
+            UpdateTheme(Settings.Theme);
+            Log.Write("Settings", $"Using theme {Settings.Theme}");
         }
 
-        private async void InitializePlugins()
-        {
-            while (BackgroundTaskActive)
-                await Task.Delay(100);
-
-            var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
-                              where !mode.IsInterface
-                              where !mode.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
-                              select mode.FullName;
-            OutputModes = new ObservableCollection<string>(outputModes);
-
-            var filters = from filter in PluginManager.GetChildTypes<IFilter>()
-                          where !filter.IsInterface
-                          where !filter.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute))
-                          select filter.FullName;
-            Filters = new ObservableCollection<string>(filters);
-            Filters.Insert(0, "{Disable}");
-        }
-
-        #region Bindable Properties
-
-        private Settings _settings;
-        private LogMessage _status;
-        private Driver _driver;
-        private bool _hooked, _debugging, _rawReports;
-        public IVirtualScreen _scr;
-        private IDisplay _disp;
-        private float _fTabW, _fTabH;
-        private bool _pluginsLoading = true;
-        private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();
-        private ObservableCollection<TabletProperties> _tablets;
-        private ObservableCollection<string> _filters, _outputs;
-
-        public Settings Settings
-        {
-            set => this.RaiseAndSetIfChanged(ref _settings, value);
-            get => _settings;
-        }
-
+        #region Properties
+            
+        private ObservableCollection<LogMessage> _messages = new ObservableCollection<LogMessage>();        
         public ObservableCollection<LogMessage> Messages
         {
             set => this.RaiseAndSetIfChanged(ref _messages, value);
             get => _messages;
         }
 
+        private LogMessage _status;
         public LogMessage StatusMessage
         {
             set => this.RaiseAndSetIfChanged(ref _status, value);
             get => _status;
         }
-
-        private Driver Driver
+        
+        private Driver _driver;
+        public Driver Driver
         {
             set => this.RaiseAndSetIfChanged(ref _driver, value);
             get => _driver;
         }
 
-        public bool InputHooked
-        {
-            private set
-            {
-                Driver.BindingEnabled = value;
-                this.RaiseAndSetIfChanged(ref _hooked, value);
-            }
-            get => _hooked;
-        }
-
-        public IVirtualScreen VirtualScreen
-        {
-            set => this.RaiseAndSetIfChanged(ref _scr, value);
-            get => _scr;
-        }
-
-        private IDisplay SelectedDisplay
+        private Settings _settings;
+        public Settings Settings
         {
             set
             {
-                this.RaiseAndSetIfChanged(ref _disp, value);
-                SelectDisplay(SelectedDisplay);
+                this.RaiseAndSetIfChanged(ref _settings, value);
             }
-            get => _disp;
+            get => _settings;
         }
 
-        private float FullTabletWidth
-        {
-            set => this.RaiseAndSetIfChanged(ref _fTabW, value);
-            get => _fTabW;
-        }
-
-        private float FullTabletHeight
-        {
-            set => this.RaiseAndSetIfChanged(ref _fTabH, value);
-            get => _fTabH;
-        }
-
+        private ObservableCollection<TabletProperties> _tablets;
         public ObservableCollection<TabletProperties> Tablets
         {
             set => this.RaiseAndSetIfChanged(ref _tablets, value);
             get => _tablets;
         }
 
-        public bool Debugging
+        private TabletProperties _tablet;
+        public TabletProperties Tablet
+        {
+            set => this.RaiseAndSetIfChanged(ref _tablet, value);
+            get => _tablet;
+        }
+
+        private IVirtualScreen _virtualScreen;
+        public IVirtualScreen VirtualScreen
+        {
+            set => this.RaiseAndSetIfChanged(ref _virtualScreen, value);
+            get => _virtualScreen;
+        }
+
+        private IDisplay _selectedDisplay;
+        public IDisplay SelectedDisplay
         {
             set
             {
-                this.RaiseAndSetIfChanged(ref _debugging, value);
-                Driver.Debugging = value;
+                this.RaiseAndSetIfChanged(ref _selectedDisplay, value);
+                SelectDisplay(value);
             }
-            get => _debugging;
+            get => _selectedDisplay;
         }
 
-        public bool RawReports
+        public bool DriverEnabled
         {
             set
             {
-                this.RaiseAndSetIfChanged(ref _rawReports, value);
-                Driver.RawReports = value;
+                Driver.BindingEnabled = value;
+                this.RaisePropertyChanged();
             }
-            get => _rawReports;
-        }
-
-        public bool BackgroundTaskActive
-        {
-            set => this.RaiseAndSetIfChanged(ref _pluginsLoading, value);
-            get => _pluginsLoading;
-        }
-
-        public ObservableCollection<string> OutputModes
-        {
-            set => this.RaiseAndSetIfChanged(ref _outputs, value);
-            get => _outputs;
-        }
-
-        public ObservableCollection<string> Filters
-        {
-            set => this.RaiseAndSetIfChanged(ref _filters, value);
-            get => _filters;
+            get => Driver?.BindingEnabled ?? false;
         }
 
         #endregion
 
-        #region Control Visibility
-
-        private bool _isAbsolute, _isRelative, _canFilter, _canBind;
-        private int _tabIndex;
-
-        public int TabIndex
+        #region Plugins
+            
+        public async Task LoadPlugins(DirectoryInfo directory)
         {
-            set => this.RaiseAndSetIfChanged(ref _tabIndex, value);
-            get => _tabIndex;
+            foreach (var path in Directory.GetFiles(directory.FullName, "*.dll", SearchOption.AllDirectories))
+            {
+                var file = new FileInfo(path);
+                await PluginManager.AddPlugin(file);
+
+                var filters = from filter in PluginManager.GetChildTypes<IFilter>()
+                    where !filter.IsInterface
+                    where !filter.IsPluginIgnored()
+                    select new PluginReference(filter.FullName);
+                PluginFilters = new ObservableCollection<PluginReference>(filters);
+                PluginFilters.Insert(0, PluginReference.Disable);
+
+                var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
+                    where !mode.IsInterface
+                    where !mode.IsPluginIgnored()
+                    select new PluginReference(mode.FullName);
+                OutputModes = new ObservableCollection<PluginReference>(outputModes);
+            }
         }
 
+        private bool _absolute;
         public bool IsAbsolute
         {
-            set => this.RaiseAndSetIfChanged(ref _isAbsolute, value);
-            get => _isAbsolute;
+            set => this.RaiseAndSetIfChanged(ref _absolute, value);
+            get => _absolute;
         }
 
+        private bool _isRelative;
         public bool IsRelative
         {
             set => this.RaiseAndSetIfChanged(ref _isRelative, value);
             get => _isRelative;
         }
 
-        public bool CanFilter
+        private bool _isBindable;
+        public bool IsBindable
         {
-            set => this.RaiseAndSetIfChanged(ref _canFilter, value);
-            get => _canFilter;
+            set => this.RaiseAndSetIfChanged(ref _isBindable, value);
+            get => _isBindable;
         }
 
-        public bool CanBind
+        private bool _isFilterable;
+        public bool IsFilterable
         {
-            set => this.RaiseAndSetIfChanged(ref _canBind, value);
-            get => _canBind;
+            set => this.RaiseAndSetIfChanged(ref _isFilterable, value);
+            get => _isFilterable;
         }
 
-        private void UpdateVisibility()
+        private ObservableCollection<PluginReference> _pluginFilters;
+        public ObservableCollection<PluginReference> PluginFilters
         {
-            CanBind = Driver.OutputMode is IBindingHandler<IBinding>;
-            CanFilter = Driver.OutputMode is IOutputMode;
-            IsAbsolute = Driver.OutputMode is IAbsoluteMode;
-            IsRelative = Driver.OutputMode is IRelativeMode;
+            set => this.RaiseAndSetIfChanged(ref _pluginFilters, value);
+            get => _pluginFilters;
+        }
 
-            if (TabIndex <= 1)
+        private PluginReference _filter;
+        public PluginReference CurrentFilter
+        {
+            set
             {
-                if (IsAbsolute)
-                    TabIndex = 0;
-                else if (IsRelative)
-                    TabIndex = 1;
+                if (value == PluginReference.Disable)
+                    value = null;
+                Settings.ActiveFilterName = value?.Path;
+                this.RaiseAndSetIfChanged(ref _filter, value);
             }
+            get => _filter;
         }
 
-        #endregion
+        private ObservableCollection<PluginReference> _outputModes;
+        public ObservableCollection<PluginReference> OutputModes
+        {
+            set => this.RaiseAndSetIfChanged(ref _outputModes, value);
+            get => _outputModes;
+        }
 
-        #region Control Collections
-
-        private ObservableCollection<AvaloniaObject> _filterControls = new ObservableCollection<AvaloniaObject>();
-
-        public ObservableCollection<AvaloniaObject> FilterControls
+        private ObservableCollection<Control> _filterControls = new ObservableCollection<Control>();
+        public ObservableCollection<Control> FilterControls
         {
             set => this.RaiseAndSetIfChanged(ref _filterControls, value);
             get => _filterControls;
@@ -285,99 +233,185 @@ namespace OpenTabletDriver.Windows
 
         #endregion
 
-        #region Buttons
-
-        public async Task ShowAbout()
+        #region TabControl
+            
+        private int _tabIndex;
+        public int TabIndex
         {
-            var about = new About();
-            await about.ShowDialog(this.GetRootWindow());
+            set => this.RaiseAndSetIfChanged(ref _tabIndex, value);
+            get => _tabIndex;
         }
 
-        public void DetectTablet()
+        #endregion
+
+        #region Event Handlers
+
+        private void HandleLogOutput(object sender, LogMessage message)
         {
-            Driver.Open(Tablets);
-            if (Settings.AutoHook && Driver.Tablet != null)
-                InputHooked = true;
-        }
-
-        private async Task OpenConfigurations(DirectoryInfo directory)
-        {
-            List<FileInfo> configRepository = directory.EnumerateFiles().ToList();
-            foreach (var dir in directory.EnumerateDirectories())
-                configRepository.AddRange(dir.EnumerateFiles());
-
-            Tablets = configRepository.ConvertAll(file => TabletProperties.Read(file)).ToObservableCollection();
-            await Task.Run(DetectTablet);
-        }
-
-        public async void ApplySettings()
-        {
-            while (BackgroundTaskActive)
-                await Task.Delay(100);
-
-            UpdatePluginSettings();
-
-            Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
-
-            if (Driver.OutputMode is IOutputMode mode)
+            if (message is DebugLogMessage)
             {
-                Log.Write("Settings", $"Using output mode '{Driver.OutputMode.GetType().FullName}'");
-                mode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
-                if (mode.Filter != null)
-                    Log.Write("Settings", $"Using filter '{mode.Filter.GetType().FullName}'.");
-                else if (string.IsNullOrWhiteSpace(Settings.ActiveFilterName))
-                    Log.Write("Settings", $"No filter selected.");
-                else
-                    Log.Write("Settings", $"Failed to get filter '{Settings.ActiveFilterName}'.", true);
-
-                Dispatcher.UIThread.Post(() =>
+                if (Driver.Debugging)
                 {
-                    var controls = PropertyTools.GetPropertyControls(mode.Filter, "Driver.OutputMode.Filter", Settings.PluginSettings);
-                    FilterControls = new ObservableCollection<AvaloniaObject>(controls);
-                });
-
-                mode.TabletProperties = Driver.TabletProperties;
-            }
-            else if (string.IsNullOrWhiteSpace(Settings.OutputMode))
-            {
-                Log.Write("Settings", $"Error: No output mode has been selected.", true);
+                    LogOutput(message);
+                }
             }
             else
             {
-                Log.Write("Settings", $"Error: Failed to get output mode '{Settings.OutputMode}'.", true);
+                LogOutput(message);
+            }
+        }
+
+        private void LogOutput(LogMessage message)
+        {
+            Messages.Add(message);
+            StatusMessage = message;
+        }
+
+        #endregion
+
+        #region Driver
+            
+        public IEnumerable<TabletProperties> LoadTablets(DirectoryInfo directory)
+        {
+            foreach (string path in Directory.GetFiles(Program.ConfigurationDirectory.FullName, "*.xml", SearchOption.AllDirectories))
+            {
+                var file = new FileInfo(path);
+                TabletProperties tablet = null;
+                
+                try
+                {
+                    tablet = TabletProperties.Read(file);
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception(ex);
+                }
+
+                if (tablet != null)
+                    yield return tablet;
+            }
+        }
+
+        public bool DetectTablets()
+        {
+            foreach (var tablet in Tablets)
+            {
+                if (Driver.Open(tablet))
+                {
+                    Log.Write("Detect", $"Tablet found: '{tablet.TabletName}'");
+                    Tablet = Driver.TabletProperties;
+                    return true;
+                }
+            }
+            Log.Write("Detect", $"No tablets found. Make sure that your tablet is connected.", true);
+            return false;
+        }
+
+        public void SetOutputMode(PluginReference mode)
+        {
+            Settings.OutputMode = mode.Path;
+            ApplySettings(Settings);
+        }
+
+        #endregion
+
+        #region User Settings
+
+        public Settings DefaultSettings => new Settings()
+        {
+            DisplayWidth = VirtualScreen.Width,
+            DisplayHeight = VirtualScreen.Height,
+            DisplayX = VirtualScreen.Width / 2,
+            DisplayY = VirtualScreen.Height / 2,
+            TabletWidth = Tablet.Width,
+            TabletHeight = Tablet.Height,
+            TabletX = Tablet.Width / 2,
+            TabletY = Tablet.Height / 2,
+            PenButtons = new ObservableCollection<string>(new string[2]),
+            AuxButtons = new ObservableCollection<string>(new string[4])
+        };
+
+        public Settings LoadSettings(FileInfo file)
+        {
+            try
+            {
+                return Settings.Deserialize(file);
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                return null;
+            }
+        }
+
+        public void SaveSettings(FileInfo file)
+        {
+            ApplySettings(Settings);
+            Settings.Serialize(file);
+        }
+
+        public void ApplySettings(Settings settings)
+        {
+            Settings = settings;
+            UpdatePluginSettings();
+            UpdateSettings();
+
+            Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
+            
+            if (Driver.OutputMode != null)
+            {
+                Log.Write("Settings", $"Output mode: {Driver.OutputMode.GetType().FullName}");
             }
 
-            if (Driver.OutputMode is IAbsoluteMode absolute)
+            if (Driver.OutputMode is IOutputMode outputMode)
+            {                
+                outputMode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
+                if (outputMode.Filter != null)
+                    Log.Write("Settings", $"Filter: {outputMode.Filter.GetType().FullName}");
+                
+                outputMode.TabletProperties = Driver.TabletProperties;
+            }
+            
+            if (Driver.OutputMode is IAbsoluteMode absoluteMode)
             {
-                absolute.Output = new Area
+                absoluteMode.Output = new Area
                 {
                     Width = Settings.DisplayWidth,
                     Height = Settings.DisplayHeight,
-                    Position = new Point(Settings.DisplayX, Settings.DisplayY),
-                    Rotation = Settings.DisplayRotation
+                    Position = new Point
+                    {
+                        X = Settings.DisplayX,
+                        Y = Settings.DisplayY
+                    }
                 };
-                Log.Write("Settings", $"Set display area: " + absolute.Output);
+                Log.Write("Settings", $"Display area: {absoluteMode.Output}");
 
-                absolute.Input = new Area
+                absoluteMode.Input = new Area
                 {
                     Width = Settings.TabletWidth,
                     Height = Settings.TabletHeight,
-                    Position = new Point(Settings.TabletX, Settings.TabletY),
-                    Rotation = Settings.TabletRotation
+                    Position = new Point
+                    {
+                        X = Settings.TabletX,
+                        Y = Settings.TabletY
+                    }
                 };
-                Log.Write("Settings", $"Set tablet area:  " + absolute.Input);
+                Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
-                absolute.AreaClipping = Settings.EnableClipping;
-                Log.Write("Settings", "Clipping is " + (absolute.AreaClipping ? "enabled" : "disabled"));
+                absoluteMode.AreaClipping = Settings.EnableClipping;   
+                Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "enabled" : "disabled")}");
             }
 
-            if (Driver.OutputMode is IRelativeMode relative)
+            if (Driver.OutputMode is IRelativeMode relativeMode)
             {
-                relative.XSensitivity = Settings.XSensitivity;
-                relative.YSensitivity = Settings.YSensitivity;
-                Log.Write("Settings", $"Set sensitivity: {relative.XSensitivity}px/mm,{relative.YSensitivity}px/mm");
-                relative.ResetTime = Settings.ResetTime;
-                Log.Write("Settings", $"Set reset time to {relative.ResetTime}");
+                relativeMode.XSensitivity = Settings.XSensitivity;
+                Log.Write("Settings", $"Horizontal Sensitivity: {relativeMode.XSensitivity}");
+
+                relativeMode.YSensitivity = Settings.YSensitivity;
+                Log.Write("Settings", $"Vertical Sensitivity: {relativeMode.YSensitivity}");
+
+                relativeMode.ResetTime = Settings.ResetTime;
+                Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
             }
 
             if (Driver.OutputMode is IBindingHandler<IBinding> bindingHandler)
@@ -403,169 +437,23 @@ namespace OpenTabletDriver.Windows
                 }
             }
 
-            UpdateVisibility();
+            if (Settings.AutoHook)
+                DriverEnabled = true;
+            Log.Write("Settings", "Driver is enabled.");
 
             Log.Write("Settings", "Applied all settings.");
+
+            UpdateControlVisibility();
         }
 
-        public void UseDefaultSettings()
+        public void UpdateSettings()
         {
-            Defaults();
-            SetTheme(Settings.Theme);
+            CurrentFilter = PluginFilters.FirstOrDefault(f => f.Path == Settings.ActiveFilterName);
         }
 
-        private void Defaults()
+        public void UpdatePluginSettings()
         {
-            Settings = new Settings()
-            {
-                DisplayWidth = VirtualScreen.Width,
-                DisplayHeight = VirtualScreen.Height,
-                DisplayX = VirtualScreen.Width / 2,
-                DisplayY = VirtualScreen.Height / 2,
-                PenButtons = new ObservableCollection<string>(new string[2]),
-                AuxButtons = new ObservableCollection<string>(new string[4])
-            };
-
-            if (Driver.Tablet != null)
-            {
-                Settings.TabletWidth = Driver.TabletProperties.Width;
-                Settings.TabletHeight = Driver.TabletProperties.Height;
-                Settings.TabletX = Driver.TabletProperties.Width / 2;
-                Settings.TabletY = Driver.TabletProperties.Height / 2;
-            }
-
-            ResetWindowSize();
-        }
-
-        public void OpenTabletDebugger()
-        {
-            var debugger = new TabletDebugger
-            {
-                DataContext = new TabletDebuggerViewModel(Driver.TabletReader, Driver.AuxReader)
-            };
-            debugger.Show();
-        }
-
-        public async Task OpenConfigurationManager()
-        {
-            var cfgMgr = new ConfigurationManager()
-            {
-                DataContext = new ConfigurationManagerViewModel()
-                {
-                    Configurations = Tablets,
-                    Devices = Driver.Devices.ToList().ToObservableCollection()
-                }
-            };
-            await cfgMgr.ShowDialog(this.GetRootWindow());
-            DetectTablet();
-        }
-
-        public async Task OpenTabletConfigurationFolder()
-        {
-            var fd = new OpenFolderDialog();
-            var path = await fd.ShowAsync(this.GetRootWindow());
-            if (path != null)
-            {
-                var directory = new DirectoryInfo(path);
-                if (directory.Exists)
-                    await OpenConfigurations(directory);
-            }
-        }
-
-        public async Task LoadSettingsDialog()
-        {
-            var fd = FileDialogs.CreateOpenFileDialog("Open settings", "XML Document", "xml");
-            var result = await fd.ShowAsync(this.GetRootWindow());
-            if (result != null)
-            {
-                var file = new FileInfo(result[0]);
-                Load(file);
-            }
-        }
-
-        public async Task SaveSettingsDialog()
-        {
-            var fd = FileDialogs.CreateSaveFileDialog("Saving settings", "XML Document", "xml");
-            var path = await fd.ShowAsync(this.GetRootWindow());
-            if (path != null)
-            {
-                var file = new FileInfo(path);
-                ApplySettings();
-                Save(file);
-            }
-        }
-
-        public void SaveSettings()
-        {
-            ApplySettings();
-            if (!Program.SettingsDirectory.Exists)
-                Program.SettingsDirectory.Create();
-            var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-            var file = new FileInfo(settingsPath);
-            Save(file);
-        }
-
-        private bool Load(FileInfo file)
-        {
-            if (!file.Exists)
-                return false;
-            try
-            {
-                Settings = Settings.Deserialize(file);
-                Log.Write("Settings", $"Read settings from '{file.FullName}'.");
-                ApplySettings();
-                return true;
-            }
-            catch (InvalidOperationException ioex)
-            {
-                Log.Write("Settings", $"The settings file is either out of date or corrupt.");
-                if (Debugging)
-                    Log.Exception(ioex);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Exception(ex);
-                Log.Write("Settings", $"Unable to read settings from file '{file.FullName}'", true);
-                return false;
-            }
-        }
-
-        private bool Save(FileInfo file)
-        {
-            try
-            {
-                Settings.Serialize(file);
-                Log.Write("Settings", $"Saved settings to '{file.FullName}'.");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                if (Debugging)
-                    Log.Exception(ex);
-                Log.Write("Settings", $"Failed to write settings to '{file.FullName}'.", true);
-                return false;
-            }
-        }
-
-        public async void LoadPlugins(DirectoryInfo directory)
-        {
-            BackgroundTaskActive = true;
-            if (!directory.Exists)
-                directory.Create();
-
-            var files = directory.GetFiles();
-            foreach (var plugin in files)
-            {
-                if (await PluginManager.AddPlugin(plugin))
-                    Log.Write("Plugin", $"Loaded plugin '{plugin.Name}'.");
-            }
-            BackgroundTaskActive = false;
-        }
-
-        private void UpdatePluginSettings()
-        {
-            var filterSettings = GetPluginSettings(Driver.OutputMode?.Filter);
+            var filterSettings = PluginTools.GetPluginSettings(Driver?.OutputMode?.Filter);
             foreach (var pair in filterSettings)
             {
                 if (Settings.PluginSettings.ContainsKey(pair.Item1))
@@ -575,82 +463,51 @@ namespace OpenTabletDriver.Windows
             }
         }
 
-        private IEnumerable<(string, string)> GetPluginSettings(object obj)
+        public void UpdateControlVisibility()
         {
-            if (obj != null)
+            IsAbsolute = Driver.OutputMode is IAbsoluteMode;
+            IsRelative = Driver.OutputMode is IRelativeMode;
+            IsBindable = Driver.OutputMode is IBindingHandler<IBinding>;
+            IsFilterable = Driver.OutputMode is IOutputMode;
+            if (TabIndex == 0 && !IsAbsolute)
+                TabIndex = 1;
+            if (TabIndex == 1 && !IsRelative)
+                TabIndex = 2;
+            if (TabIndex == 2 && !IsBindable)
+                TabIndex = 3;
+            if (TabIndex == 3 && !IsFilterable)
+                TabIndex = 4;
+        }
+
+        public bool UpdateTabletWidth(TabletProperties tablet)
+        {
+            if (Settings.TabletWidth == 0 || Settings.TabletHeight == 0)
             {
-                foreach (var property in obj.GetType().GetProperties())
-                {
-                    var attributes = from attr in property.GetCustomAttributes(false)
-                                     where attr is PropertyAttribute
-                                     select attr as PropertyAttribute;
-
-                    if (attributes.Count() > 0)
-                        yield return (property.Name, property.GetValue(obj).ToString());
-                }
-            }
-        }
-
-        public void ToggleHook()
-        {
-            try
-            {
-                InputHooked = !InputHooked;
-                Log.Write("Driver", $"Driver is {(InputHooked ? "enabled" : "disabled")}.");
-            }
-            catch (Exception ex)
-            {
-                Log.Exception(ex);
-                Log.Write("Driver", "Unable to toggle input hook.", true);
-            }
-        }
-
-        public void ResetWindowSize()
-        {
-            Settings.WindowWidth = 1280;
-            Settings.WindowHeight = 720;
-        }
-
-        private void SetTheme(string name)
-        {
-            Settings.Theme = name;
-            Log.Write("Theme", $"Using theme '{name}'.");
-            App.Restart(this);
-        }
-
-        private void SetMode(string name)
-        {
-            Settings.OutputMode = name;
-            ApplySettings();
-        }
-
-        private void SelectDisplay(IDisplay display)
-        {
-            Settings.DisplayWidth = display.Width;
-            Settings.DisplayHeight = display.Height;
-            if (display is IVirtualScreen virtualScreen)
-            {
-                Settings.DisplayX = virtualScreen.Width / 2;
-                Settings.DisplayY = virtualScreen.Height / 2;
+                Settings.TabletWidth = tablet.Width;
+                Settings.TabletHeight = tablet.Height;
+                Settings.TabletX = tablet.Width / 2;
+                Settings.TabletY = tablet.Height / 2;
+                return true;
             }
             else
             {
-                Settings.DisplayX = display.Position.X + display.Width / 2 + VirtualScreen.Position.X;
-                Settings.DisplayY = display.Position.Y + display.Height / 2 + VirtualScreen.Position.Y;
+                return false;
             }
         }
 
-        private async Task SetBinding(string bindingSource)
+        public void UpdateTheme(string name)
         {
-            var binding = GetBinding(bindingSource);
-            var bindingConfig = new BindingConfig(binding);
-            await bindingConfig.ShowDialog(this.GetRootWindow());
-            SetBinding(bindingSource, bindingConfig.Binding);
+            var theme = Themes.Parse(name);
+            App.SetTheme(theme);
+            App.Restart(this);
         }
 
-        private void ClearBinding(string bindingSource)
+        public async Task UpdateBinding(string source)
         {
-            SetBinding(bindingSource, string.Empty);
+            var binding = GetBinding(source);
+            var bindingConfig = new BindingConfig(binding);
+            await bindingConfig.ShowDialog(this.GetParentWindow());
+            SetBinding(source, bindingConfig.Binding);
         }
 
         private string GetBinding(string source)
@@ -697,6 +554,118 @@ namespace OpenTabletDriver.Windows
                     return;
                 default:
                     throw new ArgumentException("Invalid binding source");
+            }
+        }
+
+        #endregion
+
+        #region Miscellaneous Buttons
+            
+        public async Task ShowAbout()
+        {
+            var window = new About();
+            await window.ShowDialog(this.GetParentWindow());
+        }
+
+        public void ResetToDefaults()
+        {
+            ApplySettings(DefaultSettings);
+        }
+
+        public void ResetWindowSize()
+        {
+            Settings.WindowWidth = 1280;
+            Settings.WindowHeight = 720;
+        }
+
+        public void ToggleDriverEnabled()
+        {
+            DriverEnabled = !DriverEnabled;
+        }
+
+        public async Task LoadSettingsDialog()
+        {
+            var fileDialog = FileDialogs.CreateOpenFileDialog("Load settings", "OpenTabletDriver Settings", "xml");
+            var paths = await fileDialog.ShowAsync(this.GetParentWindow());
+            if (paths?.Length > 0)
+            {
+                var path = paths[0];
+                var file = new FileInfo(path);
+                if (file.Exists)
+                {
+                    try
+                    {
+                        Settings.Deserialize(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Exception(ex);
+                    }
+                }
+            }
+        }
+
+        public void SaveSettingsDefault()
+        {
+            var path = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
+            var file = new FileInfo(path); 
+            SaveSettings(file);
+        }
+
+        public async Task SaveSettingsDialog()
+        {
+            var fileDialog = FileDialogs.CreateSaveFileDialog("Save Settings", "OpenTabletDriver Settings", "xml");
+            var result = await fileDialog.ShowAsync(this.GetParentWindow());
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                var file = new FileInfo(result);
+                SaveSettings(file);
+            }
+        }
+
+        public async Task OpenTabletDebugger()
+        {
+            var tabletDebugger = new TabletDebugger(Driver.TabletReader, Driver.AuxReader);
+            await tabletDebugger.ShowDialog(this.GetParentWindow());
+        }
+
+        public async Task OpenConfigurationManager()
+        {
+            var configManager = new ConfigurationManager
+            {
+                ViewModel = new ConfigurationManagerViewModel
+                {
+                    Configurations = Tablets,
+                    Devices = new ObservableCollection<HidSharp.HidDevice>(Driver.Devices)
+                }
+            };
+            await configManager.ShowDialog(this.GetParentWindow()); 
+        }
+
+        public async Task OpenTabletConfigurationFolder()
+        {
+            var fileDialog = FileDialogs.CreateOpenFolderDialog("Opening configuration folder");
+            var result = await fileDialog.ShowAsync(this.GetParentWindow());
+            if (result != null)
+            {
+                var dir = new DirectoryInfo(result);
+                LoadTablets(dir);
+            }
+        }
+
+        public void SelectDisplay(IDisplay display)
+        {
+            Settings.DisplayWidth = display.Width;
+            Settings.DisplayHeight = display.Height;
+            if (display is IVirtualScreen virtualScreen)
+            {
+                Settings.DisplayX = virtualScreen.Width / 2;
+                Settings.DisplayY = virtualScreen.Height / 2;
+            }
+            else
+            {
+                Settings.DisplayX = display.Position.X + display.Width / 2 + VirtualScreen.Position.X;
+                Settings.DisplayY = display.Position.Y + display.Height / 2 + VirtualScreen.Position.Y;
             }
         }
 
