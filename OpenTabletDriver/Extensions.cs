@@ -7,10 +7,12 @@ namespace OpenTabletDriver
 {
     internal static class Extensions
     {
-        public static void CopyPropertiesTo<T, TU>(this T source, TU dest)
+        public static void CopyPropertiesTo(this object source, object dest)
         {
-            var sourceProperties = typeof (T).GetProperties().Where(x => x.CanRead).ToList();
-            var destinationProperties = typeof(TU).GetProperties().Where(x => x.CanWrite).ToList();
+            var sourceType = source.GetType();
+            var destType = source.GetType();
+            var sourceProperties = sourceType.GetProperties().Where(x => x.CanRead).ToList();
+            var destinationProperties = destType.GetProperties().Where(x => x.CanWrite).ToList();
             foreach (var sourceProp in sourceProperties)
             {
                 if (destinationProperties.Any(x => x.Name == sourceProp.Name))
