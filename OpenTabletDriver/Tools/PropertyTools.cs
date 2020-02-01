@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
-using Avalonia.Media;
 using TabletDriverPlugin.Attributes;
 
-namespace OpenTabletDriver
+namespace OpenTabletDriver.Tools
 {
     internal static class PropertyTools
     {
@@ -19,8 +17,8 @@ namespace OpenTabletDriver
                 foreach (var property in obj.GetType().GetProperties())
                 {
                     var attributes = from attr in property.GetCustomAttributes(false)
-                        where attr is PropertyAttribute
-                        select attr as PropertyAttribute;
+                                     where attr is PropertyAttribute
+                                     select attr as PropertyAttribute;
 
                     if (pluginSettings != null || pluginSettings?.Count == 0)
                         SetValue(obj, property, pluginSettings);
@@ -31,7 +29,7 @@ namespace OpenTabletDriver
                         {
                             Text = attr.DisplayName
                         };
-                        
+
                         var parent = new Border
                         {
                             Classes = { "r" },
@@ -68,7 +66,10 @@ namespace OpenTabletDriver
                 {
                     Minimum = sliderAttr.Min,
                     Maximum = sliderAttr.Max,
-                    [!Slider.ValueProperty] = new Binding(subPath, BindingMode.TwoWay),                    
+                    TickFrequency = (sliderAttr.Max - sliderAttr.Min) / 10,
+                    SmallChange = (sliderAttr.Max - sliderAttr.Min) / 25,
+                    LargeChange = (sliderAttr.Max - sliderAttr.Min) / 10,
+                    [!Slider.ValueProperty] = new Binding(subPath, BindingMode.TwoWay),
                 };
                 var tb = GetTextBox(subPath);
                 grid.Children.Add(slider);

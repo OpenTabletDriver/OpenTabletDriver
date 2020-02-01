@@ -103,7 +103,7 @@ namespace OpenTabletDriver.Windows
                 "XML Document",
                 "xml",
                 LastDirectory);
-            var result = await dialog.ShowAsync(App.Windows[1]);
+            var result = await dialog.ShowAsync(this.GetParentWindow());
             if (!string.IsNullOrWhiteSpace(result))
             {
                 var file = new FileInfo(result);
@@ -118,7 +118,7 @@ namespace OpenTabletDriver.Windows
             var dialog = FileDialogs.CreateOpenFolderDialog(
                 "Saving all tablets to selected directory",
                 LastDirectory);
-            var result = await dialog.ShowAsync(App.Windows[1]);
+            var result = await dialog.ShowAsync(this.GetParentWindow());
             if (!string.IsNullOrWhiteSpace(result))
             {
                 var directory = new DirectoryInfo(result);

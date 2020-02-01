@@ -24,7 +24,6 @@ namespace OpenTabletDriver.Tools
             }
         }
 
-
         public static bool IsPluginIgnored(this Type type)
         {
             return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));

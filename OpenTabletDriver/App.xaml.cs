@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
+using Avalonia.Styling;
 using System.Collections.Generic;
 using OpenTabletDriver.Windows;
 
@@ -19,45 +20,31 @@ namespace OpenTabletDriver
 
         public override async void OnFrameworkInitializationCompleted()
         {
+            Styles.CollectionChanged += (sender, e) =>
+            {
+                foreach (var window in ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).Windows)
+                {
+                    window.Styles.Add(DummyStyle);
+                    window.Styles.Remove(DummyStyle);
+                }
+            };
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Program.UnhandledException);
 
-                MainWindow = new MainWindow();
-                await MainWindow.ViewModel.Initialize();
-                MainWindow.Show();
+                desktop.MainWindow = new MainWindow();
+                await (desktop.MainWindow as MainWindow).ViewModel.Initialize();
+                desktop.MainWindow.Show();
             }
             base.OnFrameworkInitializationCompleted();
         }
 
+        private static readonly IStyle DummyStyle = new Style();
+
         public static void SetTheme(StyleInclude style)
         {
             App.Current.Styles[1] = style;
-        }
-
-        public static void Restart(MainWindowViewModel vm)
-        {
-            MainWindow = new MainWindow
-            {
-                ViewModel = vm
-            };
-            MainWindow.Show();
-            
-            foreach (Window window in Windows.Where(w => w != MainWindow))
-                window.Close();
-            
-            MainWindow.Focus();
-        }
-
-        public static MainWindow MainWindow 
-        {
-            set => (App.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime).MainWindow = value;
-            get => (App.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime).MainWindow as MainWindow;
-        }
-
-        public static IReadOnlyList<Window> Windows
-        {
-            get => (App.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime).Windows;
         }
    }
 }

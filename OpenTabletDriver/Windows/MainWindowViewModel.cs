@@ -230,7 +230,7 @@ namespace OpenTabletDriver.Windows
         {
             set
             {
-                var controls = PropertyTools.GetPropertyControls(value, "FilterTemplate", Settings.PluginSettings);
+                var controls = PropertyTools.GetPropertyControls(value, nameof(FilterTemplate), Settings.PluginSettings);
                 FilterControls = new ObservableCollection<IControl>(controls);
                 this.RaiseAndSetIfChanged(ref _filterTemplate, value);
             }
@@ -470,7 +470,7 @@ namespace OpenTabletDriver.Windows
 
         public void UpdatePluginSettings()
         {
-            var filterSettings = PluginTools.GetPluginSettings(Driver?.OutputMode?.Filter);
+            var filterSettings = PluginTools.GetPluginSettings(FilterTemplate);
             foreach (var pair in filterSettings)
             {
                 if (Settings.PluginSettings.ContainsKey(pair.Item1))
@@ -516,7 +516,6 @@ namespace OpenTabletDriver.Windows
         {
             var theme = Themes.Parse(name);
             App.SetTheme(theme);
-            App.Restart(this);
         }
 
         public async Task UpdateBinding(string source)

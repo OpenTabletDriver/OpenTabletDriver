@@ -319,9 +319,11 @@
                         </Border>
                         <ItemsControl Grid.Row="1" Items="{Binding FilterControls}">
                             <ItemsControl.Styles>
-                                <Style Selector="Border">
+                                <Style Selector="ItemsControl > Border">
                                     <Setter Property="BorderThickness" Value="1"/>
                                     <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
+                                    <Setter Property="Margin" Value="5"/>
+                                    <Setter Property="Padding" Value="5"/>
                                 </Style>
                             </ItemsControl.Styles>
                         </ItemsControl>
