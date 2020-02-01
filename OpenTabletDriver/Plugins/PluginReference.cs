@@ -4,8 +4,6 @@ using System.Linq;
 using TabletDriverPlugin.Attributes;
 using System.Reflection;
 using System.Xml.Serialization;
-using System.Xml.Schema;
-using System.Xml;
 
 namespace OpenTabletDriver.Plugins
 {
@@ -17,7 +15,7 @@ namespace OpenTabletDriver.Plugins
             Path = path;
         }
 
-        private PluginReference()
+        protected PluginReference()
         {
         }
 

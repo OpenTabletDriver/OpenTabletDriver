@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ns="clr-namespace:OpenTabletDriver.Controls;assembly=OpenTabletDriver"
         xmlns:cursor="clr-namespace:TabletDriverLib.Interop.Cursor;assembly=TabletDriverLib"
+        xmlns:cvt="clr-namespace:OpenTabletDriver.Converters;assembly=OpenTabletDriver"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenTabletDriver.Windows.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
@@ -34,6 +35,9 @@
             <Setter Property="CornerRadius" Value="5"/>
         </Style>
     </Window.Styles>
+    <Window.Resources>
+        <cvt:BindingReferenceConverter x:Key="BindingReferenceConverter"/>
+    </Window.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto,Auto">
         <Menu Grid.Row="0">
@@ -229,7 +233,7 @@
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Grid.Row="0" Text="Tip Button"/>
                                             <Button Grid.Row="1" Classes="bind"
-                                                Content="{Binding Settings.TipButton}"
+                                                Content="{Binding Settings.TipButton, Converter={StaticResource BindingReferenceConverter}}"
                                                 CommandParameter="TipButton"/>
                                         </Grid>
                                     </Border>
@@ -244,7 +248,7 @@
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Pen Button 1"/>
                                             <Button Grid.Row="1" Classes="bind"
-                                                Content="{Binding Settings.PenButtons[0]}"
+                                                Content="{Binding Settings.PenButtons[0], Converter={StaticResource BindingReferenceConverter}}"
                                                 CommandParameter="PenButtons[0]"/>
                                         </Grid>
                                     </Border>
@@ -252,7 +256,7 @@
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Pen Button 2"/>
                                             <Button Grid.Row="1" Classes="bind"
-                                                Content="{Binding Settings.PenButtons[1]}"
+                                                Content="{Binding Settings.PenButtons[1], Converter={StaticResource BindingReferenceConverter}}"
                                                 CommandParameter="PenButtons[1]"/>
                                         </Grid>
                                     </Border>
@@ -267,7 +271,7 @@
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Express Key 1"/>
                                             <Button Grid.Row="1" Classes="bind"
-                                                Content="{Binding Settings.AuxButtons[0]}"
+                                                Content="{Binding Settings.AuxButtons[0], Converter={StaticResource BindingReferenceConverter}}"
                                                 CommandParameter="AuxButtons[0]"/>
                                         </Grid>
                                     </Border>
@@ -275,7 +279,7 @@
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Express Key 2"/>
                                             <Button Grid.Row="1" Classes="bind"
-                                                Content="{Binding Settings.AuxButtons[1]}"
+                                                Content="{Binding Settings.AuxButtons[1], Converter={StaticResource BindingReferenceConverter}}"
                                                 CommandParameter="AuxButtons[1]"/>
                                         </Grid>
                                     </Border>
@@ -283,7 +287,7 @@
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Express Key 3"/>
                                             <Button Grid.Row="1" Classes="bind"
-                                                Content="{Binding Settings.AuxButtons[2]}"
+                                                Content="{Binding Settings.AuxButtons[2], Converter={StaticResource BindingReferenceConverter}}"
                                                 CommandParameter="AuxButtons[2]"/>
                                         </Grid>
                                     </Border>
@@ -291,7 +295,7 @@
                                         <Grid RowDefinitions="Auto,*">
                                             <TextBlock Text="Express Key 4"/>
                                             <Button Grid.Row="1" Classes="bind"
-                                                Content="{Binding Settings.AuxButtons[3]}"
+                                                Content="{Binding Settings.AuxButtons[3], Converter={StaticResource BindingReferenceConverter}}"
                                                 CommandParameter="AuxButtons[3]"/>
                                         </Grid>
                                     </Border>
