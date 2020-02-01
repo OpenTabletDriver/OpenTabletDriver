@@ -9,17 +9,20 @@ namespace OpenTabletDriver
     {
         public static void CopyPropertiesTo(this object source, object dest)
         {
-            var sourceType = source.GetType();
-            var destType = source.GetType();
-            var sourceProperties = sourceType.GetProperties().Where(x => x.CanRead).ToList();
-            var destinationProperties = destType.GetProperties().Where(x => x.CanWrite).ToList();
-            foreach (var sourceProp in sourceProperties)
+            if (source != null && dest != null)
             {
-                if (destinationProperties.Any(x => x.Name == sourceProp.Name))
+                var sourceType = source?.GetType();
+                var destType = source?.GetType();
+                var sourceProperties = sourceType.GetProperties().Where(x => x.CanRead).ToList();
+                var destinationProperties = destType.GetProperties().Where(x => x.CanWrite).ToList();
+                foreach (var sourceProp in sourceProperties)
                 {
-                    var property = destinationProperties.First(prop => prop.Name == sourceProp.Name);
-                    if (property.CanWrite)
-                        property.SetValue(dest, sourceProp.GetValue(source, null), null);
+                    if (destinationProperties.Any(x => x.Name == sourceProp.Name))
+                    {
+                        var property = destinationProperties.First(prop => prop.Name == sourceProp.Name);
+                        if (property.CanWrite)
+                            property.SetValue(dest, sourceProp.GetValue(source, null), null);
+                    }
                 }
             }
         }
