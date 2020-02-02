@@ -49,7 +49,7 @@
                 <MenuItem Header="Reset to defaults" Command="{Binding ResetToDefaults}"/>
                 <MenuItem Header="Reset window size" Command="{Binding ResetWindowSize}"/>
                 <MenuItem Header="Load..." Command="{Binding LoadSettingsDialog}"/>
-                <MenuItem Header="Save" Command="{Binding SaveSettings}"/>
+                <MenuItem Header="Save" Command="{Binding SaveSettingsDefault}"/>
                 <MenuItem Header="Save as..." Command="{Binding SaveSettingsDialog}"/>
                 <MenuItem Header="Themes">
                     <MenuItem.Styles>

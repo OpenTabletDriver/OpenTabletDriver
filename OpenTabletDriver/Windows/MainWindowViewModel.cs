@@ -153,20 +153,20 @@ namespace OpenTabletDriver.Windows
             {
                 var file = new FileInfo(path);
                 await PluginManager.AddPlugin(file);
-
-                var filters = from filter in PluginManager.GetChildTypes<IFilter>()
-                    where !filter.IsInterface
-                    where !filter.IsPluginIgnored()
-                    select new PluginReference(filter.FullName);
-                PluginFilters = new ObservableCollection<PluginReference>(filters);
-                PluginFilters.Insert(0, PluginReference.Disable);
-
-                var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
-                    where !mode.IsInterface
-                    where !mode.IsPluginIgnored()
-                    select new PluginReference(mode.FullName);
-                OutputModes = new ObservableCollection<PluginReference>(outputModes);
             }
+
+            var filters = from filter in PluginManager.GetChildTypes<IFilter>()
+                where !filter.IsInterface
+                where !filter.IsPluginIgnored()
+                select new PluginReference(filter.FullName);
+            PluginFilters = new ObservableCollection<PluginReference>(filters);
+            PluginFilters.Insert(0, PluginReference.Disable);
+
+            var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
+                where !mode.IsInterface
+                where !mode.IsPluginIgnored()
+                select new PluginReference(mode.FullName);
+            OutputModes = new ObservableCollection<PluginReference>(outputModes);
         }
 
         private bool _absolute;
@@ -335,6 +335,11 @@ namespace OpenTabletDriver.Windows
 
         public Settings DefaultSettings => new Settings()
         {
+            Theme = "Light",
+            WindowWidth = 1280,
+            WindowHeight = 720,
+            OutputMode = typeof(TabletDriverLib.Output.AbsoluteMode).FullName,
+            AutoHook = true,
             DisplayWidth = VirtualScreen.Width,
             DisplayHeight = VirtualScreen.Height,
             DisplayX = VirtualScreen.Width / 2,
@@ -343,8 +348,15 @@ namespace OpenTabletDriver.Windows
             TabletHeight = Tablet.Height,
             TabletX = Tablet.Width / 2,
             TabletY = Tablet.Height / 2,
+            EnableClipping = true,
+            TipButton = "TabletDriverLib.Binding.MouseBinding, Left",
+            TipActivationPressure = 1,
             PenButtons = new ObservableCollection<string>(new string[2]),
-            AuxButtons = new ObservableCollection<string>(new string[4])
+            AuxButtons = new ObservableCollection<string>(new string[4]),
+            PluginSettings = new SerializableDictionary<string, string>(),
+            XSensitivity = 10,
+            YSensitivity = 10,
+            ResetTime = TimeSpan.FromMilliseconds(100)
         };
 
         public Settings LoadSettings(FileInfo file)
@@ -416,7 +428,7 @@ namespace OpenTabletDriver.Windows
                 Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
                 absoluteMode.AreaClipping = Settings.EnableClipping;   
-                Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "enabled" : "disabled")}");
+                Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
             }
 
             if (Driver.OutputMode is IRelativeMode relativeMode)
@@ -455,8 +467,10 @@ namespace OpenTabletDriver.Windows
             }
 
             if (Settings.AutoHook)
+            {
                 DriverEnabled = true;
-            Log.Write("Settings", "Driver is enabled.");
+                Log.Write("Settings", "Driver is auto-enabled.");
+            }
 
             Log.Write("Settings", "Applied all settings.");
 
@@ -465,7 +479,7 @@ namespace OpenTabletDriver.Windows
 
         public void UpdateSettings()
         {
-            CurrentFilter = PluginFilters.FirstOrDefault(f => f.Path == Settings.ActiveFilterName);
+            CurrentFilter = PluginFilters?.FirstOrDefault(f => f.Path == Settings.ActiveFilterName);
         }
 
         public void UpdatePluginSettings()
@@ -516,6 +530,7 @@ namespace OpenTabletDriver.Windows
         {
             var theme = Themes.Parse(name);
             App.SetTheme(theme);
+            Settings.Theme = name;
         }
 
         public async Task UpdateBinding(string source)
@@ -586,6 +601,7 @@ namespace OpenTabletDriver.Windows
         public void ResetToDefaults()
         {
             ApplySettings(DefaultSettings);
+            UpdateTheme(Settings.Theme);
         }
 
         public void ResetWindowSize()
@@ -611,7 +627,8 @@ namespace OpenTabletDriver.Windows
                 {
                     try
                     {
-                        Settings.Deserialize(file);
+                        ApplySettings(Settings.Deserialize(file));
+                        UpdateTheme(Settings.Theme);
                     }
                     catch (Exception ex)
                     {
