@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
+using OpenTabletDriver.Plugins.Xml;
 using ReactiveUI;
 
 namespace OpenTabletDriver.Models
@@ -11,17 +12,6 @@ namespace OpenTabletDriver.Models
     {
         public Settings()
         {
-            Theme = "Light";
-            OutputMode = typeof(TabletDriverLib.Output.AbsoluteMode).FullName;
-            WindowWidth = 1280;
-            WindowHeight = 720;
-            ResetTime = TimeSpan.FromMilliseconds(100);
-            XSensitivity = 10;
-            YSensitivity = 10;
-            TipButton = "TabletDriverLib.Binding.MouseBinding, Left";
-            TipActivationPressure = 1;
-            AutoHook = true;
-            EnableClipping = true;
         }
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens;
@@ -34,11 +24,7 @@ namespace OpenTabletDriver.Models
         [XmlElement("Theme")]
         public string Theme
         {
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _theme, value);
-                (App.Current as App).SetTheme(Themes.Parse(value));
-            }
+            set => this.RaiseAndSetIfChanged(ref _theme, value);
             get => _theme;
         }
 
@@ -291,9 +277,7 @@ namespace OpenTabletDriver.Models
 
         public void Serialize(FileInfo file)
         {
-            if (file.Exists)
-                file.Delete();
-            using (var stream = file.OpenWrite())
+            using (var stream = file.CreateText())
                 XmlSerializer.Serialize(stream, this);
         }
 

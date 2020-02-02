@@ -4,10 +4,10 @@ using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Controls.ApplicationLifetimes;
-using OpenTabletDriver.ViewModels;
-using OpenTabletDriver.Views;
 using Avalonia.Controls;
+using Avalonia.Styling;
 using System.Collections.Generic;
+using OpenTabletDriver.Windows;
 
 namespace OpenTabletDriver
 {
@@ -18,51 +18,33 @@ namespace OpenTabletDriver
             AvaloniaXamlLoader.Load(this);
         }
 
-        public override void OnFrameworkInitializationCompleted()
+        public override async void OnFrameworkInitializationCompleted()
         {
+            Styles.CollectionChanged += (sender, e) =>
+            {
+                foreach (var window in ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).Windows)
+                {
+                    window.Styles.Add(DummyStyle);
+                    window.Styles.Remove(DummyStyle);
+                }
+            };
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Program.UnhandledException);
 
-                var viewModel = new MainWindowViewModel();
-                viewModel.Initialize();
-                MainWindow = new MainWindow
-                {
-                    DataContext = viewModel
-                };
-                MainWindow.Show();
+                desktop.MainWindow = new MainWindow();
+                await (desktop.MainWindow as MainWindow).ViewModel.Initialize();
+                desktop.MainWindow.Show();
             }
             base.OnFrameworkInitializationCompleted();
         }
 
-        public void SetTheme(StyleInclude style)
-        {
-            Styles[1] = style;
-        }
+        private static readonly IStyle DummyStyle = new Style();
 
-        public static void Restart(MainWindowViewModel vm)
+        public static void SetTheme(StyleInclude style)
         {
-            MainWindow = new MainWindow()
-            {
-                DataContext = vm
-            };
-            MainWindow.Show();
-            
-            foreach (Window window in Windows.Where(w => w != MainWindow))
-                window.Close();
-            
-            MainWindow.Focus();
-        }
-
-        public static MainWindow MainWindow 
-        {
-            set => (App.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime).MainWindow = value;
-            get => (App.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime).MainWindow as MainWindow;
-        }
-
-        public static IReadOnlyList<Window> Windows
-        {
-            get => (App.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime).Windows;
+            App.Current.Styles[1] = style;
         }
    }
 }

@@ -35,6 +35,8 @@ namespace OpenTabletDriver
                     Argument = new Argument<DirectoryInfo> ("config")
                 }
             };
+
+            CreateDirectories();
             
             rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((settings, config) => 
             {
@@ -44,6 +46,16 @@ namespace OpenTabletDriver
             rootCommand.Invoke(args);
             
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, ShutdownMode.OnLastWindowClose);
+        }
+
+        internal static void CreateDirectories()
+        {
+            if (!SettingsDirectory.Exists)
+                SettingsDirectory.Create();
+            if (!PluginDirectory.Exists)
+                PluginDirectory.Create();
+            if (!ConfigurationDirectory.Exists)
+                ConfigurationDirectory.Create();
         }
 
         internal static void UnhandledException(object sender, UnhandledExceptionEventArgs e)

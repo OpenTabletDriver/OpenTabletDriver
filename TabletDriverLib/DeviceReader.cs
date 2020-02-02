@@ -87,9 +87,6 @@ namespace TabletDriverLib
                     var data = ReportStream.Read();
                     var report = Parser.Parse(data);
                     Report?.Invoke(this, report);
-                    // Logging
-                    if (Driver.Debugging)
-                        Log.Write("Report", report.StringFormat(Driver.RawReports));
                 }
             }
             catch (ObjectDisposedException)

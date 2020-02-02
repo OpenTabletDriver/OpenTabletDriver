@@ -1,12 +1,9 @@
-using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using NativeLib;
 
-namespace OpenTabletDriver.Views
+namespace OpenTabletDriver.Windows
 {
     public class About : Window
     {
@@ -31,7 +28,7 @@ namespace OpenTabletDriver.Views
 
         private async Task Copy(string text)
         {
-            await App.Current.Clipboard.SetTextAsync(text);
+            await Avalonia.Application.Current.Clipboard.SetTextAsync(text);
         }
 
         public string Author => Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyCompanyAttribute>().Company;

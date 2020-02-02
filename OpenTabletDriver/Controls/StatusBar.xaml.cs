@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using TabletDriverPlugin.Logging;
 
-namespace OpenTabletDriver.Views
+namespace OpenTabletDriver.Controls
 {
     public class StatusBar : UserControl
     {
@@ -16,10 +16,10 @@ namespace OpenTabletDriver.Views
         {
             AvaloniaXamlLoader.Load(this);
         }
-        
+
         public static readonly StyledProperty<LogMessage> CurrentStatusProperty =
         AvaloniaProperty.Register<StatusBar, LogMessage>(nameof(CurrentStatus));
-        
+
         public LogMessage CurrentStatus
         {
             set => SetValue(CurrentStatusProperty, value);

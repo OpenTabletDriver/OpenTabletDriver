@@ -10,7 +10,7 @@ using Avalonia.Threading;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
 
-namespace OpenTabletDriver.Views
+namespace OpenTabletDriver.Controls
 {
     public class LogView : UserControl
     {
@@ -34,23 +34,23 @@ namespace OpenTabletDriver.Views
 
         public void ScrollToBottom()
         {
-            Dispatcher.UIThread.Post(async () => 
+            Dispatcher.UIThread.Post(async () =>
             {
-                ListBox listbox = (ListBox)this.Content;
+                ListBox listbox = (ListBox)Content;
                 var scrollViewer = await GetScrollViewerAsync();
                 var maxVal = scrollViewer.GetValue(ScrollViewer.VerticalScrollBarMaximumProperty);
                 scrollViewer.SetValue(ScrollViewer.VerticalScrollBarValueProperty, maxVal);
             });
         }
 
-        private async Task<ScrollViewer> GetScrollViewerAsync() => await ((ListBox)this.Content)
+        private async Task<ScrollViewer> GetScrollViewerAsync() => await ((ListBox)Content)
             .GetObservable(ListBox.ScrollProperty)
             .OfType<ScrollViewer>()
             .FirstAsync();
 
         public static readonly StyledProperty<ObservableCollection<LogMessage>> MessagesProperty =
             AvaloniaProperty.Register<LogView, ObservableCollection<LogMessage>>(nameof(Messages));
-        
+
         public ObservableCollection<LogMessage> Messages
         {
             set => SetValue(MessagesProperty, value);
@@ -60,7 +60,7 @@ namespace OpenTabletDriver.Views
         private async Task CopyMessage(LogMessage message)
         {
             var text = string.Format("[{0}:{1}] {2}", message.Group, message.IsError ? "Error" : "Normal", message.Message);
-            await App.Current.Clipboard.SetTextAsync(text);
+            await Application.Current.Clipboard.SetTextAsync(text);
         }
     }
 }

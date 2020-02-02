@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,17 +7,22 @@ namespace OpenTabletDriver
 {
     internal static class Extensions
     {
-        public static void CopyPropertiesTo<T, TU>(this T source, TU dest)
+        public static void CopyPropertiesTo(this object source, object dest)
         {
-            var sourceProperties = typeof (T).GetProperties().Where(x => x.CanRead).ToList();
-            var destinationProperties = typeof(TU).GetProperties().Where(x => x.CanWrite).ToList();
-            foreach (var sourceProp in sourceProperties)
+            if (source != null && dest != null)
             {
-                if (destinationProperties.Any(x => x.Name == sourceProp.Name))
+                var sourceType = source?.GetType();
+                var destType = source?.GetType();
+                var sourceProperties = sourceType.GetProperties().Where(x => x.CanRead).ToList();
+                var destinationProperties = destType.GetProperties().Where(x => x.CanWrite).ToList();
+                foreach (var sourceProp in sourceProperties)
                 {
-                    var property = destinationProperties.First(prop => prop.Name == sourceProp.Name);
-                    if (property.CanWrite)
-                        property.SetValue(dest, sourceProp.GetValue(source, null), null);
+                    if (destinationProperties.Any(x => x.Name == sourceProp.Name))
+                    {
+                        var property = destinationProperties.First(prop => prop.Name == sourceProp.Name);
+                        if (property.CanWrite)
+                            property.SetValue(dest, sourceProp.GetValue(source, null), null);
+                    }
                 }
             }
         }

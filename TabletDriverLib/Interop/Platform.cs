@@ -40,7 +40,7 @@ namespace TabletDriverLib.Interop
                 if (_keyboardHandler == null)
                 {
                     if (PlatformInfo.IsWindows)
-                        _keyboardHandler = new WindowsKeyboardHandler(); // TODO: Windows keyboard handler
+                        _keyboardHandler = new WindowsKeyboardHandler();
                     else if (PlatformInfo.IsLinux)
                         _keyboardHandler = new XKeyboardHandler();
                     else if (PlatformInfo.IsOSX)
