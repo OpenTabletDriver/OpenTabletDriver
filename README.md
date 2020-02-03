@@ -41,23 +41,24 @@ No special dependencies.
 # Features
 
 - Absolute cursor positioning
-- Precise areas
   - Screen area and tablet area
   - Center-anchored offsets
   - Precise area rotation
+- Relative cursor positioning
 - Pen bindings
   - Tip by pressure bindings
   - Express key bindings
   - Pen button bindings
+  - Mouse button bindings
+  - Keyboard bindings
+  - External plugin bindings
 - Saving and loading settings
   - Auto-loads user settings via `settings.xml` in the active directory
 - Tablet Configuration Manager
   - Can convert [TabletDriver](https://github.com/hawku/TabletDriver) configuration files (.cfg)
-
-## Planned features
-
-- Relative cursor positioning
-- Keyboard bindings
+- Plugins
+  - Filters
+  - Output modes
 
 # Improving OpenTabletDriver
 
@@ -65,6 +66,6 @@ If you wish to help improve OpenTabletDriver, first [check out the pinned issues
 
 # Tablet Support
 
-All statuses of tablets that are supported, untested, and planned to be supported can be found here
+All statuses of tablets that are supported, untested, and planned to be supported can be found here.
 
 - [Tablet support project](https://github.com/InfinityGhost/OpenTabletDriver/projects/4)
