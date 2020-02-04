@@ -27,10 +27,15 @@ namespace OpenTabletDriver.Controls
         private bool IsDragging { set; get; }
         private Point? LastPosition { set; get; }
 
+#pragma warning disable 618
+
         private void AreaPointerPressed(object sender, PointerPressedEventArgs e)
         {
-            IsDragging = true;
+            if (e.MouseButton == MouseButton.Left)
+                IsDragging = true;
         }
+
+#pragma warning restore 618
 
         private void AreaPointerReleased(object sender, PointerReleasedEventArgs e)
         {

@@ -9,7 +9,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenTabletDriver.Windows.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
-        Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=1280}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=720}"
+        Width="1100" Height="720"
         MinWidth="960" MinHeight="720"
         Title="OpenTabletDriver">
     <Window.Styles>
@@ -122,9 +122,12 @@
                                         <Setter Property="Margin" Value="0,0,5,0"/>
                                     </Style>
                                 </StackPanel.Styles>
-                                <CheckBox Content="Enable on startup" IsChecked="{Binding Settings.AutoHook}"/>
-                                <CheckBox Content="Area clipping" IsChecked="{Binding Settings.EnableClipping}"/>
-                                <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"/>
+                                <CheckBox Content="Enable on startup" IsChecked="{Binding Settings.AutoHook}"
+                                    ToolTip.Tip="Enables the driver as soon as the tablet is detected."/>
+                                <CheckBox Content="Area clipping" IsChecked="{Binding Settings.EnableClipping}"
+                                    ToolTip.Tip="Locks your pen inputs within the areas you set."/>
+                                <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"
+                                    ToolTip.Tip="Locks all areas to the same aspect ratio."/>
                             </StackPanel>
                         </Border>
                     </Grid>

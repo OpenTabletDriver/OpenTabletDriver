@@ -39,25 +39,7 @@
                 <Canvas Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}" HorizontalAlignment="Center">
                     <Rectangle Name="FullAreaRect" 
                         Width="{Binding BackgroundWidth}" Height="{Binding BackgroundHeight}"
-                        Fill="{DynamicResource ThemeControlMidBrush}"/>
-                    <Rectangle Name="ActiveAreaRect"
-                        Width="{Binding AreaWidth}" Height="{Binding AreaHeight}"
-                        Fill="{DynamicResource ThemeAccentBrush2}">
-                        <Canvas.Left>
-                            <MultiBinding Converter="{StaticResource CenterConvert}">
-                                <Binding Path="AreaXOffset"/>
-                                <Binding Path="AreaWidth"/>
-                            </MultiBinding>
-                        </Canvas.Left>
-                        <Canvas.Top>
-                            <MultiBinding Converter="{StaticResource CenterConvert}">
-                                <Binding Path="AreaYOffset"/>
-                                <Binding Path="AreaHeight"/>
-                            </MultiBinding>
-                        </Canvas.Top>
-                        <Rectangle.RenderTransform>
-                            <RotateTransform Angle="{Binding RotationAngle}"/>
-                        </Rectangle.RenderTransform>
+                        Fill="{DynamicResource ThemeControlMidBrush}">
                         <Rectangle.ContextMenu>
                             <ContextMenu>
                                 <ContextMenu.Styles>
@@ -82,6 +64,26 @@
                                 </MenuItem>
                             </ContextMenu>
                         </Rectangle.ContextMenu>
+                    </Rectangle>
+                    <Rectangle Name="ActiveAreaRect"
+                        Width="{Binding AreaWidth}" Height="{Binding AreaHeight}"
+                        IsHitTestVisible="False"
+                        Fill="{DynamicResource ThemeAccentBrush2}">
+                        <Canvas.Left>
+                            <MultiBinding Converter="{StaticResource CenterConvert}">
+                                <Binding Path="AreaXOffset"/>
+                                <Binding Path="AreaWidth"/>
+                            </MultiBinding>
+                        </Canvas.Left>
+                        <Canvas.Top>
+                            <MultiBinding Converter="{StaticResource CenterConvert}">
+                                <Binding Path="AreaYOffset"/>
+                                <Binding Path="AreaHeight"/>
+                            </MultiBinding>
+                        </Canvas.Top>
+                        <Rectangle.RenderTransform>
+                            <RotateTransform Angle="{Binding RotationAngle}"/>
+                        </Rectangle.RenderTransform>
                     </Rectangle>
                 </Canvas>
             </Viewbox>
