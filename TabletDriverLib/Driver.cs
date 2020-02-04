@@ -104,6 +104,13 @@ namespace TabletDriverLib
                 TabletReader.Parser = reportParser;
                 TabletReader.Start();
                 TabletReader.Report += HandleReport;
+                
+                if (TabletProperties.FeatureInitReport != null && TabletProperties.FeatureInitReport.Length > 0)
+                {
+                    Log.Write("Debug", $"Setting feature: " + BitConverter.ToString(TabletProperties.FeatureInitReport));
+                    TabletReader.ReportStream.SetFeature(TabletProperties.FeatureInitReport);
+                }
+
                 // Post tablet opened event
                 TabletSuccessfullyOpened?.Invoke(this, TabletProperties);
                 return true;

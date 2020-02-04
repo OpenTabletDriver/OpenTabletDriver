@@ -113,6 +113,13 @@ namespace TabletDriverPlugin.Tablet
         [XmlElement("AuxReportParser")]
         public string AuxReportParserName { set; get; }
 
+        /// <summary>
+        /// The feature report sent to initialize the tablet's functions.
+        /// </summary>
+        /// <value></value>
+        [XmlElement("FeatureInitReport")]
+        public byte[] FeatureInitReport { set; get; }
+
         #region XML Serialization
 
         private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));

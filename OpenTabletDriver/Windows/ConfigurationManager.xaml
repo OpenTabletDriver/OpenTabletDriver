@@ -2,10 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cvt="clr-namespace:OpenTabletDriver.Converters;assembly=OpenTabletDriver"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenTabletDriver.Windows.ConfigurationManager"
         Width="1024" Height="768"
         Title="Configuration Manager">
+    <Window.Resources>
+        <cvt:ByteArrayConverter x:Key="ByteArrayConverter"/>
+    </Window.Resources>
     <Grid RowDefinitions="Auto,*">
         <Menu Grid.Row="0">
             <MenuItem Header="File">
@@ -119,6 +123,9 @@
 
                                         <TextBlock Text="Custom Report Parser"/>
                                         <TextBox Text="{Binding CustomReportParserName}"/>
+
+                                        <TextBlock Text="Feature Initialization Report"/>
+                                        <TextBox Text="{Binding FeatureInitReport, Converter={StaticResource ByteArrayConverter}}"/>
                                     </StackPanel>
                                 </Expander>
                             </StackPanel>
