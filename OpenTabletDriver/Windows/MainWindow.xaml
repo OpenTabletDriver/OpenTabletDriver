@@ -9,7 +9,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OpenTabletDriver.Windows.MainWindow"
         Icon="avares://OpenTabletDriver/Assets/otd.ico"
-        Width="{Binding Settings.WindowWidth, Mode=TwoWay, FallbackValue=1280}" Height="{Binding Settings.WindowHeight, Mode=TwoWay, FallbackValue=720}"
+        Width="1100" Height="720"
         MinWidth="960" MinHeight="720"
         Title="OpenTabletDriver">
     <Window.Styles>
