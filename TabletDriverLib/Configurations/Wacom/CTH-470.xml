@@ -13,4 +13,5 @@
   <MaxPressure>1023</MaxPressure>
   <MinimumRange>64</MinimumRange>
   <AuxReportLength>64</AuxReportLength>
+  <FeatureInitReport>AgI=</FeatureInitReport>
 </Tablet>
