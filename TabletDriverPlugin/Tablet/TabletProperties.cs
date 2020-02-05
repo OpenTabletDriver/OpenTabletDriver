@@ -10,7 +10,7 @@ namespace TabletDriverPlugin.Tablet
     {
         private string _tabletName, _reportParser, _customReportParser, _auxReportParser;
         private int _vid, _pid;
-        private uint _inputReportLength, _customInputReportLength, _minimumRange, _auxReportLength, _maxPressure;
+        private uint _inputReportLength, _customInputReportLength, _reportId, _auxReportLength, _maxPressure;
         private float _width, _height, _maxX, _maxY;
         private byte[] _featureInitReport;
 
@@ -147,14 +147,14 @@ namespace TabletDriverPlugin.Tablet
         }
 
         /// <summary>
-        /// The device's minimum detection lift.
+        /// The device's minimum detection report ID.
         /// </summary>
         /// <value></value>
-        [XmlElement("MinimumRange")]
-        public uint MinimumRange
+        [XmlElement("ActiveReportID")]
+        public uint ActiveReportID
         {
-            set => this.RaiseAndSetIfChanged(ref _minimumRange, value);
-            get => _minimumRange;
+            set => this.RaiseAndSetIfChanged(ref _reportId, value);
+            get => _reportId;
         }
 
         /// <summary>
