@@ -21,7 +21,7 @@ namespace TabletDriverLib.Tablet
                 }
                 else if (report is ITabletReport tabletReport)
                 {
-                    return $"Lift:{tabletReport.Lift}, Position:[{tabletReport.Position}], Pressure:{tabletReport.Pressure}, PenButtons:[{String.Join(" ", tabletReport.PenButtons)}]";
+                    return $"ReportID:{tabletReport.ReportID}, Position:[{tabletReport.Position}], Pressure:{tabletReport.Pressure}, PenButtons:[{String.Join(" ", tabletReport.PenButtons)}]";
                 }
                 else
                 {

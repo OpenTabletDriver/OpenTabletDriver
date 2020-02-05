@@ -12,6 +12,6 @@
   <MaxX>31496</MaxX>
   <MaxY>19685</MaxY>
   <MaxPressure>2047</MaxPressure>
-  <MinimumRange>224</MinimumRange>
+  <ActiveReportID>224</ActiveReportID>
   <AuxReportLength>0</AuxReportLength>
 </Tablet>

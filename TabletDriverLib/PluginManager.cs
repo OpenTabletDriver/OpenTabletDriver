@@ -41,7 +41,7 @@ namespace TabletDriverLib
             }
             catch (ReflectionTypeLoadException e)
             {
-                Log.Write("Plugin", "Failed to get one or more types. This plugin is likely out of date.", true);
+                Log.Write("Plugin", $"Failed to get one or more types. The plugin '{asm.GetName().Name}' is likely out of date.", true);
                 return e.Types.Where(t => t != null);
             }
         }

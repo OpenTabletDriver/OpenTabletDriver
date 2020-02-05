@@ -10,7 +10,7 @@ namespace TabletDriverLib.Tablet
         {
             Raw = report;
 
-            Lift = (uint)report[1] >> 1;
+            ReportID = (uint)report[1] >> 1;
             var x = BitConverter.ToUInt16(report, 2);
             var y = BitConverter.ToUInt16(report, 4);
             Position = new Point(x, y);
@@ -24,7 +24,7 @@ namespace TabletDriverLib.Tablet
         }
 
         public byte[] Raw { private set; get; }
-        public uint Lift { private set; get; }
+        public uint ReportID { private set; get; }
         public Point Position { private set; get; }
         public uint Pressure { private set; get; }
         public bool[] PenButtons { private set; get; }
