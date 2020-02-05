@@ -101,14 +101,14 @@
 
                                         <TextBlock Text="Maximum Pressure Input"/>
                                         <TextBox Text="{Binding MaxPressure}"/>
-
-                                        <TextBlock Text="Minimum Hover Distance"/>
-                                        <TextBox Text="{Binding MinimumRange}"/>
                                     </StackPanel>
                                 </Expander>
 
                                 <Expander Header="Advanced">
                                     <StackPanel>
+                                        <TextBlock Text="Active Report ID"/>
+                                        <TextBox Text="{Binding ActiveReportID}"/>
+
                                         <TextBlock Text="Report Parser"/>
                                         <TextBox Text="{Binding ReportParserName}"/>
 
