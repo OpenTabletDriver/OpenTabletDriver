@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
@@ -49,7 +50,7 @@ namespace TabletDriverLib.Output
             get => _tabletProperties;
         }
 
-        public IFilter Filter { set; get; }
+        public IEnumerable<IFilter> Filters { set; get; }
 
         public bool AreaClipping { set; get; }
         
@@ -126,8 +127,9 @@ namespace TabletDriverLib.Output
                 if (pos.Y > _maxY)
                     pos.Y = _maxY;
             }
-            
-            if (Filter is IFilter filter)
+
+            // Filter
+            foreach (var filter in Filters)
                 pos = filter.Filter(pos);
 
             // Setting cursor position
