@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
@@ -13,7 +14,7 @@ namespace TabletDriverLib.Output
         public float XSensitivity { set; get; }
         public float YSensitivity { set; get; }
         public TimeSpan ResetTime { set; get; } = TimeSpan.FromMilliseconds(100);
-        public IFilter Filter { set; get; }
+        public IEnumerable<IFilter> Filters { set; get; }
 
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private ITabletReport _lastReport;
@@ -58,8 +59,8 @@ namespace TabletDriverLib.Output
                 pos += GetCursorPosition();
 
                 // Filter
-                if (Filter != null)
-                    pos = Filter.Filter(pos);
+                foreach (var filter in Filters)
+                    pos = filter.Filter(pos);
 
                 CursorHandler.SetCursorPosition(pos);
                 _lastPosition = pos;

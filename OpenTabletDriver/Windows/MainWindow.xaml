@@ -308,33 +308,9 @@
                     </UniformGrid>
                 </Border>
             </TabItem>
-            <TabItem Header="Filter" IsVisible="{Binding IsFilterable}">
+            <TabItem Header="Filters" IsVisible="{Binding IsFilterable}">
                 <Border>
-                    <Grid RowDefinitions="Auto,*">
-                        <Grid.Styles>
-                            <Style Selector="Grid > Border">
-                                <Setter Property="Margin" Value="5"/>
-                            </Style>
-                        </Grid.Styles>
-                        <Border Grid.Row="0" Classes="r">
-                            <Grid RowDefinitions="Auto,*" Margin="5">
-                                <TextBlock Grid.Row="0" Text="Filter"/>
-                                <ComboBox Grid.Row="1" Margin="5"
-                                    Items="{Binding PluginFilters}"
-                                    SelectedItem="{Binding CurrentFilter}"/>
-                            </Grid>
-                        </Border>
-                        <ItemsControl Grid.Row="1" Items="{Binding FilterControls}">
-                            <ItemsControl.Styles>
-                                <Style Selector="ItemsControl > Border">
-                                    <Setter Property="BorderThickness" Value="1"/>
-                                    <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderLowBrush}"/>
-                                    <Setter Property="Margin" Value="5"/>
-                                    <Setter Property="Padding" Value="5"/>
-                                </Style>
-                            </ItemsControl.Styles>
-                        </ItemsControl>
-                    </Grid>
+                    <ns:FilterEditor Name="FilterEditor"/>
                 </Border>
             </TabItem>
             <TabItem Header="Console">

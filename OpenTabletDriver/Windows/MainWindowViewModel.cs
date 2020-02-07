@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using OpenTabletDriver.Controls;
 using OpenTabletDriver.Models;
 using OpenTabletDriver.Plugins;
 using OpenTabletDriver.Tools;
@@ -54,9 +55,9 @@ namespace OpenTabletDriver.Windows
                 var settingsFile = new FileInfo(settingsPath);
                 if (settingsFile.Exists)
                 {
-                    var settings = LoadSettings(settingsFile);
-                    if (settings != null)
-                        ApplySettings(settings);
+                    LoadSettings(settingsFile);
+                    if (Settings != null)
+                        ApplySettings(Settings);
                 }
                 else
                     ApplySettings(DefaultSettings);
@@ -145,6 +146,24 @@ namespace OpenTabletDriver.Windows
 
         #endregion
 
+        #region Plugin Settings
+            
+        private ObservableCollection<PluginReference> _filters;
+        public ObservableCollection<PluginReference> Filters
+        {
+            set
+            {
+                var stringFilters = from filter in Filters
+                    where filter != PluginReference.Disable
+                    select filter.Path;
+                Settings.Filters = new ObservableCollection<string>(stringFilters);
+                this.RaiseAndSetIfChanged(ref _filters, value);
+            }
+            get => _filters;
+        }
+        
+        #endregion
+
         #region Plugins
             
         public async Task LoadPlugins(DirectoryInfo directory)
@@ -154,13 +173,6 @@ namespace OpenTabletDriver.Windows
                 var file = new FileInfo(path);
                 await PluginManager.AddPlugin(file);
             }
-
-            var filters = from filter in PluginManager.GetChildTypes<IFilter>()
-                where !filter.IsInterface
-                where !filter.IsPluginIgnored()
-                select new PluginReference(filter.FullName);
-            PluginFilters = new ObservableCollection<PluginReference>(filters);
-            PluginFilters.Insert(0, PluginReference.Disable);
 
             var outputModes = from mode in PluginManager.GetChildTypes<IOutputMode>()
                 where !mode.IsInterface
@@ -197,51 +209,11 @@ namespace OpenTabletDriver.Windows
             get => _isFilterable;
         }
 
-        private ObservableCollection<PluginReference> _pluginFilters;
-        public ObservableCollection<PluginReference> PluginFilters
-        {
-            set => this.RaiseAndSetIfChanged(ref _pluginFilters, value);
-            get => _pluginFilters;
-        }
-
-        private PluginReference _filter;
-        public PluginReference CurrentFilter
-        {
-            set
-            {
-                if (value == PluginReference.Disable)
-                    value = null;
-                Settings.ActiveFilterName = value?.Path;
-                FilterTemplate = value?.Construct<IFilter>();
-                this.RaiseAndSetIfChanged(ref _filter, value);
-            }
-            get => _filter;
-        }
-
         private ObservableCollection<PluginReference> _outputModes;
         public ObservableCollection<PluginReference> OutputModes
         {
             set => this.RaiseAndSetIfChanged(ref _outputModes, value);
             get => _outputModes;
-        }
-
-        private IFilter _filterTemplate;
-        public IFilter FilterTemplate
-        {
-            set
-            {
-                var controls = PropertyTools.GetPropertyControls(value, nameof(FilterTemplate), Settings.PluginSettings);
-                FilterControls = new ObservableCollection<IControl>(controls);
-                this.RaiseAndSetIfChanged(ref _filterTemplate, value);
-            }
-            get => _filterTemplate;
-        }
-
-        private ObservableCollection<IControl> _filterControls = new ObservableCollection<IControl>();
-        public ObservableCollection<IControl> FilterControls
-        {
-            set => this.RaiseAndSetIfChanged(ref _filterControls, value);
-            get => _filterControls;
         }
 
         #endregion
@@ -344,10 +316,10 @@ namespace OpenTabletDriver.Windows
             DisplayHeight = VirtualScreen.Height,
             DisplayX = VirtualScreen.Width / 2,
             DisplayY = VirtualScreen.Height / 2,
-            TabletWidth = Tablet.Width,
-            TabletHeight = Tablet.Height,
-            TabletX = Tablet.Width / 2,
-            TabletY = Tablet.Height / 2,
+            TabletWidth = Tablet?.Width ?? 0,
+            TabletHeight = Tablet?.Height ?? 0,
+            TabletX = Tablet?.Width / 2 ?? 0,
+            TabletY = Tablet?.Height / 2 ?? 0,
             EnableClipping = true,
             TipButton = "TabletDriverLib.Binding.MouseBinding, Left",
             TipActivationPressure = 1,
@@ -359,16 +331,16 @@ namespace OpenTabletDriver.Windows
             ResetTime = TimeSpan.FromMilliseconds(100)
         };
 
-        public Settings LoadSettings(FileInfo file)
+        public void LoadSettings(FileInfo file)
         {
             try
             {
-                return Settings.Deserialize(file);
+                Settings = Settings.Deserialize(file);
+                this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.RefreshPlugins();
             }
             catch (Exception ex)
             {
                 Log.Exception(ex);
-                return null;
             }
         }
 
@@ -382,8 +354,6 @@ namespace OpenTabletDriver.Windows
         {
             Settings = settings;
             UpdatePluginSettings();
-            UpdateSettings();
-
             Driver.OutputMode = PluginManager.ConstructObject<IOutputMode>(Settings.OutputMode);
             
             if (Driver.OutputMode != null)
@@ -393,10 +363,12 @@ namespace OpenTabletDriver.Windows
 
             if (Driver.OutputMode is IOutputMode outputMode)
             {                
-                outputMode.Filter = PluginManager.ConstructObject<IFilter>(Settings.ActiveFilterName);
-                FilterTemplate.CopyPropertiesTo(outputMode.Filter);
-                if (outputMode.Filter != null)
-                    Log.Write("Settings", $"Filter: {outputMode.Filter.GetType().FullName}");
+                var filterEditor = this.GetParentWindow().Find<FilterEditor>("FilterEditor");
+                
+                outputMode.Filters = filterEditor?.ViewModel.ConstructEnabledFilters() ?? new ObservableCollection<IFilter>();
+                
+                if (outputMode.Filters != null)
+                    Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
                 
                 outputMode.TabletProperties = Driver.TabletProperties;
             }
@@ -477,21 +449,13 @@ namespace OpenTabletDriver.Windows
             UpdateControlVisibility();
         }
 
-        public void UpdateSettings()
-        {
-            CurrentFilter = PluginFilters?.FirstOrDefault(f => f.Path == Settings.ActiveFilterName);
-        }
-
         public void UpdatePluginSettings()
         {
-            var filterSettings = PluginTools.GetPluginSettings(FilterTemplate);
-            foreach (var pair in filterSettings)
-            {
-                if (Settings.PluginSettings.ContainsKey(pair.Item1))
-                    Settings.PluginSettings[pair.Item1] = pair.Item2;
-                else
-                    Settings.PluginSettings.Add(pair.Item1, pair.Item2);
-            }
+            var editorFilters = this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.Filters;
+            var filters = from filter in editorFilters
+                where filter.IsEnabled
+                select filter.Path;
+            Settings.Filters = new ObservableCollection<string>(filters);
         }
 
         public void UpdateControlVisibility()

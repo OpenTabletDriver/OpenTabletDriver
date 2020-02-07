@@ -16,8 +16,9 @@ namespace OpenTabletDriver.Models
 
         private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens;
         private bool _clipping, _autohook, _lockar, _sizeChanging;
-        private string _theme, _outputMode, _activeFilter;
+        private string _theme, _outputMode;
         private TimeSpan _resetTime;
+        private ObservableCollection<string> _filters;
 
         #region General Settings
 
@@ -35,11 +36,12 @@ namespace OpenTabletDriver.Models
             get => _outputMode;
         }
 
-        [XmlElement("ActiveFilter")]
-        public string ActiveFilterName
+        [XmlArray("Filters")]
+        [XmlArrayItem("Filter")]
+        public ObservableCollection<string> Filters
         {
-            set => this.RaiseAndSetIfChanged(ref _activeFilter, value != "{Disable}" ? value : null);
-            get => _activeFilter;
+            set => this.RaiseAndSetIfChanged(ref _filters, value);
+            get => _filters;
         }
 
         [XmlElement("AutoHook")]

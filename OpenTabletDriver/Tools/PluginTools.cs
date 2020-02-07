@@ -24,6 +24,25 @@ namespace OpenTabletDriver.Tools
             }
         }
 
+        public static void SetPluginSettings<T>(T obj, IDictionary<string, string> pluginSettings)
+        {
+            if (obj != null)
+            {
+                foreach (var property in obj.GetType().GetProperties())
+                {
+                    var attributes = from attr in property.GetCustomAttributes(false)
+                        where attr is PropertyAttribute
+                        select attr as PropertyAttribute;
+
+                    if (pluginSettings.TryGetValue(property.Name, out var stringValue))
+                    {
+                        var value = Convert.ChangeType(stringValue, property.PropertyType);
+                        property.SetValue(obj, value);
+                    }
+                }
+            }
+        }
+
         public static bool IsPluginIgnored(this Type type)
         {
             return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));
