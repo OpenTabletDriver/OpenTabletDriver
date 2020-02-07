@@ -308,7 +308,7 @@
                     </UniformGrid>
                 </Border>
             </TabItem>
-            <TabItem Header="Filter" IsVisible="{Binding IsFilterable}">
+            <TabItem Header="Filters" IsVisible="{Binding IsFilterable}">
                 <Border>
                     <ns:FilterEditor Name="FilterEditor"/>
                 </Border>
