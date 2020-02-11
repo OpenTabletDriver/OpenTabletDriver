@@ -363,8 +363,7 @@ namespace OpenTabletDriver.Windows
 
             if (Driver.OutputMode is IOutputMode outputMode)
             {                
-                var filterEditor = this.GetParentWindow().Find<FilterEditor>("FilterEditor");
-                
+                var filterEditor = this.GetParentWindow()?.Find<FilterEditor>("FilterEditor");
                 outputMode.Filters = filterEditor?.ViewModel.ConstructEnabledFilters() ?? new ObservableCollection<IFilter>();
                 
                 if (outputMode.Filters != null)
@@ -451,11 +450,13 @@ namespace OpenTabletDriver.Windows
 
         public void UpdatePluginSettings()
         {
-            var editorFilters = this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.Filters;
-            var filters = from filter in editorFilters
-                where filter.IsEnabled
-                select filter.Path;
-            Settings.Filters = new ObservableCollection<string>(filters);
+            if (this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Filters is ObservableCollection<SelectablePluginReference> editorFilters)
+            {
+                var filters = from filter in editorFilters
+                    where filter.IsEnabled
+                    select filter.Path;
+                Settings.Filters = new ObservableCollection<string>(filters);
+            }
         }
 
         public void UpdateControlVisibility()
