@@ -60,6 +60,7 @@
                     <MenuItem Header="Light" CommandParameter="Light"/>
                     <MenuItem Header="Dark" CommandParameter="Dark"/>
                 </MenuItem>
+                <MenuItem Header="Open plugin directory..." Command="{Binding OpenPluginDirectory}"/>
             </MenuItem>
             <MenuItem Header="Tablets">
                 <MenuItem Header="Detect tablet" Command="{Binding DetectTablets}"/>

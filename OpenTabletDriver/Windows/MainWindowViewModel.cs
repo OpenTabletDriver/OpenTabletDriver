@@ -667,6 +667,11 @@ namespace OpenTabletDriver.Windows
             }
         }
 
+        public void OpenPluginDirectory()
+        {
+            NativeLib.Tools.OpenUrl(Program.PluginDirectory.FullName);
+        }
+
         #endregion
     }
 }

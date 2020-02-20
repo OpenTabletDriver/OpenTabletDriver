@@ -89,9 +89,9 @@ namespace TabletDriverLib
                     Report?.Invoke(this, report);
                 }
             }
-            catch (ObjectDisposedException)
+            catch (ObjectDisposedException dex)
             {
-                // Ignore, this is due to re-detecting tablets
+                Log.Debug($"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
             }
             catch (Exception ex)
             {
