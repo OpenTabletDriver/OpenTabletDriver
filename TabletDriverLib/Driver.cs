@@ -170,6 +170,8 @@ namespace TabletDriverLib
                 if (OutputMode is IBindingHandler<IBinding> binding)
                     binding.HandleBinding(report);
             }
+
+            DriverState.PostReport(sender, report);
         }
     }
 }
