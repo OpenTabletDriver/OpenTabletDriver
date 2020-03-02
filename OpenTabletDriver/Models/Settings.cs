@@ -247,6 +247,14 @@ namespace OpenTabletDriver.Models
             get => _pluginSettings;
         }
 
+        private ObservableCollection<string> _residents = new ObservableCollection<string>();
+        [XmlElement("ResidentPlugins")]
+        public ObservableCollection<string> ResidentPlugins
+        {
+            set => this.RaiseAndSetIfChanged(ref _residents, value);
+            get => _residents;
+        }
+
         #endregion
 
         #region Window Properties

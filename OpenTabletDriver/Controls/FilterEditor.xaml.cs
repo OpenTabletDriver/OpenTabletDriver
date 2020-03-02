@@ -1,22 +1,9 @@
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
 using Avalonia.Markup.Xaml;
-using OpenTabletDriver.Models;
-using OpenTabletDriver.Plugins;
-using OpenTabletDriver.Tools;
-using TabletDriverLib;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Attributes;
-using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Controls
 {
-    public class FilterEditor : UserControl, INotifyPropertyChanged, IViewModelRoot<FilterEditorViewModel>
+    public class FilterEditor : UserControl, IViewModelRoot<FilterEditorViewModel>
     {
         public FilterEditor()
         {

@@ -336,7 +336,8 @@ namespace OpenTabletDriver.Windows
             try
             {
                 Settings = Settings.Deserialize(file);
-                this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.RefreshPlugins();
+                this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
+                this.GetParentWindow().Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
             }
             catch (Exception ex)
             {
@@ -364,7 +365,7 @@ namespace OpenTabletDriver.Windows
             if (Driver.OutputMode is IOutputMode outputMode)
             {                
                 var filterEditor = this.GetParentWindow()?.Find<FilterEditor>("FilterEditor");
-                outputMode.Filters = filterEditor?.ViewModel.ConstructEnabledFilters() ?? new ObservableCollection<IFilter>();
+                outputMode.Filters = filterEditor?.ViewModel.ConstructEnabledPlugins() ?? new ObservableCollection<IFilter>();
                 
                 if (outputMode.Filters != null)
                     Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
@@ -450,7 +451,7 @@ namespace OpenTabletDriver.Windows
 
         public void UpdatePluginSettings()
         {
-            if (this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Filters is ObservableCollection<SelectablePluginReference> editorFilters)
+            if (this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Plugins is ObservableCollection<SelectablePluginReference> editorFilters)
             {
                 var filters = from filter in editorFilters
                     where filter.IsEnabled

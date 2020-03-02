@@ -3,7 +3,7 @@
         xmlns:sys="clr-namesplace:System"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ns="clr-namespace:OpenTabletDriver.Controls;assembly=OpenTabletDriver"
+        xmlns:controls="clr-namespace:OpenTabletDriver.Controls;assembly=OpenTabletDriver"
         xmlns:cursor="clr-namespace:TabletDriverLib.Interop.Cursor;assembly=TabletDriverLib"
         xmlns:cvt="clr-namespace:OpenTabletDriver.Converters;assembly=OpenTabletDriver"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -86,7 +86,7 @@
             <TabItem Header="Absolute Mode Settings" IsVisible="{Binding IsAbsolute}">
                 <Border>
                     <Grid RowDefinitions="*,*,Auto" ColumnDefinitions="*,Auto" HorizontalAlignment="Stretch" Margin="100,0">
-                        <ns:AreaSetter Grid.Row="0" Grid.ColumnSpan="2"
+                        <controls:AreaSetter Grid.Row="0" Grid.ColumnSpan="2"
                             Title="Display Area"
                             MeasurementUnit="px"
                             AreaWidth="{Binding Settings.DisplayWidth}"
@@ -105,7 +105,7 @@
                                 Items="{Binding VirtualScreen.Displays}"
                                 SelectedItem="{Binding SelectedDisplay, Mode=TwoWay}"/>
                         </Grid>
-                        <ns:AreaSetter Grid.Row="1" Grid.ColumnSpan="2" MinWidth="100"
+                        <controls:AreaSetter Grid.Row="1" Grid.ColumnSpan="2" MinWidth="100"
                             Title="Tablet Area"
                             MeasurementUnit="mm"
                             EnableRotation="True"
@@ -311,12 +311,17 @@
             </TabItem>
             <TabItem Header="Filters" IsVisible="{Binding IsFilterable}">
                 <Border>
-                    <ns:FilterEditor Name="FilterEditor"/>
+                    <controls:FilterEditor Name="FilterEditor"/>
+                </Border>
+            </TabItem>
+            <TabItem Header="Plugins">
+                <Border>
+                    <controls:ResidentPluginEditor Name="ResidentPluginEditor"/>
                 </Border>
             </TabItem>
             <TabItem Header="Console">
                 <Grid RowDefinitions="*,Auto">
-                    <ns:LogView Messages="{Binding Messages}"/>
+                    <controls:LogView Messages="{Binding Messages}"/>
                     <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
                         <StackPanel.Styles>
                             <Style Selector="CheckBox">
@@ -344,7 +349,7 @@
             </StackPanel>
         </Grid>
         <Border Grid.Row="3" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
-            <ns:StatusBar CurrentStatus="{Binding StatusMessage}"/>
+            <controls:StatusBar CurrentStatus="{Binding StatusMessage}"/>
         </Border>
     </Grid>
 
