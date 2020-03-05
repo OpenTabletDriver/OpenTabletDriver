@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Controls
             var pluginList = new Collection<SelectablePluginReference>();
             foreach (var plugin in plugins)
             {
-                bool isEnabled = Settings?.Filters.Any(f => f == plugin.FullName) ?? false;
+                bool isEnabled = Settings?.Filters?.Any(f => f == plugin.FullName) ?? false;
                 pluginList.Add(new SelectablePluginReference(plugin.FullName, isEnabled));
             }
 

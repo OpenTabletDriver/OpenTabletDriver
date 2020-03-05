@@ -51,11 +51,9 @@ namespace OpenTabletDriver.Windows
 
             if (Program.SettingsDirectory.Exists)
             {
-                var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-                var settingsFile = new FileInfo(settingsPath);
-                if (settingsFile.Exists)
+                if (Program.SettingsFile.Exists)
                 {
-                    LoadSettings(settingsFile);
+                    LoadSettings(Program.SettingsFile);
                     if (Settings != null)
                         ApplySettings(Settings);
                 }
@@ -447,6 +445,9 @@ namespace OpenTabletDriver.Windows
             Log.Write("Settings", "Applied all settings.");
 
             UpdateControlVisibility();
+
+            this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
+            this.GetParentWindow().Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
         }
 
         public void UpdatePluginSettings()
@@ -457,6 +458,14 @@ namespace OpenTabletDriver.Windows
                     where filter.IsEnabled
                     select filter.Path;
                 Settings.Filters = new ObservableCollection<string>(filters);
+            }
+
+            if (this.GetParentWindow()?.Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Plugins is ObservableCollection<SelectablePluginReference> residentPlugins)
+            {
+                var residents = from residentPlugin in residentPlugins
+                    where residentPlugin.IsEnabled
+                    select residentPlugin.Path;
+                Settings.ResidentPlugins = new ObservableCollection<string>(residents);
             }
         }
 
@@ -606,9 +615,7 @@ namespace OpenTabletDriver.Windows
 
         public void SaveSettingsDefault()
         {
-            var path = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-            var file = new FileInfo(path); 
-            SaveSettings(file);
+            SaveSettings(Program.SettingsFile);
         }
 
         public async Task SaveSettingsDialog()

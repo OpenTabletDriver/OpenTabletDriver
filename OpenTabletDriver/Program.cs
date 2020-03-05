@@ -89,6 +89,8 @@ namespace OpenTabletDriver
             }
         }
 
+        internal static FileInfo SettingsFile => new FileInfo(Path.Join(SettingsDirectory.FullName, "settings.json"));
+
         internal static DirectoryInfo ConfigurationDirectory { private set; get; } = GetDefaultConfigurationDirectory();
         private static DirectoryInfo GetDefaultConfigurationDirectory()
         {

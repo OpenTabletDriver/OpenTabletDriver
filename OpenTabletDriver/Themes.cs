@@ -14,7 +14,7 @@ namespace OpenTabletDriver
                 case "dark":
                     return DarkTheme;
                 default:
-                    throw new ArgumentException("Invalid style name: " + name);
+                    return LightTheme;
             }
         }
 
