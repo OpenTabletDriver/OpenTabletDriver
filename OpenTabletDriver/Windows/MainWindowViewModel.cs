@@ -16,6 +16,7 @@ using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Display;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
+using TabletDriverPlugin.Resident;
 using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Windows
@@ -179,6 +180,33 @@ namespace OpenTabletDriver.Windows
             OutputModes = new ObservableCollection<PluginReference>(outputModes);
         }
 
+        public void InitializeResidents()
+        {
+            var plugins = this.GetParentWindow().Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.ConstructEnabledPlugins();
+            ResidentPlugins = new ObservableCollection<IResident>(plugins);
+
+            foreach (var plugin in ResidentPlugins)
+            {
+                if (!plugin.Initialize())
+                    Log.Debug($"Failed to intialize resident plugin. {nameof(plugin)}");
+            }
+        }
+
+        public void DisposeResidents()
+        {
+            if (ResidentPlugins == null)
+            {
+                ResidentPlugins = new ObservableCollection<IResident>();
+            }
+            else
+            {
+                foreach (var plugin in ResidentPlugins)
+                    plugin.Dispose();
+
+                ResidentPlugins.Clear();
+            }
+        }
+
         private bool _absolute;
         public bool IsAbsolute
         {
@@ -212,6 +240,13 @@ namespace OpenTabletDriver.Windows
         {
             set => this.RaiseAndSetIfChanged(ref _outputModes, value);
             get => _outputModes;
+        }
+
+        private ObservableCollection<IResident> _residents;
+        public ObservableCollection<IResident> ResidentPlugins
+        {
+            set => this.RaiseAndSetIfChanged(ref _residents, value);
+            get => _residents;
         }
 
         #endregion
@@ -467,6 +502,10 @@ namespace OpenTabletDriver.Windows
                     select residentPlugin.Path;
                 Settings.ResidentPlugins = new ObservableCollection<string>(residents);
             }
+
+            // Re-initialize all resident plugins
+            DisposeResidents();
+            InitializeResidents();
         }
 
         public void UpdateControlVisibility()
