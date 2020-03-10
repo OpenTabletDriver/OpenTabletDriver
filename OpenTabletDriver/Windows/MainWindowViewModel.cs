@@ -182,7 +182,7 @@ namespace OpenTabletDriver.Windows
 
         public void InitializeResidents()
         {
-            var plugins = this.GetParentWindow().Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.ConstructEnabledPlugins();
+            var plugins = this.GetParentWindow()?.Find<ResidentPluginEditor>("ResidentPluginEditor")?.ViewModel.ConstructEnabledPlugins() ?? new IResident[0];
             ResidentPlugins = new ObservableCollection<IResident>(plugins);
 
             foreach (var plugin in ResidentPlugins)
@@ -481,8 +481,8 @@ namespace OpenTabletDriver.Windows
 
             UpdateControlVisibility();
 
-            this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
-            this.GetParentWindow().Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
+            this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
+            this.GetParentWindow()?.Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
         }
 
         public void UpdatePluginSettings()
