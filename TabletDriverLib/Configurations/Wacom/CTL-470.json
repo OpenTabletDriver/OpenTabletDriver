@@ -1,0 +1,18 @@
+{
+  "Name": "Wacom CTL-470",
+  "VendorID": 1386,
+  "ProductID": 221,
+  "InputReportLength": 10,
+  "ReportParser": null,
+  "CustomInputReportLength": 11,
+  "CustomReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+  "Width": 147.2,
+  "Height": 92.0,
+  "MaxX": 14720.0,
+  "MaxY": 9200.0,
+  "MaxPressure": 1023,
+  "ActiveReportID": 64,
+  "AuxReportLength": 64,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}

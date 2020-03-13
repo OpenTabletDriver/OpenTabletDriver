@@ -1,0 +1,18 @@
+{
+  "Name": "Wacom PTH-660",
+  "VendorID": 1386,
+  "ProductID": 855,
+  "InputReportLength": 192,
+  "ReportParser": null,
+  "CustomInputReportLength": 0,
+  "CustomReportParser": null,
+  "Width": 226.0,
+  "Height": 150.0,
+  "MaxX": 44800.0,
+  "MaxY": 29600.0,
+  "MaxPressure": 8191,
+  "ActiveReportID": 0,
+  "AuxReportLength": 0,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}

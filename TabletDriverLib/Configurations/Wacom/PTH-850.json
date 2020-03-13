@@ -1,0 +1,18 @@
+{
+  "Name": "Wacom PTH-850",
+  "VendorID": 1386,
+  "ProductID": 40,
+  "InputReportLength": 10,
+  "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
+  "CustomInputReportLength": 11,
+  "CustomReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+  "Width": 325.12,
+  "Height": 203.2,
+  "MaxX": 65024.0,
+  "MaxY": 40640.0,
+  "MaxPressure": 2047,
+  "ActiveReportID": 0,
+  "AuxReportLength": 64,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}

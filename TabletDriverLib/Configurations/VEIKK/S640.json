@@ -1,0 +1,18 @@
+{
+  "Name": "VEIKK S640",
+  "VendorID": 12267,
+  "ProductID": 1,
+  "InputReportLength": 9,
+  "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+  "CustomInputReportLength": 0,
+  "CustomReportParser": null,
+  "Width": 152.4,
+  "Height": 101.6,
+  "MaxX": 30480.0,
+  "MaxY": 20320.0,
+  "MaxPressure": 8191,
+  "ActiveReportID": 64,
+  "AuxReportLength": 0,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}
