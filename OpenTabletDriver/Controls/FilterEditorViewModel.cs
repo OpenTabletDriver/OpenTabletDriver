@@ -1,14 +1,6 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using OpenTabletDriver.Models;
 using OpenTabletDriver.Plugins;
-using OpenTabletDriver.Tools;
-using OpenTabletDriver.Windows;
-using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Tablet;

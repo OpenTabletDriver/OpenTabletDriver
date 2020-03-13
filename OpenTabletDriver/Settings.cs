@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using Newtonsoft.Json;
 using ReactiveUI;
 
-namespace OpenTabletDriver.Models
+namespace OpenTabletDriver
 {
     public class Settings : ReactiveObject
     {
@@ -47,19 +48,19 @@ namespace OpenTabletDriver.Models
             set => this.RaiseAndSetIfChanged(ref _autohook, value);
             get => _autohook;
         }
-        
+
         #endregion
 
         #region Absolute Mode Settings
 
         [JsonProperty("DisplayWidth")]
-        public float DisplayWidth 
+        public float DisplayWidth
         {
             set
             {
                 this.RaiseAndSetIfChanged(ref _dW, value);
                 if (LockAspectRatio)
-                    TabletHeight = (DisplayHeight / DisplayWidth) * TabletWidth;
+                    TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
             }
             get => _dW;
         }
@@ -71,7 +72,7 @@ namespace OpenTabletDriver.Models
             {
                 this.RaiseAndSetIfChanged(ref _dH, value);
                 if (LockAspectRatio)
-                    TabletWidth = (DisplayWidth / DisplayHeight) * TabletHeight;
+                    TabletWidth = DisplayWidth / DisplayHeight * TabletHeight;
             }
             get => _dH;
         }
@@ -106,7 +107,7 @@ namespace OpenTabletDriver.Models
                 if (LockAspectRatio && !_sizeChanging)
                 {
                     _sizeChanging = true;
-                    TabletHeight = (DisplayHeight / DisplayWidth) * value;
+                    TabletHeight = DisplayHeight / DisplayWidth * value;
                     _sizeChanging = false;
                 }
             }
@@ -122,7 +123,7 @@ namespace OpenTabletDriver.Models
                 if (LockAspectRatio && !_sizeChanging)
                 {
                     _sizeChanging = true;
-                    TabletWidth = (DisplayWidth / DisplayHeight) * value; 
+                    TabletWidth = DisplayWidth / DisplayHeight * value;
                     _sizeChanging = false;
                 }
             }
@@ -164,7 +165,7 @@ namespace OpenTabletDriver.Models
             {
                 this.RaiseAndSetIfChanged(ref _lockar, value);
                 if (value)
-                    TabletHeight = (DisplayHeight / DisplayWidth) * TabletWidth;
+                    TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
             }
             get => _lockar;
         }
@@ -172,7 +173,7 @@ namespace OpenTabletDriver.Models
         #endregion
 
         #region Relative Mode Settings
-        
+
         [JsonProperty("XSensitivity")]
         public float XSensitivity
         {
@@ -234,9 +235,9 @@ namespace OpenTabletDriver.Models
             get => _auxButtons;
         }
 
-        private SerializableDictionary<string, string> _pluginSettings = new SerializableDictionary<string, string>();
+        private Dictionary<string, string> _pluginSettings = new Dictionary<string, string>();
         [JsonProperty("PluginSettings")]
-        public SerializableDictionary<string, string> PluginSettings
+        public Dictionary<string, string> PluginSettings
         {
             set => this.RaiseAndSetIfChanged(ref _pluginSettings, value);
             get => _pluginSettings;
@@ -252,7 +253,7 @@ namespace OpenTabletDriver.Models
         #endregion
 
         #region Window Properties
-        
+
         private int _windowWidth, _windowHeight;
 
         public int WindowWidth
@@ -266,11 +267,11 @@ namespace OpenTabletDriver.Models
             set => this.RaiseAndSetIfChanged(ref _windowHeight, value);
             get => _windowHeight;
         }
-        
+
         #endregion
 
         #region JSON Serialization
-            
+
         public static Settings Deserialize(FileInfo file)
         {
             using (var stream = file.OpenRead())

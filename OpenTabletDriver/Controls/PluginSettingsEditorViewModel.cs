@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using OpenTabletDriver.Models;
 using OpenTabletDriver.Plugins;
 using OpenTabletDriver.Tools;
 using OpenTabletDriver.Windows;

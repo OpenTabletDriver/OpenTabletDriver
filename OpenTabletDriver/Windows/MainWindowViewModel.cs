@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using OpenTabletDriver.Controls;
-using OpenTabletDriver.Models;
 using OpenTabletDriver.Plugins;
 using OpenTabletDriver.Tools;
 using ReactiveUI;
@@ -357,7 +356,7 @@ namespace OpenTabletDriver.Windows
             TipActivationPressure = 1,
             PenButtons = new ObservableCollection<string>(new string[2]),
             AuxButtons = new ObservableCollection<string>(new string[4]),
-            PluginSettings = new SerializableDictionary<string, string>(),
+            PluginSettings = new Dictionary<string, string>(),
             XSensitivity = 10,
             YSensitivity = 10,
             ResetTime = TimeSpan.FromMilliseconds(100)
