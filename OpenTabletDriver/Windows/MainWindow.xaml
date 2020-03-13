@@ -322,14 +322,23 @@
             <TabItem Header="Console">
                 <Grid RowDefinitions="*,Auto">
                     <controls:LogView Messages="{Binding Messages}"/>
-                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5">
-                        <StackPanel.Styles>
+                    <Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="{DynamicResource ThemeBorderLowBrush}">
+                        <Border.Styles>
                             <Style Selector="CheckBox">
+                                <Setter Property="Margin" Value="5,0"/>
+                            </Style>
+                            <Style Selector="Button">
                                 <Setter Property="Margin" Value="5,0,0,0"/>
                             </Style>
-                        </StackPanel.Styles>
-                        <CheckBox Content="Debugging" IsChecked="{Binding Driver.Debugging}"/>
-                    </StackPanel>
+                        </Border.Styles>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <Button Content="Copy all" Command="{Binding CopyAllLog}"/>
+                                <Button Content="Export..." Command="{Binding ExportToFile}"/>
+                            </StackPanel>
+                            <CheckBox Grid.Column="1" Content="Debugging" IsChecked="{Binding Driver.Debugging}"/>
+                        </Grid>
+                    </Border>
                 </Grid>
             </TabItem>
         </TabControl>

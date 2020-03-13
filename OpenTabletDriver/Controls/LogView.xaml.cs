@@ -59,8 +59,8 @@ namespace OpenTabletDriver.Controls
 
         private async Task CopyMessage(LogMessage message)
         {
-            var text = string.Format("[{0}:{1}] {2}", message.Group, message.IsError ? "Error" : "Normal", message.Message);
-            await Application.Current.Clipboard.SetTextAsync(text);
+            var text = string.Format("[{0}:{1}]\t{2}", message.IsError ? "Error" : "Normal", message.Group, message.Message);
+            await App.Current.Clipboard.SetTextAsync(text);
         }
     }
 }

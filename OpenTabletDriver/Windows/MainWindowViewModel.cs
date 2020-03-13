@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -269,9 +270,7 @@ namespace OpenTabletDriver.Windows
             if (message is DebugLogMessage)
             {
                 if (Driver.Debugging)
-                {
                     LogOutput(message);
-                }
             }
             else
             {
@@ -717,6 +716,36 @@ namespace OpenTabletDriver.Windows
         public void OpenPluginDirectory()
         {
             NativeLib.Tools.OpenUrl(Program.PluginDirectory.FullName);
+        }
+
+        internal string GetFullLog()
+        {
+            var sb = new StringBuilder();
+            foreach (var message in Messages)
+            {
+                var line = string.Format("[{0}:{1}]\t{2}", message.IsError ? "Error" : "Normal", message.Group, message.Message);
+                sb.AppendLine(line);
+            }
+            return sb.ToString();
+        }
+
+        public async Task CopyAllLog()
+        {
+            var log = GetFullLog();
+            await App.Current.Clipboard.SetTextAsync(log);
+        }
+        
+        public async Task ExportToFile()
+        {
+            var log = GetFullLog();
+            var fileDialog = FileDialogs.CreateSaveFileDialog("Exporting log to file...", "Text", "*.*");
+            var result = await fileDialog.ShowAsync(this.GetParentWindow());
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                var file = new FileInfo(result);
+                using (var sw = file.AppendText())
+                    await sw.WriteLineAsync(log);
+            }
         }
 
         #endregion

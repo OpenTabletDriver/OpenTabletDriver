@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Windows
 
         private async Task Copy(string text)
         {
-            await Avalonia.Application.Current.Clipboard.SetTextAsync(text);
+            await App.Current.Clipboard.SetTextAsync(text);
         }
 
         public string Author => Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyCompanyAttribute>().Company;
