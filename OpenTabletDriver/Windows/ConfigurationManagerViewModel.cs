@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using System.IO;
 using HidSharp;
-using OpenTabletDriver.Models;
 using System;
 using TabletDriverLib;
 using System.Text.RegularExpressions;
 using System.Linq;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
+using OpenTabletDriver.Tools;
 
 namespace OpenTabletDriver.Windows
 {

@@ -3,11 +3,9 @@ using TabletDriverLib;
 using System.Linq;
 using TabletDriverPlugin.Attributes;
 using System.Reflection;
-using System.Xml.Serialization;
 
 namespace OpenTabletDriver.Plugins
 {
-    [XmlRoot("Plugin")]
     public class PluginReference : ReactiveObject
     {
         public PluginReference(string path)

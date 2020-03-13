@@ -6,7 +6,7 @@ using TabletDriverLib;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
-namespace OpenTabletDriver.Models
+namespace OpenTabletDriver.Tools
 {
     public static class ConfigurationConverter
     {
@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Models
                     if (config != null)
                         yield return config;
                 }
-                else if(lines.Any(line => line.StartsWith("HIDTablet")) || lines.Any(line => line.StartsWith("USBTablet")))
+                else if (lines.Any(line => line.StartsWith("HIDTablet")) || lines.Any(line => line.StartsWith("USBTablet")))
                     continue;
             }
         }

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Layout;
 using TabletDriverPlugin.Attributes;
 
 namespace OpenTabletDriver.Tools
@@ -52,16 +54,9 @@ namespace OpenTabletDriver.Tools
         private static IControl GetSubcontrol(string bindingPath, PropertyInfo property, PropertyAttribute attr)
         {
             var subPath = $"{bindingPath}.{property.Name}";
+            IControl control;
             if (attr is SliderPropertyAttribute sliderAttr)
             {
-                var grid = new Grid
-                {
-                    ColumnDefinitions = new ColumnDefinitions
-                    {
-                        new ColumnDefinition(),
-                        new ColumnDefinition(125, GridUnitType.Pixel)
-                    },
-                };
                 var slider = new Slider
                 {
                     Minimum = sliderAttr.Min,
@@ -72,17 +67,43 @@ namespace OpenTabletDriver.Tools
                     [!Slider.ValueProperty] = new Binding(subPath, BindingMode.TwoWay),
                 };
                 var tb = GetTextBox(subPath);
-                grid.Children.Add(slider);
-                grid.Children.Add(tb);
+
+                var grid = new Grid
+                {
+                    ColumnDefinitions = new ColumnDefinitions
+                    {
+                        new ColumnDefinition(),
+                        new ColumnDefinition(125, GridUnitType.Pixel)
+                    },
+                    Children =
+                    {
+                        slider,
+                        tb
+                    }
+                };
                 for (int i = 0; i < grid.Children.Count; i++)
                     Grid.SetColumn(grid.Children[i] as Control, i);
 
-                return grid;
+                control = grid;
+            }
+            else if (attr is UnitPropertyAttribute unitAttr)
+            {
+                var tb = GetTextBox(subPath);
+                var label = GetLabel(unitAttr.Unit);
+                control = new Grid
+                {
+                    Children = 
+                    {
+                        tb,
+                        label
+                    }
+                };
             }
             else
             {
-                return GetTextBox(subPath);
+                control = GetTextBox(subPath);
             }
+            return control;
         }
 
         private static IControl GetTextBox(string bindingPath)
@@ -90,6 +111,18 @@ namespace OpenTabletDriver.Tools
             return new TextBox
             {
                 [!TextBox.TextProperty] = new Binding(bindingPath, BindingMode.TwoWay),
+            };
+        }
+
+        private static IControl GetLabel(string text)
+        {
+            return new TextBlock
+            {
+                Text = text,
+                IsHitTestVisible = false,
+                Margin = new Thickness(0,0,5,0),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
             };
         }
 

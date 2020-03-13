@@ -49,7 +49,8 @@ namespace TabletDriverLib
                 {
                     var auxDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
                     var auxReportParser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.AuxReportParserName) ?? new AuxReportParser();
-                    OpenAux(auxDevice, auxReportParser);
+                    if (!OpenAux(auxDevice, auxReportParser))
+                        Log.Debug("Failed to open aux device!", true);
                 }
                 return tabletOpened;
             }
@@ -95,10 +96,7 @@ namespace TabletDriverLib
             {
                 Log.Write("Detect", $"Found device '{Tablet.GetFriendlyName()}'.");
                 Log.Write("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
-                if (Debugging)
-                {
-                    Log.Debug($"Device path: {Tablet.DevicePath}");
-                }
+                Log.Debug($"Device path: {Tablet.DevicePath}");
                 
                 TabletReader = new DeviceReader<IDeviceReport>(Tablet);
                 TabletReader.Parser = reportParser;
@@ -107,7 +105,7 @@ namespace TabletDriverLib
                 
                 if (TabletProperties.FeatureInitReport != null && TabletProperties.FeatureInitReport.Length > 0)
                 {
-                    Log.Write("Debug", $"Setting feature: " + BitConverter.ToString(TabletProperties.FeatureInitReport));
+                    Log.Debug($"Setting feature: " + BitConverter.ToString(TabletProperties.FeatureInitReport));
                     TabletReader.ReportStream.SetFeature(TabletProperties.FeatureInitReport);
                 }
 
@@ -117,8 +115,6 @@ namespace TabletDriverLib
             }
             else
             {
-                if (Debugging)
-                    Log.Write("Detect", "Tablet not found.", true);
                 return false;
             }
         }
@@ -127,11 +123,8 @@ namespace TabletDriverLib
         {
             if (auxDevice != null)
             {
-                if (Debugging)
-                {
-                    Log.Debug($"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
-                    Log.Debug($"Device path: {auxDevice.DevicePath}");
-                }
+                Log.Debug($"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
+                Log.Debug($"Device path: {auxDevice.DevicePath}");
                 
                 AuxReader = new DeviceReader<IDeviceReport>(auxDevice);
                 AuxReader.Parser = reportParser;
@@ -141,8 +134,6 @@ namespace TabletDriverLib
             }
             else
             {
-                if (Debugging)
-                    Log.Write("Detect", "Failed to open aux device.");
                 return false;
             }
         }
@@ -170,6 +161,8 @@ namespace TabletDriverLib
                 if (OutputMode is IBindingHandler<IBinding> binding)
                     binding.HandleBinding(report);
             }
+
+            DriverState.PostReport(sender, report);
         }
     }
 }

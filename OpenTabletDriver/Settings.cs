@@ -1,13 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Xml.Serialization;
-using OpenTabletDriver.Plugins.Xml;
+using Newtonsoft.Json;
 using ReactiveUI;
 
-namespace OpenTabletDriver.Models
+namespace OpenTabletDriver
 {
-    [XmlRoot("Settings", DataType = "v0.2.x")]
     public class Settings : ReactiveObject
     {
         public Settings()
@@ -18,89 +17,88 @@ namespace OpenTabletDriver.Models
         private bool _clipping, _autohook, _lockar, _sizeChanging;
         private string _theme, _outputMode;
         private TimeSpan _resetTime;
-        private ObservableCollection<string> _filters;
+        private ObservableCollection<string> _filters, _residents = new ObservableCollection<string>();
 
         #region General Settings
 
-        [XmlElement("Theme")]
+        [JsonProperty("Theme")]
         public string Theme
         {
             set => this.RaiseAndSetIfChanged(ref _theme, value);
             get => _theme;
         }
 
-        [XmlElement("OutputMode")]
+        [JsonProperty("OutputMode")]
         public string OutputMode
         {
             set => this.RaiseAndSetIfChanged(ref _outputMode, value != "{Disable}" ? value : null);
             get => _outputMode;
         }
 
-        [XmlArray("Filters")]
-        [XmlArrayItem("Filter")]
+        [JsonProperty("Filters")]
         public ObservableCollection<string> Filters
         {
             set => this.RaiseAndSetIfChanged(ref _filters, value);
             get => _filters;
         }
 
-        [XmlElement("AutoHook")]
+        [JsonProperty("AutoHook")]
         public bool AutoHook
         {
             set => this.RaiseAndSetIfChanged(ref _autohook, value);
             get => _autohook;
         }
-        
+
         #endregion
 
         #region Absolute Mode Settings
 
-        [XmlElement("DisplayWidth")]
-        public float DisplayWidth 
+        [JsonProperty("DisplayWidth")]
+        public float DisplayWidth
         {
             set
             {
                 this.RaiseAndSetIfChanged(ref _dW, value);
                 if (LockAspectRatio)
-                    TabletHeight = (DisplayHeight / DisplayWidth) * TabletWidth;
+                    TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
             }
             get => _dW;
         }
 
-        [XmlElement("DisplayHeight")]
+        [JsonProperty("DisplayHeight")]
         public float DisplayHeight
         {
             set
             {
                 this.RaiseAndSetIfChanged(ref _dH, value);
                 if (LockAspectRatio)
-                    TabletWidth = (DisplayWidth / DisplayHeight) * TabletHeight;
+                    TabletWidth = DisplayWidth / DisplayHeight * TabletHeight;
             }
             get => _dH;
         }
 
-        [XmlElement("DisplayXOffset")]
+        [JsonProperty("DisplayXOffset")]
         public float DisplayX
         {
             set => this.RaiseAndSetIfChanged(ref _dX, value);
             get => _dX;
         }
 
-        [XmlElement("DisplayYOffset")]
+        [JsonProperty("DisplayYOffset")]
         public float DisplayY
         {
             set => this.RaiseAndSetIfChanged(ref _dY, value);
             get => _dY;
         }
 
-        [XmlElement("DisplayRotation")]
+        [JsonProperty("DisplayRotation")]
         public float DisplayRotation
         {
             set => this.RaiseAndSetIfChanged(ref _dR, value);
             get => _dR;
         }
 
-        [XmlElement("TabletWidth")]
+        [JsonProperty("TabletWidth")]
         public float TabletWidth
         {
             set
@@ -109,14 +107,14 @@ namespace OpenTabletDriver.Models
                 if (LockAspectRatio && !_sizeChanging)
                 {
                     _sizeChanging = true;
-                    TabletHeight = (DisplayHeight / DisplayWidth) * value;
+                    TabletHeight = DisplayHeight / DisplayWidth * value;
                     _sizeChanging = false;
                 }
             }
             get => _tW;
         }
 
-        [XmlElement("TabletHeight")]
+        [JsonProperty("TabletHeight")]
         public float TabletHeight
         {
             set
@@ -125,49 +123,49 @@ namespace OpenTabletDriver.Models
                 if (LockAspectRatio && !_sizeChanging)
                 {
                     _sizeChanging = true;
-                    TabletWidth = (DisplayWidth / DisplayHeight) * value; 
+                    TabletWidth = DisplayWidth / DisplayHeight * value;
                     _sizeChanging = false;
                 }
             }
             get => _tH;
         }
 
-        [XmlElement("TabletXOffset")]
+        [JsonProperty("TabletXOffset")]
         public float TabletX
         {
             set => this.RaiseAndSetIfChanged(ref _tX, value);
             get => _tX;
         }
 
-        [XmlElement("TabletYOffset")]
+        [JsonProperty("TabletYOffset")]
         public float TabletY
         {
             set => this.RaiseAndSetIfChanged(ref _tY, value);
             get => _tY;
         }
 
-        [XmlElement("TabletRotation")]
+        [JsonProperty("TabletRotation")]
         public float TabletRotation
         {
             set => this.RaiseAndSetIfChanged(ref _tR, value);
             get => _tR;
         }
 
-        [XmlElement("EnableClipping")]
+        [JsonProperty("EnableClipping")]
         public bool EnableClipping
         {
             set => this.RaiseAndSetIfChanged(ref _clipping, value);
             get => _clipping;
         }
 
-        [XmlElement("LockAspectRatio")]
+        [JsonProperty("LockAspectRatio")]
         public bool LockAspectRatio
         {
             set
             {
                 this.RaiseAndSetIfChanged(ref _lockar, value);
                 if (value)
-                    TabletHeight = (DisplayHeight / DisplayWidth) * TabletWidth;
+                    TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
             }
             get => _lockar;
         }
@@ -175,22 +173,22 @@ namespace OpenTabletDriver.Models
         #endregion
 
         #region Relative Mode Settings
-        
-        [XmlElement("XSensitivity")]
+
+        [JsonProperty("XSensitivity")]
         public float XSensitivity
         {
             set => this.RaiseAndSetIfChanged(ref _xsens, value);
             get => _xsens;
         }
 
-        [XmlElement("YSensitivity")]
+        [JsonProperty("YSensitivity")]
         public float YSensitivity
         {
             set => this.RaiseAndSetIfChanged(ref _ysens, value);
             get => _ysens;
         }
 
-        [XmlElement("RelativeResetDelay")]
+        [JsonProperty("RelativeResetDelay")]
         public TimeSpan ResetTime
         {
             set => this.RaiseAndSetIfChanged(ref _resetTime, value);
@@ -203,7 +201,7 @@ namespace OpenTabletDriver.Models
 
         private float _tipPressure;
 
-        [XmlElement("TipActivationPressure")]
+        [JsonProperty("TipActivationPressure")]
         public float TipActivationPressure
         {
             set => this.RaiseAndSetIfChanged(ref _tipPressure, (float)Math.Round(value, 3));
@@ -212,7 +210,7 @@ namespace OpenTabletDriver.Models
 
         private string _tipButton;
 
-        [XmlElement("TipButton")]
+        [JsonProperty("TipButton")]
         public string TipButton
         {
             set => this.RaiseAndSetIfChanged(ref _tipButton, value);
@@ -221,8 +219,7 @@ namespace OpenTabletDriver.Models
 
         private ObservableCollection<string> _penButtons;
 
-        [XmlArray("PenButtons")]
-        [XmlArrayItem("Binding")]
+        [JsonProperty("PenButtons")]
         public ObservableCollection<string> PenButtons
         {
             set => this.RaiseAndSetIfChanged(ref _penButtons, value);
@@ -231,26 +228,32 @@ namespace OpenTabletDriver.Models
 
         private ObservableCollection<string> _auxButtons;
 
-        [XmlArray("AuxButtons")]
-        [XmlArrayItem("Binding")]
+        [JsonProperty("AuxButtons")]
         public ObservableCollection<string> AuxButtons
         {
             set => this.RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;
         }
 
-        private SerializableDictionary<string, string> _pluginSettings = new SerializableDictionary<string, string>();
-        [XmlElement("PluginSettings")]
-        public SerializableDictionary<string, string> PluginSettings
+        private Dictionary<string, string> _pluginSettings = new Dictionary<string, string>();
+        [JsonProperty("PluginSettings")]
+        public Dictionary<string, string> PluginSettings
         {
             set => this.RaiseAndSetIfChanged(ref _pluginSettings, value);
             get => _pluginSettings;
         }
 
+        [JsonProperty("ResidentPlugins")]
+        public ObservableCollection<string> ResidentPlugins
+        {
+            set => this.RaiseAndSetIfChanged(ref _residents, value);
+            get => _residents;
+        }
+
         #endregion
 
         #region Window Properties
-        
+
         private int _windowWidth, _windowHeight;
 
         public int WindowWidth
@@ -264,23 +267,25 @@ namespace OpenTabletDriver.Models
             set => this.RaiseAndSetIfChanged(ref _windowHeight, value);
             get => _windowHeight;
         }
-        
+
         #endregion
 
-        #region XML Serialization
-
-        private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(Settings));
+        #region JSON Serialization
 
         public static Settings Deserialize(FileInfo file)
         {
             using (var stream = file.OpenRead())
-                return (Settings)XmlSerializer.Deserialize(stream);
+            using (var sr = new StreamReader(stream))
+            {
+                var str = sr.ReadToEnd();
+                return JsonConvert.DeserializeObject<Settings>(str);
+            }
         }
 
         public void Serialize(FileInfo file)
         {
-            using (var stream = file.CreateText())
-                XmlSerializer.Serialize(stream, this);
+            var str = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(file.FullName, str);
         }
 
         #endregion

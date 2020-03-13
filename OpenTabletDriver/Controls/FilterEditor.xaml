@@ -4,9 +4,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="OpenTabletDriver.Controls.FilterEditor">
-    <Grid ColumnDefinitions="*,*">
+    <Grid ColumnDefinitions="*,2*">
         <ListBox Grid.Column="0"
-            Items="{Binding Filters, Mode=TwoWay}"
+            Items="{Binding Plugins, Mode=TwoWay}"
             SelectedItem="{Binding SelectedPlugin, Mode=TwoWay}"
             BorderThickness="0,0,1,0">
             <ListBox.ItemTemplate>
@@ -18,7 +18,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ItemsControl Grid.Column="1" Items="{Binding SelectedFilterSettings, Mode=TwoWay}">
+        <ItemsControl Grid.Column="1" Items="{Binding SelectedPluginSettings, Mode=TwoWay}">
             <ItemsControl.Styles>
                 <Style Selector="ItemsControl > Border">
                     <Setter Property="BorderThickness" Value="1"/>

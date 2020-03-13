@@ -3,23 +3,23 @@ using System.Linq;
 using OpenTabletDriver.Plugins;
 using TabletDriverLib;
 using TabletDriverPlugin.Attributes;
-using TabletDriverPlugin.Tablet;
+using TabletDriverPlugin.Resident;
 
 namespace OpenTabletDriver.Controls
 {
-    public class FilterEditorViewModel : PluginSettingsEditorViewModel<IFilter>
+    public class ResidentPluginEditorViewModel : PluginSettingsEditorViewModel<IResident>
     {
         public override void Refresh()
         {
-            var plugins = from plugin in PluginManager.GetChildTypes<IFilter>()
+            var plugins = from plugin in PluginManager.GetChildTypes<IResident>()
                 where !plugin.IsInterface
                 where !plugin.GetCustomAttributes(false).Any(a => a is PluginIgnoreAttribute)
                 select plugin;
-
+            
             var pluginList = new Collection<SelectablePluginReference>();
             foreach (var plugin in plugins)
             {
-                bool isEnabled = Settings?.Filters?.Any(f => f == plugin.FullName) ?? false;
+                bool isEnabled = Settings?.ResidentPlugins?.Any(r => r == plugin.FullName) ?? false;
                 pluginList.Add(new SelectablePluginReference(plugin.FullName, isEnabled));
             }
 

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using OpenTabletDriver.Controls;
-using OpenTabletDriver.Models;
 using OpenTabletDriver.Plugins;
 using OpenTabletDriver.Tools;
 using ReactiveUI;
@@ -16,6 +16,7 @@ using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Display;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
+using TabletDriverPlugin.Resident;
 using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Windows
@@ -51,11 +52,9 @@ namespace OpenTabletDriver.Windows
 
             if (Program.SettingsDirectory.Exists)
             {
-                var settingsPath = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-                var settingsFile = new FileInfo(settingsPath);
-                if (settingsFile.Exists)
+                if (Program.SettingsFile.Exists)
                 {
-                    LoadSettings(settingsFile);
+                    LoadSettings(Program.SettingsFile);
                     if (Settings != null)
                         ApplySettings(Settings);
                 }
@@ -181,6 +180,33 @@ namespace OpenTabletDriver.Windows
             OutputModes = new ObservableCollection<PluginReference>(outputModes);
         }
 
+        public void InitializeResidents()
+        {
+            var plugins = this.GetParentWindow()?.Find<ResidentPluginEditor>("ResidentPluginEditor")?.ViewModel.ConstructEnabledPlugins() ?? new IResident[0];
+            ResidentPlugins = new ObservableCollection<IResident>(plugins);
+
+            foreach (var plugin in ResidentPlugins)
+            {
+                if (!plugin.Initialize())
+                    Log.Debug($"Failed to intialize resident plugin. {nameof(plugin)}");
+            }
+        }
+
+        public void DisposeResidents()
+        {
+            if (ResidentPlugins == null)
+            {
+                ResidentPlugins = new ObservableCollection<IResident>();
+            }
+            else
+            {
+                foreach (var plugin in ResidentPlugins)
+                    plugin.Dispose();
+
+                ResidentPlugins.Clear();
+            }
+        }
+
         private bool _absolute;
         public bool IsAbsolute
         {
@@ -216,6 +242,13 @@ namespace OpenTabletDriver.Windows
             get => _outputModes;
         }
 
+        private ObservableCollection<IResident> _residents;
+        public ObservableCollection<IResident> ResidentPlugins
+        {
+            set => this.RaiseAndSetIfChanged(ref _residents, value);
+            get => _residents;
+        }
+
         #endregion
 
         #region TabControl
@@ -236,9 +269,7 @@ namespace OpenTabletDriver.Windows
             if (message is DebugLogMessage)
             {
                 if (Driver.Debugging)
-                {
                     LogOutput(message);
-                }
             }
             else
             {
@@ -325,7 +356,7 @@ namespace OpenTabletDriver.Windows
             TipActivationPressure = 1,
             PenButtons = new ObservableCollection<string>(new string[2]),
             AuxButtons = new ObservableCollection<string>(new string[4]),
-            PluginSettings = new SerializableDictionary<string, string>(),
+            PluginSettings = new Dictionary<string, string>(),
             XSensitivity = 10,
             YSensitivity = 10,
             ResetTime = TimeSpan.FromMilliseconds(100)
@@ -336,7 +367,8 @@ namespace OpenTabletDriver.Windows
             try
             {
                 Settings = Settings.Deserialize(file);
-                this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.RefreshPlugins();
+                this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
+                this.GetParentWindow().Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
             }
             catch (Exception ex)
             {
@@ -364,7 +396,7 @@ namespace OpenTabletDriver.Windows
             if (Driver.OutputMode is IOutputMode outputMode)
             {                
                 var filterEditor = this.GetParentWindow()?.Find<FilterEditor>("FilterEditor");
-                outputMode.Filters = filterEditor?.ViewModel.ConstructEnabledFilters() ?? new ObservableCollection<IFilter>();
+                outputMode.Filters = filterEditor?.ViewModel.ConstructEnabledPlugins() ?? new ObservableCollection<IFilter>();
                 
                 if (outputMode.Filters != null)
                     Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
@@ -446,17 +478,32 @@ namespace OpenTabletDriver.Windows
             Log.Write("Settings", "Applied all settings.");
 
             UpdateControlVisibility();
+
+            this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
+            this.GetParentWindow()?.Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
         }
 
         public void UpdatePluginSettings()
         {
-            if (this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Filters is ObservableCollection<SelectablePluginReference> editorFilters)
+            if (this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Plugins is ObservableCollection<SelectablePluginReference> editorFilters)
             {
                 var filters = from filter in editorFilters
                     where filter.IsEnabled
                     select filter.Path;
                 Settings.Filters = new ObservableCollection<string>(filters);
             }
+
+            if (this.GetParentWindow()?.Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Plugins is ObservableCollection<SelectablePluginReference> residentPlugins)
+            {
+                var residents = from residentPlugin in residentPlugins
+                    where residentPlugin.IsEnabled
+                    select residentPlugin.Path;
+                Settings.ResidentPlugins = new ObservableCollection<string>(residents);
+            }
+
+            // Re-initialize all resident plugins
+            DisposeResidents();
+            InitializeResidents();
         }
 
         public void UpdateControlVisibility()
@@ -582,7 +629,7 @@ namespace OpenTabletDriver.Windows
 
         public async Task LoadSettingsDialog()
         {
-            var fileDialog = FileDialogs.CreateOpenFileDialog("Load settings", "OpenTabletDriver Settings", "xml");
+            var fileDialog = FileDialogs.CreateOpenFileDialog("Load settings", "OpenTabletDriver Settings", "json");
             var paths = await fileDialog.ShowAsync(this.GetParentWindow());
             if (paths?.Length > 0)
             {
@@ -605,9 +652,7 @@ namespace OpenTabletDriver.Windows
 
         public void SaveSettingsDefault()
         {
-            var path = Path.Join(Program.SettingsDirectory.FullName, "settings.xml");
-            var file = new FileInfo(path); 
-            SaveSettings(file);
+            SaveSettings(Program.SettingsFile);
         }
 
         public async Task SaveSettingsDialog()
@@ -664,6 +709,41 @@ namespace OpenTabletDriver.Windows
             {
                 Settings.DisplayX = display.Position.X + VirtualScreen.Position.X + (display.Width / 2);
                 Settings.DisplayY = display.Position.Y + VirtualScreen.Position.Y + (display.Height / 2);
+            }
+        }
+
+        public void OpenPluginDirectory()
+        {
+            NativeLib.Tools.OpenUrl(Program.PluginDirectory.FullName);
+        }
+
+        internal string GetFullLog()
+        {
+            var sb = new StringBuilder();
+            foreach (var message in Messages)
+            {
+                var line = string.Format("[{0}:{1}]\t{2}", message.IsError ? "Error" : "Normal", message.Group, message.Message);
+                sb.AppendLine(line);
+            }
+            return sb.ToString();
+        }
+
+        public async Task CopyAllLog()
+        {
+            var log = GetFullLog();
+            await App.Current.Clipboard.SetTextAsync(log);
+        }
+        
+        public async Task ExportToFile()
+        {
+            var log = GetFullLog();
+            var fileDialog = FileDialogs.CreateSaveFileDialog("Exporting log to file...", "Program Log", "log");
+            var result = await fileDialog.ShowAsync(this.GetParentWindow());
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                var file = new FileInfo(result);
+                using (var sw = file.AppendText())
+                    await sw.WriteLineAsync(log);
             }
         }
 

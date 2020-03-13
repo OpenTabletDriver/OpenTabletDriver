@@ -8,7 +8,7 @@ namespace TabletDriverPlugin
     public static class Log
     {
         public static event EventHandler<LogMessage> Output;
-
+        
         private static void Post(LogMessage message)
         {
             Output?.Invoke(null, message);
@@ -21,9 +21,9 @@ namespace TabletDriverPlugin
             Post(message);
         }
 
-        public static void Debug(string text)
+        public static void Debug(string text, bool isError = false)
         {
-            var message = new DebugLogMessage(text, false);
+            var message = new DebugLogMessage(text, isError);
             Post(message);
         }
 

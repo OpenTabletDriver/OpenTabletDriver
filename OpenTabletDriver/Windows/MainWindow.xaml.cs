@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -14,6 +15,7 @@ namespace OpenTabletDriver.Windows
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            this.Closing += (s, e) => ViewModel.DisposeResidents();
         }
 
         public MainWindowViewModel ViewModel
