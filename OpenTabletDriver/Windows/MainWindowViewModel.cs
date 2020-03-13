@@ -630,7 +630,7 @@ namespace OpenTabletDriver.Windows
 
         public async Task LoadSettingsDialog()
         {
-            var fileDialog = FileDialogs.CreateOpenFileDialog("Load settings", "OpenTabletDriver Settings", "xml");
+            var fileDialog = FileDialogs.CreateOpenFileDialog("Load settings", "OpenTabletDriver Settings", "json");
             var paths = await fileDialog.ShowAsync(this.GetParentWindow());
             if (paths?.Length > 0)
             {
@@ -738,7 +738,7 @@ namespace OpenTabletDriver.Windows
         public async Task ExportToFile()
         {
             var log = GetFullLog();
-            var fileDialog = FileDialogs.CreateSaveFileDialog("Exporting log to file...", "Text", "*.*");
+            var fileDialog = FileDialogs.CreateSaveFileDialog("Exporting log to file...", "Program Log", "log");
             var result = await fileDialog.ShowAsync(this.GetParentWindow());
             if (!string.IsNullOrWhiteSpace(result))
             {

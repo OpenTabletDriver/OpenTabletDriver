@@ -1,15 +1,11 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Text;
-using System.Xml.Serialization;
 using Newtonsoft.Json;
-using OpenTabletDriver.Plugins.Xml;
 using ReactiveUI;
 
 namespace OpenTabletDriver.Models
 {
-    [XmlRoot("Settings", DataType = "v0.2.x")]
     public class Settings : ReactiveObject
     {
         public Settings()

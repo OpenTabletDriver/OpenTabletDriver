@@ -53,7 +53,7 @@ No special dependencies.
   - Keyboard bindings
   - External plugin bindings
 - Saving and loading settings
-  - Auto-loads user settings via `settings.xml` in the active directory
+  - Auto-loads user settings via `settings.json` in the active directory
 - Tablet Configuration Manager
   - Can convert [TabletDriver](https://github.com/hawku/TabletDriver) configuration files (.cfg)
 - Plugins
