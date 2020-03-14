@@ -78,6 +78,10 @@ namespace OpenTabletDriver.Controls
             {
                 SelectedPluginTemplate = value?.Construct<T>();
                 PluginTools.SetPluginSettings(SelectedPluginTemplate, Settings.PluginSettings);
+                
+                if (SelectedPluginTemplate is INotifyPropertyChanged inotify)
+                    inotify.PropertyChanged += (s, e) => UpdateSettings(SelectedPluginTemplate);
+                
                 this.RaiseAndSetIfChanged(ref _selectedPlugin, value);
             }
             get => _selectedPlugin;
@@ -88,12 +92,8 @@ namespace OpenTabletDriver.Controls
         {
             set
             {
-                if (value is INotifyPropertyChanged inotify)
-                    inotify.PropertyChanged += (s, e) => UpdateSettings(value);
-
                 var pluginSettings = PropertyTools.GetPropertyControls(value, nameof(SelectedPluginTemplate), Settings.PluginSettings);
                 SelectedPluginSettings = new ObservableCollection<IControl>(pluginSettings);
-
                 this.RaiseAndSetIfChanged(ref _template, value);
             }
             get => _template;

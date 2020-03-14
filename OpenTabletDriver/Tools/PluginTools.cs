@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Tools
                         select attr as PropertyAttribute;
 
                     if (attributes.Count() > 0)
-                        yield return (property.Name, property.GetValue(obj).ToString());
+                        yield return (obj.GetType().FullName + "." + property.Name, property.GetValue(obj).ToString());
                 }
             }
         }
@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Tools
                         where attr is PropertyAttribute
                         select attr as PropertyAttribute;
 
-                    if (pluginSettings.TryGetValue(property.Name, out var stringValue))
+                    if (pluginSettings.TryGetValue(obj.GetType().FullName + "." + property.Name, out var stringValue))
                     {
                         var value = Convert.ChangeType(stringValue, property.PropertyType);
                         property.SetValue(obj, value);
