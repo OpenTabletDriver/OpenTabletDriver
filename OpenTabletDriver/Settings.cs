@@ -270,7 +270,7 @@ namespace OpenTabletDriver
 
         #endregion
 
-        #region JSON Serialization
+        #region Json Serialization
 
         public static Settings Deserialize(FileInfo file)
         {

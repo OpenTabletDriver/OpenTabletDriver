@@ -1,0 +1,18 @@
+{
+  "Name": "Wacom CTH-490",
+  "VendorID": 1386,
+  "ProductID": 828,
+  "InputReportLength": 10,
+  "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
+  "CustomInputReportLength": 11,
+  "CustomReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+  "Width": 152.0,
+  "Height": 95.0,
+  "MaxX": 15200.0,
+  "MaxY": 9500.0,
+  "MaxPressure": 2047,
+  "ActiveReportID": 160,
+  "AuxReportLength": 64,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}

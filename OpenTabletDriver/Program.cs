@@ -54,8 +54,6 @@ namespace OpenTabletDriver
                 SettingsDirectory.Create();
             if (!PluginDirectory.Exists)
                 PluginDirectory.Create();
-            if (!ConfigurationDirectory.Exists)
-                ConfigurationDirectory.Create();
         }
 
         internal static void UnhandledException(object sender, UnhandledExceptionEventArgs e)

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
+﻿using System.IO;
+using Newtonsoft.Json;
 
 namespace TabletDriverPlugin.Tablet
 {
-    [XmlRoot(Namespace = "TabletDriverLib", ElementName = "Tablet")]
     public class TabletProperties : Notifier
     {
         private string _tabletName, _reportParser, _customReportParser, _auxReportParser;
@@ -18,7 +15,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's name.
         /// </summary>
         /// <value></value>
-        [XmlElement("Name")]
+        [JsonProperty("Name")]
         public string TabletName
         {
             set => this.RaiseAndSetIfChanged(ref _tabletName, value);
@@ -29,7 +26,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's vendor ID.
         /// </summary>
         /// <value></value>
-        [XmlElement("VendorID")]
+        [JsonProperty("VendorID")]
         public int VendorID
         {
             set => this.RaiseAndSetIfChanged(ref _vid, value);
@@ -40,7 +37,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's product ID.
         /// </summary>
         /// <value></value>
-        [XmlElement("ProductID")]
+        [JsonProperty("ProductID")]
         public int ProductID
         {
             set => this.RaiseAndSetIfChanged(ref _pid, value);
@@ -51,7 +48,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's report length.
         /// </summary>
         /// <value></value>
-        [XmlElement("InputReportLength")]
+        [JsonProperty("InputReportLength")]
         public uint InputReportLength
         {
             set => this.RaiseAndSetIfChanged(ref _inputReportLength, value);
@@ -62,7 +59,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's report parser type.
         /// </summary>
         /// <value></value>
-        [XmlElement("ReportParser")]
+        [JsonProperty("ReportParser")]
         public string ReportParserName
         {
             set => this.RaiseAndSetIfChanged(ref _reportParser, value);
@@ -73,7 +70,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's input report length when a custom report parser is needed.
         /// </summary>
         /// <value></value>
-        [XmlElement("CustomInputReportLength")]
+        [JsonProperty("CustomInputReportLength")]
         public uint CustomInputReportLength
         {
             set => this.RaiseAndSetIfChanged(ref _customInputReportLength, value);
@@ -84,7 +81,7 @@ namespace TabletDriverPlugin.Tablet
         /// The type path of the custom report parser to be used.
         /// </summary>
         /// <value></value>
-        [XmlElement("CustomReportParser")]
+        [JsonProperty("CustomReportParser")]
         public string CustomReportParserName
         {
             set => this.RaiseAndSetIfChanged(ref _customReportParser, value);
@@ -95,7 +92,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's horizontal active area in millimeters.
         /// </summary>
         /// <value></value>
-        [XmlElement("Width")]
+        [JsonProperty("Width")]
         public float Width
         {
             set => this.RaiseAndSetIfChanged(ref _width, value);
@@ -106,7 +103,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's vertical active area in millimeters.
         /// </summary>
         /// <value></value>
-        [XmlElement("Height")]
+        [JsonProperty("Height")]
         public float Height
         {
             set => this.RaiseAndSetIfChanged(ref _height, value);
@@ -117,7 +114,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's maximum horizontal input.
         /// </summary>
         /// <value></value>
-        [XmlElement("MaxX")]
+        [JsonProperty("MaxX")]
         public float MaxX
         {
             set => this.RaiseAndSetIfChanged(ref _maxX, value);
@@ -128,7 +125,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's maximum vertical input.
         /// </summary>
         /// <value></value>
-        [XmlElement("MaxY")]
+        [JsonProperty("MaxY")]
         public float MaxY
         {
             set => this.RaiseAndSetIfChanged(ref _maxY, value);
@@ -139,7 +136,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's maximum input pressure detection value.
         /// </summary>
         /// <value></value>
-        [XmlElement("MaxPressure")]
+        [JsonProperty("MaxPressure")]
         public uint MaxPressure
         {
             set => this.RaiseAndSetIfChanged(ref _maxPressure, value);
@@ -150,7 +147,7 @@ namespace TabletDriverPlugin.Tablet
         /// The device's minimum detection report ID.
         /// </summary>
         /// <value></value>
-        [XmlElement("ActiveReportID")]
+        [JsonProperty("ActiveReportID")]
         public uint ActiveReportID
         {
             set => this.RaiseAndSetIfChanged(ref _reportId, value);
@@ -161,7 +158,7 @@ namespace TabletDriverPlugin.Tablet
         /// The report length of the device's auxiliary hid device, if it has one.
         /// </summary>
         /// <value></value>
-        [XmlElement("AuxReportLength")]
+        [JsonProperty("AuxReportLength")]
         public uint AuxReportLength
         {
             set => this.RaiseAndSetIfChanged(ref _auxReportLength, value);
@@ -172,7 +169,7 @@ namespace TabletDriverPlugin.Tablet
         /// The report parser used by the auxiliary hid device.
         /// </summary>
         /// <value></value>
-        [XmlElement("AuxReportParser")]
+        [JsonProperty("AuxReportParser")]
         public string AuxReportParserName
         {
             set => this.RaiseAndSetIfChanged(ref _auxReportParser, value);
@@ -183,33 +180,29 @@ namespace TabletDriverPlugin.Tablet
         /// The feature report sent to initialize the tablet's functions.
         /// </summary>
         /// <value></value>
-        [XmlElement("FeatureInitReport")]
+        [JsonProperty("FeatureInitReport")]
         public byte[] FeatureInitReport
         {
             set => this.RaiseAndSetIfChanged(ref _featureInitReport, value);
             get => _featureInitReport;
         }
 
-        #region XML Serialization
-
-        private static readonly XmlSerializer XmlSerializer = new XmlSerializer(typeof(TabletProperties));
-
+        #region Json Serialization
+            
         public void Write(FileInfo file)
         {
-            if (file.Exists)
-                file.Delete();
-
-            if (!file.Directory.Exists)
-                file.Directory.Create();
-
-            using (var fs = file.OpenWrite())
-                XmlSerializer.Serialize(fs, this);
+            var str = JsonConvert.SerializeObject(this, Formatting.Indented);
+            File.WriteAllText(file.FullName, str);
         }
 
         public static TabletProperties Read(FileInfo file)
         {
-            using (var fs = file.OpenRead())
-                return (TabletProperties)XmlSerializer.Deserialize(fs);
+            using (var stream = file.OpenRead())
+            using (var sr = new StreamReader(stream))
+            {
+                var str = sr.ReadToEnd();
+                return JsonConvert.DeserializeObject<TabletProperties>(str);
+            }
         }
 
         #endregion

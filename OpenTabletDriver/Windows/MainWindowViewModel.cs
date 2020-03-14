@@ -292,7 +292,7 @@ namespace OpenTabletDriver.Windows
             
         public IEnumerable<TabletProperties> LoadTablets(DirectoryInfo directory)
         {
-            foreach (string path in Directory.GetFiles(Program.ConfigurationDirectory.FullName, "*.xml", SearchOption.AllDirectories))
+            foreach (string path in Directory.GetFiles(Program.ConfigurationDirectory.FullName, "*.json", SearchOption.AllDirectories))
             {
                 var file = new FileInfo(path);
                 TabletProperties tablet = null;
@@ -657,7 +657,7 @@ namespace OpenTabletDriver.Windows
 
         public async Task SaveSettingsDialog()
         {
-            var fileDialog = FileDialogs.CreateSaveFileDialog("Save Settings", "OpenTabletDriver Settings", "xml");
+            var fileDialog = FileDialogs.CreateSaveFileDialog("Save Settings", "OpenTabletDriver Settings", "json");
             var result = await fileDialog.ShowAsync(this.GetParentWindow());
             if (!string.IsNullOrWhiteSpace(result))
             {

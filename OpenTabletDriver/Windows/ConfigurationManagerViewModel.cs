@@ -100,8 +100,8 @@ namespace OpenTabletDriver.Windows
         {
             var dialog = FileDialogs.CreateSaveFileDialog(
                 $"Saving tablet '{tablet.TabletName}'",
-                "XML Document",
-                "xml",
+                "Json Struct",
+                "json",
                 LastDirectory);
             var result = await dialog.ShowAsync(this.GetParentWindow());
             if (!string.IsNullOrWhiteSpace(result))
@@ -129,7 +129,7 @@ namespace OpenTabletDriver.Windows
                     var manufacturer = match.Groups["Manufacturer"].Value;
                     var tabletName = match.Groups["TabletName"].Value;
 
-                    var path = Path.Join(directory.FullName, manufacturer, string.Format("{0}.xml", tabletName));
+                    var path = Path.Join(directory.FullName, manufacturer, string.Format("{0}.json", tabletName));
                     var file = new FileInfo(path);
                     configuration.Write(file);
                 }
