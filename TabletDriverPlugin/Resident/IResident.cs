@@ -7,7 +7,6 @@ namespace TabletDriverPlugin.Resident
     /// </summary>
     public interface IResident : IDisposable
     {
-        string Name { get; }
         bool Initialize();
     }
 }
