@@ -367,8 +367,8 @@ namespace OpenTabletDriver.Windows
             try
             {
                 Settings = Settings.Deserialize(file);
-                this.GetParentWindow().Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
-                this.GetParentWindow().Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
+                this.GetParentWindow()?.Find<FilterEditor>("FilterEditor").ViewModel.Refresh();
+                this.GetParentWindow()?.Find<ResidentPluginEditor>("ResidentPluginEditor").ViewModel.Refresh();
             }
             catch (Exception ex)
             {
