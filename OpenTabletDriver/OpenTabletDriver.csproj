@@ -7,6 +7,7 @@
     <VersionPrefix>0.2.0</VersionPrefix>
     <Company>InfinityGhost</Company>
     <Product>OpenTabletDriver</Product>
+	<AplicationIcon>Assets\otd.ico</AplicationIcon>
     <Description />
   </PropertyGroup>
   <ItemGroup>
