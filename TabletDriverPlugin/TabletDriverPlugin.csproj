@@ -10,6 +10,7 @@
     <Authors>InfinityGhost</Authors>
     <Description>Library used to create OpenTabletDriver plugins.</Description>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
