@@ -7,6 +7,7 @@
     <VersionPrefix>0.2.0</VersionPrefix>
     <Company>InfinityGhost</Company>
     <Product>OpenTabletDriver</Product>
+	    <ApplicationIcon>Assets\otd.ico</ApplicationIcon>
     <Description />
   </PropertyGroup>
   <ItemGroup>
@@ -29,5 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="mscorlib" />
+    <EmbeddedResource Include="Assets\otd.ico" />
   </ItemGroup>
 </Project>
