@@ -30,6 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="mscorlib" />
-	    <EmbeddedResource Include="Assets\otd.ico" />
+    <EmbeddedResource Include="Assets\otd.ico" />
   </ItemGroup>
 </Project>
