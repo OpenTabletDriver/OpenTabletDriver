@@ -63,9 +63,8 @@ namespace OpenTabletDriver.Windows
             }
             else
                 ApplySettings(DefaultSettings);
-
+            
             UpdateTheme(Settings.Theme);
-            Log.Write("Settings", $"Using theme {Settings.Theme}");
         }
 
         #region Properties
@@ -543,6 +542,8 @@ namespace OpenTabletDriver.Windows
             var theme = Themes.Parse(name);
             App.SetTheme(theme);
             Settings.Theme = name;
+            (App.Current as App).RefreshAllStyles();
+            Log.Debug($"Set theme to {name}");
         }
 
         public async Task UpdateBinding(string source)
