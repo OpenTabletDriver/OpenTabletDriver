@@ -43,6 +43,11 @@ namespace OpenTabletDriver.Windows
                 Tablets = new ObservableCollection<TabletProperties>(tablets);
                 DetectTablets();
             }
+            else
+            {
+                Log.Write("Detect", $"No Configuration directory {Program.ConfigurationDirectory.FullName}");
+                Tablets = new ObservableCollection<TabletProperties>();
+            }
 
             if (Program.PluginDirectory.Exists)
             {
