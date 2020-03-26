@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Windows
             }
             else
             {
-                Log.Write("Detect", $"No Configuration directory {Program.ConfigurationDirectory.FullName}");
+                Log.Write("Detect", $"Invalid configuration directory: {Program.ConfigurationDirectory.FullName}");
                 Tablets = new ObservableCollection<TabletProperties>();
             }
 
