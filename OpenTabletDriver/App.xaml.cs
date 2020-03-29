@@ -20,23 +20,17 @@ namespace OpenTabletDriver
 
         public override async void OnFrameworkInitializationCompleted()
         {
-            Styles.CollectionChanged += (sender, e) =>
-            {
-                foreach (var window in ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).Windows)
-                {
-                    window.Styles.Add(DummyStyle);
-                    window.Styles.Remove(DummyStyle);
-                }
-            };
+            Styles.CollectionChanged += (sender, e) => RefreshAllStyles();
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Program.UnhandledException);
 
                 desktop.MainWindow = new MainWindow();
-                await (desktop.MainWindow as MainWindow).ViewModel.Initialize();
                 desktop.MainWindow.Show();
+                await (desktop.MainWindow as MainWindow).ViewModel.Initialize();
             }
+            
             base.OnFrameworkInitializationCompleted();
         }
 
@@ -45,6 +39,15 @@ namespace OpenTabletDriver
         public static void SetTheme(StyleInclude style)
         {
             App.Current.Styles[1] = style;
+        }
+
+        public void RefreshAllStyles()
+        {
+            foreach (var window in ((IClassicDesktopStyleApplicationLifetime)ApplicationLifetime).Windows)
+            {
+                window.Styles.Add(DummyStyle);
+                window.Styles.Remove(DummyStyle);
+            }
         }
    }
 }
