@@ -285,8 +285,11 @@ namespace OpenTabletDriver.Windows
         {
             Dispatcher.UIThread.Post(() => 
             {
-                Messages.Add(message);
-                StatusMessage = message;
+                if (!(message is DebugLogMessage) | Driver.Debugging)
+                {
+                    Messages.Add(message);
+                    StatusMessage = message;
+                }
             });
         }
 
@@ -728,8 +731,8 @@ namespace OpenTabletDriver.Windows
             var sb = new StringBuilder();
             foreach (var message in Messages)
             {
-                var line = string.Format("[{0}:{1}]\t{2}", message.IsError ? "Error" : "Normal", message.Group, message.Message);
-                sb.AppendLine(line);
+                var text = Log.GetStringFormat(message);
+                sb.AppendLine(text);
             }
             return sb.ToString();
         }
