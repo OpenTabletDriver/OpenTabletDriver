@@ -285,8 +285,11 @@ namespace OpenTabletDriver.Windows
         {
             Dispatcher.UIThread.Post(() => 
             {
-                Messages.Add(message);
-                StatusMessage = message;
+                if (!(message is DebugLogMessage) | Driver.Debugging)
+                {
+                    Messages.Add(message);
+                    StatusMessage = message;
+                }
             });
         }
 
