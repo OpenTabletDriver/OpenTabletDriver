@@ -19,7 +19,7 @@ namespace TabletDriverLib.Interop
                     if (PlatformInfo.IsWindows)
                         _cursorHandler = new WindowsCursorHandler();
                     else if (PlatformInfo.IsLinux)
-                        _cursorHandler = new XCursorHandler();
+                        _cursorHandler = new EvdevCursorHandler();
                     else if (PlatformInfo.IsOSX)
                         _cursorHandler = new MacOSCursorHandler();
                     else
