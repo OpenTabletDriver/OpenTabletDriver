@@ -16,14 +16,14 @@ namespace TabletDriverLib.Interop.Cursor
             
             var xAbs = new input_absinfo
             {
-                maximum = 5760
+                maximum = (int)Platform.VirtualScreen.Width
             };
             input_absinfo* xPtr = &xAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_X, (IntPtr)xPtr);
 
             var yAbs = new input_absinfo
             {
-                maximum = 1080
+                maximum = (int)Platform.VirtualScreen.Height
             };
             input_absinfo* yPtr = &yAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
