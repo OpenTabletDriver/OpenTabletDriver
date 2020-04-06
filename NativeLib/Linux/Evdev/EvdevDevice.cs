@@ -31,7 +31,7 @@ namespace NativeLib.Linux.Evdev
             }
         }
 
-        public void EnableType(EventType type) => libevdev_enable_event_type(_device, (uint)type);        
+        public void EnableType(EventType type) => libevdev_enable_event_type(_device, (uint)type);
 
         public void EnableCode(EventType type, EventCode code) => libevdev_enable_event_code(_device, (uint)type, (uint)code, IntPtr.Zero);
         public void EnableCodes(EventType type, params EventCode[] codes)
@@ -49,5 +49,7 @@ namespace NativeLib.Linux.Evdev
         }
 
         public void Write(EventType type, EventCode code, int value) => libevdev_uinput_write_event(_uidev, (uint)type, (uint)code, value);
+
+        public void Sync() => Write(EventType.EV_SYN, EventCode.SYN_REPORT, 0);
     }
 }

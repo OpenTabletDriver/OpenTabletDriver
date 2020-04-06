@@ -13,7 +13,7 @@ namespace TabletDriverLib.Interop.Cursor
             Device = new EvdevDevice("OpenTabletDriver Virtual Pointer");
 
             Device.EnableType(EventType.EV_ABS);
-            
+
             var xAbs = new input_absinfo
             {
                 maximum = (int)Platform.VirtualScreen.Width
@@ -56,7 +56,7 @@ namespace TabletDriverLib.Interop.Cursor
             _last = pos;
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)pos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)pos.Y);
-            Sync();
+            Device.Sync();
         }
 
         public void MouseDown(MouseButton button)
@@ -64,7 +64,7 @@ namespace TabletDriverLib.Interop.Cursor
             if (button != MouseButton.None)
             {
                 Device.Write(EventType.EV_KEY, GetCode(button), 1);
-                Sync();
+                Device.Sync();
             }
         }
 
@@ -73,13 +73,8 @@ namespace TabletDriverLib.Interop.Cursor
             if (button != MouseButton.None)
             {
                 Device.Write(EventType.EV_KEY, GetCode(button), 0);
-                Sync();
+                Device.Sync();
             }
-        }
-
-        private void Sync()
-        {
-            Device.Write(EventType.EV_SYN, EventCode.SYN_REPORT, 0);
         }
 
         private EventCode GetCode(MouseButton button)
