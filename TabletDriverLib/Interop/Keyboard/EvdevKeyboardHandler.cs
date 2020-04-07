@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NativeLib.Linux.Evdev;
+using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Keyboard
 {
@@ -13,7 +14,8 @@ namespace TabletDriverLib.Interop.Keyboard
 
             Device.EnableTypeCodes(EventType.EV_KEY, XKeysymToEventCode.Values.Distinct().ToArray());
 
-            Device.Initialize();
+            if (!Device.Initialize())
+                Log.Write("Evdev", "Failed to initialize virtual keyboard.", true);
         }
 
         private EvdevDevice Device { set; get; }
