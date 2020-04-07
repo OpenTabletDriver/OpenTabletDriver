@@ -18,7 +18,7 @@ namespace NativeLib.Linux.Evdev
         public bool Initialize()
         {
             var err = libevdev_uinput_create_from_device(_device, LIBEVDEV_UINPUT_OPEN_MANAGED, out _uidev);
-            return err != 0;
+            return err == 0;
         }
 
         public void Dispose()
