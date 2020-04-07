@@ -26,7 +26,7 @@ namespace NativeLib.Linux.Evdev
         public extern static void libevdev_uinput_destroy(IntPtr uinput_dev);
 
         [DllImport(libevdev)]
-        public extern static void libevdev_uinput_write_event(IntPtr uinput_dev, uint type, uint code, int value);
+        public extern static int libevdev_uinput_write_event(IntPtr uinput_dev, uint type, uint code, int value);
 
         public const int LIBEVDEV_UINPUT_OPEN_MANAGED = -2;
     }

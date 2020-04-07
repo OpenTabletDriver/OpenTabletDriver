@@ -18,7 +18,7 @@ namespace NativeLib.Linux.Evdev
         public bool Initialize()
         {
             var err = libevdev_uinput_create_from_device(_device, LIBEVDEV_UINPUT_OPEN_MANAGED, out _uidev);
-            return err != 0;
+            return err == 0;
         }
 
         public void Dispose()
@@ -31,7 +31,7 @@ namespace NativeLib.Linux.Evdev
             }
         }
 
-        public void EnableType(EventType type) => libevdev_enable_event_type(_device, (uint)type);        
+        public void EnableType(EventType type) => libevdev_enable_event_type(_device, (uint)type);
 
         public void EnableCode(EventType type, EventCode code) => libevdev_enable_event_code(_device, (uint)type, (uint)code, IntPtr.Zero);
         public void EnableCodes(EventType type, params EventCode[] codes)
@@ -48,6 +48,12 @@ namespace NativeLib.Linux.Evdev
             EnableCodes(type, codes);
         }
 
-        public void Write(EventType type, EventCode code, int value) => libevdev_uinput_write_event(_uidev, (uint)type, (uint)code, value);
+        public int Write(EventType type, EventCode code, int value) => libevdev_uinput_write_event(_uidev, (uint)type, (uint)code, value);
+
+        public bool Sync()
+        {
+            var err = Write(EventType.EV_SYN, EventCode.SYN_REPORT, 0);
+            return err == 0;
+        }
     }
 }
