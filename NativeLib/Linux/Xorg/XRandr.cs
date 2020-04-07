@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace NativeLib.Linux
+namespace NativeLib.Linux.Xorg
 {
     using Display = IntPtr;
     using Window = IntPtr;
