@@ -24,7 +24,7 @@ namespace TabletDriverLib.Interop.Keyboard
         {
             var keyEventCode = XKeysymToEventCode[key];
 
-            Device.Write(EventType.EV_ABS, keyEventCode, isPress ? 1 : 0);
+            Device.Write(EventType.EV_KEY, keyEventCode, isPress ? 1 : 0);
             Device.Sync();
         }
 

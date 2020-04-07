@@ -48,8 +48,12 @@ namespace NativeLib.Linux.Evdev
             EnableCodes(type, codes);
         }
 
-        public void Write(EventType type, EventCode code, int value) => libevdev_uinput_write_event(_uidev, (uint)type, (uint)code, value);
+        public int Write(EventType type, EventCode code, int value) => libevdev_uinput_write_event(_uidev, (uint)type, (uint)code, value);
 
-        public void Sync() => Write(EventType.EV_SYN, EventCode.SYN_REPORT, 0);
+        public bool Sync()
+        {
+            var err = Write(EventType.EV_SYN, EventCode.SYN_REPORT, 0);
+            return err == 0;
+        }
     }
 }
