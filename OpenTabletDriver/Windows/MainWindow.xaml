@@ -42,7 +42,7 @@
     <Grid RowDefinitions="Auto,*,Auto,Auto">
         <Menu Grid.Row="0">
             <MenuItem Header="File">
-                <MenuItem Header="About" Command="{Binding ShowAbout}"/>    
+                <MenuItem Header="About" Command="{Binding ShowAbout}"/>
                 <MenuItem Header="Exit" Command="{Binding $parent[Window].Close}"/>
             </MenuItem>
             <MenuItem Header="Settings">
@@ -80,6 +80,10 @@
                         <Setter Property="CommandParameter" Value="{Binding}"/>
                     </Style>
                 </MenuItem.Styles>
+            </MenuItem>
+            <MenuItem Header="Diagnostics">
+                <MenuItem Header="Copy diagnostic dump" Command="{Binding CopyDiagnosticDump}"/>
+                <MenuItem Header="Export diagnostic dump..." Command="{Binding ExportDiagnosticDump}"/>
             </MenuItem>
         </Menu>
         <TabControl Grid.Row="1" SelectedIndex="{Binding TabIndex}">
@@ -334,7 +338,7 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <StackPanel Orientation="Horizontal" Margin="0,5">
                                 <Button Content="Copy all" Command="{Binding CopyAllLog}"/>
-                                <Button Content="Export..." Command="{Binding ExportToFile}"/>
+                                <Button Content="Export..." Command="{Binding ExportLogToFile}"/>
                             </StackPanel>
                             <CheckBox Grid.Column="1" Content="Debugging" IsChecked="{Binding Driver.Debugging}"/>
                         </Grid>

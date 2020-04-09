@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using Newtonsoft.Json;
 using OpenTabletDriver.Controls;
 using OpenTabletDriver.Plugins;
 using OpenTabletDriver.Tools;
@@ -743,7 +744,7 @@ namespace OpenTabletDriver.Windows
             await App.Current.Clipboard.SetTextAsync(log);
         }
         
-        public async Task ExportToFile()
+        public async Task ExportLogToFile()
         {
             var log = GetFullLog();
             var fileDialog = FileDialogs.CreateSaveFileDialog("Exporting log to file...", "Program Log", "log");
@@ -753,6 +754,27 @@ namespace OpenTabletDriver.Windows
                 var file = new FileInfo(result);
                 using (var sw = file.AppendText())
                     await sw.WriteLineAsync(log);
+            }
+        }
+
+        public async Task CopyDiagnosticDump()
+        {
+            var dump = new Diagnostics.DiagnosticDump();
+            await App.Current.Clipboard.SetTextAsync(dump.ToString());
+        }
+
+        public async Task ExportDiagnosticDump()
+        {
+            var fileDialog = FileDialogs.CreateSaveFileDialog("Exporting diagnostic dump to file...", "Diagnostic Dump", "json");
+            var result = await fileDialog.ShowAsync(this.GetParentWindow());
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                var file = new FileInfo(result);
+                using (var sw = file.AppendText())
+                {
+                    var dump = new Diagnostics.DiagnosticDump();
+                    await sw.WriteLineAsync(dump.ToString());
+                }
             }
         }
 
