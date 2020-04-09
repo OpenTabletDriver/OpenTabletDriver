@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using NativeLib.Linux;
+using NativeLib.Linux.Xorg;
 using TabletDriverPlugin;
 
 namespace TabletDriverLib.Interop.Display
