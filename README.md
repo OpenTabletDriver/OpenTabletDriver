@@ -26,12 +26,14 @@ No special dependencies.
 - libx11
 - libxrandr
 - libxtst
+- libevdev2
 
 ##### Debian / Ubuntu
 
 - libx11-dev
 - libxrandr-dev
 - libxtst-dev
+- libevdev-dev
 
 ### Mac OS X [Unsupported]
 > Code is written for Mac OS X, but it isn't maintained at all. It will compile but most functions either won't work or cause crashes. There isn't any plan to support this platform at the moment but it certainly could be done.
