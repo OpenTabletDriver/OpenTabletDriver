@@ -43,7 +43,7 @@ namespace TabletDriverLib
         public virtual void Dispose()
         {
             Stop();
-            ReportStream.Dispose();
+            ReportStream?.Dispose();
         }
 
         private void Setup()
