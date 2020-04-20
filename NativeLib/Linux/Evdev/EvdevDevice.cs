@@ -15,10 +15,10 @@ namespace NativeLib.Linux.Evdev
         private IntPtr _device;
         private IntPtr _uidev;
 
-        public bool Initialize()
+        public int Initialize()
         {
             var err = libevdev_uinput_create_from_device(_device, LIBEVDEV_UINPUT_OPEN_MANAGED, out _uidev);
-            return err == 0;
+            return err;
         }
 
         public void Dispose()

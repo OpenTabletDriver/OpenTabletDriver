@@ -14,8 +14,9 @@ namespace TabletDriverLib.Interop.Keyboard
 
             Device.EnableTypeCodes(EventType.EV_KEY, XKeysymToEventCode.Values.Distinct().ToArray());
 
-            if (!Device.Initialize())
-                Log.Write("Evdev", "Failed to initialize virtual keyboard.", true);
+            var result = Device.Initialize();
+            if (result != 0)
+                Log.Write("Evdev", $"Failed to initialize virtual keyboard. (error code {result})", true);
         }
 
         private EvdevDevice Device { set; get; }
