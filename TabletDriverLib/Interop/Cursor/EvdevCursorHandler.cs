@@ -35,8 +35,10 @@ namespace TabletDriverLib.Interop.Cursor
                 EventCode.BTN_RIGHT,
                 EventCode.BTN_FORWARD,
                 EventCode.BTN_BACK);
-            if (!Device.Initialize())
-                Log.Write("Evdev", "Failed to initialize virtual pointer.", true);
+            
+            var result = Device.Initialize();
+            if (result != 0)
+                Log.Write("Evdev", $"Failed to initialize virtual pointer. (error code {result})", true);
         }
 
         public void Dispose()

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace NativeLib.Linux.Evdev
 {
@@ -12,17 +13,21 @@ namespace NativeLib.Linux.Evdev
             libevdev_set_name(_device, deviceName);
         }
 
+        public bool CanWrite { private set; get; }
+
         private IntPtr _device;
         private IntPtr _uidev;
 
-        public bool Initialize()
+        public int Initialize()
         {
             var err = libevdev_uinput_create_from_device(_device, LIBEVDEV_UINPUT_OPEN_MANAGED, out _uidev);
-            return err == 0;
+            CanWrite = err == 0;
+            return err;
         }
 
         public void Dispose()
         {
+            CanWrite = false;
             if (_uidev != null)
             {
                 libevdev_uinput_destroy(_uidev);
@@ -48,7 +53,10 @@ namespace NativeLib.Linux.Evdev
             EnableCodes(type, codes);
         }
 
-        public int Write(EventType type, EventCode code, int value) => libevdev_uinput_write_event(_uidev, (uint)type, (uint)code, value);
+        public int Write(EventType type, EventCode code, int value)
+        {
+            return CanWrite ? libevdev_uinput_write_event(_uidev, (uint)type, (uint)code, value) : int.MinValue; 
+        }
 
         public bool Sync()
         {
