@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using NativeLib.Linux;
 using NativeLib.Linux.Evdev;
 using NativeLib.Linux.Evdev.Structs;
 using TabletDriverPlugin;
@@ -37,8 +38,15 @@ namespace TabletDriverLib.Interop.Cursor
                 EventCode.BTN_BACK);
             
             var result = Device.Initialize();
-            if (result != 0)
-                Log.Write("Evdev", $"Failed to initialize virtual pointer. (error code {result})", true);
+            switch (result)
+            {
+                case ERRNO.NONE:
+                    Log.Debug($"Successfully initialized virtual pointer. (code {result})");
+                    break;
+                default:
+                    Log.Write("Evdev", $"Failed to initialize virtual pointer. (error code {result})", true);
+                    break;
+            }
         }
 
         public void Dispose()

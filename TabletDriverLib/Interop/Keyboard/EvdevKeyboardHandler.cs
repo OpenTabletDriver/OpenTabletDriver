@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NativeLib.Linux;
 using NativeLib.Linux.Evdev;
 using TabletDriverPlugin;
 
@@ -15,8 +16,15 @@ namespace TabletDriverLib.Interop.Keyboard
             Device.EnableTypeCodes(EventType.EV_KEY, XKeysymToEventCode.Values.Distinct().ToArray());
 
             var result = Device.Initialize();
-            if (result != 0)
-                Log.Write("Evdev", $"Failed to initialize virtual keyboard. (error code {result})", true);
+            switch (result)
+            {
+                case ERRNO.NONE:
+                    Log.Debug($"Successfully initialized virtual keyboard. (code {result})");
+                    break;
+                default:
+                    Log.Write("Evdev", $"Failed to initialize virtual keyboard. (error code {result})", true);
+                    break;
+            }
         }
 
         private EvdevDevice Device { set; get; }
