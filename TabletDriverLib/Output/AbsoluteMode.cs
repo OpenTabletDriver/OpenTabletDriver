@@ -57,8 +57,8 @@ namespace TabletDriverLib.Output
             set
             {
                 _filters = value;
-                _preFilters = value.Where(f => f.FilterTime == FilterTime.PreFilter);
-                _postFilters = value.Where(f => f.FilterTime == FilterTime.PostFilter);
+                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose);
+                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose);
             }
             get => _filters;
         }

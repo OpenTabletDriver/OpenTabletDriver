@@ -3,6 +3,6 @@ namespace TabletDriverPlugin.Tablet
     public interface IFilter
     {
         Point Filter(Point point);
-        FilterTime FilterTime { get; }
+        FilterStage FilterStage { get; }
     }
 }
