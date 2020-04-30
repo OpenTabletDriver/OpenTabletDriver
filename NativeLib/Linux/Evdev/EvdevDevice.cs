@@ -18,11 +18,11 @@ namespace NativeLib.Linux.Evdev
         private IntPtr _device;
         private IntPtr _uidev;
 
-        public int Initialize()
+        public ERRNO Initialize()
         {
             var err = libevdev_uinput_create_from_device(_device, LIBEVDEV_UINPUT_OPEN_MANAGED, out _uidev);
             CanWrite = err == 0;
-            return err;
+            return (ERRNO)(-err);
         }
 
         public void Dispose()
