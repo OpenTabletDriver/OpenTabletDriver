@@ -29,7 +29,7 @@ namespace TabletDriverLib.Output
 
         public void Position(ITabletReport report)
         {
-            if (report.ReportID <= TabletProperties.ActiveReportID)
+            if (report.ReportID < TabletProperties.ActiveReportID)
                 return;
             
             var difference = DateTime.Now - _lastReceived;

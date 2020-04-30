@@ -75,7 +75,7 @@ namespace TabletDriverLib.Output
 
         public void Position(ITabletReport report)
         {
-            if (report.ReportID <= TabletProperties.ActiveReportID)
+            if (report.ReportID < TabletProperties.ActiveReportID)
                 return;
             
             var pos = new Point(report.Position.X, report.Position.Y);
