@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
@@ -14,7 +15,18 @@ namespace TabletDriverLib.Output
         public float XSensitivity { set; get; }
         public float YSensitivity { set; get; }
         public TimeSpan ResetTime { set; get; } = TimeSpan.FromMilliseconds(100);
-        public IEnumerable<IFilter> Filters { set; get; }
+        
+        private IEnumerable<IFilter> _filters, _preFilters, _postFilters;
+        public IEnumerable<IFilter> Filters
+        {
+            set
+            {
+                _filters = value;
+                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose);
+                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose);
+            }
+            get => _filters;
+        }
 
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private ITabletReport _lastReport;
@@ -42,6 +54,10 @@ namespace TabletDriverLib.Output
             if (_lastReport != null)
             {
                 var pos = new Point(report.Position.X - _lastReport.Position.X, report.Position.Y - _lastReport.Position.Y);
+
+                // Pre Filter
+                foreach (IFilter filter in _preFilters)
+                    pos = filter.Filter(pos);
                 
                 // Normalize (ratio of 1)
                 pos.X /= TabletProperties.MaxX;
@@ -58,8 +74,8 @@ namespace TabletDriverLib.Output
                 // Translate by cursor position
                 pos += GetCursorPosition();
 
-                // Filter
-                foreach (var filter in Filters)
+                // Post Filter
+                foreach (IFilter filter in _postFilters)
                     pos = filter.Filter(pos);
 
                 CursorHandler.SetCursorPosition(pos);
