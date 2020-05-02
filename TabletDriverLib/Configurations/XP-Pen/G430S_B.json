@@ -1,0 +1,18 @@
+{
+  "Name": "XP-Pen G430S_B",
+  "VendorID": 10429,
+  "ProductID": 2323,
+  "InputReportLength": 12,
+  "ReportParser": null,
+  "CustomInputReportLength": 0,
+  "CustomReportParser": null,
+  "Width": 101.6,
+  "Height": 76.2,
+  "MaxX": 10160.0,
+  "MaxY": 7620.0,
+  "MaxPressure": 8191,
+  "ActiveReportID": 12,
+  "AuxReportLength": 0,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}
