@@ -1,4 +1,4 @@
-using ReactiveUI;
+using TabletDriverLib.Plugins;
 
 namespace OpenTabletDriver.Plugins
 {
@@ -11,12 +11,7 @@ namespace OpenTabletDriver.Plugins
             Value = tokens[1];
         }
 
-        private string _value;
-        public string Value
-        {
-            set => this.RaiseAndSetIfChanged(ref _value, value);
-            get => _value;
-        }
+        public string Value { get; set; }
 
         public override string ToString()
         {

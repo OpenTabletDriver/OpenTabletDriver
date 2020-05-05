@@ -1,35 +1,34 @@
-using ReactiveUI;
 using TabletDriverLib;
 using System.Linq;
 using TabletDriverPlugin.Attributes;
 using System.Reflection;
 
-namespace OpenTabletDriver.Plugins
+namespace TabletDriverLib.Plugins
 {
-    public class PluginReference : ReactiveObject
+    public class PluginReference
     {
         public PluginReference(string path)
         {
             Path = path;
         }
 
+        public PluginReference(object obj)
+        {
+            Path = obj.GetType().FullName;
+        }
+
         protected PluginReference()
         {
         }
 
-        private string _name;
-        public string Name
-        {
-            protected set => this.RaiseAndSetIfChanged(ref _name, value);
-            get => !string.IsNullOrWhiteSpace(_name) ? _name : Path;
-        }
+        public string Name { private set; get; }
 
         private string _path;
         public string Path
         {
             protected set
             {
-                this.RaiseAndSetIfChanged(ref _path, value);
+                _path = value;
                 Name = GetName(Path);
             }
             get => _path;

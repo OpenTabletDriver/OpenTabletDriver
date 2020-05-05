@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using TabletDriverPlugin.Attributes;
 
-namespace OpenTabletDriver.Tools
+namespace TabletDriverLib.Plugins
 {
     public static class PluginTools
     {
@@ -15,8 +15,8 @@ namespace OpenTabletDriver.Tools
                 foreach (var property in obj.GetType().GetProperties())
                 {
                     var attributes = from attr in property.GetCustomAttributes(false)
-                        where attr is PropertyAttribute
-                        select attr as PropertyAttribute;
+                                     where attr is PropertyAttribute
+                                     select attr as PropertyAttribute;
 
                     if (attributes.Count() > 0)
                         yield return (obj.GetType().FullName + "." + property.Name, property.GetValue(obj).ToString());
@@ -31,8 +31,8 @@ namespace OpenTabletDriver.Tools
                 foreach (var property in obj.GetType().GetProperties())
                 {
                     var attributes = from attr in property.GetCustomAttributes(false)
-                        where attr is PropertyAttribute
-                        select attr as PropertyAttribute;
+                                     where attr is PropertyAttribute
+                                     select attr as PropertyAttribute;
 
                     if (pluginSettings.TryGetValue(obj.GetType().FullName + "." + property.Name, out var stringValue))
                     {

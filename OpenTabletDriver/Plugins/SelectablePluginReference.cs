@@ -1,4 +1,5 @@
 using ReactiveUI;
+using TabletDriverLib.Plugins;
 
 namespace OpenTabletDriver.Plugins
 {
@@ -14,11 +15,6 @@ namespace OpenTabletDriver.Plugins
             IsEnabled = false;
         }
 
-        private bool _isEnabled;
-        public bool IsEnabled
-        {
-            set => this.RaiseAndSetIfChanged(ref _isEnabled, value);
-            get => _isEnabled;
-        }
+        public bool IsEnabled { get; set; }
     }
 }

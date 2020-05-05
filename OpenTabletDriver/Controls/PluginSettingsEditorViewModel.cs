@@ -9,6 +9,7 @@ using OpenTabletDriver.Tools;
 using OpenTabletDriver.Windows;
 using ReactiveUI;
 using TabletDriverLib;
+using TabletDriverLib.Plugins;
 using TabletDriverPlugin.Attributes;
 
 namespace OpenTabletDriver.Controls

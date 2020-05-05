@@ -10,11 +10,11 @@ using Avalonia.Threading;
 using Newtonsoft.Json;
 using OpenTabletDriver.Controls;
 using OpenTabletDriver.Plugins;
-using OpenTabletDriver.Tools;
 using ReactiveUI;
 using TabletDriverLib;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Display;
+using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Resident;
@@ -70,7 +70,7 @@ namespace OpenTabletDriver.Windows
             else
                 ApplySettings(DefaultSettings);
             
-            UpdateTheme(Settings.Theme);
+            // UpdateTheme(Settings.Theme);
         }
 
         #region Properties
@@ -346,9 +346,6 @@ namespace OpenTabletDriver.Windows
 
         public Settings DefaultSettings => new Settings()
         {
-            Theme = "Light",
-            WindowWidth = 1280,
-            WindowHeight = 720,
             OutputMode = typeof(TabletDriverLib.Output.AbsoluteMode).FullName,
             AutoHook = true,
             DisplayWidth = VirtualScreen.Width,
@@ -550,7 +547,7 @@ namespace OpenTabletDriver.Windows
         {
             var theme = Themes.Parse(name);
             App.SetTheme(theme);
-            Settings.Theme = name;
+            // Settings.Theme = name;
             (App.Current as App).RefreshAllStyles();
             Log.Debug($"Set theme to {name}");
         }
@@ -623,13 +620,11 @@ namespace OpenTabletDriver.Windows
         public void ResetToDefaults()
         {
             ApplySettings(DefaultSettings);
-            UpdateTheme(Settings.Theme);
+            // UpdateTheme(Settings.Theme);
         }
 
         public void ResetWindowSize()
         {
-            Settings.WindowWidth = 1280;
-            Settings.WindowHeight = 720;
         }
 
         public void ToggleDriverEnabled()
@@ -650,7 +645,7 @@ namespace OpenTabletDriver.Windows
                     try
                     {
                         ApplySettings(Settings.Deserialize(file));
-                        UpdateTheme(Settings.Theme);
+                        // UpdateTheme(Settings.Theme);
                     }
                     catch (Exception ex)
                     {
