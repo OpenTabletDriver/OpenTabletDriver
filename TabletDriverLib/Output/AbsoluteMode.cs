@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
@@ -50,7 +51,17 @@ namespace TabletDriverLib.Output
             get => _tabletProperties;
         }
 
-        public IEnumerable<IFilter> Filters { set; get; }
+        private IEnumerable<IFilter> _filters, _preFilters, _postFilters;
+        public IEnumerable<IFilter> Filters
+        {
+            set
+            {
+                _filters = value;
+                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose);
+                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose);
+            }
+            get => _filters;
+        }
 
         public bool AreaClipping { set; get; }
         
@@ -75,10 +86,14 @@ namespace TabletDriverLib.Output
 
         public void Position(ITabletReport report)
         {
-            if (report.ReportID <= TabletProperties.ActiveReportID)
+            if (TabletProperties.ActiveReportID != 0 && report.ReportID <= TabletProperties.ActiveReportID)
                 return;
             
             var pos = new Point(report.Position.X, report.Position.Y);
+
+            // Pre Filter
+            foreach (IFilter filter in _preFilters)
+                pos = filter.Filter(pos);
 
             // Normalize (ratio of 1)
             pos.X /= TabletProperties.MaxX;
@@ -128,8 +143,8 @@ namespace TabletDriverLib.Output
                     pos.Y = _maxY;
             }
 
-            // Filter
-            foreach (var filter in Filters)
+            // Post Filter
+            foreach (IFilter filter in _postFilters)
                 pos = filter.Filter(pos);
 
             // Setting cursor position

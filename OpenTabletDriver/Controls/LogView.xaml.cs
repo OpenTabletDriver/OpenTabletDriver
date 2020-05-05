@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
@@ -59,7 +60,7 @@ namespace OpenTabletDriver.Controls
 
         private async Task CopyMessage(LogMessage message)
         {
-            var text = string.Format("[{0}:{1}]\t{2}", message.IsError ? "Error" : "Normal", message.Group, message.Message);
+            var text = Log.GetStringFormat(message);
             await App.Current.Clipboard.SetTextAsync(text);
         }
     }

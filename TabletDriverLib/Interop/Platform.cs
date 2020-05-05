@@ -19,12 +19,12 @@ namespace TabletDriverLib.Interop
                     if (PlatformInfo.IsWindows)
                         _cursorHandler = new WindowsCursorHandler();
                     else if (PlatformInfo.IsLinux)
-                        _cursorHandler = new XCursorHandler();
+                        _cursorHandler = new EvdevCursorHandler();
                     else if (PlatformInfo.IsOSX)
                         _cursorHandler = new MacOSCursorHandler();
                     else
                     {
-                        Log.Write("CursorHandler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);  
+                        Log.Write("CursorHandler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);
                         return null;
                     }
                 }
@@ -42,7 +42,7 @@ namespace TabletDriverLib.Interop
                     if (PlatformInfo.IsWindows)
                         _keyboardHandler = new WindowsKeyboardHandler();
                     else if (PlatformInfo.IsLinux)
-                        _keyboardHandler = new XKeyboardHandler();
+                        _keyboardHandler = new EvdevKeyboardHandler();
                     else if (PlatformInfo.IsOSX)
                         _keyboardHandler = null;
                     else
@@ -65,7 +65,7 @@ namespace TabletDriverLib.Interop
                     return new XScreen();
                 else if (PlatformInfo.IsOSX)
                     return new MacOSDisplay();
-                    
+
                 Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
                 return null;
             }
