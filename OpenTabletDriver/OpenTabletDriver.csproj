@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <PublishTrimmed>true</PublishTrimmed>
     <PublishSingleFile>false</PublishSingleFile>
-    <VersionPrefix>0.2.0</VersionPrefix>
+    <VersionPrefix>0.2.1</VersionPrefix>
     <Company>InfinityGhost</Company>
     <Product>OpenTabletDriver</Product>
 	    <ApplicationIcon>Assets\otd.ico</ApplicationIcon>
