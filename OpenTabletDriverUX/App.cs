@@ -1,19 +1,37 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using NativeLib;
+using JKang.IpcServiceFramework.Client;
+using Microsoft.Extensions.DependencyInjection;
+using TabletDriverLib;
+using TabletDriverLib.Contracts;
 
 namespace OpenTabletDriverUX
 {
-    public static class AppInfo
+    public static class App
     {
+        public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
+        public static Settings Settings { set; get; }
+        
         public static AboutDialog AboutDialog => _aboutDialog.Value;
         public static Bitmap Logo => _logo.Value;
-        public static DirectoryInfo ConfigurationDirectory => new DirectoryInfo(Path.Join(Environment.CurrentDirectory, "Configurations"));
-        public static DirectoryInfo AppDataDirectory => _appDataDirectory.Value;
-        public static FileInfo SettingsFile => new FileInfo(Path.Join(AppDataDirectory.FullName, "settings.json"));
+
+        private static readonly Lazy<IIpcClient<IDriverDaemon>> _driverDaemon = new Lazy<IIpcClient<IDriverDaemon>>(() => 
+        {
+            // Register IPC Clients
+			ServiceProvider serviceProvider = new ServiceCollection()
+				.AddNamedPipeIpcClient<IDriverDaemon>("OpenTabletDriverUX", "OpenTabletDriver")
+				.BuildServiceProvider();
+
+			// Resolve IPC client factory
+			IIpcClientFactory<IDriverDaemon> clientFactory = serviceProvider
+				.GetRequiredService<IIpcClientFactory<IDriverDaemon>>();
+
+			// Create client
+			return clientFactory.CreateClient("OpenTabletDriverUX");
+        });
 
         private static readonly Lazy<AboutDialog> _aboutDialog = new Lazy<AboutDialog>(() => new AboutDialog
         {
@@ -35,29 +53,6 @@ namespace OpenTabletDriverUX
         {
             var dataStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriverUX.Assets.otd.png");
             return new Bitmap(dataStream);
-        });
-
-        private static readonly Lazy<DirectoryInfo> _appDataDirectory = new Lazy<DirectoryInfo>(() => 
-        {
-            if (PlatformInfo.IsWindows)
-            {
-                var appdata = Environment.GetEnvironmentVariable("LOCALAPPDATA");
-                return new DirectoryInfo(Path.Join(appdata, "OpenTabletDriver"));
-            }
-            else if (PlatformInfo.IsLinux)
-            {
-                var home = Environment.GetEnvironmentVariable("HOME");
-                return new DirectoryInfo(Path.Join(home, ".config", "OpenTabletDriver"));
-            }
-            else if (PlatformInfo.IsOSX)
-            {
-                var macHome = Environment.GetEnvironmentVariable("HOME");
-                return new DirectoryInfo(Path.Join(macHome, "Library", "Application Support", "OpenTabletDriver"));
-            }
-            else
-            {
-                return null;
-            }
         });
     }
 }

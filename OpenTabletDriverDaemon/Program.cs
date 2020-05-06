@@ -28,7 +28,7 @@ namespace OpenTabletDriverDaemon
             Host.CreateDefaultBuilder()
                 .ConfigureServices(services => 
                 {
-                    services.AddScoped<IDriverDaemon, DriverDaemon>();
+                    services.AddSingleton<IDriverDaemon, DriverDaemon>((s) => Daemon);
                 })
                 .ConfigureIpcHost(builder => 
                 {

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Eto.Forms;
+using TabletDriverLib.Contracts;
 
 namespace OpenTabletDriverUX.Gtk
 {

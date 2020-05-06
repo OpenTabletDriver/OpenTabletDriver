@@ -22,7 +22,7 @@ namespace OpenTabletDriverDaemon
 
         public Driver Driver { private set; get; }
         private Settings Settings { set; get; }
-        
+
         public bool SetTablet(TabletProperties tablet)
         {
             return Driver.Open(tablet);
@@ -36,6 +36,8 @@ namespace OpenTabletDriverDaemon
         public void SetSettings(Settings settings)
         {
             Settings = settings;
+            
+            Driver.OutputMode = new PluginReference(Settings.OutputMode).Construct<IOutputMode>();
 
             if (Driver.OutputMode != null)
             {
