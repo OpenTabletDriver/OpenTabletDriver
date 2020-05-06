@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TabletDriverLib", "TabletDriverLib\TabletDriverLib.csproj", "{E1407092-4EC3-4FDB-A1F7-27684B889750}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver", "OpenTabletDriver\OpenTabletDriver.csproj", "{5720DD79-C5B1-410A-B059-AC385F702DA5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeLib", "NativeLib\NativeLib.csproj", "{57A5101A-20F4-41AA-8649-2C3785DD5BA2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TabletDriverPlugin", "TabletDriverPlugin\TabletDriverPlugin.csproj", "{1EF3ED59-1D11-4814-907B-4F8C90B9032E}"
@@ -44,18 +42,6 @@ Global
 		{E1407092-4EC3-4FDB-A1F7-27684B889750}.Release|x64.Build.0 = Release|Any CPU
 		{E1407092-4EC3-4FDB-A1F7-27684B889750}.Release|x86.ActiveCfg = Release|Any CPU
 		{E1407092-4EC3-4FDB-A1F7-27684B889750}.Release|x86.Build.0 = Release|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Debug|x64.Build.0 = Debug|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Debug|x86.Build.0 = Debug|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Release|x64.ActiveCfg = Release|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Release|x64.Build.0 = Release|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Release|x86.ActiveCfg = Release|Any CPU
-		{5720DD79-C5B1-410A-B059-AC385F702DA5}.Release|x86.Build.0 = Release|Any CPU
 		{57A5101A-20F4-41AA-8649-2C3785DD5BA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{57A5101A-20F4-41AA-8649-2C3785DD5BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57A5101A-20F4-41AA-8649-2C3785DD5BA2}.Debug|x64.ActiveCfg = Debug|Any CPU
