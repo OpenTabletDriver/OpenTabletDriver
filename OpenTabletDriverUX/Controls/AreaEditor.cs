@@ -1,7 +1,4 @@
-using System;
 using Eto.Forms;
-using OpenTabletDriverUX.Converters;
-using TabletDriverPlugin;
 
 namespace OpenTabletDriverUX.Controls
 {

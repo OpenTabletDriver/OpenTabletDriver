@@ -33,8 +33,8 @@ namespace OpenTabletDriverUX.Controls
             
             pixelScale = GetRelativeScale(background.Width, background.Height);
 
-            DrawBackgroundRect(graphics, background, new Color(0.5f, 0.5f, 0.5f));
-            DrawForegroundRect(graphics, foreground, new Color(1, 1, 1));
+            DrawBackgroundRect(graphics, background, App.ColorDictionary["WindowBackground"]);
+            DrawForegroundRect(graphics, foreground, App.ColorDictionary["Highlight"]);
         }
 
         private float GetRelativeScale(float width, float height)
