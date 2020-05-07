@@ -7,14 +7,13 @@ using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
 using TabletDriverLib;
 using TabletDriverLib.Contracts;
+using TabletDriverPlugin;
 
 namespace OpenTabletDriverUX
 {
     public static class App
     {
         public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
-        public static Settings Settings { set; get; }
-        
         public static AboutDialog AboutDialog => _aboutDialog.Value;
         public static Bitmap Logo => _logo.Value;
 

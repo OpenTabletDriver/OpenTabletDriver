@@ -17,10 +17,7 @@ namespace OpenTabletDriverDaemon
     {
         static async Task Main(string[] args)
         {
-            Write("Daemon", "Welcome to OpenTabletDriver");
             Daemon = new DriverDaemon();
-            Write("Daemon", "Driver interface created.");
-
             await CreateHostBuilder().Build().RunAsync();
         }
 

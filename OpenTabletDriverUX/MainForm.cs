@@ -1,57 +1,78 @@
 using Eto.Forms;
 using Eto.Drawing;
 using OpenTabletDriverUX.Controls;
-using TabletDriverLib.Contracts;
-using JKang.IpcServiceFramework.Client;
-using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using TabletDriverPlugin.Tablet;
 using System.Threading.Tasks;
-using System;
-using TabletDriverLib.Plugins;
 using TabletDriverLib;
 using TabletDriverPlugin;
 
 namespace OpenTabletDriverUX
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IViewModelRoot<MainFormViewModel>
 	{
 		public MainForm()
 		{
+			this.DataContext = new MainFormViewModel();
+			
 			Title = "OpenTabletDriver";
-			ClientSize = new Size(960, 720);
-			MinimumSize = new Size(960, 720);
+			ClientSize = new Size(960, 730);
+			MinimumSize = new Size(960, 730);
 			Icon = App.Logo.WithSize(256, 256);
 
 			displayAreaEditor = new AreaEditor();
-
-			tabletAreaEditor = new AreaEditor();
-			
-			var outputConfigContent = new StackLayout
+			ViewModel.PropertyChanged += (sender, e) =>
 			{
-				Orientation = Orientation.Vertical,
-				Padding = new Padding(5),
-				Items = 
+				if (e.PropertyName == nameof(ViewModel.Settings))
 				{
-					new StackLayoutItem(new GroupBox
-					{
-						Text = "Display Area",
-						Padding = new Padding(5),
-						Content = displayAreaEditor
-					}, true),
-					new StackLayoutItem(new GroupBox
-					{
-						Text = "Tablet Area",
-						Padding = new Padding(5),
-						Content = tabletAreaEditor
-					}, true)
+					displayAreaEditor.Bind(c => c.ViewModel.Width, ViewModel.Settings, m => m.DisplayWidth);
+					displayAreaEditor.Bind(c => c.ViewModel.Height, ViewModel.Settings, m => m.DisplayHeight);
+					displayAreaEditor.Bind(c => c.ViewModel.X, ViewModel.Settings, m => m.DisplayX);
+					displayAreaEditor.Bind(c => c.ViewModel.Y, ViewModel.Settings, m => m.DisplayY);
 				}
 			};
-			this.SizeChanged += (sender, e) => 
+			
+			var displayAreaGroup = new GroupBox
 			{
-				outputConfigContent.Width = ParentWindow.ClientSize.Width;
-				foreach (var child in outputConfigContent.Children)
-					child.Width = outputConfigContent.Width - 10;
+				Text = "Display Area",
+				Padding = new Padding(5),
+				Content = displayAreaEditor
+			};
+
+			tabletAreaEditor = new AreaEditor();
+			ViewModel.PropertyChanged += (sender, e) => 
+			{
+				if (e.PropertyName == nameof(ViewModel.Settings))
+				{
+					tabletAreaEditor.Bind(c => c.ViewModel.Width, ViewModel.Settings, m => m.TabletWidth);
+					tabletAreaEditor.Bind(c => c.ViewModel.Height, ViewModel.Settings, m => m.TabletHeight);
+					tabletAreaEditor.Bind(c => c.ViewModel.X, ViewModel.Settings, m => m.TabletX);
+					tabletAreaEditor.Bind(c => c.ViewModel.Y, ViewModel.Settings, m => m.TabletY);
+					tabletAreaEditor.Bind(c => c.ViewModel.Rotation, ViewModel.Settings, m => m.TabletRotation);
+				}
+			};
+
+			var tabletAreaGroup = new GroupBox
+			{
+				Text = "Tablet Area",
+				Padding = new Padding(5),
+				Content = tabletAreaEditor
+			};
+			
+			var outputConfigContent = new TableLayout
+			{
+				Padding = new Padding(5),
+				Rows = 
+				{
+					new TableRow(new TableCell(displayAreaGroup, true))
+					{
+						ScaleHeight = true
+					},
+					new TableRow(new TableCell(tabletAreaGroup, true))
+					{
+						ScaleHeight = true
+					}
+				}
 			};
 			
 			// Main Content
@@ -104,7 +125,7 @@ namespace OpenTabletDriverUX
 			var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
 			quitCommand.Executed += (sender, e) => Application.Instance.Quit();
 
-			var aboutCommand = new Command { MenuText = "About..." };
+			var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
 			aboutCommand.Executed += (sender, e) => App.AboutDialog.ShowDialog(this);
 
 			var resetSettings = new Command { MenuText = "Reset to defaults" };
@@ -113,11 +134,14 @@ namespace OpenTabletDriverUX
 			var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
 			loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
 
-			var saveSettingsAs = new Command { MenuText = "Save settings as..." };
+			var saveSettingsAs = new Command { MenuText = "Save settings as...", Shortcut = Application.Instance.CommonModifier | Keys.Shift | Keys.S };
 			saveSettingsAs.Executed += async (sender, e) => await SaveSettingsDialog();
 
 			var saveSettings = new Command { MenuText = "Save settings", Shortcut = Application.Instance.CommonModifier | Keys.S };
 			saveSettings.Executed += async (sender, e) => await SaveSettings();
+
+			var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
+			applySettings.Executed += async (sender, e) => await ApplySettings();
 
 			var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
 			detectTablet.Executed += async (sender, e) => await DetectAllTablets();
@@ -139,7 +163,8 @@ namespace OpenTabletDriverUX
 							loadSettings,
 							saveSettings,
 							saveSettingsAs,
-							resetSettings
+							resetSettings,
+							applySettings
 						}
 					},
 					// Tablets submenu
@@ -166,53 +191,57 @@ namespace OpenTabletDriverUX
 
 		public async void InitializeAsync()
 		{
-			if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
-			{
-				App.Settings = settings;
-			}
-			else if (App.Settings is Settings appSettings)
-			{
-				await App.DriverDaemon.InvokeAsync(d => d.SetSettings(appSettings));
-			}
-			else if (AppInfo.SettingsFile.Exists)
-			{
-				App.Settings = Settings.Deserialize(AppInfo.SettingsFile);
-			}
-
 			if (await App.DriverDaemon.InvokeAsync(d => d.GetTablet()) is TabletProperties tablet)
 			{
-				if (App.Settings == null)
-				{
-					await ResetSettings();
-				}
+				SetTabletAreaDimensions(tablet);
 			}
 			else
 			{
 				await DetectAllTablets();
-				if (App.Settings == null)
-				{
-					await ResetSettings();
-				}
 			}
+
+			if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
+			{
+				ViewModel.Settings = settings;
+			}
+			else if (AppInfo.SettingsFile.Exists)
+			{
+				ViewModel.Settings = Settings.Deserialize(AppInfo.SettingsFile);
+				await App.DriverDaemon.InvokeAsync(d => d.SetSettings(ViewModel.Settings));
+			}
+			else
+			{
+				await ResetSettings();
+			}
+
+			var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+			displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
+			displayAreaEditor.ViewModel.MaxHeight = virtualScreen.Height;
 		}
 
 		private AreaEditor displayAreaEditor, tabletAreaEditor;
+
+		public MainFormViewModel ViewModel
+		{
+			set => this.DataContext = value;
+			get => (MainFormViewModel)this.DataContext;
+		}
 
 		private async Task ResetSettings()
 		{
 			var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
 			var tablet = await App.DriverDaemon.InvokeAsync(d => d.GetTablet());
-			App.Settings = TabletDriverLib.Settings.Defaults;
-			App.Settings.DisplayWidth = virtualScreen.Width;
-            App.Settings.DisplayHeight = virtualScreen.Height;
-            App.Settings.DisplayX = virtualScreen.Width / 2;
-            App.Settings.DisplayY = virtualScreen.Height / 2;
-            App.Settings.TabletWidth = tablet?.Width ?? 0;
-            App.Settings.TabletHeight = tablet?.Height ?? 0;
-            App.Settings.TabletX = tablet?.Width / 2 ?? 0;
-            App.Settings.TabletY = tablet?.Height / 2 ?? 0;
+			ViewModel.Settings = TabletDriverLib.Settings.Defaults;
+			ViewModel.Settings.DisplayWidth = virtualScreen.Width;
+            ViewModel.Settings.DisplayHeight = virtualScreen.Height;
+            ViewModel.Settings.DisplayX = virtualScreen.Width / 2;
+            ViewModel.Settings.DisplayY = virtualScreen.Height / 2;
+            ViewModel.Settings.TabletWidth = tablet?.Width ?? 0;
+            ViewModel.Settings.TabletHeight = tablet?.Height ?? 0;
+            ViewModel.Settings.TabletX = tablet?.Width / 2 ?? 0;
+            ViewModel.Settings.TabletY = tablet?.Height / 2 ?? 0;
 
-			await App.DriverDaemon.InvokeAsync(d => d.SetSettings(App.Settings));
+			await App.DriverDaemon.InvokeAsync(d => d.SetSettings(ViewModel.Settings));
 		}
 
         private async Task LoadSettingsDialog()
@@ -230,8 +259,8 @@ namespace OpenTabletDriverUX
 				case DialogResult.Ok:
 				case DialogResult.Yes:
 					var file = new FileInfo(fileDialog.FileName);
-					App.Settings = Settings.Deserialize(file);
-					await App.DriverDaemon.InvokeAsync(d => d.SetSettings(App.Settings));
+					ViewModel.Settings = Settings.Deserialize(file);
+					await App.DriverDaemon.InvokeAsync(d => d.SetSettings(ViewModel.Settings));
 					break;
 			}
 		}
@@ -263,6 +292,12 @@ namespace OpenTabletDriverUX
 				settings.Serialize(AppInfo.SettingsFile);
 		}
 
+		private async Task ApplySettings()
+		{
+			if (ViewModel.Settings is Settings settings)
+				await App.DriverDaemon.InvokeAsync(d => d.SetSettings(settings));
+		}
+
 		private async Task DetectAllTablets()
 		{
 			if (AppInfo.ConfigurationDirectory.Exists)
@@ -276,8 +311,9 @@ namespace OpenTabletDriverUX
 						var settings = await App.DriverDaemon.InvokeAsync(d => d.GetSettings());
 						if (settings != null)
 						{
-							await App.DriverDaemon.InvokeAsync(d=> d.SetInputHook(settings.AutoHook));
+							await App.DriverDaemon.InvokeAsync(d => d.SetInputHook(settings.AutoHook));
 						}
+						SetTabletAreaDimensions(tablet);
 						break;
 					}
 				}
@@ -286,6 +322,12 @@ namespace OpenTabletDriverUX
 			{
 				Log.Write("Detect", $"Configuration directory '{AppInfo.ConfigurationDirectory.FullName}' does not exist.");
 			}
+		}
+
+		private void SetTabletAreaDimensions(TabletProperties tablet)
+		{
+			tabletAreaEditor.ViewModel.MaxWidth = tablet.Width;
+			tabletAreaEditor.ViewModel.MaxHeight = tablet.Height;
 		}
 	}
 }

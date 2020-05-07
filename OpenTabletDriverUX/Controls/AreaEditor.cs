@@ -12,7 +12,6 @@ namespace OpenTabletDriverUX.Controls
             this.DataContext = new AreaViewModel();
             
             areaDisplay = new AreaDisplay();
-            // areaDisplay.Bind(c => c.ViewModel, ViewModel, m => m);
             areaDisplay.Bind(c => c.ViewModel.Width, ViewModel, m => m.Width);
             areaDisplay.Bind(c => c.ViewModel.Height, ViewModel, m => m.Height);
             areaDisplay.Bind(c => c.ViewModel.X, ViewModel, m => m.X);
@@ -59,6 +58,7 @@ namespace OpenTabletDriverUX.Controls
             var stackLayout = new StackLayout
             {
                 Orientation = Orientation.Vertical,
+                Spacing = 5,
                 Items = 
                 {
                     new GroupBox
@@ -94,15 +94,13 @@ namespace OpenTabletDriverUX.Controls
                 var groupBox = (GroupBox)item.Control;
                 groupBox.Padding = new Eto.Drawing.Padding(5);
             }
-            
-            Content = new StackLayout
+
+            TableCell[] cells = 
             {
-                Items = 
-                {
-                    new StackLayoutItem(areaDisplay, true),
-                    new StackLayoutItem(stackLayout, false)
-                }
+                new TableCell(stackLayout),
+                new TableCell(areaDisplay, true)
             };
+            Content = TableLayout.Horizontal(5, cells);
         }
 
         public AreaViewModel ViewModel

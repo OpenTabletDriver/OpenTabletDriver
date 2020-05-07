@@ -19,8 +19,12 @@ namespace TabletDriverLib
         private bool _lockar, _sizeChanging, _autoHook, _clipping;
         private string _outputMode, _tipButton;
 
-        private ObservableCollection<string> _filters, _penButtons, _auxButtons, _residents;
-        private Dictionary<string, string> _pluginSettings;
+        private ObservableCollection<string> _filters = new ObservableCollection<string>(), 
+            _penButtons = new ObservableCollection<string>(),
+            _auxButtons = new ObservableCollection<string>(),
+            _residents = new ObservableCollection<string>();
+            
+        private Dictionary<string, string> _pluginSettings = new Dictionary<string, string>();
 
         #region General Settings
 

@@ -46,7 +46,7 @@ namespace OpenTabletDriverDaemon
 
             if (Driver.OutputMode is IOutputMode outputMode)
             {                
-                outputMode.Filters = from filter in Settings.Filters
+                outputMode.Filters = from filter in Settings?.Filters
                     select new PluginReference(filter).Construct<IFilter>();
 
                 if (outputMode.Filters != null)
