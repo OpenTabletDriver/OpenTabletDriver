@@ -92,7 +92,6 @@ namespace OpenTabletDriverUX
 						Text = "Bindings",
 						Content = new StackLayout
 						{
-							
 						}
 					},
 					new TabPage
@@ -100,7 +99,6 @@ namespace OpenTabletDriverUX
 						Text = "Filters",
 						Content = new StackLayout
 						{
-							
 						}
 					},
 					new TabPage
@@ -108,7 +106,6 @@ namespace OpenTabletDriverUX
 						Text = "Plugins",
 						Content = new StackLayout
 						{
-							
 						}
 					},
 					new TabPage
@@ -116,7 +113,6 @@ namespace OpenTabletDriverUX
 						Text = "Console",
 						Content = new TableLayout
 						{
-
 						}
 					}
 				}

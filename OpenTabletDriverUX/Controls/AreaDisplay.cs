@@ -23,7 +23,6 @@ namespace OpenTabletDriverUX.Controls
         
         private void Draw(Graphics graphics)
         {
-            
             var background = new RectangleF(0, 0, ViewModel.MaxWidth, ViewModel.MaxHeight);
             var foreground = new RectangleF(
                 ViewModel.X - (ViewModel.Width / 2),
@@ -76,7 +75,7 @@ namespace OpenTabletDriverUX.Controls
 
             // Set rotation origin to center of rectangle
             var drawRect = new RectangleF(-width / 2, -height / 2, width, height);
-            graphics.TranslateTransform(x + width / 2, y + height / 2);
+            graphics.TranslateTransform(x + (width / 2), y + (height / 2));
             graphics.RotateTransform(ViewModel.Rotation);
 
             graphics.FillRectangle(color, drawRect);

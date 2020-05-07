@@ -32,8 +32,7 @@ namespace OpenTabletDriverDaemon
                     builder.AddNamedPipeEndpoint<IDriverDaemon>("OpenTabletDriver");
                 })
                 .ConfigureLogging(builder => 
-                {
-                    
+                {                    
                 });
 
         static DriverDaemon Daemon { set; get; }
