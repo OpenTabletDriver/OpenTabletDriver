@@ -18,8 +18,8 @@ jobs:
     - name: Linux Publish
       run: |
         GIT_HASH=$(git rev-parse --short $GITHUB_SHA)
-        dotnet publish OpenTabletDriverUX.Gtk/OpenTabletDriverUX.Gtk.csproj --configuration Release --runtime linux-x64 --version-suffix "$GIT_HASH"
-        dotnet publish OpenTabletDriverDaemon/OpenTabletDriverDaemon.csproj --configuration Release --runtime linux-x64 --version-suffix "$GIT_HASH"
+        dotnet publish OpenTabletDriverUX.Gtk/OpenTabletDriverUX.Gtk.csproj --configuration Release --runtime linux-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
+        dotnet publish OpenTabletDriverDaemon/OpenTabletDriverDaemon.csproj --configuration Release --runtime linux-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
     - name: Copy configurations
       run: |
         cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverUX.Gtk/bin/Release/netcoreapp3.1/linux-x64/publish
@@ -41,8 +41,8 @@ jobs:
       - name: Windows Publish
         run: |
           $GIT_HASH = $(git rev-parse --short ${ENV:GITHUB_SHA})
-          dotnet publish OpenTabletDriverUX.Wpf/OpenTabletDriverUX.Wpf.csproj --configuration Release --runtime win-x64 --version-suffix "$GIT_HASH"
-          dotnet publish OpenTabletDriverDaemon/OpenTabletDriverDaemon.csproj --configuration Release --runtime win-x645 --version-suffix "$GIT_HASH"
+          dotnet publish OpenTabletDriverUX.Wpf/OpenTabletDriverUX.Wpf.csproj --configuration Release --runtime win-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
+          dotnet publish OpenTabletDriverDaemon/OpenTabletDriverDaemon.csproj --configuration Release --runtime win-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
       - name: Copy configurations
         run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriverUX.Wpf/bin/Release/netcoreapp3.1/win-x64/publish/Configurations/" -Recurse
       - name: Upload Windows artifacts
