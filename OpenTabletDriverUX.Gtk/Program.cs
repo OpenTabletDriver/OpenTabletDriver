@@ -7,13 +7,13 @@ using TabletDriverLib.Contracts;
 
 namespace OpenTabletDriverUX.Gtk
 {
-	class MainClass
-	{
-		[STAThread]
-		public static void Main(string[] args)
-		{
-			App.ThemeSetup(typeof(Eto.GtkSharp.Drawing.SystemColorsHandler));
-			new Application(Eto.Platforms.Gtk).Run(new MainForm());
-		}
-	}
+    class MainClass
+    {
+        [STAThread]
+        public static void Main(string[] args)
+        {
+            App.ThemeSetup(typeof(Eto.GtkSharp.Drawing.SystemColorsHandler));
+            new Application(Eto.Platforms.Gtk).Run(new MainForm());
+        }
+    }
 }

@@ -27,13 +27,13 @@ namespace OpenTabletDriverUX
             var obj = ctor.Invoke(null);
             
             foreach (var property in themeSource.GetProperties())
-			{
-				if (property.PropertyType == typeof(Color))
-				{
+            {
+                if (property.PropertyType == typeof(Color))
+                {
                     var color = (Color)property.GetValue(obj);
                     colors.Add(property.Name, color);
-				}
-			}
+                }
+            }
             return colors;
         });
 
@@ -47,16 +47,16 @@ namespace OpenTabletDriverUX
         private static readonly Lazy<IIpcClient<IDriverDaemon>> _driverDaemon = new Lazy<IIpcClient<IDriverDaemon>>(() => 
         {
             // Register IPC Clients
-			ServiceProvider serviceProvider = new ServiceCollection()
-				.AddNamedPipeIpcClient<IDriverDaemon>("OpenTabletDriverUX", "OpenTabletDriver")
-				.BuildServiceProvider();
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddNamedPipeIpcClient<IDriverDaemon>("OpenTabletDriverUX", "OpenTabletDriver")
+                .BuildServiceProvider();
 
-			// Resolve IPC client factory
-			IIpcClientFactory<IDriverDaemon> clientFactory = serviceProvider
-				.GetRequiredService<IIpcClientFactory<IDriverDaemon>>();
+            // Resolve IPC client factory
+            IIpcClientFactory<IDriverDaemon> clientFactory = serviceProvider
+                .GetRequiredService<IIpcClientFactory<IDriverDaemon>>();
 
-			// Create client
-			return clientFactory.CreateClient("OpenTabletDriverUX");
+            // Create client
+            return clientFactory.CreateClient("OpenTabletDriverUX");
         });
 
         private static readonly Lazy<AboutDialog> _aboutDialog = new Lazy<AboutDialog>(() => new AboutDialog
