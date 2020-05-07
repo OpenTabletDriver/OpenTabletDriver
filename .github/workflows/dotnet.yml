@@ -7,7 +7,6 @@ on:
   pull_request:
 jobs:
   unixpublish:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -19,25 +18,16 @@ jobs:
     - name: Linux Publish
       run: |
         GIT_HASH=$(git rev-parse --short $GITHUB_SHA)
-        dotnet publish --configuration Release --runtime linux-x64 --version-suffix "$GIT_HASH"
-    - name: Mac OS X Publish
-      run: |
-        GIT_HASH=$(git rev-parse --short $GITHUB_SHA)
-        dotnet publish --configuration Release --runtime osx-x64 --version-suffix "$GIT_HASH"
+        dotnet publish OpenTabletDriverUX.Gtk/OpenTabletDriverUX.Gtk.csproj --configuration Release --runtime linux-x64 --version-suffix "$GIT_HASH"
+        dotnet publish OpenTabletDriverDaemon/OpenTabletDriverDaemon.csproj --configuration Release --runtime linux-x64 --version-suffix "$GIT_HASH"
     - name: Copy configurations
       run: |
-        cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriver/bin/Release/netcoreapp3.1/linux-x64/publish
-        cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriver/bin/Release/netcoreapp3.1/osx-x64/publish
+        cp -vr ./TabletDriverLib/Configurations/ ./OpenTabletDriverUX.Gtk/bin/Release/netcoreapp3.1/linux-x64/publish
     - name: Upload Linux artifacts
       uses: actions/upload-artifact@master
       with:
         name: OpenTabletDriver linux-x64
-        path: OpenTabletDriver/bin/Release/netcoreapp3.1/linux-x64/publish
-    - name: Upload Mac OS X artifacts
-      uses: actions/upload-artifact@master
-      with:
-        name: OpenTabletDriver osx-x64
-        path: OpenTabletDriver/bin/Release/netcoreapp3.1/osx-x64/publish
+        path: ./**/bin/Release/netcoreapp3.1/linux-x64/publish
 
   windowspublish:
     runs-on: windows-latest
@@ -47,15 +37,16 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.100
+          dotnet-version: 3.1.103
       - name: Windows Publish
         run: |
           $GIT_HASH = $(git rev-parse --short ${ENV:GITHUB_SHA})
-          dotnet publish --configuration Release --runtime win-x64 --version-suffix "$GIT_HASH"
+          dotnet publish OpenTabletDriverUX.Wpf/OpenTabletDriverUX.Wpf.csproj --configuration Release --runtime win-x64 --version-suffix "$GIT_HASH"
+          dotnet publish OpenTabletDriverDaemon/OpenTabletDriverDaemon.csproj --configuration Release --runtime win-x645 --version-suffix "$GIT_HASH"
       - name: Copy configurations
-        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriver/bin/Release/netcoreapp3.1/win-x64/publish/Configurations/" -Recurse
+        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "./OpenTabletDriverUX.Wpf/bin/Release/netcoreapp3.1/win-x64/publish/Configurations/" -Recurse
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
           name: OpenTabletDriver win-x64
-          path: OpenTabletDriver/bin/Release/netcoreapp3.1/win-x64/publish
+          path: ./**/bin/Release/netcoreapp3.1/win-x64/publish
