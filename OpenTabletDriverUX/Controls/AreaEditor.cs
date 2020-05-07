@@ -4,7 +4,7 @@ namespace OpenTabletDriverUX.Controls
 {
     public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
     {
-        public AreaEditor()
+        public AreaEditor(bool enableRotation = false)
         {
             this.DataContext = new AreaViewModel();
             
@@ -44,14 +44,14 @@ namespace OpenTabletDriverUX.Controls
                 f => f.ToString()).BindDataContext(
                     Binding.Property(
                         (AreaViewModel d) =>  d.Y));
-            
+
             rotationBox = new TextBox();
             rotationBox.TextBinding.Convert(
                 s => float.TryParse(s, out var v) ? v : 0,
                 f => f.ToString()).BindDataContext(
                     Binding.Property(
                         (AreaViewModel d) =>  d.Rotation));
-            
+                        
             var stackLayout = new StackLayout
             {
                 Orientation = Orientation.Vertical,
@@ -81,15 +81,16 @@ namespace OpenTabletDriverUX.Controls
                     new GroupBox
                     {
                         Text = "Rotation", 
-                        Content = rotationBox
+                        Content = rotationBox,
+                        Visible = enableRotation
                     }
                 }
             };
 
             foreach (var item in stackLayout.Items)
             {
-                var groupBox = (GroupBox)item.Control;
-                groupBox.Padding = new Eto.Drawing.Padding(5);
+                if (item.Control is GroupBox groupBox)
+                    groupBox.Padding = new Eto.Drawing.Padding(5);
             }
 
             TableCell[] cells = 

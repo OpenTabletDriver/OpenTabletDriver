@@ -39,7 +39,7 @@ namespace OpenTabletDriverUX
                 Content = displayAreaEditor
             };
 
-            tabletAreaEditor = new AreaEditor();
+            tabletAreaEditor = new AreaEditor(true);
             ViewModel.PropertyChanged += (sender, e) => 
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
