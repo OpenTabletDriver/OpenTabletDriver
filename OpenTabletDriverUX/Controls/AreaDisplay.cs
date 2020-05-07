@@ -9,8 +9,8 @@ namespace OpenTabletDriverUX.Controls
         {
             this.DataContext = new AreaViewModel();
             this.Paint += (sender, e) => Draw(e.Graphics);
-            this.MouseDown += (sender, e) => BeginAreaDrag();
-            this.MouseUp += (sender, e) => EndAreaDrag();
+            this.MouseDown += (sender, e) => BeginAreaDrag(e.Buttons);
+            this.MouseUp += (sender, e) => EndAreaDrag(e.Buttons);
 
             ViewModel.PropertyChanged += (sender, e) => this.Invalidate();
         }
@@ -119,17 +119,21 @@ namespace OpenTabletDriverUX.Controls
         private float pixelScale;
         private PointF? lastMouseLocation;
 
-        private void BeginAreaDrag()
+        private void BeginAreaDrag(MouseButtons buttons)
         {
-            this.MouseMove += MoveArea;
+            if (buttons.HasFlag(MouseButtons.Primary))
+                this.MouseMove += MoveArea;
         }
 
-        private void EndAreaDrag()
+        private void EndAreaDrag(MouseButtons buttons)
         {
-            this.MouseMove -= MoveArea;
-            lastMouseLocation = null;
+            if (buttons.HasFlag(MouseButtons.Primary))
+            {
+                this.MouseMove -= MoveArea;
+                lastMouseLocation = null;
+            }
         }
-
+        
         private void MoveArea(object sender, MouseEventArgs e)
         {
             if (lastMouseLocation is PointF lastPos)
