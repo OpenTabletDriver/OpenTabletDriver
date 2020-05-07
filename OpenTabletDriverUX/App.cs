@@ -70,7 +70,7 @@ namespace OpenTabletDriverUX
             Developers = new string[] { "InfinityGhost" },
             Designers = new string[] { "InfinityGhost" },
             Documenters = new string[] { "InfinityGhost" },
-            License = File.ReadAllText("/usr/share/licenses/common/GPL3/license.txt"),
+            License = string.Empty,
             Copyright = string.Empty,
             Logo = Logo.WithSize(256, 256)
         });
