@@ -3,13 +3,13 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
-using HidSharp;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
 using TabletDriverLib.Contracts;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
+using System.Reflection;
 
 namespace OpenTabletDriverDaemon
 {
@@ -18,10 +18,24 @@ namespace OpenTabletDriverDaemon
         public DriverDaemon()
         {
             Driver = new Driver();
+            LoadUserSettings();
+        }
+
+        private async void LoadUserSettings()
+        {
+            await LoadPlugins();
+            DetectTablets();
+
+            if (Settings == null && AppInfo.SettingsFile.Exists)
+            {
+                var settings = Settings.Deserialize(AppInfo.SettingsFile);
+                SetSettings(settings);
+            }
         }
 
         public Driver Driver { private set; get; }
         private Settings Settings { set; get; }
+        private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
 
         public bool SetTablet(TabletProperties tablet)
         {
@@ -31,6 +45,20 @@ namespace OpenTabletDriverDaemon
         public TabletProperties GetTablet()
         {
             return Driver.TabletProperties;
+        }
+
+        public TabletProperties DetectTablets()
+        {
+            if (AppInfo.ConfigurationDirectory.Exists)
+            {
+                foreach (var file in AppInfo.ConfigurationDirectory.EnumerateFiles("*.json", SearchOption.AllDirectories))
+                {
+                    var tablet = TabletProperties.Read(file);
+                    if (SetTablet(tablet))
+                        return GetTablet();
+                }
+            }
+            return null;
         }
 
         public void SetSettings(Settings settings)
@@ -132,24 +160,40 @@ namespace OpenTabletDriverDaemon
             return Settings;
         }
 
-        public void SetOutputMode(PluginReference outputMode)
+        public async Task<bool> LoadPlugins()
         {
-            Driver.OutputMode = outputMode.Construct<IOutputMode>();
+            if (AppInfo.PluginDirectory.Exists)
+            {
+                foreach (var file in AppInfo.PluginDirectory.EnumerateFiles("*.dll", SearchOption.AllDirectories))
+                    await ImportPlugin(file.FullName);
+                return true;
+            }
+            else
+                return false;
         }
 
-        public IOutputMode GetOutputMode()
+        public async Task<bool> ImportPlugin(string pluginPath)
         {
-            return Driver.OutputMode;
-        }
-
-        public async Task<bool> ImportPlugin(FileInfo plugin)
-        {
-            return await PluginManager.AddPlugin(plugin);
+            if (LoadedPlugins.Any(p => p.FullName == pluginPath))
+            {
+                return true;
+            }
+            else
+            {
+                var plugin = new FileInfo(pluginPath);
+                LoadedPlugins.Add(plugin);
+                return await PluginManager.AddPlugin(plugin);
+            }
         }
 
         public void SetInputHook(bool isHooked)
         {
             Driver.BindingEnabled = isHooked;
+        }
+
+        public IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
+        {
+            return PluginManager.GetChildTypes<T>();
         }
     }
 }

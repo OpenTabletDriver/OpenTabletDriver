@@ -6,11 +6,24 @@ namespace TabletDriverLib
 {
     public static class AppInfo
     {
-        public static DirectoryInfo ConfigurationDirectory => new DirectoryInfo(Path.Join(Environment.CurrentDirectory, "Configurations"));
-        public static DirectoryInfo AppDataDirectory => _appDataDirectory.Value;
-        public static FileInfo SettingsFile => new FileInfo(Path.Join(AppDataDirectory.FullName, "settings.json"));
+        private static DirectoryInfo _configDirectory, _appDataDirectory;
+        
+        public static DirectoryInfo ConfigurationDirectory
+        {
+            set => _configDirectory = value;
+            get => _configDirectory ?? new DirectoryInfo(Path.Join(Environment.CurrentDirectory, "Configurations"));
+        }
 
-        private static readonly Lazy<DirectoryInfo> _appDataDirectory = new Lazy<DirectoryInfo>(() => 
+        public static DirectoryInfo AppDataDirectory
+        {
+            set => _appDataDirectory = value;
+            get => _appDataDirectory ?? _defaultAppDataDirectory.Value;
+        }
+
+        public static FileInfo SettingsFile => new FileInfo(Path.Join(AppDataDirectory.FullName, "settings.json"));
+        public static DirectoryInfo PluginDirectory => new DirectoryInfo(Path.Join(AppDataDirectory.FullName, "Plugins"));
+
+        private static readonly Lazy<DirectoryInfo> _defaultAppDataDirectory = new Lazy<DirectoryInfo>(() => 
         {
             if (PlatformInfo.IsWindows)
             {

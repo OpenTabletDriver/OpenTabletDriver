@@ -18,7 +18,7 @@ namespace OpenTabletDriverUX
             Title = "OpenTabletDriver";
             ClientSize = new Size(960, 730);
             MinimumSize = new Size(960, 730);
-            Icon = App.Logo.WithSize(256, 256);
+            Icon = App.Logo.WithSize(App.Logo.Size);
 
             displayAreaEditor = new AreaEditor();
             ViewModel.PropertyChanged += (sender, e) =>
@@ -187,6 +187,14 @@ namespace OpenTabletDriverUX
 
         public async void InitializeAsync()
         {
+            if (AppInfo.PluginDirectory.Exists)
+            {
+                foreach (var file in AppInfo.PluginDirectory.EnumerateFiles("*.dll", SearchOption.AllDirectories))
+                {
+                    await App.DriverDaemon.InvokeAsync(d => d.ImportPlugin(file.FullName));
+                }
+            }
+
             if (await App.DriverDaemon.InvokeAsync(d => d.GetTablet()) is TabletProperties tablet)
             {
                 SetTabletAreaDimensions(tablet);
@@ -255,8 +263,11 @@ namespace OpenTabletDriverUX
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var file = new FileInfo(fileDialog.FileName);
-                    ViewModel.Settings = Settings.Deserialize(file);
-                    await App.DriverDaemon.InvokeAsync(d => d.SetSettings(ViewModel.Settings));
+                    if (file.Exists)
+                    {
+                        ViewModel.Settings = Settings.Deserialize(file);
+                        await App.DriverDaemon.InvokeAsync(d => d.SetSettings(ViewModel.Settings));
+                    }
                     break;
             }
         }
@@ -296,23 +307,14 @@ namespace OpenTabletDriverUX
 
         private async Task DetectAllTablets()
         {
-            if (AppInfo.ConfigurationDirectory.Exists)
+            if (await App.DriverDaemon.InvokeAsync(d => d.DetectTablets()) is TabletProperties tablet)
             {
-                foreach (var path in Directory.GetFiles(AppInfo.ConfigurationDirectory.FullName, "*.json", SearchOption.AllDirectories))
+                var settings = await App.DriverDaemon.InvokeAsync(d => d.GetSettings());
+                if (settings != null)
                 {
-                    var file = new FileInfo(path);
-                    var tablet = TabletProperties.Read(file);
-                    if (await App.DriverDaemon.InvokeAsync(d => d.SetTablet(tablet)))
-                    {
-                        var settings = await App.DriverDaemon.InvokeAsync(d => d.GetSettings());
-                        if (settings != null)
-                        {
-                            await App.DriverDaemon.InvokeAsync(d => d.SetInputHook(settings.AutoHook));
-                        }
-                        SetTabletAreaDimensions(tablet);
-                        break;
-                    }
+                    await App.DriverDaemon.InvokeAsync(d => d.SetInputHook(settings.AutoHook));
                 }
+                SetTabletAreaDimensions(tablet);
             }
             else
             {

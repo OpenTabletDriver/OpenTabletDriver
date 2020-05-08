@@ -1,10 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
-using HidSharp;
-using TabletDriverLib.Plugins;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Contracts
@@ -13,15 +9,17 @@ namespace TabletDriverLib.Contracts
     {
         bool SetTablet(TabletProperties tablet);
         TabletProperties GetTablet();
+        
+        TabletProperties DetectTablets();
 
         void SetSettings(Settings settings);
         Settings GetSettings();
-                
-        void SetOutputMode(PluginReference outputMode);
-        IOutputMode GetOutputMode();
         
-        Task<bool> ImportPlugin(FileInfo plugin);
+        Task<bool> LoadPlugins();
+        Task<bool> ImportPlugin(string pluginPath);
 
         void SetInputHook(bool isHooked);
+
+        IReadOnlyCollection<TypeInfo> GetChildTypes<T>();
     }
 }
