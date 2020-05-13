@@ -1,0 +1,18 @@
+{
+  "Name": "XP-Pen G640",
+  "VendorID": 10429,
+  "ProductID": 2324,
+  "InputReportLength": 8,
+  "ReportParser": null,
+  "CustomInputReportLength": 0,
+  "CustomReportParser": null,
+  "Width": 160.0,
+  "Height": 100.0,
+  "MaxX": 32000.0,
+  "MaxY": 20000.0,
+  "MaxPressure": 8191,
+  "ActiveReportID": 64,
+  "AuxReportLength": 0,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}

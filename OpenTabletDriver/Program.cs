@@ -2,6 +2,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Avalonia;
 using Avalonia.Controls;
@@ -93,6 +94,10 @@ namespace OpenTabletDriver
         private static DirectoryInfo GetDefaultConfigurationDirectory()
         {
             var path = Path.Join(Environment.CurrentDirectory, "Configurations");
+            if (!(Directory.Exists(path)))
+            {
+                path = Path.Join(Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory.ToString()).ToString()).ToString()).ToString()).ToString(), "TabletDriverLib", "Configurations");
+            }
             return new DirectoryInfo(path);
         }
 
