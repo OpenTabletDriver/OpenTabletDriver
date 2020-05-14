@@ -2,7 +2,7 @@
   "Name": "XP-Pen G640",
   "VendorID": 10429,
   "ProductID": 2324,
-  "InputReportLength": 8,
+  "InputReportLength": 12,
   "ReportParser": null,
   "CustomInputReportLength": 0,
   "CustomReportParser": null,

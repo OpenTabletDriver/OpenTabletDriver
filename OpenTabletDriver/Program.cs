@@ -96,7 +96,7 @@ namespace OpenTabletDriver
             var path = Path.Join(Environment.CurrentDirectory, "Configurations");
             if (!(Directory.Exists(path)))
             {
-                path = Path.Join(Directory.GetParent(Directory.GetParent(Directory.GetParent(Directory.GetParent(Environment.CurrentDirectory.ToString()).ToString()).ToString()).ToString()).ToString(), "TabletDriverLib", "Configurations");
+                path = Path.Join(Environment.CurrentDirectory.ToString(), "../../../..", "TabletDriverLib", "Configurations");
             }
             return new DirectoryInfo(path);
         }
