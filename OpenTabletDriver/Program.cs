@@ -93,10 +93,6 @@ namespace OpenTabletDriver
         private static DirectoryInfo GetDefaultConfigurationDirectory()
         {
             var path = Path.Join(Environment.CurrentDirectory, "Configurations");
-            if (!(Directory.Exists(path)))
-            {
-                path = Path.Join(Environment.CurrentDirectory.ToString(), "../../../..", "TabletDriverLib", "Configurations");
-            }
             return new DirectoryInfo(path);
         }
 
