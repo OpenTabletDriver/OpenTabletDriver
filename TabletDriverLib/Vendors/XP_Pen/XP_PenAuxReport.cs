@@ -14,12 +14,12 @@ namespace TabletDriverLib.Vendors.XP_Pen
             {
                 AuxButtons = new bool[] 
                 {
-                ButtonInt == 1,
-                ButtonInt == 2,
-                ButtonInt == 4,
-                ButtonInt == 8,
-                ButtonInt == 16,
-                ButtonInt == 32
+                    ButtonInt == 1,
+                    ButtonInt == 2,
+                    ButtonInt == 4,
+                    ButtonInt == 8,
+                    ButtonInt == 16,
+                    ButtonInt == 32
                 };
             }
 
