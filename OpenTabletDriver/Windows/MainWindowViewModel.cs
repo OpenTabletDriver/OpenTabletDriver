@@ -348,7 +348,7 @@ namespace OpenTabletDriver.Windows
         {
             Theme = "Light",
             WindowWidth = 1280,
-            WindowHeight = 720,
+            WindowHeight = 700,
             OutputMode = typeof(TabletDriverLib.Output.AbsoluteMode).FullName,
             AutoHook = true,
             DisplayWidth = VirtualScreen.Width,
@@ -629,7 +629,7 @@ namespace OpenTabletDriver.Windows
         public void ResetWindowSize()
         {
             Settings.WindowWidth = 1280;
-            Settings.WindowHeight = 720;
+            Settings.WindowHeight = 700;
         }
 
         public void ToggleDriverEnabled()
