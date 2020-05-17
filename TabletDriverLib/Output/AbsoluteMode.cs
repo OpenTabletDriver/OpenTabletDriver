@@ -18,7 +18,7 @@ namespace TabletDriverLib.Output
         }
         
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
-        private Area _displayArea, _tabletArea;
+        private Area _displayArea, _tabletArea, _screenArea;
         private TabletProperties _tabletProperties;
 
         public Area Output
@@ -39,6 +39,16 @@ namespace TabletDriverLib.Output
                 UpdateCache();
             }
             get => _tabletArea;
+        }
+
+        public Area Screen
+        {
+            set
+            {
+                _screenArea = value;
+                UpdateCache();
+            }
+            get => _screenArea;
         }
 
         public override TabletProperties TabletProperties
