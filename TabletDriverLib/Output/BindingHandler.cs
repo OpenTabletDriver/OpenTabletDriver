@@ -17,7 +17,7 @@ namespace TabletDriverLib.Output
 
         private bool TipState = false;
         private IList<bool> PenButtonStates = new bool[2];
-        private IList<bool> AuxButtonStates = new bool[4];
+        private IList<bool> AuxButtonStates = new bool[6];
 
         public void HandleBinding(IDeviceReport report)
         {
@@ -55,7 +55,7 @@ namespace TabletDriverLib.Output
 
         private void HandleAuxBinding(IAuxReport report)
         {
-            for (var auxButton = 0; auxButton < 4; auxButton++)
+            for (var auxButton = 0; auxButton < 6; auxButton++)
             {
                 if (AuxButtonBindings.TryGetValue(auxButton, out var binding) && binding != null)
                 {
