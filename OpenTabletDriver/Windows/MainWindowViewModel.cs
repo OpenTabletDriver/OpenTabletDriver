@@ -363,7 +363,7 @@ namespace OpenTabletDriver.Windows
             TipButton = "TabletDriverLib.Binding.MouseBinding, Left",
             TipActivationPressure = 1,
             PenButtons = new ObservableCollection<string>(new string[2]),
-            AuxButtons = new ObservableCollection<string>(new string[4]),
+            AuxButtons = new ObservableCollection<string>(new string[6]),
             PluginSettings = new Dictionary<string, string>(),
             XSensitivity = 10,
             YSensitivity = 10,
@@ -577,6 +577,8 @@ namespace OpenTabletDriver.Windows
                 case "AuxButtons[1]":
                 case "AuxButtons[2]":
                 case "AuxButtons[3]":
+                case "AuxButtons[4]":
+                case "AuxButtons[5]":
                     var auxIndex = source.Split("[", 2)[1].Trim(']').Convert<int>();
                     return Settings.AuxButtons[auxIndex];
                 default:
@@ -602,6 +604,8 @@ namespace OpenTabletDriver.Windows
                 case "AuxButtons[1]":
                 case "AuxButtons[2]":
                 case "AuxButtons[3]":
+                case "AuxButtons[4]":
+                case "AuxButtons[5]":
                     var auxIndex = source.Split("[", 2)[1].Trim(']').Convert<int>();
                     Settings.AuxButtons[auxIndex] = binding;
                     return;

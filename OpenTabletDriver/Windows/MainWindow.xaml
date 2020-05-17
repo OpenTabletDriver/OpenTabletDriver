@@ -307,6 +307,22 @@
                                                 CommandParameter="AuxButtons[3]"/>
                                         </Grid>
                                     </Border>
+                                    <Border>
+                                        <Grid RowDefinitions="Auto,*">
+                                            <TextBlock Text="Express Key 5"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.AuxButtons[4], Converter={StaticResource BindingReferenceConverter}}"
+                                                CommandParameter="AuxButtons[4]"/>
+                                        </Grid>
+                                    </Border>
+                                    <Border>
+                                        <Grid RowDefinitions="Auto,*">
+                                            <TextBlock Text="Express Key 6"/>
+                                            <Button Grid.Row="1" Classes="bind"
+                                                Content="{Binding Settings.AuxButtons[5], Converter={StaticResource BindingReferenceConverter}}"
+                                                CommandParameter="AuxButtons[5]"/>
+                                        </Grid>
+                                    </Border>
                                 </ItemsControl>
                             </Grid>
                         </Border>
