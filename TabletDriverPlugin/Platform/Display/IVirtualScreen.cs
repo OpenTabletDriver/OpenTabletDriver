@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TabletDriverLib.Interop.Display
+namespace TabletDriverPlugin.Platform.Display
 {
     public interface IVirtualScreen : IDisplay
     {

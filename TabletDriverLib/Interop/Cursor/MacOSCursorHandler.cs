@@ -1,6 +1,7 @@
 using System;
 using NativeLib.OSX;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Platform.Pointer;
 
 namespace TabletDriverLib.Interop.Cursor
 {

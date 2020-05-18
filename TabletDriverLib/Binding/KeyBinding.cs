@@ -1,8 +1,8 @@
 using System;
 using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.Keyboard;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
+using TabletDriverPlugin.Platform.Keyboard;
 
 namespace TabletDriverLib.Binding
 {
