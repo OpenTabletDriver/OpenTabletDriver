@@ -1,4 +1,4 @@
-namespace TabletDriverLib.Interop.Keyboard
+namespace TabletDriverPlugin.Platform.Keyboard
 {
     public interface IKeyboardHandler
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using NativeLib.Linux;
 using NativeLib.Linux.Evdev;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Platform.Keyboard;
 
 namespace TabletDriverLib.Interop.Keyboard
 {

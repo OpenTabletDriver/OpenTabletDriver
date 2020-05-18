@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using NativeLib.Windows;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Platform.Display;
 
 namespace TabletDriverLib.Interop.Display
 {

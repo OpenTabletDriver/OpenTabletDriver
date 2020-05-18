@@ -3,6 +3,7 @@ using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using System.Linq;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Platform.Pointer;
 
 namespace TabletDriverLib.Interop.Cursor
 {
