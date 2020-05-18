@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using NativeLib.OSX;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Platform.Display;
 
 namespace TabletDriverLib.Interop.Display
 {

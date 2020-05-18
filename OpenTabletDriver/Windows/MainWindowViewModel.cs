@@ -17,6 +17,7 @@ using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Display;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
+using TabletDriverPlugin.Platform.Display;
 using TabletDriverPlugin.Resident;
 using TabletDriverPlugin.Tablet;
 

@@ -4,6 +4,7 @@ using NativeLib.Linux;
 using NativeLib.Linux.Evdev;
 using NativeLib.Linux.Evdev.Structs;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Platform.Pointer;
 
 namespace TabletDriverLib.Interop.Cursor
 {

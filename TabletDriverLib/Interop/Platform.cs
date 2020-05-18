@@ -4,6 +4,9 @@ using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Interop.Keyboard;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Platform.Display;
+using TabletDriverPlugin.Platform.Keyboard;
+using TabletDriverPlugin.Platform.Pointer;
 
 namespace TabletDriverLib.Interop
 {

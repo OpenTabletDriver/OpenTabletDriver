@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TabletDriverPlugin.Platform.Pointer;
 
 namespace TabletDriverLib.Interop.Cursor
 {

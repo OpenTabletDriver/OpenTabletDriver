@@ -1,8 +1,8 @@
 using System;
 using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
+using TabletDriverPlugin.Platform.Pointer;
 
 namespace TabletDriverLib.Binding
 {
