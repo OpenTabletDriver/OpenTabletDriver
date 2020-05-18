@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using NativeLib;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 
 namespace TabletDriverLib
 {
@@ -19,7 +21,11 @@ namespace TabletDriverLib
             {
                 var asm = await ImportAssembly(file.FullName);
                 foreach (var type in GetLoadableTypes(asm))
-                    Types.Add(type.GetTypeInfo());
+                {
+                    var attr = type.GetCustomAttribute(typeof(SupportedPlatformAttribute), true) as SupportedPlatformAttribute;
+                    if (attr == null || attr.IsCurrentPlatform)
+                        Types.Add(type.GetTypeInfo());
+                }
                 return true;
             }
             else
