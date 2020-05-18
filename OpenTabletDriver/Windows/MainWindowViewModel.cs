@@ -441,32 +441,14 @@ namespace OpenTabletDriver.Windows
 
                 if (SelectedDisplay == null)
                 {
-                    absoluteMode.Screen = new Area
-                    {
-                        Width = VirtualScreen.Displays.Last().Width,
-                        Height = VirtualScreen.Displays.Last().Height,
-                        Position = new Point
-                        {
-                            X = VirtualScreen.Displays.Last().Position.X,
-                            Y = VirtualScreen.Displays.Last().Position.Y
-                        }
-                    };
+                    absoluteMode.SelectedDisplay = VirtualScreen.Displays.Last();
                 }
                 else
                 {
-                    absoluteMode.Screen = new Area
-                    {
-                        Width = SelectedDisplay.Width,
-                        Height = SelectedDisplay.Height,
-                        Position = new Point
-                        {
-                            X = SelectedDisplay.Position.X,
-                            Y = SelectedDisplay.Position.Y
-                        }
-                    };
+                    absoluteMode.SelectedDisplay = SelectedDisplay;
                 }
 
-                Log.Write("Settings", $"Screen area: {absoluteMode.Screen}");
+                Log.Write("Settings", $"Screen area: {absoluteMode.SelectedDisplay}");
 
                 absoluteMode.AreaClipping = Settings.EnableClipping;   
                 Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");

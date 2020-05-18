@@ -3,6 +3,7 @@ using System.Linq;
 using TabletDriverLib.Interop;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
+using TabletDriverPlugin.Platform.Display;
 using TabletDriverPlugin.Platform.Pointer;
 using TabletDriverPlugin.Tablet;
 
@@ -18,8 +19,9 @@ namespace TabletDriverLib.Output
         }
         
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
-        private Area _displayArea, _tabletArea, _screenArea;
+        private Area _displayArea, _tabletArea;
         private TabletProperties _tabletProperties;
+        private IDisplay _selectedDisplay;
 
         public Area Output
         {
@@ -41,14 +43,14 @@ namespace TabletDriverLib.Output
             get => _tabletArea;
         }
 
-        public Area Screen
+        public IDisplay SelectedDisplay
         {
             set
             {
-                _screenArea = value;
+                _selectedDisplay = value;
                 UpdateCache();
             }
-            get => _screenArea;
+            get => _selectedDisplay;
         }
 
         public override TabletProperties TabletProperties
