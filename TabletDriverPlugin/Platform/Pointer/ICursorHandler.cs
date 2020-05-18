@@ -1,6 +1,6 @@
 using TabletDriverPlugin;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverPlugin.Platform.Pointer
 {
     public interface ICursorHandler
     {

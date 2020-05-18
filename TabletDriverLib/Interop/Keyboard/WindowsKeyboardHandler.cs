@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
+using TabletDriverPlugin.Platform.Keyboard;
 
 namespace TabletDriverLib.Interop.Keyboard
 {
