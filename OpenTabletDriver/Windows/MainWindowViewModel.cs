@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using NativeLib;
 using Newtonsoft.Json;
 using OpenTabletDriver.Controls;
 using OpenTabletDriver.Plugins;
@@ -20,6 +21,7 @@ using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Platform.Display;
 using TabletDriverPlugin.Resident;
 using TabletDriverPlugin.Tablet;
+using System.Diagnostics;
 
 namespace OpenTabletDriver.Windows
 {
@@ -44,6 +46,12 @@ namespace OpenTabletDriver.Windows
                 var tablets = LoadTablets(Program.ConfigurationDirectory);
                 Tablets = new ObservableCollection<TabletProperties>(tablets);
                 DetectTablets();
+                if (PlatformInfo.IsWindows)
+                {
+                    // This should eventually become a setting (waiting for ui overhaul).
+                    // Along with this, there should be a RestartDrivers() on program close.
+                    KillDrivers();
+                }
             }
             else
             {
@@ -332,6 +340,19 @@ namespace OpenTabletDriver.Windows
                 }
             }
             Log.Write("Detect", $"No tablets found. Make sure that your tablet is connected.", true);
+            return false;
+        }
+
+        public bool KillDrivers()
+        {
+            var processList = Process.GetProcesses();
+            var pentabletProcesses = processList.Where(pr => pr.ProcessName == "PentabletService" | pr.ProcessName == "PenTablet"); // without '.exe'
+
+            foreach (var process in pentabletProcesses)
+            {
+                process.Kill();
+                return true;
+            }
             return false;
         }
 
