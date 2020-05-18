@@ -14,8 +14,8 @@ namespace TabletDriverPlugin.Attributes
         public PluginPlatform Platform { private set; get; }
 
         public bool IsCurrentPlatform => 
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Platform.HasFlag(PluginPlatform.Windows) ||
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Platform.HasFlag(PluginPlatform.Linux) ||
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Platform.HasFlag(PluginPlatform.MacOS);
+            (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Platform.HasFlag(PluginPlatform.Windows)) ||
+            (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Platform.HasFlag(PluginPlatform.Linux)) ||
+            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Platform.HasFlag(PluginPlatform.MacOS));
     }
 }
