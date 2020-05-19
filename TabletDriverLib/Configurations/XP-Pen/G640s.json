@@ -3,6 +3,7 @@
   "VendorID": 10429,
   "ProductID": 2310,
   "InputReportLength": 10,
+  "OutputReportLength": 8,
   "ReportParser": "TabletDriverLib.Vendors.XP_Pen.XP_PenReportParser",
   "CustomInputReportLength": 0,
   "CustomReportParser": null,

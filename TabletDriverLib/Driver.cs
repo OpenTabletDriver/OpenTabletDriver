@@ -33,12 +33,15 @@ namespace TabletDriverLib
             Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
             try
             {
-                var matching = Devices.Where(d => d.ProductID == tablet.ProductID && d.VendorID == tablet.VendorID);
-                var tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.InputReportLength & d.GetMaxOutputReportLength() != 0);
+                var vendorMatch = Devices.Where(d => d.VendorID == tablet.VendorID);
+                var productMatch = vendorMatch.Where(d => d.ProductID == tablet.ProductID);
+                var inputReportMatch = productMatch.Where(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
+                var tabletDevice = tablet.OutputReportLength > 0 ? inputReportMatch.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : inputReportMatch.FirstOrDefault();
+                
                 var parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.ReportParserName) ?? new TabletReportParser();
                 if (tabletDevice == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
                 {
-                    tabletDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
+                    tabletDevice = productMatch.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
                     if (tabletDevice != null)
                         parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.CustomReportParserName);
                 }
@@ -47,7 +50,7 @@ namespace TabletDriverLib
                 var tabletOpened = Open(tabletDevice, parser);
                 if (tabletOpened && tablet.AuxReportLength > 0)
                 {
-                    var auxDevice = matching.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
+                    var auxDevice = productMatch.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.AuxReportLength);
                     var auxReportParser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.AuxReportParserName) ?? new AuxReportParser();
                     if (!OpenAux(auxDevice, auxReportParser))
                         Log.Debug("Failed to open aux device!", true);
