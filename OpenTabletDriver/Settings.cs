@@ -13,7 +13,7 @@ namespace OpenTabletDriver
         {
         }
 
-        private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens;
+        private float _dW, _dH, _dX, _dY, _dR, _tW, _tH, _tX, _tY, _tR, _xsens, _ysens, _tRatio, _dRatio;
         private bool _clipping, _autohook, _lockar, _sizeChanging;
         private string _theme, _outputMode;
         private TimeSpan _resetTime;
@@ -61,6 +61,7 @@ namespace OpenTabletDriver
                 this.RaiseAndSetIfChanged(ref _dW, value);
                 if (LockAspectRatio)
                     TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
+                DisplayRatio = DisplayWidth / DisplayHeight;
             }
             get => _dW;
         }
@@ -73,8 +74,16 @@ namespace OpenTabletDriver
                 this.RaiseAndSetIfChanged(ref _dH, value);
                 if (LockAspectRatio)
                     TabletWidth = DisplayWidth / DisplayHeight * TabletHeight;
+                DisplayRatio = DisplayWidth / DisplayHeight;
+                
             }
             get => _dH;
+        }
+
+        public float DisplayRatio
+        {
+            set => this.RaiseAndSetIfChanged(ref _dRatio, value);
+            get => (float)Math.Round(_dRatio * 1000f) / 1000f;
         }
 
         [JsonProperty("DisplayXOffset")]
@@ -110,6 +119,7 @@ namespace OpenTabletDriver
                     TabletHeight = DisplayHeight / DisplayWidth * value;
                     _sizeChanging = false;
                 }
+                TabletRatio = TabletWidth / TabletHeight;
             }
             get => _tW;
         }
@@ -126,8 +136,15 @@ namespace OpenTabletDriver
                     TabletWidth = DisplayWidth / DisplayHeight * value;
                     _sizeChanging = false;
                 }
+                TabletRatio = TabletWidth / TabletHeight;
             }
             get => _tH;
+        }
+
+        public float TabletRatio
+        {
+            set => this.RaiseAndSetIfChanged(ref _tRatio, value);
+            get => (float)Math.Round(_tRatio * 1000f) / 1000f;
         }
 
         [JsonProperty("TabletXOffset")]
