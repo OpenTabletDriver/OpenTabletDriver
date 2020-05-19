@@ -36,7 +36,7 @@ namespace TabletDriverLib
                 var vendorMatch = Devices.Where(d => d.VendorID == tablet.VendorID);
                 var productMatch = vendorMatch.Where(d => d.ProductID == tablet.ProductID);
                 var inputReportMatch = productMatch.Where(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
-                var tabletDevice = inputReportMatch.Count() > 1 ? inputReportMatch.FirstOrDefault(d => d.GetMaxOutputReportLength() != 0) : inputReportMatch.FirstOrDefault();
+                var tabletDevice = tablet.OutputReportLength > 0 ? inputReportMatch.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : inputReportMatch.FirstOrDefault();
                 
                 var parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.ReportParserName) ?? new TabletReportParser();
                 if (tabletDevice == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))

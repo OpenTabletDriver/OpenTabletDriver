@@ -7,7 +7,7 @@ namespace TabletDriverPlugin.Tablet
     {
         private string _tabletName, _reportParser, _customReportParser, _auxReportParser;
         private int _vid, _pid;
-        private uint _inputReportLength, _customInputReportLength, _reportId, _auxReportLength, _maxPressure;
+        private uint _inputReportLength, _customInputReportLength, _reportId, _auxReportLength, _outputReportLength, _maxPressure;
         private float _width, _height, _maxX, _maxY;
         private byte[] _featureInitReport;
 
@@ -53,6 +53,18 @@ namespace TabletDriverPlugin.Tablet
         {
             set => this.RaiseAndSetIfChanged(ref _inputReportLength, value);
             get => _inputReportLength;
+        }
+
+        /// <summary>
+        /// The device's output report length.
+        /// If the value is 0, it isn't used as an identifier.
+        /// </summary>
+        /// <value></value>
+        [JsonProperty("OutputReportLength")]
+        public uint OutputReportLength
+        {
+            set => this.RaiseAndSetIfChanged(ref _outputReportLength, value);
+            get => _outputReportLength;
         }
 
         /// <summary>
