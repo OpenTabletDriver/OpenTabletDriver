@@ -121,6 +121,9 @@
                                         <TextBlock Text="Custom Input Report Length"/>
                                         <TextBox Text="{Binding CustomInputReportLength}"/>
 
+                                        <TextBlock Text="Output Report Length"/>
+                                        <TextBox Text="{Binding OutputReportLength}"/>
+
                                         <TextBlock Text="Custom Report Parser"/>
                                         <TextBox Text="{Binding CustomReportParserName}"/>
 
