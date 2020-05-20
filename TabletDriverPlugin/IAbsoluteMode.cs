@@ -6,7 +6,7 @@ namespace TabletDriverPlugin
     {
         Area Input { set; get; }
         Area Output { set; get; }
-        IDisplay SelectedDisplay { set; get; }
+        IVirtualScreen VirtualScreen { set; get; }
         bool AreaClipping { set; get; }
     }
 }

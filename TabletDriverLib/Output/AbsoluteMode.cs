@@ -21,7 +21,7 @@ namespace TabletDriverLib.Output
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private Area _displayArea, _tabletArea;
         private TabletProperties _tabletProperties;
-        private IDisplay _selectedDisplay;
+        private IVirtualScreen _virtualScreen;
 
         public Area Output
         {
@@ -43,14 +43,14 @@ namespace TabletDriverLib.Output
             get => _tabletArea;
         }
 
-        public IDisplay SelectedDisplay
+        public IVirtualScreen VirtualScreen
         {
             set
             {
-                _selectedDisplay = value;
+                _virtualScreen = value;
                 UpdateCache();
             }
-            get => _selectedDisplay;
+            get => _virtualScreen;
         }
 
         public override TabletProperties TabletProperties
