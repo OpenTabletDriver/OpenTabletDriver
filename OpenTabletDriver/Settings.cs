@@ -81,7 +81,7 @@ namespace OpenTabletDriver
 
         public float DisplayRatio
         {
-            set => this.RaiseAndSetIfChanged(ref _dRatio, value);
+            private set => this.RaiseAndSetIfChanged(ref _dRatio, value);
             get => (float)Math.Round(_dRatio * 1000f) / 1000f;
         }
 
@@ -142,7 +142,7 @@ namespace OpenTabletDriver
 
         public float TabletRatio
         {
-            set => this.RaiseAndSetIfChanged(ref _tRatio, value);
+            private set => this.RaiseAndSetIfChanged(ref _tRatio, value);
             get => (float)Math.Round(_tRatio * 1000f) / 1000f;
         }
 
