@@ -134,7 +134,7 @@
                                 <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"
                                     ToolTip.Tip="Locks all areas to the same aspect ratio."/>
                                 <TextBlock Text="{Binding Path=Settings.DisplayRatio, StringFormat=Display \{0\}:1}" Margin="300,1,0,0"/>
-                                <Grid Background="#6cc4e4" Height="20" Width="2" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <Grid Background="{DynamicResource ThemeAccentBrush2}" Height="20" Width="2" VerticalAlignment="Center" Margin="10,0,0,0"/>
                                 <TextBlock Text="{Binding Path=Settings.TabletRatio, StringFormat=Tablet \{0\}:1}" Margin="10,1,0,0"/>
                             </StackPanel>
                         </Border>

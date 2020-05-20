@@ -75,7 +75,6 @@ namespace OpenTabletDriver
                 if (LockAspectRatio)
                     TabletWidth = DisplayWidth / DisplayHeight * TabletHeight;
                 DisplayRatio = DisplayWidth / DisplayHeight;
-                
             }
             get => _dH;
         }
