@@ -127,6 +127,9 @@
                                         <TextBlock Text="Custom Report Parser"/>
                                         <TextBox Text="{Binding CustomReportParserName}"/>
 
+                                        <TextBlock Text="Output Initialization Report"/>
+                                        <TextBox Text="{Binding OutputInitReport, Converter={StaticResource ByteArrayConverter}}"/>
+
                                         <TextBlock Text="Feature Initialization Report"/>
                                         <TextBox Text="{Binding FeatureInitReport, Converter={StaticResource ByteArrayConverter}}"/>
                                     </StackPanel>

@@ -9,7 +9,7 @@ namespace TabletDriverPlugin.Tablet
         private int _vid, _pid;
         private uint _inputReportLength, _customInputReportLength, _reportId, _auxReportLength, _outputReportLength, _maxPressure;
         private float _width, _height, _maxX, _maxY;
-        private byte[] _featureInitReport;
+        private byte[] _featureInitReport, _outputInitReport;
 
         /// <summary>
         /// The device's name.
@@ -197,6 +197,17 @@ namespace TabletDriverPlugin.Tablet
         {
             set => this.RaiseAndSetIfChanged(ref _featureInitReport, value);
             get => _featureInitReport;
+        }
+
+        /// <summary>
+        /// The output report sent to initialize the tablet's functions.
+        /// </summary>
+        /// <value></value>
+        [JsonProperty("OutputInitReport")]
+        public byte[] OutputInitReport
+        {
+            set => this.RaiseAndSetIfChanged(ref _outputInitReport, value);
+            get => _outputInitReport;
         }
 
         #region Json Serialization

@@ -112,6 +112,12 @@ namespace TabletDriverLib
                     TabletReader.ReportStream.SetFeature(TabletProperties.FeatureInitReport);
                 }
 
+                if (TabletProperties.OutputInitReport != null && TabletProperties.OutputInitReport.Length > 0)
+                {
+                    Log.Debug($"Setting output: " + BitConverter.ToString(TabletProperties.OutputInitReport));
+                    TabletReader.ReportStream.Write(TabletProperties.OutputInitReport);
+                }
+
                 // Post tablet opened event
                 TabletSuccessfullyOpened?.Invoke(this, TabletProperties);
                 return true;
