@@ -121,19 +121,26 @@
                             BackgroundWidth="{Binding Tablet.Width}"
                             BackgroundHeight="{Binding Tablet.Height}"/>
                         <Border Classes="r" Grid.Row="2" Grid.ColumnSpan="2" Margin="5">
-                            <StackPanel Orientation="Horizontal" Margin="5">
-                                <StackPanel.Styles>
-                                    <Style Selector="CheckBox">
-                                        <Setter Property="Margin" Value="0,0,5,0"/>
-                                    </Style>
-                                </StackPanel.Styles>
-                                <CheckBox Content="Enable on startup" IsChecked="{Binding Settings.AutoHook}"
-                                    ToolTip.Tip="Enables the driver as soon as the tablet is detected."/>
-                                <CheckBox Content="Area clipping" IsChecked="{Binding Settings.EnableClipping}"
-                                    ToolTip.Tip="Locks your pen inputs within the areas you set."/>
-                                <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"
-                                    ToolTip.Tip="Locks all areas to the same aspect ratio."/>
-                            </StackPanel>
+                            <Grid>
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="5">
+                                    <StackPanel.Styles>
+                                        <Style Selector="CheckBox">
+                                            <Setter Property="Margin" Value="0,0,5,0"/>
+                                        </Style>
+                                    </StackPanel.Styles>
+                                    <CheckBox Content="Enable on startup" IsChecked="{Binding Settings.AutoHook}"
+                                        ToolTip.Tip="Enables the driver as soon as the tablet is detected."/>
+                                    <CheckBox Content="Area clipping" IsChecked="{Binding Settings.EnableClipping}"
+                                        ToolTip.Tip="Locks your pen inputs within the areas you set."/>
+                                    <CheckBox Content="Lock aspect ratio" IsChecked="{Binding Settings.LockAspectRatio}"
+                                        ToolTip.Tip="Locks all areas to the same aspect ratio."/>
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="5">
+                                    <TextBlock Text="{Binding Path=Settings.DisplayRatio, StringFormat=Display \{0\}:1}" VerticalAlignment="Center"/>
+                                    <Grid Background="{DynamicResource ThemeAccentBrush2}" Height="20" Width="2" VerticalAlignment="Center" Margin="10,0"/>
+                                    <TextBlock Text="{Binding Path=Settings.TabletRatio, StringFormat=Tablet \{0\}:1}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
                         </Border>
                     </Grid>
                 </Border>
