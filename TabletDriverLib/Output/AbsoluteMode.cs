@@ -3,6 +3,7 @@ using System.Linq;
 using TabletDriverLib.Interop;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
+using TabletDriverPlugin.Platform.Display;
 using TabletDriverPlugin.Platform.Pointer;
 using TabletDriverPlugin.Tablet;
 
@@ -40,6 +41,8 @@ namespace TabletDriverLib.Output
             }
             get => _tabletArea;
         }
+
+        public IVirtualScreen VirtualScreen { set; get; }
 
         public override TabletProperties TabletProperties
         {
