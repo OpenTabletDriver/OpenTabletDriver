@@ -439,6 +439,9 @@ namespace OpenTabletDriver.Windows
                 };
                 Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
+                absoluteMode.VirtualScreen = VirtualScreen;
+                Log.Debug("VirtualScreen set to {absoluteMode.VirtualScreen}");
+
                 absoluteMode.AreaClipping = Settings.EnableClipping;   
                 Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
             }

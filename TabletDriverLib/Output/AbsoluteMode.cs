@@ -3,6 +3,7 @@ using System.Linq;
 using TabletDriverLib.Interop;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
+using TabletDriverPlugin.Platform.Display;
 using TabletDriverPlugin.Platform.Pointer;
 using TabletDriverPlugin.Tablet;
 
@@ -20,6 +21,7 @@ namespace TabletDriverLib.Output
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private Area _displayArea, _tabletArea;
         private TabletProperties _tabletProperties;
+        private IVirtualScreen _virtualScreen;
 
         public Area Output
         {
@@ -40,6 +42,8 @@ namespace TabletDriverLib.Output
             }
             get => _tabletArea;
         }
+
+        public IVirtualScreen VirtualScreen { set; get; }
 
         public override TabletProperties TabletProperties
         {
