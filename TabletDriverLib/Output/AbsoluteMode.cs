@@ -43,15 +43,7 @@ namespace TabletDriverLib.Output
             get => _tabletArea;
         }
 
-        public IVirtualScreen VirtualScreen
-        {
-            set
-            {
-                _virtualScreen = value;
-                UpdateCache();
-            }
-            get => _virtualScreen;
-        }
+        public IVirtualScreen VirtualScreen { set; get; }
 
         public override TabletProperties TabletProperties
         {
