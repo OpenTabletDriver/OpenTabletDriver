@@ -12,5 +12,10 @@ namespace TabletDriverPlugin
             obj = newValue;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public void AllPropertiesChanged()
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));
+        }
     }
 }

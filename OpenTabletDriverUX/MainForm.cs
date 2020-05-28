@@ -6,6 +6,7 @@ using TabletDriverPlugin.Tablet;
 using System.Threading.Tasks;
 using TabletDriverLib;
 using TabletDriverPlugin;
+using System.Collections.ObjectModel;
 
 namespace OpenTabletDriverUX
 {
@@ -74,6 +75,18 @@ namespace OpenTabletDriverUX
                     }
                 }
             };
+
+            var bindingColumns = 3;
+            var bindingRows = 7;
+            bindingLayout = new TableLayout(bindingColumns, bindingRows)
+            {
+                Padding = new Padding(5),
+                Spacing = new Size(5, 5)
+            };
+            for (int i = 0; i < bindingColumns; i++)
+                bindingLayout.SetColumnScale(i, true);
+            for (int i = 0; i < bindingRows; i++)
+                bindingLayout.SetRowScale(i, false);
             
             // Main Content
             Content = new TabControl
@@ -90,9 +103,7 @@ namespace OpenTabletDriverUX
                     new TabPage
                     {
                         Text = "Bindings",
-                        Content = new StackLayout
-                        {
-                        }
+                        Content = bindingLayout
                     },
                     new TabPage
                     {
@@ -207,7 +218,7 @@ namespace OpenTabletDriverUX
             if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
             {
                 ViewModel.Settings = settings;
-            }
+                }
             else if (AppInfo.SettingsFile.Exists)
             {
                 ViewModel.Settings = Settings.Deserialize(AppInfo.SettingsFile);
@@ -218,12 +229,15 @@ namespace OpenTabletDriverUX
                 await ResetSettings();
             }
 
+            UpdateBindingLayout();
+
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
             displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
             displayAreaEditor.ViewModel.MaxHeight = virtualScreen.Height;
         }
 
         private AreaEditor displayAreaEditor, tabletAreaEditor;
+        private TableLayout bindingLayout;
 
         public MainFormViewModel ViewModel
         {
@@ -326,6 +340,77 @@ namespace OpenTabletDriverUX
         {
             tabletAreaEditor.ViewModel.MaxWidth = tablet.Width;
             tabletAreaEditor.ViewModel.MaxHeight = tablet.Height;
+        }
+
+        private void UpdateBindingLayout()
+        {
+            // Tip Binding
+            var tipBindingControl = new BindingDisplay(ViewModel.Settings.TipButton);
+            tipBindingControl.BindingUpdated += (s, binding) => ViewModel.Settings.TipButton = binding;
+            var tipBindingGroup = new GroupBox
+            {
+                Text = "Tip Binding",
+                Padding = new Padding(5),
+                Content = tipBindingControl
+            };
+            bindingLayout.Add(tipBindingGroup, 0, 0);
+            
+            var tipPressureControl = new Slider
+            {
+                MinValue = 0,
+                MaxValue = 100,
+                Width = 150
+            };
+            tipPressureControl.BindDataContext(c => c.Value, (MainFormViewModel m) => m.Settings.TipActivationPressure);
+            var tipPressureGroup = new GroupBox
+            {
+                Text = "Tip Activation Pressure",
+                Padding = new Padding(5),
+                Content = tipPressureControl
+            };
+            bindingLayout.Add(tipPressureGroup, 0, 1);
+
+            // Pen Bindings
+            for (int i = 0; i < ViewModel.Settings.PenButtons.Count; i++)
+            {
+                var penBindingControl = new BindingDisplay(ViewModel.Settings.PenButtons[i])
+                {
+                    Tag = i
+                };
+                penBindingControl.BindingUpdated += (sender, binding) => 
+                {
+                    var index = (int)(sender as BindingDisplay).Tag;
+                    ViewModel.Settings.PenButtons[index] = binding;
+                };
+                var penBindingGroup = new GroupBox
+                {
+                    Text = $"Pen Button {i + 1}",
+                    Padding = new Padding(5),
+                    Content = penBindingControl
+                };
+                bindingLayout.Add(penBindingGroup, 1, i);
+            }
+
+            // Aux Bindings
+            for (int i = 0; i < ViewModel.Settings.AuxButtons.Count; i++)
+            {
+                var auxBindingControl = new BindingDisplay(ViewModel.Settings.AuxButtons[i])
+                {
+                    Tag = i
+                };
+                auxBindingControl.BindingUpdated += (sender, binding) =>
+                {
+                    int index = (int)(sender as BindingDisplay).Tag;
+                    ViewModel.Settings.AuxButtons[index] = binding;
+                };
+                var auxBindingGroup = new GroupBox
+                {
+                    Text = $"Express Key {i + 1}",
+                    Padding = new Padding(5),
+                    Content = auxBindingControl
+                };
+                bindingLayout.Add(auxBindingGroup, 2, i);
+            }
         }
     }
 }
