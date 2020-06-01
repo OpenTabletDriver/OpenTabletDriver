@@ -40,7 +40,7 @@ namespace TabletDriverLib.Output
                 TipState = pressurePercent >= TipActivationPressure;
             }
 
-            for (var penButton = 0; penButton < 2; penButton++)
+            for (var penButton = 0; penButton < report.PenButtons.Length; penButton++)
             {
                 if (PenButtonBindings.TryGetValue(penButton, out var binding) && binding != null)
                 {
@@ -55,7 +55,7 @@ namespace TabletDriverLib.Output
 
         private void HandleAuxBinding(IAuxReport report)
         {
-            for (var auxButton = 0; auxButton < 6; auxButton++)
+            for (var auxButton = 0; auxButton < report.AuxButtons.Length; auxButton++)
             {
                 if (AuxButtonBindings.TryGetValue(auxButton, out var binding) && binding != null)
                 {
