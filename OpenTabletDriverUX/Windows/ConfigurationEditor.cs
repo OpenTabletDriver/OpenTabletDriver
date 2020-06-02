@@ -108,7 +108,6 @@ namespace OpenTabletDriverUX.Windows
             get => _selected;
         }
 
-
         private ListBox _configList = new ListBox();
         private StackLayout _configControls = new StackLayout();
 
