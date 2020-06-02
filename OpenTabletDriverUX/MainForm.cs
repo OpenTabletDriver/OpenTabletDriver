@@ -6,7 +6,7 @@ using TabletDriverPlugin.Tablet;
 using System.Threading.Tasks;
 using TabletDriverLib;
 using TabletDriverPlugin;
-using System.Collections.ObjectModel;
+using OpenTabletDriverUX.Windows;
 
 namespace OpenTabletDriverUX
 {
@@ -156,7 +156,10 @@ namespace OpenTabletDriverUX
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             // TODO: Show tablet debugger
 
-            // create menu
+            var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
+            configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
+
+            // Menu
             Menu = new MenuBar
             {
                 Items =
@@ -181,7 +184,8 @@ namespace OpenTabletDriverUX
                         Items =
                         {
                             detectTablet,
-                            showTabletDebugger
+                            showTabletDebugger,
+                            configurationEditor
                         }
                     }
                 },
@@ -334,6 +338,12 @@ namespace OpenTabletDriverUX
             {
                 Log.Write("Detect", $"Configuration directory '{AppInfo.ConfigurationDirectory.FullName}' does not exist.");
             }
+        }
+
+        public void ShowConfigurationEditor()
+        {
+            var configEditor = new ConfigurationEditor();
+            configEditor.Show();
         }
 
         private void SetTabletAreaDimensions(TabletProperties tablet)
