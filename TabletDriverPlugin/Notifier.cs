@@ -13,6 +13,11 @@ namespace TabletDriverPlugin
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        protected void RaiseChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public void AllPropertiesChanged()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));

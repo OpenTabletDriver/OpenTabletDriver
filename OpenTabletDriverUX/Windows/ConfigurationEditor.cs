@@ -26,12 +26,8 @@ namespace OpenTabletDriverUX.Windows
             // Main Controls
             Configurations = ReadConfigurations(AppInfo.ConfigurationDirectory);
             SelectedConfiguration = Configurations[0];
-            _configList.SelectedIndexChanged += (sender, e) =>
-            {
-                SelectedConfiguration = Configurations[_configList.SelectedIndex];
-                SelectedConfiguration.AllPropertiesChanged();
-            };
-
+            _configList.SelectedIndexChanged += (sender, e) => SelectedConfiguration = Configurations[_configList.SelectedIndex];
+            
             this.Content = new Splitter
             {
                 Orientation = Orientation.Horizontal,
@@ -79,7 +75,6 @@ namespace OpenTabletDriverUX.Windows
         }
 
         private List<TabletProperties> _configs;
-
         private List<TabletProperties> Configurations
         {
             set

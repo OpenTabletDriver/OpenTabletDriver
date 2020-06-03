@@ -20,6 +20,6 @@ namespace TabletDriverLib.Contracts
 
         void SetInputHook(bool isHooked);
 
-        IReadOnlyCollection<TypeInfo> GetChildTypes<T>();
+        IEnumerable<string> GetChildTypes<T>();
     }
 }

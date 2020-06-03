@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TabletDriverLib;
 using TabletDriverPlugin;
 using OpenTabletDriverUX.Windows;
+using TabletDriverPlugin.Resident;
 
 namespace OpenTabletDriverUX
 {
@@ -87,6 +88,28 @@ namespace OpenTabletDriverUX
                 bindingLayout.SetColumnScale(i, true);
             for (int i = 0; i < bindingRows; i++)
                 bindingLayout.SetRowScale(i, false);
+
+            filterEditor = new PluginManager<IFilter>();
+            filterEditor.GetPluginEnabled = () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path);
+            filterEditor.SetPluginEnabled += (sender, enabled) => 
+            {
+                var path = filterEditor.SelectedPlugin.Path;
+                if (enabled && !App.Settings.Filters.Contains(path))
+                    App.Settings.Filters.Add(path);
+                else if (!enabled && App.Settings.Filters.Contains(path))
+                    App.Settings.Filters.Remove(path);
+            };
+
+            residentEditor = new PluginManager<IResident>();
+            residentEditor.GetPluginEnabled = () => App.Settings.ResidentPlugins.Contains(residentEditor.SelectedPlugin.Path);
+            residentEditor.SetPluginEnabled += (sender, enabled) => 
+            {
+                var path = residentEditor.SelectedPlugin.Path;
+                if (enabled && !App.Settings.ResidentPlugins.Contains(path))
+                    App.Settings.ResidentPlugins.Add(path);
+                else if (!enabled && App.Settings.ResidentPlugins.Contains(path))
+                    App.Settings.ResidentPlugins.Remove(path);
+            };
             
             // Main Content
             Content = new TabControl
@@ -108,16 +131,12 @@ namespace OpenTabletDriverUX
                     new TabPage
                     {
                         Text = "Filters",
-                        Content = new StackLayout
-                        {
-                        }
+                        Content = filterEditor
                     },
                     new TabPage
                     {
                         Text = "Plugins",
-                        Content = new StackLayout
-                        {
-                        }
+                        Content = residentEditor
                     },
                     new TabPage
                     {
@@ -154,6 +173,7 @@ namespace OpenTabletDriverUX
             detectTablet.Executed += async (sender, e) => await DetectAllTablets();
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
+            showTabletDebugger.Enabled = false;
             // TODO: Show tablet debugger
 
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
@@ -200,13 +220,14 @@ namespace OpenTabletDriverUX
             InitializeAsync();
         }
 
-        public async void InitializeAsync()
+        private async void InitializeAsync()
         {
             if (AppInfo.PluginDirectory.Exists)
             {
                 foreach (var file in AppInfo.PluginDirectory.EnumerateFiles("*.dll", SearchOption.AllDirectories))
                 {
                     await App.DriverDaemon.InvokeAsync(d => d.ImportPlugin(file.FullName));
+                    await PluginManager.AddPlugin(file);
                 }
             }
 
@@ -235,6 +256,9 @@ namespace OpenTabletDriverUX
 
             UpdateBindingLayout();
 
+            await filterEditor.InitializeAsync();
+            await residentEditor.InitializeAsync();
+
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
             displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
             displayAreaEditor.ViewModel.MaxHeight = virtualScreen.Height;
@@ -242,6 +266,8 @@ namespace OpenTabletDriverUX
 
         private AreaEditor displayAreaEditor, tabletAreaEditor;
         private TableLayout bindingLayout;
+        private PluginManager<IFilter> filterEditor;
+        private PluginManager<IResident> residentEditor;
 
         public MainFormViewModel ViewModel
         {
@@ -340,7 +366,7 @@ namespace OpenTabletDriverUX
             }
         }
 
-        public void ShowConfigurationEditor()
+        private void ShowConfigurationEditor()
         {
             var configEditor = new ConfigurationEditor();
             configEditor.Show();

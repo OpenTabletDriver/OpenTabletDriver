@@ -53,6 +53,15 @@ namespace TabletDriverLib.Plugins
             return PluginManager.ConstructObject<T>(Path);
         }
 
+        public TypeInfo GetTypeReference<T>()
+        {
+            var types = from type in PluginManager.GetChildTypes<T>()
+                where type.FullName == Path
+                select type;
+            
+            return types.FirstOrDefault();
+        }
+
         public static readonly PluginReference Disable = new PluginReference
         {
             Name = "{Disable}",

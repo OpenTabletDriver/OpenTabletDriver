@@ -20,6 +20,8 @@ namespace OpenTabletDriverUX
 
         public static IReadOnlyDictionary<string, Color> ColorDictionary => _colorDict.Value;
 
+        public static Settings Settings { set; get; }
+
         private static Lazy<Dictionary<string, Color>> _colorDict = new Lazy<Dictionary<string, Color>>(() => 
         {
             var colors = new Dictionary<string, Color>();

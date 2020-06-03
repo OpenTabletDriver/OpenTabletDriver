@@ -191,9 +191,10 @@ namespace OpenTabletDriverDaemon
             Driver.BindingEnabled = isHooked;
         }
 
-        public IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
+        public IEnumerable<string> GetChildTypes<T>()
         {
-            return PluginManager.GetChildTypes<T>();
+            return from type in PluginManager.GetChildTypes<T>()
+                select type.FullName;
         }
     }
 }
