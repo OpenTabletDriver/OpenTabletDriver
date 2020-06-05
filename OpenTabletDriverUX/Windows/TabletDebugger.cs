@@ -74,7 +74,6 @@ namespace OpenTabletDriverUX.Windows
             InitializeAsync(tabletPipeName, auxPipeName);
         }
 
-
         private async void InitializeAsync(string tabletPipeName, string auxPipeName)
         {
             await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(true));

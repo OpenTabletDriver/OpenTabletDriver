@@ -4,7 +4,6 @@ using System.IO.Pipes;
 using Newtonsoft.Json;
 using TabletDriverPlugin.Tablet;
 
-
 namespace OpenTabletDriverDaemon
 {
     internal class TabletDebuggerServer : IDisposable
