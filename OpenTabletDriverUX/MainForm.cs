@@ -173,8 +173,7 @@ namespace OpenTabletDriverUX
             detectTablet.Executed += async (sender, e) => await DetectAllTablets();
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
-            showTabletDebugger.Enabled = false;
-            // TODO: Show tablet debugger
+            showTabletDebugger.Executed += (sender, e) => ShowTabletDebugger();
 
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
@@ -447,6 +446,12 @@ namespace OpenTabletDriverUX
                 };
                 bindingLayout.Add(auxBindingGroup, 2, i);
             }
+        }
+
+        private void ShowTabletDebugger()
+        {
+            var debugger = new TabletDebugger("OpenTabletDriver_TABLETDEBUGGER", "OpenTabletDriver_AUXDEBUGGER");
+            debugger.Show();
         }
     }
 }

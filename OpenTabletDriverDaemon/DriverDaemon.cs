@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -9,7 +10,6 @@ using TabletDriverLib.Contracts;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
-using System.Reflection;
 
 namespace OpenTabletDriverDaemon
 {
@@ -36,6 +36,11 @@ namespace OpenTabletDriverDaemon
         public Driver Driver { private set; get; }
         private Settings Settings { set; get; }
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
+        private TabletDebuggerServer TabletDebuggerServer { set; get; }
+        private TabletDebuggerServer AuxDebuggerServer { set; get; }
+
+        private const string TabletDebuggerPipe = "OpenTabletDriver_TABLETDEBUGGER";
+        private const string AuxDebuggerPipe = "OpenTabletDriver_AUXDEBUGGER";
 
         public bool SetTablet(TabletProperties tablet)
         {
@@ -189,6 +194,34 @@ namespace OpenTabletDriverDaemon
         public void SetInputHook(bool isHooked)
         {
             Driver.BindingEnabled = isHooked;
+        }
+
+        public void SetTabletDebug(bool isEnabled)
+        {
+            if (isEnabled && TabletDebuggerServer == null)
+            {
+                TabletDebuggerServer = new TabletDebuggerServer(TabletDebuggerPipe);
+                Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
+                
+                if (Driver.AuxReader != null)
+                {
+                    AuxDebuggerServer = new TabletDebuggerServer(AuxDebuggerPipe);
+                    Driver.AuxReader.Report += AuxDebuggerServer.HandlePacket;
+                }
+            }
+            else if (!isEnabled && TabletDebuggerServer != null)
+            {
+                Driver.TabletReader.Report -= TabletDebuggerServer.HandlePacket;
+                TabletDebuggerServer.Dispose();
+                TabletDebuggerServer = null;
+                
+                if (Driver.AuxReader != null)
+                {
+                    Driver.AuxReader.Report -= AuxDebuggerServer.HandlePacket;
+                    AuxDebuggerServer.Dispose();
+                    AuxDebuggerServer = null;
+                }
+            }
         }
 
         public IEnumerable<string> GetChildTypes<T>()
