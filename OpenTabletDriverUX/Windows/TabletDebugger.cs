@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriverUX.Debugging;
@@ -9,13 +10,10 @@ namespace OpenTabletDriverUX.Windows
 {
     public class TabletDebugger : Form
     {
-        private TabletDebugger()
+        public TabletDebugger()
         {
             Title = "Tablet Debugger";
-        }
 
-        public TabletDebugger(string tabletPipeName, string auxPipeName) : this()
-        {
             rawTabCtrl = new GroupBox
             {
                 Text = "Raw Tablet Data",
@@ -71,25 +69,32 @@ namespace OpenTabletDriverUX.Windows
 
             this.Content = mainLayout;
 
-            InitializeAsync(tabletPipeName, auxPipeName);
+            InitializeAsync();
         }
 
-        private async void InitializeAsync(string tabletPipeName, string auxPipeName)
+        private async void InitializeAsync()
         {
-            await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(true));
+            var result = await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(true));
+            var guids = result.ToList();
 
-            var tabletReader = new PipeReader<DebugTabletReport>(tabletPipeName);
-            tabletReader.Report += HandleReport;
+            if (guids.Count > 0)
+            {
+                var tabletReader = new PipeReader<DebugTabletReport>(guids[0].ToString());
+                tabletReader.Report += HandleReport;
+                this.Closing += (sender, e) => tabletReader.Dispose();
+            }
             
-            var auxReader = new PipeReader<DebugAuxReport>(auxPipeName);
-            auxReader.Report += HandleReport;
+            if (guids.Count > 1)
+            {
+                var auxReader = new PipeReader<DebugAuxReport>(guids[1].ToString());
+                auxReader.Report += HandleReport;
+                this.Closing += (sender, e) => auxReader.Dispose();
+            }
 
             this.Closing += async (sender, e) => 
             {
                 // For whatever reason, this sometimes hangs the entire GUI application.
                 await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(false));
-                tabletReader.Dispose();
-                auxReader.Dispose();
             };
         }
 

@@ -131,19 +131,19 @@ namespace OpenTabletDriverUX
                     new TabPage
                     {
                         Text = "Filters",
+                        Padding = 5,
                         Content = filterEditor
                     },
                     new TabPage
                     {
                         Text = "Plugins",
+                        Padding = 5,
                         Content = residentEditor
                     },
                     new TabPage
                     {
                         Text = "Console",
-                        Content = new TableLayout
-                        {
-                        }
+                        Content = new LogView()
                     }
                 }
             };
@@ -450,7 +450,7 @@ namespace OpenTabletDriverUX
 
         private void ShowTabletDebugger()
         {
-            var debugger = new TabletDebugger("OpenTabletDriver_TABLETDEBUGGER", "OpenTabletDriver_AUXDEBUGGER");
+            var debugger = new TabletDebugger();
             debugger.Show();
         }
     }

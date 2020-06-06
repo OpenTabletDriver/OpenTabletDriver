@@ -8,9 +8,9 @@ namespace OpenTabletDriverDaemon
 {
     internal class TabletDebuggerServer : IDisposable
     {
-        public TabletDebuggerServer(string pipeName)
+        public TabletDebuggerServer()
         {
-            PipeServer = new NamedPipeServerStream(pipeName);
+            PipeServer = new NamedPipeServerStream(Identifier.ToString());
             InitializeAsync();
         }
 
@@ -41,7 +41,9 @@ namespace OpenTabletDriverDaemon
             StreamWriter = null;
         }
 
-        public NamedPipeServerStream PipeServer { private set; get; }
+        public Guid Identifier { private set; get; } = Guid.NewGuid();
+
+        private NamedPipeServerStream PipeServer { set; get; }
         private StreamWriter StreamWriter { set; get; }
         private JsonTextWriter JsonWriter { set; get; }
         private JsonSerializer Serializer { set; get; } = new JsonSerializer

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -10,6 +9,8 @@ using TabletDriverLib.Contracts;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
+using TabletDriverPlugin.Logging;
+using System;
 
 namespace OpenTabletDriverDaemon
 {
@@ -18,6 +19,7 @@ namespace OpenTabletDriverDaemon
         public DriverDaemon()
         {
             Driver = new Driver();
+            Log.Output += (sender, message) => LogMessages.Add(message);
             LoadUserSettings();
         }
 
@@ -36,11 +38,10 @@ namespace OpenTabletDriverDaemon
         public Driver Driver { private set; get; }
         private Settings Settings { set; get; }
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
+        private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private TabletDebuggerServer TabletDebuggerServer { set; get; }
         private TabletDebuggerServer AuxDebuggerServer { set; get; }
-
-        private const string TabletDebuggerPipe = "OpenTabletDriver_TABLETDEBUGGER";
-        private const string AuxDebuggerPipe = "OpenTabletDriver_AUXDEBUGGER";
+        private LogServer LogServer { set; get; }
 
         public bool SetTablet(TabletProperties tablet)
         {
@@ -196,16 +197,18 @@ namespace OpenTabletDriverDaemon
             Driver.BindingEnabled = isHooked;
         }
 
-        public void SetTabletDebug(bool isEnabled)
+        public IEnumerable<Guid> SetTabletDebug(bool isEnabled)
         {
             if (isEnabled && TabletDebuggerServer == null)
             {
-                TabletDebuggerServer = new TabletDebuggerServer(TabletDebuggerPipe);
+                TabletDebuggerServer = new TabletDebuggerServer();
+                yield return TabletDebuggerServer.Identifier; 
                 Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
                 
                 if (Driver.AuxReader != null)
                 {
-                    AuxDebuggerServer = new TabletDebuggerServer(AuxDebuggerPipe);
+                    AuxDebuggerServer = new TabletDebuggerServer();
+                    yield return AuxDebuggerServer.Identifier;
                     Driver.AuxReader.Report += AuxDebuggerServer.HandlePacket;
                 }
             }
@@ -222,6 +225,30 @@ namespace OpenTabletDriverDaemon
                     AuxDebuggerServer = null;
                 }
             }
+            else if (isEnabled && TabletDebuggerServer != null)
+            {
+                yield return TabletDebuggerServer.Identifier;
+                if (AuxDebuggerServer != null)
+                    yield return AuxDebuggerServer.Identifier;
+            }
+        }
+
+        public Guid SetLogOutput(bool isEnabled)
+        {
+            if (isEnabled && LogServer == null)
+            {
+                LogServer = new LogServer();
+            }
+            else if (!isEnabled && LogServer != null)
+            {
+                LogServer.Dispose();
+            }
+            return LogServer?.Identifier ?? Guid.Empty;
+        }
+
+        public IEnumerable<LogMessage> GetCurrentLog()
+        {
+            return LogMessages;
         }
 
         public IEnumerable<string> GetChildTypes<T>()

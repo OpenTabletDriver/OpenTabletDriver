@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Contracts
@@ -18,7 +20,10 @@ namespace TabletDriverLib.Contracts
         Task<bool> ImportPlugin(string pluginPath);
 
         void SetInputHook(bool isHooked);
-        void SetTabletDebug(bool isEnabled);
+        IEnumerable<Guid> SetTabletDebug(bool isEnabled);
+        
+        Guid SetLogOutput(bool isEnabled);
+        IEnumerable<LogMessage> GetCurrentLog();
 
         IEnumerable<string> GetChildTypes<T>();
     }
