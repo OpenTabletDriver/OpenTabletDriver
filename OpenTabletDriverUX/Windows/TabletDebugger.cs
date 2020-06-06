@@ -17,25 +17,25 @@ namespace OpenTabletDriverUX.Windows
             rawTabCtrl = new GroupBox
             {
                 Text = "Raw Tablet Data",
-                Padding = new Padding(5)
+                Padding = App.GroupBoxPadding
             };
             
             tabReportCtrl = new GroupBox
             {
                 Text = "Tablet Report",
-                Padding = new Padding(5)
+                Padding = App.GroupBoxPadding
             };
 
             rawAuxCtrl = new GroupBox
             {
                 Text = "Raw Aux Data",
-                Padding = new Padding(5)
+                Padding = App.GroupBoxPadding
             };
             
             auxReportCtrl = new GroupBox
             {
                 Text = "Aux Report",
-                Padding = new Padding(5)
+                Padding = App.GroupBoxPadding
             };
             
             var mainLayout = new TableLayout

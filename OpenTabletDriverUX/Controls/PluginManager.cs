@@ -102,7 +102,7 @@ namespace OpenTabletDriverUX.Controls
                     {
                         Content = control,
                         Text = string.IsNullOrWhiteSpace(attr.DisplayName) ? property.Name : attr.DisplayName,
-                        Padding = new Padding(5)
+                        Padding = App.GroupBoxPadding
                     };
                 }
             }

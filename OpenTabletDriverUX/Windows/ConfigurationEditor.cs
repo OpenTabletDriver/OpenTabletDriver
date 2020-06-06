@@ -252,7 +252,7 @@ namespace OpenTabletDriverUX.Windows
             return new GroupBox
             {
                 Text = groupName,
-                Padding = new Padding(5),
+                Padding = App.GroupBoxPadding,
                 Content = textBox
             };
         }

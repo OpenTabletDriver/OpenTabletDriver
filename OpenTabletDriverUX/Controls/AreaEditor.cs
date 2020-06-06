@@ -90,7 +90,7 @@ namespace OpenTabletDriverUX.Controls
             foreach (var item in stackLayout.Items)
             {
                 if (item.Control is GroupBox groupBox)
-                    groupBox.Padding = new Eto.Drawing.Padding(5);
+                    groupBox.Padding = App.GroupBoxPadding;
             }
 
             TableCell[] cells = 

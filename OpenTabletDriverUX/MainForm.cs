@@ -37,7 +37,7 @@ namespace OpenTabletDriverUX
             var displayAreaGroup = new GroupBox
             {
                 Text = "Display Area",
-                Padding = new Padding(5),
+                Padding = App.GroupBoxPadding,
                 Content = displayAreaEditor
             };
 
@@ -57,7 +57,7 @@ namespace OpenTabletDriverUX
             var tabletAreaGroup = new GroupBox
             {
                 Text = "Tablet Area",
-                Padding = new Padding(5),
+                Padding = App.GroupBoxPadding,
                 Content = tabletAreaEditor
             };
             
@@ -385,7 +385,7 @@ namespace OpenTabletDriverUX
             var tipBindingGroup = new GroupBox
             {
                 Text = "Tip Binding",
-                Padding = new Padding(5),
+                Padding = App.GroupBoxPadding,
                 Content = tipBindingControl
             };
             bindingLayout.Add(tipBindingGroup, 0, 0);
@@ -400,7 +400,7 @@ namespace OpenTabletDriverUX
             var tipPressureGroup = new GroupBox
             {
                 Text = "Tip Activation Pressure",
-                Padding = new Padding(5),
+                Padding = App.GroupBoxPadding,
                 Content = tipPressureControl
             };
             bindingLayout.Add(tipPressureGroup, 0, 1);
@@ -420,7 +420,7 @@ namespace OpenTabletDriverUX
                 var penBindingGroup = new GroupBox
                 {
                     Text = $"Pen Button {i + 1}",
-                    Padding = new Padding(5),
+                    Padding = App.GroupBoxPadding,
                     Content = penBindingControl
                 };
                 bindingLayout.Add(penBindingGroup, 1, i);
@@ -441,7 +441,7 @@ namespace OpenTabletDriverUX
                 var auxBindingGroup = new GroupBox
                 {
                     Text = $"Express Key {i + 1}",
-                    Padding = new Padding(5),
+                    Padding = App.GroupBoxPadding,
                     Content = auxBindingControl
                 };
                 bindingLayout.Add(auxBindingGroup, 2, i);

@@ -6,6 +6,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
+using NativeLib;
 using TabletDriverLib;
 using TabletDriverLib.Contracts;
 using TabletDriverPlugin;
@@ -17,6 +18,7 @@ namespace OpenTabletDriverUX
         public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
         public static AboutDialog AboutDialog => _aboutDialog.Value;
         public static Bitmap Logo => _logo.Value;
+        public static Padding GroupBoxPadding => _groupBoxPadding.Value;
 
         public static IReadOnlyDictionary<string, Color> ColorDictionary => _colorDict.Value;
 
@@ -81,6 +83,14 @@ namespace OpenTabletDriverUX
         {
             var dataStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriverUX.Assets.otd.png");
             return new Bitmap(dataStream);
+        });
+
+        private static readonly Lazy<Padding> _groupBoxPadding = new Lazy<Padding>(() => 
+        {
+            if (PlatformInfo.IsWindows)
+                return new Padding(0);
+            else
+                return new Padding(5);
         });
     }
 }
