@@ -57,8 +57,8 @@ namespace OpenTabletDriverUX.Controls
 
         private void DrawForegroundRect(Graphics graphics, RectangleF foreground, Color color)
         {
-            var width = foreground.Width * pixelScale - 5;
-            var height = foreground.Height * pixelScale - 5;
+            var width = (foreground.Width * pixelScale) - 5;
+            var height = (foreground.Height * pixelScale) - 5;
             
             var x = (foreground.X * pixelScale);
             var y = (foreground.Y * pixelScale);
@@ -83,8 +83,8 @@ namespace OpenTabletDriverUX.Controls
         {
             var centerPoint = new PointF(Width / 2, Height / 2);
 
-            var width = rect.Width * pixelScale - 5;
-            var height = rect.Height * pixelScale - 5;
+            var width = (rect.Width * pixelScale) - 5;
+            var height = (rect.Height * pixelScale) - 5;
             var x = ((float)Width - width) / 2;
             var y = ((float)Height - height) / 2;
             
