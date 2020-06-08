@@ -32,7 +32,7 @@ namespace OpenTabletDriverUX.Controls
             
             pixelScale = GetRelativeScale(background.Width, background.Height);
 
-            DrawBackgroundRect(graphics, background, SystemColors.WindowBackground, SystemColors.ControlBackground);
+            DrawBackgroundRect(graphics, background, SystemColors.WindowBackground, SystemColors.Highlight);
             DrawForegroundRect(graphics, foreground, SystemColors.Highlight);
         }
 
@@ -57,19 +57,17 @@ namespace OpenTabletDriverUX.Controls
 
         private void DrawForegroundRect(Graphics graphics, RectangleF foreground, Color color)
         {
-            var center = new PointF(Width / 2, Height / 2);
-
-            var width = foreground.Width * pixelScale;
-            var height = foreground.Height * pixelScale;
+            var width = foreground.Width * pixelScale - 5;
+            var height = foreground.Height * pixelScale - 5;
             
             var x = (foreground.X * pixelScale);
             var y = (foreground.Y * pixelScale);
 
-            var offsetX = Width - (ViewModel.MaxWidth * pixelScale);
+            var offsetX = Width - (ViewModel.MaxWidth * pixelScale) + 5;
             if (offsetX / 2 > 0)
                 x += offsetX / 2;
 
-            var offsetY = Height - (ViewModel.MaxHeight * pixelScale);
+            var offsetY = Height - (ViewModel.MaxHeight * pixelScale) + 5;
             if (offsetY > 0)
                 y += offsetY / 2;
 
@@ -85,36 +83,14 @@ namespace OpenTabletDriverUX.Controls
         {
             var centerPoint = new PointF(Width / 2, Height / 2);
 
-            var width = rect.Width * pixelScale;
-            var height = rect.Height * pixelScale;
+            var width = rect.Width * pixelScale - 5;
+            var height = rect.Height * pixelScale - 5;
             var x = ((float)Width - width) / 2;
             var y = ((float)Height - height) / 2;
             
             var drawRect = new RectangleF(x, y, width, height);
             graphics.FillRectangle(fill, drawRect);
             graphics.DrawRectangle(border, drawRect);
-        }
-
-        private void DrawRect(Graphics graphics, RectangleF rect, Color color, bool centered)
-        {
-            var center = new PointF(Width / 2, Height / 2);
-            var drawRect = new RectangleF(rect.X, rect.Y, rect.Width * pixelScale, rect.Height * pixelScale);
-            
-            if (centered)
-            {
-                if (drawRect.Width < this.Width)
-                {
-                    var x = (this.Width - drawRect.Width) / 2;
-                    drawRect.Offset(x, 0);
-                }
-                if (drawRect.Height < this.Height)
-                {
-                    var y = (this.Height - drawRect.Height) / 2;
-                    drawRect.Offset(0, y);
-                }
-            }
-
-            graphics.FillRectangle(color, drawRect);
         }
 
         private float pixelScale;
