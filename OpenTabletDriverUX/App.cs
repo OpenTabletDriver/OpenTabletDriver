@@ -20,33 +20,7 @@ namespace OpenTabletDriverUX
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
 
-        public static IReadOnlyDictionary<string, Color> ColorDictionary => _colorDict.Value;
-
         public static Settings Settings { set; get; }
-
-        private static Lazy<Dictionary<string, Color>> _colorDict = new Lazy<Dictionary<string, Color>>(() => 
-        {
-            var colors = new Dictionary<string, Color>();
-            var ctor = themeSource.GetConstructor(new Type[0]);
-            var obj = ctor.Invoke(null);
-            
-            foreach (var property in themeSource.GetProperties())
-            {
-                if (property.PropertyType == typeof(Color))
-                {
-                    var color = (Color)property.GetValue(obj);
-                    colors.Add(property.Name, color);
-                }
-            }
-            return colors;
-        });
-
-        private static Type themeSource;
-
-        public static void ThemeSetup(Type type)
-        {
-            themeSource = type;
-        }
 
         private static readonly Lazy<IIpcClient<IDriverDaemon>> _driverDaemon = new Lazy<IIpcClient<IDriverDaemon>>(() => 
         {

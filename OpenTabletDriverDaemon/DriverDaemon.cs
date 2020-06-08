@@ -201,9 +201,12 @@ namespace OpenTabletDriverDaemon
         {
             if (isEnabled && TabletDebuggerServer == null)
             {
-                TabletDebuggerServer = new TabletDebuggerServer();
-                yield return TabletDebuggerServer.Identifier; 
-                Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
+                if (Driver.TabletReader != null)
+                {
+                    TabletDebuggerServer = new TabletDebuggerServer();
+                    yield return TabletDebuggerServer.Identifier;
+                    Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
+                }
                 
                 if (Driver.AuxReader != null)
                 {
@@ -214,9 +217,12 @@ namespace OpenTabletDriverDaemon
             }
             else if (!isEnabled && TabletDebuggerServer != null)
             {
-                Driver.TabletReader.Report -= TabletDebuggerServer.HandlePacket;
-                TabletDebuggerServer.Dispose();
-                TabletDebuggerServer = null;
+                if (Driver.TabletReader != null)
+                {
+                    Driver.TabletReader.Report -= TabletDebuggerServer.HandlePacket;
+                    TabletDebuggerServer.Dispose();
+                    TabletDebuggerServer = null;
+                }
                 
                 if (Driver.AuxReader != null)
                 {

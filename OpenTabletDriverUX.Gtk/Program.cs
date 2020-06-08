@@ -12,7 +12,6 @@ namespace OpenTabletDriverUX.Gtk
         [STAThread]
         public static void Main(string[] args)
         {
-            App.ThemeSetup(typeof(Eto.GtkSharp.Drawing.SystemColorsHandler));
             new Application(Eto.Platforms.Gtk).Run(new MainForm());
         }
     }

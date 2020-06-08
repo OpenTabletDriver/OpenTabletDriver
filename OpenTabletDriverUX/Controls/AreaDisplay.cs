@@ -32,8 +32,8 @@ namespace OpenTabletDriverUX.Controls
             
             pixelScale = GetRelativeScale(background.Width, background.Height);
 
-            DrawBackgroundRect(graphics, background, App.ColorDictionary["WindowBackground"]);
-            DrawForegroundRect(graphics, foreground, App.ColorDictionary["Highlight"]);
+            DrawBackgroundRect(graphics, background, SystemColors.WindowBackground, SystemColors.ControlBackground);
+            DrawForegroundRect(graphics, foreground, SystemColors.Highlight);
         }
 
         private float GetRelativeScale(float width, float height)
@@ -81,7 +81,7 @@ namespace OpenTabletDriverUX.Controls
             graphics.FillRectangle(color, drawRect);
         }
 
-        private void DrawBackgroundRect(Graphics graphics, RectangleF rect, Color color)
+        private void DrawBackgroundRect(Graphics graphics, RectangleF rect, Color fill, Color border)
         {
             var centerPoint = new PointF(Width / 2, Height / 2);
 
@@ -91,7 +91,8 @@ namespace OpenTabletDriverUX.Controls
             var y = ((float)Height - height) / 2;
             
             var drawRect = new RectangleF(x, y, width, height);
-            graphics.FillRectangle(color, drawRect);
+            graphics.FillRectangle(fill, drawRect);
+            graphics.DrawRectangle(border, drawRect);
         }
 
         private void DrawRect(Graphics graphics, RectangleF rect, Color color, bool centered)

@@ -9,7 +9,6 @@ namespace OpenTabletDriverUX.Wpf
         [STAThread]
         public static void Main(string[] args)
         {
-            App.ThemeSetup(typeof(Eto.Wpf.Drawing.SystemColorsHandler));
             new Application(Eto.Platforms.Wpf).Run(new MainForm());
         }
     }
