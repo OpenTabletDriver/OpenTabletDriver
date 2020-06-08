@@ -18,11 +18,11 @@ namespace OpenTabletDriverUX
             this.DataContext = new MainFormViewModel();
             
             Title = "OpenTabletDriver";
-            ClientSize = new Size(960, 730);
-            MinimumSize = new Size(960, 730);
+            ClientSize = new Size(960, 750);
+            MinimumSize = new Size(960, 750);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
-            displayAreaEditor = new AreaEditor();
+            displayAreaEditor = new AreaEditor("px");
             ViewModel.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
@@ -41,7 +41,7 @@ namespace OpenTabletDriverUX
                 Content = displayAreaEditor
             };
 
-            tabletAreaEditor = new AreaEditor(true);
+            tabletAreaEditor = new AreaEditor("mm", true);
             ViewModel.PropertyChanged += (sender, e) => 
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
@@ -60,10 +60,36 @@ namespace OpenTabletDriverUX
                 Padding = App.GroupBoxPadding,
                 Content = tabletAreaEditor
             };
+
+            var lockAr = new CheckBox
+            {
+                Text = "Lock Aspect Ratio"
+            };
+
+            var areaClipping = new CheckBox
+            {
+                Text = "Area Clipping"
+            };
+
+            ViewModel.PropertyChanged += (sender, e) => 
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    lockAr.CheckedBinding.Convert(
+                        (b) => b.HasValue ? b.Value : false,
+                        (b) => (bool?)b)
+                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.LockAspectRatio));
+                    areaClipping.CheckedBinding.Convert(
+                        (b) => b.HasValue ? b.Value : false,
+                        (b) => (bool?)b)
+                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.EnableClipping));
+                }
+            };
             
-            var outputConfigContent = new TableLayout
+            var areaConfig = new TableLayout
             {
                 Padding = new Padding(5),
+                Spacing = new Size(5, 5),
                 Rows = 
                 {
                     new TableRow(new TableCell(displayAreaGroup, true))
@@ -73,10 +99,76 @@ namespace OpenTabletDriverUX
                     new TableRow(new TableCell(tabletAreaGroup, true))
                     {
                         ScaleHeight = true
+                    },
+                    new TableRow()
+                    {
+                        ScaleHeight = false,
+                        Cells = 
+                        {
+                            new StackLayout
+                            {
+                                Orientation = Orientation.Horizontal,
+                                Items =
+                                {
+                                    lockAr,
+                                    areaClipping
+                                }
+                            }
+                        }
                     }
                 }
             };
 
+            var xSens = new TextBox();
+            ViewModel.PropertyChanged += (sender, e) => 
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    xSens.TextBinding.Convert(
+                        s => float.TryParse(s, out var v) ? v : 0,
+                        f => f.ToString())
+                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.XSensitivity));
+                }
+            };
+
+            var xSensBox = new GroupBox
+            {
+                Text = "X Sensitivity",
+                Padding = App.GroupBoxPadding,
+                Content = TableLayout.Horizontal(5, new TableCell(xSens, true), new Label { Text = "mm/px", VerticalAlignment = VerticalAlignment.Center })
+            };
+
+            var ySens = new TextBox();
+            ViewModel.PropertyChanged += (sender, e) => 
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    ySens.TextBinding.Convert(
+                        s => float.TryParse(s, out var v) ? v : 0,
+                        f => f.ToString())
+                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.YSensitivity));
+                }
+            };
+
+            var ySensBox = new GroupBox
+            {
+                Text = "Y Sensitivity",
+                Padding = App.GroupBoxPadding,
+                Content = TableLayout.Horizontal(5, new TableCell(ySens, true), new Label { Text = "mm/px", VerticalAlignment = VerticalAlignment.Center })
+            };
+
+            var sensitivityConfig = new StackLayout
+            {
+                Padding = new Padding(5),
+                Spacing = 5,
+                Orientation = Orientation.Horizontal,
+                Items =
+                {
+                    new StackLayoutItem(xSensBox, true),
+                    new StackLayoutItem(ySensBox, true)
+                }
+            };
+            
             var bindingColumns = 3;
             var bindingRows = 7;
             bindingLayout = new TableLayout(bindingColumns, bindingRows)
@@ -116,12 +208,25 @@ namespace OpenTabletDriverUX
             {
                 Pages = 
                 {
-                    // Main Tab
                     new TabPage
                     {
-                        Text = "Output Configuration",
-                        // Content = mainTabLayout
-                        Content = outputConfigContent
+                        Text = "Area Configuration",
+                        Content = new TableLayout
+                        {
+                            Rows = 
+                            {
+                                new TableRow(new TableCell(areaConfig, true))
+                                {
+                                    ScaleHeight = true
+                                },
+                                new TableRow(new TableCell())
+                            }
+                        }
+                    },
+                    new TabPage
+                    {
+                        Text = "Sensitivity",
+                        Content = sensitivityConfig
                     },
                     new TabPage
                     {
@@ -242,7 +347,7 @@ namespace OpenTabletDriverUX
             if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
             {
                 ViewModel.Settings = settings;
-                }
+            }
             else if (AppInfo.SettingsFile.Exists)
             {
                 ViewModel.Settings = Settings.Deserialize(AppInfo.SettingsFile);
@@ -330,16 +435,22 @@ namespace OpenTabletDriverUX
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var file = new FileInfo(fileDialog.FileName);
-                    if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
+                    if (ViewModel.Settings is Settings settings)
+                    {
                         settings.Serialize(file);
+                        await ApplySettings();
+                    }
                     break;
             }
         }
 
         private async Task SaveSettings()
         {
-            if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
+            if (ViewModel.Settings is Settings settings)
+            {
                 settings.Serialize(AppInfo.SettingsFile);
+                await ApplySettings();
+            }
         }
 
         private async Task ApplySettings()

@@ -51,7 +51,7 @@ namespace OpenTabletDriverUX.Windows
             {
                 Property = e.Key.ToString(),
             };
-            Return(keyBind.ToString());
+            Return(keyBind);
         }
 
         private void CreateMouseBinding(object sender, MouseEventArgs e)
@@ -60,12 +60,17 @@ namespace OpenTabletDriverUX.Windows
             {
                 Property = ParseMouseButton(e)
             };
-            Return(mouseBind.ToString());
+            Return(mouseBind);
         }
 
         private void ClearBinding(object sender, EventArgs e)
         {
             Return(string.Empty);
+        }
+
+        private void Return<T>(T binding) where T : TabletDriverPlugin.IBinding
+        {
+            Return(typeof(T).FullName + ", " + binding.Property);
         }
 
         private void Return(string result)

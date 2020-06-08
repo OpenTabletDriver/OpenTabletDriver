@@ -4,7 +4,7 @@ namespace OpenTabletDriverUX.Controls
 {
     public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
     {
-        public AreaEditor(bool enableRotation = false)
+        public AreaEditor(string unit, bool enableRotation = false)
         {
             this.DataContext = new AreaViewModel();
             
@@ -51,7 +51,7 @@ namespace OpenTabletDriverUX.Controls
                 f => f.ToString()).BindDataContext(
                     Binding.Property(
                         (AreaViewModel d) =>  d.Rotation));
-                        
+
             var stackLayout = new StackLayout
             {
                 Orientation = Orientation.Vertical,
@@ -61,27 +61,27 @@ namespace OpenTabletDriverUX.Controls
                     new GroupBox
                     {
                         Text = "Width",
-                        Content = widthBox
+                        Content = AppendUnit(widthBox, unit)
                     },
                     new GroupBox
                     {
                         Text = "Height",
-                        Content = heightBox
+                        Content = AppendUnit(heightBox, unit)
                     },
                     new GroupBox
                     {
                         Text = "X Offset",
-                        Content = xOffsetBox
+                        Content = AppendUnit(xOffsetBox, unit)
                     },
                     new GroupBox
                     {
                         Text = "Y Offset",
-                        Content = yOffsetBox
+                        Content = AppendUnit(yOffsetBox, unit)
                     },
                     new GroupBox
                     {
                         Text = "Rotation", 
-                        Content = rotationBox,
+                        Content = AppendUnit(rotationBox, "°"),
                         Visible = enableRotation
                     }
                 }
@@ -105,6 +105,18 @@ namespace OpenTabletDriverUX.Controls
         {
             set => this.DataContext = value;
             get => (AreaViewModel)this.DataContext;
+        }
+
+        private Control AppendUnit(Control control, string unit)
+        {
+            return TableLayout.Horizontal(
+                5,
+                new TableCell(control, true),
+                new Label
+                {
+                    Text = unit,
+                    VerticalAlignment = VerticalAlignment.Center,
+                });
         }
 
         private AreaDisplay areaDisplay;

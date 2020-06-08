@@ -1,6 +1,7 @@
 using System;
 using Eto.Forms;
 using OpenTabletDriverUX.Windows;
+using TabletDriverLib.Plugins;
 using IBinding = TabletDriverPlugin.IBinding;
 
 namespace OpenTabletDriverUX.Controls
