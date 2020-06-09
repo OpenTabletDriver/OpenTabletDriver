@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using TabletDriverLib;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin.Attributes;
 
@@ -119,12 +118,26 @@ namespace OpenTabletDriverUX.Controls
                 var layout = new StackLayout
                 {
                     Orientation = Orientation.Horizontal,
-                    Spacing = 5
-                };
-                layout.Items.Add(new StackLayoutItem(tb, true));
-                layout.Items.Add(new StackLayoutItem(label, VerticalAlignment.Center));
-                
+                    Spacing = 5,
+                    Items =
+                    {
+                        new StackLayoutItem(tb, true),
+                        new StackLayoutItem(label, VerticalAlignment.Center)
+                    }
+                };                
                 return layout;
+            }
+            else if (attr is BooleanPropertyAttribute boolAttr)
+            {
+                var checkBox = new CheckBox
+                {
+                    Text = boolAttr.Description
+                };
+                checkBox.CheckedBinding.Convert(
+                    (b) => b.Value.ToString(),
+                    (string str) => bool.TryParse(str, out var val) ? val : false)
+                    .Bind(getValue, setValue);
+                return checkBox;
             }
             else
             {
