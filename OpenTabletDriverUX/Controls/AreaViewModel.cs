@@ -3,6 +3,7 @@
     public class AreaViewModel : ViewModelBase
     {
         private float _w, _h, _x, _y, _r, _fW, _fH;
+        private string _unit;
 
         public float Width
         {
@@ -44,6 +45,12 @@
         {
             set => this.RaiseAndSetIfChanged(ref _fH, value);
             get => _fH;
+        }
+
+        public string Unit
+        {
+            set => this.RaiseAndSetIfChanged(ref _unit, value);
+            get => _unit;
         }
     }
 }

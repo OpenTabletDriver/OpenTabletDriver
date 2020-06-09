@@ -14,7 +14,7 @@ namespace TabletDriverLib
         {
         }
 
-        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _tP, _dRatio, _tRatio;
+        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping;
         private string _outputMode, _tipButton;
@@ -61,7 +61,6 @@ namespace TabletDriverLib
                 RaiseAndSetIfChanged(ref _dW, value);
                 if (LockAspectRatio)
                     TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
-                DisplayRatio = DisplayWidth / DisplayHeight;
             }
             get => _dW;
         }
@@ -74,15 +73,8 @@ namespace TabletDriverLib
                 RaiseAndSetIfChanged(ref _dH, value);
                 if (LockAspectRatio)
                     TabletWidth = DisplayWidth / DisplayHeight * TabletHeight;
-                DisplayRatio = DisplayWidth / DisplayHeight;
             }
             get => _dH;
-        }
-
-        public float DisplayRatio
-        {
-            private set => this.RaiseAndSetIfChanged(ref _dRatio, value);
-            get => (float)Math.Round(_dRatio * 1000f) / 1000f;
         }
 
         [JsonProperty("DisplayXOffset")]
@@ -111,7 +103,6 @@ namespace TabletDriverLib
                     TabletHeight = DisplayHeight / DisplayWidth * value;
                     _sizeChanging = false;
                 }
-                TabletRatio = TabletWidth / TabletHeight;
             }
             get => _tW;
         }
@@ -128,15 +119,8 @@ namespace TabletDriverLib
                     TabletWidth = DisplayWidth / DisplayHeight * value;
                     _sizeChanging = false;
                 }
-                TabletRatio = TabletWidth / TabletHeight;
             }
             get => _tH;
-        }
-
-        public float TabletRatio
-        {
-            private set => this.RaiseAndSetIfChanged(ref _tRatio, value);
-            get => (float)Math.Round(_tRatio * 1000f) / 1000f;
         }
 
         [JsonProperty("TabletXOffset")]

@@ -1,3 +1,4 @@
+using Eto.Drawing;
 using Eto.Forms;
 
 namespace OpenTabletDriverUX.Controls
@@ -8,7 +9,10 @@ namespace OpenTabletDriverUX.Controls
         {
             this.DataContext = new AreaViewModel();
             
-            areaDisplay = new AreaDisplay();
+            areaDisplay = new AreaDisplay(unit)
+            {
+                Padding = new Padding(5)
+            };
             areaDisplay.Bind(c => c.ViewModel.Width, ViewModel, m => m.Width);
             areaDisplay.Bind(c => c.ViewModel.Height, ViewModel, m => m.Height);
             areaDisplay.Bind(c => c.ViewModel.X, ViewModel, m => m.X);
