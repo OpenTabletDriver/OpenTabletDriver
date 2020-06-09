@@ -22,6 +22,14 @@ namespace OpenTabletDriverUX
             MinimumSize = new Size(960, 750);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
+            Content = ConstructMainControls();
+            Menu = ConstructMenu();
+
+            InitializeAsync();
+        }
+        
+        private Control ConstructMainControls()
+        {
             displayAreaEditor = new AreaEditor("px");
             ViewModel.PropertyChanged += (sender, e) =>
             {
@@ -204,7 +212,7 @@ namespace OpenTabletDriverUX
             };
             
             // Main Content
-            Content = new TabControl
+            return new TabControl
             {
                 Pages = 
                 {
@@ -252,7 +260,10 @@ namespace OpenTabletDriverUX
                     }
                 }
             };
+        }
 
+        private MenuBar ConstructMenu()
+        {
             var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
             quitCommand.Executed += (sender, e) => Application.Instance.Quit();
 
@@ -283,8 +294,7 @@ namespace OpenTabletDriverUX
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
-            // Menu
-            Menu = new MenuBar
+            return new MenuBar
             {
                 Items =
                 {
@@ -320,8 +330,6 @@ namespace OpenTabletDriverUX
                 QuitItem = quitCommand,
                 AboutItem = aboutCommand
             };
-
-            InitializeAsync();
         }
 
         private async void InitializeAsync()
