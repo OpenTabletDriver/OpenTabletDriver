@@ -17,10 +17,8 @@ namespace OpenTabletDriverUX.Controls
             bindingCommand.BindDataContext(c => c.MenuText, (BindingViewModel m) => m.Binding);
             bindingCommand.Executed += async (sender, e) =>
             {
-                var dialog = new BindingEditorDialog();
-                dialog.Result = ViewModel.Binding;
-                var result = await dialog.ShowModalAsync(this);
-                ViewModel.Binding = result;
+                var dialog = new BindingEditorDialog(ViewModel.Binding);
+                ViewModel.Binding = await dialog.ShowModalAsync(this);
             };
             this.Command = bindingCommand;
 

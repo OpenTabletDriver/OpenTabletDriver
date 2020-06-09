@@ -9,9 +9,10 @@ namespace OpenTabletDriverUX.Windows
 {
     public class BindingEditorDialog : Dialog<string>
     {
-        public BindingEditorDialog()
+        public BindingEditorDialog(string currentBinding = null)
         {
             Title = "Binding Editor";
+            Result = currentBinding;
 
             var inputHandler = new RichTextArea
             {
@@ -75,8 +76,7 @@ namespace OpenTabletDriverUX.Windows
 
         private void Return(string result)
         {
-            Result = result;
-            Close();
+            Close(result);
         }
 
         private static string ParseMouseButton(MouseEventArgs e)

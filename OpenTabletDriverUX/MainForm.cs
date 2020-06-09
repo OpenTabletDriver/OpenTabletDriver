@@ -1,12 +1,13 @@
+using System;
+using System.IO;
+using System.Threading.Tasks;
 using Eto.Forms;
 using Eto.Drawing;
 using OpenTabletDriverUX.Controls;
-using System.IO;
-using TabletDriverPlugin.Tablet;
-using System.Threading.Tasks;
+using OpenTabletDriverUX.Windows;
 using TabletDriverLib;
 using TabletDriverPlugin;
-using OpenTabletDriverUX.Windows;
+using TabletDriverPlugin.Tablet;
 using TabletDriverPlugin.Resident;
 
 namespace OpenTabletDriverUX
@@ -30,44 +31,8 @@ namespace OpenTabletDriverUX
         
         private Control ConstructMainControls()
         {
-            displayAreaEditor = new AreaEditor("px");
-            ViewModel.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName == nameof(ViewModel.Settings))
-                {
-                    displayAreaEditor.Bind(c => c.ViewModel.Width, ViewModel.Settings, m => m.DisplayWidth);
-                    displayAreaEditor.Bind(c => c.ViewModel.Height, ViewModel.Settings, m => m.DisplayHeight);
-                    displayAreaEditor.Bind(c => c.ViewModel.X, ViewModel.Settings, m => m.DisplayX);
-                    displayAreaEditor.Bind(c => c.ViewModel.Y, ViewModel.Settings, m => m.DisplayY);
-                }
-            };
-            
-            var displayAreaGroup = new GroupBox
-            {
-                Text = "Display Area",
-                Padding = App.GroupBoxPadding,
-                Content = displayAreaEditor
-            };
-
-            tabletAreaEditor = new AreaEditor("mm", true);
-            ViewModel.PropertyChanged += (sender, e) => 
-            {
-                if (e.PropertyName == nameof(ViewModel.Settings))
-                {
-                    tabletAreaEditor.Bind(c => c.ViewModel.Width, ViewModel.Settings, m => m.TabletWidth);
-                    tabletAreaEditor.Bind(c => c.ViewModel.Height, ViewModel.Settings, m => m.TabletHeight);
-                    tabletAreaEditor.Bind(c => c.ViewModel.X, ViewModel.Settings, m => m.TabletX);
-                    tabletAreaEditor.Bind(c => c.ViewModel.Y, ViewModel.Settings, m => m.TabletY);
-                    tabletAreaEditor.Bind(c => c.ViewModel.Rotation, ViewModel.Settings, m => m.TabletRotation);
-                }
-            };
-
-            var tabletAreaGroup = new GroupBox
-            {
-                Text = "Tablet Area",
-                Padding = App.GroupBoxPadding,
-                Content = tabletAreaEditor
-            };
+            var displayAreaGroup = ConstructDisplayArea();
+            var tabletAreaGroup = ConstructTabletArea();
 
             var lockAr = new CheckBox
             {
@@ -79,7 +44,7 @@ namespace OpenTabletDriverUX
                 Text = "Area Clipping"
             };
 
-            ViewModel.PropertyChanged += (sender, e) => 
+            ViewModel.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
                 {
@@ -93,77 +58,11 @@ namespace OpenTabletDriverUX
                         .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.EnableClipping));
                 }
             };
-            
-            var areaConfig = new TableLayout
-            {
-                Padding = new Padding(5),
-                Spacing = new Size(5, 5),
-                Rows = 
-                {
-                    new TableRow(new TableCell(displayAreaGroup, true))
-                    {
-                        ScaleHeight = true
-                    },
-                    new TableRow(new TableCell(tabletAreaGroup, true))
-                    {
-                        ScaleHeight = true
-                    },
-                    new TableRow()
-                    {
-                        ScaleHeight = false,
-                        Cells = 
-                        {
-                            new StackLayout
-                            {
-                                Orientation = Orientation.Horizontal,
-                                Items =
-                                {
-                                    lockAr,
-                                    areaClipping
-                                }
-                            }
-                        }
-                    }
-                }
-            };
 
-            var xSens = new TextBox();
-            ViewModel.PropertyChanged += (sender, e) => 
-            {
-                if (e.PropertyName == nameof(ViewModel.Settings))
-                {
-                    xSens.TextBinding.Convert(
-                        s => float.TryParse(s, out var v) ? v : 0,
-                        f => f.ToString())
-                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.XSensitivity));
-                }
-            };
+            var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, lockAr, areaClipping);
 
-            var xSensBox = new GroupBox
-            {
-                Text = "X Sensitivity",
-                Padding = App.GroupBoxPadding,
-                Content = TableLayout.Horizontal(5, new TableCell(xSens, true), new Label { Text = "mm/px", VerticalAlignment = VerticalAlignment.Center })
-            };
-
-            var ySens = new TextBox();
-            ViewModel.PropertyChanged += (sender, e) => 
-            {
-                if (e.PropertyName == nameof(ViewModel.Settings))
-                {
-                    ySens.TextBinding.Convert(
-                        s => float.TryParse(s, out var v) ? v : 0,
-                        f => f.ToString())
-                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.YSensitivity));
-                }
-            };
-
-            var ySensBox = new GroupBox
-            {
-                Text = "Y Sensitivity",
-                Padding = App.GroupBoxPadding,
-                Content = TableLayout.Horizontal(5, new TableCell(ySens, true), new Label { Text = "mm/px", VerticalAlignment = VerticalAlignment.Center })
-            };
+            var xSensBox = ConstructSensitivityEditor("X Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.XSensitivity));
+            var ySensBox = ConstructSensitivityEditor("Y Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.YSensitivity));
 
             var sensitivityConfig = new StackLayout
             {
@@ -176,60 +75,42 @@ namespace OpenTabletDriverUX
                     new StackLayoutItem(ySensBox, true)
                 }
             };
-            
-            var bindingColumns = 3;
-            var bindingRows = 7;
-            bindingLayout = new TableLayout(bindingColumns, bindingRows)
-            {
-                Padding = new Padding(5),
-                Spacing = new Size(5, 5)
-            };
-            for (int i = 0; i < bindingColumns; i++)
-                bindingLayout.SetColumnScale(i, true);
-            for (int i = 0; i < bindingRows; i++)
-                bindingLayout.SetRowScale(i, false);
 
-            filterEditor = new PluginManager<IFilter>();
-            filterEditor.GetPluginEnabled = () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path);
-            filterEditor.SetPluginEnabled += (sender, enabled) => 
-            {
-                var path = filterEditor.SelectedPlugin.Path;
-                if (enabled && !App.Settings.Filters.Contains(path))
-                    App.Settings.Filters.Add(path);
-                else if (!enabled && App.Settings.Filters.Contains(path))
-                    App.Settings.Filters.Remove(path);
-            };
+            bindingLayout = ConstructBindingLayout(3, 7);
 
-            residentEditor = new PluginManager<IResident>();
-            residentEditor.GetPluginEnabled = () => App.Settings.ResidentPlugins.Contains(residentEditor.SelectedPlugin.Path);
-            residentEditor.SetPluginEnabled += (sender, enabled) => 
-            {
-                var path = residentEditor.SelectedPlugin.Path;
-                if (enabled && !App.Settings.ResidentPlugins.Contains(path))
-                    App.Settings.ResidentPlugins.Add(path);
-                else if (!enabled && App.Settings.ResidentPlugins.Contains(path))
-                    App.Settings.ResidentPlugins.Remove(path);
-            };
-            
+            filterEditor = ConstructPluginManager<IFilter>(
+                () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),
+                (sender, enabled) =>
+                {
+                    var path = filterEditor.SelectedPlugin.Path;
+                    if (enabled && !App.Settings.Filters.Contains(path))
+                        App.Settings.Filters.Add(path);
+                    else if (!enabled && App.Settings.Filters.Contains(path))
+                        App.Settings.Filters.Remove(path);
+                }
+            );
+
+            residentEditor = ConstructPluginManager<IResident>(
+                () => App.Settings.ResidentPlugins.Contains(residentEditor.SelectedPlugin.Path),
+                (sender, enabled) =>
+                {
+                    var path = residentEditor.SelectedPlugin.Path;
+                    if (enabled && !App.Settings.ResidentPlugins.Contains(path))
+                        App.Settings.ResidentPlugins.Add(path);
+                    else if (!enabled && App.Settings.ResidentPlugins.Contains(path))
+                        App.Settings.ResidentPlugins.Remove(path);
+                }
+            );
+
             // Main Content
             return new TabControl
             {
-                Pages = 
+                Pages =
                 {
                     new TabPage
                     {
                         Text = "Area Configuration",
-                        Content = new TableLayout
-                        {
-                            Rows = 
-                            {
-                                new TableRow(new TableCell(areaConfig, true))
-                                {
-                                    ScaleHeight = true
-                                },
-                                new TableRow(new TableCell())
-                            }
-                        }
+                        Content = areaConfig
                     },
                     new TabPage
                     {
@@ -260,6 +141,132 @@ namespace OpenTabletDriverUX
                     }
                 }
             };
+        }
+
+        private static TableLayout ConstructAreaConfig(Control displayControl, Control tabletControl, params Control[] otherControls)
+        {
+            var miscControls = new StackLayout
+            {
+                Orientation = Orientation.Horizontal
+            };
+            foreach (var control in otherControls)
+                miscControls.Items.Add(control);
+            
+            return new TableLayout
+            {
+                Padding = new Padding(5),
+                Spacing = new Size(5, 5),
+                Rows =
+                {
+                    new TableRow(new TableCell(displayControl, true))
+                    {
+                        ScaleHeight = true
+                    },
+                    new TableRow(new TableCell(tabletControl, true))
+                    {
+                        ScaleHeight = true
+                    },
+                    new TableRow()
+                    {
+                        ScaleHeight = false,
+                        Cells =
+                        {
+                            miscControls
+                        }
+                    }
+                }
+            };
+        }
+
+        private Control ConstructTabletArea()
+        {
+            tabletAreaEditor = new AreaEditor("mm", true);
+            ViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    tabletAreaEditor.Bind(c => c.ViewModel.Width, ViewModel.Settings, m => m.TabletWidth);
+                    tabletAreaEditor.Bind(c => c.ViewModel.Height, ViewModel.Settings, m => m.TabletHeight);
+                    tabletAreaEditor.Bind(c => c.ViewModel.X, ViewModel.Settings, m => m.TabletX);
+                    tabletAreaEditor.Bind(c => c.ViewModel.Y, ViewModel.Settings, m => m.TabletY);
+                    tabletAreaEditor.Bind(c => c.ViewModel.Rotation, ViewModel.Settings, m => m.TabletRotation);
+                }
+            };
+
+            var tabletAreaGroup = new GroupBox
+            {
+                Text = "Tablet Area",
+                Padding = App.GroupBoxPadding,
+                Content = tabletAreaEditor
+            };
+            return tabletAreaGroup;
+        }
+
+        private Control ConstructDisplayArea()
+        {
+            displayAreaEditor = new AreaEditor("px");
+            ViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    displayAreaEditor.Bind(c => c.ViewModel.Width, ViewModel.Settings, m => m.DisplayWidth);
+                    displayAreaEditor.Bind(c => c.ViewModel.Height, ViewModel.Settings, m => m.DisplayHeight);
+                    displayAreaEditor.Bind(c => c.ViewModel.X, ViewModel.Settings, m => m.DisplayX);
+                    displayAreaEditor.Bind(c => c.ViewModel.Y, ViewModel.Settings, m => m.DisplayY);
+                }
+            };
+
+            var displayAreaGroup = new GroupBox
+            {
+                Text = "Display Area",
+                Padding = App.GroupBoxPadding,
+                Content = displayAreaEditor
+            };
+            return displayAreaGroup;
+        }
+
+        private Control ConstructSensitivityEditor(string header, IndirectBinding<float> dataContextBinding)
+        {
+            var textbox = new TextBox();
+            ViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    textbox.TextBinding.Convert(
+                        s => float.TryParse(s, out var v) ? v : 0,
+                        f => f.ToString())
+                        .BindDataContext(dataContextBinding);
+                }
+            };
+
+            return new GroupBox
+            {
+                Text = header,
+                Padding = App.GroupBoxPadding,
+                Content = TableLayout.Horizontal(5, new TableCell(textbox, true), new Label { Text = "mm/px", VerticalAlignment = VerticalAlignment.Center })
+            };
+        }
+
+        private TableLayout ConstructBindingLayout(int columns, int rows)
+        {
+            var layout = new TableLayout(columns, rows)
+            {
+                Padding = new Padding(5),
+                Spacing = new Size(5, 5)
+            };
+            for (int i = 0; i < columns; i++)
+                layout.SetColumnScale(i, true);
+            for (int i = 0; i < rows; i++)
+                layout.SetRowScale(i, false);
+            return layout;
+        }
+
+        private PluginManager<T> ConstructPluginManager<T>(Func<bool> getMethod, EventHandler<bool> setMethod)
+        {
+            var editor = new PluginManager<T>();
+            editor.GetPluginEnabled = getMethod;
+            editor.SetPluginEnabled += setMethod;
+            return editor;
         }
 
         private MenuBar ConstructMenu()

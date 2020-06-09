@@ -12,8 +12,8 @@ namespace OpenTabletDriverUX.Windows
         public DeviceListDialog()
         {
             Title = "Device List";
-            ClientSize = new Size(960 - 50, 730 - 50);
-            MinimumSize = new Size(960 - 50, 730 - 50);
+            ClientSize = new Size(960 - 100, 730 - 100);
+            MinimumSize = new Size(960 - 100, 730 - 100);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
             Devices = DeviceList.Local.GetHidDevices().ToList();
@@ -76,7 +76,12 @@ namespace OpenTabletDriverUX.Windows
         }
 
         private ListBox _deviceList = new ListBox();
-        private StackLayout _devicePropertyList = new StackLayout();
+        
+        private StackLayout _devicePropertyList = new StackLayout
+        {
+            Padding = new Padding(5),
+            Spacing = 5
+        };
 
         private IEnumerable<Control> GeneratePropertyControls() => new List<Control>
         {
