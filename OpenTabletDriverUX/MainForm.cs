@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Eto.Forms;
 using Eto.Drawing;
@@ -31,6 +32,8 @@ namespace OpenTabletDriverUX
         
         private Control ConstructMainControls()
         {
+            var outputModeSelector = ConstructOutputModeSelector();
+
             var displayAreaGroup = ConstructDisplayArea();
             var tabletAreaGroup = ConstructTabletArea();
 
@@ -59,7 +62,7 @@ namespace OpenTabletDriverUX
                 }
             };
 
-            var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, lockAr, areaClipping);
+            var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, outputModeSelector, lockAr, areaClipping);
 
             var xSensBox = ConstructSensitivityEditor("X Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.XSensitivity));
             var ySensBox = ConstructSensitivityEditor("Y Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.YSensitivity));
@@ -143,11 +146,13 @@ namespace OpenTabletDriverUX
             };
         }
 
-        private static TableLayout ConstructAreaConfig(Control displayControl, Control tabletControl, params Control[] otherControls)
+        private TableLayout ConstructAreaConfig(Control displayControl, Control tabletControl, params Control[] otherControls)
         {
             var miscControls = new StackLayout
             {
-                Orientation = Orientation.Horizontal
+                Orientation = Orientation.Horizontal,
+                Spacing = 5,
+                VerticalContentAlignment = VerticalAlignment.Center
             };
             foreach (var control in otherControls)
                 miscControls.Items.Add(control);
@@ -223,6 +228,24 @@ namespace OpenTabletDriverUX
                 Content = displayAreaEditor
             };
             return displayAreaGroup;
+        }
+
+        private Control ConstructOutputModeSelector()
+        {
+            var control = new OutputModeSelector
+            {
+                Width = 300
+            };
+            control.SelectedModeChanged += (sender, mode) => App.Settings.OutputMode = mode.Path;
+            ViewModel.PropertyChanged += (sender, e) => 
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode);
+                    control.SelectedIndex = control.OutputModes.IndexOf(mode);
+                }
+            };
+            return control;
         }
 
         private Control ConstructSensitivityEditor(string header, IndirectBinding<float> dataContextBinding)
