@@ -111,7 +111,8 @@ namespace OpenTabletDriverDaemon
                     {
                         X = Settings.TabletX,
                         Y = Settings.TabletY
-                    }
+                    },
+                    Rotation = settings.TabletRotation
                 };
                 Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 

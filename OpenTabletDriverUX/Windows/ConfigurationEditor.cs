@@ -9,7 +9,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using HidSharp;
 using TabletDriverLib;
+using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriverUX.Windows
@@ -25,10 +27,14 @@ namespace OpenTabletDriverUX.Windows
 
             // Main Controls
             Configurations = ReadConfigurations(AppInfo.ConfigurationDirectory);
-            SelectedConfiguration = Configurations[0];
-            _configList.SelectedIndexChanged += (sender, e) => SelectedConfiguration = Configurations[_configList.SelectedIndex];
+            _configList.SelectedIndexChanged += (sender, e) => 
+            {
+                if (_configList.SelectedIndex >= 0)
+                    SelectedConfiguration = Configurations[_configList.SelectedIndex];
+            };
+            _configList.SelectedIndex = 0;
             
-            this.Content = new Splitter
+            Content = new Splitter
             {
                 Orientation = Orientation.Horizontal,
                 Panel1MinimumSize = 200,
@@ -53,6 +59,15 @@ namespace OpenTabletDriverUX.Windows
             var saveDirectory = new Command { MenuText = "Save configurations...", Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.S };
             saveDirectory.Executed += (sender, e) => SaveConfigurationsDialog();
 
+            var newConfiguration = new Command { ToolBarText = "New configuration", Shortcut = Application.Instance.CommonModifier | Keys.N };
+            newConfiguration.Executed += (sender, e) => CreateNewConfiguration();
+
+            var deleteConfiguration = new Command { ToolBarText = "Delete configuration" };
+            deleteConfiguration.Executed += (sender, e) => DeleteConfiguration(SelectedConfiguration);
+
+            var generateConfiguration = new Command { ToolBarText = "Generate configuration..." };
+            generateConfiguration.Executed += async (sender, e) => await GenerateConfiguration();
+
             // Menu
             Menu = new MenuBar
             {
@@ -71,6 +86,16 @@ namespace OpenTabletDriverUX.Windows
                 },
                 QuitItem = quitCommand,
                 AboutItem = aboutCommand
+            };
+
+            ToolBar = new ToolBar
+            {
+                Items =
+                {
+                    newConfiguration,
+                    deleteConfiguration,
+                    generateConfiguration
+                }
             };
         }
 
@@ -157,6 +182,48 @@ namespace OpenTabletDriverUX.Windows
                     var dir = new DirectoryInfo(folderDialog.Directory);
                     WriteConfigurations(Configurations, dir);
                     break;
+            }
+        }
+
+        private void CreateNewConfiguration()
+        {
+            var newTablet = new TabletProperties
+            {
+                TabletName = "New Tablet"
+            };
+            Configurations = Configurations.Append(newTablet).ToList();
+            _configList.SelectedIndex = Configurations.IndexOf(newTablet);
+        }
+
+        private void DeleteConfiguration(TabletProperties config)
+        {
+            Configurations = Configurations.Where(c => c != config).ToList();
+            if (SelectedConfiguration == config)
+                _configList.SelectedIndex = Configurations.Count - 1;
+        }
+
+        private async Task GenerateConfiguration()
+        {
+            var dialog = new DeviceListDialog();
+            if (await dialog.ShowModalAsync() is HidDevice device)
+            {
+                try
+                {
+                    var generatedConfig = new TabletProperties
+                    {
+                        TabletName = device.GetManufacturer() + " " + device.GetProductName(),
+                        VendorID = device.VendorID,
+                        ProductID = device.ProductID,
+                        InputReportLength = (uint)device.GetMaxInputReportLength(),
+                        OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                    };
+                    Configurations = Configurations.Append(generatedConfig).ToList();
+                    _configList.SelectedIndex = Configurations.IndexOf(generatedConfig);
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception(ex);
+                }
             }
         }
 
