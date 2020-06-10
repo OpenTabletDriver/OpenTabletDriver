@@ -1,7 +1,6 @@
 using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace OpenTabletDriver.Console

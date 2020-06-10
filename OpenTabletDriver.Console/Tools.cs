@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.CommandLine;
-using System.Linq;
 
 namespace OpenTabletDriver.Console
 {

@@ -9,13 +9,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeLib", "NativeLib\Nati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TabletDriverPlugin", "TabletDriverPlugin\TabletDriverPlugin.csproj", "{1EF3ED59-1D11-4814-907B-4F8C90B9032E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriverDaemon", "OpenTabletDriverDaemon\OpenTabletDriverDaemon.csproj", "{18F3FBE6-110E-4F14-912F-14273028191C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Daemon", "OpenTabletDriver.Daemon\OpenTabletDriver.Daemon.csproj", "{18F3FBE6-110E-4F14-912F-14273028191C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriverUX.Gtk", "OpenTabletDriverUX.Gtk\OpenTabletDriverUX.Gtk.csproj", "{7A31CE07-C732-4DCF-BBAD-01EFC55A1C60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX.Gtk", "OpenTabletDriver.UX.Gtk\OpenTabletDriver.UX.Gtk.csproj", "{7A31CE07-C732-4DCF-BBAD-01EFC55A1C60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriverUX", "OpenTabletDriverUX\OpenTabletDriverUX.csproj", "{1A9166D9-0B7E-41B6-8210-EC04E17E9C3E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX", "OpenTabletDriver.UX\OpenTabletDriver.UX.csproj", "{1A9166D9-0B7E-41B6-8210-EC04E17E9C3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriverUX.Wpf", "OpenTabletDriverUX.Wpf\OpenTabletDriverUX.Wpf.csproj", "{CAD634C1-780D-4123-8D58-385A50F3F33C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX.Wpf", "OpenTabletDriver.UX.Wpf\OpenTabletDriver.UX.Wpf.csproj", "{CAD634C1-780D-4123-8D58-385A50F3F33C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Console", "OpenTabletDriver.Console\OpenTabletDriver.Console.csproj", "{040FFF57-84CB-464C-83A5-B99002FF6605}"
 EndProject
