@@ -1,3 +1,4 @@
+using System;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -8,6 +9,7 @@ namespace OpenTabletDriver.UX.Controls
         public AreaEditor(string unit, bool enableRotation = false)
         {
             this.DataContext = new AreaViewModel();
+            this.ContextMenu = new ContextMenu();
             
             areaDisplay = new AreaDisplay(unit)
             {
@@ -103,6 +105,22 @@ namespace OpenTabletDriver.UX.Controls
                 new TableCell(areaDisplay, true)
             };
             Content = TableLayout.Horizontal(5, cells);
+
+            AppendMenuItem("Align area to the left", () => ViewModel.X = ViewModel.Width / 2);
+            AppendMenuItem("Align area to the right", () => ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2));
+            AppendMenuItem("Align area to the top", () => ViewModel.Y = ViewModel.Height / 2);
+            AppendMenuItem("Align area to the bottom", ()  => ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2));
+            AppendMenuItem("Align area to the center", () => 
+            {
+                ViewModel.X = ViewModel.MaxWidth / 2;
+                ViewModel.Y = ViewModel.MaxHeight / 2;
+            });
+            
+            this.MouseDown += (sender, e) =>
+            {
+                if (e.Buttons.HasFlag(MouseButtons.Alternate))
+                    this.ContextMenu.Show(this);
+            };
         }
 
         public AreaViewModel ViewModel
@@ -121,6 +139,27 @@ namespace OpenTabletDriver.UX.Controls
                     Text = unit,
                     VerticalAlignment = VerticalAlignment.Center,
                 });
+        }
+
+        public Command AppendMenuItem(string menuText, Action handler)
+        {
+            var command = new Command { MenuText = menuText };
+            command.Executed += (sender, e) => handler();
+            this.ContextMenu.Items.Add(command);
+            return command;
+        }
+
+        public CheckCommand AppendCheckBoxMenuItem(string menuText, Action<bool> handler)
+        {
+            var command = new CheckCommand { MenuText = menuText };
+            command.Executed += (sender, e) => handler(command.Checked);
+            this.ContextMenu.Items.Add(command);
+            return command;
+        }
+
+        public void AppendMenuItemSeparator()
+        {
+            this.ContextMenu.Items.Add(new SeparatorMenuItem());
         }
 
         private AreaDisplay areaDisplay;

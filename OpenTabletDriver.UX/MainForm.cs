@@ -10,6 +10,7 @@ using TabletDriverLib;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 using TabletDriverPlugin.Resident;
+using TabletDriverPlugin.Platform.Display;
 
 namespace OpenTabletDriver.UX
 {
@@ -37,11 +38,6 @@ namespace OpenTabletDriver.UX
             var displayAreaGroup = ConstructDisplayArea();
             var tabletAreaGroup = ConstructTabletArea();
 
-            var lockAr = new CheckBox
-            {
-                Text = "Lock Aspect Ratio"
-            };
-
             var areaClipping = new CheckBox
             {
                 Text = "Area Clipping"
@@ -51,10 +47,6 @@ namespace OpenTabletDriver.UX
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
                 {
-                    lockAr.CheckedBinding.Convert(
-                        (b) => b.HasValue ? b.Value : false,
-                        (b) => (bool?)b)
-                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.LockAspectRatio));
                     areaClipping.CheckedBinding.Convert(
                         (b) => b.HasValue ? b.Value : false,
                         (b) => (bool?)b)
@@ -62,7 +54,7 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, outputModeSelector, lockAr, areaClipping);
+            var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, outputModeSelector, areaClipping);
 
             var xSensBox = ConstructSensitivityEditor("X Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.XSensitivity));
             var ySensBox = ConstructSensitivityEditor("Y Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.YSensitivity));
@@ -197,6 +189,14 @@ namespace OpenTabletDriver.UX
                     tabletAreaEditor.Bind(c => c.ViewModel.Rotation, ViewModel.Settings, m => m.TabletRotation);
                 }
             };
+            
+            tabletAreaEditor.AppendMenuItemSeparator();
+            var lockAr = tabletAreaEditor.AppendCheckBoxMenuItem("Lock aspect ratio", (value) => ViewModel.Settings.LockAspectRatio = value);
+            ViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                    lockAr.Checked = ViewModel.Settings.LockAspectRatio;
+            };
 
             var tabletAreaGroup = new GroupBox
             {
@@ -220,6 +220,25 @@ namespace OpenTabletDriver.UX
                     displayAreaEditor.Bind(c => c.ViewModel.Y, ViewModel.Settings, m => m.DisplayY);
                 }
             };
+            displayAreaEditor.AppendMenuItemSeparator();
+            foreach (var display in TabletDriverLib.Interop.Platform.VirtualScreen.Displays)
+                displayAreaEditor.AppendMenuItem($"Set to {display}", 
+                    () => 
+                    {
+                        displayAreaEditor.ViewModel.Width = display.Width;
+                        displayAreaEditor.ViewModel.Height = display.Height;
+                        if (display is IVirtualScreen virtualScreen)
+                        {
+                            displayAreaEditor.ViewModel.X = virtualScreen.Width / 2;
+                            displayAreaEditor.ViewModel.Y = virtualScreen.Height / 2;
+                        }
+                        else
+                        {
+                            virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+                            displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
+                            displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
+                        }
+                    });
 
             var displayAreaGroup = new GroupBox
             {
