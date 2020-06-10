@@ -19,8 +19,11 @@ namespace OpenTabletDriverDaemon
             StreamWriter = new StreamWriter(PipeServer);
             Log.Output += (sender, message) =>
             {
-                StreamWriter.WriteLine(Log.GetStringFormat(message));
-                StreamWriter.Flush();
+                if (PipeServer.IsConnected)
+                {
+                    StreamWriter.WriteLine(Log.GetStringFormat(message));
+                    StreamWriter.Flush();
+                }
             };
         }
 

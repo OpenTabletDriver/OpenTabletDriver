@@ -71,7 +71,7 @@ namespace OpenTabletDriverUX.Windows
 
         private void Return<T>(T binding) where T : TabletDriverPlugin.IBinding
         {
-            Return(typeof(T).FullName + ", " + binding.Property);
+            Return(BindingTools.GetBindingString(binding));
         }
 
         private void Return(string result)

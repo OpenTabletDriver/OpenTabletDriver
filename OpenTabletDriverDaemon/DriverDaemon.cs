@@ -112,7 +112,7 @@ namespace OpenTabletDriverDaemon
                         X = Settings.TabletX,
                         Y = Settings.TabletY
                     },
-                    Rotation = settings.TabletRotation
+                    Rotation = Settings.TabletRotation
                 };
                 Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
@@ -136,7 +136,7 @@ namespace OpenTabletDriverDaemon
             {
                 bindingHandler.TipBinding = BindingTools.GetBinding(Settings.TipButton);
                 bindingHandler.TipActivationPressure = Settings.TipActivationPressure;
-                Log.Write("Settings", $"Tip Binding: '{bindingHandler.TipBinding?.Name ?? "None"}'@{bindingHandler.TipActivationPressure}%");
+                Log.Write("Settings", $"Tip Binding: '{bindingHandler.TipBinding.ToString() ?? "None"}'@{bindingHandler.TipActivationPressure}%");
 
                 if (Settings.PenButtons != null)
                 {
@@ -261,6 +261,7 @@ namespace OpenTabletDriverDaemon
         public IEnumerable<string> GetChildTypes<T>()
         {
             return from type in PluginManager.GetChildTypes<T>()
+                where !type.IsInterface
                 select type.FullName;
         }
     }

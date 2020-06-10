@@ -9,14 +9,8 @@ namespace TabletDriverLib.Binding
     [PluginName("Mouse Button Binding")]
     public class MouseBinding : IBinding
     {
-        public string Name
-        {
-            get
-            {
-                return nameof(MouseBinding) + ": " + Property;
-            }
-        }
-
+        public string Property { set; get; }
+        
         public Action Press 
         {
             get 
@@ -40,9 +34,7 @@ namespace TabletDriverLib.Binding
                     return null;
             }
         }
-
-        public string Property { set; get; }
-
-        public override string ToString() => Name;
+        
+        public override string ToString() => BindingTools.GetShortBindingString(this);
     }
 }

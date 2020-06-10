@@ -13,6 +13,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <VersionPrefix>0.3.0</VersionPrefix>
   </PropertyGroup>
 
 </Project>

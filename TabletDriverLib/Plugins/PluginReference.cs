@@ -46,7 +46,7 @@ namespace TabletDriverLib.Plugins
             return null;
         }
 
-        public override string ToString() => Name;
+        public override string ToString() => string.IsNullOrWhiteSpace(Name) ? Path : Name;
 
         public T Construct<T>() where T : class
         {
