@@ -39,8 +39,8 @@ namespace OpenTabletDriver.Daemon
         private Settings Settings { set; get; }
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
-        private TabletDebuggerServer TabletDebuggerServer { set; get; }
-        private TabletDebuggerServer AuxDebuggerServer { set; get; }
+        private DeviceDebuggerServer TabletDebuggerServer { set; get; }
+        private DeviceDebuggerServer AuxDebuggerServer { set; get; }
         private LogServer LogServer { set; get; }
 
         public bool SetTablet(TabletProperties tablet)
@@ -204,14 +204,14 @@ namespace OpenTabletDriver.Daemon
             {
                 if (Driver.TabletReader != null)
                 {
-                    TabletDebuggerServer = new TabletDebuggerServer();
+                    TabletDebuggerServer = new DeviceDebuggerServer();
                     yield return TabletDebuggerServer.Identifier;
                     Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
                 }
                 
                 if (Driver.AuxReader != null)
                 {
-                    AuxDebuggerServer = new TabletDebuggerServer();
+                    AuxDebuggerServer = new DeviceDebuggerServer();
                     yield return AuxDebuggerServer.Identifier;
                     Driver.AuxReader.Report += AuxDebuggerServer.HandlePacket;
                 }

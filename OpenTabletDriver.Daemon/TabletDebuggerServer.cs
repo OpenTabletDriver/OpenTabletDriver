@@ -2,13 +2,14 @@
 using System.IO;
 using System.IO.Pipes;
 using Newtonsoft.Json;
+using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Daemon
 {
-    internal class TabletDebuggerServer : IDisposable
+    internal class DeviceDebuggerServer : IDisposable
     {
-        public TabletDebuggerServer()
+        public DeviceDebuggerServer()
         {
             PipeServer = new NamedPipeServerStream(Identifier.ToString());
             InitializeAsync();
@@ -17,34 +18,30 @@ namespace OpenTabletDriver.Daemon
         private async void InitializeAsync()
         {
             await PipeServer.WaitForConnectionAsync();
-            StreamWriter = new StreamWriter(PipeServer);
-            
-            JsonWriter = new JsonTextWriter(StreamWriter);
+            Log.Debug($"Started device debugger server {{{Identifier}}}");
+            JsonWriter = new JsonTextWriter(new StreamWriter(PipeServer));
             await JsonWriter.WriteStartArrayAsync();
         }
 
         public void HandlePacket(object sender, IDeviceReport report)
         {
-            if (PipeServer.IsConnected)
-            {
+            if (PipeServer.IsConnected && JsonWriter != null)
                 Serializer.Serialize(JsonWriter, report);
-            }
         }
 
         public void Dispose()
         {
             JsonWriter.WriteEndArray();
-
             PipeServer.Disconnect();
             PipeServer.Dispose();
             PipeServer = null;
-            StreamWriter = null;
+            
+            Log.Debug($"Stopped tablet debugger server {{{Identifier}}}.");
         }
 
         public Guid Identifier { private set; get; } = Guid.NewGuid();
 
         private NamedPipeServerStream PipeServer { set; get; }
-        private StreamWriter StreamWriter { set; get; }
         private JsonTextWriter JsonWriter { set; get; }
         private JsonSerializer Serializer { set; get; } = new JsonSerializer
         {

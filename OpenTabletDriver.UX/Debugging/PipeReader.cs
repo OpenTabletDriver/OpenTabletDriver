@@ -2,26 +2,17 @@ using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using TabletDriverLib.Contracts;
-using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.UX.Debugging
 {
-    public class PipeReader<T> : IDeviceReader<T>, IDisposable where T : IDeviceReport
+    public class PipeReader<T> : IDisposable where T : IDeviceReport
     {
-        public PipeReader(string pipeName)
+        public PipeReader(Guid serverId)
         {
-            InitializeAsync(pipeName);
-        }
-
-        private async void InitializeAsync(string pipeName)
-        {
-            PipeClient = new NamedPipeClientStream(pipeName);
-            await PipeClient.ConnectAsync();
+            ServerID = serverId;
             WorkerThread = new Thread(Main)
             {
                 Name = "PipeReader Worker Thread"
@@ -29,10 +20,9 @@ namespace OpenTabletDriver.UX.Debugging
             WorkerThread.Start();
         }
 
-        public NamedPipeClientStream PipeClient { private set; get; }
-        public bool Reading { protected set; get; }
-        public IReportParser<T> Parser { set; get; }
+        public bool Reading { private set; get; } = true;
         public virtual event EventHandler<T> Report;
+        public Guid ServerID { private set; get; }
 
         private CancellationTokenSource cancelSource = new CancellationTokenSource();
 
@@ -44,11 +34,12 @@ namespace OpenTabletDriver.UX.Debugging
 
         private async void Main()
         {
-            Reading = true;
             var serializer = new JsonSerializer();
-            using (var sr = new StreamReader(PipeClient))
+            using (var pipeClient = new NamedPipeClientStream(ServerID.ToString()))
+            using (var sr = new StreamReader(pipeClient))
             using (var reader = new JsonTextReader(sr))
             {
+                await pipeClient.ConnectAsync();
                 try
                 {
                     while (Reading)

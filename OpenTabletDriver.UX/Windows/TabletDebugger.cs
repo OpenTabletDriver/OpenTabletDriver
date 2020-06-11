@@ -79,23 +79,19 @@ namespace OpenTabletDriver.UX.Windows
 
             if (guids.Count > 0)
             {
-                var tabletReader = new PipeReader<DebugTabletReport>(guids[0].ToString());
+                var tabletReader = new PipeReader<DebugTabletReport>(guids[0]);
                 tabletReader.Report += HandleReport;
                 this.Closing += (sender, e) => tabletReader.Dispose();
             }
             
             if (guids.Count > 1)
             {
-                var auxReader = new PipeReader<DebugAuxReport>(guids[1].ToString());
+                var auxReader = new PipeReader<DebugAuxReport>(guids[1]);
                 auxReader.Report += HandleReport;
                 this.Closing += (sender, e) => auxReader.Dispose();
             }
 
-            this.Closing += async (sender, e) => 
-            {
-                // For whatever reason, this sometimes hangs the entire GUI application.
-                await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(false));
-            };
+            this.Closing += async (sender, e) => await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(false));
         }
 
         private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl;
