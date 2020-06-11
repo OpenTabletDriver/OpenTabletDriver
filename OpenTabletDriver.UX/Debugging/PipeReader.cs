@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TabletDriverLib.Contracts;
@@ -21,7 +22,10 @@ namespace OpenTabletDriver.UX.Debugging
         {
             PipeClient = new NamedPipeClientStream(pipeName);
             await PipeClient.ConnectAsync();
-            WorkerThread = new Thread(Main);
+            WorkerThread = new Thread(Main)
+            {
+                Name = "PipeReader Worker Thread"
+            };
             WorkerThread.Start();
         }
 
@@ -30,13 +34,15 @@ namespace OpenTabletDriver.UX.Debugging
         public IReportParser<T> Parser { set; get; }
         public virtual event EventHandler<T> Report;
 
+        private CancellationTokenSource cancelSource = new CancellationTokenSource();
+
         private Thread WorkerThread;
         private static readonly JsonSerializerSettings serializerSettings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.All
         };
 
-        private void Main()
+        private async void Main()
         {
             Reading = true;
             var serializer = new JsonSerializer();
@@ -47,7 +53,7 @@ namespace OpenTabletDriver.UX.Debugging
                 {
                     while (Reading)
                     {
-                        reader.Read();
+                        await reader.ReadAsync(cancelSource.Token);
                         if (reader.TokenType == JsonToken.StartObject)
                         {
                             JObject jsonObject = (JObject)serializer.Deserialize(reader);
@@ -66,8 +72,7 @@ namespace OpenTabletDriver.UX.Debugging
         public void Dispose()
         {
             Reading = false;
-            if (PipeClient.IsConnected)
-                PipeClient.Dispose();
+            cancelSource.Cancel();
         }
     }
 }
