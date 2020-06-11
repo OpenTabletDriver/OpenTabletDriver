@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Console
                 Name = "otd"
             };
             root.AddRange(GenerateIOCommands());
+            root.AddRange(GenerateActionCommands());
             root.AddRange(GenerateModifyCommands());
             root.AddRange(GenerateRequestCommands());
             root.AddRange(GenerateListCommands());
@@ -28,6 +29,11 @@ namespace OpenTabletDriver.Console
         {
             yield return CreateCommand<FileInfo>(LoadSettings, "Load settings from a file", "load");
             yield return CreateCommand<FileInfo>(SaveSettings, "Save settings to a file", "save");
+        }
+
+        static IEnumerable<Command> GenerateActionCommands()
+        {
+            yield return CreateCommand(Detect, "Detects tablets");
         }
 
         static IEnumerable<Command> GenerateModifyCommands()
@@ -55,11 +61,6 @@ namespace OpenTabletDriver.Console
             yield return CreateCommand(GetOutputMode, "Gets the current output mode");
             yield return CreateCommand(GetFilters, "Gets the currently enabled filters");
             yield return CreateCommand(GetResidents, "Gets the currently enabled residents");
-        }
-
-        static IEnumerable<Command> GenerateActionCommands()
-        {
-            yield return CreateCommand(Detect, "Detects tablets");
         }
 
         static IEnumerable<Command> GenerateListCommands()
