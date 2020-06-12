@@ -75,7 +75,8 @@ namespace OpenTabletDriver.Console
         {
             Command[] commands = 
             {
-                CreateCommand(GetAllSettingsJson, "Gets all current settings in JSON format")
+                CreateCommand(GetAllSettingsJson, "Gets all current settings in JSON format"),
+                CreateCommand(GetDiagnostics, "Gets diagnostic information in JSON format")
             };
             foreach (var command in commands)
                 command.IsHidden = true;

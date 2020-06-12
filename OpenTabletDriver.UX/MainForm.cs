@@ -11,6 +11,7 @@ using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 using TabletDriverPlugin.Resident;
 using TabletDriverPlugin.Platform.Display;
+using TabletDriverLib.Diagnostics;
 
 namespace OpenTabletDriver.UX
 {
@@ -19,7 +20,7 @@ namespace OpenTabletDriver.UX
         public MainForm()
         {
             this.DataContext = new MainFormViewModel();
-            
+
             Title = "OpenTabletDriver";
             ClientSize = new Size(960, 750);
             MinimumSize = new Size(960, 750);
@@ -30,7 +31,7 @@ namespace OpenTabletDriver.UX
 
             InitializeAsync();
         }
-        
+
         private Control ConstructMainControls()
         {
             var outputModeSelector = ConstructOutputModeSelector();
@@ -148,7 +149,7 @@ namespace OpenTabletDriver.UX
             };
             foreach (var control in otherControls)
                 miscControls.Items.Add(control);
-            
+
             return new TableLayout
             {
                 Padding = new Padding(5),
@@ -189,7 +190,7 @@ namespace OpenTabletDriver.UX
                     tabletAreaEditor.Bind(c => c.ViewModel.Rotation, ViewModel.Settings, m => m.TabletRotation);
                 }
             };
-            
+
             tabletAreaEditor.AppendMenuItemSeparator();
             var lockAr = tabletAreaEditor.AppendCheckBoxMenuItem("Lock aspect ratio", (value) => ViewModel.Settings.LockAspectRatio = value);
             ViewModel.PropertyChanged += (sender, e) =>
@@ -222,8 +223,8 @@ namespace OpenTabletDriver.UX
             };
             displayAreaEditor.AppendMenuItemSeparator();
             foreach (var display in TabletDriverLib.Interop.Platform.VirtualScreen.Displays)
-                displayAreaEditor.AppendMenuItem($"Set to {display}", 
-                    () => 
+                displayAreaEditor.AppendMenuItem($"Set to {display}",
+                    () =>
                     {
                         displayAreaEditor.ViewModel.Width = display.Width;
                         displayAreaEditor.ViewModel.Height = display.Height;
@@ -256,7 +257,7 @@ namespace OpenTabletDriver.UX
                 Width = 300
             };
             control.SelectedModeChanged += (sender, mode) => App.Settings.OutputMode = mode.Path;
-            ViewModel.PropertyChanged += (sender, e) => 
+            ViewModel.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
                 {
@@ -343,6 +344,9 @@ namespace OpenTabletDriver.UX
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
+            var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
+            exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
+
             return new MenuBar
             {
                 Items =
@@ -369,6 +373,14 @@ namespace OpenTabletDriver.UX
                             detectTablet,
                             showTabletDebugger,
                             configurationEditor
+                        }
+                    },
+                    new ButtonMenuItem
+                    {
+                        Text = "&Help",
+                        Items =
+                        {
+                            exportDiagnostics
                         }
                     }
                 },
@@ -482,7 +494,7 @@ namespace OpenTabletDriver.UX
             var fileDialog = new SaveFileDialog
             {
                 Title = "Save OpenTabletDriver settings...",
-                Filters = 
+                Filters =
                 {
                     new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
                 }
@@ -539,6 +551,30 @@ namespace OpenTabletDriver.UX
             configEditor.Show();
         }
 
+        private async Task ExportDiagnostics()
+        {
+            var log = await App.DriverDaemon.InvokeAsync(d => d.GetCurrentLog());
+            var diagnosticDump = new DiagnosticInfo(log);
+            var fileDialog = new SaveFileDialog
+            {
+                Title = "Exporting diagnostic information...",
+                Filters =
+                {
+                    new FileFilter("Diagnostic information", ".json")
+                }
+            };
+            switch (fileDialog.ShowDialog(this))
+            {
+                case DialogResult.Ok:
+                case DialogResult.Yes:
+                    var file = new FileInfo(fileDialog.FileName);
+                    using (var fs = file.OpenWrite())
+                    using (var sw = new StreamWriter(fs))
+                        await sw.WriteLineAsync(diagnosticDump.ToString());
+                    break;
+            }
+        }
+
         private void SetTabletAreaDimensions(TabletProperties tablet)
         {
             tabletAreaEditor.ViewModel.MaxWidth = tablet.Width;
@@ -557,7 +593,7 @@ namespace OpenTabletDriver.UX
                 Content = tipBindingControl
             };
             bindingLayout.Add(tipBindingGroup, 0, 0);
-            
+
             var tipPressureControl = new Slider
             {
                 MinValue = 0,
@@ -580,7 +616,7 @@ namespace OpenTabletDriver.UX
                 {
                     Tag = i
                 };
-                penBindingControl.BindingUpdated += (sender, binding) => 
+                penBindingControl.BindingUpdated += (sender, binding) =>
                 {
                     var index = (int)(sender as BindingDisplay).Tag;
                     ViewModel.Settings.PenButtons[index] = binding;

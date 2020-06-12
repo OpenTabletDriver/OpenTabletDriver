@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
+using TabletDriverLib.Diagnostics;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Resident;
@@ -264,6 +265,13 @@ namespace OpenTabletDriver.Console
         {
             var settings = await GetSettings();
             await Out.WriteLineAsync(JsonConvert.SerializeObject(settings, Formatting.Indented));
+        }
+
+        static async Task GetDiagnostics()
+        {
+            var log = await DriverDaemon.InvokeAsync(d => d.GetCurrentLog());
+            var diagnostics = new DiagnosticInfo(log);
+            await Out.WriteLineAsync(diagnostics.ToString());
         }
             
         #endregion
