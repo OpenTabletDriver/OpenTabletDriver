@@ -17,10 +17,11 @@ namespace TabletDriverLib.Output
 
         private bool TipState = false;
         private IList<bool> PenButtonStates = new bool[2];
-        private IList<bool> AuxButtonStates = new bool[6];
+        private IList<bool> AuxButtonStates = new bool[8];
 
         public void HandleBinding(IDeviceReport report)
         {
+
             if (report is ITabletReport tabletReport && tabletReport.ReportID >= TabletProperties.ActiveReportID)
                 HandlePenBinding(tabletReport);
             if (report is IAuxReport auxReport)

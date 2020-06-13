@@ -1,4 +1,7 @@
-﻿using TabletDriverPlugin.Tablet;
+using System;
+using TabletDriverLib.Tablet;
+using TabletDriverPlugin;
+using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Vendors.Vikoo
 {
@@ -6,7 +9,10 @@ namespace TabletDriverLib.Vendors.Vikoo
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            return new HK708Report(data);
+            if(data[1] == 224)
+                return new HK708AuxReport(data);
+            else
+                return new TabletReport(data);
         }
     }
 }
