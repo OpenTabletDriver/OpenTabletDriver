@@ -11,6 +11,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
 using TabletDriverLib;
+using TabletDriverLib.Tablet;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
@@ -231,7 +232,8 @@ namespace OpenTabletDriver.UX.Windows
             {
                 GetControl("Name",
                     () => SelectedConfiguration.TabletName,
-                    (o) => SelectedConfiguration.TabletName = o),
+                    (o) => SelectedConfiguration.TabletName = o
+                ),
                 GetControl("Vendor ID",
                     () => SelectedConfiguration.VendorID.ToString(),
                     (o) => SelectedConfiguration.VendorID = int.TryParse(o, out var val) ? val : 0
@@ -250,7 +252,9 @@ namespace OpenTabletDriver.UX.Windows
                 ),
                 GetControl("Report Parser",
                     () => SelectedConfiguration.ReportParserName,
-                    (o) => SelectedConfiguration.ReportParserName = o),
+                    (o) => SelectedConfiguration.ReportParserName = o,
+                    typeof(TabletReportParser).FullName
+                ),
                 GetControl("Custom Input Report Length",
                     () => SelectedConfiguration.CustomInputReportLength.ToString(),
                     (o) => SelectedConfiguration.CustomInputReportLength = uint.TryParse(o, out var val) ? val : 0
@@ -289,7 +293,8 @@ namespace OpenTabletDriver.UX.Windows
                 ),
                 GetControl("Auxiliary Report Parser",
                     () => SelectedConfiguration.AuxReportParserName,
-                    (o) => SelectedConfiguration.AuxReportParserName = o
+                    (o) => SelectedConfiguration.AuxReportParserName = o,
+                    typeof(AuxReportParser).FullName
                 ),
                 GetControl("Feature Initialization Report",
                     () => SelectedConfiguration.FeatureInitReport != null ? ToHexValue(SelectedConfiguration.FeatureInitReport) : string.Empty,
@@ -312,9 +317,12 @@ namespace OpenTabletDriver.UX.Windows
                 ),
             };
 
-        private GroupBox GetControl(string groupName, Func<string> getValue, Action<string> setValue)
+        private GroupBox GetControl(string groupName, Func<string> getValue, Action<string> setValue, string placeholder = null)
         {
-            var textBox = new TextBox();
+            var textBox = new TextBox
+            {
+                PlaceholderText = placeholder
+            };
             textBox.TextBinding.Bind(getValue, setValue);
             return new GroupBox
             {

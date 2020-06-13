@@ -28,7 +28,10 @@ namespace OpenTabletDriver.UX.Controls
                 PipeClient = new NamedPipeClientStream(ServerID.ToString());
                 await PipeClient.ConnectAsync();
                 
-                MainThread = new Thread(Main);
+                MainThread = new Thread(Main)
+                {
+                    Name = "Log Client Thread"
+                };
                 MainThread.Start();
             }
         }
