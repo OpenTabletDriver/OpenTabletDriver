@@ -40,9 +40,9 @@ namespace TabletDriverLib
 
                 var inputReportMatch = productMatch.Where(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
 
-                var activateReportMatch = inputReportMatch.Where(d => HaveReportID(d, tablet.ActiveReportID));
+                var hidReportIDMatch = tablet.HidReportID != -1 ?  inputReportMatch.Where(d => HaveReportID(d, (uint)tablet.HidReportID)) : inputReportMatch;
 
-                var matchedDevice = activateReportMatch.Count() > 0 ? activateReportMatch : inputReportMatch;
+                var matchedDevice = hidReportIDMatch.Count() > 0 ? hidReportIDMatch : inputReportMatch;
 
                 var tabletDevice = tablet.OutputReportLength > 0 ? matchedDevice.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : matchedDevice.FirstOrDefault();
                 

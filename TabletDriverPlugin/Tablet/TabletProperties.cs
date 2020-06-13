@@ -10,6 +10,7 @@ namespace TabletDriverPlugin.Tablet
         private uint _inputReportLength, _customInputReportLength, _reportId, _auxReportLength, _outputReportLength, _maxPressure;
         private float _width, _height, _maxX, _maxY;
         private byte[] _featureInitReport;
+        private int _hidReportID = -1;
 
         /// <summary>
         /// The device's name.
@@ -199,8 +200,19 @@ namespace TabletDriverPlugin.Tablet
             get => _featureInitReport;
         }
 
+        /// <summary>
+        /// TO filter interface contain such report hid report id.
+        /// </summary>
+        /// <value></value>
+        [JsonProperty("HidReportID")]
+        public int HidReportID
+        {
+            set => this.RaiseAndSetIfChanged(ref _hidReportID, value);
+            get => _hidReportID;
+        }
+
         #region Json Serialization
-            
+
         public void Write(FileInfo file)
         {
             var str = JsonConvert.SerializeObject(this, Formatting.Indented);
