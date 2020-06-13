@@ -180,7 +180,6 @@ namespace TabletDriverLib
         private bool HaveReportID(HidDevice device, uint reportID)
         {
             var rawDescriptor = device.GetRawReportDescriptor();
-            Log.Write("detect", BitConverter.ToString(rawDescriptor).Replace("-", ""));
             var items = EncodedItem.DecodeItems(rawDescriptor, 0, rawDescriptor.Length);
             return items.Any(
                 item => item.ItemType == ItemType.Global &&
