@@ -10,6 +10,8 @@ namespace NativeLib.OSX
     using IOHIDDeviceRef = IntPtr;
     using io_service_t = UInt32;
     using CFAllocatorRef = IntPtr;
+    using CGError = Int32;
+
 
     public static class OSX
     {
@@ -27,6 +29,9 @@ namespace NativeLib.OSX
 
         [DllImport(Quartz)]
         public extern static CGEventRef CGWarpMouseCursorPosition(CGPoint newCursorPosition);
+
+        [DllImport(Quartz)]
+        public extern static CGError CGAssociateMouseAndMouseCursorPosition(int connected);
 
         [DllImport(Quartz)]
         public extern static CGEventRef CGEventCreateMouseEvent(CGEventSourceRef source, CGEventType mouseType,

@@ -20,7 +20,22 @@ namespace TabletDriverLib.Interop.Cursor
 
         public void SetCursorPosition(Point pos)
         {
-            CGWarpMouseCursorPosition(new CGPoint(pos.X, pos.Y));
+            var eventRef = CGEventCreate(IntPtr.Zero);
+            var cgPos = new CGPoint(pos.X, pos.Y);
+            var cgEventType = CGEventType.kCGEventMouseMoved;
+            if(GetMouseButtonState(MouseButton.Right))
+            {
+                cgEventType = CGEventType.kCGEventRightMouseDragged;
+            }
+            if (GetMouseButtonState(MouseButton.Left))
+            {
+                cgEventType = CGEventType.kCGEventLeftMouseDragged;
+            }
+            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, cgEventType, cgPos, 0);
+            CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
+            CFRelease(eventRef);
+            CFRelease(mouseEventRef);
+
         }
 
         private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
