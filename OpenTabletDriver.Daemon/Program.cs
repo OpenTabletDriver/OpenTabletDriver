@@ -41,7 +41,6 @@ namespace OpenTabletDriver.Daemon
                 AppInfo.AppDataDirectory = appdata;
                 AppInfo.ConfigurationDirectory = config;
                 RunAsService = runAsService;
-                
             });
             rootCommand.Invoke(args);
 
