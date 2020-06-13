@@ -3,8 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace NativeLib.OSX
 {
-    using CGEvent = IntPtr;
+    using CGEventRef = IntPtr;
     using CGDirectDisplayID = UInt32;
+    using CGEventSourceRef = IntPtr;
 
     public static class OSX
     {
@@ -15,20 +16,20 @@ namespace NativeLib.OSX
         public static extern void CFRelease(IntPtr handle);
 
         [DllImport(Quartz)]
-        public extern static CGEvent CGEventCreate();
+        public extern static CGEventRef CGEventCreate(CGEventSourceRef source);
 
         [DllImport(Quartz)]
-        public extern static CGPoint CGEventGetLocation(ref CGEvent eventRef);
+        public extern static CGPoint CGEventGetLocation(CGEventRef eventRef);
 
         [DllImport(Quartz)]
-        public extern static CGEvent CGWarpMouseCursorPosition(CGPoint newCursorPosition);
+        public extern static CGEventRef CGWarpMouseCursorPosition(CGPoint newCursorPosition);
 
         [DllImport(Quartz)]
-        public extern static CGEvent CGEventCreateMouseEvent(ref CGEvent source, CGEventType mouseType,
+        public extern static CGEventRef CGEventCreateMouseEvent(CGEventSourceRef source, CGEventType mouseType,
             CGPoint mouseCursorPosition, CGMouseButton mouseButton);
         
         [DllImport(Quartz)]
-        public extern static CGEvent CGEventPost(ref CGEvent source, CGEventType mouseType, CGPoint mouseCursorPosition, CGMouseButton mouseButton);
+        public extern static CGEventRef CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
 
         [DllImport(Quartz)]
         public extern static CGDirectDisplayID CGMainDisplayID();

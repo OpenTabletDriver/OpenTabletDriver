@@ -1,0 +1,18 @@
+{
+  "Name": "Vikoo HK708",
+  "VendorID": 21827,
+  "ProductID": 129,
+  "InputReportLength": 8,
+  "ReportParser": "TabletDriverLib.Vendors.Vikoo.HK708ReportParser",
+  "CustomInputReportLength": 0,
+  "CustomReportParser": null,
+  "Width": 260.0,
+  "Height": 170.0,
+  "MaxX": 10000.0,
+  "MaxY": 6000.0,
+  "MaxPressure": 2047,
+  "ActiveReportID": 7,
+  "AuxReportLength": 0,
+  "AuxReportParser": null,
+  "FeatureInitReport": null
+}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
+using HidSharp.Reports.Encodings;
 using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Tablet;
@@ -34,9 +35,16 @@ namespace TabletDriverLib
             try
             {
                 var vendorMatch = Devices.Where(d => d.VendorID == tablet.VendorID);
+
                 var productMatch = vendorMatch.Where(d => d.ProductID == tablet.ProductID);
+
                 var inputReportMatch = productMatch.Where(d => d.GetMaxInputReportLength() == tablet.InputReportLength);
-                var tabletDevice = tablet.OutputReportLength > 0 ? inputReportMatch.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : inputReportMatch.FirstOrDefault();
+
+                var activateReportMatch = inputReportMatch.Where(d => HaveReportID(d, tablet.ActiveReportID));
+
+                var matchedDevice = activateReportMatch.Count() > 0 ? activateReportMatch : inputReportMatch;
+
+                var tabletDevice = tablet.OutputReportLength > 0 ? matchedDevice.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : matchedDevice.FirstOrDefault();
                 
                 var parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.ReportParserName) ?? new TabletReportParser();
                 if (tabletDevice == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
@@ -59,6 +67,7 @@ namespace TabletDriverLib
             }
             catch (ArgumentOutOfRangeException ex)
             {
+                Log.Write("Exception", ex.StackTrace.ToString());
                 if (Debugging)
                     Log.Exception(ex);
                 if (PlatformInfo.IsLinux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.VendorID))
@@ -166,6 +175,17 @@ namespace TabletDriverLib
             }
 
             DriverState.PostReport(sender, report);
+        }
+
+        private bool HaveReportID(HidDevice device, uint reportID)
+        {
+            var rawDescriptor = device.GetRawReportDescriptor();
+            Log.Write("detect", BitConverter.ToString(rawDescriptor).Replace("-", ""));
+            var items = EncodedItem.DecodeItems(rawDescriptor, 0, rawDescriptor.Length);
+            return items.Any(
+                item => item.ItemType == ItemType.Global &&
+                item.TagForGlobal == GlobalItemTag.ReportID &&
+                item.DataValue == reportID);
         }
     }
 }

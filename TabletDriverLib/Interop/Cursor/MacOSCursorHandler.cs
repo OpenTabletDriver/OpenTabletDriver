@@ -12,10 +12,10 @@ namespace TabletDriverLib.Interop.Cursor
 
         public Point GetCursorPosition()
         {
-            IntPtr eventRef = CGEventCreate();
-            CGPoint cursor = CGEventGetLocation(ref eventRef);
+            IntPtr eventRef = CGEventCreate(IntPtr.Zero);
+            CGPoint cursor = CGEventGetLocation(eventRef);
             CFRelease(eventRef);
-            return new Point(cursor.x, cursor.y);
+            return new Point((float)cursor.x, (float)cursor.y);
         }
 
         public void SetCursorPosition(Point pos)
@@ -25,17 +25,18 @@ namespace TabletDriverLib.Interop.Cursor
 
         private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
         {
-            var eventRef = CGEventCreate();
+            var eventRef = CGEventCreate(IntPtr.Zero);
             var curPos = GetCursorPosition();
             var cgPos = new CGPoint(curPos.X, curPos.Y);
-            var mouseEventRef = CGEventCreateMouseEvent(ref eventRef, type, cgPos, cgButton);
-            CGEventPost(ref mouseEventRef, type, cgPos, cgButton);
+            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, type, cgPos, cgButton);
+            CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
             CFRelease(eventRef);
             CFRelease(mouseEventRef);
         }
  
         public void MouseDown(MouseButton button)
         {
+
             CGEventType type;
             CGMouseButton cgButton;
             switch (button)
