@@ -6,6 +6,10 @@ namespace NativeLib.OSX
     using CGEventRef = IntPtr;
     using CGDirectDisplayID = UInt32;
     using CGEventSourceRef = IntPtr;
+    using IOReturn = Int32;
+    using IOHIDDeviceRef = IntPtr;
+    using io_service_t = UInt32;
+    using CFAllocatorRef = IntPtr;
 
     public static class OSX
     {
@@ -39,5 +43,18 @@ namespace NativeLib.OSX
 
         [DllImport(Quartz)]
         public extern static ulong CGDisplayPixelsHigh(CGDirectDisplayID display);
+
+        [DllImport(Quartz)]
+        public extern static IOReturn IOHIDDeviceOpen(IOHIDDeviceRef device, IOHIDOptionsType options);
+
+        [DllImport(Quartz)]
+        public extern static io_service_t IOHIDDeviceGetService(IOHIDDeviceRef device);
+
+        [DllImport(Quartz)]
+        public extern static IOHIDDeviceRef IOHIDDeviceCreate(CFAllocatorRef allocator, io_service_t service);
+
+        [DllImport(Quartz)]
+        public extern static IOReturn IOHIDDeviceClose(IOHIDDeviceRef device, IOHIDOptionsType options);
+
     }
 }
