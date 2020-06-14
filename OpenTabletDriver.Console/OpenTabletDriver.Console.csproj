@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <VersionPrefix>0.3.0</VersionPrefix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>otd</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20303.1" />
+    <PackageReference Include="JKang.IpcServiceFramework.Client.NamedPipe" Version="3.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.5" />
+    <ProjectReference Include="..\TabletDriverLib\TabletDriverLib.csproj" />
+  </ItemGroup>
+
+</Project>
