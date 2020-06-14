@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading;
 using HidSharp;
-using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.HID;
 using TabletDriverLib.Tablet;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
+using TabletDriverLib.Interop;
+using TabletDriverLib.Interop.HID;
 
 namespace TabletDriverLib
 {
