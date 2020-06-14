@@ -72,7 +72,7 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            bindingLayout = ConstructBindingLayout(3, 7);
+            bindingLayout = ConstructBindingLayout(3, 9);
 
             filterEditor = ConstructPluginManager<IFilter>(
                 () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),

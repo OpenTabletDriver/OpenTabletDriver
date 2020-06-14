@@ -31,7 +31,7 @@ namespace TabletDriverLib
 
         public bool Open(TabletProperties tablet)
         {
-            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
+            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName} {Devices.Count()}'");
             try
             {
                 var vendorMatch = Devices.Where(d => d.VendorID == tablet.VendorID);
@@ -43,6 +43,8 @@ namespace TabletDriverLib
                 var hidReportIDMatch = tablet.HidReportID != -1 ?  inputReportMatch.Where(d => HaveReportID(d, (uint)tablet.HidReportID)) : inputReportMatch;
 
                 var matchedDevice = hidReportIDMatch.Count() > 0 ? hidReportIDMatch : inputReportMatch;
+
+                Log.Write("Detect", $"Searching for tablet '{productMatch.Count()}'");
 
                 var tabletDevice = tablet.OutputReportLength > 0 ? matchedDevice.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : matchedDevice.FirstOrDefault();
                 
