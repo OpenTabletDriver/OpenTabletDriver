@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NativeLib.OSX;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Display;
@@ -10,21 +11,26 @@ namespace TabletDriverLib.Interop.Display
 
     public class MacOSDisplay : IVirtualScreen
     {
-        private uint MainDisplay => CGMainDisplayID();
-
-        public float Width 
+        public MacOSDisplay()
         {
-            get => CGDisplayPixelsWide(MainDisplay);
+            var monitors = InternalDisplays;
+            var primary = monitors.First();
+
+            var displays = new List<IDisplay>();
+            displays.Add(this);
+            foreach (var monitor in monitors)
+            {
+                displays.Add(monitor);
+            }
+
+            var x = primary.Position.X - monitors.Min(m => m.Position.X);
+            var y = primary.Position.Y - monitors.Min(m => m.Position.Y);
+
+            Displays = displays;
+            Position = new Point(x, y);
         }
 
-        public float Height
-        {
-            get => CGDisplayPixelsHigh(MainDisplay);
-        }
-
-        public Point Position => new Point(0, 0);
-
-        public IEnumerable<IDisplay> Displays
+        private IEnumerable<Display> GetDisplays
         {
             get
             {
@@ -36,22 +42,47 @@ namespace TabletDriverLib.Interop.Display
                     var bound = CGDisplayBounds(displayIDs[i]);
 
                     var display = new Display(
-                        CGDisplayPixelsWide(MainDisplay),
-                        CGDisplayPixelsWide(MainDisplay),
+                        CGDisplayPixelsWide(displayIDs[i]),
+                        CGDisplayPixelsHigh(displayIDs[i]),
                         new Point((float)bound.origin.x, (float)bound.origin.y),
-                        i) ;
+                        i);
 
                     yield return display;
                 }
-                yield return this;
             }
         }
+
+        private IEnumerable<Display> InternalDisplays => GetDisplays.ToList().OrderBy(e => e.Position.X);
+
+        public float Width
+        {
+            get
+            {
+                var left = InternalDisplays.Min(d => d.Position.X);
+                var right = InternalDisplays.Max(d => d.Position.X + d.Width);
+                return right - left;
+            }
+        }
+
+        public float Height
+        {
+            get
+            {
+                var top = InternalDisplays.Min(d => d.Position.Y);
+                var bottom = InternalDisplays.Max(d => d.Position.Y + d.Height);
+                return bottom - top;
+            }
+        }
+
+        public Point Position { private set; get; }
+
+        public IEnumerable<IDisplay> Displays { private set; get; }
 
         public int Index => 0;
 
         public override string ToString()
         {
-            return $"VirtualDisplay {Index} ({Width}x{Height}@{Position})";
+            return $"Virtual Display {Index} ({Width}x{Height}@{Position})";
         }
     }
 }
