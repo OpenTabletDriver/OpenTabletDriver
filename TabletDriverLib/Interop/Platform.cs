@@ -2,7 +2,6 @@ using System;
 using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
-using TabletDriverLib.Interop.HID;
 using TabletDriverLib.Interop.Keyboard;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Display;
@@ -75,19 +74,5 @@ namespace TabletDriverLib.Interop
             }
         }
 
-        public static IDeviceSeizer DeviceSeizer
-        {
-            get
-            {
-                if (PlatformInfo.IsWindows)
-                    return new WindowsDeviceSeizer();
-                else if (PlatformInfo.IsLinux)
-                    return new EvdevDeviceSeizer();
-                else if (PlatformInfo.IsOSX)
-                    return new MacOSDeviceSeizer();
-
-                return null;
-            }
-        }
     }
 }
