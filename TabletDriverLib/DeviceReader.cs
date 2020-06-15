@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Threading;
 using HidSharp;
-using TabletDriverLib.Tablet;
+using TabletDriverLib.Contracts;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib
 {
-    public class DeviceReader<T> : IDisposable where T : IDeviceReport
+    public class DeviceReader<T> : IDeviceReader<T>, IDisposable where T : IDeviceReport
     {
         public DeviceReader(HidDevice device)
         {

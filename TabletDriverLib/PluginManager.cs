@@ -13,7 +13,17 @@ namespace TabletDriverLib
 {
     public static class PluginManager
     {
-        public static ObservableCollection<TypeInfo> Types { private set; get; } = GetAllTypes();
+        private static Collection<TypeInfo> _types;
+        public static Collection<TypeInfo> Types
+        {
+            set => _types = value;
+            get
+            {
+                if (_types == null)
+                    _types = new Collection<TypeInfo>(allTypes.Value);
+                return _types;
+            }
+        }
         
         public static async Task<bool> AddPlugin(FileInfo file)
         {
@@ -74,14 +84,14 @@ namespace TabletDriverLib
                 select type;
             return new List<TypeInfo>(children);
         }
-        
-        private static ObservableCollection<TypeInfo> GetAllTypes()
+
+        private static Lazy<IList<TypeInfo>> allTypes = new Lazy<IList<TypeInfo>>(() => 
         {
-            var types = Assembly.GetEntryAssembly()
+            return Assembly.GetEntryAssembly()
                 .GetReferencedAssemblies()
                 .Select(Assembly.Load)
-                .SelectMany(x => x.DefinedTypes);
-            return new ObservableCollection<TypeInfo>(types);
-        }
+                .SelectMany(x => x.DefinedTypes)
+                .ToList();
+        });
     }
 }

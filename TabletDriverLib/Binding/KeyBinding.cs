@@ -9,14 +9,6 @@ namespace TabletDriverLib.Binding
     [PluginName("Key Binding")]
     public class KeyBinding : IBinding
     {
-        public string Name
-        {
-            get
-            {
-                return nameof(KeyBinding) + ": " + Property;
-            }
-        }
-
         public string Property { set; get; }
 
         public Action Press
@@ -37,6 +29,6 @@ namespace TabletDriverLib.Binding
             }
         }
 
-        public override string ToString() => Name;
+        public override string ToString() => BindingTools.GetShortBindingString(this);
     }
 }

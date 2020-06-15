@@ -21,7 +21,6 @@ namespace TabletDriverLib.Output
         private ICursorHandler CursorHandler { set; get; } = Platform.CursorHandler;
         private Area _displayArea, _tabletArea;
         private TabletProperties _tabletProperties;
-        private IVirtualScreen _virtualScreen;
 
         public Area Output
         {
