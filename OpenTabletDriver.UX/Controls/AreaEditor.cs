@@ -1,6 +1,8 @@
 using System;
+using System.ComponentModel;
 using Eto.Drawing;
 using Eto.Forms;
+using TabletDriverLib;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -106,15 +108,60 @@ namespace OpenTabletDriver.UX.Controls
             };
             Content = TableLayout.Horizontal(5, cells);
 
-            AppendMenuItem("Align area to the left", () => ViewModel.X = ViewModel.Width / 2);
-            AppendMenuItem("Align area to the right", () => ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2));
-            AppendMenuItem("Align area to the top", () => ViewModel.Y = ViewModel.Height / 2);
-            AppendMenuItem("Align area to the bottom", ()  => ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2));
-            AppendMenuItem("Align area to the center", () => 
-            {
-                ViewModel.X = ViewModel.MaxWidth / 2;
-                ViewModel.Y = ViewModel.MaxHeight / 2;
-            });
+            this.ContextMenu.Items.GetSubmenu("Align").Items.AddRange(
+                new MenuItem[]
+                {
+                    CreateMenuItem("Left", () => ViewModel.X = ViewModel.Width / 2),
+                    CreateMenuItem("Right", () => ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2)),
+                    CreateMenuItem("Top", () => ViewModel.Y = ViewModel.Height / 2),
+                    CreateMenuItem("Bottom", ()  => ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2)),
+                    CreateMenuItem("Center", 
+                        () => 
+                        {
+                            ViewModel.X = ViewModel.MaxWidth / 2;
+                            ViewModel.Y = ViewModel.MaxHeight / 2;
+                        }
+                    )
+                }
+            );
+
+            this.ContextMenu.Items.GetSubmenu("Resize").Items.AddRange(
+                new MenuItem[]
+                {
+                    CreateMenuItem(
+                        "Full area",
+                        () => 
+                        {
+                            ViewModel.Height = ViewModel.MaxHeight;
+                            ViewModel.Width = ViewModel.MaxWidth;
+                            ViewModel.Y = ViewModel.MaxHeight / 2;
+                            ViewModel.X = ViewModel.MaxWidth / 2;
+                        }
+                    ),
+                    CreateMenuItem(
+                        "Quarter area",
+                        () => 
+                        {
+                            ViewModel.Height = ViewModel.MaxHeight / 2;
+                            ViewModel.Width = ViewModel.MaxWidth / 2;
+                        }
+                    )
+                }
+            );
+
+            AppendMenuItemSeparator();
+            
+            AppendCheckBoxMenuItem(
+                "Lock to usable area",
+                lockToMax =>
+                {
+                    if (lockToMax)
+                        ViewModel.PropertyChanged += LimitArea;
+                    else
+                        ViewModel.PropertyChanged -= LimitArea;
+                },
+                defaultValue: true
+            );
             
             this.MouseDown += (sender, e) =>
             {
@@ -141,25 +188,59 @@ namespace OpenTabletDriver.UX.Controls
                 });
         }
 
-        public Command AppendMenuItem(string menuText, Action handler)
+        private Command CreateMenuItem(string menuText, Action handler)
         {
             var command = new Command { MenuText = menuText };
             command.Executed += (sender, e) => handler();
-            this.ContextMenu.Items.Add(command);
             return command;
         }
 
-        public CheckCommand AppendCheckBoxMenuItem(string menuText, Action<bool> handler)
+        public Command AppendMenuItem(string menuText, Action handler)
+        {
+            var item = CreateMenuItem(menuText, handler);   
+            this.ContextMenu.Items.Add(item);
+            return item;
+        }
+
+        public CheckCommand AppendCheckBoxMenuItem(string menuText, Action<bool> handler, bool defaultValue = false)
         {
             var command = new CheckCommand { MenuText = menuText };
             command.Executed += (sender, e) => handler(command.Checked);
+            command.Checked = defaultValue;
+            if (defaultValue)
+                command.Execute();
             this.ContextMenu.Items.Add(command);
             return command;
         }
 
         public void AppendMenuItemSeparator()
         {
-            this.ContextMenu.Items.Add(new SeparatorMenuItem());
+            this.ContextMenu.Items.AddSeparator();
+        }
+
+        private void LimitArea(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(ViewModel.X):
+                case nameof(ViewModel.Y):
+                case nameof(ViewModel.Width):
+                case nameof(ViewModel.Height):
+                case nameof(ViewModel.MaxWidth):
+                case nameof(ViewModel.MaxHeight):
+                    if (ViewModel.MaxWidth == 0 || ViewModel.MaxHeight == 0)
+                        break;
+                    
+                    if (ViewModel.X + (ViewModel.Width / 2) > ViewModel.MaxWidth)
+                        areaDisplay.ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2);
+                    else if (ViewModel.X - (ViewModel.Width / 2) < 0)
+                        areaDisplay.ViewModel.X = ViewModel.Width / 2;
+                    if (ViewModel.Y + (ViewModel.Height / 2) > ViewModel.MaxHeight)
+                        areaDisplay.ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2);
+                    else if (ViewModel.Y - (ViewModel.Height / 2) < 0)
+                        areaDisplay.ViewModel.Y = ViewModel.Height / 2;
+                    break;
+            }
         }
 
         private AreaDisplay areaDisplay;

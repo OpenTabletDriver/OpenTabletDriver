@@ -191,7 +191,6 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            tabletAreaEditor.AppendMenuItemSeparator();
             var lockAr = tabletAreaEditor.AppendCheckBoxMenuItem("Lock aspect ratio", (value) => ViewModel.Settings.LockAspectRatio = value);
             ViewModel.PropertyChanged += (sender, e) =>
             {
