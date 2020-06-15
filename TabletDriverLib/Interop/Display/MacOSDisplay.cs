@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NativeLib.OSX;
 using TabletDriverPlugin;
@@ -27,7 +28,21 @@ namespace TabletDriverLib.Interop.Display
         {
             get
             {
-                // TODO: Multiple display support
+                var displayIDs = new uint[10];
+                uint count = 0;
+                CGGetActiveDisplayList(100, displayIDs, ref count);
+                for (var i = 0; i < count; i++)
+                {
+                    var bound = CGDisplayBounds(displayIDs[i]);
+
+                    var display = new Display(
+                        CGDisplayPixelsWide(MainDisplay),
+                        CGDisplayPixelsWide(MainDisplay),
+                        new Point((float)bound.origin.x, (float)bound.origin.y),
+                        i) ;
+
+                    yield return display;
+                }
                 yield return this;
             }
         }

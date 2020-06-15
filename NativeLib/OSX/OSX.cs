@@ -12,7 +12,6 @@ namespace NativeLib.OSX
     using CFAllocatorRef = IntPtr;
     using CGError = Int32;
 
-
     public static class OSX
     {
         private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
@@ -60,6 +59,13 @@ namespace NativeLib.OSX
 
         [DllImport(Quartz)]
         public extern static IOReturn IOHIDDeviceClose(IOHIDDeviceRef device, IOHIDOptionsType options);
+
+        [DllImport(Quartz)]
+        public extern static CGError CGGetActiveDisplayList(UInt32 maxDisplays, [In, Out] CGDirectDisplayID[] activeDisplays, ref UInt32 displayCount);
+
+        [DllImport(Quartz)]
+        public extern static CGrect CGDisplayBounds(CGDirectDisplayID maxDisplays);
+
 
     }
 }
