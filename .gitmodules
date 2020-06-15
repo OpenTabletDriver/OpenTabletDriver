@@ -1,0 +1,3 @@
+[submodule "HIDSharpCore"]
+	path = HIDSharpCore
+	url = https://github.com/kroware/HIDSharpCore
