@@ -3,6 +3,7 @@
   "VendorID": 10429,
   "ProductID": 2311,
   "InputReportLength": 10,
+  "OutputReportLength": 0,
   "ReportParser": null,
   "CustomInputReportLength": 0,
   "CustomReportParser": null,
