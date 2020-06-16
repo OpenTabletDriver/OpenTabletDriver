@@ -3,6 +3,7 @@ using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Interop.Keyboard;
+using TabletDriverLib.Interop.USB;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Display;
 using TabletDriverPlugin.Platform.Keyboard;
@@ -68,6 +69,22 @@ namespace TabletDriverLib.Interop
                     return new XScreen();
                 else if (PlatformInfo.IsOSX)
                     return new MacOSDisplay();
+
+                Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
+                return null;
+            }
+        }
+
+        public static IUSBUtility USBUtility
+        {
+            get
+            {
+                if (PlatformInfo.IsWindows)
+                    return new WindowsUSBUtility();
+                else if (PlatformInfo.IsLinux)
+                    return new EvdevUSBUtility();
+                else if (PlatformInfo.IsOSX)
+                    return new MacoSUSBUtility();
 
                 Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
                 return null;

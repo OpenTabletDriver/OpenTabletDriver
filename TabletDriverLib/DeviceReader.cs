@@ -2,6 +2,7 @@
 using System.Threading;
 using HidSharp;
 using TabletDriverLib.Contracts;
+using TabletDriverLib.Interop;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
@@ -50,6 +51,7 @@ namespace TabletDriverLib
 
         private void Setup()
         {
+            Platform.USBUtility.initStrings(Device.DevicePath, new byte[] {0x64 });
             var config = new OpenConfiguration();
             config.SetOption(OpenOption.Priority, OpenPriority.Low);
             for (int retries = 3; retries > 0; retries--)
