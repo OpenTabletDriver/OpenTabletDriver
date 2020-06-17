@@ -18,8 +18,8 @@ jobs:
     - name: Linux Publish
       run: |
         GIT_HASH=$(git rev-parse --short $GITHUB_SHA)
-	git submodule sync
-	git submodule update
+        git submodule sync
+        git submodule update
         dotnet publish OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj --configuration Release --runtime linux-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
         dotnet publish OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime linux-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
         dotnet publish OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime linux-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
@@ -44,8 +44,8 @@ jobs:
       - name: Windows Publish
         run: |
           $GIT_HASH = $(git rev-parse --short ${ENV:GITHUB_SHA})
-	  git submodule sync
-	  git submodule update
+          git submodule sync
+          git submodule update
           dotnet publish OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime win-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
           dotnet publish OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime win-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
           dotnet publish OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime win-x64 --framework netcoreapp3.1 --version-suffix "$GIT_HASH"
