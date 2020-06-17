@@ -16,5 +16,5 @@
   "AuxReportLength": 0,
   "AuxReportParser": null,
   "FeatureInitReport": null,
-  "InitStrings": [100]
+  "InitStrings": [ 100 ]
 }

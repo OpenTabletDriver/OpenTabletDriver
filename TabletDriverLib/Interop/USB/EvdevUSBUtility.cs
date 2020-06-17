@@ -8,4 +8,3 @@ namespace TabletDriverLib.Interop.USB
         }
     }
 }
-

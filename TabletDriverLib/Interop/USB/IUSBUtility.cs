@@ -5,5 +5,3 @@ namespace TabletDriverLib.Interop.USB
         public bool InitStrings(string hidDvicePath, byte[] array);
     }
 }
-
-
