@@ -2,10 +2,8 @@
 using System.Threading;
 using HidSharp;
 using TabletDriverLib.Contracts;
-using TabletDriverLib.Interop;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
-
 
 namespace TabletDriverLib
 {
@@ -22,10 +20,8 @@ namespace TabletDriverLib
             };
         }
 
-
         public virtual HidDevice Device { protected set; get; }
         public virtual HidStream ReportStream { protected set; get; }
-
         public bool Reading { protected set; get; }
         public IReportParser<T> Parser { set; get; }
         public virtual event EventHandler<T> Report;
@@ -58,7 +54,6 @@ namespace TabletDriverLib
                 if (Device.TryOpen(config, out var stream, out var exception))
                 {
                     ReportStream = (HidStream)stream;
-
                     break;
                 }
                 else

@@ -22,7 +22,6 @@ namespace TabletDriverLib.Interop.Keyboard
                 CFRelease(keyEvent);
                   
             }
-
         }
 
         public void Press(string key)
