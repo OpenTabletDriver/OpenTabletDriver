@@ -31,9 +31,10 @@ namespace TabletDriverLib.Interop.Display
         {
             get
             {
-                var displayIDs = new uint[10];
+                uint max_displays = 10;
+                var displayIDs = new uint[max_displays];
                 uint count = 0;
-                CGGetActiveDisplayList(100, displayIDs, ref count);
+                CGGetActiveDisplayList(max_displays, displayIDs, ref count);
                 for (var i = 0; i < count; i++)
                 {
                     var bound = CGDisplayBounds(displayIDs[i]);

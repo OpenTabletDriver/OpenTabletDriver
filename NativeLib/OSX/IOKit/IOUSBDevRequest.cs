@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 namespace NativeLib.OSX
 {
     using UInt8 = Byte;
-    using UInt16 = UInt16;
 
     [StructLayout(LayoutKind.Sequential)]
     public struct IOUSBDevRequest

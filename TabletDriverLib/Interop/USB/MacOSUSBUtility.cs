@@ -65,13 +65,12 @@ namespace TabletDriverLib.Interop.USB
 
                     if(hidEntry != 0)
                         IOObjectRelease(hidEntry);
-                    if (hidEntry != 0)
+                    if (interfaceEntry != 0)
                         IOObjectRelease(interfaceEntry);
-                    if (hidEntry != 0)
+                    if (deviceEntry != 0)
                         IOObjectRelease(deviceEntry);
                     if(usbdev != null)
                         (**usbdev).guts.Release(new IntPtr(usbdev));
-
                     if (iodev != null)
                         (**iodev).Release(new IntPtr(iodev));
                 }

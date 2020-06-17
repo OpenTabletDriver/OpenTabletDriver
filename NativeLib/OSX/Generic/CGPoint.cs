@@ -6,7 +6,7 @@ namespace NativeLib.OSX
     [StructLayout(LayoutKind.Sequential)]
     public struct CGPoint
     {
-        //Todo: revert to float on 32 bit binary.
+        //TODO: revert to float on 32 bit binary.
         public Double x;
         public Double y;
 

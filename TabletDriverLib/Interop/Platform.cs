@@ -86,7 +86,7 @@ namespace TabletDriverLib.Interop
                 else if (PlatformInfo.IsOSX)
                     return new MacoSUSBUtility();
 
-                Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
+                Log.Write("USBU tility", $"Failed to create usb utility for this platform ({Environment.OSVersion.Platform}).", true);
                 return null;
             }
         }

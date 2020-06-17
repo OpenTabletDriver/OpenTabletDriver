@@ -6,7 +6,7 @@ namespace NativeLib.OSX
     [StructLayout(LayoutKind.Sequential)]
     public struct CGSize
     {
-        //Todo: revert to float on 32 bit binary.
+        //TODO: revert to float on 32 bit binary.
         public Double width;
         public Double height;
 

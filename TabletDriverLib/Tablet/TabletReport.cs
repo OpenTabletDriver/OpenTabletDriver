@@ -15,8 +15,8 @@ namespace TabletDriverLib.Tablet
             var y = BitConverter.ToUInt16(report, 4);
             Position = new Point(x, y);
 
-            //For unkown reason, sometimes, the tablet send incomplete report
-            //TOdo: Reset the device after observing incomplete report
+            //For unknown reason, sometimes, the tablet send incomplete report
+            //TODO: Reset the device after observing incomplete report
             if (report.Length < 8)
                 Pressure = 0;
             else
