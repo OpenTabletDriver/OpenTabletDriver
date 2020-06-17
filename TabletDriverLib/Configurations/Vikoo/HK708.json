@@ -12,8 +12,9 @@
   "MaxY": 30480.0,
   "MaxPressure": 2047,
   "ActiveReportID": 0,
-  "HidReportID" :  7,
+  "HidReportID": 7,
   "AuxReportLength": 0,
   "AuxReportParser": null,
-  "FeatureInitReport": null
+  "FeatureInitReport": null,
+  "InitStrings": [100]
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using HidSharp;
 using HidSharp.Reports.Encodings;
 using NativeLib;
+using TabletDriverLib.Interop;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Tablet;
 using TabletDriverLib.Vendors;
@@ -56,6 +57,10 @@ namespace TabletDriverLib
                         parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.CustomReportParserName);
                 }
                 TabletProperties = tablet;
+                if(tablet.InitStrings != null)
+                {
+                    Platform.USBUtility.InitStrings(tabletDevice.DevicePath, tablet.InitStrings);
+                }
 
                 var tabletOpened = Open(tabletDevice, parser);
                 if (tabletOpened && tablet.AuxReportLength > 0)

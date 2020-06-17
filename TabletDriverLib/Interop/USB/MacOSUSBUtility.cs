@@ -7,7 +7,7 @@ namespace TabletDriverLib.Interop.USB
 
     public class MacoSUSBUtility : IUSBUtility
     {
-        public bool initStrings(string hidDvicePath, byte[] array)
+        public bool InitStrings(string hidDvicePath, byte[] array)
         {
             bool success = false;
             unsafe
@@ -51,7 +51,7 @@ namespace TabletDriverLib.Interop.USB
                                     IOUSBDevRequest request;
                                     request.bmRequestType = 128; //USBmakebmRequestType(kUSBIn, kUSBStandard, kUSBDevice);
                                     request.bRequest = 6; //kUSBRqGetDescriptor
-                                    request.wValue = (ushort)(3 << 8 | array[0]);
+                                    request.wValue = (ushort)(3 << 8 | array[i]);
                                     request.wIndex = 0;
                                     request.wLength = (ushort)bLength;
                                     request.pData = new IntPtr((void*)p);

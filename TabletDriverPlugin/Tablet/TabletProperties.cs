@@ -11,7 +11,7 @@ namespace TabletDriverPlugin.Tablet
         private float _width, _height, _maxX, _maxY;
         private byte[] _featureInitReport;
         private int _hidReportID = -1;
-
+        private byte[] _initString;
         /// <summary>
         /// The device's name.
         /// </summary>
@@ -209,6 +209,17 @@ namespace TabletDriverPlugin.Tablet
         {
             set => this.RaiseAndSetIfChanged(ref _hidReportID, value);
             get => _hidReportID;
+        }
+
+        /// <summary>
+        /// Get string descriptor, some devices use it as initalization
+        /// </summary>
+        /// <value></value>
+        [JsonProperty("InitStrings")]
+        public byte[] InitStrings
+        {
+            set => this.RaiseAndSetIfChanged(ref _initString, value);
+            get => _initString;
         }
 
         #region Json Serialization
