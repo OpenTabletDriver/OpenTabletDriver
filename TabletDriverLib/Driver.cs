@@ -48,13 +48,16 @@ namespace TabletDriverLib
                 var tabletDevice = tablet.OutputReportLength > 0 ? matchedDevice.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : matchedDevice.FirstOrDefault();
                 
                 var parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.ReportParserName) ?? new TabletReportParser();
+
                 if (tabletDevice == null && !string.IsNullOrEmpty(tablet.CustomReportParserName))
                 {
                     tabletDevice = productMatch.FirstOrDefault(d => d.GetMaxInputReportLength() == tablet.CustomInputReportLength);
                     if (tabletDevice != null)
                         parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.CustomReportParserName);
                 }
+
                 TabletProperties = tablet;
+
                 if(tablet.InitStrings != null)
                 {
                     Platform.USBUtility.InitStrings(tabletDevice.DevicePath, tablet.InitStrings);

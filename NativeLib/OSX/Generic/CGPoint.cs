@@ -16,5 +16,4 @@ namespace NativeLib.OSX
             this.y = y;
         }
     }
-
 }

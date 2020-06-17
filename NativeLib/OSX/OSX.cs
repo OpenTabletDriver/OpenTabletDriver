@@ -30,6 +30,18 @@ namespace NativeLib.OSX
         public const string kIOServicePlane = "IOService";
         public const string kIO = "9DC7B780-9EC0-11D4-A54F-000A27052861";
 
+        public static readonly IntPtr kIOCFPlugInInterfaceID = CFUUIDGetConstantUUIDWithBytes(IntPtr.Zero,
+            0xC2, 0x44, 0xE8, 0x58, 0x10, 0x9C, 0x11, 0xD4,
+            0x91, 0xD4, 0x00, 0x50, 0xE4, 0xC6, 0x42, 0x6F);
+
+        public static readonly IntPtr kIOUSBDeviceUserClientTypeID = CFUUIDGetConstantUUIDWithBytes(IntPtr.Zero,
+            0x9d, 0xc7, 0xb7, 0x80, 0x9e, 0xc0, 0x11, 0xD4,
+            0xa5, 0x4f, 0x00, 0x0a, 0x27, 0x05, 0x28, 0x61);
+
+        public static readonly IntPtr kIOUSBDeviceInterfaceID = CFUUIDGetConstantUUIDWithBytes(IntPtr.Zero,
+            0x5c, 0x81, 0x87, 0xd0, 0x9e, 0xf3, 0x11, 0xD4,
+             0x8b, 0x45, 0x00, 0x0a, 0x27, 0x05, 0x28, 0x61);
+
         [DllImport(Foundation)]
         public extern static CFUUIDRef CFUUIDGetConstantUUIDWithBytes(CFAllocatorRef alloc,
             UInt8 byte0, UInt8 byte1, UInt8 byte2, UInt8 byte3, UInt8 byte4, UInt8 byte5, UInt8 byte6, UInt8 byte7,
@@ -60,7 +72,6 @@ namespace NativeLib.OSX
         [DllImport(Quartz)]
         public extern static CGEventRef CGEventCreateKeyboardEvent(CGEventSourceRef source, CGKeyCode virtualKey, bool keyDown);
 
-
         [DllImport(Quartz)]
         public extern static CGEventRef CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
 
@@ -80,10 +91,6 @@ namespace NativeLib.OSX
         [DllImport(Quartz)]
         public extern static CGrect CGDisplayBounds(CGDirectDisplayID maxDisplays);
 
-
-
-
-
         [DllImport(IOKit)]
         public extern static io_registry_entry_t IORegistryEntryFromPath(mach_port_t masterPort,
             [MarshalAs(UnmanagedType.LPStr)] io_string_t path);
@@ -98,20 +105,6 @@ namespace NativeLib.OSX
 
         [DllImport(IOKit)]
         public extern static kern_return_t IOObjectRelease(io_object_t obj);
-
-        public static readonly IntPtr kIOCFPlugInInterfaceID = CFUUIDGetConstantUUIDWithBytes(IntPtr.Zero,
-            0xC2, 0x44, 0xE8, 0x58, 0x10, 0x9C, 0x11, 0xD4,
-            0x91, 0xD4, 0x00, 0x50, 0xE4, 0xC6, 0x42, 0x6F);
-
-
-        public static readonly IntPtr kIOUSBDeviceUserClientTypeID = CFUUIDGetConstantUUIDWithBytes(IntPtr.Zero,
-            0x9d, 0xc7, 0xb7, 0x80, 0x9e, 0xc0, 0x11, 0xD4,
-            0xa5, 0x4f, 0x00, 0x0a, 0x27, 0x05, 0x28, 0x61);
-
-        public static readonly IntPtr kIOUSBDeviceInterfaceID = CFUUIDGetConstantUUIDWithBytes(IntPtr.Zero,
-            0x5c, 0x81, 0x87, 0xd0, 0x9e, 0xf3, 0x11, 0xD4,
-             0x8b, 0x45, 0x00, 0x0a, 0x27, 0x05, 0x28, 0x61);
-
 
     }
 }

@@ -15,17 +15,14 @@ namespace TabletDriverLib.Interop.Display
         {
             var monitors = InternalDisplays;
             var primary = monitors.First();
-
             var displays = new List<IDisplay>();
             displays.Add(this);
             foreach (var monitor in monitors)
             {
                 displays.Add(monitor);
             }
-
             var x = primary.Position.X - monitors.Min(m => m.Position.X);
             var y = primary.Position.Y - monitors.Min(m => m.Position.Y);
-
             Displays = displays;
             Position = new Point(x, y);
         }
