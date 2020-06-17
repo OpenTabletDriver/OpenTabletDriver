@@ -39,8 +39,8 @@ namespace OpenTabletDriver.Daemon
         private Settings Settings { set; get; }
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
-        private DeviceDebuggerServer TabletDebuggerServer { set; get; }
-        private DeviceDebuggerServer AuxDebuggerServer { set; get; }
+        private DeviceDebuggerServer<ITabletReport> TabletDebuggerServer { set; get; }
+        private DeviceDebuggerServer<IAuxReport> AuxDebuggerServer { set; get; }
         private LogServer LogServer { set; get; }
 
         public bool SetTablet(TabletProperties tablet)
@@ -204,16 +204,22 @@ namespace OpenTabletDriver.Daemon
             {
                 if (Driver.TabletReader != null)
                 {
-                    TabletDebuggerServer = new DeviceDebuggerServer();
+                    TabletDebuggerServer = new DeviceDebuggerServer<ITabletReport>();
                     yield return TabletDebuggerServer.Identifier;
-                    Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
-                }
-                
-                if (Driver.AuxReader != null)
-                {
-                    AuxDebuggerServer = new DeviceDebuggerServer();
+
+                    AuxDebuggerServer = new DeviceDebuggerServer<IAuxReport>();
                     yield return AuxDebuggerServer.Identifier;
-                    Driver.AuxReader.Report += AuxDebuggerServer.HandlePacket;
+
+                    if (Driver.TabletReader != null)
+                    {
+                        Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
+                        //Aux Report comes out from the tablet interface on vikoo 708
+                        //Just Let AuxDebuggerServer handle the report
+                        Driver.TabletReader.Report += AuxDebuggerServer.HandlePacket;
+                    }
+
+                    if (Driver.AuxReader != null)
+                        Driver.AuxReader.Report += TabletDebuggerServer.HandlePacket;
                 }
             }
             else if (!isEnabled && TabletDebuggerServer != null)
@@ -221,22 +227,26 @@ namespace OpenTabletDriver.Daemon
                 if (Driver.TabletReader != null)
                 {
                     Driver.TabletReader.Report -= TabletDebuggerServer.HandlePacket;
-                    TabletDebuggerServer.Dispose();
-                    TabletDebuggerServer = null;
+                    Driver.TabletReader.Report -= AuxDebuggerServer.HandlePacket;
+
                 }
-                
+
                 if (Driver.AuxReader != null)
                 {
                     Driver.AuxReader.Report -= AuxDebuggerServer.HandlePacket;
-                    AuxDebuggerServer.Dispose();
-                    AuxDebuggerServer = null;
                 }
+
+                TabletDebuggerServer.Dispose();
+                TabletDebuggerServer = null;
+
+                AuxDebuggerServer.Dispose();
+                AuxDebuggerServer = null;
+
             }
             else if (isEnabled && TabletDebuggerServer != null)
             {
                 yield return TabletDebuggerServer.Identifier;
-                if (AuxDebuggerServer != null)
-                    yield return AuxDebuggerServer.Identifier;
+                yield return AuxDebuggerServer.Identifier;
             }
         }
 

@@ -7,7 +7,7 @@ using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Daemon
 {
-    internal class DeviceDebuggerServer : IDisposable
+    internal class DeviceDebuggerServer<T> : IDisposable where T : IDeviceReport
     {
         public DeviceDebuggerServer()
         {
@@ -25,8 +25,11 @@ namespace OpenTabletDriver.Daemon
 
         public void HandlePacket(object sender, IDeviceReport report)
         {
-            if (PipeServer.IsConnected && JsonWriter != null)
+            if (PipeServer.IsConnected && JsonWriter != null && report is T)
+            {
                 Serializer.Serialize(JsonWriter, report);
+                JsonWriter.Flush();
+            }
         }
 
         public void Dispose()
