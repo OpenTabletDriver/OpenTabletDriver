@@ -48,7 +48,6 @@ namespace OpenTabletDriver.UX.Debugging
                         if (reader.TokenType == JsonToken.StartObject)
                         {
                             JObject jsonObject = (JObject)serializer.Deserialize(reader);
-                            Console.WriteLine($"jobject {jsonObject}");
                             if (jsonObject.ToObject<T>() is T report) 
                                 Report?.Invoke(this, report);
                         }
