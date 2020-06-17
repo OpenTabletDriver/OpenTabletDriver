@@ -255,7 +255,7 @@ namespace OpenTabletDriver.Daemon
 
         public IEnumerable<LogMessage> GetCurrentLog()
         {
-            return LogMessages.TakeLast(10);
+            return LogMessages;
         }
 
         public IEnumerable<string> GetChildTypes<T>()
