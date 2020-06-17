@@ -32,7 +32,7 @@ namespace TabletDriverLib
 
         public bool Open(TabletProperties tablet)
         {
-            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName} {Devices.Count()}'");
+            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
             try
             {
                 var vendorMatch = Devices.Where(d => d.VendorID == tablet.VendorID);
@@ -75,7 +75,6 @@ namespace TabletDriverLib
             }
             catch (ArgumentOutOfRangeException ex)
             {
-                Log.Write("Exception", ex.StackTrace.ToString());
                 if (Debugging)
                     Log.Exception(ex);
                 if (PlatformInfo.IsLinux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.VendorID))
