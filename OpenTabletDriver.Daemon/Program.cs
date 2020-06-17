@@ -21,6 +21,8 @@ namespace OpenTabletDriver.Daemon
     {
         static async Task Main(string[] args)
         {
+            
+
             var rootCommand = new RootCommand("OpenTabletDriver")
             {
                 new Option(new string[] { "--appdata", "-a" }, "Application data directory")
@@ -38,8 +40,8 @@ namespace OpenTabletDriver.Daemon
             };
             rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, bool>((appdata, config, runAsService) => 
             {
-                AppInfo.AppDataDirectory = appdata;
-                AppInfo.ConfigurationDirectory = config;
+                AppInfo.Current.AppDataDirectory = appdata?.FullName;
+                AppInfo.Current.ConfigurationDirectory = config?.FullName;
                 RunAsService = runAsService;
             });
             rootCommand.Invoke(args);
