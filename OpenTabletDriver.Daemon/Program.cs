@@ -21,8 +21,6 @@ namespace OpenTabletDriver.Daemon
     {
         static async Task Main(string[] args)
         {
-            
-
             var rootCommand = new RootCommand("OpenTabletDriver")
             {
                 new Option(new string[] { "--appdata", "-a" }, "Application data directory")
