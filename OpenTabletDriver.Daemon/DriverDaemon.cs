@@ -228,7 +228,6 @@ namespace OpenTabletDriver.Daemon
                 {
                     Driver.TabletReader.Report -= TabletDebuggerServer.HandlePacket;
                     Driver.TabletReader.Report -= AuxDebuggerServer.HandlePacket;
-
                 }
 
                 if (Driver.AuxReader != null)
@@ -241,7 +240,6 @@ namespace OpenTabletDriver.Daemon
 
                 AuxDebuggerServer.Dispose();
                 AuxDebuggerServer = null;
-
             }
             else if (isEnabled && TabletDebuggerServer != null)
             {
