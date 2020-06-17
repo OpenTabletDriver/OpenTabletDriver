@@ -3,6 +3,7 @@
   "VendorID": 1386,
   "ProductID": 891,
   "InputReportLength": 10,
+  "OutputReportLength": 0,
   "ReportParser": "",
   "CustomInputReportLength": 11,
   "CustomReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",

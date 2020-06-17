@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Daemon
             PipeServer.Dispose();
             PipeServer = null;
             
-            Log.Debug($"Stopped tablet debugger server {{{Identifier}}}.");
+            Log.Debug($"Stopped tablet debugger server {{{Identifier}}}");
         }
 
         public Guid Identifier { private set; get; } = Guid.NewGuid();

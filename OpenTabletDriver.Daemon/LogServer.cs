@@ -17,6 +17,7 @@ namespace OpenTabletDriver.Daemon
             PipeServer = new NamedPipeServerStream(Identifier.ToString());
             await PipeServer.WaitForConnectionAsync();
             StreamWriter = new StreamWriter(PipeServer);
+
             Log.Output += (sender, message) =>
             {
                 if (PipeServer.IsConnected)
@@ -25,6 +26,7 @@ namespace OpenTabletDriver.Daemon
                     StreamWriter.Flush();
                 }
             };
+            Log.Debug($"Started log server {{{Identifier}}}");
         }
 
         public readonly Guid Identifier = Guid.NewGuid();
@@ -37,6 +39,8 @@ namespace OpenTabletDriver.Daemon
             PipeServer.Dispose();
             PipeServer = null;
             StreamWriter = null;
+
+            Log.Debug($"Stopped log server {{{Identifier}}}");
         }
     }
 }
