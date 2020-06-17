@@ -287,6 +287,10 @@ namespace OpenTabletDriver.UX.Windows
                     () => SelectedConfiguration.ActiveReportID.ToString(),
                     (o) => SelectedConfiguration.ActiveReportID = uint.TryParse(o, out var val) ? val : 0
                 ),
+                GetControl("HID Report ID",
+                    () => SelectedConfiguration.HidReportID.ToString(),
+                    (o) => SelectedConfiguration.HidReportID = int.TryParse(o, out var val) ? val : -1
+                ),
                 GetControl("Auxiliary Input Report Length",
                     () => SelectedConfiguration.AuxReportLength.ToString(),
                     (o) => SelectedConfiguration.AuxReportLength = uint.TryParse(o, out var val) ? val : 0
@@ -313,6 +317,25 @@ namespace OpenTabletDriver.UX.Windows
                             }
                         }
                         SelectedConfiguration.FeatureInitReport = buffer;
+                    }
+                ),
+                GetControl("String Descriptor Initialization",
+                    () => SelectedConfiguration.InitStrings != null ? ToHexValue(SelectedConfiguration.InitStrings) : string.Empty,
+                    (o) =>
+                    {
+                        var raw = o.Split(' ');
+                        byte[] buffer = new byte[raw.Length];
+                        for (int i = 0; i < raw.Length; i++)
+                        {
+                            if (TryGetHexValue(raw[i], out var val))
+                                buffer[i] = val;
+                            else
+                            {
+                                SelectedConfiguration.InitStrings = null;
+                                return;
+                            }
+                        }
+                        SelectedConfiguration.InitStrings = buffer;
                     }
                 ),
             };
