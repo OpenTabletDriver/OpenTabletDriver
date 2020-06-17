@@ -90,6 +90,5 @@ namespace TabletDriverLib.Interop
                 return null;
             }
         }
-
     }
 }

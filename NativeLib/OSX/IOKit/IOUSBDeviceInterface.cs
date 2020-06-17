@@ -10,12 +10,10 @@ namespace NativeLib.OSX
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     unsafe public delegate IOReturn DeviceRequest(IOUSBDeviceInterface** self, ref IOUSBDevRequest req);
 
-
     [StructLayout(LayoutKind.Sequential)]
     public struct IOUSBDeviceInterface 
     {
         public IUnknownCGuts guts;
-
         IntPtr CreateDeviceAsyncEventSource;
         IntPtr GetDeviceAsyncEventSource;
         IntPtr CreateDeviceAsyncPort;
@@ -38,8 +36,6 @@ namespace NativeLib.OSX
         IntPtr SetConfiguration;
         IntPtr GetBusFrameNumber;
         IntPtr ResetDevice;
-
-
         IntPtr DeviceRequestPtr;
         public DeviceRequest DeviceRequest => Wrap<DeviceRequest>(DeviceRequestPtr);
     }

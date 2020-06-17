@@ -15,5 +15,4 @@ namespace NativeLib.OSX
             this.size = size;
         }
     }
-
 }

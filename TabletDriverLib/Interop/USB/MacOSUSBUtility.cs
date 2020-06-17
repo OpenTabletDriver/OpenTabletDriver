@@ -36,7 +36,7 @@ namespace TabletDriverLib.Interop.USB
                     {
                         IntPtr devPtr = IntPtr.Zero;
 
-                        (**iodev).QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), ref devPtr) ;
+                        (**iodev).QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), ref devPtr);
 
                         if (devPtr != IntPtr.Zero)
                         {
@@ -60,7 +60,6 @@ namespace TabletDriverLib.Interop.USB
                                     if (result != 0) success = false;
                                 }
                             }
-                         
                         }
                     }
 
@@ -78,8 +77,6 @@ namespace TabletDriverLib.Interop.USB
                 }
                 return success;
             }
-           
         }
     }
 }
-

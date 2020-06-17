@@ -20,7 +20,6 @@ namespace TabletDriverLib.Interop.Keyboard
                 var keyEvent  = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
                 CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
                 CFRelease(keyEvent);
-                  
             }
         }
 

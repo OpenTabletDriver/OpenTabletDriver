@@ -105,6 +105,5 @@ namespace NativeLib.OSX
 
         [DllImport(IOKit)]
         public extern static kern_return_t IOObjectRelease(io_object_t obj);
-
     }
 }

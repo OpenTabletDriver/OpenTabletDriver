@@ -21,7 +21,6 @@ namespace TabletDriverLib.Output
 
         public void HandleBinding(IDeviceReport report)
         {
-
             if (report is ITabletReport tabletReport && tabletReport.ReportID >= TabletProperties.ActiveReportID)
                 HandlePenBinding(tabletReport);
             if (report is IAuxReport auxReport)

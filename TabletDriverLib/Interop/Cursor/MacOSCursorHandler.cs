@@ -35,7 +35,6 @@ namespace TabletDriverLib.Interop.Cursor
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
             CFRelease(eventRef);
             CFRelease(mouseEventRef);
-
         }
 
         private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
@@ -51,7 +50,6 @@ namespace TabletDriverLib.Interop.Cursor
  
         public void MouseDown(MouseButton button)
         {
-
             CGEventType type;
             CGMouseButton cgButton;
             switch (button)
