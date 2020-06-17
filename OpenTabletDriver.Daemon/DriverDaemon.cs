@@ -28,9 +28,10 @@ namespace OpenTabletDriver.Daemon
             await LoadPlugins();
             DetectTablets();
 
-            if (Settings == null && AppInfo.SettingsFile.Exists)
+            var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
+            if (Settings == null && settingsFile.Exists)
             {
-                var settings = Settings.Deserialize(AppInfo.SettingsFile);
+                var settings = Settings.Deserialize(settingsFile);
                 SetSettings(settings);
             }
         }
@@ -55,9 +56,10 @@ namespace OpenTabletDriver.Daemon
 
         public TabletProperties DetectTablets()
         {
-            if (AppInfo.ConfigurationDirectory.Exists)
+            var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
+            if (configDir.Exists)
             {
-                foreach (var file in AppInfo.ConfigurationDirectory.EnumerateFiles("*.json", SearchOption.AllDirectories))
+                foreach (var file in configDir.EnumerateFiles("*.json", SearchOption.AllDirectories))
                 {
                     var tablet = TabletProperties.Read(file);
                     if (SetTablet(tablet))
@@ -167,11 +169,17 @@ namespace OpenTabletDriver.Daemon
             return Settings;
         }
 
+        public AppInfo GetApplicationInfo()
+        {
+            return AppInfo.Current;
+        }
+
         public async Task<bool> LoadPlugins()
         {
-            if (AppInfo.PluginDirectory.Exists)
+            var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
+            if (pluginDir.Exists)
             {
-                foreach (var file in AppInfo.PluginDirectory.EnumerateFiles("*.dll", SearchOption.AllDirectories))
+                foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
                     await ImportPlugin(file.FullName);
                 return true;
             }

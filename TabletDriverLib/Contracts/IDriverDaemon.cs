@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Tablet;
@@ -15,6 +16,8 @@ namespace TabletDriverLib.Contracts
 
         void SetSettings(Settings settings);
         Settings GetSettings();
+
+        AppInfo GetApplicationInfo();
         
         Task<bool> LoadPlugins();
         Task<bool> ImportPlugin(string pluginPath);
