@@ -45,8 +45,6 @@ namespace TabletDriverLib
 
                 var matchedDevice = hidReportIDMatch.Count() > 0 ? hidReportIDMatch : inputReportMatch;
 
-                Log.Write("Detect", $"Searching for tablet '{productMatch.Count()}'");
-
                 var tabletDevice = tablet.OutputReportLength > 0 ? matchedDevice.FirstOrDefault(d => d.GetMaxOutputReportLength() == tablet.OutputReportLength) : matchedDevice.FirstOrDefault();
                 
                 var parser = PluginManager.ConstructObject<IDeviceReportParser>(tablet.ReportParserName) ?? new TabletReportParser();
