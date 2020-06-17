@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using NativeLib.OSX.Generic;
+using NativeLib.OSX.Input;
 
 namespace NativeLib.OSX
 {
@@ -55,6 +56,10 @@ namespace NativeLib.OSX
         [DllImport(Quartz)]
         public extern static CGEventRef CGEventCreateMouseEvent(CGEventSourceRef source, CGEventType mouseType,
             CGPoint mouseCursorPosition, CGMouseButton mouseButton);
+
+        [DllImport(Quartz)]
+        public extern static CGEventRef CGEventCreateKeyboardEvent(CGEventSourceRef source, CGKeyCode virtualKey, bool keyDown);
+
 
         [DllImport(Quartz)]
         public extern static CGEventRef CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);

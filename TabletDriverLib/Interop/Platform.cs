@@ -48,7 +48,7 @@ namespace TabletDriverLib.Interop
                     else if (PlatformInfo.IsLinux)
                         _keyboardHandler = new EvdevKeyboardHandler();
                     else if (PlatformInfo.IsOSX)
-                        _keyboardHandler = null;
+                        _keyboardHandler = new MacOsKeyboardHandler();
                     else
                     {
                         Log.Write("KeyboardHandler", $"Failed to create a keyboard handler for this platform ({Environment.OSVersion.Platform}).", true);
