@@ -79,14 +79,14 @@ namespace OpenTabletDriver.UX.Windows
 
             if (guids.Count > 0)
             {
-                var tabletReader = new PipeReader<DebugTabletReport, DebugAuxReport>(guids[0]);
+                var tabletReader = new PipeReader<DebugTabletReport>(guids[0]);
                 tabletReader.Report += HandleReport;
                 this.Closing += (sender, e) => tabletReader.Dispose();
             }
             
             if (guids.Count > 1)
             {
-                var auxReader = new PipeReader<DebugAuxReport, DebugAuxReport>(guids[1]);
+                var auxReader = new PipeReader<DebugAuxReport>(guids[1]);
                 auxReader.Report += HandleReport;
                 this.Closing += (sender, e) => auxReader.Dispose();
             }

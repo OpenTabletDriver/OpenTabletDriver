@@ -8,7 +8,7 @@ using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.UX.Debugging
 {
-    public class PipeReader<T,A> : IDisposable where T : IDeviceReport where A:IDeviceReport
+    public class PipeReader<T> : IDisposable where T : IDeviceReport
     {
         public PipeReader(Guid serverId)
         {
@@ -48,15 +48,8 @@ namespace OpenTabletDriver.UX.Debugging
                         if (reader.TokenType == JsonToken.StartObject)
                         {
                             JObject jsonObject = (JObject)serializer.Deserialize(reader);
-                            if(jsonObject.ContainsKey("AuxButtons"))
-                            {
-                                if (jsonObject.ToObject<A>() is A report)
-                                    Report?.Invoke(this, report);
-                            }else
-                            {
-                                if (jsonObject.ToObject<T>() is T report)
-                                    Report?.Invoke(this, report);
-                            }
+                            if (jsonObject.ToObject<T>() is T report) 
+                                Report?.Invoke(this, report);
                         }
                     }
                 }

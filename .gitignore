@@ -11,5 +11,6 @@
 # User Preferences
 *.user
 
-#macos temp file
-.DS_Store
+
+# MacOS
+*.DS_Store
