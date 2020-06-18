@@ -60,7 +60,7 @@ namespace TabletDriverLib
 
                 if(tablet.InitStrings != null)
                 {
-                    Platform.USBUtility.InitStrings(tabletDevice.DevicePath, tablet.InitStrings);
+                    tablet.InitStrings.Select(s =>  tabletDevice.GetDeviceString(s)).ToList();
                 }
 
                 var tabletOpened = Open(tabletDevice, parser);
