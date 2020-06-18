@@ -9,9 +9,10 @@ namespace TabletDriverLib
 {
     public class DeviceReader<T> : IDeviceReader<T>, IDisposable where T : IDeviceReport
     {
-        public DeviceReader(HidDevice device)
+        public DeviceReader(HidDevice device, IReportParser<T> reportParser)
         {
             Device = device;
+            Parser = reportParser;
             WorkerThread = new Thread(Main)
             {
                 Name = "OpenTabletDriver Device Reader",
@@ -23,7 +24,7 @@ namespace TabletDriverLib
         public virtual HidDevice Device { protected set; get; }
         public virtual HidStream ReportStream { protected set; get; }
         public bool Reading { protected set; get; }
-        public IReportParser<T> Parser { set; get; }
+        public IReportParser<T> Parser { private set; get; }
         public virtual event EventHandler<T> Report;
 
         private Thread WorkerThread;
@@ -67,11 +68,6 @@ namespace TabletDriverLib
             {
                 Log.Write("Detect", "Failed to open tablet. Make sure you have required permissions to open device streams.", true);
                 return;
-            }
-
-            if (Driver.Debugging)
-            {
-                Log.Debug("InputReportLength: " + Device.GetMaxInputReportLength());
             }
         }
 

@@ -2,7 +2,7 @@ using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Tablet
 {
-    public class AuxReportParser : IDeviceReportParser
+    public class AuxReportParser : IReportParser<IDeviceReport>
     {
         public IDeviceReport Parse(byte[] data)
         {

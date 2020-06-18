@@ -6,6 +6,6 @@ namespace TabletDriverLib.Contracts
     public interface IDeviceReader<T> where T : IDeviceReport
     {
         event EventHandler<T> Report;
-        IReportParser<T> Parser { set; get; }
+        IReportParser<T> Parser { get; }
     }
 }

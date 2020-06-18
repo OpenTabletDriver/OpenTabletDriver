@@ -2,7 +2,7 @@
 
 namespace TabletDriverLib.Vendors.Wacom
 {
-    public class IntuosV2ReportParser : IDeviceReportParser
+    public class IntuosV2ReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {

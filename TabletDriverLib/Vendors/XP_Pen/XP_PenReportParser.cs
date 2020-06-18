@@ -3,7 +3,7 @@ using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Vendors.XP_Pen
 {
-    public class XP_PenReportParser : IDeviceReportParser
+    public class XP_PenReportParser : IReportParser<IDeviceReport>
     {
         public IDeviceReport Parse(byte[] data)
         {
