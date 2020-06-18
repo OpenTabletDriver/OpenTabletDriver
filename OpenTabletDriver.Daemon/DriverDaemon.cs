@@ -118,6 +118,9 @@ namespace OpenTabletDriver.Daemon
                 };
                 Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
+                absoluteMode.VirtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+                Log.Write("Settings", $"Screen area: {absoluteMode.VirtualScreen}");
+
                 absoluteMode.AreaClipping = Settings.EnableClipping;   
                 Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
             }
