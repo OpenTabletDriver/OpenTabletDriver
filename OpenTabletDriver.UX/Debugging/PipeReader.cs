@@ -53,7 +53,7 @@ namespace OpenTabletDriver.UX.Debugging
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Ignore any exception here, just stop reading instead of throwing.
                 }
