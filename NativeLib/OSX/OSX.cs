@@ -14,7 +14,6 @@ namespace NativeLib.OSX
         private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
         private const string Foundation = "/System/Library/Frameworks/Foundation.framework/Foundation";
 
-
         [DllImport(Foundation)]
         public static extern void CFRelease(IntPtr handle);
 
@@ -55,7 +54,5 @@ namespace NativeLib.OSX
 
         [DllImport(Quartz)]
         public extern static CGrect CGDisplayBounds(CGDirectDisplayID maxDisplays);
-
-
     }
-}
+} 
