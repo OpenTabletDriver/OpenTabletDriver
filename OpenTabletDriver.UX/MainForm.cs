@@ -19,6 +19,8 @@ namespace OpenTabletDriver.UX
     {
         public MainForm()
         {
+            Application.Instance.UnhandledException += App.UnhandledException;
+
             this.DataContext = new MainFormViewModel();
 
             Title = "OpenTabletDriver";
