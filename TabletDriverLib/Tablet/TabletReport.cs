@@ -14,13 +14,7 @@ namespace TabletDriverLib.Tablet
             var x = BitConverter.ToUInt16(report, 2);
             var y = BitConverter.ToUInt16(report, 4);
             Position = new Point(x, y);
-
-            //For unknown reason, sometimes, the tablet send incomplete report
-            //TODO: Reset the device after observing incomplete report
-            if (report.Length < 8)
-                Pressure = 0;
-            else
-                Pressure = BitConverter.ToUInt16(report, 6);
+            Pressure = BitConverter.ToUInt16(report, 6);
 
             PenButtons = new bool[]
             {

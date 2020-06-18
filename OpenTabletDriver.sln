@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX.Wpf", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Console", "OpenTabletDriver.Console\OpenTabletDriver.Console.csproj", "{040FFF57-84CB-464C-83A5-B99002FF6605}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX.Mac", "OpenTabletDriver.UX.Mac\OpenTabletDriver.UX.Mac.csproj", "{6BF7353B-6C62-4B01-A1AC-84255D49B58D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX.Mac64", "OpenTabletDriver.UX.Mac\OpenTabletDriver.UX.Mac64.csproj", "{6BF7353B-6C62-4B01-A1AC-84255D49B58D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HidSharp", "HIDSharpCore\HidSharp\HidSharp.csproj", "{645C6F5C-0E30-4598-AAAE-513385386FF6}"
 EndProject
