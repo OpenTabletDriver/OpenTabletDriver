@@ -2,7 +2,7 @@
 
 namespace TabletDriverLib.Tablet
 {
-    public class TabletReportParser : IDeviceReportParser
+    public class TabletReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {

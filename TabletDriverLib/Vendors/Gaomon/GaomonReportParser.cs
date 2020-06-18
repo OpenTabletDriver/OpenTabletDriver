@@ -3,7 +3,7 @@ using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Vendors.Gaomon
 {
-    public class GaomonReportParser : IDeviceReportParser
+    public class GaomonReportParser : IReportParser<IDeviceReport>
     {
         public IDeviceReport Parse(byte[] data)
         {

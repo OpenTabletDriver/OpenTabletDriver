@@ -46,7 +46,7 @@ namespace OpenTabletDriver.Daemon
 
         public bool SetTablet(TabletProperties tablet)
         {
-            return Driver.Open(tablet);
+            return Driver.TryMatch(tablet);
         }
 
         public TabletProperties GetTablet()
@@ -159,7 +159,7 @@ namespace OpenTabletDriver.Daemon
 
             if (Settings.AutoHook)
             {
-                Driver.BindingEnabled = true;
+                Driver.EnableInput = true;
                 Log.Write("Settings", "Driver is auto-enabled.");
             }
         }
@@ -203,7 +203,7 @@ namespace OpenTabletDriver.Daemon
 
         public void SetInputHook(bool isHooked)
         {
-            Driver.BindingEnabled = isHooked;
+            Driver.EnableInput = isHooked;
         }
 
         public IEnumerable<Guid> SetTabletDebug(bool isEnabled)
