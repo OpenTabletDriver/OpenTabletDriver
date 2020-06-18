@@ -26,7 +26,10 @@ namespace OpenTabletDriver.Daemon
         public void HandlePacket(object sender, IDeviceReport report)
         {
             if (PipeServer.IsConnected && JsonWriter != null)
+            {
                 Serializer.Serialize(JsonWriter, report);
+                JsonWriter.Flush();
+            }
         }
 
         public void Dispose()
