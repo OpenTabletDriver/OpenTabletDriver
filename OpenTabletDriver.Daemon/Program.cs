@@ -21,6 +21,22 @@ namespace OpenTabletDriver.Daemon
     {
         static async Task Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) => 
+            {
+                var exception = (Exception)e.ExceptionObject;
+                File.WriteAllLines(Path.Join(AppInfo.Current.AppDataDirectory, "daemon.log"),
+                    new string[]
+                    {
+                        DateTime.Now.ToString(),
+                        exception.GetType().FullName,
+                        exception.Message,
+                        exception.Source,
+                        exception.StackTrace,
+                        exception.TargetSite.Name
+                    }
+                );
+            };
+
             var rootCommand = new RootCommand("OpenTabletDriver")
             {
                 new Option(new string[] { "--appdata", "-a" }, "Application data directory")
