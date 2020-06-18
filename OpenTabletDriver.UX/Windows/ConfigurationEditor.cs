@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
-using TabletDriverLib;
 using TabletDriverLib.Tablet;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
@@ -27,13 +24,11 @@ namespace OpenTabletDriver.UX.Windows
             Icon = App.Logo.WithSize(App.Logo.Size);
 
             // Main Controls
-            Configurations = ReadConfigurations(AppInfo.ConfigurationDirectory);
             _configList.SelectedIndexChanged += (sender, e) => 
             {
                 if (_configList.SelectedIndex >= 0)
                     SelectedConfiguration = Configurations[_configList.SelectedIndex];
             };
-            _configList.SelectedIndex = 0;
             
             Content = new Splitter
             {
@@ -98,6 +93,16 @@ namespace OpenTabletDriver.UX.Windows
                     generateConfiguration
                 }
             };
+
+            InitializeAsync();
+        }
+
+        private async void InitializeAsync()
+        {
+            var appinfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
+            var configDir = new DirectoryInfo(appinfo.ConfigurationDirectory);
+            Configurations = ReadConfigurations(configDir);
+            _configList.SelectedIndex = 0;
         }
 
         private List<TabletProperties> _configs;

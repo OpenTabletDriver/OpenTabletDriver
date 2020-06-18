@@ -394,9 +394,11 @@ namespace OpenTabletDriver.UX
 
         private async void InitializeAsync()
         {
-            if (AppInfo.PluginDirectory.Exists)
+            var appInfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
+            var pluginDir = new DirectoryInfo(appInfo.PluginDirectory);
+            if (pluginDir.Exists)
             {
-                foreach (var file in AppInfo.PluginDirectory.EnumerateFiles("*.dll", SearchOption.AllDirectories))
+                foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
                 {
                     await App.DriverDaemon.InvokeAsync(d => d.ImportPlugin(file.FullName));
                     await PluginManager.AddPlugin(file);
@@ -412,13 +414,14 @@ namespace OpenTabletDriver.UX
                 await DetectAllTablets();
             }
 
+            var settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
             {
                 ViewModel.Settings = settings;
             }
-            else if (AppInfo.SettingsFile.Exists)
+            else if (settingsFile.Exists)
             {
-                ViewModel.Settings = Settings.Deserialize(AppInfo.SettingsFile);
+                ViewModel.Settings = Settings.Deserialize(settingsFile);
                 await App.DriverDaemon.InvokeAsync(d => d.SetSettings(ViewModel.Settings));
             }
             else
@@ -514,9 +517,10 @@ namespace OpenTabletDriver.UX
 
         private async Task SaveSettings()
         {
+            var appInfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
             if (ViewModel.Settings is Settings settings)
             {
-                settings.Serialize(AppInfo.SettingsFile);
+                settings.Serialize(new FileInfo(appInfo.SettingsFile));
                 await ApplySettings();
             }
         }
@@ -540,7 +544,8 @@ namespace OpenTabletDriver.UX
             }
             else
             {
-                Log.Write("Detect", $"Configuration directory '{AppInfo.ConfigurationDirectory.FullName}' does not exist.");
+                var appInfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
+                Log.Write("Detect", $"Configuration directory '{appInfo.ConfigurationDirectory}' does not exist.");
             }
         }
 

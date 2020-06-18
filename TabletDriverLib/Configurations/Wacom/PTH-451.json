@@ -3,6 +3,7 @@
   "VendorID": 1386,
   "ProductID": 788,
   "InputReportLength": 10,
+  "OutputReportLength": 0,
   "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
   "CustomInputReportLength": 11,
   "CustomReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
