@@ -19,7 +19,7 @@ namespace TabletDriverLib.Vendors.Vikoo
             if(data[1] == 224)
                 return new HK708AuxReport(data);
             else
-                return new TabletReport(data);
+                return new HK708TabletReport(data);
         }
     }
 }

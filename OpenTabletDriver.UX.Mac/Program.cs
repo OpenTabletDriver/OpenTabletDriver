@@ -1,7 +1,7 @@
 using System;
 using Eto.Forms;
 
-namespace OpenTabletDriver.UX.Mac64
+namespace OpenTabletDriver.UX.Mac
 {
     class MainClass
     {

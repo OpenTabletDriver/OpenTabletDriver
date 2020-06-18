@@ -10,3 +10,6 @@
 
 # User Preferences
 *.user
+
+# MacOS
+*.DS_Store
