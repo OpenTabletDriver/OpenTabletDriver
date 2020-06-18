@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
@@ -12,6 +13,23 @@ namespace OpenTabletDriver.UX
 {
     public static class App
     {
+        public async static void UnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
+        {
+            var appInfo = await DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
+            var exception = (Exception)e.ExceptionObject;
+            await File.WriteAllLinesAsync(Path.Join(appInfo.AppDataDirectory, "ux.log"),
+                new string[]
+                {
+                    DateTime.Now.ToString(),
+                    exception.GetType().FullName,
+                    exception.Message,
+                    exception.Source,
+                    exception.StackTrace,
+                    exception.TargetSite.Name
+                }
+            );
+        }
+
         public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
         public static AboutDialog AboutDialog => _aboutDialog.Value;
         public static Bitmap Logo => _logo.Value;
