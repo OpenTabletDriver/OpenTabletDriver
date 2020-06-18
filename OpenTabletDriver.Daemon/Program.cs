@@ -21,6 +21,22 @@ namespace OpenTabletDriver.Daemon
     {
         static async Task Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) => 
+            {
+                var exception = (Exception)e.ExceptionObject;
+                File.WriteAllLines(Path.Join(AppInfo.Current.AppDataDirectory, "daemon.log"),
+                    new string[]
+                    {
+                        DateTime.Now.ToString(),
+                        exception.GetType().FullName,
+                        exception.Message,
+                        exception.Source,
+                        exception.StackTrace,
+                        exception.TargetSite.Name
+                    }
+                );
+            };
+
             var rootCommand = new RootCommand("OpenTabletDriver")
             {
                 new Option(new string[] { "--appdata", "-a" }, "Application data directory")
@@ -38,8 +54,8 @@ namespace OpenTabletDriver.Daemon
             };
             rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, bool>((appdata, config, runAsService) => 
             {
-                AppInfo.AppDataDirectory = appdata;
-                AppInfo.ConfigurationDirectory = config;
+                AppInfo.Current.AppDataDirectory = appdata?.FullName;
+                AppInfo.Current.ConfigurationDirectory = config?.FullName;
                 RunAsService = runAsService;
             });
             rootCommand.Invoke(args);
