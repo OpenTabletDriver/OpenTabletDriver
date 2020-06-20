@@ -12,7 +12,8 @@
         kCGEventRightMouseDragged = 7,
         kCGEventKeyDown = 10,
         kCGEventKeyUp = 11,
-        kCGEventOtherMouseDown = 16, // Likely incorrect
-        kCGEventOtherMouseUp = 17, // ^
+        kCGEventOtherMouseDown = 16,
+        kCGEventOtherMouseUp = 17,
+        kCGEventOtherMouseDragged = 27 // Possibly incorrect, based on other docs
     }
 }
