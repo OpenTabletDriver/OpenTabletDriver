@@ -12,7 +12,7 @@ namespace TabletDriverPlugin
         private static void Post(LogMessage message)
         {
             Output?.Invoke(null, message);
-            Console.WriteLine(string.Format("[{0}:{1}]\t{2}", message.IsError ? "Error" : "Normal", message.Group, message.Message));
+            Console.WriteLine(GetStringFormat(message));
         }
 
         public static string GetStringFormat(LogMessage message)
