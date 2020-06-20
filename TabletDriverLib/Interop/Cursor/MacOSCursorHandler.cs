@@ -32,17 +32,17 @@ namespace TabletDriverLib.Interop.Cursor
         public void SetCursorPosition(Point pos)
         {
             var newPos = new CGPoint(pos.X, pos.Y) - offset;
-            CGWarpMouseCursorPosition(newPos);
+            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, CGEventType.kCGEventMouseMoved, newPos, GetButtonStates());
+            CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
+            CFRelease(mouseEventRef);
         }
 
         private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
         {
-            var eventRef = CGEventCreate(IntPtr.Zero);
             var curPos = GetCursorPosition();
             var cgPos = new CGPoint(curPos.X, curPos.Y);
             var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, type, cgPos, cgButton);
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
-            CFRelease(eventRef);
             CFRelease(mouseEventRef);
         }
 
@@ -55,16 +55,18 @@ namespace TabletDriverLib.Interop.Cursor
                 switch (button)
                 {
                     case MouseButton.Left:
-                        type = CGEventType.kCGEventLeftMouseDown;
+                        type = CGEventType.kCGEventLeftMouseDragged;
                         cgButton = CGMouseButton.kCGMouseButtonLeft;
+                        PostMouseEvent(CGEventType.kCGEventLeftMouseDown, cgButton);
                         break;
                     case MouseButton.Middle:
                         type = CGEventType.kCGEventOtherMouseDown;
                         cgButton = CGMouseButton.kCGMouseButtonCenter;
                         break;
                     case MouseButton.Right:
-                        type = CGEventType.kCGEventRightMouseDown;
+                        type = CGEventType.kCGEventRightMouseDragged;
                         cgButton = CGMouseButton.kCGMouseButtonRight;
+                        PostMouseEvent(CGEventType.kCGEventRightMouseDown, cgButton);
                         break;
                     case MouseButton.Backward:
                         type = CGEventType.kCGEventOtherMouseDown;
@@ -121,6 +123,24 @@ namespace TabletDriverLib.Interop.Cursor
         public bool GetMouseButtonState(MouseButton button)
         {
             return InputDictionary.TryGetValue(button, out var state) ? state : false;
+        }
+
+        private CGMouseButton GetButtonStates()
+        {
+            CGMouseButton pressedButtons = 0;
+
+            if (GetMouseButtonState(MouseButton.Left))
+                pressedButtons |= CGMouseButton.kCGMouseButtonLeft;
+            if (GetMouseButtonState(MouseButton.Middle))
+                pressedButtons |= CGMouseButton.kCGMouseButtonCenter;
+            if (GetMouseButtonState(MouseButton.Right))
+                pressedButtons |= CGMouseButton.kCGMouseButtonRight;
+            if (GetMouseButtonState(MouseButton.Forward))
+                pressedButtons |= CGMouseButton.kCGMouseButtonForward;
+            if (GetMouseButtonState(MouseButton.Backward))
+                pressedButtons |= CGMouseButton.kCGMouseButtonBackward;
+
+            return pressedButtons;
         }
     }
 }
