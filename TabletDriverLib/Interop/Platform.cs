@@ -12,66 +12,44 @@ namespace TabletDriverLib.Interop
 {
     public static class Platform
     {
-        private static ICursorHandler _cursorHandler;
-        public static ICursorHandler CursorHandler
-        {
-            get
-            {
-                if (_cursorHandler == null)
-                {
-                    if (PlatformInfo.IsWindows)
-                        _cursorHandler = new WindowsCursorHandler();
-                    else if (PlatformInfo.IsLinux)
-                        _cursorHandler = new EvdevCursorHandler();
-                    else if (PlatformInfo.IsOSX)
-                        _cursorHandler = new MacOSCursorHandler();
-                    else
-                    {
-                        Log.Write("CursorHandler", $"Failed to create a cursor handler for this platform ({Environment.OSVersion.Platform}).", true);
-                        return null;
-                    }
-                }
-                return _cursorHandler;
-            }
-        }
+        public static ICursorHandler CursorHandler => _cursorHandler.Value;
+        public static IKeyboardHandler KeyboardHandler => _keyboardHandler.Value;
+        public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
 
-        private static IKeyboardHandler _keyboardHandler;
-        public static IKeyboardHandler KeyboardHandler
+        private static Lazy<ICursorHandler> _cursorHandler = new Lazy<ICursorHandler>(() =>
         {
-            get
-            {
-                if (_keyboardHandler == null)
-                {
-                    if (PlatformInfo.IsWindows)
-                        _keyboardHandler = new WindowsKeyboardHandler();
-                    else if (PlatformInfo.IsLinux)
-                        _keyboardHandler = new EvdevKeyboardHandler();
-                    else if (PlatformInfo.IsOSX)
-                        _keyboardHandler = null;
-                    else
-                    {
-                        Log.Write("KeyboardHandler", $"Failed to create a keyboard handler for this platform ({Environment.OSVersion.Platform}).", true);
-                        return null;
-                    }
-                }
-                return _keyboardHandler;
-            }
-        }
-
-        public static IVirtualScreen VirtualScreen
-        {
-            get
-            {
-                if (PlatformInfo.IsWindows)
-                    return new WindowsDisplay();
-                else if (PlatformInfo.IsLinux)
-                    return new XScreen();
-                else if (PlatformInfo.IsOSX)
-                    return new MacOSDisplay();
-
-                Log.Write("Display Handler", $"Failed to create a display handler for this platform ({Environment.OSVersion.Platform}).", true);
+            if (PlatformInfo.IsWindows)
+                return new WindowsCursorHandler();
+            else if (PlatformInfo.IsLinux)
+                return new EvdevCursorHandler();
+            else if (PlatformInfo.IsOSX)
+                return new MacOSCursorHandler();
+            else
                 return null;
-            }
-        }
+        });
+
+        private static Lazy<IKeyboardHandler> _keyboardHandler = new Lazy<IKeyboardHandler>(() => 
+        {
+            if (PlatformInfo.IsWindows)
+                return new WindowsKeyboardHandler();
+            else if (PlatformInfo.IsLinux)
+                return new EvdevKeyboardHandler();
+            else if (PlatformInfo.IsOSX)
+                return new MacOSKeyboardHandler();
+            else
+                return null;
+        });
+
+        private static Lazy<IVirtualScreen> _virtualScreen = new Lazy<IVirtualScreen>(() => 
+        {
+            if (PlatformInfo.IsWindows)
+                return new WindowsDisplay();
+            else if (PlatformInfo.IsLinux)
+                return new XScreen();
+            else if (PlatformInfo.IsOSX)
+                return new MacOSDisplay();
+            else
+                return null;
+        });
     }
 }

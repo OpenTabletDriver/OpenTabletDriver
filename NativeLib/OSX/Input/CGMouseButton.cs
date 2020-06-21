@@ -1,4 +1,4 @@
-﻿namespace NativeLib.OSX
+﻿namespace NativeLib.OSX.Input
 {
     public enum CGMouseButton : uint
     {
