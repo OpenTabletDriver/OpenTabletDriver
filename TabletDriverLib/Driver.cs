@@ -16,7 +16,18 @@ namespace TabletDriverLib
         public bool EnableInput { set; get; }
         
         public HidDevice TabletDevice { private set; get; }
-        public TabletProperties TabletProperties { private set; get; }
+
+        private TabletProperties _tabletProperties;
+        public TabletProperties TabletProperties
+        {
+            private set
+            {
+                _tabletProperties = value;
+                if (OutputMode != null)
+                    OutputMode.TabletProperties = TabletProperties;
+            }
+            get => _tabletProperties;
+        }
 
         public IOutputMode OutputMode { set; get; }
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
