@@ -9,6 +9,7 @@ OpenTabletDriver is an open source tablet configurator. The goal of OpenTabletDr
 You can grab the latest release below. Make sure to download the right version for your platform.
 
 - [Latest Release](https://github.com/InfinityGhost/OpenTabletDriver/releases)
+- [Windows Installation Script](https://gist.github.com/InfinityGhost/c6461a53a3b60f8549fe28c7e517d4f1)
 - [Arch User Repository (opentabletdriver-git)](https://aur.archlinux.org/packages/opentabletdriver-git)
 
 ## Running OpenTabletDriver
@@ -26,7 +27,7 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 #### Windows
 
-No special dependencies.
+No other dependencies.
 
 #### Linux
 
@@ -37,14 +38,14 @@ No special dependencies.
 
 #### MacOS [Experimental]
 
-No special dependencies.
+No other dependencies.
 
 # Features
 
 - Fully platform-native GUI
-  - Windows uses WPF
-  - Linux uses GTK+3
-  - MacOS uses its native GUI
+  - Windows: `Windows Presentation Foundation`
+  - Linux: `GTK+3`
+  - MacOS: `MonoMac`
 - Fully fledged console tool
   - Quickly acquire, change, load, or save settings
   - Scripting support (json output)
