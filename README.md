@@ -6,47 +6,55 @@ OpenTabletDriver is an open source tablet configurator. The goal of OpenTabletDr
 
 ## Releases
 
-You can grab the latest release below. Make sure to download the version for your platform.
+You can grab the latest release below. Make sure to download the right version for your platform.
 
-- [Latest release](https://github.com/InfinityGhost/OpenTabletDriver/releases)
+- [Latest Release](https://github.com/InfinityGhost/OpenTabletDriver/releases)
+- [Windows Installation Script](https://gist.github.com/InfinityGhost/c6461a53a3b60f8549fe28c7e517d4f1)
+- [Arch User Repository (opentabletdriver-git)](https://aur.archlinux.org/packages/opentabletdriver-git)
 
-# Build Dependencies
+## Running OpenTabletDriver
+
+OpenTabletDriver functions as two separate processes that interact with each other seamlessly. The active program that does all of the tablet data handling is `OpenTabletDriver.Daemon`, while the GUI frontend is `OpenTabletDriver.UX.*`, where `*` depends on your platform<sup>1</sup>. The daemon must be started in order for anything to work, however the GUI is unnecessary. If you have existing settings, they should apply when the daemon starts.
+
+> <sup>1</sup>Windows uses `Wpf`, Linux uses `Gtk`, and MacOS uses `MacOS` respectively. This for the most part can be ignored if you don't build it from source as only the correct version will be provided.
+
+## Building OpenTabletDriver
 
 The requirements to build OpenTabletDriver are consistent across all platforms. Running OpenTabletDriver on each platform requires different dependencies.
 
-## All platforms
+### All platforms
 - .NET Core 3.1 SDK
 
-### Windows
+#### Windows
 
-No special dependencies.
+No other dependencies.
 
-### Linux
+#### Linux
 
 - libx11
 - libxrandr
-- libxtst
 - libevdev2
+- GTK+3
 
-##### Debian / Ubuntu
+#### MacOS [Experimental]
 
-- libx11-dev
-- libxrandr-dev
-- libxtst-dev
-- libevdev-dev
-
-### Mac OS X [Unsupported]
-> Code is written for Mac OS X, but it isn't maintained at all. It will compile but most functions either won't work or cause crashes. There isn't any plan to support this platform at the moment but it certainly could be done.
-
-No special dependencies.
+No other dependencies.
 
 # Features
 
+- Fully platform-native GUI
+  - Windows: `Windows Presentation Foundation`
+  - Linux: `GTK+3`
+  - MacOS: `MonoMac`
+- Fully fledged console tool
+  - Quickly acquire, change, load, or save settings
+  - Scripting support (json output)
 - Absolute cursor positioning
   - Screen area and tablet area
   - Center-anchored offsets
   - Precise area rotation
 - Relative cursor positioning
+  - mm/px horizontal and vertical sensitivity
 - Pen bindings
   - Tip by pressure bindings
   - Express key bindings
@@ -55,19 +63,21 @@ No special dependencies.
   - Keyboard bindings
   - External plugin bindings
 - Saving and loading settings
-  - Auto-loads user settings via `settings.json` in the active directory
-- Tablet Configuration Manager
-  - Can convert [TabletDriver](https://github.com/hawku/TabletDriver) configuration files (.cfg)
+  - Auto-loads user settings via `settings.json` in the active user `%localappdata%` or `.config` settings root directory.
+- Configuration Editor
+  - Allows you to create, modify, and delete configurations.
+  - Generate configurations from visible HID devices
 - Plugins
   - Filters
   - Output modes
+  - Run-and-stay-resident tools
 
 # Improving OpenTabletDriver
 
-If you wish to help improve OpenTabletDriver, first [check out the pinned issues](https://github.com/InfinityGhost/OpenTabletDriver/issues).
+If you wish to help improve OpenTabletDriver, please [check out the pinned issues](https://github.com/InfinityGhost/OpenTabletDriver/issues).
 
 # Tablet Support
 
-All statuses of tablets that are supported, untested, and planned to be supported can be found here.
+All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
 
 - [Tablet support project](https://github.com/InfinityGhost/OpenTabletDriver/projects/4)
