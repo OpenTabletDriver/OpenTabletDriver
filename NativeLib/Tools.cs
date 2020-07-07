@@ -9,7 +9,7 @@ namespace NativeLib
         {
             if (PlatformInfo.IsWindows)
             {
-                var startInfo = new ProcessStartInfo(cmd", $"/c start \"\" \"{url.Replace("&", "^&")}\"")
+                var startInfo = new ProcessStartInfo("cmd", $"/c start \"\" \"{url.Replace("&", "^&")}\"")
                 {
                     CreateNoWindow = true
                 };
