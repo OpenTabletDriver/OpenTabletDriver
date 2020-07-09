@@ -14,17 +14,17 @@ namespace TabletDriverPlugin.Tablet
         /// <summary>
         /// The digitizer device identifier.
         /// </summary>
-        public DeviceIdentifier DigitizerIdentifier { set; get; }
+        public DeviceIdentifier DigitizerIdentifier { set; get; } = new DeviceIdentifier();
 
         /// <summary>
         /// The alternate digitizer device identifier.
         /// </summary>
-        public DeviceIdentifier AlternateDigitizerIdentifier { set; get; }
+        public DeviceIdentifier AlternateDigitizerIdentifier { set; get; } = new DeviceIdentifier();
 
         /// <summary>
         /// The auxiliary device identifier.
         /// </summary>
-        public DeviceIdentifier AuxilaryDeviceIdentifier { set; get; }
+        public DeviceIdentifier AuxilaryDeviceIdentifier { set; get; } = new DeviceIdentifier();
 
         /// <summary>
         /// The tablet's horizontal active area in millimeters.
