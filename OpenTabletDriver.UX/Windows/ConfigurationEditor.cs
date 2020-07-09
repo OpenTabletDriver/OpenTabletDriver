@@ -294,42 +294,12 @@ namespace OpenTabletDriver.UX.Windows
                         typeof(TabletReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexValue(report) : string.Empty,
-                        (o) =>
-                        {
-                            var raw = o.Split(' ');
-                            byte[] buffer = new byte[raw.Length];
-                            for (int i = 0; i < raw.Length; i++)
-                            {
-                                if (TryGetHexValue(raw[i], out var val))
-                                    buffer[i] = val;
-                                else
-                                {
-                                    SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = null;
-                                    return;
-                                }
-                            }
-                            SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = buffer;
-                        }
+                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = ToByteArray(o)
                     ),
                     GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexValue(report) : string.Empty,
-                        (o) => 
-                        {
-                            var raw = o.Split(' ');
-                            byte[] buffer = new byte[raw.Length];
-                            for (int i = 0; i < raw.Length; i++)
-                            {
-                                if (TryGetHexValue(raw[i], out var val))
-                                    buffer[i] = val;
-                                else
-                                {
-                                    SelectedConfiguration.DigitizerIdentifier.OutputInitReport = null;
-                                    return;
-                                }
-                            }
-                            SelectedConfiguration.DigitizerIdentifier.OutputInitReport = buffer;
-                        }
+                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 ),
                 GetExpander("Alternate Tablet Identifiers", false,
@@ -355,42 +325,12 @@ namespace OpenTabletDriver.UX.Windows
                         typeof(TabletReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexValue(report) : string.Empty,
-                        (o) =>
-                        {
-                            var raw = o.Split(' ');
-                            byte[] buffer = new byte[raw.Length];
-                            for (int i = 0; i < raw.Length; i++)
-                            {
-                                if (TryGetHexValue(raw[i], out var val))
-                                    buffer[i] = val;
-                                else
-                                {
-                                    SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = null;
-                                    return;
-                                }
-                            }
-                            SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = buffer;
-                        }
+                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = ToByteArray(o)
                     ),
                     GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexValue(report) : string.Empty,
-                        (o) => 
-                        {
-                            var raw = o.Split(' ');
-                            byte[] buffer = new byte[raw.Length];
-                            for (int i = 0; i < raw.Length; i++)
-                            {
-                                if (TryGetHexValue(raw[i], out var val))
-                                    buffer[i] = val;
-                                else
-                                {
-                                    SelectedConfiguration.DigitizerIdentifier.OutputInitReport = null;
-                                    return;
-                                }
-                            }
-                            SelectedConfiguration.DigitizerIdentifier.OutputInitReport = buffer;
-                        }
+                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 ),
                 GetExpander("Auxiliary Device Identifiers", isExpanded: false,
@@ -416,42 +356,12 @@ namespace OpenTabletDriver.UX.Windows
                         typeof(AuxReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexValue(report) : string.Empty,
-                        (o) =>
-                        {
-                            var raw = o.Split(' ');
-                            byte[] buffer = new byte[raw.Length];
-                            for (int i = 0; i < raw.Length; i++)
-                            {
-                                if (TryGetHexValue(raw[i], out var val))
-                                    buffer[i] = val;
-                                else
-                                {
-                                    SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = null;
-                                    return;
-                                }
-                            }
-                            SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = buffer;
-                        }
+                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = ToByteArray(o)
                     ),
                     GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexValue(report) : string.Empty,
-                        (o) => 
-                        {
-                            var raw = o.Split(' ');
-                            byte[] buffer = new byte[raw.Length];
-                            for (int i = 0; i < raw.Length; i++)
-                            {
-                                if (TryGetHexValue(raw[i], out var val))
-                                    buffer[i] = val;
-                                else
-                                {
-                                    SelectedConfiguration.DigitizerIdentifier.OutputInitReport = null;
-                                    return;
-                                }
-                            }
-                            SelectedConfiguration.DigitizerIdentifier.OutputInitReport = buffer;
-                        }
+                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 )
             };
@@ -501,6 +411,20 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private static bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
-        private static string ToHexValue(byte[] value) => "0x" + BitConverter.ToString(value).Replace("-", " 0x") ?? string.Empty;
+        private static string ToHexString(byte[] value) => "0x" + BitConverter.ToString(value).Replace("-", " 0x") ?? string.Empty;
+        
+        private static byte[] ToByteArray(string hex)
+        {
+            var raw = hex.Split(' ');
+            byte[] buffer = new byte[raw.Length];
+            for (int i = 0; i < raw.Length; i++)
+            {
+                if (TryGetHexValue(raw[i], out var val))
+                    buffer[i] = val;
+                else
+                    return null;
+            }
+            return buffer;
+        }
     }
 }
