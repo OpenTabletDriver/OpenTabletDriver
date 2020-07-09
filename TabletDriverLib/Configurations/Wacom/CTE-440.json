@@ -1,19 +1,36 @@
 {
   "Name": "Wacom CTE-440",
-  "VendorID": 1386,
-  "ProductID": 21,
-  "InputReportLength": 9,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 10,
-  "CustomReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 21,
+    "InputReportLength": 9,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 21,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 21,
+    "InputReportLength": 64,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 102.08,
   "Height": 74.24,
   "MaxX": 10208.0,
   "MaxY": 7424.0,
   "MaxPressure": 511,
-  "ActiveReportID": 0,
-  "AuxReportLength": 64,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "ActiveReportID": 0
 }

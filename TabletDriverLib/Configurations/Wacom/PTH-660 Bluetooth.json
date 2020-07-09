@@ -1,19 +1,36 @@
 {
   "Name": "Wacom PTH-660 Bluetooth",
-  "VendorID": 1386,
-  "ProductID": 864,
-  "InputReportLength": 361,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 0,
-  "CustomReportParser": null,
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 864,
+    "InputReportLength": 361,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 864,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 864,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 226.0,
   "Height": 150.0,
   "MaxX": 44800.0,
   "MaxY": 29600.0,
   "MaxPressure": 8191,
-  "ActiveReportID": 0,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "ActiveReportID": 0
 }

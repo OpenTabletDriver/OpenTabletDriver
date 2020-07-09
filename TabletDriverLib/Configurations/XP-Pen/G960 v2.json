@@ -1,19 +1,36 @@
 {
   "Name": "XP-Pen G960 v2",
-  "VendorID": 10429,
-  "ProductID": 2336,
-  "InputReportLength": 10,
-  "OutputReportLength": 10,
-  "ReportParser": null,
-  "CustomInputReportLength": 0,
-  "CustomReportParser": null,
+  "DigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2336,
+    "InputReportLength": 10,
+    "OutputReportLength": 10,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2336,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2336,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 212.0,
   "Height": 135.0,
   "MaxX": 22352.0,
   "MaxY": 13970.0,
   "MaxPressure": 8191,
-  "ActiveReportID": 0,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "ActiveReportID": 0
 }

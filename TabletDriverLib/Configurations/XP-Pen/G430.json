@@ -1,19 +1,36 @@
 {
   "Name": "XP-Pen G430",
-  "VendorID": 10429,
-  "ProductID": 117,
-  "InputReportLength": 10,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 0,
-  "CustomReportParser": null,
+  "DigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 117,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 117,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 117,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 120.0,
   "Height": 77.0,
   "MaxX": 24000.0,
   "MaxY": 15400.0,
   "MaxPressure": 8191,
-  "ActiveReportID": 64,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "ActiveReportID": 64
 }

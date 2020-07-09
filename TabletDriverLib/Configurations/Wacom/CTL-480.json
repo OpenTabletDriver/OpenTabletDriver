@@ -1,19 +1,36 @@
 {
   "Name": "Wacom CTL-480",
-  "VendorID": 1386,
-  "ProductID": 782,
-  "InputReportLength": 10,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 11,
-  "CustomReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 782,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 782,
+    "InputReportLength": 11,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 782,
+    "InputReportLength": 64,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 152.0,
   "Height": 95.0,
   "MaxX": 15200.0,
   "MaxY": 9500.0,
   "MaxPressure": 1023,
-  "ActiveReportID": 64,
-  "AuxReportLength": 64,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "ActiveReportID": 64
 }

@@ -1,19 +1,36 @@
 {
   "Name": "Wacom PTH-451",
-  "VendorID": 1386,
-  "ProductID": 788,
-  "InputReportLength": 10,
-  "OutputReportLength": 0,
-  "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
-  "CustomInputReportLength": 11,
-  "CustomReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 788,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 788,
+    "InputReportLength": 11,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 788,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 157.0,
   "Height": 98.0,
   "MaxX": 31496.0,
   "MaxY": 19685.0,
   "MaxPressure": 2047,
-  "ActiveReportID": 0,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "ActiveReportID": 0
 }
