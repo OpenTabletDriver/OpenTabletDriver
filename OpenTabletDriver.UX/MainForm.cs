@@ -31,6 +31,21 @@ namespace OpenTabletDriver.UX
             Content = ConstructMainControls();
             Menu = ConstructMenu();
 
+            var trayIcon = new TrayIcon(this);
+            this.WindowStateChanged += (sender, e) =>
+            {
+                switch (this.WindowState)
+                {
+                    case WindowState.Normal:
+                    case WindowState.Maximized:
+                        this.ShowInTaskbar = true;
+                        break;
+                    case WindowState.Minimized:
+                        this.ShowInTaskbar = false;
+                        break;
+                }
+            };
+
             InitializeAsync();
         }
 

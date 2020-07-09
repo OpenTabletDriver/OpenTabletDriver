@@ -320,6 +320,25 @@ namespace OpenTabletDriver.UX.Windows
                         SelectedConfiguration.FeatureInitReport = buffer;
                     }
                 ),
+                GetControl("Output Initialization Report", 
+                    () => SelectedConfiguration.OutputInitReport != null ? ToHexValue(SelectedConfiguration.OutputInitReport) : string.Empty,
+                    (o) => 
+                    {
+                        var raw = o.Split(' ');
+                        byte[] buffer = new byte[raw.Length];
+                        for (int i = 0; i < raw.Length; i++)
+                        {
+                            if (TryGetHexValue(raw[i], out var val))
+                                buffer[i] = val;
+                            else
+                            {
+                                SelectedConfiguration.OutputInitReport = null;
+                                return;
+                            }
+                        }
+                        SelectedConfiguration.OutputInitReport = buffer;
+                    }
+                )
             };
 
         private GroupBox GetControl(string groupName, Func<string> getValue, Action<string> setValue, string placeholder = null)
