@@ -28,6 +28,13 @@ namespace OpenTabletDriver.Daemon
             await LoadPlugins();
             DetectTablets();
 
+            var appdataDir = new DirectoryInfo(AppInfo.Current.AppDataDirectory);
+            if (!appdataDir.Exists)
+            {
+                appdataDir.Create();
+                Log.Write("Settings", $"Created OpenTabletDriver application data directory: {appdataDir.FullName}");
+            }
+
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
             if (Settings == null && settingsFile.Exists)
             {
