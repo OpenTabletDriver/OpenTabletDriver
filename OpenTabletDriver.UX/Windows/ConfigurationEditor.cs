@@ -113,7 +113,7 @@ namespace OpenTabletDriver.UX.Windows
                 _configs = value;
                 _configList.Items.Clear();
                 foreach (var config in Configurations)
-                    _configList.Items.Add(config.TabletName);
+                    _configList.Items.Add(config.Name);
             }
             get => _configs;
         }
@@ -135,7 +135,10 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private ListBox _configList = new ListBox();
-        private StackLayout _configControls = new StackLayout();
+        private StackLayout _configControls = new StackLayout
+        {
+            Spacing = 5,
+        };
 
         private List<TabletProperties> ReadConfigurations(DirectoryInfo dir)
         {
@@ -149,7 +152,7 @@ namespace OpenTabletDriver.UX.Windows
             var regex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
             foreach (var config in configs)
             {
-                var match = regex.Match(config.TabletName);
+                var match = regex.Match(config.Name);
                 var manufacturer = match.Groups["Manufacturer"].Value;
                 var tabletName = match.Groups["TabletName"].Value;
 
@@ -195,7 +198,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             var newTablet = new TabletProperties
             {
-                TabletName = "New Tablet"
+                Name = "New Tablet"
             };
             Configurations = Configurations.Append(newTablet).ToList();
             _configList.SelectedIndex = Configurations.IndexOf(newTablet);
@@ -217,11 +220,14 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     var generatedConfig = new TabletProperties
                     {
-                        TabletName = device.GetManufacturer() + " " + device.GetProductName(),
-                        VendorID = device.VendorID,
-                        ProductID = device.ProductID,
-                        InputReportLength = (uint)device.GetMaxInputReportLength(),
-                        OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                        Name = device.GetManufacturer() + " " + device.GetProductName(),
+                        DigitizerIdentifier = new DeviceIdentifier
+                        {
+                            VendorID = device.VendorID,
+                            ProductID = device.ProductID,
+                            InputReportLength = (uint)device.GetMaxInputReportLength(),
+                            OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                        }
                     };
                     Configurations = Configurations.Append(generatedConfig).ToList();
                     _configList.SelectedIndex = Configurations.IndexOf(generatedConfig);
@@ -236,108 +242,217 @@ namespace OpenTabletDriver.UX.Windows
         private IEnumerable<Control> GeneratePropertyControls() => new List<Control>
             {
                 GetControl("Name",
-                    () => SelectedConfiguration.TabletName,
-                    (o) => SelectedConfiguration.TabletName = o
+                    () => SelectedConfiguration.Name,
+                    (o) => SelectedConfiguration.Name = o
                 ),
-                GetControl("Vendor ID",
-                    () => SelectedConfiguration.VendorID.ToString(),
-                    (o) => SelectedConfiguration.VendorID = int.TryParse(o, out var val) ? val : 0
+                GetExpander("Tablet Specifications", isExpanded: true,
+                    GetControl("Width (mm)",
+                        () => SelectedConfiguration.Width.ToString(),
+                        (o) => SelectedConfiguration.Width = float.TryParse(o, out var val) ? val : 0f
+                    ),
+                    GetControl("Height (mm)",
+                        () => SelectedConfiguration.Height.ToString(),
+                        (o) => SelectedConfiguration.Height = float.TryParse(o, out var val) ? val : 0f
+                    ),
+                    GetControl("Max X (px)",
+                        () => SelectedConfiguration.MaxX.ToString(),
+                        (o) => SelectedConfiguration.MaxX = float.TryParse(o, out var val) ? val : 0f
+                    ),
+                    GetControl("Max Y (px)",
+                        () => SelectedConfiguration.MaxY.ToString(),
+                        (o) => SelectedConfiguration.MaxY = float.TryParse(o, out var val) ? val : 0f
+                    ),
+                    GetControl("Max Pressure",
+                        () => SelectedConfiguration.MaxPressure.ToString(),
+                        (o) => SelectedConfiguration.MaxPressure = uint.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Active Report ID",
+                        () => SelectedConfiguration.ActiveReportID.ToString(),
+                        (o) => SelectedConfiguration.ActiveReportID = uint.TryParse(o, out var val) ? val : 0
+                    )
                 ),
-                GetControl("Product ID",
-                    () => SelectedConfiguration.ProductID.ToString(),
-                    (o) => SelectedConfiguration.ProductID = int.TryParse(o, out var val) ? val : 0
-                ),
-                GetControl("Input Report Length",
-                    () => SelectedConfiguration.InputReportLength.ToString(),
-                    (o) => SelectedConfiguration.InputReportLength = uint.TryParse(o, out var val) ? val : 0
-                ),
-                GetControl("Output Report Length",
-                    () => SelectedConfiguration.OutputReportLength.ToString(),
-                    (o) => SelectedConfiguration.OutputReportLength = uint.TryParse(o, out var val) ? val : 0
-                ),
-                GetControl("Report Parser",
-                    () => SelectedConfiguration.ReportParserName,
-                    (o) => SelectedConfiguration.ReportParserName = o,
-                    typeof(TabletReportParser).FullName
-                ),
-                GetControl("Custom Input Report Length",
-                    () => SelectedConfiguration.CustomInputReportLength.ToString(),
-                    (o) => SelectedConfiguration.CustomInputReportLength = uint.TryParse(o, out var val) ? val : 0
-                ),
-                GetControl("Custom Report Parser",
-                    () => SelectedConfiguration.CustomReportParserName,
-                    (o) => SelectedConfiguration.CustomReportParserName = o
-                ),
-                GetControl("Width (mm)",
-                    () => SelectedConfiguration.Width.ToString(),
-                    (o) => SelectedConfiguration.Width = float.TryParse(o, out var val) ? val : 0f
-                ),
-                GetControl("Height (mm)",
-                    () => SelectedConfiguration.Height.ToString(),
-                    (o) => SelectedConfiguration.Height = float.TryParse(o, out var val) ? val : 0f
-                ),
-                GetControl("Max X (px)",
-                    () => SelectedConfiguration.MaxX.ToString(),
-                    (o) => SelectedConfiguration.MaxX = float.TryParse(o, out var val) ? val : 0f
-                ),
-                GetControl("Max Y (px)",
-                    () => SelectedConfiguration.MaxY.ToString(),
-                    (o) => SelectedConfiguration.MaxY = float.TryParse(o, out var val) ? val : 0f
-                ),
-                GetControl("Max Pressure",
-                    () => SelectedConfiguration.MaxPressure.ToString(),
-                    (o) => SelectedConfiguration.MaxPressure = uint.TryParse(o, out var val) ? val : 0
-                ),
-                GetControl("Active Report ID",
-                    () => SelectedConfiguration.ActiveReportID.ToString(),
-                    (o) => SelectedConfiguration.ActiveReportID = uint.TryParse(o, out var val) ? val : 0
-                ),
-                GetControl("Auxiliary Input Report Length",
-                    () => SelectedConfiguration.AuxReportLength.ToString(),
-                    (o) => SelectedConfiguration.AuxReportLength = uint.TryParse(o, out var val) ? val : 0
-                ),
-                GetControl("Auxiliary Report Parser",
-                    () => SelectedConfiguration.AuxReportParserName,
-                    (o) => SelectedConfiguration.AuxReportParserName = o,
-                    typeof(AuxReportParser).FullName
-                ),
-                GetControl("Feature Initialization Report",
-                    () => SelectedConfiguration.FeatureInitReport != null ? ToHexValue(SelectedConfiguration.FeatureInitReport) : string.Empty,
-                    (o) =>
-                    {
-                        var raw = o.Split(' ');
-                        byte[] buffer = new byte[raw.Length];
-                        for (int i = 0; i < raw.Length; i++)
+                GetExpander("Tablet Identifiers", isExpanded: false,
+                    GetControl("Vendor ID",
+                        () => SelectedConfiguration.DigitizerIdentifier.VendorID.ToString(),
+                        (o) => SelectedConfiguration.DigitizerIdentifier.VendorID = int.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Product ID",
+                        () => SelectedConfiguration.DigitizerIdentifier.ProductID.ToString(),
+                        (o) => SelectedConfiguration.DigitizerIdentifier.ProductID = int.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Input Report Length",
+                        () => SelectedConfiguration.DigitizerIdentifier.InputReportLength.ToString(),
+                        (o) => SelectedConfiguration.DigitizerIdentifier.InputReportLength = uint.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Output Report Length",
+                        () => SelectedConfiguration.DigitizerIdentifier.OutputReportLength.ToString(),
+                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputReportLength = uint.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Report Parser",
+                        () => SelectedConfiguration.DigitizerIdentifier.ReportParser,
+                        (o) => SelectedConfiguration.DigitizerIdentifier.ReportParser = o,
+                        typeof(TabletReportParser).FullName
+                    ),
+                    GetControl("Feature Initialization Report",
+                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexValue(report) : string.Empty,
+                        (o) =>
                         {
-                            if (TryGetHexValue(raw[i], out var val))
-                                buffer[i] = val;
-                            else
+                            var raw = o.Split(' ');
+                            byte[] buffer = new byte[raw.Length];
+                            for (int i = 0; i < raw.Length; i++)
                             {
-                                SelectedConfiguration.FeatureInitReport = null;
-                                return;
+                                if (TryGetHexValue(raw[i], out var val))
+                                    buffer[i] = val;
+                                else
+                                {
+                                    SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = null;
+                                    return;
+                                }
                             }
+                            SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = buffer;
                         }
-                        SelectedConfiguration.FeatureInitReport = buffer;
-                    }
-                ),
-                GetControl("Output Initialization Report", 
-                    () => SelectedConfiguration.OutputInitReport != null ? ToHexValue(SelectedConfiguration.OutputInitReport) : string.Empty,
-                    (o) => 
-                    {
-                        var raw = o.Split(' ');
-                        byte[] buffer = new byte[raw.Length];
-                        for (int i = 0; i < raw.Length; i++)
+                    ),
+                    GetControl("Output Initialization Report", 
+                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexValue(report) : string.Empty,
+                        (o) => 
                         {
-                            if (TryGetHexValue(raw[i], out var val))
-                                buffer[i] = val;
-                            else
+                            var raw = o.Split(' ');
+                            byte[] buffer = new byte[raw.Length];
+                            for (int i = 0; i < raw.Length; i++)
                             {
-                                SelectedConfiguration.OutputInitReport = null;
-                                return;
+                                if (TryGetHexValue(raw[i], out var val))
+                                    buffer[i] = val;
+                                else
+                                {
+                                    SelectedConfiguration.DigitizerIdentifier.OutputInitReport = null;
+                                    return;
+                                }
                             }
+                            SelectedConfiguration.DigitizerIdentifier.OutputInitReport = buffer;
                         }
-                        SelectedConfiguration.OutputInitReport = buffer;
-                    }
+                    )
+                ),
+                GetExpander("Alternate Tablet Identifiers", false,
+                    GetControl("Vendor ID",
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.VendorID.ToString(),
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.VendorID = int.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Product ID",
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.ProductID.ToString(),
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.ProductID = int.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Input Report Length",
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.InputReportLength.ToString(),
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.InputReportLength = uint.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Output Report Length",
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.OutputReportLength.ToString(),
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.OutputReportLength = uint.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Report Parser",
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.ReportParser,
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.ReportParser = o,
+                        typeof(TabletReportParser).FullName
+                    ),
+                    GetControl("Feature Initialization Report",
+                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexValue(report) : string.Empty,
+                        (o) =>
+                        {
+                            var raw = o.Split(' ');
+                            byte[] buffer = new byte[raw.Length];
+                            for (int i = 0; i < raw.Length; i++)
+                            {
+                                if (TryGetHexValue(raw[i], out var val))
+                                    buffer[i] = val;
+                                else
+                                {
+                                    SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = null;
+                                    return;
+                                }
+                            }
+                            SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = buffer;
+                        }
+                    ),
+                    GetControl("Output Initialization Report", 
+                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexValue(report) : string.Empty,
+                        (o) => 
+                        {
+                            var raw = o.Split(' ');
+                            byte[] buffer = new byte[raw.Length];
+                            for (int i = 0; i < raw.Length; i++)
+                            {
+                                if (TryGetHexValue(raw[i], out var val))
+                                    buffer[i] = val;
+                                else
+                                {
+                                    SelectedConfiguration.DigitizerIdentifier.OutputInitReport = null;
+                                    return;
+                                }
+                            }
+                            SelectedConfiguration.DigitizerIdentifier.OutputInitReport = buffer;
+                        }
+                    )
+                ),
+                GetExpander("Auxiliary Device Identifiers", isExpanded: false,
+                    GetControl("Vendor ID",
+                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.VendorID.ToString(),
+                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.VendorID = int.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Product ID",
+                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.ProductID.ToString(),
+                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.ProductID = int.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Input Report Length",
+                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.InputReportLength.ToString(),
+                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.InputReportLength = uint.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Output Report Length",
+                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputReportLength.ToString(),
+                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputReportLength = uint.TryParse(o, out var val) ? val : 0
+                    ),
+                    GetControl("Report Parser",
+                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.ReportParser,
+                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.ReportParser = o,
+                        typeof(AuxReportParser).FullName
+                    ),
+                    GetControl("Feature Initialization Report",
+                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexValue(report) : string.Empty,
+                        (o) =>
+                        {
+                            var raw = o.Split(' ');
+                            byte[] buffer = new byte[raw.Length];
+                            for (int i = 0; i < raw.Length; i++)
+                            {
+                                if (TryGetHexValue(raw[i], out var val))
+                                    buffer[i] = val;
+                                else
+                                {
+                                    SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = null;
+                                    return;
+                                }
+                            }
+                            SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = buffer;
+                        }
+                    ),
+                    GetControl("Output Initialization Report", 
+                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexValue(report) : string.Empty,
+                        (o) => 
+                        {
+                            var raw = o.Split(' ');
+                            byte[] buffer = new byte[raw.Length];
+                            for (int i = 0; i < raw.Length; i++)
+                            {
+                                if (TryGetHexValue(raw[i], out var val))
+                                    buffer[i] = val;
+                                else
+                                {
+                                    SelectedConfiguration.DigitizerIdentifier.OutputInitReport = null;
+                                    return;
+                                }
+                            }
+                            SelectedConfiguration.DigitizerIdentifier.OutputInitReport = buffer;
+                        }
+                    )
                 )
             };
 
@@ -354,6 +469,35 @@ namespace OpenTabletDriver.UX.Windows
                 Padding = App.GroupBoxPadding,
                 Content = textBox
             };
+        }
+
+        private Expander GetExpander(string groupName, bool isExpanded, params Control[] controls)
+        {
+            var stack = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5
+            };
+
+            var expander = new Expander
+            {
+                Header = groupName,
+                Content = stack,
+                Expanded = isExpanded,
+                Padding = new Padding(0, 5, 0, 0)
+            };
+            
+            foreach (var ctrl in controls)
+            {
+                var stackitem = new StackLayoutItem
+                {
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    Control = ctrl
+                };
+                stack.Items.Add(ctrl);
+            }
+
+            return expander;
         }
 
         private static bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
