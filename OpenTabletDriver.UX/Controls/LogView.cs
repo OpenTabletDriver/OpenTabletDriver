@@ -34,6 +34,8 @@ namespace OpenTabletDriver.UX.Controls
                 };
                 MainThread.Start();
             }
+
+            this.ParentWindow.Closing += async (sender, e) => await App.DriverDaemon.InvokeAsync(d => d.SetLogOutput(false));
         }
 
         public Guid ServerID { private set; get; }

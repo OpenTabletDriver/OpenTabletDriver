@@ -266,6 +266,7 @@ namespace OpenTabletDriver.Daemon
             else if (!isEnabled && LogServer != null)
             {
                 LogServer.Dispose();
+                LogServer = null;
             }
             return LogServer?.Identifier ?? Guid.Empty;
         }
