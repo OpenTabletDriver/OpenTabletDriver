@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
+using Newtonsoft.Json;
 using TabletDriverLib.Tablet;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
@@ -363,6 +365,12 @@ namespace OpenTabletDriver.UX.Windows
                         () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
                         (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
                     )
+                ),
+                GetExpander("Advanced", false,
+                    GetDictionaryControl("Attributes",
+                        () => SelectedConfiguration.Attributes,
+                        (o) => SelectedConfiguration.Attributes = o
+                    )
                 )
             };
 
@@ -408,6 +416,152 @@ namespace OpenTabletDriver.UX.Windows
             }
 
             return expander;
+        }
+
+        private GroupBox GetDictionaryControl(
+            string groupName,
+            Func<Dictionary<string, string>> getValue,
+            Action<Dictionary<string, string>> setValue
+        )
+        {
+            var entries = new StackLayout
+            {
+                Spacing = 5,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch
+            };
+            
+            foreach (var pair in getValue())
+                entries.Items.Add(GetDictionaryEntryControl(getValue, setValue, pair.Key, pair.Value));
+
+            var actions = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Items = 
+                {
+                    new Button((sender, e) => entries.Items.Add(GetDictionaryEntryControl(getValue, setValue)))
+                    {
+                        Text = "+"
+                    }
+                }
+            };
+
+            var layout = new TableLayout
+            {
+                Spacing = new Size(5, 5),
+                Rows =
+                {
+                    new TableRow
+                    {
+                        ScaleHeight = true,
+                        Cells = 
+                        {
+                            new TableCell
+                            {
+                                ScaleWidth = true,
+                                Control = entries
+                            }
+                        }
+                    },
+                    new TableRow
+                    {
+                        ScaleHeight = false,
+                        Cells =
+                        {
+                            new TableCell
+                            {
+                                ScaleWidth = true,
+                                Control = actions
+                            }
+                        }
+                    }
+                }
+            };
+
+            return new GroupBox
+            {
+                Text = groupName,
+                Padding = App.GroupBoxPadding,
+                Content = layout
+            };
+        }
+
+        StackLayoutItem GetDictionaryEntryControl(
+            Func<Dictionary<string, string>> getValue,
+            Action<Dictionary<string, string>> setValue,
+            string startKey = null,
+            string startValue = null
+        )
+        {
+            var keyBox = new TextBox
+            {
+                PlaceholderText = "Key",
+                ToolTip = 
+                    "The dictionary entry's key. This is what is indexed to find a value." + Environment.NewLine +
+                    "If left empty, the entry will be removed on save or apply."
+            };
+
+            var valueBox = new TextBox
+            {
+                PlaceholderText = "Value",
+                ToolTip = "The dictionary entry's value. This is what is retrieved when indexing with the specified key."
+            };
+
+            string oldKey = startKey;
+            keyBox.TextBinding.Bind(
+                () => startKey,
+                (key) =>
+                {
+                    var dict = getValue();
+                    var value = valueBox.Text;
+
+                    if (string.IsNullOrWhiteSpace(key))
+                        dict.Remove(key);
+                    else if (!dict.TryAdd(key, value))
+                        dict[key] = value;
+                    
+                    if (oldKey != null)
+                        dict.Remove(oldKey);
+                    oldKey = key;
+
+                    setValue(dict);
+                }
+            );
+
+            valueBox.TextBinding.Bind(
+                () => startValue,
+                (value) =>
+                {
+                    var dict = getValue();
+                    var key = keyBox.Text;
+
+                    if (!dict.TryAdd(key, value))
+                        dict[key] = value;
+
+                    setValue(dict);
+                }
+            );
+
+            var stackLayout = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 5,
+                Items =
+                {
+                    new StackLayoutItem
+                    {
+                        Control = keyBox,
+                        Expand = true
+                    },
+                    new StackLayoutItem
+                    {
+                        Control = valueBox,
+                        Expand = true
+                    }
+                }
+            };
+            
+            return new StackLayoutItem(stackLayout, true);
         }
 
         private static bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
