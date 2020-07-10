@@ -103,7 +103,10 @@ namespace OpenTabletDriver.UX.Windows
         {
             var appinfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
             var configDir = new DirectoryInfo(appinfo.ConfigurationDirectory);
-            Configurations = ReadConfigurations(configDir);
+            var sortedConfigs = from config in ReadConfigurations(configDir)
+                orderby config.Name
+                select config;
+            Configurations = new List<TabletProperties>(sortedConfigs);
             _configList.SelectedIndex = 0;
         }
 
