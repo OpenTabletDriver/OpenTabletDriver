@@ -32,5 +32,8 @@
   "MaxX": 32000.0,
   "MaxY": 20000.0,
   "MaxPressure": 8191,
-  "ActiveReportID": 64
+  "ActiveReportID": 64,
+  "Attributes": {
+    "libinputoverride": "1"
+  }
 }

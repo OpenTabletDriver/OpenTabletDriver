@@ -32,5 +32,6 @@
   "MaxX": 33020.0,
   "MaxY": 20320.0,
   "MaxPressure": 8191,
-  "ActiveReportID": 10
+  "ActiveReportID": 10,
+  "Attributes": {}
 }

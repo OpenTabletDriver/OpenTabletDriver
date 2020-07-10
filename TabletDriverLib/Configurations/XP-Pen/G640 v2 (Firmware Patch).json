@@ -1,26 +1,26 @@
 {
-  "Name": "Huion HS64",
+  "Name": "XP-Pen G640 v2 (Firmware Patch)",
   "DigitizerIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 109,
-    "InputReportLength": 8,
+    "VendorID": 10429,
+    "ProductID": 2324,
+    "InputReportLength": 12,
     "OutputReportLength": 0,
     "ReportParser": null,
     "FeatureInitReport": null,
-    "OutputInitReport": null
+    "OutputInitReport": "ArAEAAAAAAAAAAAA"
   },
   "AlternateDigitizerIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 109,
+    "VendorID": 10429,
+    "ProductID": 2324,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,
     "FeatureInitReport": null,
-    "OutputInitReport": null
+    "OutputInitReport": "ArAEAAAAAAAAAAAA"
   },
   "AuxilaryDeviceIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 109,
+    "VendorID": 10429,
+    "ProductID": 2324,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,
@@ -28,10 +28,12 @@
     "OutputInitReport": null
   },
   "Width": 160.0,
-  "Height": 102.0,
+  "Height": 100.0,
   "MaxX": 32000.0,
-  "MaxY": 20400.0,
+  "MaxY": 20000.0,
   "MaxPressure": 8191,
-  "ActiveReportID": 0,
-  "Attributes": {}
+  "ActiveReportID": 64,
+  "Attributes": {
+    "libinputoverride": "1"
+  }
 }
