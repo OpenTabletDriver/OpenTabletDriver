@@ -16,14 +16,22 @@ namespace OpenTabletDriver.Daemon
         {
             PipeServer = new NamedPipeServerStream(Identifier.ToString());
             await PipeServer.WaitForConnectionAsync();
-            StreamWriter = new StreamWriter(PipeServer);
-
-            Log.Output += (sender, message) =>
+            StreamWriter = new StreamWriter(PipeServer)
             {
-                if (PipeServer.IsConnected)
+                AutoFlush = true
+            };
+
+            Log.Output += async (sender, message) =>
+            {
+                try
                 {
+                    if (PipeServer?.IsConnected ?? false)
                     StreamWriter.WriteLine(Log.GetStringFormat(message));
-                    StreamWriter.Flush();
+                }
+                catch (IOException ioEx)
+                {
+                    Log.Exception(ioEx);
+                    await PipeServer.WaitForConnectionAsync();
                 }
             };
             Log.Debug($"Started log server {{{Identifier}}}");
