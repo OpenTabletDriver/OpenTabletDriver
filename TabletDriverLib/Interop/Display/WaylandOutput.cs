@@ -31,7 +31,8 @@ namespace TabletDriverLib.Interop.Display
         void WlOutput.IListener.Geometry(WlOutput wlOutput, int x, int y, int physicalWidth, int physicalHeight,
             WlOutput.Subpixel subpixel, string make, string model, WlOutput.Transform transform)
         {
-            if (XdgOutput == null)
+            // xdg_output version 1 does not have name or description events
+            if (XdgOutput == null || XdgOutput.Version < 2)
             {
                 Position = new Point(x, y);
                 Name = make;

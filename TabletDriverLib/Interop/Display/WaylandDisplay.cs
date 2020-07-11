@@ -69,13 +69,13 @@ namespace TabletDriverLib.Interop.Display
             switch (@interface)
             {
                 case "wl_output":
-                    var wlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 3);
+                    var wlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 1);
                     var output = new WaylandOutput(wlOutput, _outputs.Count + 1);
                     output.WlOutput.Listener = output;
                     _outputs.Add(output);
                     break;
                 case "zxdg_output_manager_v1":
-                    _outputManager = wlRegistry.Bind<ZxdgOutputManagerV1>(name, @interface, 3);
+                    _outputManager = wlRegistry.Bind<ZxdgOutputManagerV1>(name, @interface, Math.Min(version, 2));
                     break;
             }
         }
