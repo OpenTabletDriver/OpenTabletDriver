@@ -14,7 +14,8 @@ namespace TabletDriverLib.Interop.Display
         public float Height { private set; get; }
         public Point Position { private set; get; }
 
-        private string _name, _description;
+        public string Name { private set; get; }
+        public string Description { private set; get; }
 
         public WaylandOutput(WlOutput wlOutput, int index)
         {
@@ -24,7 +25,7 @@ namespace TabletDriverLib.Interop.Display
 
         public override string ToString()
         {
-            return $"{_name} {_description} ({Width}x{Height}@{Position})";
+            return $"{Name} {Description} ({Width}x{Height}@{Position})";
         }
 
         void WlOutput.IListener.Geometry(WlOutput wlOutput, int x, int y, int physicalWidth, int physicalHeight,
@@ -33,8 +34,8 @@ namespace TabletDriverLib.Interop.Display
             if (XdgOutput == null)
             {
                 Position = new Point(x, y);
-                _name = make;
-                _description = model;
+                Name = make;
+                Description = model;
             }
         }
 
@@ -72,12 +73,12 @@ namespace TabletDriverLib.Interop.Display
 
         void ZxdgOutputV1.IListener.Name(ZxdgOutputV1 zxdgOutputV1, string name)
         {
-            _name = name;
+            Name = name;
         }
 
         void ZxdgOutputV1.IListener.Description(ZxdgOutputV1 zxdgOutputV1, string description)
         {
-            _description = description;
+            Description = description;
         }
     }
 }
