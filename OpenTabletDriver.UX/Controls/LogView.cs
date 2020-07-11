@@ -20,7 +20,8 @@ namespace OpenTabletDriver.UX.Controls
         private async void InitializeAsync()
         {
             foreach (var message in await App.DriverDaemon.InvokeAsync(d => d.GetCurrentLog()))
-                this.Items.Add(Log.GetStringFormat(message));
+                if (message != null)
+                    this.Items.Add(Log.GetStringFormat(message));
             
             ServerID = await App.DriverDaemon.InvokeAsync(d => d.SetLogOutput(true));
             if (ServerID != Guid.Empty)
