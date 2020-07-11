@@ -1,4 +1,5 @@
 using System;
+using System.Net.Sockets;
 using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
@@ -37,12 +38,24 @@ namespace TabletDriverLib.Interop
             };
         });
 
+        private static IVirtualScreen GetLinuxScreen()
+        {
+            try
+            {
+                return new WaylandDisplay();
+            }
+            catch (SocketException)
+            {
+                return new XScreen();
+            }
+        }
+
         private static Lazy<IVirtualScreen> _virtualScreen = new Lazy<IVirtualScreen>(() => 
         {
             return SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => new WindowsDisplay(),
-                RuntimePlatform.Linux   => new XScreen(),
+                RuntimePlatform.Linux   => GetLinuxScreen(),
                 RuntimePlatform.MacOS   => new MacOSDisplay(),
                 _                       => null
             };
