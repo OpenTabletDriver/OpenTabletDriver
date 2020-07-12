@@ -1,11 +1,11 @@
 using System;
 
-namespace TabletDriverPlugin.Resident
+namespace TabletDriverPlugin
 {
     /// <summary>
     /// A plugin that will be started up and kept running until OpenTabletDriver is closed.
     /// </summary>
-    public interface IResident : IDisposable
+    public interface ITool : IDisposable
     {
         bool Initialize();
     }

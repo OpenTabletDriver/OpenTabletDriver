@@ -10,7 +10,6 @@ using TabletDriverLib.Binding;
 using TabletDriverLib.Diagnostics;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
-using TabletDriverPlugin.Resident;
 using TabletDriverPlugin.Tablet;
 using static System.Console;
 
@@ -117,9 +116,9 @@ namespace OpenTabletDriver.Console
             await ModifySettings(s => s.Filters = new ObservableCollection<string>(filters));
         }
 
-        static async Task SetResidents(IEnumerable<string> residents)
+        static async Task SetTools(IEnumerable<string> tools)
         {
-            await ModifySettings(s => s.ResidentPlugins = new ObservableCollection<string>(residents));
+            await ModifySettings(s => s.Tools = new ObservableCollection<string>(tools));
         }
 
         static async Task SetInputHook(bool isHooked)
@@ -146,7 +145,7 @@ namespace OpenTabletDriver.Console
             await GetMiscSettings();
             await GetOutputMode();
             await GetFilters();
-            await GetResidents();
+            await GetTools();
         }
 
         static async Task GetAreas()
@@ -216,12 +215,12 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync("Filters: " + string.Join(", ", filters));
         }
 
-        static async Task GetResidents()
+        static async Task GetTools()
         {
             var settings = await GetSettings();
-            var residents = from path in settings.ResidentPlugins
+            var tools = from path in settings.Tools
                 select new PluginReference(path);
-            await Out.WriteLineAsync("Resident Plugins: " + string.Join(", ", residents));
+            await Out.WriteLineAsync("Tools: " + string.Join(", ", tools));
         }
 
         #endregion
@@ -247,9 +246,9 @@ namespace OpenTabletDriver.Console
             await ListTypes<IFilter>();
         }
 
-        static async Task ListResidents()
+        static async Task ListTools()
         {
-            await ListTypes<IResident>();
+            await ListTypes<ITool>();
         }
 
         static async Task ListBindings()

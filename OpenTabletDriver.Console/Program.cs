@@ -55,19 +55,19 @@ namespace OpenTabletDriver.Console
             yield return CreateCommand(GetCurrentLog, "Gets the current log", "log");
             yield return CreateCommand(GetAllSettings, "Gets all current settings");
             yield return CreateCommand(GetAreas, "Gets the current display and tablet area");
-            yield return CreateCommand(GetSensitivity, "Gets the current relative sensitivity.");
+            yield return CreateCommand(GetSensitivity, "Gets the current relative sensitivity");
             yield return CreateCommand(GetBindings, "Gets all current bindings");
             yield return CreateCommand(GetMiscSettings, "Gets other uncategorized settings");
             yield return CreateCommand(GetOutputMode, "Gets the current output mode");
             yield return CreateCommand(GetFilters, "Gets the currently enabled filters");
-            yield return CreateCommand(GetResidents, "Gets the currently enabled residents");
+            yield return CreateCommand(GetTools, "Gets the currently enabled tools");
         }
 
         static IEnumerable<Command> GenerateListCommands()
         {
             yield return CreateCommand(ListOutputModes, "Lists all available output modes");
             yield return CreateCommand(ListFilters, "Lists all available filters");
-            yield return CreateCommand(ListResidents, "Lists all available resident plugins");
+            yield return CreateCommand(ListTools, "Lists all available tools");
             yield return CreateCommand(ListBindings, "Lists all available binding types");
         }
 
