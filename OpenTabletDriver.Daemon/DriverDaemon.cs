@@ -73,6 +73,10 @@ namespace OpenTabletDriver.Daemon
                         return GetTablet();
                 }
             }
+            else
+            {
+                Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", true);
+            }
             return null;
         }
 

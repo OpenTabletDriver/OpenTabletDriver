@@ -557,15 +557,8 @@ namespace OpenTabletDriver.UX
             {
                 var settings = await App.DriverDaemon.InvokeAsync(d => d.GetSettings());
                 if (settings != null)
-                {
                     await App.DriverDaemon.InvokeAsync(d => d.SetInputHook(settings.AutoHook));
-                }
                 SetTabletAreaDimensions(tablet);
-            }
-            else
-            {
-                var appInfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
-                Log.Write("Detect", $"Configuration directory '{appInfo.ConfigurationDirectory}' does not exist.");
             }
         }
 
