@@ -1,19 +1,37 @@
 {
   "Name": "Wacom CTH-690",
-  "VendorID": 1386,
-  "ProductID": 830,
-  "InputReportLength": 10,
-  "OutputReportLength": 0,
-  "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
-  "CustomInputReportLength": 11,
-  "CustomReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 830,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 830,
+    "InputReportLength": 11,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 830,
+    "InputReportLength": 64,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 216.0,
   "Height": 135.0,
   "MaxX": 21600.0,
   "MaxY": 13500.0,
   "MaxPressure": 2047,
   "ActiveReportID": 16,
-  "AuxReportLength": 64,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "Attributes": {}
 }

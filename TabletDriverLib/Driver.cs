@@ -35,18 +35,18 @@ namespace TabletDriverLib
 
         public bool TryMatch(TabletProperties tablet)
         {
-            Log.Write("Detect", $"Searching for tablet '{tablet.TabletName}'");
+            Log.Write("Detect", $"Searching for tablet '{tablet.Name}'");
             try
             {
-                if (TryMatchTablet(tablet, out var tabletDevice, out var tabletParser) || TryMatchAltTablet(tablet, out tabletDevice, out tabletParser))
+                if (TryMatchTablet(tablet, out var tabletDevice, out var identifier, out var tabletParser) || TryMatchAltTablet(tablet, out tabletDevice, out identifier, out tabletParser))
                 {
-                    InitializeTabletDevice(tablet, tabletDevice, tabletParser);
+                    InitializeTabletDevice(tablet, tabletDevice, identifier, tabletParser);
                     
-                    if (TryMatchAuxDevice(tablet, out var auxDevice, out var auxParser))
+                    if (TryMatchAuxDevice(tablet, out var auxDevice, out var auxIdentifier, out var auxParser))
                     {
-                        InitializeAuxDevice(auxDevice, auxParser);
+                        InitializeAuxDevice(auxDevice, auxIdentifier, auxParser);
                     }
-                    else if (tablet.AuxReportLength > 0)
+                    else if (tablet.AuxilaryDeviceIdentifier is DeviceIdentifier auxDeviceIdentifier)
                     {
                         Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", true);
                     }
@@ -57,12 +57,12 @@ namespace TabletDriverLib
             catch (ArgumentOutOfRangeException ex)
             {
                 Log.Exception(ex);
-                if (PlatformInfo.IsLinux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.VendorID))
+                if (PlatformInfo.IsLinux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.DigitizerIdentifier.VendorID))
                 {
                     Log.Write("Detect", "Failed to get device."
                         + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Linux-FAQ#notice-for-uclogic-tablet-owners", true);
                 }
-                else if (PlatformInfo.IsWindows && tablet.VendorID == (int)UCLogicInfo.VendorIDs.XP_Pen)
+                else if (PlatformInfo.IsWindows && tablet.DigitizerIdentifier.VendorID == (int)UCLogicInfo.VendorIDs.XP_Pen)
                 {
                     Log.Write("Detect", "Failed to get device."
                         + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Windows-FAQ#my-xp-pen-tablet-fails-to-open-deviceioexception-unable-to-open-hid-class-device");
@@ -82,73 +82,65 @@ namespace TabletDriverLib
             return false;
         }
 
-        internal bool TryMatchTablet(TabletProperties tablet, out HidDevice tabletDevice, out IReportParser<IDeviceReport> parser)
+        internal bool TryMatchTablet(TabletProperties tablet, out HidDevice tabletDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
         {
-            var matches = from device in DeviceList.Local.GetHidDevices()
-                where tablet.VendorID == device.VendorID
-                where tablet.ProductID == device.ProductID
-                where tablet.InputReportLength == device.GetMaxInputReportLength()
-                where tablet.OutputReportLength > 0 ? device.GetMaxOutputReportLength() == tablet.OutputReportLength : true
-                select device;
+            var matches = FindMatches(tablet.DigitizerIdentifier);
 
             if (matches.Count() > 1)
                 Log.Write("Detect", "Warning: More than 1 matching tablet has been found.", true);
 
             tabletDevice = matches.FirstOrDefault();
-            parser = PluginManager.ConstructObject<IReportParser<IDeviceReport>>(tablet.ReportParserName) ?? new TabletReportParser();
+            identifier = tablet.DigitizerIdentifier;
+            parser = GetReportParser(tablet.DigitizerIdentifier.ReportParser) ?? new TabletReportParser();
             
             return tabletDevice != null;
         }
 
-        internal bool TryMatchAltTablet(TabletProperties tablet, out HidDevice tabletDevice, out IReportParser<IDeviceReport> parser)
+        internal bool TryMatchAltTablet(TabletProperties tablet, out HidDevice tabletDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
         {
-            if (string.IsNullOrWhiteSpace(tablet.CustomReportParserName))
+            if (tablet.AlternateDigitizerIdentifier == null)
             {
                 tabletDevice = null;
+                identifier = null;
                 parser = null;
                 return false;
             }
 
-            var matches = from device in DeviceList.Local.GetHidDevices()
-                where tablet.VendorID == device.VendorID
-                where tablet.ProductID == device.ProductID
-                where tablet.CustomInputReportLength == device.GetMaxInputReportLength()
-                select device;
+            var matches = FindMatches(tablet.AlternateDigitizerIdentifier);
             
             if (matches.Count() > 1)
                 Log.Write("Detect", "Warning: More than 1 matching alternate tablet has been found.", true);
 
             tabletDevice = matches.FirstOrDefault();
-            parser = PluginManager.ConstructObject<IReportParser<IDeviceReport>>(tablet.CustomReportParserName);
+            identifier = tablet.AlternateDigitizerIdentifier;
+            parser = GetReportParser(tablet.AlternateDigitizerIdentifier.ReportParser) ?? new TabletReportParser();
 
             return tabletDevice != null;
         }
 
-        internal bool TryMatchAuxDevice(TabletProperties tablet, out HidDevice auxDevice, out IReportParser<IDeviceReport> parser)
+        internal bool TryMatchAuxDevice(TabletProperties tablet, out HidDevice auxDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
         {
-            if (tablet.AuxReportLength == 0)
+            if (tablet.AuxilaryDeviceIdentifier == null)
             {
                 auxDevice = null;
+                identifier = null;
                 parser = null;
                 return false;
             }
 
-            var matches = from device in DeviceList.Local.GetHidDevices()
-                where tablet.VendorID == device.VendorID
-                where tablet.ProductID == device.ProductID
-                where tablet.AuxReportLength == device.GetMaxInputReportLength()
-                select device;
+            var matches = FindMatches(tablet.AuxilaryDeviceIdentifier);
 
             if (matches.Count() > 1)
                 Log.Write("Detect", "Warning: More than 1 matching auxiliary device has been found.", true);
             
             auxDevice = matches.FirstOrDefault();
-            parser = PluginManager.ConstructObject<IReportParser<IDeviceReport>>(tablet.AuxReportParserName) ?? new AuxReportParser();
+            identifier = tablet.AuxilaryDeviceIdentifier;
+            parser = GetReportParser(tablet.AuxilaryDeviceIdentifier.ReportParser) ?? new AuxReportParser();
 
             return auxDevice != null;
         }
 
-        internal void InitializeTabletDevice(TabletProperties tablet, HidDevice tabletDevice, IReportParser<IDeviceReport> reportParser)
+        internal void InitializeTabletDevice(TabletProperties tablet, HidDevice tabletDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
         {
             TabletProperties = tablet;
             TabletDevice = tabletDevice;
@@ -161,20 +153,20 @@ namespace TabletDriverLib
             TabletReader.Start();
             TabletReader.Report += HandleReport;
             
-            if (TabletProperties.FeatureInitReport != null && TabletProperties.FeatureInitReport.Length > 0)
+            if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Setting feature: " + BitConverter.ToString(TabletProperties.FeatureInitReport));
-                TabletReader.ReportStream.SetFeature(TabletProperties.FeatureInitReport);
+                Log.Debug("Setting feature: " + BitConverter.ToString(featureInitReport));
+                TabletReader.ReportStream.SetFeature(featureInitReport);
             }
 
-            if (TabletProperties.OutputInitReport != null && TabletProperties.OutputInitReport.Length > 0)
+            if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Setting output: " + BitConverter.ToString(TabletProperties.OutputInitReport));
-                TabletReader.ReportStream.Write(TabletProperties.OutputInitReport);
+                Log.Debug("Setting output: " + BitConverter.ToString(outputInitReport));
+                TabletReader.ReportStream.Write(outputInitReport);
             }
         }
 
-        internal void InitializeAuxDevice(HidDevice auxDevice, IReportParser<IDeviceReport> reportParser)
+        internal void InitializeAuxDevice(HidDevice auxDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
         {
             Log.Debug($"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
             Log.Debug($"Device path: {auxDevice.DevicePath}");
@@ -182,6 +174,33 @@ namespace TabletDriverLib
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
             AuxReader.Start();
             AuxReader.Report += HandleReport;
+
+            if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
+            {
+                Log.Debug("Setting aux feature: " + BitConverter.ToString(featureInitReport));
+                AuxReader.ReportStream.SetFeature(featureInitReport);
+            }
+
+            if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
+            {
+                Log.Debug("Setting aux output: " + BitConverter.ToString(outputInitReport));
+                AuxReader.ReportStream.Write(outputInitReport);
+            }
+        }
+
+        private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
+        {
+            return from device in DeviceList.Local.GetHidDevices()
+                where identifier.VendorID == device.VendorID
+                where identifier.ProductID == device.ProductID
+                where identifier.InputReportLength > 0 ? identifier.InputReportLength == device.GetMaxInputReportLength() : true
+                where identifier.OutputReportLength > 0 ? identifier.OutputReportLength == device.GetMaxOutputReportLength() : true
+                select device;
+        }
+
+        private IReportParser<IDeviceReport> GetReportParser(string parserName) 
+        {
+            return PluginManager.ConstructObject<IReportParser<IDeviceReport>>(parserName);
         }
 
         public void Dispose()

@@ -1,19 +1,39 @@
 {
   "Name": "XP-Pen G640s",
-  "VendorID": 10429,
-  "ProductID": 2310,
-  "InputReportLength": 10,
-  "OutputReportLength": 8,
-  "ReportParser": "TabletDriverLib.Vendors.XP_Pen.XP_PenReportParser",
-  "CustomInputReportLength": 0,
-  "CustomReportParser": null,
+  "DigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2310,
+    "InputReportLength": 10,
+    "OutputReportLength": 8,
+    "ReportParser": "TabletDriverLib.Vendors.XP_Pen.XP_PenReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2310,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2310,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 165.0,
   "Height": 103.5,
   "MaxX": 32000.0,
   "MaxY": 20000.0,
   "MaxPressure": 8191,
   "ActiveReportID": 79,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "Attributes": {
+    "libinputoverride": "1"
+  }
 }

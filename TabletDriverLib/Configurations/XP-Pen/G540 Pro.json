@@ -1,19 +1,37 @@
 {
   "Name": "XP-Pen G540 Pro",
-  "VendorID": 10429,
-  "ProductID": 97,
-  "InputReportLength": 8,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 0,
-  "CustomReportParser": null,
+  "DigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 97,
+    "InputReportLength": 8,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 97,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 97,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 147.0,
   "Height": 101.6,
   "MaxX": 54720.0,
   "MaxY": 29210.0,
   "MaxPressure": 8191,
   "ActiveReportID": 128,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "Attributes": {}
 }

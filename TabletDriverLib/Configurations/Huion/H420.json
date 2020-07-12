@@ -1,19 +1,37 @@
 {
   "Name": "Huion H420",
-  "VendorID": 9580,
-  "ProductID": 110,
-  "InputReportLength": 8,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 0,
-  "CustomReportParser": null,
+  "DigitizerIdentifier": {
+    "VendorID": 9580,
+    "ProductID": 110,
+    "InputReportLength": 8,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 9580,
+    "ProductID": 110,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 9580,
+    "ProductID": 110,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 105.918,
   "Height": 59.436,
   "MaxX": 8340.0,
   "MaxY": 4680.0,
   "MaxPressure": 2047,
   "ActiveReportID": 0,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "Attributes": {}
 }

@@ -1,19 +1,37 @@
 {
   "Name": "XP-Pen Deco 01 v2",
-  "VendorID": 10429,
-  "ProductID": 2306,
-  "InputReportLength": 10,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 0,
-  "CustomReportParser": null,
+  "DigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2306,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2306,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 10429,
+    "ProductID": 2306,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 254.0,
   "Height": 158.75,
   "MaxX": 25400.0,
   "MaxY": 15875.0,
   "MaxPressure": 8191,
   "ActiveReportID": 128,
-  "AuxReportLength": 0,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "Attributes": {}
 }

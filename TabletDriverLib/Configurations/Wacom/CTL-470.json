@@ -1,19 +1,37 @@
 {
   "Name": "Wacom CTL-470",
-  "VendorID": 1386,
-  "ProductID": 221,
-  "InputReportLength": 10,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 11,
-  "CustomReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 221,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 221,
+    "InputReportLength": 11,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 221,
+    "InputReportLength": 64,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 147.2,
   "Height": 92.0,
   "MaxX": 14720.0,
   "MaxY": 9200.0,
   "MaxPressure": 1023,
   "ActiveReportID": 64,
-  "AuxReportLength": 64,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "Attributes": {}
 }

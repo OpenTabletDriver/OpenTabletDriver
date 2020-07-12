@@ -1,19 +1,37 @@
 {
   "Name": "Wacom CTL-671",
-  "VendorID": 1386,
-  "ProductID": 769,
-  "InputReportLength": 10,
-  "OutputReportLength": 0,
-  "ReportParser": null,
-  "CustomInputReportLength": 11,
-  "CustomReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 769,
+    "InputReportLength": 10,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 769,
+    "InputReportLength": 11,
+    "OutputReportLength": 0,
+    "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 769,
+    "InputReportLength": 64,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
   "Width": 216.48,
   "Height": 153.3,
   "MaxX": 21648.0,
   "MaxY": 15330.0,
   "MaxPressure": 1023,
   "ActiveReportID": 64,
-  "AuxReportLength": 64,
-  "AuxReportParser": null,
-  "FeatureInitReport": null
+  "Attributes": {}
 }
