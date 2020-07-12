@@ -334,8 +334,8 @@ namespace OpenTabletDriver.UX.Windows
                         (o) => SelectedConfiguration.AlternateDigitizerIdentifier.FeatureInitReport = ToByteArray(o)
                     ),
                     GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 ),
                 GetExpander("Auxiliary Device Identifiers", isExpanded: false,
