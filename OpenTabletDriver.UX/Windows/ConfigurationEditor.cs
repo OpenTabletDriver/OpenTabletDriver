@@ -330,12 +330,12 @@ namespace OpenTabletDriver.UX.Windows
                         typeof(TabletReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = ToByteArray(o)
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.FeatureInitReport = ToByteArray(o)
                     ),
                     GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
+                        () => SelectedConfiguration.AlternateDigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 ),
                 GetExpander("Auxiliary Device Identifiers", isExpanded: false,
@@ -361,12 +361,12 @@ namespace OpenTabletDriver.UX.Windows
                         typeof(AuxReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = ToByteArray(o)
+                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.FeatureInitReport = ToByteArray(o)
                     ),
                     GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
+                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
+                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 ),
                 GetExpander("Advanced", false,
