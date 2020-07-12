@@ -1,5 +1,4 @@
 using System;
-using System.Net.Sockets;
 using NativeLib;
 using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
