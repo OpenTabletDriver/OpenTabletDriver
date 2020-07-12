@@ -30,25 +30,13 @@ namespace TabletDriverLib
 
         private static readonly Lazy<string> _defaultAppDataDirectory = new Lazy<string>(() => 
         {
-            if (PlatformInfo.IsWindows)
+            return SystemInfo.CurrentPlatform switch
             {
-                var appdata = Environment.GetEnvironmentVariable("LOCALAPPDATA");
-                return Path.Join(appdata, "OpenTabletDriver");
-            }
-            else if (PlatformInfo.IsLinux)
-            {
-                var home = Environment.GetEnvironmentVariable("HOME");
-                return Path.Join(home, ".config", "OpenTabletDriver");
-            }
-            else if (PlatformInfo.IsOSX)
-            {
-                var macHome = Environment.GetEnvironmentVariable("HOME");
-                return Path.Join(macHome, "Library", "Application Support", "OpenTabletDriver");
-            }
-            else
-            {
-                return null;
-            }
+                RuntimePlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
+                RuntimePlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
+                RuntimePlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
+                _                       => null
+            };
         });
     }
 }
