@@ -42,10 +42,20 @@ namespace TabletDriverLib.Interop
             return SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => new WindowsDisplay(),
-                RuntimePlatform.Linux   => new XScreen(),
+                RuntimePlatform.Linux   => GetLinuxScreen(),
                 RuntimePlatform.MacOS   => new MacOSDisplay(),
                 _                       => null
             };
         });
+
+        private static IVirtualScreen GetLinuxScreen()
+        {
+            if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
+                return new WaylandDisplay();
+            else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
+                return new XScreen();
+            else
+                throw new Exception("Neither Wayland nor X11 were detected. Make sure DISPLAY or WAYLAND_DISPLAY is set.");
+        }
     }
 }
