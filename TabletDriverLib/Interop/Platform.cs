@@ -38,18 +38,6 @@ namespace TabletDriverLib.Interop
             };
         });
 
-        private static IVirtualScreen GetLinuxScreen()
-        {
-            try
-            {
-                return new WaylandDisplay();
-            }
-            catch (SocketException)
-            {
-                return new XScreen();
-            }
-        }
-
         private static Lazy<IVirtualScreen> _virtualScreen = new Lazy<IVirtualScreen>(() => 
         {
             return SystemInfo.CurrentPlatform switch
@@ -60,5 +48,15 @@ namespace TabletDriverLib.Interop
                 _                       => null
             };
         });
+
+        private static IVirtualScreen GetLinuxScreen()
+        {
+            if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
+                return new WaylandDisplay();
+            else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
+                return new XScreen();
+            else
+                throw new Exception("Neither Wayland nor X11 were detected. Make sure DISPLAY or WAYLAND_DISPLAY is set.");
+        }
     }
 }
