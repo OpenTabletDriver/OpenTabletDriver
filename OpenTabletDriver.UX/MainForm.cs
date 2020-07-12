@@ -11,6 +11,7 @@ using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 using TabletDriverPlugin.Platform.Display;
 using TabletDriverLib.Diagnostics;
+using NativeLib;
 
 namespace OpenTabletDriver.UX
 {
@@ -30,20 +31,23 @@ namespace OpenTabletDriver.UX
             Content = ConstructMainControls();
             Menu = ConstructMenu();
 
-            var trayIcon = new TrayIcon(this);
-            this.WindowStateChanged += (sender, e) =>
+            if (SystemInfo.CurrentPlatform == RuntimePlatform.Windows)
             {
-                switch (this.WindowState)
+                var trayIcon = new TrayIcon(this);
+                this.WindowStateChanged += (sender, e) =>
                 {
-                    case WindowState.Normal:
-                    case WindowState.Maximized:
-                        this.ShowInTaskbar = true;
-                        break;
-                    case WindowState.Minimized:
-                        this.ShowInTaskbar = false;
-                        break;
-                }
-            };
+                    switch (this.WindowState)
+                    {
+                        case WindowState.Normal:
+                        case WindowState.Maximized:
+                            this.ShowInTaskbar = true;
+                            break;
+                        case WindowState.Minimized:
+                            this.ShowInTaskbar = false;
+                            break;
+                    }
+                };
+            }
 
             InitializeAsync();
         }
