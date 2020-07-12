@@ -62,7 +62,7 @@ namespace OpenTabletDriver.Daemon
 
             Daemon = new DriverDaemon();
             var hostBuilder = CreateHostBuilder();
-            if (RunAsService && PlatformInfo.IsWindows)
+            if (RunAsService && SystemInfo.CurrentPlatform == RuntimePlatform.Windows)
                 hostBuilder = hostBuilder.UseWindowsService();
             await hostBuilder.Build().RunAsync();
         }
