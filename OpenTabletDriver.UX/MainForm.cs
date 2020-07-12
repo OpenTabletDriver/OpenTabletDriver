@@ -9,7 +9,6 @@ using OpenTabletDriver.UX.Windows;
 using TabletDriverLib;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
-using TabletDriverPlugin.Resident;
 using TabletDriverPlugin.Platform.Display;
 using TabletDriverLib.Diagnostics;
 
@@ -103,15 +102,15 @@ namespace OpenTabletDriver.UX
                 }
             );
 
-            residentEditor = ConstructPluginManager<IResident>(
-                () => App.Settings.ResidentPlugins.Contains(residentEditor.SelectedPlugin.Path),
+            toolEditor = ConstructPluginManager<ITool>(
+                () => App.Settings.Tools.Contains(toolEditor.SelectedPlugin.Path),
                 (sender, enabled) =>
                 {
-                    var path = residentEditor.SelectedPlugin.Path;
-                    if (enabled && !App.Settings.ResidentPlugins.Contains(path))
-                        App.Settings.ResidentPlugins.Add(path);
-                    else if (!enabled && App.Settings.ResidentPlugins.Contains(path))
-                        App.Settings.ResidentPlugins.Remove(path);
+                    var path = toolEditor.SelectedPlugin.Path;
+                    if (enabled && !App.Settings.Tools.Contains(path))
+                        App.Settings.Tools.Add(path);
+                    else if (!enabled && App.Settings.Tools.Contains(path))
+                        App.Settings.Tools.Remove(path);
                 }
             );
 
@@ -143,9 +142,9 @@ namespace OpenTabletDriver.UX
                     },
                     new TabPage
                     {
-                        Text = "Plugins",
+                        Text = "Tools",
                         Padding = 5,
-                        Content = residentEditor
+                        Content = toolEditor
                     },
                     new TabPage
                     {
@@ -449,7 +448,7 @@ namespace OpenTabletDriver.UX
             UpdateBindingLayout();
 
             await filterEditor.InitializeAsync();
-            await residentEditor.InitializeAsync();
+            await toolEditor.InitializeAsync();
 
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
             displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
@@ -459,7 +458,7 @@ namespace OpenTabletDriver.UX
         private AreaEditor displayAreaEditor, tabletAreaEditor;
         private TableLayout bindingLayout;
         private PluginManager<IFilter> filterEditor;
-        private PluginManager<IResident> residentEditor;
+        private PluginManager<ITool> toolEditor;
 
         public MainFormViewModel ViewModel
         {

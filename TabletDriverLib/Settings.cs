@@ -22,7 +22,7 @@ namespace TabletDriverLib
         private ObservableCollection<string> _filters = new ObservableCollection<string>(), 
             _penButtons = new ObservableCollection<string>(),
             _auxButtons = new ObservableCollection<string>(),
-            _residents = new ObservableCollection<string>();
+            _tools = new ObservableCollection<string>();
             
         private Dictionary<string, string> _pluginSettings = new Dictionary<string, string>();
 
@@ -227,11 +227,11 @@ namespace TabletDriverLib
             get => _pluginSettings;
         }
 
-        [JsonProperty("ResidentPlugins")]
-        public ObservableCollection<string> ResidentPlugins
+        [JsonProperty("Tools")]
+        public ObservableCollection<string> Tools
         {
-            set => this.RaiseAndSetIfChanged(ref _residents, value);
-            get => _residents;
+            set => this.RaiseAndSetIfChanged(ref _tools, value);
+            get => _tools;
         }
 
         #endregion

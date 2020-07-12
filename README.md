@@ -70,7 +70,7 @@ No other dependencies.
 - Plugins
   - Filters
   - Output modes
-  - Run-and-stay-resident tools
+  - Tools
 
 # Improving OpenTabletDriver
 
