@@ -57,12 +57,12 @@ namespace TabletDriverLib
             catch (ArgumentOutOfRangeException ex)
             {
                 Log.Exception(ex);
-                if (SystemInfo.CurrentPlatform.HasFlag(RuntimePlatform.Linux) && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.DigitizerIdentifier.VendorID))
+                if (SystemInfo.CurrentPlatform == RuntimePlatform.Linux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.DigitizerIdentifier.VendorID))
                 {
                     Log.Write("Detect", "Failed to get device."
                         + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Linux-FAQ#notice-for-uclogic-tablet-owners", true);
                 }
-                else if (SystemInfo.CurrentPlatform.HasFlag(RuntimePlatform.Windows) && tablet.DigitizerIdentifier.VendorID == (int)UCLogicInfo.VendorIDs.XP_Pen)
+                else if (SystemInfo.CurrentPlatform == RuntimePlatform.Windows && tablet.DigitizerIdentifier.VendorID == (int)UCLogicInfo.VendorIDs.XP_Pen)
                 {
                     Log.Write("Detect", "Failed to get device."
                         + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Windows-FAQ#my-xp-pen-tablet-fails-to-open-deviceioexception-unable-to-open-hid-class-device");
