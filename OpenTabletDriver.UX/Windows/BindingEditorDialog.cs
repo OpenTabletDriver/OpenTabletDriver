@@ -2,7 +2,6 @@ using System;
 using Eto.Drawing;
 using Eto.Forms;
 using TabletDriverLib.Binding;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverPlugin.Platform.Pointer;
 
 namespace OpenTabletDriver.UX.Windows

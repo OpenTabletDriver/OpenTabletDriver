@@ -305,7 +305,7 @@ namespace OpenTabletDriver.UX
             {
                 Text = header,
                 Padding = App.GroupBoxPadding,
-                Content = TableLayout.Horizontal(5, new TableCell(textbox, true), new Label { Text = "mm/px", VerticalAlignment = VerticalAlignment.Center })
+                Content = TableLayout.Horizontal(5, new TableCell(textbox, true), new Label { Text = "px/mm", VerticalAlignment = VerticalAlignment.Center })
             };
         }
 

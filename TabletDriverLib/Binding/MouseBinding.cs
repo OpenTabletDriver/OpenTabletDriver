@@ -16,9 +16,9 @@ namespace TabletDriverLib.Binding
         {
             get 
             {
-                ICursorHandler cursorHandler = Platform.CursorHandler;
+                IMouseHandler mouseHandler = Platform.MouseHandler;
                 if (Enum.TryParse<MouseButton>(Property, true, out var mouseButton))
-                    return () => cursorHandler.MouseDown(mouseButton);
+                    return () => mouseHandler.MouseDown(mouseButton);
                 else
                     return null;
             }
@@ -28,9 +28,9 @@ namespace TabletDriverLib.Binding
         {
             get
             {
-                ICursorHandler cursorHandler = Platform.CursorHandler;
+                IMouseHandler mouseHandler = Platform.MouseHandler;
                 if (Enum.TryParse<MouseButton>(Property, true, out var mouseButton))
-                    return () => cursorHandler.MouseUp(mouseButton);
+                    return () => mouseHandler.MouseUp(mouseButton);
                 else
                     return null;
             }

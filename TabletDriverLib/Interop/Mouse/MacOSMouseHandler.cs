@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using NativeLib.OSX;
 using NativeLib.OSX.Generic;
@@ -6,13 +6,13 @@ using NativeLib.OSX.Input;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Pointer;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Mouse
 {
     using static OSX;
 
-    public class MacOSCursorHandler : ICursorHandler
+    public class MacOSMouseHandler : IMouseHandler
     {
-        public MacOSCursorHandler()
+        public MacOSMouseHandler()
         {
             var primary = Platform.VirtualScreen.Displays.FirstOrDefault();
             offset = new CGPoint(primary.Position.X, primary.Position.Y);
@@ -24,7 +24,7 @@ namespace TabletDriverLib.Interop.Cursor
         private CGEventType moveEvent = CGEventType.kCGEventMouseMoved;
         private CGMouseButton pressedButtons;
 
-        public Point GetCursorPosition()
+        public Point GetPosition()
         {
             var eventRef = CGEventCreate(IntPtr.Zero);
             CGPoint cursor = CGEventGetLocation(eventRef) + offset;
@@ -32,7 +32,7 @@ namespace TabletDriverLib.Interop.Cursor
             return new Point((float)cursor.x, (float)cursor.y);
         }
 
-        public void SetCursorPosition(Point pos)
+        public void SetPosition(Point pos)
         {
             var newPos = new CGPoint(pos.X, pos.Y) - offset;
             var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, moveEvent, newPos, pressedButtons);
@@ -127,7 +127,7 @@ namespace TabletDriverLib.Interop.Cursor
         private CGEventType GetMoveEventType()
         {
             CGEventType eventType = 0;
-            
+
             if (GetMouseButtonState(MouseButton.Left))
                 eventType |= CGEventType.kCGEventLeftMouseDragged;
             if (GetMouseButtonState(MouseButton.Middle))
@@ -162,7 +162,7 @@ namespace TabletDriverLib.Interop.Cursor
 
         private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
         {
-            var curPos = GetCursorPosition();
+            var curPos = GetPosition();
             var cgPos = new CGPoint(curPos.X, curPos.Y) - offset;
             var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, type, cgPos, cgButton);
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);

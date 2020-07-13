@@ -1,4 +1,5 @@
 using System;
+using TabletDriverPlugin.Output;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverPlugin

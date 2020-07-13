@@ -1,8 +1,8 @@
 using System;
 using NativeLib;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Interop.Display;
 using TabletDriverLib.Interop.Keyboard;
+using TabletDriverLib.Interop.Mouse;
 using TabletDriverPlugin.Platform.Display;
 using TabletDriverPlugin.Platform.Keyboard;
 using TabletDriverPlugin.Platform.Pointer;
@@ -11,17 +11,17 @@ namespace TabletDriverLib.Interop
 {
     public static class Platform
     {
-        public static ICursorHandler CursorHandler => _cursorHandler.Value;
+        public static IMouseHandler MouseHandler => _mouseHandler.Value;
         public static IKeyboardHandler KeyboardHandler => _keyboardHandler.Value;
         public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
 
-        private static Lazy<ICursorHandler> _cursorHandler = new Lazy<ICursorHandler>(() =>
+        private static Lazy<IMouseHandler> _mouseHandler = new Lazy<IMouseHandler>(() =>
         {
             return SystemInfo.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => new WindowsCursorHandler(),
-                RuntimePlatform.Linux   => new EvdevCursorHandler(),
-                RuntimePlatform.MacOS   => new MacOSCursorHandler(),
+                RuntimePlatform.Windows => new WindowsMouseHandler(),
+                RuntimePlatform.Linux   => new EvdevMouseHandler(),
+                RuntimePlatform.MacOS   => new MacOSMouseHandler(),
                 _                       => null
             };
         });

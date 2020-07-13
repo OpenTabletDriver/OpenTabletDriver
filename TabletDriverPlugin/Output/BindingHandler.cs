@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
-using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Tablet;
 
-namespace TabletDriverLib.Output
+namespace TabletDriverPlugin.Output
 {
     [PluginIgnore]
     public class BindingHandler : IBindingHandler<IBinding>
-    {               
+    {
         public virtual TabletProperties TabletProperties { set; get; }
 
         public float TipActivationPressure { set; get; }

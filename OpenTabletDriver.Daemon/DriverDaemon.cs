@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
 using TabletDriverLib.Contracts;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
-using TabletDriverPlugin.Tablet;
 using TabletDriverPlugin.Logging;
-using System;
+using TabletDriverPlugin.Output;
+using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -102,7 +103,7 @@ namespace OpenTabletDriver.Daemon
                 outputMode.TabletProperties = Driver.TabletProperties;
             }
             
-            if (Driver.OutputMode is IAbsoluteMode absoluteMode)
+            if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
             {
                 absoluteMode.Output = new Area
                 {
@@ -135,7 +136,7 @@ namespace OpenTabletDriver.Daemon
                 Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
             }
 
-            if (Driver.OutputMode is IRelativeMode relativeMode)
+            if (Driver.OutputMode is RelativeOutputMode relativeMode)
             {
                 relativeMode.XSensitivity = Settings.XSensitivity;
                 Log.Write("Settings", $"Horizontal Sensitivity: {relativeMode.XSensitivity}");

@@ -1,12 +1,12 @@
-﻿using System;
+﻿using HidSharp;
+using NativeLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using HidSharp;
-using NativeLib;
-using TabletDriverLib.Interop.Cursor;
 using TabletDriverLib.Tablet;
 using TabletDriverLib.Vendors;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Output;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib
