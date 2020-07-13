@@ -21,6 +21,15 @@ namespace OpenTabletDriver.UX.Controls
             this.Command = bindingCommand;
 
             ViewModel.BindingUpdated += (s, e) => BindingUpdated?.Invoke(this, e);
+
+            this.MouseDown += async (s, e) => 
+            {
+                if (e.Buttons.HasFlag(MouseButtons.Alternate))
+                {
+                    var dialog = new AdvancedBindingEditorDialog(ViewModel.Binding);
+                    ViewModel.Binding = await dialog.ShowModalAsync(this);
+                }
+            };
         }
 
         public BindingDisplay(string binding) : this()

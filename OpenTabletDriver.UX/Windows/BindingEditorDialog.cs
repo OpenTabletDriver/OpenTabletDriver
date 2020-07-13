@@ -14,7 +14,7 @@ namespace OpenTabletDriver.UX.Windows
             Title = "Binding Editor";
             Result = currentBinding;
 
-            var inputHandler = new RichTextArea
+            var inputHandler = new TextArea
             {
                 Text = "Press a key or press a mouse button",
                 Width = 300,
