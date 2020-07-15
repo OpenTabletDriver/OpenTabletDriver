@@ -8,25 +8,72 @@ using WaylandNET.Client.Protocol;
 
 namespace TabletDriverLib.Interop.Display
 {
-    public class WaylandDisplay : IVirtualScreen, WlRegistry.IListener
+    public class WaylandDisplay : IVirtualScreen
     {
         private List<WaylandOutput> _outputs;
-        private ZxdgOutputManagerV1 _outputManager;
 
         public WaylandDisplay()
         {
             _outputs = new List<WaylandOutput>();
             using (var connection = new WaylandClientConnection())
             {
+                ZxdgOutputManagerV1 outputManager = null;
                 var registry = connection.Display.GetRegistry();
-                registry.Listener = this;
+                registry.Global += (wlRegistry, name, @interface, version) =>
+                {
+                    switch (@interface)
+                    {
+                        case "wl_output":
+                            var output = new WaylandOutput();
+                            output.Index = _outputs.Count + 1;
+                            output.WlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 1);
+                            output.WlOutput.Geometry += (wlOutput, x, y, physicalWidth, physicalHeight, subpixel, make, model, transform) =>
+                            {
+                                if (output.XdgOutput == null || output.XdgOutput.Version < 2)
+                                {
+                                    output.Position = new Point(x, y);
+                                    output.Name = make;
+                                    output.Description = model;
+                                }
+                            };
+                            output.WlOutput.Mode += (wlOutput, flags, width, height, refresh) =>
+                            {
+                                if (output.XdgOutput == null && flags.HasFlag(WlOutput.ModeEnum.Current))
+                                {
+                                    output.Width = width;
+                                    output.Height = height;
+                                }
+                            };
+                            _outputs.Add(output);
+                            break;
+                        case "zxdg_output_manager_v1":
+                            outputManager = wlRegistry.Bind<ZxdgOutputManagerV1>(name, @interface, Math.Min(version, 2));
+                            break;
+                    }
+                };
                 connection.Roundtrip();
-                if (_outputManager != null)
+                if (outputManager != null)
                 {
                     foreach (var output in _outputs)
                     {
-                        output.XdgOutput = _outputManager.GetXdgOutput(output.WlOutput);
-                        output.XdgOutput.Listener = output;
+                        output.XdgOutput = outputManager.GetXdgOutput(output.WlOutput);
+                        output.XdgOutput.LogicalPosition += (xdgOutput, x, y) =>
+                        {
+                            output.Position = new Point(x, y);
+                        };
+                        output.XdgOutput.LogicalSize += (xdgOutput, width, height) =>
+                        {
+                            output.Width = width;
+                            output.Height = height;
+                        };
+                        output.XdgOutput.Name += (xdgOutput, name) =>
+                        {
+                            output.Name = name;
+                        };
+                        output.XdgOutput.Description += (xdgOutput, description) =>
+                        {
+                            output.Description = description;
+                        };
                     }
                 }
                 connection.Roundtrip();
@@ -59,29 +106,6 @@ namespace TabletDriverLib.Interop.Display
 
         public Point Position => new Point(0, 0);
 
-        public override string ToString()
-        {
-            return $"Virtual Display ({Width}x{Height}@{Position})";
-        }
-
-        void WlRegistry.IListener.Global(WlRegistry wlRegistry, uint name, string @interface, uint version)
-        {
-            switch (@interface)
-            {
-                case "wl_output":
-                    var wlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 1);
-                    var output = new WaylandOutput(wlOutput, _outputs.Count + 1);
-                    output.WlOutput.Listener = output;
-                    _outputs.Add(output);
-                    break;
-                case "zxdg_output_manager_v1":
-                    _outputManager = wlRegistry.Bind<ZxdgOutputManagerV1>(name, @interface, Math.Min(version, 2));
-                    break;
-            }
-        }
-
-        void WlRegistry.IListener.GlobalRemove(WlRegistry wlRegistry, uint name)
-        {
-        }
+        public override string ToString() => $"Virtual Display ({Width}x{Height}@{Position})";
     }
 }
