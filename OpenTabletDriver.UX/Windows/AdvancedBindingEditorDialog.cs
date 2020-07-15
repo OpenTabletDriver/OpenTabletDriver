@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.Windows
             Padding = 5;
 
             var bindingRegex = new Regex("^(?<BindingName>.+?): (?<BindingProperty>.+?)$");
-            var match = bindingRegex.Match(currentBinding);
+            var match = bindingRegex.Match(currentBinding ?? string.Empty);
             
             if (match.Success)
             {
