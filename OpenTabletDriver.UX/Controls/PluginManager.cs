@@ -105,6 +105,32 @@ namespace OpenTabletDriver.UX.Controls
                     };
                 }
             }
+            
+            var staticMethods = from method in type.GetMethods()
+                where method.IsStatic
+                select method;
+            
+            foreach (var method in staticMethods)
+            {
+                var attributes = from attr in method.GetCustomAttributes(false)
+                    where attr is ActionAttribute
+                    select attr;
+
+                foreach (ActionAttribute attr in attributes)
+                {
+                    var control = new Button((sender, e) => method.Invoke(null, null))
+                    {
+                        Text = attr.DisplayText,
+                    };
+
+                    yield return new GroupBox
+                    {
+                        Content = control,
+                        Text = attr.GroupName,
+                        Padding = App.GroupBoxPadding
+                    };
+                }
+            }
         }
 
         private Control GetControl(PropertyInfo property, PropertyAttribute attr, Func<string> getValue, Action<string> setValue)
