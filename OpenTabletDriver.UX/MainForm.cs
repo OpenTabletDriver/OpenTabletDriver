@@ -25,7 +25,6 @@ namespace OpenTabletDriver.UX
 
             Title = "OpenTabletDriver";
             ClientSize = new Size(960, 720);
-            MinimumSize = new Size(800, 600);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
             Content = ConstructMainControls();
