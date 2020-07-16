@@ -57,9 +57,9 @@ jobs:
         env:
           runtime: win-x64
         run: |
-          dotnet build OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
-          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
+          dotnet build OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
+          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
+          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
       - name: Copy Configurations
         run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
       - name: Upload Windows artifacts
