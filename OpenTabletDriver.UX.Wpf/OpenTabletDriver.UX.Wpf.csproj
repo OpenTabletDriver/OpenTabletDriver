@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <VersionPrefix>0.3.0</VersionPrefix>
+    <ApplicationIcon>../OpenTabletDriver.UX/Assets/otd.ico</ApplicationIcon>
   </PropertyGroup>
   
   <ItemGroup>
