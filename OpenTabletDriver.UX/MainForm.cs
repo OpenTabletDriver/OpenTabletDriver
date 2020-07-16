@@ -173,7 +173,7 @@ namespace OpenTabletDriver.UX
             return new TableLayout
             {
                 Padding = new Padding(5),
-                Spacing = new Size(5, 5),
+                Spacing = SystemInfo.CurrentPlatform == RuntimePlatform.Windows ? new Size() : new Size(5, 5),
                 Rows =
                 {
                     new TableRow(new TableCell(displayControl, true))
