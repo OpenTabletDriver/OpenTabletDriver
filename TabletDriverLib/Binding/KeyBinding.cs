@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
+using NativeLib;
 using TabletDriverLib.Interop;
+using TabletDriverLib.Interop.Keyboard;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Platform.Keyboard;
@@ -7,7 +10,7 @@ using TabletDriverPlugin.Platform.Keyboard;
 namespace TabletDriverLib.Binding
 {
     [PluginName("Key Binding")]
-    public class KeyBinding : IBinding
+    public class KeyBinding : IBinding, IValidateBinding
     {
         public string Property { set; get; }
 
@@ -28,6 +31,15 @@ namespace TabletDriverLib.Binding
                 return () => keyboardHandler.Release(Property);
             }
         }
+
+        public string[] ValidProperties => 
+            SystemInfo.CurrentPlatform switch
+            {
+                RuntimePlatform.Windows => WindowsKeyboardHandler.EtoKeysymToVK.Keys.ToArray(),
+                RuntimePlatform.Linux   => EvdevKeyboardHandler.EtoKeysymToEventCode.Keys.ToArray(),
+                RuntimePlatform.MacOS   => MacOSKeyboardHandler.EtoKeysymToVK.Keys.ToArray(),
+                _                       => null
+            };
 
         public override string ToString() => BindingTools.GetShortBindingString(this);
     }

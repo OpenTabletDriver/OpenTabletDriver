@@ -1,9 +1,9 @@
+using Eto.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Eto.Forms;
 using TabletDriverLib.Plugins;
-using TabletDriverPlugin;
+using TabletDriverPlugin.Output;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -18,8 +18,8 @@ namespace OpenTabletDriver.UX.Controls
         {
             var outputModes = from typeName in await App.DriverDaemon.InvokeAsync(d => d.GetChildTypes<IOutputMode>())
                 where typeName != typeof(IOutputMode).FullName
-                where typeName != typeof(IAbsoluteMode).FullName
-                where typeName != typeof(IRelativeMode).FullName
+                where typeName != typeof(AbsoluteOutputMode).FullName
+                where typeName != typeof(RelativeOutputMode).FullName
                 select new PluginReference(typeName);
 
             OutputModes = new List<PluginReference>(outputModes);

@@ -1,15 +1,16 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
 using TabletDriverLib.Diagnostics;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Output;
 using TabletDriverPlugin.Tablet;
 using static System.Console;
 

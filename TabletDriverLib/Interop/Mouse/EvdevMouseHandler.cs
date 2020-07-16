@@ -1,16 +1,15 @@
-using System;
-using System.Runtime.InteropServices;
-using NativeLib.Linux;
+﻿using NativeLib.Linux;
 using NativeLib.Linux.Evdev;
 using NativeLib.Linux.Evdev.Structs;
+using System;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Pointer;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Mouse
 {
-    public class EvdevCursorHandler : ICursorHandler, IDisposable
+    public class EvdevMouseHandler : IMouseHandler, IDisposable
     {
-        public unsafe EvdevCursorHandler()
+        public unsafe EvdevMouseHandler()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Pointer");
 
@@ -37,7 +36,7 @@ namespace TabletDriverLib.Interop.Cursor
                 EventCode.BTN_RIGHT,
                 EventCode.BTN_FORWARD,
                 EventCode.BTN_BACK);
-            
+
             var result = Device.Initialize();
             switch (result)
             {
@@ -58,12 +57,12 @@ namespace TabletDriverLib.Interop.Cursor
         private EvdevDevice Device { set; get; }
         private Point _last;
 
-        public Point GetCursorPosition()
+        public Point GetPosition()
         {
             return _last;
         }
 
-        public void SetCursorPosition(Point pos)
+        public void SetPosition(Point pos)
         {
             _last = pos;
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)pos.X);
@@ -94,11 +93,11 @@ namespace TabletDriverLib.Interop.Cursor
             switch (button)
             {
                 case MouseButton.Left:
-                    return  EventCode.BTN_LEFT;
+                    return EventCode.BTN_LEFT;
                 case MouseButton.Middle:
-                    return  EventCode.BTN_MIDDLE;
+                    return EventCode.BTN_MIDDLE;
                 case MouseButton.Right:
-                    return  EventCode.BTN_RIGHT;
+                    return EventCode.BTN_RIGHT;
                 case MouseButton.Forward:
                     return EventCode.BTN_FORWARD;
                 case MouseButton.Backward:

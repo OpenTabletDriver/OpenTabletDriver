@@ -1,12 +1,7 @@
-using TabletDriverPlugin;
-
 namespace TabletDriverPlugin.Platform.Pointer
 {
-    public interface ICursorHandler
+    public interface IMouseHandler : IPointerHandler
     {
-        Point GetCursorPosition();
-        void SetCursorPosition(Point pos);
-
         void MouseDown(MouseButton button);
         void MouseUp(MouseButton button);
     }

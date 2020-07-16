@@ -54,7 +54,7 @@ No other dependencies.
   - Center-anchored offsets
   - Precise area rotation
 - Relative cursor positioning
-  - mm/px horizontal and vertical sensitivity
+  - px/mm horizontal and vertical sensitivity
 - Pen bindings
   - Tip by pressure bindings
   - Express key bindings

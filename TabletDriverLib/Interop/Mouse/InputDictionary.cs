@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TabletDriverPlugin.Platform.Pointer;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Mouse
 {
     public class InputDictionary : IDictionary<MouseButton, bool>
     {
         #region MouseButton Implementation
 
         private Dictionary<MouseButton, bool> _mouse = new Dictionary<MouseButton, bool>();
-        
+
         public bool this[MouseButton key]
         {
             set => _mouse[key] = value;

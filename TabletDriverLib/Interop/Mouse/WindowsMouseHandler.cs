@@ -1,17 +1,15 @@
-using System;
-using NativeLib.Windows;
+﻿using NativeLib.Windows;
 using NativeLib.Windows.Input;
-using System.Linq;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Pointer;
 
-namespace TabletDriverLib.Interop.Cursor
+namespace TabletDriverLib.Interop.Mouse
 {
     using static Windows;
 
-    public class WindowsCursorHandler : ICursorHandler
+    public class WindowsMouseHandler : IMouseHandler
     {
-        public WindowsCursorHandler()
+        public WindowsMouseHandler()
         {
             _offsetX = Platform.VirtualScreen.Position.X;
             _offsetY = Platform.VirtualScreen.Position.Y;
@@ -19,20 +17,20 @@ namespace TabletDriverLib.Interop.Cursor
 
         private float _offsetX, _offsetY;
 
-        public Point GetCursorPosition()
+        public Point GetPosition()
         {
             GetCursorPos(out POINT pt);
             return new Point(pt.X + _offsetX, pt.Y + _offsetY);
         }
 
-        public void SetCursorPosition(Point pos)
+        public void SetPosition(Point pos)
         {
             SetCursorPos((int)(pos.X - _offsetX), (int)(pos.Y - _offsetY));
         }
 
         private void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
-            var pos = GetCursorPosition();
+            var pos = GetPosition();
             mouse_event((uint)arg, (uint)pos.X, (uint)pos.Y, dwData, 0);
         }
 
