@@ -101,9 +101,15 @@ namespace OpenTabletDriver.UX.Controls
                     groupBox.Padding = App.GroupBoxPadding;
             }
 
+            var scrollview = new Scrollable
+            {
+                Content = stackLayout,
+                Border = BorderType.None
+            };
+
             TableCell[] cells = 
             {
-                new TableCell(stackLayout),
+                new TableCell(scrollview),
                 new TableCell(areaDisplay, true)
             };
             Content = TableLayout.Horizontal(5, cells);
