@@ -24,8 +24,8 @@ namespace OpenTabletDriver.UX
             this.DataContext = new MainFormViewModel();
 
             Title = "OpenTabletDriver";
-            ClientSize = new Size(960, 750);
-            MinimumSize = new Size(960, 750);
+            ClientSize = new Size(800, 600);
+            MinimumSize = new Size(800, 600);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
             Content = ConstructMainControls();
