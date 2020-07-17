@@ -271,7 +271,7 @@ namespace OpenTabletDriver.UX.Windows
                     ),
                     GetControl("Active Report ID",
                         () => SelectedConfiguration.ActiveReportID.ToString(),
-                        (o) => SelectedConfiguration.ActiveReportID = uint.TryParse(o, out var val) ? val : 0
+                        (o) => SelectedConfiguration.ActiveReportID = DetectionRange.Parse(o)
                     )
                 ),
                 GetExpander("Tablet Identifiers", isExpanded: false,
