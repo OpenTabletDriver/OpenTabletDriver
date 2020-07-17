@@ -5,16 +5,16 @@
     "ProductID": 887,
     "InputReportLength": 361,
     "OutputReportLength": 0,
-    "ReportParser": null,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV3ReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
   "AlternateDigitizerIdentifier": {
     "VendorID": 1386,
     "ProductID": 887,
-    "InputReportLength": 0,
+    "InputReportLength": 193,
     "OutputReportLength": 0,
-    "ReportParser": null,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
