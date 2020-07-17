@@ -19,16 +19,16 @@ jobs:
         env:
           runtime: linux-x64
         run: |
-          dotnet publish OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
           dotnet publish OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
           dotnet publish OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
       - name: MacOS Build
         env:
           runtime: osx-x64
         run: |
-          dotnet publish OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
           dotnet publish OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
           dotnet publish OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
       - name: Copy Configurations
         run: |
           cp -vr ./TabletDriverLib/Configurations/ build/linux-x64
@@ -57,9 +57,9 @@ jobs:
         env:
           runtime: win-x64
         run: |
-          dotnet publish OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
       - name: Copy Configurations
         run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
       - name: Upload Windows artifacts
