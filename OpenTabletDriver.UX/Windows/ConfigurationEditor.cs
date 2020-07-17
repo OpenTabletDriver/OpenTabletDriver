@@ -48,9 +48,6 @@ namespace OpenTabletDriver.UX.Windows
             var quitCommand = new Command { MenuText = "Close", Shortcut = Application.Instance.CommonModifier | Keys.W };
             quitCommand.Executed += (sender, e) => Close();
 
-            var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
-            aboutCommand.Executed += (sender, e) => App.AboutDialog.ShowDialog(this);
-
             var loadDirectory = new Command { MenuText = "Load configurations...", Shortcut = Application.Instance.CommonModifier | Keys.O };
             loadDirectory.Executed += (sender, e) => LoadConfigurationsDialog();
 
@@ -82,8 +79,7 @@ namespace OpenTabletDriver.UX.Windows
                         }
                     }
                 },
-                QuitItem = quitCommand,
-                AboutItem = aboutCommand
+                QuitItem = quitCommand
             };
 
             ToolBar = new ToolBar
