@@ -20,7 +20,7 @@ namespace TabletDriverPlugin.Output
 
         public void HandleBinding(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport && tabletReport.ReportID >= TabletProperties.ActiveReportID)
+            if (report is ITabletReport tabletReport)
                 HandlePenBinding(tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxBinding(auxReport);
