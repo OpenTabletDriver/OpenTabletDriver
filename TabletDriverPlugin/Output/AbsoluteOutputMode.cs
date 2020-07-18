@@ -82,7 +82,7 @@ namespace TabletDriverPlugin.Output
         {
             if (report is ITabletReport tabletReport)
             {
-                if (TabletProperties.ActiveReportID != 0 && tabletReport.ReportID > TabletProperties.ActiveReportID)
+                if (TabletProperties.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
                     if (PointerHandler is IPressureHandler pressureHandler)
                         pressureHandler.SetPressure((float)tabletReport.Pressure / (float)TabletProperties.MaxPressure);

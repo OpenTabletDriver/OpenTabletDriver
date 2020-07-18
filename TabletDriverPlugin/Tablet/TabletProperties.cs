@@ -58,10 +58,10 @@ namespace TabletDriverPlugin.Tablet
         public uint MaxPressure { set; get; }
 
         /// <summary>
-        /// The tablet's minimum detection report ID.
+        /// The tablet's active detection report ID.
         /// </summary>
         [JsonProperty("ActiveReportID")]
-        public uint ActiveReportID { set; get; }
+        public DetectionRange ActiveReportID { set; get; }
 
         /// <summary>
         /// Other information about the tablet that can be used in tools or other applications.
