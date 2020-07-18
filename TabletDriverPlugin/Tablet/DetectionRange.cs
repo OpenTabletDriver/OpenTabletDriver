@@ -45,10 +45,11 @@ namespace TabletDriverPlugin.Tablet
             var tokens = str.Split("..", 2);
             if (tokens.Length == 2)
             {
-                string left = tokens[0];
-                string right = tokens[1];
-                char leftOp = left[0];
-                char rightOp = right[^0];
+                string left = tokens[0][1..^0];
+                char leftOp = tokens[0][0];
+                
+                string right = tokens[1][0..^1];
+                char rightOp = tokens[1][^1];
 
                 uint? start = left == "null" ? null : (uint.TryParse(left, out var startValue) ? (uint?)startValue : null);
                 uint? end = right == "null" ? null : (uint.TryParse(right, out var endValue) ? (uint?)endValue : null);
