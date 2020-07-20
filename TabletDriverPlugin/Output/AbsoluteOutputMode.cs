@@ -13,15 +13,16 @@ namespace TabletDriverPlugin.Output
         private float[] _rotationMatrix;
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
         private float _minX, _maxX, _minY, _maxY;
-        
-        private IEnumerable<IFilter> _filters, _preFilters, _postFilters;
+
+        private IEnumerable<IFilter> _filters;
+        private List<IFilter> _preFilters, _postFilters;
         public IEnumerable<IFilter> Filters
         {
             set
             {
                 _filters = value;
-                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose);
-                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose);
+                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose).ToList();
+                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose).ToList();
             }
             get => _filters;
         }
