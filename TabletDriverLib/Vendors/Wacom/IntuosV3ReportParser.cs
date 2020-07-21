@@ -1,3 +1,4 @@
+using TabletDriverLib.Tablet;
 using TabletDriverPlugin.Tablet;
 
 namespace TabletDriverLib.Vendors.Wacom
@@ -6,7 +7,10 @@ namespace TabletDriverLib.Vendors.Wacom
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            return new IntuosV3Report(data);
+            if (data[0] == 0x11)
+                return new IntuosV3AuxReport(data);
+            else
+                return new IntuosV3Report(data);
         }
     }
 }
