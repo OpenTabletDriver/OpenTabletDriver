@@ -95,104 +95,116 @@ namespace OpenTabletDriver.Daemon
             }
 
             if (Driver.OutputMode is IOutputMode outputMode)
-            {                
-                outputMode.Filters = from filter in Settings?.Filters
-                    select new PluginReference(filter).Construct<IFilter>();
-
-                foreach (var filter in outputMode.Filters)
-                {
-                    var properties = from property in filter.GetType().GetProperties()
-                        where property.GetCustomAttribute<PropertyAttribute>(false) != null
-                        select property;
-                    
-                    foreach (var property in properties)
-                    {
-                        if (Settings.PluginSettings.TryGetValue(property.Name, out var strValue))
-                        {
-                            var value = Convert.ChangeType(strValue, property.PropertyType);
-                            property.SetValue(filter, value);
-                        }
-                    }
-                }
-
-                if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
-                    Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
-                
-                outputMode.TabletProperties = Driver.TabletProperties;
-            }
+                SetOutputModeSettings(outputMode);
             
             if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
-            {
-                absoluteMode.Output = new Area
-                {
-                    Width = Settings.DisplayWidth,
-                    Height = Settings.DisplayHeight,
-                    Position = new Point
-                    {
-                        X = Settings.DisplayX,
-                        Y = Settings.DisplayY
-                    }
-                };
-                Log.Write("Settings", $"Display area: {absoluteMode.Output}");
-
-                absoluteMode.Input = new Area
-                {
-                    Width = Settings.TabletWidth,
-                    Height = Settings.TabletHeight,
-                    Position = new Point
-                    {
-                        X = Settings.TabletX,
-                        Y = Settings.TabletY
-                    },
-                    Rotation = Settings.TabletRotation
-                };
-                Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
-
-                absoluteMode.VirtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
-
-                absoluteMode.AreaClipping = Settings.EnableClipping;   
-                Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
-            }
+                SetAbsoluteModeSettings(absoluteMode);
 
             if (Driver.OutputMode is RelativeOutputMode relativeMode)
-            {
-                relativeMode.XSensitivity = Settings.XSensitivity;
-                Log.Write("Settings", $"Horizontal Sensitivity: {relativeMode.XSensitivity}");
-
-                relativeMode.YSensitivity = Settings.YSensitivity;
-                Log.Write("Settings", $"Vertical Sensitivity: {relativeMode.YSensitivity}");
-
-                relativeMode.ResetTime = Settings.ResetTime;
-                Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
-            }
+                SetRelativeModeSettings(relativeMode);
 
             if (Driver.OutputMode is IBindingHandler<IBinding> bindingHandler)
-            {
-                bindingHandler.TipBinding = BindingTools.GetBinding(Settings.TipButton);
-                bindingHandler.TipActivationPressure = Settings.TipActivationPressure;
-                Log.Write("Settings", $"Tip Binding: '{(bindingHandler.TipBinding is IBinding binding ? binding.ToString() : "None")}'@{bindingHandler.TipActivationPressure}%");
-
-                if (Settings.PenButtons != null)
-                {
-                    for (int index = 0; index < Settings.PenButtons.Count; index++)
-                        bindingHandler.PenButtonBindings[index] = BindingTools.GetBinding(Settings.PenButtons[index]);
-
-                    Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
-                }
-
-                if (Settings.AuxButtons != null)
-                {
-                    for (int index = 0; index < Settings.AuxButtons.Count; index++)
-                        bindingHandler.AuxButtonBindings[index] = BindingTools.GetBinding(Settings.AuxButtons[index]);
-
-                    Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
-                }
-            }
+                SetBindingHandlerSettings(bindingHandler);
 
             if (Settings.AutoHook)
             {
                 Driver.EnableInput = true;
                 Log.Write("Settings", "Driver is auto-enabled.");
+            }
+        }
+
+        private void SetOutputModeSettings(IOutputMode outputMode)
+        {
+            outputMode.Filters = from filter in Settings?.Filters
+                select new PluginReference(filter).Construct<IFilter>();
+
+            foreach (var filter in outputMode.Filters)
+            {
+                var properties = from property in filter.GetType().GetProperties()
+                    where property.GetCustomAttribute<PropertyAttribute>(false) != null
+                    select property;
+                
+                foreach (var property in properties)
+                {
+                    if (Settings.PluginSettings.TryGetValue(property.Name, out var strValue))
+                    {
+                        var value = Convert.ChangeType(strValue, property.PropertyType);
+                        property.SetValue(filter, value);
+                    }
+                }
+            }
+
+            if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
+                Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
+            
+            outputMode.TabletProperties = Driver.TabletProperties;
+        }
+
+        private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
+        {
+            absoluteMode.Output = new Area
+            {
+                Width = Settings.DisplayWidth,
+                Height = Settings.DisplayHeight,
+                Position = new Point
+                {
+                    X = Settings.DisplayX,
+                    Y = Settings.DisplayY
+                }
+            };
+            Log.Write("Settings", $"Display area: {absoluteMode.Output}");
+
+            absoluteMode.Input = new Area
+            {
+                Width = Settings.TabletWidth,
+                Height = Settings.TabletHeight,
+                Position = new Point
+                {
+                    X = Settings.TabletX,
+                    Y = Settings.TabletY
+                },
+                Rotation = Settings.TabletRotation
+            };
+            Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
+
+            absoluteMode.VirtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+
+            absoluteMode.AreaClipping = Settings.EnableClipping;   
+            Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
+        }
+
+        private void SetRelativeModeSettings(RelativeOutputMode relativeMode)
+        {
+            relativeMode.XSensitivity = Settings.XSensitivity;
+            Log.Write("Settings", $"Horizontal Sensitivity: {relativeMode.XSensitivity}");
+
+            relativeMode.YSensitivity = Settings.YSensitivity;
+            Log.Write("Settings", $"Vertical Sensitivity: {relativeMode.YSensitivity}");
+
+            relativeMode.ResetTime = Settings.ResetTime;
+            Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
+        }
+
+        private void SetBindingHandlerSettings(IBindingHandler<IBinding> bindingHandler)
+        {
+            bindingHandler.TipBinding = BindingTools.GetBinding(Settings.TipButton);
+            bindingHandler.TipActivationPressure = Settings.TipActivationPressure;
+            Log.Write("Settings", $"Tip Binding: '{(bindingHandler.TipBinding is IBinding binding ? binding.ToString() : "None")}'@{bindingHandler.TipActivationPressure}%");
+
+            if (Settings.PenButtons != null)
+            {
+                for (int index = 0; index < Settings.PenButtons.Count; index++)
+                    bindingHandler.PenButtonBindings[index] = BindingTools.GetBinding(Settings.PenButtons[index]);
+
+                Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
+            }
+
+            if (Settings.AuxButtons != null)
+            {
+                for (int index = 0; index < Settings.AuxButtons.Count; index++)
+                    bindingHandler.AuxButtonBindings[index] = BindingTools.GetBinding(Settings.AuxButtons[index]);
+
+                Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
             }
         }
 
