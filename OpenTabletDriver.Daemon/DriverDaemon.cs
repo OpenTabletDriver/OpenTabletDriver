@@ -101,13 +101,12 @@ namespace OpenTabletDriver.Daemon
 
                 foreach (var filter in outputMode.Filters)
                 {
-                    var properties = from property in filter.GetType().GetProperties()
-                        where property.GetCustomAttribute<PropertyAttribute>(false) != null
-                        select property;
+                    var properties = filter.GetType().GetProperties();
                     
                     foreach (var property in properties)
                     {
-                        if (Settings.PluginSettings.TryGetValue(property.Name, out var strValue))
+                        if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
+                            Settings.PluginSettings.TryGetValue(filter.GetType().FullName + "." + property.Name, out var strValue))
                         {
                             var value = Convert.ChangeType(strValue, property.PropertyType);
                             property.SetValue(filter, value);

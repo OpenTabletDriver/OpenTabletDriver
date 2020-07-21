@@ -14,15 +14,12 @@ namespace TabletDriverPlugin.Output
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
         private float _minX, _maxX, _minY, _maxY;
 
-        private IEnumerable<IFilter> _filters;
-        private List<IFilter> _preFilters, _postFilters;
+        private List<IFilter> _filters;
         public IEnumerable<IFilter> Filters
         {
             set
             {
-                _filters = value;
-                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose).ToList();
-                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose).ToList();
+                _filters = value.ToList();
             }
             get => _filters;
         }
@@ -100,8 +97,9 @@ namespace TabletDriverPlugin.Output
             var pos = new Point(report.Position.X, report.Position.Y);
 
             // Pre Filter
-            foreach (IFilter filter in _preFilters)
-                pos = filter.Filter(pos);
+            foreach (IFilter filter in _filters)
+                if (filter.FilterStage == FilterStage.PreTranspose)
+                    pos = filter.Filter(pos);
 
             // Normalize (ratio of 1)
             pos.X /= TabletProperties.MaxX;
@@ -152,8 +150,9 @@ namespace TabletDriverPlugin.Output
             }
 
             // Post Filter
-            foreach (IFilter filter in _postFilters)
-                pos = filter.Filter(pos);
+            foreach (IFilter filter in _filters)
+                if (filter.FilterStage == FilterStage.PostTranspose)
+                    pos = filter.Filter(pos);
 
             return pos;
         }
