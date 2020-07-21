@@ -584,6 +584,8 @@ namespace OpenTabletDriver.UX
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var file = new FileInfo(fileDialog.FileName);
+                    if (file.Exists)
+                        file.Delete();
                     using (var fs = file.OpenWrite())
                     using (var sw = new StreamWriter(fs))
                         await sw.WriteLineAsync(diagnosticDump.ToString());
