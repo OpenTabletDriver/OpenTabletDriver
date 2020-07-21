@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
 using TabletDriverLib.Contracts;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Logging;
 using TabletDriverPlugin.Output;
 using TabletDriverPlugin.Tablet;
@@ -97,7 +99,20 @@ namespace OpenTabletDriver.Daemon
                 outputMode.Filters = from filter in Settings?.Filters
                     select new PluginReference(filter).Construct<IFilter>();
 
-                if (outputMode.Filters != null)
+                foreach (var filter in outputMode.Filters)
+                {
+                    foreach (var property in filter.GetType().GetProperties())
+                    {
+                        var attribute = property.GetCustomAttribute<PropertyAttribute>(false);
+                        
+                        var strValue = Settings.PluginSettings[property.Name];
+                        var value = Convert.ChangeType(strValue, property.PropertyType);
+                        
+                        property.SetValue(filter, value);
+                    }
+                }
+
+                if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                     Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
                 
                 outputMode.TabletProperties = Driver.TabletProperties;
