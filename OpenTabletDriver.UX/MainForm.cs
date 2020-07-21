@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX
             ClientSize = new Size(960, 720);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
-            Content = ConstructMainControls();
+            Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
 
             if (SystemInfo.CurrentPlatform == RuntimePlatform.Windows)
@@ -49,6 +49,28 @@ namespace OpenTabletDriver.UX
             }
 
             InitializeAsync();
+        }
+
+        private Control ConstructPlaceholderControl()
+        {
+            return new StackLayout
+            {
+                Items =
+                {
+                    new StackLayoutItem(null, true),
+                    new StackLayoutItem
+                    {
+                        Control = new Bitmap(App.Logo.WithSize(256, 256)),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    },
+                    new StackLayoutItem
+                    {
+                        Control = "Connecting to OpenTabletDriver Daemon...",
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    },
+                    new StackLayoutItem(null, true)
+                }
+            };
         }
 
         private Control ConstructMainControls()
@@ -423,6 +445,8 @@ namespace OpenTabletDriver.UX
                     await PluginManager.AddPlugin(file);
                 }
             }
+
+            Content = ConstructMainControls();
 
             if (await App.DriverDaemon.InvokeAsync(d => d.GetTablet()) is TabletProperties tablet)
             {
