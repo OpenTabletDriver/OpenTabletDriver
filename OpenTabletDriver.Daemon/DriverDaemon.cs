@@ -50,6 +50,7 @@ namespace OpenTabletDriver.Daemon
         private Settings Settings { set; get; }
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
+        private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private DeviceDebuggerServer TabletDebuggerServer { set; get; }
         private DeviceDebuggerServer AuxDebuggerServer { set; get; }
         private LogServer LogServer { set; get; }
@@ -111,6 +112,8 @@ namespace OpenTabletDriver.Daemon
                 Driver.EnableInput = true;
                 Log.Write("Settings", "Driver is auto-enabled.");
             }
+
+            SetToolSettings();
         }
 
         private void SetOutputModeSettings(IOutputMode outputMode)
@@ -202,6 +205,36 @@ namespace OpenTabletDriver.Daemon
                     bindingHandler.AuxButtonBindings[index] = BindingTools.GetBinding(Settings.AuxButtons[index]);
 
                 Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
+            }
+        }
+
+        private void SetToolSettings()
+        {
+            foreach (var runningTool in Tools)
+            {
+                runningTool.Dispose();
+            }
+            
+            foreach (var toolName in Settings.Tools)
+            {
+                var plugin = new PluginReference(toolName);
+                var type = plugin.GetTypeReference<ITool>();
+                
+                var tool = plugin.Construct<ITool>();
+                foreach (var property in type.GetProperties())
+                {
+                    if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
+                        Settings.PluginSettings.TryGetValue(type.FullName + "." + property.Name, out var strValue))
+                    {
+                        var value = Convert.ChangeType(strValue, property.PropertyType);
+                        property.SetValue(tool, value);
+                    }
+                }
+
+                if (tool.Initialize())
+                    Tools.Add(tool);
+                else
+                    Log.Write("Tool", $"Failed to initialize {plugin.Name} tool.", true);
             }
         }
 
