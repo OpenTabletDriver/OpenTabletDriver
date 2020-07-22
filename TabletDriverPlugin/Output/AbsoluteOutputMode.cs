@@ -20,6 +20,8 @@ namespace TabletDriverPlugin.Output
             set
             {
                 _filters = value.ToList();
+                _preFilters.Clear();
+                _postFilters.Clear();
                 foreach (IFilter filter in _filters)
                     if (filter.FilterStage == FilterStage.PreTranspose)
                         _preFilters.Add(filter);
