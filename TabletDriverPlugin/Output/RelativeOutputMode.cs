@@ -10,14 +10,19 @@ namespace TabletDriverPlugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : BindingHandler, IOutputMode
     {
-        private IEnumerable<IFilter> _filters, _preFilters, _postFilters;
+        private List<IFilter> _filters, _preFilters = new List<IFilter>(), _postFilters = new List<IFilter>();
         public IEnumerable<IFilter> Filters
         {
             set
             {
-                _filters = value;
-                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose);
-                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose);
+                _filters = value.ToList();
+                _preFilters.Clear();
+                _postFilters.Clear();
+                foreach (IFilter filter in _filters)
+                    if (filter.FilterStage == FilterStage.PreTranspose)
+                        _preFilters.Add(filter);
+                    else if (filter.FilterStage == FilterStage.PostTranspose)
+                        _postFilters.Add(filter);
             }
             get => _filters;
         }
