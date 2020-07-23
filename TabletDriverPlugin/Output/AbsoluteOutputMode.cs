@@ -14,15 +14,19 @@ namespace TabletDriverPlugin.Output
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
         private float _minX, _maxX, _minY, _maxY;
 
-        private IEnumerable<IFilter> _filters;
-        private List<IFilter> _preFilters, _postFilters;
+        private List<IFilter> _filters, _preFilters = new List<IFilter>(), _postFilters = new List<IFilter>();
         public IEnumerable<IFilter> Filters
         {
             set
             {
-                _filters = value;
-                _preFilters = value.Where(f => f.FilterStage == FilterStage.PreTranspose).ToList();
-                _postFilters = value.Where(f => f.FilterStage == FilterStage.PostTranspose).ToList();
+                _filters = value.ToList();
+                _preFilters.Clear();
+                _postFilters.Clear();
+                foreach (IFilter filter in _filters)
+                    if (filter.FilterStage == FilterStage.PreTranspose)
+                        _preFilters.Add(filter);
+                    else if (filter.FilterStage == FilterStage.PostTranspose)
+                        _postFilters.Add(filter);
             }
             get => _filters;
         }
