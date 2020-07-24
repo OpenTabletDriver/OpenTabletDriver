@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Threading.Tasks;
 using NativeLib;
 using TabletDriverPlugin;
@@ -46,7 +47,7 @@ namespace TabletDriverLib
 
         private static async Task<Assembly> ImportAssembly(string path)
         {
-            return await Task.Run<Assembly>(() => Assembly.LoadFile(path));
+            return await Task.Run<Assembly>(() => AssemblyLoadContext.Default.LoadFromAssemblyPath(path));
         }
 
         private static IEnumerable<Type> GetLoadableTypes(Assembly asm)
