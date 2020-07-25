@@ -75,8 +75,6 @@ namespace OpenTabletDriver.UX
 
         private Control ConstructMainControls()
         {
-            var outputModeSelector = ConstructOutputModeSelector();
-
             var displayAreaGroup = ConstructDisplayArea();
             var tabletAreaGroup = ConstructTabletArea();
 
@@ -95,6 +93,8 @@ namespace OpenTabletDriver.UX
                         .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.EnableClipping));
                 }
             };
+
+            var outputModeSelector = ConstructOutputModeSelector();
 
             var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, outputModeSelector, areaClipping);
 
@@ -442,7 +442,7 @@ namespace OpenTabletDriver.UX
                 foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
                 {
                     await App.DriverDaemon.InvokeAsync(d => d.ImportPlugin(file.FullName));
-                    await PluginManager.AddPlugin(file);
+                    PluginManager.AddPlugin(file);
                 }
             }
 
@@ -473,9 +473,6 @@ namespace OpenTabletDriver.UX
             }
 
             UpdateBindingLayout();
-
-            await filterEditor.InitializeAsync();
-            await toolEditor.InitializeAsync();
 
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
             displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
@@ -627,7 +624,7 @@ namespace OpenTabletDriver.UX
         {
             // Tip Binding
             var tipBindingControl = new BindingDisplay(ViewModel.Settings.TipButton);
-            tipBindingControl.BindingUpdated += (s, binding) => ViewModel.Settings.TipButton = binding;
+            tipBindingControl.BindingUpdated += (s, binding) => ViewModel.Settings.TipButton = binding.ToString();
             var tipBindingGroup = new GroupBox
             {
                 Text = "Tip Binding",
@@ -661,7 +658,7 @@ namespace OpenTabletDriver.UX
                 penBindingControl.BindingUpdated += (sender, binding) =>
                 {
                     var index = (int)(sender as BindingDisplay).Tag;
-                    ViewModel.Settings.PenButtons[index] = binding;
+                    ViewModel.Settings.PenButtons[index] = binding.ToString();
                 };
                 var penBindingGroup = new GroupBox
                 {
@@ -682,7 +679,7 @@ namespace OpenTabletDriver.UX
                 auxBindingControl.BindingUpdated += (sender, binding) =>
                 {
                     int index = (int)(sender as BindingDisplay).Tag;
-                    ViewModel.Settings.AuxButtons[index] = binding;
+                    ViewModel.Settings.AuxButtons[index] = binding.ToString();
                 };
                 var auxBindingGroup = new GroupBox
                 {

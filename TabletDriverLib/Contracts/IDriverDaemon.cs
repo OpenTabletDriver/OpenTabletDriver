@@ -19,15 +19,13 @@ namespace TabletDriverLib.Contracts
 
         AppInfo GetApplicationInfo();
         
-        Task<bool> LoadPlugins();
-        Task<bool> ImportPlugin(string pluginPath);
+        bool LoadPlugins();
+        bool ImportPlugin(string pluginPath);
 
         void SetInputHook(bool isHooked);
         IEnumerable<Guid> SetTabletDebug(bool isEnabled);
         
         Guid SetLogOutput(bool isEnabled);
         IEnumerable<LogMessage> GetCurrentLog();
-
-        IEnumerable<string> GetChildTypes<T>();
     }
 }

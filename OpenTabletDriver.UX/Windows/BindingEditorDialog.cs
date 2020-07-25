@@ -6,9 +6,9 @@ using TabletDriverPlugin.Platform.Pointer;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class BindingEditorDialog : Dialog<string>
+    public class BindingEditorDialog : Dialog<BindingReference>
     {
-        public BindingEditorDialog(string currentBinding = null)
+        public BindingEditorDialog(BindingReference currentBinding = null)
         {
             Title = "Binding Editor";
             Result = currentBinding;
@@ -65,15 +65,17 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ClearBinding(object sender, EventArgs e)
         {
-            Return(string.Empty);
+            Return(BindingReference.None);
         }
 
         private void Return<T>(T binding) where T : TabletDriverPlugin.IBinding
         {
-            Return(BindingTools.GetBindingString(binding));
+            var str = BindingTools.GetBindingString(binding);
+            var bindRef = BindingReference.FromString(str);
+            Return(bindRef);
         }
 
-        private void Return(string result)
+        private void Return(BindingReference result)
         {
             Close(result);
         }

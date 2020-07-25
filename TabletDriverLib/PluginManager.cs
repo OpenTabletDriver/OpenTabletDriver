@@ -18,19 +18,14 @@ namespace TabletDriverLib
         public static Collection<TypeInfo> Types
         {
             set => _types = value;
-            get
-            {
-                if (_types == null)
-                    _types = new Collection<TypeInfo>(allTypes.Value);
-                return _types;
-            }
+            get => _types ??= allTypes.Value;
         }
         
-        public static async Task<bool> AddPlugin(FileInfo file)
+        public static bool AddPlugin(FileInfo file)
         {
             if (file.Extension == ".dll")
             {
-                var asm = await ImportAssembly(file.FullName);
+                var asm = ImportAssembly(file.FullName);
                 foreach (var type in GetLoadableTypes(asm))
                 {
                     var attr = type.GetCustomAttribute(typeof(SupportedPlatformAttribute), true) as SupportedPlatformAttribute;
@@ -45,9 +40,9 @@ namespace TabletDriverLib
             }
         }
 
-        private static async Task<Assembly> ImportAssembly(string path)
+        private static Assembly ImportAssembly(string path)
         {
-            return await Task.Run<Assembly>(() => AssemblyLoadContext.Default.LoadFromAssemblyPath(path));
+            return AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
         }
 
         private static IEnumerable<Type> GetLoadableTypes(Assembly asm)
@@ -86,13 +81,13 @@ namespace TabletDriverLib
             return new List<TypeInfo>(children);
         }
 
-        private static Lazy<IList<TypeInfo>> allTypes = new Lazy<IList<TypeInfo>>(() => 
+        private static Lazy<Collection<TypeInfo>> allTypes = new Lazy<Collection<TypeInfo>>(() => 
         {
-            return Assembly.GetEntryAssembly()
-                .GetReferencedAssemblies()
-                .Select(Assembly.Load)
-                .SelectMany(x => x.DefinedTypes)
-                .ToList();
+            var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                from type in assembly.DefinedTypes
+                select type;
+                
+            return new ObservableCollection<TypeInfo>(types);
         });
     }
 }

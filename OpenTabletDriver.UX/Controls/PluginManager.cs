@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using TabletDriverLib;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin.Attributes;
 
@@ -25,6 +26,12 @@ namespace OpenTabletDriver.UX.Controls
                 if (_pluginList.SelectedIndex >= 0 && _pluginList.SelectedIndex <= Plugins.Count)
                     SelectedPlugin = Plugins[_pluginList.SelectedIndex];
             };
+
+            var pluginRefs = from type in PluginManager.GetChildTypes<T>()
+                where type != typeof(T)
+                select new PluginReference(type);
+
+            Plugins = new List<PluginReference>(pluginRefs);
         }
 
         private List<PluginReference> _plugins;
@@ -59,15 +66,6 @@ namespace OpenTabletDriver.UX.Controls
             Padding = new Padding(5),
             Spacing = 5
         };
-
-        public async Task InitializeAsync()
-        {
-            var pluginRefs = from typeName in await App.DriverDaemon.InvokeAsync(d => d.GetChildTypes<T>())
-                where typeName != typeof(T).FullName
-                select new PluginReference(typeName);
-
-            Plugins = new List<PluginReference>(pluginRefs);
-        }
 
         private IEnumerable<Control> GeneratePropertyControls()
         {

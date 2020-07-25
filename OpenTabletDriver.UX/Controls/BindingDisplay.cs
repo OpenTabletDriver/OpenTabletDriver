@@ -1,48 +1,46 @@
 using System;
 using Eto.Forms;
 using OpenTabletDriver.UX.Windows;
+using TabletDriverLib.Binding;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class BindingDisplay : Button, IViewModelRoot<BindingViewModel>
+    public class BindingDisplay : Button
     {
-        public BindingDisplay()
+        public BindingDisplay(string binding)
         {
-            this.DataContext = new BindingViewModel();
-            this.TextBinding.BindDataContext((BindingViewModel m) => m.Binding);
+            Binding = BindingReference.FromString(binding);
             
             var bindingCommand = new Command();
-            bindingCommand.BindDataContext(c => c.MenuText, (BindingViewModel m) => m.Binding);
             bindingCommand.Executed += async (sender, e) =>
             {
-                var dialog = new BindingEditorDialog(ViewModel.Binding);
-                ViewModel.Binding = await dialog.ShowModalAsync(this);
+                var dialog = new BindingEditorDialog(Binding);
+                Binding = await dialog.ShowModalAsync(this);
             };
             this.Command = bindingCommand;
-
-            ViewModel.BindingUpdated += (s, e) => BindingUpdated?.Invoke(this, e);
 
             this.MouseDown += async (s, e) => 
             {
                 if (e.Buttons.HasFlag(MouseButtons.Alternate))
                 {
-                    var dialog = new AdvancedBindingEditorDialog(ViewModel.Binding);
-                    ViewModel.Binding = await dialog.ShowModalAsync(this);
+                    var dialog = new AdvancedBindingEditorDialog(Binding);
+                    Binding = await dialog.ShowModalAsync(this);
                 }
             };
         }
 
-        public BindingDisplay(string binding) : this()
-        {
-            ViewModel.Binding = binding;
-        }
+        public event EventHandler<BindingReference> BindingUpdated;
 
-        public event EventHandler<string> BindingUpdated;
-
-        public BindingViewModel ViewModel
+        private BindingReference _binding;
+        public BindingReference Binding
         {
-            set => this.DataContext = value;
-            get => (BindingViewModel)this.DataContext;
+            set
+            {
+                _binding = value;
+                Text = Binding.ToDisplayString();
+                BindingUpdated?.Invoke(this, Binding);
+            }
+            get => _binding ?? BindingReference.None;
         }
     }
 }
