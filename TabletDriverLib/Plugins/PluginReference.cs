@@ -6,7 +6,7 @@ using System;
 
 namespace TabletDriverLib.Plugins
 {
-    public class PluginReference
+    public class PluginReference : IEquatable<PluginReference>
     {
         protected PluginReference()
         {
@@ -55,6 +55,11 @@ namespace TabletDriverLib.Plugins
                 select type;
             
             return types.FirstOrDefault();
+        }
+
+        public bool Equals(PluginReference other)
+        {
+            return Name == other.Name && Path == other.Path;
         }
 
         public static readonly PluginReference Disable = new PluginReference

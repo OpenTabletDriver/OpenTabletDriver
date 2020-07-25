@@ -27,25 +27,22 @@ namespace OpenTabletDriver.UX.Controls
                     SelectedPlugin = Plugins[_pluginList.SelectedIndex];
             };
 
-            var pluginRefs = from type in PluginManager.GetChildTypes<T>()
-                where type != typeof(T)
-                select new PluginReference(type);
-
-            Plugins = new List<PluginReference>(pluginRefs);
-        }
-
-        private List<PluginReference> _plugins;
-        private List<PluginReference> Plugins
-        {
-            set
+            foreach (var type in PluginManager.GetChildTypes<T>())
             {
-                _plugins = value;
-                _pluginList.Items.Clear();
-                foreach (var plugin in Plugins)
-                    _pluginList.Items.Add(string.IsNullOrWhiteSpace(plugin.Name) ? plugin.Path : plugin.Name);
+                var pluginRef = new PluginReference(type);
+                if (type != typeof(T) && !Plugins.Contains(pluginRef))
+                {
+                    Plugins.Add(pluginRef);
+                }
             }
-            get => _plugins;
+
+            _pluginList.Items.Clear();
+            foreach (var plugin in Plugins)
+                _pluginList.Items.Add(string.IsNullOrWhiteSpace(plugin.Name) ? plugin.Path : plugin.Name);
+
         }
+
+        private List<PluginReference> Plugins = new List<PluginReference>();
 
         private PluginReference _selectedPlugin;
         public PluginReference SelectedPlugin
