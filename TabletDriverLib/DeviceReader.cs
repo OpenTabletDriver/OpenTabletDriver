@@ -23,9 +23,21 @@ namespace TabletDriverLib
 
         public virtual HidDevice Device { protected set; get; }
         public virtual HidStream ReportStream { protected set; get; }
-        public bool Reading { protected set; get; }
         public IReportParser<T> Parser { private set; get; }
         public virtual event EventHandler<T> Report;
+        
+        private bool _reading;
+        public bool Reading
+        {
+            protected set
+            {
+                _reading = value;
+                ReadingChanged?.Invoke(this, Reading);
+            }
+            get => _reading;
+        }
+        
+        public event EventHandler<bool> ReadingChanged;
 
         private Thread WorkerThread;
 
@@ -91,6 +103,10 @@ namespace TabletDriverLib
             catch (Exception ex)
             {
                 Log.Exception(ex);
+            }
+            finally
+            {
+                Reading = false;
             }
         }
     }
