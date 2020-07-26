@@ -47,7 +47,7 @@ namespace TabletDriverLib
                     {
                         InitializeAuxDevice(auxDevice, auxIdentifier, auxParser);
                     }
-                    else if (tablet.AuxilaryDeviceIdentifier is DeviceIdentifier auxDeviceIdentifier)
+                    else if (tablet.AuxilaryDeviceIdentifier.VendorID != 0 & tablet.AuxilaryDeviceIdentifier.ProductID != 0)
                     {
                         Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", true);
                     }
