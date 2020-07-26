@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HidSharpCore" Version="1.0.0" />
+    <PackageReference Include="HidSharpCore" Version="1.0.1" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="WaylandNET" Version="0.2.0" />
   </ItemGroup>

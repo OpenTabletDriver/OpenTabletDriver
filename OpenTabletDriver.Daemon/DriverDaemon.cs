@@ -26,9 +26,9 @@ namespace OpenTabletDriver.Daemon
             LoadUserSettings();
         }
 
-        private async void LoadUserSettings()
+        private void LoadUserSettings()
         {
-            await LoadPlugins();
+            LoadPlugins();
             DetectTablets();
 
             var appdataDir = new DirectoryInfo(AppInfo.Current.AppDataDirectory);
@@ -248,20 +248,20 @@ namespace OpenTabletDriver.Daemon
             return AppInfo.Current;
         }
 
-        public async Task<bool> LoadPlugins()
+        public bool LoadPlugins()
         {
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
                 foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
-                    await ImportPlugin(file.FullName);
+                    ImportPlugin(file.FullName);
                 return true;
             }
             else
                 return false;
         }
 
-        public async Task<bool> ImportPlugin(string pluginPath)
+        public bool ImportPlugin(string pluginPath)
         {
             if (LoadedPlugins.Any(p => p.FullName == pluginPath))
             {
@@ -271,7 +271,7 @@ namespace OpenTabletDriver.Daemon
             {
                 var plugin = new FileInfo(pluginPath);
                 LoadedPlugins.Add(plugin);
-                return await PluginManager.AddPlugin(plugin);
+                return PluginManager.AddPlugin(plugin);
             }
         }
 

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using TabletDriverLib;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin.Attributes;
 
@@ -25,20 +26,22 @@ namespace OpenTabletDriver.UX.Controls
                 if (_pluginList.SelectedIndex >= 0 && _pluginList.SelectedIndex <= Plugins.Count)
                     SelectedPlugin = Plugins[_pluginList.SelectedIndex];
             };
+
+            foreach (var type in PluginManager.GetChildTypes<T>())
+            {
+                var pluginRef = new PluginReference(type);
+                if (type != typeof(T) && !Plugins.Contains(pluginRef))
+                {
+                    Plugins.Add(pluginRef);
+                }
+            }
+
+            _pluginList.Items.Clear();
+            foreach (var plugin in Plugins)
+                _pluginList.Items.Add(string.IsNullOrWhiteSpace(plugin.Name) ? plugin.Path : plugin.Name);
         }
 
-        private List<PluginReference> _plugins;
-        private List<PluginReference> Plugins
-        {
-            set
-            {
-                _plugins = value;
-                _pluginList.Items.Clear();
-                foreach (var plugin in Plugins)
-                    _pluginList.Items.Add(string.IsNullOrWhiteSpace(plugin.Name) ? plugin.Path : plugin.Name);
-            }
-            get => _plugins;
-        }
+        private List<PluginReference> Plugins = new List<PluginReference>();
 
         private PluginReference _selectedPlugin;
         public PluginReference SelectedPlugin
@@ -59,15 +62,6 @@ namespace OpenTabletDriver.UX.Controls
             Padding = new Padding(5),
             Spacing = 5
         };
-
-        public async Task InitializeAsync()
-        {
-            var pluginRefs = from typeName in await App.DriverDaemon.InvokeAsync(d => d.GetChildTypes<T>())
-                where typeName != typeof(T).FullName
-                select new PluginReference(typeName);
-
-            Plugins = new List<PluginReference>(pluginRefs);
-        }
 
         private IEnumerable<Control> GeneratePropertyControls()
         {

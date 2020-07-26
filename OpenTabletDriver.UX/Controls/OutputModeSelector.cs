@@ -11,16 +11,11 @@ namespace OpenTabletDriver.UX.Controls
     {
         public OutputModeSelector()
         {
-            InitializeAsync();
-        }
-
-        private async void InitializeAsync()
-        {
-            var outputModes = from typeName in await App.DriverDaemon.InvokeAsync(d => d.GetChildTypes<IOutputMode>())
-                where typeName != typeof(IOutputMode).FullName
-                where typeName != typeof(AbsoluteOutputMode).FullName
-                where typeName != typeof(RelativeOutputMode).FullName
-                select new PluginReference(typeName);
+            var outputModes = from type in TabletDriverLib.PluginManager.GetChildTypes<IOutputMode>()
+                where type != typeof(IOutputMode)
+                where type != typeof(AbsoluteOutputMode)
+                where type != typeof(RelativeOutputMode)
+                select new PluginReference(type);
 
             OutputModes = new List<PluginReference>(outputModes);
             this.SelectedIndexChanged += (sender, e) => SelectedMode = OutputModes[this.SelectedIndex];
@@ -36,7 +31,7 @@ namespace OpenTabletDriver.UX.Controls
                 _modes = value;
                 Items.Clear();
                 foreach (var plugin in OutputModes)
-                    Items.Add(plugin.Name ?? plugin.Path);
+                    Items.Add(plugin.ToString());
             }
             get => _modes;
         }

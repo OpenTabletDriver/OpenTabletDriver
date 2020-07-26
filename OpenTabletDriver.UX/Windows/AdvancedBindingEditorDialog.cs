@@ -5,26 +5,21 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Eto.Forms;
 using TabletDriverLib;
+using TabletDriverLib.Binding;
 using TabletDriverPlugin;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class AdvancedBindingEditorDialog : Dialog<string>
+    public class AdvancedBindingEditorDialog : Dialog<BindingReference>
     {
-        public AdvancedBindingEditorDialog(string currentBinding = null)
+        public AdvancedBindingEditorDialog(BindingReference currentBinding = null)
         {
             Title = "Advanced Binding Editor";
             Result = currentBinding;
             Padding = 5;
 
-            var bindingRegex = new Regex("^(?<BindingName>.+?): (?<BindingProperty>.+?)$");
-            var match = bindingRegex.Match(currentBinding ?? string.Empty);
-            
-            if (match.Success)
-            {
-                BindingName = match.Groups["BindingName"].Value;
-                BindingProperty = match.Groups["BindingProperty"].Value;
-            }
+            BindingName = currentBinding.Binding.Path;
+            BindingProperty = currentBinding.BindingProperty;
 
             var bindingTypes = PluginManager.GetChildTypes<TabletDriverPlugin.IBinding>();
 
@@ -136,7 +131,7 @@ namespace OpenTabletDriver.UX.Windows
 
         public void Return(string result)
         {
-            Close(result);
+            Close(BindingReference.FromString(result));
         }
 
         private GroupBox GetControl(string header, Func<string> getValue, Action<string> setValue)

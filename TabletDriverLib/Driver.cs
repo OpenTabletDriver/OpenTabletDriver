@@ -3,6 +3,7 @@ using NativeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TabletDriverLib.Plugins;
 using TabletDriverLib.Tablet;
 using TabletDriverLib.Vendors;
 using TabletDriverPlugin;
@@ -46,7 +47,7 @@ namespace TabletDriverLib
                     {
                         InitializeAuxDevice(auxDevice, auxIdentifier, auxParser);
                     }
-                    else if (tablet.AuxilaryDeviceIdentifier is DeviceIdentifier auxDeviceIdentifier)
+                    else if (tablet.AuxilaryDeviceIdentifier.VendorID != 0 & tablet.AuxilaryDeviceIdentifier.ProductID != 0)
                     {
                         Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", true);
                     }
@@ -200,7 +201,8 @@ namespace TabletDriverLib
 
         private IReportParser<IDeviceReport> GetReportParser(string parserName) 
         {
-            return PluginManager.ConstructObject<IReportParser<IDeviceReport>>(parserName);
+            var parserRef = new PluginReference(parserName);
+            return parserRef.Construct<IReportParser<IDeviceReport>>();
         }
 
         public void Dispose()

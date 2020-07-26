@@ -28,8 +28,8 @@ namespace OpenTabletDriver.Console
 
         static async Task ListTypes<T>()
         {
-            var types = from path in await DriverDaemon.InvokeAsync(d => d.GetChildTypes<T>())
-                select new PluginReference(path);
+            var types = from plugin in PluginManager.GetChildTypes<T>()
+                select new PluginReference(plugin);
             foreach (var type in types)
             {
                 var output = string.IsNullOrWhiteSpace(type.Name) ? type.Path : $"{type.Path} [{type.Name}]";
