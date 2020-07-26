@@ -39,7 +39,6 @@ namespace OpenTabletDriver.UX.Controls
             _pluginList.Items.Clear();
             foreach (var plugin in Plugins)
                 _pluginList.Items.Add(string.IsNullOrWhiteSpace(plugin.Name) ? plugin.Path : plugin.Name);
-
         }
 
         private List<PluginReference> Plugins = new List<PluginReference>();
