@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using HidSharp;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
 using TabletDriverLib.Contracts;
@@ -24,6 +25,20 @@ namespace OpenTabletDriver.Daemon
             Driver = new Driver();
             Log.Output += (sender, message) => LogMessages.Add(message);
             LoadUserSettings();
+
+            HidSharp.DeviceList.Local.Changed += (sender, e) => 
+            {
+                var newDevices = from device in DeviceList.Local.GetHidDevices()
+                    where !CurrentDevices.Any(d => d == device)
+                    select device;
+
+                if (newDevices.Count() > 0)
+                {
+                    if (GetTablet() == null)
+                        DetectTablets();
+                }
+                CurrentDevices = DeviceList.Local.GetHidDevices().ToList();
+            };
         }
 
         private void LoadUserSettings()
@@ -48,6 +63,7 @@ namespace OpenTabletDriver.Daemon
 
         public Driver Driver { private set; get; }
         private Settings Settings { set; get; }
+        private List<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices().ToList();
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
@@ -62,7 +78,7 @@ namespace OpenTabletDriver.Daemon
 
         public TabletProperties GetTablet()
         {
-            return Driver.TabletProperties;
+            return Driver.TabletReader != null && Driver.TabletReader.Reading ? Driver.TabletProperties : null;
         }
 
         public TabletProperties DetectTablets()
