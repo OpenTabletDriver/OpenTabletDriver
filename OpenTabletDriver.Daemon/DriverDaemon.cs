@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Daemon
 
             HidSharp.DeviceList.Local.Changed += (sender, e) => 
             {
-                var newDevices = from device in DeviceList.Local.GetAllDevices()
+                var newDevices = from device in DeviceList.Local.GetHidDevices()
                     where !CurrentDevices.Any(d => d == device)
                     select device;
 
