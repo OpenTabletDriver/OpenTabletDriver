@@ -3,6 +3,7 @@ using NativeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TabletDriverLib.Plugins;
 using TabletDriverLib.Tablet;
 using TabletDriverLib.Vendors;
 using TabletDriverPlugin;
@@ -200,7 +201,8 @@ namespace TabletDriverLib
 
         private IReportParser<IDeviceReport> GetReportParser(string parserName) 
         {
-            return PluginManager.ConstructObject<IReportParser<IDeviceReport>>(parserName);
+            var parserRef = new PluginReference(parserName);
+            return parserRef.Construct<IReportParser<IDeviceReport>>();
         }
 
         public void Dispose()

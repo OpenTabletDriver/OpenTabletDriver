@@ -2,43 +2,38 @@ using TabletDriverLib;
 using System.Linq;
 using TabletDriverPlugin.Attributes;
 using System.Reflection;
+using System;
 
 namespace TabletDriverLib.Plugins
 {
-    public class PluginReference
+    public class PluginReference : IEquatable<PluginReference>
     {
-        public PluginReference(string path)
-        {
-            Path = path;
-        }
-
-        public PluginReference(object obj)
-        {
-            Path = obj.GetType().FullName;
-        }
-
         protected PluginReference()
         {
         }
 
-        public string Name { private set; get; }
-
-        private string _path;
-        public string Path
+        public PluginReference(string path) : this()
         {
-            protected set
-            {
-                _path = value;
-                Name = GetName(Path);
-            }
-            get => _path;
+            Path = path;
+            Name = GetName(path);
         }
+
+        public PluginReference(object obj) : this(obj.GetType().FullName)
+        {
+        }
+
+        public PluginReference(Type t) : this(t.FullName)
+        {
+        }
+
+        public string Name { private set; get; }
+        public string Path { private set; get; }
 
         internal static string GetName(string path)
         {
             if (PluginManager.Types.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
             {
-                var attrs = plugin.GetCustomAttributes(false);
+                var attrs = plugin.GetCustomAttributes(true);
                 var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
                 if (nameattr is PluginNameAttribute attr)
                     return attr.Name;
@@ -60,6 +55,11 @@ namespace TabletDriverLib.Plugins
                 select type;
             
             return types.FirstOrDefault();
+        }
+
+        public bool Equals(PluginReference other)
+        {
+            return Name == other.Name && Path == other.Path;
         }
 
         public static readonly PluginReference Disable = new PluginReference
