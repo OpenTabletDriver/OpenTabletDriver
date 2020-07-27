@@ -26,11 +26,23 @@ namespace TabletDriverLib
                 _tabletProperties = value;
                 if (OutputMode != null)
                     OutputMode.TabletProperties = TabletProperties;
+                
+                DriverState.TabletProperties = TabletProperties;
             }
             get => _tabletProperties;
         }
 
-        public IOutputMode OutputMode { set; get; }
+        private IOutputMode _outputMode;
+        public IOutputMode OutputMode
+        {
+            set
+            {
+                _outputMode = value;
+                DriverState.OutputMode = OutputMode;
+            }
+            get => _outputMode;
+        }
+        
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
 
