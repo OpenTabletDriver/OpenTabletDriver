@@ -83,11 +83,23 @@ namespace TabletDriverLib
 
         private static Lazy<Collection<TypeInfo>> allTypes = new Lazy<Collection<TypeInfo>>(() => 
         {
-            var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                from type in assembly.DefinedTypes
-                select type;
-                
-            return new ObservableCollection<TypeInfo>(types);
+            try
+            {
+                var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    from type in assembly.DefinedTypes
+                    select type;
+                    
+                return new ObservableCollection<TypeInfo>(types);
+            }
+            catch (ReflectionTypeLoadException)
+            {
+                var types = from assembly in Assembly.GetEntryAssembly().GetReferencedAssemblies()
+                    let loadedAsm = Assembly.Load(assembly)
+                    from type in loadedAsm.DefinedTypes
+                    select type;
+
+                return new ObservableCollection<TypeInfo>(types);
+            }
         });
     }
 }
