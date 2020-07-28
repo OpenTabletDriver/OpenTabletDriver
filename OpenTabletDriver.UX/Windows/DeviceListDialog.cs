@@ -53,8 +53,22 @@ namespace OpenTabletDriver.UX.Windows
             {
                 _devices = value;
                 _deviceList.Items.Clear();
+                bool getDeviceFailed = false;
                 foreach (var device in _devices)
-                    _deviceList.Items.Add(device.GetFriendlyName());
+                {
+                    try
+                    {
+                        _deviceList.Items.Add(device.GetFriendlyName());
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!getDeviceFailed)
+                        {
+                            MessageBox.Show($"Failed to get a device, one or more HID devices may not be shown.");
+                            getDeviceFailed = true;
+                        }
+                    }
+                }
             }
             get => _devices;
         }
@@ -177,7 +191,15 @@ namespace OpenTabletDriver.UX.Windows
         private GroupBox GetControl(string groupName, Func<string> getValue)
         {
             var textBox = new TextBox();
-            textBox.TextBinding.Bind(getValue);
+            try
+            {
+                textBox.TextBinding.Bind(getValue);
+            }
+            catch
+            {
+                textBox.Text = $"Failed to obtain '{groupName.ToLower()}'.";
+                textBox.TextColor = Colors.Red;
+            }
             return new GroupBox
             {
                 Text = groupName,
