@@ -64,7 +64,8 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         if (!getDeviceFailed)
                         {
-                            MessageBox.Show($"Failed to get a device, one or more HID devices may not be shown.");
+                            MessageBox.Show($"Failed to get a device, one or more HID devices may not be shown." + Environment.NewLine
+                                + $"{ex.GetType().Name}: {ex.Message}");
                             getDeviceFailed = true;
                         }
                     }
