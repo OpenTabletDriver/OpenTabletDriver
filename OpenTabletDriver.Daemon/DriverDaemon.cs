@@ -141,11 +141,20 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var property in filter.GetType().GetProperties())
                 {
+                    var settingPath = filter.GetType().FullName + "." + property.Name;
                     if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
-                        Settings.PluginSettings.TryGetValue(filter.GetType().FullName + "." + property.Name, out var strValue))
+                        Settings.PluginSettings.TryGetValue(settingPath, out var strValue))
                     {
-                        var value = Convert.ChangeType(strValue, property.PropertyType);
-                        property.SetValue(filter, value);
+                        try
+                        {
+                            var value = Convert.ChangeType(strValue, property.PropertyType);
+                            property.SetValue(filter, value);
+                        }
+                        catch (FormatException)
+                        {
+                            Log.Write("Settings", $"Invalid filter setting for '{property.Name}', this setting will be cleared.");
+                            Settings.PluginSettings.Remove(settingPath);
+                        }
                     }
                 }
             }
