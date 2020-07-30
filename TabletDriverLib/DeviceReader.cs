@@ -61,26 +61,35 @@ namespace TabletDriverLib
         private void Setup()
         {
             var config = new OpenConfiguration();
+            bool exclusive = true;
             config.SetOption(OpenOption.Priority, OpenPriority.Low);
-            for (int retries = 3; retries > 0; retries--)
+            config.SetOption(OpenOption.DeviceExclusive, exclusive);
+            if (!Device.TryOpen(config, out var stream, out var exception))
             {
-                if (Device.TryOpen(config, out var stream, out var exception))
+                Log.Write("Detect", "Failed to open device in exclusive mode. Retrying in shared mode.", true);
+                exclusive = false;
+                config.SetOption(OpenOption.DeviceExclusive, exclusive);
+                for (int retries = 2; retries > 0; retries--)
                 {
-                    ReportStream = (HidStream)stream;
-                    break;
-                }
-                else
-                {                    
-                    Log.Write("Detect", $"{exception}; Retrying {retries} more times", true);
-                    Thread.Sleep(1000);
+                    if (Device.TryOpen(config, out stream, out exception))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Log.Write("Detect", $"{exception}; Retrying {retries} more times", true);
+                        Thread.Sleep(1000);
+                    }
                 }
             }
-            
-            if (ReportStream == null)
-            {
+
+            ReportStream = (HidStream)stream;
+
+            if (exclusive && ReportStream != null)
+                Log.Write("Detect", "Tablet opened in exclusive mode.");
+
+            else if (ReportStream == null)
                 Log.Write("Detect", "Failed to open tablet. Make sure you have required permissions to open device streams.", true);
-                return;
-            }
         }
 
         protected void Main()
