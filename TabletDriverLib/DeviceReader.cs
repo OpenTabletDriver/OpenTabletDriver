@@ -87,7 +87,6 @@ namespace TabletDriverLib
 
             if (exclusive && ReportStream != null)
                 Log.Write("Detect", "Tablet opened in exclusive mode.");
-
             else if (ReportStream == null)
                 Log.Write("Detect", "Failed to open tablet. Make sure you have required permissions to open device streams.", true);
         }
