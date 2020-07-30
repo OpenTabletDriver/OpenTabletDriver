@@ -134,8 +134,10 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
-            outputMode.Filters = from filter in Settings?.Filters
-                select new PluginReference(filter).Construct<IFilter>();
+            outputMode.Filters = from filterPath in Settings?.Filters
+                let filter = new PluginReference(filterPath).Construct<IFilter>()
+                where filter != null
+                select filter;
 
             foreach (var filter in outputMode.Filters)
             {
