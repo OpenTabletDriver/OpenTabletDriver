@@ -102,16 +102,16 @@ namespace OpenTabletDriver.UX.Windows
             {
                 await Application.Instance.InvokeAsync(() => 
                 {
-                    rawTabCtrl.Content = tabletReport.StringFormat(true);
-                    tabReportCtrl.Content = tabletReport.StringFormat(false).Replace(", ", Environment.NewLine);
+                    rawTabCtrl.Content = tabletReport?.StringFormat(true);
+                    tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
                 });
             }
             if (report is IAuxReport auxReport)
             {
                 await Application.Instance.InvokeAsync(() => 
                 {
-                    rawAuxCtrl.Content = auxReport.StringFormat(true);
-                    auxReportCtrl.Content = auxReport.StringFormat(false).Replace(", ", Environment.NewLine);
+                    rawAuxCtrl.Content = auxReport?.StringFormat(true);
+                    auxReportCtrl.Content = auxReport?.StringFormat(false).Replace(", ", Environment.NewLine);
                 });
             }
         }
