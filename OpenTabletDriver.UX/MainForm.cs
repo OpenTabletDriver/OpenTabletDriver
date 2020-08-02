@@ -350,8 +350,7 @@ namespace OpenTabletDriver.UX
                 };
                 layout.Rows[0].Cells.Add(unitControl);
             }
-                
-
+            
             return new GroupBox
             {
                 Text = header,
