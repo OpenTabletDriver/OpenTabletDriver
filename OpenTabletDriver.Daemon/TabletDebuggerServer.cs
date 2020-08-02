@@ -18,7 +18,7 @@ namespace OpenTabletDriver.Daemon
         private async void InitializeAsync()
         {
             await PipeServer.WaitForConnectionAsync();
-            Log.Debug($"Started device debugger server {{{Identifier}}}");
+            Log.Debug("Daemon", $"Started device debugger server {{{Identifier}}}");
             JsonWriter = new JsonTextWriter(new StreamWriter(PipeServer));
             await JsonWriter.WriteStartArrayAsync();
         }
@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Daemon
             PipeServer.Dispose();
             PipeServer = null;
             
-            Log.Debug($"Stopped device debugger server {{{Identifier}}}");
+            Log.Debug("Daemon", $"Stopped device debugger server {{{Identifier}}}");
         }
 
         public Guid Identifier { private set; get; } = Guid.NewGuid();

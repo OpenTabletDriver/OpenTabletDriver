@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Daemon
                     await PipeServer.WaitForConnectionAsync();
                 }
             };
-            Log.Debug($"Started log server {{{Identifier}}}");
+            Log.Debug("Daemon", $"Started log server {{{Identifier}}}");
         }
 
         public readonly Guid Identifier = Guid.NewGuid();
@@ -48,7 +48,7 @@ namespace OpenTabletDriver.Daemon
             PipeServer = null;
             StreamWriter = null;
 
-            Log.Debug($"Stopped log server {{{Identifier}}}");
+            Log.Debug("Daemon", $"Stopped log server {{{Identifier}}}");
         }
     }
 }
