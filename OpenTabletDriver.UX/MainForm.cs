@@ -95,23 +95,8 @@ namespace OpenTabletDriver.UX
             };
 
             var outputModeSelector = ConstructOutputModeSelector();
-
             var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, outputModeSelector, areaClipping);
-
-            var xSensBox = ConstructSensitivityEditor("X Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.XSensitivity));
-            var ySensBox = ConstructSensitivityEditor("Y Sensitivity", Binding.Property((MainFormViewModel m) => m.Settings.YSensitivity));
-
-            var sensitivityConfig = new StackLayout
-            {
-                Padding = new Padding(5),
-                Spacing = 5,
-                Orientation = Orientation.Horizontal,
-                Items =
-                {
-                    new StackLayoutItem(xSensBox, true),
-                    new StackLayoutItem(ySensBox, true)
-                }
-            };
+            var sensitivityConfig = ConstructSensitivityControls();
 
             bindingLayout = ConstructBindingLayout(3, 7);
 
@@ -308,25 +293,70 @@ namespace OpenTabletDriver.UX
             return control;
         }
 
-        private Control ConstructSensitivityEditor(string header, IndirectBinding<float> dataContextBinding)
+        private Control ConstructSensitivityControls()
+        {
+            var xSensBox = ConstructSensitivityEditor(
+                "X Sensitivity", 
+                (s) => App.Settings.XSensitivity = float.TryParse(s, out var val) ? val : 0f,
+                () => App.Settings.XSensitivity.ToString(),
+                "px/mm"
+            );
+            var ySensBox = ConstructSensitivityEditor(
+                "Y Sensitivity",
+                (s) => App.Settings.YSensitivity = float.TryParse(s, out var val) ? val : 0f,
+                () => App.Settings.YSensitivity.ToString(),
+                "px/mm"
+            );
+            
+            var resetTimeBox = ConstructSensitivityEditor(
+                "Reset Time",
+                (s) => App.Settings.ResetTime = TimeSpan.TryParse(s, out var val) ? val : TimeSpan.FromMilliseconds(100),
+                () => App.Settings.ResetTime.ToString()
+            );
+
+            return new StackLayout
+            {
+                Padding = new Padding(5),
+                Spacing = 5,
+                Orientation = Orientation.Horizontal,
+                Items =
+                {
+                    new StackLayoutItem(xSensBox, true),
+                    new StackLayoutItem(ySensBox, true),
+                    new StackLayoutItem(resetTimeBox, true)
+                }
+            };
+        }
+
+        private Control ConstructSensitivityEditor(string header, Action<string> setValue, Func<string> getValue, string unit = null)
         {
             var textbox = new TextBox();
             ViewModel.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
                 {
-                    textbox.TextBinding.Convert(
-                        s => float.TryParse(s, out var v) ? v : 0,
-                        f => f.ToString())
-                        .BindDataContext(dataContextBinding);
+                    textbox.TextBinding.Bind(getValue, setValue);
                 }
             };
+
+            var layout = TableLayout.Horizontal(5, new TableCell(textbox, true));
+
+            if (unit != null)
+            {
+                var unitControl = new Label
+                {
+                    Text = unit, 
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                layout.Rows[0].Cells.Add(unitControl);
+            }
+                
 
             return new GroupBox
             {
                 Text = header,
                 Padding = App.GroupBoxPadding,
-                Content = TableLayout.Horizontal(5, new TableCell(textbox, true), new Label { Text = "px/mm", VerticalAlignment = VerticalAlignment.Center })
+                Content = layout
             };
         }
 
