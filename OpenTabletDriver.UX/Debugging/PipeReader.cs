@@ -8,7 +8,7 @@ using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.UX.Debugging
 {
-    public class PipeReader<T> : IDisposable where T : IDeviceReport
+    public class PipeReader : IDisposable
     {
         public PipeReader(Guid serverId)
         {
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX.Debugging
         }
 
         public bool Reading { private set; get; } = true;
-        public virtual event EventHandler<T> Report;
+        public virtual event EventHandler<IDeviceReport> Report;
         public Guid ServerID { private set; get; }
 
         private CancellationTokenSource cancelSource = new CancellationTokenSource();
@@ -48,8 +48,10 @@ namespace OpenTabletDriver.UX.Debugging
                         if (reader.TokenType == JsonToken.StartObject)
                         {
                             JObject jsonObject = (JObject)serializer.Deserialize(reader);
-                            if (jsonObject.ToObject<T>() is T report) 
-                                Report?.Invoke(this, report);
+                            if (Cast<DebugTabletReport>(jsonObject) is ITabletReport tabletReport) 
+                                Report?.Invoke(this, tabletReport);
+                            if (Cast<DebugAuxReport>(jsonObject) is IAuxReport auxReport)
+                                Report?.Invoke(this, auxReport);
                         }
                     }
                 }
@@ -58,6 +60,21 @@ namespace OpenTabletDriver.UX.Debugging
                     // Ignore any exception here, just stop reading instead of throwing.
                 }
             }
+        }
+
+        private T Cast<T>(JObject jsonObject) where T : class, IDeviceReport
+        {
+            return jsonObject.ToObject<T>() is T parsedReport && Validate(parsedReport) ? parsedReport : null;
+        }
+
+        private bool Validate(IDeviceReport report)
+        {
+            if (report is ITabletReport tabletReport)
+                return tabletReport.Raw != null && tabletReport.PenButtons != null;
+            else if (report is IAuxReport auxReport)
+                return auxReport.Raw != null && auxReport.AuxButtons != null;
+            else
+                return true;
         }
 
         public void Dispose()
