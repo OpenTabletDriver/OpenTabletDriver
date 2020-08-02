@@ -2,7 +2,7 @@
 	
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
-    <VersionPrefix>0.3.0</VersionPrefix>
+    <VersionPrefix>0.3.1</VersionPrefix>
   </PropertyGroup>
   
   <ItemGroup>
@@ -12,7 +12,7 @@
   
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.5.2" />
-    <PackageReference Include="JKang.IpcServiceFramework.Client.NamedPipe" Version="3.0.2" />
+    <PackageReference Include="JKang.IpcServiceFramework.Client.NamedPipe" Version="3.0.4" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.5" />
     <ProjectReference Include="..\TabletDriverLib\TabletDriverLib.csproj" />
   </ItemGroup>
