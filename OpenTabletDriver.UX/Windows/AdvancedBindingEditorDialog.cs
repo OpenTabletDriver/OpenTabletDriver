@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX.Windows
             BindingName = currentBinding.Binding.Path;
             BindingProperty = currentBinding.BindingProperty;
 
-            var bindingTypes = PluginManager.GetChildTypes<TabletDriverPlugin.IBinding>();
+            var bindingTypes = TypeManager.GetChildTypes<TabletDriverPlugin.IBinding>();
 
             var bindingName = GetControl(
                 "Name",

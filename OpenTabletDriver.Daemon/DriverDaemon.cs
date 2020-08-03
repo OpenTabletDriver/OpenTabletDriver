@@ -299,7 +299,7 @@ namespace OpenTabletDriver.Daemon
             {
                 var plugin = new FileInfo(pluginPath);
                 LoadedPlugins.Add(plugin);
-                return PluginManager.AddPlugin(plugin);
+                return TypeManager.AddPlugin(plugin);
             }
         }
 
@@ -371,7 +371,7 @@ namespace OpenTabletDriver.Daemon
 
         public IEnumerable<string> GetChildTypes<T>()
         {
-            return from type in PluginManager.GetChildTypes<T>()
+            return from type in TypeManager.GetChildTypes<T>()
                 where !type.IsInterface
                 select type.FullName;
         }

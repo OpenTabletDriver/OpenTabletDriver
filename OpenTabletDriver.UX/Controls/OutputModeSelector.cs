@@ -11,7 +11,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         public OutputModeSelector()
         {
-            var outputModes = from type in TabletDriverLib.PluginManager.GetChildTypes<IOutputMode>()
+            var outputModes = from type in TabletDriverLib.TypeManager.GetChildTypes<IOutputMode>()
                 where type != typeof(IOutputMode)
                 where type != typeof(AbsoluteOutputMode)
                 where type != typeof(RelativeOutputMode)

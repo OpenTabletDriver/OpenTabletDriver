@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -12,7 +12,7 @@ using TabletDriverPlugin.Attributes;
 
 namespace TabletDriverLib
 {
-    public static class PluginManager
+    public static class TypeManager
     {
         private static Collection<TypeInfo> _types;
         public static Collection<TypeInfo> Types

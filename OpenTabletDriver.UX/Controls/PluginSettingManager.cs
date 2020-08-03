@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls
                     SelectedPlugin = Plugins[_pluginList.SelectedIndex];
             };
 
-            foreach (var type in PluginManager.GetChildTypes<T>())
+            foreach (var type in TypeManager.GetChildTypes<T>())
             {
                 var pluginRef = new PluginReference(type);
                 if (type != typeof(T) && !Plugins.Contains(pluginRef))

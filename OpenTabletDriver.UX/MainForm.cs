@@ -471,7 +471,7 @@ namespace OpenTabletDriver.UX
                 foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
                 {
                     await App.DriverDaemon.InvokeAsync(d => d.ImportPlugin(file.FullName));
-                    PluginManager.AddPlugin(file);
+                    TypeManager.AddPlugin(file);
                 }
             }
 

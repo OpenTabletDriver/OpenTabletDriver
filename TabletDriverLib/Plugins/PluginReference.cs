@@ -31,7 +31,7 @@ namespace TabletDriverLib.Plugins
 
         internal static string GetName(string path)
         {
-            if (PluginManager.Types.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
+            if (TypeManager.Types.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
             {
                 var attrs = plugin.GetCustomAttributes(true);
                 var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
@@ -45,12 +45,12 @@ namespace TabletDriverLib.Plugins
 
         public T Construct<T>() where T : class
         {
-            return PluginManager.ConstructObject<T>(Path);
+            return TypeManager.ConstructObject<T>(Path);
         }
 
         public TypeInfo GetTypeReference<T>()
         {
-            var types = from type in PluginManager.GetChildTypes<T>()
+            var types = from type in TypeManager.GetChildTypes<T>()
                 where type.FullName == Path
                 select type;
             
