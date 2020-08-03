@@ -24,6 +24,7 @@ namespace OpenTabletDriver.Daemon
         {
             Driver = new Driver();
             Log.Output += (sender, message) => LogMessages.Add(message);
+            Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
             LoadUserSettings();
 
             HidSharp.DeviceList.Local.Changed += (sender, e) => 
@@ -95,7 +96,7 @@ namespace OpenTabletDriver.Daemon
             }
             else
             {
-                Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", true);
+                Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", LogLevel.Error);
             }
             return null;
         }
@@ -261,7 +262,7 @@ namespace OpenTabletDriver.Daemon
                 if (tool.Initialize())
                     Tools.Add(tool);
                 else
-                    Log.Write("Tool", $"Failed to initialize {plugin.Name} tool.", true);
+                    Log.Write("Tool", $"Failed to initialize {plugin.Name} tool.", LogLevel.Error);
             }
         }
 

@@ -61,7 +61,7 @@ namespace TabletDriverLib
                     }
                     else if (tablet.AuxilaryDeviceIdentifier.VendorID != 0 & tablet.AuxilaryDeviceIdentifier.ProductID != 0)
                     {
-                        Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", true);
+                        Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Error);
                     }
                     
                     return true;
@@ -73,17 +73,17 @@ namespace TabletDriverLib
                 if (SystemInfo.CurrentPlatform == RuntimePlatform.Linux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.DigitizerIdentifier.VendorID))
                 {
                     Log.Write("Detect", "Failed to get device."
-                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Linux-FAQ#notice-for-uclogic-tablet-owners", true);
+                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Linux-FAQ#notice-for-uclogic-tablet-owners", LogLevel.Error);
                 }
                 else if (SystemInfo.CurrentPlatform == RuntimePlatform.Windows && tablet.DigitizerIdentifier.VendorID == (int)UCLogicInfo.VendorIDs.XP_Pen)
                 {
                     Log.Write("Detect", "Failed to get device."
-                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Windows-FAQ#my-xp-pen-tablet-fails-to-open-deviceioexception-unable-to-open-hid-class-device");
+                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Windows-FAQ#my-xp-pen-tablet-fails-to-open-deviceioexception-unable-to-open-hid-class-device", LogLevel.Error);
                 }
                 else
                 {
                     Log.Write("Detect", "Failed to get device. Visit the wiki for more information: "
-                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki", true);
+                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki", LogLevel.Error);
                 }
                 return false;
             }
@@ -100,7 +100,7 @@ namespace TabletDriverLib
             var matches = FindMatches(tablet.DigitizerIdentifier);
 
             if (matches.Count() > 1)
-                Log.Write("Detect", "Warning: More than 1 matching tablet has been found.", true);
+                Log.Write("Detect", "More than 1 matching tablet has been found.", LogLevel.Warning);
 
             tabletDevice = matches.FirstOrDefault();
             identifier = tablet.DigitizerIdentifier;
@@ -122,7 +122,7 @@ namespace TabletDriverLib
             var matches = FindMatches(tablet.AlternateDigitizerIdentifier);
             
             if (matches.Count() > 1)
-                Log.Write("Detect", "Warning: More than 1 matching alternate tablet has been found.", true);
+                Log.Write("Detect", "More than 1 matching alternate tablet has been found.", LogLevel.Warning);
 
             tabletDevice = matches.FirstOrDefault();
             identifier = tablet.AlternateDigitizerIdentifier;
@@ -144,7 +144,7 @@ namespace TabletDriverLib
             var matches = FindMatches(tablet.AuxilaryDeviceIdentifier);
 
             if (matches.Count() > 1)
-                Log.Write("Detect", "Warning: More than 1 matching auxiliary device has been found.", true);
+                Log.Write("Detect", "More than 1 matching auxiliary device has been found.", LogLevel.Warning);
             
             auxDevice = matches.FirstOrDefault();
             identifier = tablet.AuxilaryDeviceIdentifier;
@@ -160,7 +160,7 @@ namespace TabletDriverLib
 
             Log.Write("Detect", $"Found device '{tabletDevice.GetFriendlyName()}'.");
             Log.Write("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
-            Log.Debug($"Device path: {TabletDevice.DevicePath}");
+            Log.Debug("Detect", $"Device path: {TabletDevice.DevicePath}");
             
             TabletReader = new DeviceReader<IDeviceReport>(TabletDevice, reportParser);
             TabletReader.Start();
@@ -168,21 +168,21 @@ namespace TabletDriverLib
             
             if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Setting feature: " + BitConverter.ToString(featureInitReport));
+                Log.Debug("Detect", "Setting feature: " + BitConverter.ToString(featureInitReport));
                 TabletReader.ReportStream.SetFeature(featureInitReport);
             }
 
             if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Setting output: " + BitConverter.ToString(outputInitReport));
+                Log.Debug("Detect", "Setting output: " + BitConverter.ToString(outputInitReport));
                 TabletReader.ReportStream.Write(outputInitReport);
             }
         }
 
         internal void InitializeAuxDevice(HidDevice auxDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
         {
-            Log.Debug($"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
-            Log.Debug($"Device path: {auxDevice.DevicePath}");
+            Log.Debug("Detect", $"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
+            Log.Debug("Detect", $"Device path: {auxDevice.DevicePath}");
             
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
             AuxReader.Start();
@@ -190,13 +190,13 @@ namespace TabletDriverLib
 
             if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Setting aux feature: " + BitConverter.ToString(featureInitReport));
+                Log.Debug("Detect", "Setting aux feature: " + BitConverter.ToString(featureInitReport));
                 AuxReader.ReportStream.SetFeature(featureInitReport);
             }
 
             if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Setting aux output: " + BitConverter.ToString(outputInitReport));
+                Log.Debug("Detect", "Setting aux output: " + BitConverter.ToString(outputInitReport));
                 AuxReader.ReportStream.Write(outputInitReport);
             }
         }

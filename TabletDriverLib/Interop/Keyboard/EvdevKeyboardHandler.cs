@@ -20,10 +20,10 @@ namespace TabletDriverLib.Interop.Keyboard
             switch (result)
             {
                 case ERRNO.NONE:
-                    Log.Debug($"Successfully initialized virtual keyboard. (code {result})");
+                    Log.Debug("Evdev", $"Successfully initialized virtual keyboard. (code {result})");
                     break;
                 default:
-                    Log.Write("Evdev", $"Failed to initialize virtual keyboard. (error code {result})", true);
+                    Log.Write("Evdev", $"Failed to initialize virtual keyboard. (error code {result})", LogLevel.Error);
                     break;
             }
         }

@@ -41,10 +41,10 @@ namespace TabletDriverLib.Interop.Mouse
             switch (result)
             {
                 case ERRNO.NONE:
-                    Log.Debug($"Successfully initialized virtual pointer. (code {result})");
+                    Log.Debug("Evdev", $"Successfully initialized virtual pointer. (code {result})");
                     break;
                 default:
-                    Log.Write("Evdev", $"Failed to initialize virtual pointer. (error code {result})", true);
+                    Log.Write("Evdev", $"Failed to initialize virtual pointer. (error code {result})", LogLevel.Error);
                     break;
             }
         }

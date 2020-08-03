@@ -71,14 +71,14 @@ namespace TabletDriverLib
                 }
                 else
                 {                    
-                    Log.Write("Detect", $"{exception}; Retrying {retries} more times", true);
+                    Log.Write("Detect", $"{exception}; Retrying {retries} more times", LogLevel.Error);
                     Thread.Sleep(1000);
                 }
             }
             
             if (ReportStream == null)
             {
-                Log.Write("Detect", "Failed to open tablet. Make sure you have required permissions to open device streams.", true);
+                Log.Write("Detect", "Failed to open tablet. Make sure you have required permissions to open device streams.", LogLevel.Error);
                 return;
             }
         }
@@ -98,7 +98,7 @@ namespace TabletDriverLib
             }
             catch (ObjectDisposedException dex)
             {
-                Log.Debug($"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
+                Log.Debug("Detect", $"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
             }
             catch (Exception ex)
             {
