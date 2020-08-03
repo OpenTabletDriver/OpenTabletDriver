@@ -79,14 +79,14 @@ namespace OpenTabletDriver.UX.Windows
 
             if (guids.Count > 0)
             {
-                var tabletReader = new PipeReader<DebugTabletReport>(guids[0]);
+                var tabletReader = new PipeReader(guids[0]);
                 tabletReader.Report += HandleReport;
                 this.Closing += (sender, e) => tabletReader.Dispose();
             }
             
             if (guids.Count > 1)
             {
-                var auxReader = new PipeReader<DebugAuxReport>(guids[1]);
+                var auxReader = new PipeReader(guids[1]);
                 auxReader.Report += HandleReport;
                 this.Closing += (sender, e) => auxReader.Dispose();
             }
@@ -102,16 +102,16 @@ namespace OpenTabletDriver.UX.Windows
             {
                 await Application.Instance.InvokeAsync(() => 
                 {
-                    rawTabCtrl.Content = tabletReport.StringFormat(true);
-                    tabReportCtrl.Content = tabletReport.StringFormat(false).Replace(", ", Environment.NewLine);
+                    rawTabCtrl.Content = tabletReport?.StringFormat(true);
+                    tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
                 });
             }
             if (report is IAuxReport auxReport)
             {
                 await Application.Instance.InvokeAsync(() => 
                 {
-                    rawAuxCtrl.Content = auxReport.StringFormat(true);
-                    auxReportCtrl.Content = auxReport.StringFormat(false).Replace(", ", Environment.NewLine);
+                    rawAuxCtrl.Content = auxReport?.StringFormat(true);
+                    auxReportCtrl.Content = auxReport?.StringFormat(false).Replace(", ", Environment.NewLine);
                 });
             }
         }
