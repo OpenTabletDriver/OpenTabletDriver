@@ -10,18 +10,10 @@ namespace TabletDriverLib.Interop.Mouse
 
     public class WindowsMouseHandler : IMouseHandler
     {
-        public WindowsMouseHandler()
-        {
-            _offsetX = Platform.VirtualScreen.Position.X;
-            _offsetY = Platform.VirtualScreen.Position.Y;
-        }
-
-        private float _offsetX, _offsetY;
-
         public Point GetPosition()
         {
             GetCursorPos(out POINT pt);
-            return new Point(pt.X + _offsetX, pt.Y + _offsetY);
+            return new Point(pt.X, pt.Y);
         }
 
         public void SetPosition(Point pos)
@@ -33,8 +25,8 @@ namespace TabletDriverLib.Interop.Mouse
                 {
                     mi = new MOUSEINPUT
                     {
-                        dx = (int)((pos.X - _offsetX) / Platform.VirtualScreen.Width * 65535),
-                        dy = (int)((pos.Y - _offsetY) / Platform.VirtualScreen.Height * 65535),
+                        dx = (int)(pos.X / Platform.VirtualScreen.Width * 65535),
+                        dy = (int)(pos.Y / Platform.VirtualScreen.Height * 65535),
                         dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK,
                         time = 0,
                         dwExtraInfo = UIntPtr.Zero
