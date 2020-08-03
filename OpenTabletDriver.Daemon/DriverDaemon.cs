@@ -24,6 +24,7 @@ namespace OpenTabletDriver.Daemon
         {
             Driver = new Driver();
             Log.Output += (sender, message) => LogMessages.Add(message);
+            Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
             LoadUserSettings();
 
             HidSharp.DeviceList.Local.Changed += (sender, e) => 

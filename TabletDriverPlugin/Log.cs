@@ -18,15 +18,9 @@ namespace TabletDriverPlugin
     {
         public static event EventHandler<LogMessage> Output;
 
-        public static LogLevel Severity = LogLevel.Info;
-
         private static void Post(LogMessage message)
         {
-            if (message.Level >= Severity)
-            {
-                Output?.Invoke(null, message);
-                Console.WriteLine(GetStringFormat(message));
-            }
+            Output?.Invoke(null, message);
         }
 
         public static string GetStringFormat(LogMessage message)
