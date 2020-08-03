@@ -1,4 +1,5 @@
-﻿using NativeLib.Windows;
+﻿using System;
+using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Pointer;
@@ -9,23 +10,33 @@ namespace TabletDriverLib.Interop.Mouse
 
     public class WindowsMouseHandler : IMouseHandler
     {
-        public WindowsMouseHandler()
-        {
-            _offsetX = Platform.VirtualScreen.Position.X;
-            _offsetY = Platform.VirtualScreen.Position.Y;
-        }
-
-        private float _offsetX, _offsetY;
+        private Point _last;
 
         public Point GetPosition()
         {
-            GetCursorPos(out POINT pt);
-            return new Point(pt.X + _offsetX, pt.Y + _offsetY);
+            return _last;
         }
 
         public void SetPosition(Point pos)
         {
-            SetCursorPos((int)(pos.X - _offsetX), (int)(pos.Y - _offsetY));
+            var input = new INPUT
+            {
+                type = INPUT_TYPE.MOUSE_INPUT,
+                U = new InputUnion
+                {
+                    mi = new MOUSEINPUT
+                    {
+                        dx = (int)(pos.X / Platform.VirtualScreen.Width * 65535),
+                        dy = (int)(pos.Y / Platform.VirtualScreen.Height * 65535),
+                        dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK,
+                        time = 0,
+                        dwExtraInfo = UIntPtr.Zero
+                    }
+                }
+            };
+            var inputs = new INPUT[] { input };
+            SendInput((uint)inputs.Length, inputs, INPUT.Size);
+            _last = pos;
         }
 
         private void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)

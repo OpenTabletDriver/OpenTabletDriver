@@ -15,7 +15,7 @@ namespace TabletDriverLib.Interop.Keyboard
             var vk = EtoKeysymToVK[key];
             var input = new INPUT
             {
-                type = 1,
+                type = INPUT_TYPE.KEYBD_INPUT,
                 U = new InputUnion
                 {
                     ki = new KEYBDINPUT
