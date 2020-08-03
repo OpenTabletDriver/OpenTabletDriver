@@ -5,16 +5,16 @@
     "ProductID": 887,
     "InputReportLength": 361,
     "OutputReportLength": 0,
-    "ReportParser": null,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV3ReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
   "AlternateDigitizerIdentifier": {
     "VendorID": 1386,
     "ProductID": 887,
-    "InputReportLength": 0,
+    "InputReportLength": 193,
     "OutputReportLength": 0,
-    "ReportParser": null,
+    "ReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
@@ -33,8 +33,8 @@
   "MaxY": 9500.0,
   "MaxPressure": 4095,
   "ActiveReportID": {
-    "Start": 224,
-    "StartInclusive": false,
+    "Start": 16,
+    "StartInclusive": true,
     "End": null,
     "EndInclusive": false
   },

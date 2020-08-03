@@ -25,7 +25,7 @@ namespace TabletDriverLib.Tablet
                 }
                 else
                 {
-                    return report.ToString();
+                    return $"Raw: {BitConverter.ToString(report.Raw).Replace('-', ' ')}";
                 }
             }
         }
