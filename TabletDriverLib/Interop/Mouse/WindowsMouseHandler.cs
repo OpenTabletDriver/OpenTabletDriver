@@ -10,10 +10,11 @@ namespace TabletDriverLib.Interop.Mouse
 
     public class WindowsMouseHandler : IMouseHandler
     {
+        private Point _last;
+
         public Point GetPosition()
         {
-            GetCursorPos(out POINT pt);
-            return new Point(pt.X, pt.Y);
+            return _last;
         }
 
         public void SetPosition(Point pos)
@@ -35,6 +36,7 @@ namespace TabletDriverLib.Interop.Mouse
             };
             var inputs = new INPUT[] { input };
             SendInput((uint)inputs.Length, inputs, INPUT.Size);
+            _last = pos;
         }
 
         private void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
