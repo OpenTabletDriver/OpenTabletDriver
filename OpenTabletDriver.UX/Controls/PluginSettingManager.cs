@@ -11,9 +11,9 @@ using TabletDriverPlugin.Attributes;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class PluginManager<T> : Splitter
+    public class PluginSettingManager<T> : Splitter
     {
-        public PluginManager()
+        public PluginSettingManager()
         {
             Orientation = Orientation.Horizontal;
             Panel1MinimumSize = 200;

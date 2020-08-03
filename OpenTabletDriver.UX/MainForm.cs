@@ -100,7 +100,7 @@ namespace OpenTabletDriver.UX
 
             bindingLayout = ConstructBindingLayout(3, 7);
 
-            filterEditor = ConstructPluginManager<IFilter>(
+            filterEditor = ConstructPluginSettingManager<IFilter>(
                 () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),
                 (sender, enabled) =>
                 {
@@ -112,7 +112,7 @@ namespace OpenTabletDriver.UX
                 }
             );
 
-            toolEditor = ConstructPluginManager<ITool>(
+            toolEditor = ConstructPluginSettingManager<ITool>(
                 () => App.Settings.Tools.Contains(toolEditor.SelectedPlugin.Path),
                 (sender, enabled) =>
                 {
@@ -373,9 +373,9 @@ namespace OpenTabletDriver.UX
             return layout;
         }
 
-        private PluginManager<T> ConstructPluginManager<T>(Func<bool> getMethod, EventHandler<bool> setMethod)
+        private PluginSettingManager<T> ConstructPluginSettingManager<T>(Func<bool> getMethod, EventHandler<bool> setMethod)
         {
-            var editor = new PluginManager<T>();
+            var editor = new PluginSettingManager<T>();
             editor.GetPluginEnabled = getMethod;
             editor.SetPluginEnabled += setMethod;
             return editor;
@@ -510,8 +510,8 @@ namespace OpenTabletDriver.UX
 
         private AreaEditor displayAreaEditor, tabletAreaEditor;
         private TableLayout bindingLayout;
-        private PluginManager<IFilter> filterEditor;
-        private PluginManager<ITool> toolEditor;
+        private PluginSettingManager<IFilter> filterEditor;
+        private PluginSettingManager<ITool> toolEditor;
 
         public MainFormViewModel ViewModel
         {
