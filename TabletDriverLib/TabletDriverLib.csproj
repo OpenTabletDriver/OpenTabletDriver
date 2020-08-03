@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <VersionPrefix>0.3.1</VersionPrefix>
+    <VersionPrefix>0.3.2</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
