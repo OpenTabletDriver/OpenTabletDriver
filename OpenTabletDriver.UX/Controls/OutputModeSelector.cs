@@ -2,6 +2,7 @@ using Eto.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TabletDriverLib;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin.Output;
 
@@ -11,6 +12,13 @@ namespace OpenTabletDriver.UX.Controls
     {
         public OutputModeSelector()
         {
+            Refresh();
+            this.SelectedIndexChanged += (sender, e) => SelectedMode = OutputModes[this.SelectedIndex];
+            TypeManager.AssemblyLoaded += (asm) => Refresh();
+        }
+
+        public void Refresh()
+        {
             var outputModes = from type in TabletDriverLib.TypeManager.GetChildTypes<IOutputMode>()
                 where type != typeof(IOutputMode)
                 where type != typeof(AbsoluteOutputMode)
@@ -18,7 +26,6 @@ namespace OpenTabletDriver.UX.Controls
                 select new PluginReference(type);
 
             OutputModes = new List<PluginReference>(outputModes);
-            this.SelectedIndexChanged += (sender, e) => SelectedMode = OutputModes[this.SelectedIndex];
         }
 
         public event EventHandler<PluginReference> SelectedModeChanged;

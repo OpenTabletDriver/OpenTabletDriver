@@ -404,6 +404,9 @@ namespace OpenTabletDriver.UX
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
+            var showPluginManager = new Command { MenuText = "Plugin Manager...", Shortcut = Application.Instance.CommonModifier | Keys.M };
+            showPluginManager.Executed += (sender, e) => ShowPluginManager();
+
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await DetectAllTablets();
 
@@ -430,7 +433,9 @@ namespace OpenTabletDriver.UX
                             saveSettings,
                             saveSettingsAs,
                             resetSettings,
-                            applySettings
+                            applySettings,
+                            new SeparatorMenuItem(),
+                            showPluginManager
                         }
                     },
                     // Tablets submenu
@@ -598,6 +603,12 @@ namespace OpenTabletDriver.UX
         {
             if (ViewModel.Settings is Settings settings)
                 await App.DriverDaemon.InvokeAsync(d => d.SetSettings(settings));
+        }
+
+        private void ShowPluginManager()
+        {
+            var pluginManager = new PluginManager();
+            pluginManager.Show();
         }
 
         private async Task DetectAllTablets()

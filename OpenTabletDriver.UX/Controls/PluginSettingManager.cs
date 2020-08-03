@@ -20,20 +20,25 @@ namespace OpenTabletDriver.UX.Controls
             Panel1 = new Scrollable { Content = _pluginList };
             Panel2 = new Scrollable { Content = _settingControls };
 
-            Plugins = new List<PluginReference>();
             _pluginList.SelectedIndexChanged += (sender, e) =>
             {
                 if (_pluginList.SelectedIndex >= 0 && _pluginList.SelectedIndex <= Plugins.Count)
                     SelectedPlugin = Plugins[_pluginList.SelectedIndex];
             };
 
+            Refresh();
+            TypeManager.AssemblyLoaded += (asm) => Refresh();
+        }
+
+        public void Refresh()
+        {
+            Plugins.Clear();
+            
             foreach (var type in TypeManager.GetChildTypes<T>())
             {
                 var pluginRef = new PluginReference(type);
                 if (type != typeof(T) && !Plugins.Contains(pluginRef))
-                {
                     Plugins.Add(pluginRef);
-                }
             }
 
             _pluginList.Items.Clear();

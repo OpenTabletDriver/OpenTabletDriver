@@ -20,10 +20,14 @@ namespace TabletDriverLib
             set => _types = value;
             get => _types ??= allTypes.Value;
         }
+
+        private static Collection<FileInfo> LoadedFiles { set; get; } = new Collection<FileInfo>();
+
+        public static event Action<Assembly> AssemblyLoaded;
         
         public static bool AddPlugin(FileInfo file)
         {
-            if (file.Extension == ".dll")
+            if (file.Extension == ".dll" && !LoadedFiles.Contains(file))
             {
                 var asm = ImportAssembly(file.FullName);
                 foreach (var type in GetLoadableTypes(asm))
@@ -32,6 +36,8 @@ namespace TabletDriverLib
                     if (attr == null || attr.IsCurrentPlatform)
                         Types.Add(type.GetTypeInfo());
                 }
+                AssemblyLoaded?.Invoke(asm);
+                LoadedFiles.Add(file);
                 return true;
             }
             else
