@@ -43,6 +43,7 @@ namespace OpenTabletDriver.UX
                             break;
                         case WindowState.Minimized:
                             this.ShowInTaskbar = false;
+                            this.Visible = false;
                             break;
                     }
                 };
