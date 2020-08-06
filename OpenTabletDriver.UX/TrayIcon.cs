@@ -4,7 +4,7 @@ namespace OpenTabletDriver.UX
 {
     public class TrayIcon
     {
-        public TrayIcon(Window window)
+        public TrayIcon(MainForm window)
         {
             var showWindow = new ButtonMenuItem
             {
@@ -12,7 +12,8 @@ namespace OpenTabletDriver.UX
             };
             showWindow.Click += (sender, e) =>
             {
-                window.WindowState = WindowState.Normal;   
+                window.WindowState = WindowState.Normal;
+                window.Show();
                 window.BringToFront();
             };
 
