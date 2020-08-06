@@ -10,8 +10,8 @@
     "OutputInitReport": "ArAEAAAAAAA="
   },
   "AlternateDigitizerIdentifier": {
-    "VendorID": 10429,
-    "ProductID": 2310,
+    "VendorID": 0,
+    "ProductID": 0,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,
@@ -19,8 +19,8 @@
     "OutputInitReport": null
   },
   "AuxilaryDeviceIdentifier": {
-    "VendorID": 10429,
-    "ProductID": 2310,
+    "VendorID": 0,
+    "ProductID": 0,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,

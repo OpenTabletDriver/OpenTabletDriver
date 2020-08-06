@@ -4,7 +4,7 @@
     "VendorID": 10429,
     "ProductID": 2311,
     "InputReportLength": 10,
-    "OutputReportLength": 0,
+    "OutputReportLength": 8,
     "ReportParser": null,
     "FeatureInitReport": null,
     "OutputInitReport": "ArAEAAAAAAA="
