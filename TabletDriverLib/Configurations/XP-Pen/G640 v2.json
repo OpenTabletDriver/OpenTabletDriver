@@ -3,11 +3,11 @@
   "DigitizerIdentifier": {
     "VendorID": 10429,
     "ProductID": 2324,
-    "InputReportLength": 10,
-    "OutputReportLength": 0,
+    "InputReportLength": 12,
+    "OutputReportLength": 12,
     "ReportParser": null,
     "FeatureInitReport": null,
-    "OutputInitReport": null
+    "OutputInitReport": "ArAEAAAAAAAAAAAA"
   },
   "AlternateDigitizerIdentifier": {
     "VendorID": 0,
