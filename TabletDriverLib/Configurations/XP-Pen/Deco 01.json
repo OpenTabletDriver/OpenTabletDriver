@@ -4,10 +4,10 @@
     "VendorID": 10429,
     "ProductID": 66,
     "InputReportLength": 8,
-    "OutputReportLength": 0,
+    "OutputReportLength": 8,
     "ReportParser": null,
     "FeatureInitReport": null,
-    "OutputInitReport": null
+    "OutputInitReport": "ArACAAAAAAA="
   },
   "AlternateDigitizerIdentifier": {
     "VendorID": 10429,
