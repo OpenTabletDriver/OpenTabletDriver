@@ -43,6 +43,12 @@ namespace OpenTabletDriver.UX
                     }
                 }
             };
+			indicator.Activated += (object sender, System.EventArgs e) =>
+            {
+                window.Show();
+                window.WindowState = WindowState.Normal;
+                window.BringToFront();
+            };
             indicator.Show();
         }
     }
