@@ -31,7 +31,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
             
-            this.Items.Add(new StackLayoutItem(logList, HorizontalAlignment.Stretch, true));
+            this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
             this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
 
             InitializeAsync();
@@ -47,15 +47,14 @@ namespace OpenTabletDriver.UX.Controls
                 AddItem(message);
             
             var exitHandle = new CancellationTokenSource();
-
             var serverGuid = await App.DriverDaemon.InvokeAsync(d => d.SetLogOutput(true));
-            var host = CreateHostBuilder(serverGuid).Build();
             
+            var host = CreateHostBuilder(serverGuid).Build();
             this.ParentWindow.Closing += async (sender, e) =>
             {
-                await App.DriverDaemon.InvokeAsync(d => d.SetLogOutput(false));
-                await host.StopAsync();
+                exitHandle.Cancel();
                 host.Dispose();
+                await App.DriverDaemon.InvokeAsync(d => d.SetLogOutput(false));
             };
 
             await host.StartAsync(exitHandle.Token);
@@ -87,7 +86,47 @@ namespace OpenTabletDriver.UX.Controls
             return filter;
         }
 
-        private ListBox logList = new ListBox();
+        private GridView<LogMessage> messageList = new GridView<LogMessage>
+        {
+            Border = BorderType.None,
+            GridLines = GridLines.Vertical,
+            Columns =
+            {
+                new GridColumn
+                {
+                    HeaderText = "Time",
+                    DataCell = new TextBoxCell
+                    {
+                        Binding = Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
+                    }
+                },
+                new GridColumn
+                {
+                    HeaderText = "Level",
+                    DataCell = new TextBoxCell
+                    {
+                        Binding = Binding.Property<LogMessage, string>(m => m.Level.GetName())
+                    }
+                },
+                new GridColumn
+                {
+                    HeaderText = "Group",
+                    DataCell = new TextBoxCell
+                    {
+                        Binding = Binding.Property<LogMessage, string>(m => m.Group)
+                    }
+                },
+                new GridColumn
+                {
+                    HeaderText = "Message",
+                    DataCell = new TextBoxCell
+                    {
+                        Binding = Binding.Property<LogMessage, string>(m => m.Message)
+                    }
+                }
+            }
+        };
+
         private List<LogMessage> Messages { set; get; } = new List<LogMessage>();
 
         private LogLevel _currentFilter = LogLevel.Info;
@@ -101,33 +140,44 @@ namespace OpenTabletDriver.UX.Controls
             get => _currentFilter;
         }
 
+        private IEnumerable<LogMessage> GetFilteredMessages()
+        {
+            return from message in Messages
+                where message.Level >= CurrentFilter
+                select message;
+        }
+
+        private void Update(int index)
+        {
+            messageList.DataStore = GetFilteredMessages();
+            messageList.ReloadData(index);
+        }
+
+        private void Update(int startIndex, int endIndex)
+        {
+            messageList.DataStore = GetFilteredMessages();
+            messageList.ReloadData(new Range<int>(startIndex, endIndex));
+        }
+
         private void AddItem(LogMessage message)
         {
             Messages.Add(message);
+
             if (message.Level >= CurrentFilter)
-            {
-                var str = Log.GetStringFormat(message);
-                logList.Items.Add(str);
-            }
+                Update(Messages.Count - 1);
+
+            if (messageList.SelectedRow == -1)
+                messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
         }
 
         private void Refresh()
         {
-            logList.Items.Clear();
-
-            var currentMessages = from message in Messages
-                where message.Level >= CurrentFilter
-                select new ListItem
-                {
-                    Text = Log.GetStringFormat(message)
-                };
-
-            logList.Items.AddRange(currentMessages);
+            Update(0, Messages.Count - 1);
         }
 
-        public async void Post(LogMessage message)
+        public void Post(LogMessage message)
         {
-            await Application.Instance.InvokeAsync(() => AddItem(message));
+            Application.Instance.AsyncInvoke(() => AddItem(message));
         }
     }
 }
