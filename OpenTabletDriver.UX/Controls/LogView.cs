@@ -1,12 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Eto.Forms;
 using JKang.IpcServiceFramework.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using OpenTabletDriver.UX.Tools;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
 using TabletDriverLib.Contracts;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Logging;
@@ -27,7 +28,23 @@ namespace OpenTabletDriver.UX.Controls
                 HorizontalContentAlignment = HorizontalAlignment.Left,
                 Items = 
                 {
-                    GenerateFilterControl()
+                    GenerateFilterControl(),
+                    new Button((sender, e) => Copy(GetFilteredMessages()))
+                    {
+                        Text = "Copy all messages"
+                    }
+                }
+            };
+
+            var copyCommand = new Command((sender, e) => Copy(messageList.SelectedItems))
+            {
+                MenuText = "Copy"
+            };
+            messageList.ContextMenu = new ContextMenu
+            {
+                Items = 
+                {
+                    copyCommand
                 }
             };
             
@@ -60,6 +77,18 @@ namespace OpenTabletDriver.UX.Controls
             await host.StartAsync(exitHandle.Token);
         }
 
+        private void Copy(IEnumerable<LogMessage> messages)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (var message in messages)
+            {
+                var line = Log.GetStringFormat(message);
+                sb.AppendLine(line);
+            }
+            Clipboard.Instance.Clear();
+            Clipboard.Instance.Text = sb.ToString();
+        }
+
         private IHostBuilder CreateHostBuilder(Guid guid) => 
             Host.CreateDefaultBuilder()
                 .ConfigureServices(services => 
@@ -90,6 +119,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             Border = BorderType.None,
             GridLines = GridLines.Vertical,
+            AllowMultipleSelection = true,
             Columns =
             {
                 new GridColumn
