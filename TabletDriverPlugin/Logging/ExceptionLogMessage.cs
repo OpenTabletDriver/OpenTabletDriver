@@ -4,11 +4,11 @@ namespace TabletDriverPlugin.Logging
 {
     public class ExceptionLogMessage : LogMessage
     {
-        public ExceptionLogMessage(Exception ex) : base(ex.GetType().FullName, ex.Message, LogLevel.Error)
+        public ExceptionLogMessage(string fullName, string message, string stackTrace) : base(fullName, message, LogLevel.Error)
         {
-            Exception = ex;
+            StackTrace = stackTrace;
         }
 
-        public Exception Exception { private set; get; }
+        public string StackTrace { private set; get; }
     }
 }

@@ -29,8 +29,8 @@ namespace TabletDriverPlugin
             var text = string.Format("[{0}:{1}]\t{2}", message.Group, level, message.Message);
             
             // Append stack trace if an exception was caught.
-            if (message is ExceptionLogMessage exceptionMessage)
-                text += Environment.NewLine + exceptionMessage.Exception.StackTrace;
+            if (message is ExceptionLogMessage exceptionMessage && exceptionMessage.StackTrace != null)
+                text += Environment.NewLine + exceptionMessage.StackTrace;
 
             return text;
         }
@@ -47,10 +47,12 @@ namespace TabletDriverPlugin
             Post(message);
         }
 
-        public static void Exception(Exception ex)
+        public static void Exception<T>(T ex) where T : Exception
         {
-            var message = new ExceptionLogMessage(ex);
+            // GC.SuppressFinalize(ex);
+            var message = new ExceptionLogMessage(typeof(T).FullName, ex.Message, ex.StackTrace);
             Post(message);
+            // GC.ReRegisterForFinalize(ex);
         }
     }
 }
