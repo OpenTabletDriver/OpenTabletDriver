@@ -1,7 +1,14 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using Newtonsoft.Json;
+using JKang.IpcServiceFramework.Client;
 using TabletDriverPlugin;
+using TabletDriverLib.Contracts;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using System.Net.Sockets;
+using TabletDriverPlugin.Logging;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -9,44 +16,56 @@ namespace OpenTabletDriver.Daemon
     {
         public LogServer()
         {
-            InitializeAsync();
-        }
-
-        private async void InitializeAsync()
-        {
-            PipeServer = new NamedPipeServerStream(Identifier.ToString());
-            await PipeServer.WaitForConnectionAsync();
-            StreamWriter = new StreamWriter(PipeServer)
-            {
-                AutoFlush = true
-            };
-
-            Log.Output += async (sender, message) =>
-            {
-                try
-                {
-                    if (PipeServer?.IsConnected ?? false)
-                    StreamWriter.WriteLine(Log.GetStringFormat(message));
-                }
-                catch (IOException ioEx)
-                {
-                    Log.Exception(ioEx);
-                    await PipeServer.WaitForConnectionAsync();
-                }
-            };
+            Server = CreateClient(Identifier);
+            Log.Output += HandleMessage;
             Log.Debug("Daemon", $"Started log server {{{Identifier}}}");
         }
 
+        private IIpcClient<ILogServer> CreateClient(Guid guid)
+        {
+            var name = guid.ToString();
+
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddNamedPipeIpcClient<ILogServer>(name, name)
+                .BuildServiceProvider();
+
+            IIpcClientFactory<ILogServer> clientFactory = serviceProvider
+                .GetRequiredService<IIpcClientFactory<ILogServer>>();
+
+            return clientFactory.CreateClient(name);
+        }
+        
+        private async void HandleMessage(object sender, LogMessage message)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                try
+                {
+                    // Connect to server
+                    await Server?.InvokeAsync(d => d.Post(message));
+                    break;
+                }
+                catch (IOException)
+                {
+                    // Wait for server to be ready
+                    await Task.Delay(100);
+                    continue;
+                }
+                catch (NullReferenceException)
+                {
+                    // This should have been unsubscribed by the point the server disconnected
+                    break;
+                }
+            }
+        }
+
         public readonly Guid Identifier = Guid.NewGuid();
-        private NamedPipeServerStream PipeServer { set; get; }
-        private StreamWriter StreamWriter { set; get; }
+        private IIpcClient<ILogServer> Server { set; get; }
 
         public void Dispose()
         {
-            PipeServer.Disconnect();
-            PipeServer.Dispose();
-            PipeServer = null;
-            StreamWriter = null;
+            Log.Output -= HandleMessage;
+            Server = null;
 
             Log.Debug("Daemon", $"Stopped log server {{{Identifier}}}");
         }
