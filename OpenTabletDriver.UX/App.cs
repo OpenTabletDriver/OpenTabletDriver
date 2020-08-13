@@ -31,11 +31,26 @@ namespace OpenTabletDriver.UX
         }
 
         public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
-        public static AboutDialog AboutDialog => _aboutDialog.Value;
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
 
         public static Settings Settings { set; get; }
+
+        public static AboutDialog AboutDialog => new AboutDialog
+        {
+            Title = "OpenTabletDriver",
+            ProgramName = "OpenTabletDriver",
+            ProgramDescription = "Open source, cross-platform tablet configurator",
+            WebsiteLabel = "OpenTabletDriver GitHub Repository",
+            Website = new Uri(@"https://github.com/InfinityGhost/OpenTabletDriver"),
+            Version = $"v{Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}",
+            Developers = new string[] { "InfinityGhost" },
+            Designers = new string[] { "InfinityGhost" },
+            Documenters = new string[] { "InfinityGhost" },
+            License = string.Empty,
+            Copyright = string.Empty,
+            Logo = Logo.WithSize(256, 256)
+        };
 
         private static readonly Lazy<IIpcClient<IDriverDaemon>> _driverDaemon = new Lazy<IIpcClient<IDriverDaemon>>(() => 
         {
@@ -50,22 +65,6 @@ namespace OpenTabletDriver.UX
 
             // Create client
             return clientFactory.CreateClient("OpenTabletDriverUX");
-        });
-
-        private static readonly Lazy<AboutDialog> _aboutDialog = new Lazy<AboutDialog>(() => new AboutDialog
-        {
-            Title = "OpenTabletDriver",
-            ProgramName = "OpenTabletDriver",
-            ProgramDescription = "Open source, cross-platform tablet configurator",
-            WebsiteLabel = "OpenTabletDriver GitHub Repository",
-            Website = new Uri(@"https://github.com/InfinityGhost/OpenTabletDriver"),
-            Version = $"v{Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}",
-            Developers = new string[] { "InfinityGhost" },
-            Designers = new string[] { "InfinityGhost" },
-            Documenters = new string[] { "InfinityGhost" },
-            License = string.Empty,
-            Copyright = string.Empty,
-            Logo = Logo.WithSize(256, 256)
         });
 
         private static readonly Lazy<Bitmap> _logo = new Lazy<Bitmap>(() => 
