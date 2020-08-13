@@ -31,7 +31,7 @@ namespace OpenTabletDriver.UX.Controls
                     GenerateFilterControl(),
                     new Button((sender, e) => Copy(GetFilteredMessages()))
                     {
-                        Text = "Copy all messages"
+                        Text = "Copy All"
                     }
                 }
             };
@@ -117,8 +117,6 @@ namespace OpenTabletDriver.UX.Controls
 
         private GridView<LogMessage> messageList = new GridView<LogMessage>
         {
-            Border = BorderType.None,
-            GridLines = GridLines.Vertical,
             AllowMultipleSelection = true,
             Columns =
             {
