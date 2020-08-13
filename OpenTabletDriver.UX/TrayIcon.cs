@@ -12,9 +12,10 @@ namespace OpenTabletDriver.UX
             };
             showWindow.Click += (sender, e) =>
             {
-                window.WindowState = WindowState.Normal;
                 window.Show();
+                window.WindowState = WindowState.Normal;
                 window.BringToFront();
+                window.WindowStyle = WindowStyle.Default;
             };
 
             var restart = new ButtonMenuItem
@@ -42,6 +43,13 @@ namespace OpenTabletDriver.UX
                         close
                     }
                 }
+            };
+			indicator.Activated += (object sender, System.EventArgs e) =>
+            {
+                window.Show();
+                window.WindowState = WindowState.Normal;
+                window.BringToFront();
+                window.WindowStyle = WindowStyle.Default;
             };
             indicator.Show();
         }
