@@ -505,37 +505,44 @@ namespace OpenTabletDriver.UX
 
         private void ApplyPlatformQuirks()
         {
-            Size? size = null;
-            Padding? padding = null;
-            
-            switch (SystemInfo.CurrentPlatform)
+            this.Padding = SystemInfo.CurrentPlatform switch
             {
-                case RuntimePlatform.MacOS:
-                    padding = new Padding(10);
-                    size = new Size(970, 730);
-                    goto default;
-                default:
-                    var trayIcon = new TrayIcon(this);
-                    this.WindowStateChanged += (sender, e) =>
-                    {
-                        switch (this.WindowState)
-                        {
-                            case WindowState.Normal:
-                            case WindowState.Maximized:
-                                this.ShowInTaskbar = true;
-                                break;
-                            case WindowState.Minimized:
-                                this.ShowInTaskbar = false;
-                                this.Visible = false;
-                                break;
-                        }
-                    };
-                    Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
-                    break;
-            }
+                RuntimePlatform.MacOS => new Padding(10),
+                _                     => new Padding(0)
+            };
 
-            this.Padding = padding ?? new Padding(0);
-            this.ClientSize = size ?? new Size(960, 720);
+            this.ClientSize = SystemInfo.CurrentPlatform switch
+            {
+                RuntimePlatform.MacOS => new Size(970, 730),
+                _ => new Size(960, 720)
+            };
+
+            bool enableTrayIcon = SystemInfo.CurrentPlatform switch
+            {
+                RuntimePlatform.Windows => true,
+                RuntimePlatform.MacOS   => true,
+                _                       => false
+            };
+
+            if (enableTrayIcon)
+            {
+                var trayIcon = new TrayIcon(this);
+                this.WindowStateChanged += (sender, e) =>
+                {
+                    switch (this.WindowState)
+                    {
+                        case WindowState.Normal:
+                        case WindowState.Maximized:
+                            this.ShowInTaskbar = true;
+                            break;
+                        case WindowState.Minimized:
+                            this.ShowInTaskbar = false;
+                            this.Visible = false;
+                            break;
+                    }
+                };
+                Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
+            }
         }
 
         private async void InitializeAsync()

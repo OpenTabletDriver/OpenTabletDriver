@@ -75,10 +75,11 @@ namespace OpenTabletDriver.UX
 
         private static readonly Lazy<Padding> _groupBoxPadding = new Lazy<Padding>(() => 
         {
-            if (SystemInfo.CurrentPlatform == RuntimePlatform.Windows)
-                return new Padding(0);
-            else
-                return new Padding(5);
+            return SystemInfo.CurrentPlatform switch
+            {
+                RuntimePlatform.Windows => new Padding(0),
+                _                       => new Padding(5)
+            };
         });
     }
 }
