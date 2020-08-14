@@ -12,6 +12,8 @@ using TabletDriverPlugin.Tablet;
 using TabletDriverPlugin.Platform.Display;
 using TabletDriverLib.Diagnostics;
 using NativeLib;
+using TabletDriverLib.Plugins;
+using TabletDriverPlugin.Output;
 
 namespace OpenTabletDriver.UX
 {
@@ -84,20 +86,23 @@ namespace OpenTabletDriver.UX
                 Text = "Area Clipping"
             };
 
-            ViewModel.PropertyChanged += (sender, e) =>
+            var outputModeSelector = ConstructOutputModeSelector();
+            absoluteConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup);
+            relativeConfig = ConstructSensitivityControls();
+            nullConfig = new Panel();
+
+            var outputConfig = new StackLayout
             {
-                if (e.PropertyName == nameof(ViewModel.Settings))
+                Padding = 5,
+                Spacing = 5,
+                Items =
                 {
-                    areaClipping.CheckedBinding.Convert(
-                        (b) => b.HasValue ? b.Value : false,
-                        (b) => (bool?)b)
-                        .BindDataContext(Binding.Property((MainFormViewModel m) => m.Settings.EnableClipping));
+                    new StackLayoutItem(absoluteConfig, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(relativeConfig, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(nullConfig, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(outputModeSelector, HorizontalAlignment.Left, false)
                 }
             };
-
-            var outputModeSelector = ConstructOutputModeSelector();
-            var areaConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup, outputModeSelector, areaClipping);
-            var sensitivityConfig = ConstructSensitivityControls();
 
             bindingLayout = ConstructBindingLayout(3, 7);
 
@@ -132,13 +137,8 @@ namespace OpenTabletDriver.UX
                 {
                     new TabPage
                     {
-                        Text = "Area Configuration",
-                        Content = areaConfig
-                    },
-                    new TabPage
-                    {
-                        Text = "Sensitivity",
-                        Content = sensitivityConfig
+                        Text = "Output",
+                        Content = outputConfig
                     },
                     new TabPage
                     {
@@ -166,39 +166,16 @@ namespace OpenTabletDriver.UX
             };
         }
 
-        private TableLayout ConstructAreaConfig(Control displayControl, Control tabletControl, params Control[] otherControls)
+        private Control ConstructAreaConfig(Control displayControl, Control tabletControl)
         {
-            var miscControls = new StackLayout
+            return new StackLayout
             {
-                Orientation = Orientation.Horizontal,
-                Spacing = 5,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
-            foreach (var control in otherControls)
-                miscControls.Items.Add(control);
-
-            return new TableLayout
-            {
-                Padding = new Padding(5),
-                Spacing = SystemInfo.CurrentPlatform == RuntimePlatform.Windows ? new Size() : new Size(5, 5),
-                Rows =
+                Visible = false,
+                Spacing = SystemInfo.CurrentPlatform == RuntimePlatform.Windows ? 0 : 5,
+                Items =
                 {
-                    new TableRow(new TableCell(displayControl, true))
-                    {
-                        ScaleHeight = true
-                    },
-                    new TableRow(new TableCell(tabletControl, true))
-                    {
-                        ScaleHeight = true
-                    },
-                    new TableRow()
-                    {
-                        ScaleHeight = false,
-                        Cells =
-                        {
-                            miscControls
-                        }
-                    }
+                    new StackLayoutItem(displayControl, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(tabletControl, HorizontalAlignment.Stretch, true)
                 }
             };
         }
@@ -223,6 +200,13 @@ namespace OpenTabletDriver.UX
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
                     lockAr.Checked = ViewModel.Settings.LockAspectRatio;
+            };
+
+            var areaClipping = tabletAreaEditor.AppendCheckBoxMenuItem("Area clipping", (value) => ViewModel.Settings.EnableClipping = value);
+            ViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                    areaClipping.Checked = ViewModel.Settings.EnableClipping;
             };
 
             var tabletAreaGroup = new GroupBox
@@ -282,7 +266,11 @@ namespace OpenTabletDriver.UX
             {
                 Width = 300
             };
-            control.SelectedModeChanged += (sender, mode) => App.Settings.OutputMode = mode.Path;
+            control.SelectedModeChanged += (sender, mode) =>
+            {
+                App.Settings.OutputMode = mode.Path;
+                UpdateOutputMode(mode);
+            };
             ViewModel.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
@@ -317,7 +305,7 @@ namespace OpenTabletDriver.UX
 
             return new StackLayout
             {
-                Padding = new Padding(5),
+                Visible = false,
                 Spacing = 5,
                 Orientation = Orientation.Horizontal,
                 Items =
@@ -509,6 +497,7 @@ namespace OpenTabletDriver.UX
             displayAreaEditor.ViewModel.MaxHeight = virtualScreen.Height;
         }
 
+        private Control absoluteConfig, relativeConfig, nullConfig;
         private AreaEditor displayAreaEditor, tabletAreaEditor;
         private TableLayout bindingLayout;
         private PluginManager<IFilter> filterEditor;
@@ -719,6 +708,14 @@ namespace OpenTabletDriver.UX
                 };
                 bindingLayout.Add(auxBindingGroup, 2, i);
             }
+        }
+
+        private void UpdateOutputMode(PluginReference pluginRef)
+        {
+            var outputMode = pluginRef.GetTypeReference<IOutputMode>();
+            absoluteConfig.Visible = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
+            relativeConfig.Visible = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
+            nullConfig.Visible = !(absoluteConfig.Visible || relativeConfig.Visible);
         }
 
         private void ShowTabletDebugger()
