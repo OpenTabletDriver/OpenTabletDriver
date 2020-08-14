@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using Eto.Forms;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
+using TabletDriverLib.Plugins;
 using TabletDriverPlugin;
+using IBinding = TabletDriverPlugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -18,18 +18,17 @@ namespace OpenTabletDriver.UX.Windows
             Result = currentBinding;
             Padding = 5;
 
-            BindingName = currentBinding.Binding?.Path;
+            BindingPath = currentBinding.Binding?.Path;
             BindingProperty = currentBinding.BindingProperty;
 
             var bindingTypes = PluginManager.GetChildTypes<TabletDriverPlugin.IBinding>();
 
-            var bindingName = GetControl(
-                "Name",
-                () => BindingName,
-                (o) => BindingName = o
+            var bindingPath = GetBindingSelector(
+                () => BindingPath,
+                (o) => BindingPath = o
             );
-            var bindingProperty = GetControl(
-                "Property",
+            var bindingProperty = GetPropertySelector(
+                (ComboBox)bindingPath.Content,
                 () => BindingProperty,
                 (o) => BindingProperty = o
             );
@@ -40,7 +39,7 @@ namespace OpenTabletDriver.UX.Windows
                 Spacing = 5,
                 Items = 
                 {
-                    new StackLayoutItem(bindingName)
+                    new StackLayoutItem(bindingPath)
                     {
                         HorizontalAlignment = HorizontalAlignment.Stretch
                     },
@@ -105,12 +104,12 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private string _bindingName, _bindingProperty;
+        private string _bindingPath, _bindingProperty;
 
-        private string BindingName
+        private string BindingPath
         {
-            set => _bindingName = value;
-            get => _bindingName;
+            set => _bindingPath = value;
+            get => _bindingPath;
         }
 
         private string BindingProperty
@@ -121,30 +120,84 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ClearBinding(object sender, EventArgs e)
         {
-            Return(string.Empty);
+            Close(BindingReference.None);
         }
 
         private void ApplyBinding(object sender, EventArgs e)
         {
-            Return($"{BindingName}: {BindingProperty}");
+            Close(new BindingReference(BindingPath, BindingProperty));
         }
 
-        public void Return(string result)
+        private GroupBox GetBindingSelector(Func<string> getValue, Action<string> setValue)
         {
-            Close(BindingReference.FromString(result));
-        }
+            var selector = new ComboBox();
+            var items = from type in PluginManager.GetChildTypes<IBinding>()
+                where !type.IsInterface
+                let pluginRef = new PluginReference(type)
+                select new ListItem
+                {
+                    Text = pluginRef.Name,
+                    Key = pluginRef.Path
+                };
 
-        private GroupBox GetControl(string header, Func<string> getValue, Action<string> setValue)
-        {
-            var textBox = new TextBox();
-            textBox.TextBinding.Bind(getValue, setValue);
+            selector.Items.AddRange(items);
+            selector.SelectedKeyBinding.Bind(
+                getValue,
+                setValue
+            );
 
             return new GroupBox
             {
-                Text = header,
+                Text = "Binding Type",
                 Padding = App.GroupBoxPadding,
-                Content = textBox
+                Content = selector
             };
+        }
+
+        private Control GetPropertySelector(ComboBox bindingSelector, Func<string> getValue, Action<string> setValue)
+        {
+            var selector = new ComboBox();
+            var generic = new TextBox();
+            generic.TextBinding.Bind(getValue, setValue);
+
+            var groupBox = new GroupBox
+            {
+                Text = "Binding Property",
+                Padding = App.GroupBoxPadding,
+                Content = generic
+            };
+
+            void updateControl()
+            {
+                var pluginRef = new PluginReference(BindingPath);
+                var type = pluginRef.GetTypeReference<IBinding>();
+                if (typeof(IValidateBinding).IsAssignableFrom(type))
+                {
+                    selector.Items.Clear();
+                    var binding = pluginRef.Construct<IValidateBinding>();
+                    var items = from item in binding.ValidProperties
+                        select new ListItem
+                        {
+                            Text = item,
+                            Key = item
+                        };
+
+                    selector.Items.AddRange(items);
+                    selector.SelectedKeyBinding.Bind(
+                        getValue,
+                        setValue
+                    );
+                    
+                    groupBox.Content = selector;
+                }
+                else
+                {
+                    groupBox.Content = generic;
+                }
+            }
+            bindingSelector.SelectedKeyChanged += (sender, e) => updateControl();
+            updateControl();
+            return groupBox;
         }
     }
 }
