@@ -24,30 +24,12 @@ namespace OpenTabletDriver.UX
             Application.Instance.UnhandledException += App.UnhandledException;
 
             Title = "OpenTabletDriver";
-            ClientSize = new Size(960, 720);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
 
-            if (SystemInfo.CurrentPlatform == RuntimePlatform.Windows)
-            {
-                var trayIcon = new TrayIcon(this);
-                this.WindowStateChanged += (sender, e) =>
-                {
-                    switch (this.WindowState)
-                    {
-                        case WindowState.Normal:
-                        case WindowState.Maximized:
-                            this.ShowInTaskbar = true;
-                            break;
-                        case WindowState.Minimized:
-                            this.ShowInTaskbar = false;
-                            this.Visible = false;
-                            break;
-                    }
-                };
-            }
+            ApplyPlatformQuirks();
 
             InitializeAsync();
         }
@@ -84,7 +66,7 @@ namespace OpenTabletDriver.UX
             relativeConfig = ConstructSensitivityControls();
             nullConfig = new Panel();
 
-            var outputConfig = new StackLayout
+            outputConfig = new StackLayout
             {
                 Padding = 5,
                 Spacing = 5,
@@ -521,6 +503,41 @@ namespace OpenTabletDriver.UX
             };
         }
 
+        private void ApplyPlatformQuirks()
+        {
+            Size? size = null;
+            Padding? padding = null;
+            
+            switch (SystemInfo.CurrentPlatform)
+            {
+                case RuntimePlatform.MacOS:
+                    padding = new Padding(10);
+                    size = new Size(970, 730);
+                    goto default;
+                default:
+                    var trayIcon = new TrayIcon(this);
+                    this.WindowStateChanged += (sender, e) =>
+                    {
+                        switch (this.WindowState)
+                        {
+                            case WindowState.Normal:
+                            case WindowState.Maximized:
+                                this.ShowInTaskbar = true;
+                                break;
+                            case WindowState.Minimized:
+                                this.ShowInTaskbar = false;
+                                this.Visible = false;
+                                break;
+                        }
+                    };
+                    Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
+                    break;
+            }
+
+            this.Padding = padding ?? new Padding(0);
+            this.ClientSize = size ?? new Size(960, 720);
+        }
+
         private async void InitializeAsync()
         {
             var appInfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
@@ -566,6 +583,7 @@ namespace OpenTabletDriver.UX
         }
 
         private Control absoluteConfig, relativeConfig, nullConfig;
+        private StackLayout outputConfig;
         private AreaEditor displayAreaEditor, tabletAreaEditor;
         private PluginManager<IFilter> filterEditor;
         private PluginManager<ITool> toolEditor;
@@ -713,9 +731,42 @@ namespace OpenTabletDriver.UX
         private void UpdateOutputMode(PluginReference pluginRef)
         {
             var outputMode = pluginRef.GetTypeReference<IOutputMode>();
-            absoluteConfig.Visible = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
-            relativeConfig.Visible = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
-            nullConfig.Visible = !(absoluteConfig.Visible || relativeConfig.Visible);
+            bool showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
+            bool showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
+            bool showNull = !(showAbsolute | showRelative);
+            switch (SystemInfo.CurrentPlatform)
+            {
+                case RuntimePlatform.Linux:
+                    absoluteConfig.Visible = showAbsolute;
+                    relativeConfig.Visible = showRelative;
+                    nullConfig.Visible = showNull;
+                    break;
+                default:
+                    absoluteConfig.Visible = true;
+                    relativeConfig.Visible = true;
+                    nullConfig.Visible = true;
+
+                    void setVisibilityWorkaround(Control control, bool visibility, int index)
+                    {
+                        var isContained = outputConfig.Items.Any(d => d.Control == control);
+                        if (!isContained & visibility)
+                        {
+                            if (outputConfig.Items.Count - index - 1 < 0)
+                                index = 0;
+                            outputConfig.Items.Insert(index, new StackLayoutItem(control, HorizontalAlignment.Stretch, true));
+                        }
+                        else if (isContained & !visibility)
+                        {
+                            var item = outputConfig.Items.FirstOrDefault(d => d.Control == control);
+                            outputConfig.Items.Remove(item);
+                        }
+                    }
+                    
+                    setVisibilityWorkaround(absoluteConfig, showAbsolute, 0);
+                    setVisibilityWorkaround(relativeConfig, showRelative, 1);
+                    setVisibilityWorkaround(nullConfig, showNull, 2);
+                    break;
+            }
         }
 
         private void ShowTabletDebugger()
