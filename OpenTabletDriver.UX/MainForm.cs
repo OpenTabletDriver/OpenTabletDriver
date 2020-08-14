@@ -345,16 +345,39 @@ namespace OpenTabletDriver.UX
                 var tipPressureSlider = new Slider
                 {
                     MinValue = 0,
-                    MaxValue = 100,
+                    MaxValue = 100
                 };
-                tipPressureSlider.Value = (int)Settings.TipActivationPressure;
-                tipPressureSlider.ValueChanged += (sender, e) => Settings.TipActivationPressure = tipPressureSlider.Value;
+                var tipPressureBox = new TextBox();
+
+                tipPressureSlider.ValueChanged += (sender, e) => 
+                {
+                    settings.TipActivationPressure = tipPressureSlider.Value;
+                    tipPressureBox.Text = Settings.TipActivationPressure.ToString();
+                    tipPressureBox.CaretIndex = tipPressureBox.Text.Length;
+                };
+
+                tipPressureBox.TextChanged += (sender, e) =>
+                {
+                    Settings.TipActivationPressure = float.TryParse(tipPressureBox.Text, out var val) ? val : 0f;
+                    tipPressureSlider.Value = (int)Settings.TipActivationPressure;
+                };
+                tipPressureBox.Text = Settings.TipActivationPressure.ToString();
+                
+                var tipPressureLayout = new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    Items = 
+                    {
+                        new StackLayoutItem(tipPressureSlider, VerticalAlignment.Center, true),
+                        new StackLayoutItem(tipPressureBox, VerticalAlignment.Center, false)
+                    }
+                };
 
                 var tipPressureGroup = new GroupBox
                 {
                     Text = "Tip Activation Pressure",
                     Padding = App.GroupBoxPadding,
-                    Content = tipPressureSlider
+                    Content = tipPressureLayout
                 };
                 tipBindingLayout.Items.Add(new StackLayoutItem(tipPressureGroup, HorizontalAlignment.Stretch, true));
                 layout.Items.Add(new StackLayoutItem(tipBindingLayout, true));
