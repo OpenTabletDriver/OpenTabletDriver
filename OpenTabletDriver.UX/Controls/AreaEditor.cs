@@ -13,17 +13,17 @@ namespace OpenTabletDriver.UX.Controls
             this.DataContext = new AreaViewModel();
             this.ContextMenu = new ContextMenu();
             
-            areaDisplay = new AreaDisplay(unit)
+            AreaDisplay = new AreaDisplay(unit)
             {
                 Padding = new Padding(5)
             };
-            areaDisplay.Bind(c => c.ViewModel.Width, ViewModel, m => m.Width);
-            areaDisplay.Bind(c => c.ViewModel.Height, ViewModel, m => m.Height);
-            areaDisplay.Bind(c => c.ViewModel.X, ViewModel, m => m.X);
-            areaDisplay.Bind(c => c.ViewModel.Y, ViewModel, m => m.Y);
-            areaDisplay.Bind(c => c.ViewModel.Rotation, ViewModel, m => m.Rotation);
-            areaDisplay.Bind(c => c.ViewModel.MaxWidth, ViewModel, m => m.MaxWidth);
-            areaDisplay.Bind(c => c.ViewModel.MaxHeight, ViewModel, m => m.MaxHeight);
+            AreaDisplay.Bind(c => c.ViewModel.Width, ViewModel, m => m.Width);
+            AreaDisplay.Bind(c => c.ViewModel.Height, ViewModel, m => m.Height);
+            AreaDisplay.Bind(c => c.ViewModel.X, ViewModel, m => m.X);
+            AreaDisplay.Bind(c => c.ViewModel.Y, ViewModel, m => m.Y);
+            AreaDisplay.Bind(c => c.ViewModel.Rotation, ViewModel, m => m.Rotation);
+            AreaDisplay.Bind(c => c.ViewModel.MaxWidth, ViewModel, m => m.MaxWidth);
+            AreaDisplay.Bind(c => c.ViewModel.MaxHeight, ViewModel, m => m.MaxHeight);
 
             widthBox = new TextBox();
             widthBox.TextBinding.Convert(
@@ -110,7 +110,7 @@ namespace OpenTabletDriver.UX.Controls
             TableCell[] cells = 
             {
                 new TableCell(scrollview),
-                new TableCell(areaDisplay, true)
+                new TableCell(AreaDisplay, true)
             };
             Content = TableLayout.Horizontal(5, cells);
 
@@ -238,18 +238,19 @@ namespace OpenTabletDriver.UX.Controls
                         break;
                     
                     if (ViewModel.X + (ViewModel.Width / 2) > ViewModel.MaxWidth)
-                        areaDisplay.ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2);
+                        AreaDisplay.ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2);
                     else if (ViewModel.X - (ViewModel.Width / 2) < 0)
-                        areaDisplay.ViewModel.X = ViewModel.Width / 2;
+                        AreaDisplay.ViewModel.X = ViewModel.Width / 2;
                     if (ViewModel.Y + (ViewModel.Height / 2) > ViewModel.MaxHeight)
-                        areaDisplay.ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2);
+                        AreaDisplay.ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2);
                     else if (ViewModel.Y - (ViewModel.Height / 2) < 0)
-                        areaDisplay.ViewModel.Y = ViewModel.Height / 2;
+                        AreaDisplay.ViewModel.Y = ViewModel.Height / 2;
                     break;
             }
         }
 
-        private AreaDisplay areaDisplay;
+        public AreaDisplay AreaDisplay { protected set; get; }
+
         private TextBox widthBox, heightBox, xOffsetBox, yOffsetBox, rotationBox;
     }
 }

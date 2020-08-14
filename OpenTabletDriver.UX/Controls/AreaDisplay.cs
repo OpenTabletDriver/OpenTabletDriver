@@ -25,6 +25,15 @@ namespace OpenTabletDriver.UX.Controls
         
         private void Draw(Graphics graphics)
         {
+            if (ViewModel.MaxHeight <= 0 | ViewModel.MaxWidth <= 0)
+            {
+                var errSize = graphics.MeasureString(Font, InvalidSizeError);
+                var x = (Width / 2) - (errSize.Width / 2);
+                var y = (Height / 2) - (errSize.Height / 2);
+                graphics.DrawText(Font, TextBrush, x, y, InvalidSizeError);
+                return;
+            }
+
             var background = new RectangleF(0, 0, ViewModel.MaxWidth, ViewModel.MaxHeight);
             var foreground = new RectangleF(
                 ViewModel.X - (ViewModel.Width / 2),
@@ -115,6 +124,8 @@ namespace OpenTabletDriver.UX.Controls
 
         private float pixelScale;
         private PointF? lastMouseLocation;
+
+        public string InvalidSizeError { set; get; } = "Invalid area size";
 
         private void BeginAreaDrag(MouseButtons buttons)
         {

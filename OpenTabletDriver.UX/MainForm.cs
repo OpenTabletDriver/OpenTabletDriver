@@ -183,6 +183,8 @@ namespace OpenTabletDriver.UX
         private Control ConstructTabletArea()
         {
             tabletAreaEditor = new AreaEditor("mm", true);
+            tabletAreaEditor.AreaDisplay.InvalidSizeError = "No tablet detected.";
+
             ViewModel.PropertyChanged += (sender, e) =>
             {
                 if (e.PropertyName == nameof(ViewModel.Settings))
