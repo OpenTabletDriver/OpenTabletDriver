@@ -81,11 +81,6 @@ namespace OpenTabletDriver.UX
             var displayAreaGroup = ConstructDisplayArea();
             var tabletAreaGroup = ConstructTabletArea();
 
-            var areaClipping = new CheckBox
-            {
-                Text = "Area Clipping"
-            };
-
             var outputModeSelector = ConstructOutputModeSelector();
             absoluteConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup);
             relativeConfig = ConstructSensitivityControls();
@@ -104,7 +99,7 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            bindingLayout = ConstructBindingLayout(3, 7);
+            var bindingLayout = ConstructBindingLayout();
 
             filterEditor = ConstructPluginManager<IFilter>(
                 () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),
@@ -350,17 +345,107 @@ namespace OpenTabletDriver.UX
             };
         }
 
-        private TableLayout ConstructBindingLayout(int columns, int rows)
+        private Control ConstructBindingLayout()
         {
-            var layout = new TableLayout(columns, rows)
+            var layout = new StackLayout()
             {
+                Orientation = Orientation.Horizontal,
                 Padding = new Padding(5),
-                Spacing = new Size(5, 5)
+                Spacing = 5
             };
-            for (int i = 0; i < columns; i++)
-                layout.SetColumnScale(i, true);
-            for (int i = 0; i < rows; i++)
-                layout.SetRowScale(i, false);
+
+            ViewModel.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(ViewModel.Settings))
+                {
+                    // Clear layout
+                    layout.Items.Clear();
+
+                    // Tip Binding
+                    var tipBindingLayout = new StackLayout
+                    {
+                        Spacing = 5
+                    };
+
+                    var tipBindingControl = new BindingDisplay(ViewModel.Settings.TipButton);
+                    tipBindingControl.BindingUpdated += (s, binding) => ViewModel.Settings.TipButton = binding.ToString();
+                    var tipBindingGroup = new GroupBox
+                    {
+                        Text = "Tip Binding",
+                        Padding = App.GroupBoxPadding,
+                        Content = tipBindingControl
+                    };
+                    tipBindingLayout.Items.Add(new StackLayoutItem(tipBindingGroup, HorizontalAlignment.Stretch, true));
+
+                    var tipPressureSlider = new Slider
+                    {
+                        MinValue = 0,
+                        MaxValue = 100,
+                    };
+                    tipPressureSlider.BindDataContext(c => c.Value, (MainFormViewModel m) => m.Settings.TipActivationPressure);
+
+                    var tipPressureGroup = new GroupBox
+                    {
+                        Text = "Tip Activation Pressure",
+                        Padding = App.GroupBoxPadding,
+                        Content = tipPressureSlider
+                    };
+                    tipBindingLayout.Items.Add(new StackLayoutItem(tipPressureGroup, HorizontalAlignment.Stretch, true));
+                    layout.Items.Add(new StackLayoutItem(tipBindingLayout, true));
+
+                    // Pen Bindings
+                    var penBindingLayout = new StackLayout
+                    {
+                        Spacing = 5
+                    };
+                    for (int i = 0; i < ViewModel.Settings.PenButtons.Count; i++)
+                    {
+                        var penBindingControl = new BindingDisplay(ViewModel.Settings.PenButtons[i])
+                        {
+                            Tag = i
+                        };
+                        penBindingControl.BindingUpdated += (sender, binding) =>
+                        {
+                            var index = (int)(sender as BindingDisplay).Tag;
+                            ViewModel.Settings.PenButtons[index] = binding.ToString();
+                        };
+                        var penBindingGroup = new GroupBox
+                        {
+                            Text = $"Pen Button {i + 1}",
+                            Padding = App.GroupBoxPadding,
+                            Content = penBindingControl
+                        };
+                        penBindingLayout.Items.Add(new StackLayoutItem(penBindingGroup, HorizontalAlignment.Stretch, true));
+                    }
+                    layout.Items.Add(new StackLayoutItem(penBindingLayout, true));
+
+                    // Aux Bindings
+                    var auxBindingLayout = new StackLayout
+                    {
+                        Spacing = 5
+                    };
+                    for (int i = 0; i < ViewModel.Settings.AuxButtons.Count; i++)
+                    {
+                        var auxBindingControl = new BindingDisplay(ViewModel.Settings.AuxButtons[i])
+                        {
+                            Tag = i
+                        };
+                        auxBindingControl.BindingUpdated += (sender, binding) =>
+                        {
+                            int index = (int)(sender as BindingDisplay).Tag;
+                            ViewModel.Settings.AuxButtons[index] = binding.ToString();
+                        };
+                        var auxBindingGroup = new GroupBox
+                        {
+                            Text = $"Express Key {i + 1}",
+                            Padding = App.GroupBoxPadding,
+                            Content = auxBindingControl
+                        };
+                        auxBindingLayout.Items.Add(new StackLayoutItem(auxBindingGroup, HorizontalAlignment.Stretch, true));
+                    }
+                    layout.Items.Add(new StackLayoutItem(auxBindingLayout, true));
+                }
+            };
             return layout;
         }
 
@@ -492,8 +577,6 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            UpdateBindingLayout();
-
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
             displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
             displayAreaEditor.ViewModel.MaxHeight = virtualScreen.Height;
@@ -501,7 +584,6 @@ namespace OpenTabletDriver.UX
 
         private Control absoluteConfig, relativeConfig, nullConfig;
         private AreaEditor displayAreaEditor, tabletAreaEditor;
-        private TableLayout bindingLayout;
         private PluginManager<IFilter> filterEditor;
         private PluginManager<ITool> toolEditor;
 
@@ -639,77 +721,6 @@ namespace OpenTabletDriver.UX
         {
             tabletAreaEditor.ViewModel.MaxWidth = tablet.Width;
             tabletAreaEditor.ViewModel.MaxHeight = tablet.Height;
-        }
-
-        private void UpdateBindingLayout()
-        {
-            // Tip Binding
-            var tipBindingControl = new BindingDisplay(ViewModel.Settings.TipButton);
-            tipBindingControl.BindingUpdated += (s, binding) => ViewModel.Settings.TipButton = binding.ToString();
-            var tipBindingGroup = new GroupBox
-            {
-                Text = "Tip Binding",
-                Padding = App.GroupBoxPadding,
-                Content = tipBindingControl
-            };
-            bindingLayout.Add(tipBindingGroup, 0, 0);
-
-            var tipPressureControl = new Slider
-            {
-                MinValue = 0,
-                MaxValue = 100,
-                Width = 150
-            };
-            tipPressureControl.BindDataContext(c => c.Value, (MainFormViewModel m) => m.Settings.TipActivationPressure);
-            var tipPressureGroup = new GroupBox
-            {
-                Text = "Tip Activation Pressure",
-                Padding = App.GroupBoxPadding,
-                Content = tipPressureControl
-            };
-            bindingLayout.Add(tipPressureGroup, 0, 1);
-
-            // Pen Bindings
-            for (int i = 0; i < ViewModel.Settings.PenButtons.Count; i++)
-            {
-                var penBindingControl = new BindingDisplay(ViewModel.Settings.PenButtons[i])
-                {
-                    Tag = i
-                };
-                penBindingControl.BindingUpdated += (sender, binding) =>
-                {
-                    var index = (int)(sender as BindingDisplay).Tag;
-                    ViewModel.Settings.PenButtons[index] = binding.ToString();
-                };
-                var penBindingGroup = new GroupBox
-                {
-                    Text = $"Pen Button {i + 1}",
-                    Padding = App.GroupBoxPadding,
-                    Content = penBindingControl
-                };
-                bindingLayout.Add(penBindingGroup, 1, i);
-            }
-
-            // Aux Bindings
-            for (int i = 0; i < ViewModel.Settings.AuxButtons.Count; i++)
-            {
-                var auxBindingControl = new BindingDisplay(ViewModel.Settings.AuxButtons[i])
-                {
-                    Tag = i
-                };
-                auxBindingControl.BindingUpdated += (sender, binding) =>
-                {
-                    int index = (int)(sender as BindingDisplay).Tag;
-                    ViewModel.Settings.AuxButtons[index] = binding.ToString();
-                };
-                var auxBindingGroup = new GroupBox
-                {
-                    Text = $"Express Key {i + 1}",
-                    Padding = App.GroupBoxPadding,
-                    Content = auxBindingControl
-                };
-                bindingLayout.Add(auxBindingGroup, 2, i);
-            }
         }
 
         private void UpdateOutputMode(PluginReference pluginRef)
