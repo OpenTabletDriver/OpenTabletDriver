@@ -61,11 +61,5 @@ namespace TabletDriverLib.Plugins
         {
             return Name == other.Name && Path == other.Path;
         }
-
-        public static readonly PluginReference Disable = new PluginReference
-        {
-            Name = "{Disable}",
-            Path = "{Disable}"
-        };
     }
 }

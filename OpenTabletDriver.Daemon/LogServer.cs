@@ -47,8 +47,8 @@ namespace OpenTabletDriver.Daemon
                 }
                 catch (IOException)
                 {
-                    // Wait for server to be ready
-                    await Task.Delay(100);
+                    // Delay to wait for the client to be ready
+                    await Task.Delay(1000);
                     continue;
                 }
                 catch (NullReferenceException)

@@ -1,3 +1,4 @@
+using System;
 using TabletDriverLib.Plugins;
 
 namespace TabletDriverLib.Binding
@@ -12,6 +13,10 @@ namespace TabletDriverLib.Binding
         {
             Binding = new PluginReference(bindingPath);
             BindingProperty = bindingProperty;
+        }
+
+        public BindingReference(Type type, string bindingProperty = null) : this(type.FullName, bindingProperty)
+        {
         }
 
         public PluginReference Binding { private set; get; }
@@ -42,6 +47,11 @@ namespace TabletDriverLib.Binding
         public string ToDisplayString()
         {
             return this.Equals(None) ? null : BindingTools.GetBindingString(Binding.ToString(), BindingProperty);
+        }
+
+        public static implicit operator string(BindingReference bindingRef)
+        {
+            return bindingRef.ToString();
         }
     }
 }

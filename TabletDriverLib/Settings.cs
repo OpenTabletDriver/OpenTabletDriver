@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using Newtonsoft.Json;
+using TabletDriverLib.Binding;
 using TabletDriverPlugin;
 
 namespace TabletDriverLib
@@ -293,7 +294,7 @@ namespace TabletDriverLib
             OutputMode = typeof(TabletDriverLib.Output.AbsoluteMode).FullName,
             AutoHook = true,
             EnableClipping = true,
-            TipButton = "TabletDriverLib.Binding.MouseBinding, Left",
+            TipButton = new BindingReference(typeof(TabletDriverLib.Binding.MouseBinding), "Left"),
             TipActivationPressure = 1,
             PenButtons = new ObservableCollection<string>(new string[2]),
             AuxButtons = new ObservableCollection<string>(new string[4]),

@@ -1,8 +1,9 @@
-﻿using Eto.Forms;
+﻿using System;
+using Eto.Forms;
 
 namespace OpenTabletDriver.UX
 {
-    public class TrayIcon
+    public class TrayIcon : IDisposable
     {
         public TrayIcon(MainForm window)
         {
@@ -30,7 +31,7 @@ namespace OpenTabletDriver.UX
             };
             close.Click += (sender, e) => window.Close();
 
-            var indicator = new TrayIndicator
+            indicator = new TrayIndicator
             {
                 Title = "OpenTabletDriver",
                 Image = App.Logo,
@@ -52,6 +53,14 @@ namespace OpenTabletDriver.UX
                 window.WindowStyle = WindowStyle.Default;
             };
             indicator.Show();
+        }
+
+        private TrayIndicator indicator;
+
+        public void Dispose()
+        {
+            indicator.Hide();
+            indicator.Dispose();
         }
     }
 }
