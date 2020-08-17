@@ -10,8 +10,15 @@ namespace TabletDriverLib.Interop.Input.Mouse
     
     public class WindowsVirtualMouse : WindowsVirtualPointer, IVirtualMouse
     {
+        private float xError, yError;
+
         public void Move(float dX, float dY)
         {
+            dX += xError;
+            dY += yError;
+            xError = dX % 1;
+            yError = dY % 1;
+
             var input = new INPUT
             {
                 type = INPUT_TYPE.MOUSE_INPUT,

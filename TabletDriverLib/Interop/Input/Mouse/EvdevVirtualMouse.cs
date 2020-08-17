@@ -38,8 +38,15 @@ namespace TabletDriverLib.Interop.Input.Mouse
             }
         }
 
+        private float xError, yError;
+
         public void Move(float dX, float dY)
         {
+            dX += xError;
+            dY += yError;
+            xError = dX % 1;
+            yError = dY % 1;
+            
             Device.Write(EventType.EV_REL, EventCode.REL_X, (int)dX);
             Device.Write(EventType.EV_REL, EventCode.REL_Y, (int)dY);
             Device.Sync();
