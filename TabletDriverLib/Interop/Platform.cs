@@ -12,10 +12,12 @@ namespace TabletDriverLib.Interop
 {
     public static class Platform
     {
+        public static IVirtualPointer VirtualPointer => _virtualMouse.IsValueCreated ? (IVirtualPointer)VirtualMouse : VirtualTablet;
         public static IVirtualTablet VirtualTablet => _virtualTablet.Value;
         public static IVirtualMouse VirtualMouse => _virtualMouse.Value;
         public static IVirtualKeyboard KeyboardHandler => _keyboardHandler.Value;
         public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
+
 
         private static Lazy<IVirtualTablet> _virtualTablet = new Lazy<IVirtualTablet>(() =>
         {
