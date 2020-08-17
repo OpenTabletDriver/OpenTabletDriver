@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using NativeLib;
 using TabletDriverLib.Interop;
-using TabletDriverLib.Interop.Keyboard;
+using TabletDriverLib.Interop.Input.Keyboard;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Platform.Keyboard;
@@ -18,7 +18,7 @@ namespace TabletDriverLib.Binding
         {
             get
             {
-                IKeyboardHandler keyboardHandler = Platform.KeyboardHandler;
+                IVirtualKeyboard keyboardHandler = Platform.KeyboardHandler;
                 return () => keyboardHandler.Press(Property);
             }
         }
@@ -27,7 +27,7 @@ namespace TabletDriverLib.Binding
         {
             get
             {
-                IKeyboardHandler keyboardHandler = Platform.KeyboardHandler;
+                IVirtualKeyboard keyboardHandler = Platform.KeyboardHandler;
                 return () => keyboardHandler.Release(Property);
             }
         }
@@ -35,9 +35,9 @@ namespace TabletDriverLib.Binding
         public string[] ValidProperties => 
             SystemInfo.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => WindowsKeyboardHandler.EtoKeysymToVK.Keys.ToArray(),
-                RuntimePlatform.Linux   => EvdevKeyboardHandler.EtoKeysymToEventCode.Keys.ToArray(),
-                RuntimePlatform.MacOS   => MacOSKeyboardHandler.EtoKeysymToVK.Keys.ToArray(),
+                RuntimePlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
+                RuntimePlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys.ToArray(),
+                RuntimePlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
                 _                       => null
             };
 

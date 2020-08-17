@@ -1,6 +1,6 @@
-namespace TabletDriverPlugin.Platform.Pointer
+﻿namespace TabletDriverPlugin.Platform.Pointer
 {
-    public interface IMouseHandler : IPointerHandler
+    public interface IVirtualPointer
     {
         void MouseDown(MouseButton button);
         void MouseUp(MouseButton button);

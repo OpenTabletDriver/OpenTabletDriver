@@ -65,7 +65,7 @@ namespace TabletDriverPlugin.Output
         }
 
         public IVirtualScreen VirtualScreen { set; get; }
-        public abstract IPointerHandler PointerHandler { get; }
+        public abstract IVirtualTablet VirtualTablet { get; }
         public bool AreaClipping { set; get; }
 
         internal void UpdateCache()
@@ -89,11 +89,11 @@ namespace TabletDriverPlugin.Output
             {
                 if (TabletProperties.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    if (PointerHandler is IPressureHandler pressureHandler)
+                    if (VirtualTablet is IPressureHandler pressureHandler)
                         pressureHandler.SetPressure((float)tabletReport.Pressure / (float)TabletProperties.MaxPressure);
                     
                     var pos = Transpose(tabletReport);
-                    PointerHandler.SetPosition(pos);
+                    VirtualTablet.SetPosition(pos);
                 }
             }
             HandleBinding(report);

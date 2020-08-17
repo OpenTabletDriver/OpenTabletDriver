@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Platform.Pointer;
 using TabletDriverPlugin.Tablet;
@@ -27,7 +28,7 @@ namespace TabletDriverPlugin.Output
             get => _filters;
         }
 
-        public abstract IPointerHandler PointerHandler { get; }
+        public abstract IVirtualMouse VirtualMouse { get; }
 
         public float XSensitivity { set; get; }
         public float YSensitivity { set; get; }
@@ -35,7 +36,6 @@ namespace TabletDriverPlugin.Output
 
         private ITabletReport _lastReport;
         private DateTime _lastReceived;
-        private Point _lastPosition;
 
         public virtual void Read(IDeviceReport report)
         {
@@ -45,23 +45,22 @@ namespace TabletDriverPlugin.Output
                 {
                     if (Transpose(tabletReport) is Point pos)
                     {
-                        if (PointerHandler is IPressureHandler pressureHandler)
+                        if (VirtualMouse is IPressureHandler pressureHandler)
                             pressureHandler.SetPressure((float)tabletReport.Pressure / (float)TabletProperties.MaxPressure);
                         
-                        PointerHandler.SetPosition(pos);
+                        VirtualMouse.Move(pos.X, pos.Y);
                     }
                 }
             }
             HandleBinding(report);
         }
         
-        internal Point Transpose(ITabletReport report)
+        protected Point Transpose(ITabletReport report)
         {
             var difference = DateTime.Now - _lastReceived;
             if (difference > ResetTime && _lastReceived != default)
             {
                 _lastReport = null;
-                _lastPosition = null;
             }
 
             if (_lastReport != null)
@@ -84,13 +83,11 @@ namespace TabletDriverPlugin.Output
                 pos.X *= XSensitivity;
                 pos.Y *= YSensitivity;
                 
-                // Translate by cursor position
-                pos += _lastPosition ??= PointerHandler.GetPosition() ?? new Point(0, 0);
-
                 // Post Filter
                 foreach (IFilter filter in _postFilters)
                     pos = filter.Filter(pos);
 
+                _lastReport = report;
                 return pos;
             }
             

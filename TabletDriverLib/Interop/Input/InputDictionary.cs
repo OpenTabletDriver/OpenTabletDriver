@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TabletDriverPlugin.Platform.Pointer;
 
-namespace TabletDriverLib.Interop.Mouse
+namespace TabletDriverLib.Interop.Input
 {
     public class InputDictionary : IDictionary<MouseButton, bool>
     {

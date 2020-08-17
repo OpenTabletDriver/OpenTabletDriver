@@ -9,6 +9,5 @@ namespace TabletDriverPlugin.Output
         void Read(IDeviceReport report);
         IEnumerable<IFilter> Filters { set; get; }
         TabletProperties TabletProperties { set; get; }
-        IPointerHandler PointerHandler { get; }
     }
 }

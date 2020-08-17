@@ -8,6 +8,6 @@ namespace TabletDriverLib.Output
     [PluginName("Absolute Mode")]
     public class AbsoluteMode : AbsoluteOutputMode
     {
-        public override IPointerHandler PointerHandler => Platform.MouseHandler;
+        public override IVirtualTablet VirtualTablet => Platform.VirtualTablet;
     }
 }
