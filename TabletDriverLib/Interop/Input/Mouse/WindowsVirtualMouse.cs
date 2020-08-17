@@ -28,7 +28,7 @@ namespace TabletDriverLib.Interop.Input.Mouse
                     {
                         dx = (int)dX,
                         dy = (int)dY,
-                        dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK,
+                        dwFlags = MOUSEEVENTF.MOVE,
                         time = 0,
                         dwExtraInfo = UIntPtr.Zero
                     }
