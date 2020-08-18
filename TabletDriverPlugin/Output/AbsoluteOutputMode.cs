@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Platform.Display;
@@ -144,16 +145,7 @@ namespace TabletDriverPlugin.Output
 
             // Clipping to display bounds
             if (AreaClipping)
-            {
-                if (pos.X < _minX)
-                    pos.X = _minX;
-                if (pos.X > _maxX)
-                    pos.X = _maxX;
-                if (pos.Y < _minY)
-                    pos.Y = _minY;
-                if (pos.Y > _maxY)
-                    pos.Y = _maxY;
-            }
+                pos.Clamp(_minX, _maxX, _minY, _maxY);
 
             // Post Filter
             foreach (IFilter filter in _postFilters)
