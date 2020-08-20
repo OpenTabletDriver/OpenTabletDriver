@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using TabletDriverPlugin.Platform.Keyboard;
 
-namespace TabletDriverLib.Interop.Keyboard
+namespace TabletDriverLib.Interop.Input.Keyboard
 {
     using static Windows;
 
-    public class WindowsKeyboardHandler : IKeyboardHandler
+    public class WindowsVirtualKeyboard : IVirtualKeyboard
     {
         private void KeyPress(string key, bool isPress)
         {

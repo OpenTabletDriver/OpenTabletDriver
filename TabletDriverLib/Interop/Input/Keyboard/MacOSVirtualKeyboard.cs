@@ -1,21 +1,21 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using NativeLib.OSX;
 using NativeLib.OSX.Generic;
 using NativeLib.OSX.Input;
 using TabletDriverPlugin.Platform.Keyboard;
 
-namespace TabletDriverLib.Interop.Keyboard
+namespace TabletDriverLib.Interop.Input.Keyboard
 {
     using static OSX;
 
-    public class MacOSKeyboardHandler : IKeyboardHandler
+    public class MacOSVirtualKeyboard : IVirtualKeyboard
     {
         private void KeyPress(string key, bool isPress)
         {
             if (EtoKeysymToVK.TryGetValue(key, out var code))
             {
-                var keyEvent  = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
+                var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
                 CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
                 CFRelease(keyEvent);
             }
@@ -92,7 +92,7 @@ namespace TabletDriverLib.Interop.Keyboard
             { "End", CGKeyCode.kVK_End },
             { "Divide", CGKeyCode.kVK_ANSI_KeypadDivide },
             { "Decimal", CGKeyCode.kVK_ANSI_KeypadDecimal },
-            { "Backspace", CGKeyCode.kVK_Delete }, 
+            { "Backspace", CGKeyCode.kVK_Delete },
             { "Up", CGKeyCode.kVK_UpArrow },
             { "Down", CGKeyCode.kVK_DownArrow },
             { "Left", CGKeyCode.kVK_LeftArrow },

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Linq;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Platform.Display;
@@ -65,7 +66,7 @@ namespace TabletDriverPlugin.Output
         }
 
         public IVirtualScreen VirtualScreen { set; get; }
-        public abstract IPointerHandler PointerHandler { get; }
+        public abstract IVirtualTablet VirtualTablet { get; }
         public bool AreaClipping { set; get; }
 
         internal void UpdateCache()
@@ -89,11 +90,11 @@ namespace TabletDriverPlugin.Output
             {
                 if (TabletProperties.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    if (PointerHandler is IPressureHandler pressureHandler)
+                    if (VirtualTablet is IPressureHandler pressureHandler)
                         pressureHandler.SetPressure((float)tabletReport.Pressure / (float)TabletProperties.MaxPressure);
                     
                     var pos = Transpose(tabletReport);
-                    PointerHandler.SetPosition(pos);
+                    VirtualTablet.SetPosition(pos);
                 }
             }
             HandleBinding(report);
@@ -144,16 +145,7 @@ namespace TabletDriverPlugin.Output
 
             // Clipping to display bounds
             if (AreaClipping)
-            {
-                if (pos.X < _minX)
-                    pos.X = _minX;
-                if (pos.X > _maxX)
-                    pos.X = _maxX;
-                if (pos.Y < _minY)
-                    pos.Y = _minY;
-                if (pos.Y > _maxY)
-                    pos.Y = _maxY;
-            }
+                pos.Clamp(_minX, _maxX, _minY, _maxY);
 
             // Post Filter
             foreach (IFilter filter in _postFilters)

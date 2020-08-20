@@ -1,48 +1,21 @@
-﻿using System;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using TabletDriverPlugin;
+using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Platform.Pointer;
 
-namespace TabletDriverLib.Interop.Mouse
+namespace TabletDriverLib.Interop.Input
 {
     using static Windows;
-
-    public class WindowsMouseHandler : IMouseHandler
+    
+    [PluginIgnore]
+    public abstract class WindowsVirtualPointer : IVirtualPointer
     {
-        private Point _last;
+        protected Point _last;
 
-        public Point GetPosition()
+        protected void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
-            return _last;
-        }
-
-        public void SetPosition(Point pos)
-        {
-            var input = new INPUT
-            {
-                type = INPUT_TYPE.MOUSE_INPUT,
-                U = new InputUnion
-                {
-                    mi = new MOUSEINPUT
-                    {
-                        dx = (int)(pos.X / Platform.VirtualScreen.Width * 65535),
-                        dy = (int)(pos.Y / Platform.VirtualScreen.Height * 65535),
-                        dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK,
-                        time = 0,
-                        dwExtraInfo = UIntPtr.Zero
-                    }
-                }
-            };
-            var inputs = new INPUT[] { input };
-            SendInput((uint)inputs.Length, inputs, INPUT.Size);
-            _last = pos;
-        }
-
-        private void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
-        {
-            var pos = GetPosition();
-            mouse_event((uint)arg, (uint)pos.X, (uint)pos.Y, dwData, 0);
+            mouse_event((uint)arg, (uint)_last.X, (uint)_last.Y, dwData, 0);
         }
 
         public void MouseDown(MouseButton button)

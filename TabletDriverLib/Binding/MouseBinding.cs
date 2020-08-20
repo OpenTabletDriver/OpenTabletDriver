@@ -16,7 +16,7 @@ namespace TabletDriverLib.Binding
         {
             get 
             {
-                IMouseHandler mouseHandler = Platform.MouseHandler;
+                IVirtualPointer mouseHandler = Platform.VirtualPointer;
                 if (Enum.TryParse<MouseButton>(Property, true, out var mouseButton))
                     return () => mouseHandler.MouseDown(mouseButton);
                 else
@@ -28,7 +28,7 @@ namespace TabletDriverLib.Binding
         {
             get
             {
-                IMouseHandler mouseHandler = Platform.MouseHandler;
+                IVirtualPointer mouseHandler = Platform.VirtualPointer;
                 if (Enum.TryParse<MouseButton>(Property, true, out var mouseButton))
                     return () => mouseHandler.MouseUp(mouseButton);
                 else

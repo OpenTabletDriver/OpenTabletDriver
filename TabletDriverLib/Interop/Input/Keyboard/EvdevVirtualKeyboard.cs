@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NativeLib.Linux;
@@ -6,11 +6,11 @@ using NativeLib.Linux.Evdev;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Keyboard;
 
-namespace TabletDriverLib.Interop.Keyboard
+namespace TabletDriverLib.Interop.Input.Keyboard
 {
-    public class EvdevKeyboardHandler : IKeyboardHandler, IDisposable
+    public class EvdevVirtualKeyboard : IVirtualKeyboard, IDisposable
     {
-        public EvdevKeyboardHandler()
+        public EvdevVirtualKeyboard()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Keyboard");
 

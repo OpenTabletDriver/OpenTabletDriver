@@ -25,6 +25,12 @@ namespace TabletDriverPlugin
             return (float)Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
         }
 
+        public void Clamp(float minX, float maxX, float minY, float maxY)
+        {
+            X = Math.Clamp(X, minX, maxX);
+            Y = Math.Clamp(Y, minY, maxY);
+        }
+
         #region Overrides
 
         public override string ToString()

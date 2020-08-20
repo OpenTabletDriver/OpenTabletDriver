@@ -1,44 +1,27 @@
-﻿using System;
-using System.Linq;
 using NativeLib.OSX;
 using NativeLib.OSX.Generic;
 using NativeLib.OSX.Input;
+using System;
+using System.Linq;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Pointer;
 
-namespace TabletDriverLib.Interop.Mouse
+namespace TabletDriverLib.Interop.Input
 {
     using static OSX;
-
-    public class MacOSMouseHandler : IMouseHandler
+    
+    public abstract class MacOSVirtualPointer : IVirtualPointer
     {
-        public MacOSMouseHandler()
+        protected MacOSVirtualPointer()
         {
             var primary = Platform.VirtualScreen.Displays.FirstOrDefault();
             offset = new CGPoint(primary.Position.X, primary.Position.Y);
         }
 
-        private InputDictionary InputDictionary = new InputDictionary();
-
-        private CGPoint offset;
-        private CGEventType moveEvent = CGEventType.kCGEventMouseMoved;
-        private CGMouseButton pressedButtons;
-
-        public Point GetPosition()
-        {
-            var eventRef = CGEventCreate(IntPtr.Zero);
-            CGPoint cursor = CGEventGetLocation(eventRef) + offset;
-            CFRelease(eventRef);
-            return new Point((float)cursor.x, (float)cursor.y);
-        }
-
-        public void SetPosition(Point pos)
-        {
-            var newPos = new CGPoint(pos.X, pos.Y) - offset;
-            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, moveEvent, newPos, pressedButtons);
-            CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
-            CFRelease(mouseEventRef);
-        }
+        protected InputDictionary inputDictionary = new InputDictionary();
+        protected CGEventType moveEvent = CGEventType.kCGEventMouseMoved;
+        protected CGPoint offset;
+        protected CGMouseButton pressedButtons;
 
         public void MouseDown(MouseButton button)
         {
@@ -114,14 +97,22 @@ namespace TabletDriverLib.Interop.Mouse
 
         private bool GetMouseButtonState(MouseButton button)
         {
-            return InputDictionary.TryGetValue(button, out var state) ? state : false;
+            return inputDictionary.TryGetValue(button, out var state) ? state : false;
         }
 
         private void SetMouseButtonState(MouseButton button, bool newState)
         {
-            InputDictionary.UpdateState(button, newState);
+            inputDictionary.UpdateState(button, newState);
             moveEvent = GetMoveEventType();
             pressedButtons = GetPressedCGButtons();
+        }
+
+        protected Point GetPosition()
+        {
+            var eventRef = CGEventCreate(IntPtr.Zero);
+            CGPoint cursor = CGEventGetLocation(eventRef) + offset;
+            CFRelease(eventRef);
+            return new Point((float)cursor.x, (float)cursor.y);
         }
 
         private CGEventType GetMoveEventType()

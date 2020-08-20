@@ -13,6 +13,6 @@ namespace TabletDriverLib.Output
     [PluginName("Relative Mode")]
     public class RelativeMode : RelativeOutputMode
     {
-        public override IPointerHandler PointerHandler => Platform.MouseHandler;
+        public override IVirtualMouse VirtualMouse => Platform.VirtualMouse;
     }
 }
