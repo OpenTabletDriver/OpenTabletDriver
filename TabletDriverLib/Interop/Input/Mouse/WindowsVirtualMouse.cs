@@ -36,6 +36,7 @@ namespace TabletDriverLib.Interop.Input.Mouse
             };
             var inputs = new INPUT[] { input };
             SendInput((uint)inputs.Length, inputs, INPUT.Size);
+            _last = new Point(dX, dY);
         }
     }
 }
