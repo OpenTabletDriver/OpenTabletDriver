@@ -454,7 +454,7 @@ namespace OpenTabletDriver.UX
             aboutCommand.Executed += (sender, e) => App.AboutDialog.ShowDialog(this);
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
-            resetSettings.Executed += async (sender, e) => await ResetSettings(true);
+            resetSettings.Executed += async (sender, e) => await ResetSettings(false);
 
             var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
             loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
