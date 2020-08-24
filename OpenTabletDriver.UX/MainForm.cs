@@ -631,7 +631,7 @@ namespace OpenTabletDriver.UX
 
         private async Task ResetSettings(bool force=true)
         {
-            if (!force || MessageBox.Show("Reset settings to default?", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
+            if (!force || MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
