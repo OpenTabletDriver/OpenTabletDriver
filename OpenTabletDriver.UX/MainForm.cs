@@ -631,6 +631,9 @@ namespace OpenTabletDriver.UX
 
         private async Task ResetSettings()
         {
+            if (MessageBox.Show("Reset settings to default?", MessageBoxButtons.OKCancel) != DialogResult.Ok)
+                return;
+
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
             var tablet = await App.DriverDaemon.InvokeAsync(d => d.GetTablet());
             Settings = TabletDriverLib.Settings.Defaults;
