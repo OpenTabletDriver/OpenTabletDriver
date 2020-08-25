@@ -6,7 +6,7 @@
     "InputReportLength": 10,
     "OutputReportLength": 0,
     "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
-    "FeatureInitReport": null,
+    "FeatureInitReport": "AgI=",
     "OutputInitReport": null
   },
   "AlternateDigitizerIdentifier": {

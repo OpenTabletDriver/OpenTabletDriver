@@ -5,7 +5,7 @@
     "ProductID": 891,
     "InputReportLength": 10,
     "OutputReportLength": 0,
-    "ReportParser": "",
+    "ReportParser": null,
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
