@@ -629,7 +629,7 @@ namespace OpenTabletDriver.UX
             get => App.Settings;
         }
 
-        private async Task ResetSettings(bool force=true)
+        private async Task ResetSettings(bool force = true)
         {
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
