@@ -454,7 +454,7 @@ namespace OpenTabletDriver.UX
             aboutCommand.Executed += (sender, e) => App.AboutDialog.ShowDialog(this);
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
-            resetSettings.Executed += async (sender, e) => await ResetSettings();
+            resetSettings.Executed += async (sender, e) => await ResetSettings(false);
 
             var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
             loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
@@ -629,9 +629,9 @@ namespace OpenTabletDriver.UX
             get => App.Settings;
         }
 
-        private async Task ResetSettings()
+        private async Task ResetSettings(bool force = true)
         {
-            if (MessageBox.Show("Reset settings to default?", MessageBoxButtons.OKCancel) != DialogResult.Ok)
+            if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
             var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
