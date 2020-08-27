@@ -7,7 +7,7 @@
     "OutputReportLength": 8,
     "ReportParser": "TabletDriverLib.Vendors.XP_Pen.XP_PenReportParser",
     "FeatureInitReport": null,
-    "OutputInitReport": "ArAEAAAAAAA="
+    "OutputInitReport": "ArAE"
   },
   "AlternateDigitizerIdentifier": {
     "VendorID": 0,

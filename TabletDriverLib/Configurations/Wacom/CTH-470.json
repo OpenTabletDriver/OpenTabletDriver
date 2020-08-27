@@ -6,7 +6,7 @@
     "InputReportLength": 10,
     "OutputReportLength": 0,
     "ReportParser": null,
-    "FeatureInitReport": null,
+    "FeatureInitReport": "AgI=",
     "OutputInitReport": null
   },
   "AlternateDigitizerIdentifier": {
