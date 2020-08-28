@@ -9,6 +9,16 @@ namespace TabletDriverLib.Vendors.Wacom
         {
             Raw = report;
 
+            if (report.Length < 10)
+            {
+                // Discard first tablet report or whenever report length is insufficient
+                ReportID = 0;
+                Position = new Point(0, 0);
+                Pressure = 0;
+                PenButtons = new bool[] { false, false };
+                return;
+            }
+
             ReportID = report[0];
             var x = (report[2] | (report[3] << 8) | (report[4] << 16));
             var y = (report[5] | (report[6] << 8) | (report[7] << 16));
