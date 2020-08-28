@@ -106,7 +106,7 @@ namespace OpenTabletDriver.UX
             );
 
             // Main Content
-            return new TabControl
+            var tabControl = new TabControl
             {
                 Pages =
                 {
@@ -137,6 +137,34 @@ namespace OpenTabletDriver.UX
                         Text = "Console",
                         Content = new LogView()
                     }
+                }
+            };
+
+            var commandsPanel = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalContentAlignment = HorizontalAlignment.Right,
+                Padding = new Padding(0, 5),
+                Spacing = 5,
+                Items =
+                {
+                    new Button(async (s, e) => await SaveSettings())
+                    {
+                        Text = "Save"
+                    },
+                    new Button(async (s, e) => await ApplySettings())
+                    {
+                        Text = "Apply"
+                    }
+                }
+            };
+
+            return new StackLayout
+            {
+                Items =
+                {
+                    new StackLayoutItem(tabControl, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(commandsPanel, HorizontalAlignment.Right)
                 }
             };
         }
@@ -536,8 +564,8 @@ namespace OpenTabletDriver.UX
 
             this.ClientSize = SystemInfo.CurrentPlatform switch
             {
-                RuntimePlatform.MacOS => new Size(970, 730),
-                _ => new Size(960, 720)
+                RuntimePlatform.MacOS => new Size(970, 770),
+                _ => new Size(960, 760)
             };
 
             bool enableTrayIcon = SystemInfo.CurrentPlatform switch
