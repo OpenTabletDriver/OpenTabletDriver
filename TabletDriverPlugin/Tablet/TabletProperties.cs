@@ -68,6 +68,18 @@ namespace TabletDriverPlugin.Tablet
         /// </summary>
         public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Device strings to match against, used for identification.
+        /// </summary>
+        /// <typeparam name="uint">The index to query</typeparam>
+        /// <typeparam name="string">The value to match to the queried index</typeparam>
+        public Dictionary<byte, string> DeviceStrings { set; get; } = new Dictionary<byte, string>();
+
+        /// <summary>
+        /// Device strings to query to initialize device endpoints.
+        /// </summary>
+        public List<byte> InitializationStrings { set; get; } = new List<byte>();
+
         #region Json Serialization
             
         public void Write(FileInfo file)
