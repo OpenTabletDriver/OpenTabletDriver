@@ -38,7 +38,7 @@ No other dependencies.
 
 #### MacOS [Experimental]
 
-No other dependencies.
+- .NET 5 SDK
 
 # Features
 

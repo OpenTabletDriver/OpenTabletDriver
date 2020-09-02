@@ -14,7 +14,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.103
+          dotnet-version: 5.0.100-preview.8.20417.9
       - name: Linux Build
         env:
           runtime: linux-x64
@@ -26,7 +26,7 @@ jobs:
         env:
           runtime: osx-x64
         run: |
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
+          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework net5 -o build/$runtime
           dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
           dotnet build OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
       - name: Copy Configurations
@@ -52,7 +52,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.103
+          dotnet-version: 5.0.100-preview.8.20417.9
       - name: Windows Publish
         env:
           runtime: win-x64

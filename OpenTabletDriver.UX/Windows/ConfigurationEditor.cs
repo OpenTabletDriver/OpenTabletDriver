@@ -242,7 +242,7 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        private IEnumerable<Control> GeneratePropertyControls() => new List<Control>
+        private IEnumerable<Control> GeneratePropertyControls() => new Control[]
             {
                 GetControl("Name",
                     () => SelectedConfiguration.Name,
@@ -294,7 +294,7 @@ namespace OpenTabletDriver.UX.Windows
                     GetControl("Report Parser",
                         () => SelectedConfiguration.DigitizerIdentifier.ReportParser,
                         (o) => SelectedConfiguration.DigitizerIdentifier.ReportParser = o,
-                        typeof(TabletReportParser).FullName
+                        placeholder: typeof(TabletReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
                         () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
@@ -305,7 +305,7 @@ namespace OpenTabletDriver.UX.Windows
                         (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 ),
-                GetExpander("Alternate Tablet Identifiers", false,
+                GetExpander("Alternate Tablet Identifiers", isExpanded: false,
                     GetControl("Vendor ID",
                         () => SelectedConfiguration.AlternateDigitizerIdentifier.VendorID.ToString(),
                         (o) => SelectedConfiguration.AlternateDigitizerIdentifier.VendorID = int.TryParse(o, out var val) ? val : 0
@@ -325,7 +325,7 @@ namespace OpenTabletDriver.UX.Windows
                     GetControl("Report Parser",
                         () => SelectedConfiguration.AlternateDigitizerIdentifier.ReportParser,
                         (o) => SelectedConfiguration.AlternateDigitizerIdentifier.ReportParser = o,
-                        typeof(TabletReportParser).FullName
+                        placeholder: typeof(TabletReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
                         () => SelectedConfiguration.AlternateDigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
@@ -356,7 +356,7 @@ namespace OpenTabletDriver.UX.Windows
                     GetControl("Report Parser",
                         () => SelectedConfiguration.AuxilaryDeviceIdentifier.ReportParser,
                         (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.ReportParser = o,
-                        typeof(AuxReportParser).FullName
+                        placeholder: typeof(AuxReportParser).FullName
                     ),
                     GetControl("Feature Initialization Report",
                         () => SelectedConfiguration.AuxilaryDeviceIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
@@ -367,10 +367,42 @@ namespace OpenTabletDriver.UX.Windows
                         (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputInitReport = ToByteArray(o)
                     )
                 ),
-                GetExpander("Advanced", false,
+                GetExpander("Advanced", isExpanded: false,
                     GetDictionaryControl("Attributes",
                         () => SelectedConfiguration.Attributes,
                         (o) => SelectedConfiguration.Attributes = o
+                    ),
+                    GetDictionaryControl("Device Strings",
+                        () =>
+                        {
+                            var dictionaryBuffer = new Dictionary<string, string>();
+                            foreach (var pair in SelectedConfiguration.DeviceStrings)
+                                dictionaryBuffer.Add($"{pair.Key}", pair.Value);
+                            return dictionaryBuffer;
+                        },
+                        (o) =>
+                        {
+                            SelectedConfiguration.DeviceStrings.Clear();
+                            foreach (KeyValuePair<string, string> pair in o)
+                                if (byte.TryParse(pair.Key, out var keyByte))
+                                    SelectedConfiguration.DeviceStrings.Add(keyByte, pair.Value);
+                        }
+                    ),
+                    GetListControl("Initialization String Indexes",
+                        () =>
+                        {
+                            var listBuffer = new List<string>();
+                            foreach (var value in SelectedConfiguration.InitializationStrings)
+                                listBuffer.Add($"{value}");
+                            return listBuffer;
+                        },
+                        (o) =>
+                        {
+                            SelectedConfiguration.InitializationStrings.Clear();
+                            foreach (string value in o)
+                                if (byte.TryParse(value, out var byteValue))
+                                    SelectedConfiguration.InitializationStrings.Add(byteValue);
+                        }
                     )
                 )
             };
@@ -417,6 +449,34 @@ namespace OpenTabletDriver.UX.Windows
             }
 
             return expander;
+        }
+
+        private Control GetListControl(
+            string groupName,
+            Func<IEnumerable<string>> getValue,
+            Action<IEnumerable<string>> setValue
+        )
+        {
+            var textArea = new TextArea();
+            textArea.TextBinding.Bind(
+                () => 
+                {
+                    StringBuilder buffer = new StringBuilder();
+                    foreach (string value in getValue())
+                        buffer.AppendLine(value);
+                    return buffer.ToString();
+                },
+                (o) => 
+                {
+                    setValue(o.Split(Environment.NewLine));
+                }
+            );
+            return new GroupBox
+            {
+                Text = groupName,
+                Padding = App.GroupBoxPadding,
+                Content = textArea
+            };
         }
 
         private GroupBox GetDictionaryControl(
