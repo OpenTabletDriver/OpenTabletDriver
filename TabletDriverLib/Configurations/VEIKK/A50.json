@@ -1,8 +1,8 @@
 {
-  "Name": "VEIKK S640",
+  "Name": "VEIKK A50",
   "DigitizerIdentifier": {
     "VendorID": 12267,
-    "ProductID": 1,
+    "ProductID": 3,
     "InputReportLength": 9,
     "OutputReportLength": 0,
     "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
@@ -27,10 +27,10 @@
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
-  "Width": 152.4,
-  "Height": 101.6,
-  "MaxX": 30480.0,
-  "MaxY": 20320.0,
+  "Width": 254.0,
+  "Height": 152.4,
+  "MaxX": 50800.0,
+  "MaxY": 30480.0,
   "MaxPressure": 8191,
   "ActiveReportID": {
     "Start": 64,
