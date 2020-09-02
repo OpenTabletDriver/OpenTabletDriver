@@ -67,6 +67,7 @@ namespace TabletDriverPlugin.Output
 
         public IVirtualScreen VirtualScreen { set; get; }
         public abstract IVirtualTablet VirtualTablet { get; }
+        public IVirtualPointer Pointer => VirtualTablet;
         public bool AreaClipping { set; get; }
 
         internal void UpdateCache()
