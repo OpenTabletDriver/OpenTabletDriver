@@ -1,9 +1,9 @@
 {
-  "Name": "Huion H420",
+  "Name": "Huion H610 Pro",
   "DigitizerIdentifier": {
     "VendorID": 9580,
-    "ProductID": 110,
-    "InputReportLength": 8,
+    "ProductID": 109,
+    "InputReportLength": 4,
     "OutputReportLength": 0,
     "ReportParser": null,
     "FeatureInitReport": null,
@@ -27,19 +27,22 @@
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
-  "Width": 105.918,
-  "Height": 59.436,
-  "MaxX": 8340.0,
-  "MaxY": 4680.0,
-  "MaxPressure": 2047,
+  "Width": 254.0,
+  "Height": 158.75,
+  "MaxX": 40000.0,
+  "MaxY": 25000.0,
+  "MaxPressure": 8191,
   "ActiveReportID": {
-    "Start": 128,
+    "Start": 0,
     "StartInclusive": false,
     "End": null,
     "EndInclusive": false
   },
   "Attributes": {},
-  "DeviceStrings": {},
+  "DeviceStrings": {
+    "0": "HVAN",
+    "33": "HA60"
+  },
   "InitializationStrings": [
     0,
     0

@@ -1,8 +1,8 @@
 {
-  "Name": "Huion H420",
+  "Name": "Huion 420",
   "DigitizerIdentifier": {
     "VendorID": 9580,
-    "ProductID": 110,
+    "ProductID": 109,
     "InputReportLength": 8,
     "OutputReportLength": 0,
     "ReportParser": null,

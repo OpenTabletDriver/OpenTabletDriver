@@ -1,8 +1,8 @@
 {
-  "Name": "Huion H420",
+  "Name": "Huion osu!tablet",
   "DigitizerIdentifier": {
     "VendorID": 9580,
-    "ProductID": 110,
+    "ProductID": 109,
     "InputReportLength": 8,
     "OutputReportLength": 0,
     "ReportParser": null,
@@ -27,8 +27,8 @@
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
-  "Width": 105.918,
-  "Height": 59.436,
+  "Width": 101.6,
+  "Height": 56.6,
   "MaxX": 8340.0,
   "MaxY": 4680.0,
   "MaxPressure": 2047,
@@ -39,7 +39,9 @@
     "EndInclusive": false
   },
   "Attributes": {},
-  "DeviceStrings": {},
+  "DeviceStrings": {
+    "0": "HVAN"
+  },
   "InitializationStrings": [
     0,
     0
