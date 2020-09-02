@@ -29,6 +29,7 @@ namespace TabletDriverPlugin.Output
         }
 
         public abstract IVirtualMouse VirtualMouse { get; }
+        public IVirtualPointer Pointer => VirtualMouse;
 
         public float XSensitivity { set; get; }
         public float YSensitivity { set; get; }
