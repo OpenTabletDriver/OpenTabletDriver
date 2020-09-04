@@ -33,17 +33,20 @@
   "MaxY": 4680.0,
   "MaxPressure": 2047,
   "ActiveReportID": {
-    "Start": 128,
-    "StartInclusive": false,
+    "Start": 64,
+    "StartInclusive": true,
     "End": null,
     "EndInclusive": false
   },
   "Attributes": {},
   "DeviceStrings": {
-    "6": "420"
+    "6": "H420"
   },
   "InitializationStrings": [
-    121,
+    100,
+    99,
+    101,
+    123,
     122
   ]
 }
