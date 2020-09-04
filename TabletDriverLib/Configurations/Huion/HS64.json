@@ -38,5 +38,12 @@
     "End": null,
     "EndInclusive": false
   },
-  "Attributes": {}
+  "Attributes": {},
+  "DeviceStrings": {
+    "201": "HUION_T193_190307"
+  },
+  "InitializationStrings": [
+    200,
+    202
+  ]
 }

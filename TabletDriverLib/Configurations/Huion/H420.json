@@ -39,9 +39,11 @@
     "EndInclusive": false
   },
   "Attributes": {},
-  "DeviceStrings": {},
+  "DeviceStrings": {
+    "6": "420"
+  },
   "InitializationStrings": [
-    0,
-    0
+    121,
+    122
   ]
 }
