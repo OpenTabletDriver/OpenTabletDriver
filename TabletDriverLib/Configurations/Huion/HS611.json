@@ -40,9 +40,10 @@
   },
   "Attributes": {},
   "DeviceStrings": {
-    "201": "HUION_T19c_191224"
+    "2": "Huion Tablet_HS611"
   },
   "InitializationStrings": [
+    201,
     200
   ]
 }
