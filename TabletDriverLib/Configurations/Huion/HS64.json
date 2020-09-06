@@ -3,7 +3,7 @@
   "DigitizerIdentifier": {
     "VendorID": 9580,
     "ProductID": 109,
-    "InputReportLength": 8,
+    "InputReportLength": 12,
     "OutputReportLength": 0,
     "ReportParser": null,
     "FeatureInitReport": null,
@@ -40,9 +40,10 @@
   },
   "Attributes": {},
   "DeviceStrings": {
-    "201": "HUION_T193_190307"
+    "2": "Huion Tablet_HS64"
   },
   "InitializationStrings": [
+    201,
     200
   ]
 }
