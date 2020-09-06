@@ -33,18 +33,15 @@
   "MaxY": 25000.0,
   "MaxPressure": 8191,
   "ActiveReportID": {
-    "Start": 0,
-    "StartInclusive": false,
+    "Start": 64,
+    "StartInclusive": true,
     "End": null,
     "EndInclusive": false
   },
   "Attributes": {},
   "DeviceStrings": {
-    "0": "HVAN",
-    "33": "HA60"
+    "200": "HVAN",
+    "121": "HA60"
   },
-  "InitializationStrings": [
-    0,
-    0
-  ]
+  "InitializationStrings": []
 }

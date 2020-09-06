@@ -33,17 +33,16 @@
   "MaxY": 15240.0,
   "MaxPressure": 4095,
   "ActiveReportID": {
-    "Start": 128,
-    "StartInclusive": false,
-    "End": 96,
+    "Start": 64,
+    "StartInclusive": true,
+    "End": null,
     "EndInclusive": false
   },
   "Attributes": {},
   "DeviceStrings": {
-    "1": "HUION_T176"
+    "201": "HUION_T176"
   },
   "InitializationStrings": [
-    0,
-    0
+    200
   ]
 }

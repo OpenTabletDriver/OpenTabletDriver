@@ -34,16 +34,15 @@
   "MaxPressure": 8191,
   "ActiveReportID": {
     "Start": 128,
-    "StartInclusive": false,
-    "End": 96,
+    "StartInclusive": true,
+    "End": null,
     "EndInclusive": false
   },
   "Attributes": {},
   "DeviceStrings": {
-    "1": "HUION_T174"
+    "201": "HUION_T174"
   },
   "InitializationStrings": [
-    0,
-    0
+    200
   ]
 }

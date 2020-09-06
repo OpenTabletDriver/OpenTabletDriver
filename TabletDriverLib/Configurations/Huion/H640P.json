@@ -27,20 +27,22 @@
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
-  "Width": 0.0,
-  "Height": 0.0,
-  "MaxX": 31999.0,
+  "Width": 160.0,
+  "Height": 100.0,
+  "MaxX": 32000.0,
   "MaxY": 20000.0,
   "MaxPressure": 8191,
   "ActiveReportID": {
-    "Start": 128,
-    "StartInclusive": false,
-    "End": 96,
+    "Start": 64,
+    "StartInclusive": true,
+    "End": null,
     "EndInclusive": false
   },
   "Attributes": {},
   "DeviceStrings": {
-    "1": "HUION_T173"
+    "201": "HUION_T173"
   },
-  "InitializationStrings": []
+  "InitializationStrings": [
+    200
+  ]
 }
