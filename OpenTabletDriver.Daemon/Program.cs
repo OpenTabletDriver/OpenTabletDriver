@@ -12,6 +12,7 @@ using System.CommandLine;
 using System.IO;
 using System.CommandLine.Invocation;
 using NativeLib;
+using System.Threading;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -21,6 +22,13 @@ namespace OpenTabletDriver.Daemon
     {
         static async Task Main(string[] args)
         {
+            if (!SingleInstance.WaitOne(TimeSpan.Zero, true))
+            {
+                Console.WriteLine("OTD Daemon is already running");
+                Thread.Sleep(1000);
+                return;
+            }
+
             AppDomain.CurrentDomain.UnhandledException += (sender, e) => 
             {
                 var exception = (Exception)e.ExceptionObject;
@@ -84,5 +92,6 @@ namespace OpenTabletDriver.Daemon
         static DriverDaemon Daemon { set; get; }
         static bool Running { set; get; }
         static bool RunAsService { set; get; }
+        static readonly Mutex SingleInstance = new Mutex(true, "OpenTabletDriver.Daemon");
     }
 }
