@@ -3,6 +3,7 @@ using NativeLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TabletDriverLib.Plugins;
 using TabletDriverLib.Tablet;
 using TabletDriverLib.Vendors;
@@ -232,7 +233,7 @@ namespace TabletDriverLib
                 {
                     // Iterate through each device string, if one doesn't match then its the wrong configuration.
                     var str = device.GetDeviceString(matchQuery.Key);
-                    if (str != matchQuery.Value)
+                    if (!Regex.IsMatch(matchQuery.Value, str))
                         return false;
                 }
                 catch (Exception ex)
