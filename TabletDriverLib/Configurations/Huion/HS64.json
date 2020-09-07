@@ -3,15 +3,15 @@
   "DigitizerIdentifier": {
     "VendorID": 9580,
     "ProductID": 109,
-    "InputReportLength": 8,
+    "InputReportLength": 12,
     "OutputReportLength": 0,
     "ReportParser": null,
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
   "AlternateDigitizerIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 109,
+    "VendorID": 0,
+    "ProductID": 0,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,
@@ -19,8 +19,8 @@
     "OutputInitReport": null
   },
   "AuxilaryDeviceIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 109,
+    "VendorID": 0,
+    "ProductID": 0,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,
@@ -33,10 +33,17 @@
   "MaxY": 20400.0,
   "MaxPressure": 8191,
   "ActiveReportID": {
-    "Start": 0,
-    "StartInclusive": false,
+    "Start": 64,
+    "StartInclusive": true,
     "End": null,
     "EndInclusive": false
   },
-  "Attributes": {}
+  "Attributes": {},
+  "DeviceStrings": {
+    "2": "Huion Tablet_HS64"
+  },
+  "InitializationStrings": [
+    201,
+    200
+  ]
 }

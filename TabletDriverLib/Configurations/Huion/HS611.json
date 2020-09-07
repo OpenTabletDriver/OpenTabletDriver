@@ -1,11 +1,11 @@
 {
-  "Name": "Gaomon S620",
+  "Name": "Huion HS611",
   "DigitizerIdentifier": {
     "VendorID": 9580,
     "ProductID": 109,
     "InputReportLength": 12,
     "OutputReportLength": 0,
-    "ReportParser": "TabletDriverLib.Vendors.Gaomon.GaomonReportParser",
+    "ReportParser": null,
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
@@ -27,10 +27,10 @@
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
-  "Width": 165.1,
-  "Height": 101.6,
-  "MaxX": 33020.0,
-  "MaxY": 20320.0,
+  "Width": 258.4,
+  "Height": 161.5,
+  "MaxX": 51680.0,
+  "MaxY": 32300.0,
   "MaxPressure": 8191,
   "ActiveReportID": {
     "Start": 64,
@@ -40,9 +40,10 @@
   },
   "Attributes": {},
   "DeviceStrings": {
-    "201": "OEM02_T18e_190814"
+    "2": "Huion Tablet_HS611"
   },
   "InitializationStrings": [
+    201,
     200
   ]
 }

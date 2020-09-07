@@ -1,17 +1,17 @@
 {
-  "Name": "Huion H420",
+  "Name": "Huion H430P",
   "DigitizerIdentifier": {
     "VendorID": 9580,
-    "ProductID": 110,
-    "InputReportLength": 8,
+    "ProductID": 109,
+    "InputReportLength": 12,
     "OutputReportLength": 0,
     "ReportParser": null,
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
   "AlternateDigitizerIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 110,
+    "VendorID": 0,
+    "ProductID": 0,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,
@@ -19,24 +19,30 @@
     "OutputInitReport": null
   },
   "AuxilaryDeviceIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 110,
+    "VendorID": 0,
+    "ProductID": 0,
     "InputReportLength": 0,
     "OutputReportLength": 0,
     "ReportParser": null,
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
-  "Width": 105.918,
-  "Height": 59.436,
-  "MaxX": 8340.0,
-  "MaxY": 4680.0,
-  "MaxPressure": 2047,
+  "Width": 121.92,
+  "Height": 76.2,
+  "MaxX": 24384.0,
+  "MaxY": 15240.0,
+  "MaxPressure": 4095,
   "ActiveReportID": {
-    "Start": 0,
-    "StartInclusive": false,
+    "Start": 64,
+    "StartInclusive": true,
     "End": null,
     "EndInclusive": false
   },
-  "Attributes": {}
+  "Attributes": {},
+  "DeviceStrings": {
+    "201": "HUION_T176"
+  },
+  "InitializationStrings": [
+    200
+  ]
 }
