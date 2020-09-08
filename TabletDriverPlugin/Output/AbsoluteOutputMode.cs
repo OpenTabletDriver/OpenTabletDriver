@@ -73,7 +73,8 @@ namespace TabletDriverPlugin.Output
 
         internal void UpdateCache()
         {
-            _transformationMatrix = CalculateTransformation();
+            if (!(Input is null | Output is null | TabletProperties is null))
+                _transformationMatrix = CalculateTransformation(Input, Output, TabletProperties);
             
             _halfDisplayWidth = Output?.Width / 2 ?? 0;
             _halfDisplayHeight = Output?.Height / 2 ?? 0;
@@ -86,32 +87,28 @@ namespace TabletDriverPlugin.Output
             _maxY = Output?.Position.Y + Output?.Height - _halfDisplayHeight ?? 0;
         }
 
-        internal Matrix3x2 CalculateTransformation()
+        internal Matrix3x2 CalculateTransformation(Area input, Area output, TabletProperties tablet)
         {
-            if (Input is null | Output is null |
-                TabletProperties is null | VirtualScreen is null)
-                return new Matrix3x2();
-
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(
-                TabletProperties.Width / TabletProperties.MaxX,
-                TabletProperties.Height / TabletProperties.MaxY);
+                tablet.Width / tablet.MaxX,
+                tablet.Height / tablet.MaxY);
 
             // Translate to the center of input area
             res *= Matrix3x2.CreateTranslation(
-                -Input.Position.X, -Input.Position.Y);
+                -input.Position.X, -input.Position.Y);
 
             // Apply rotation
             res *= Matrix3x2.CreateRotation(
-                (float)(Input.Rotation * System.Math.PI / 180));
+                (float)(input.Rotation * System.Math.PI / 180));
 
             // Scale millimeters to pixels
             res *= Matrix3x2.CreateScale(
-                Output.Width / Input.Width, Output.Height / Input.Height);
+                output.Width / input.Width, output.Height / input.Height);
 
             // Translate output to virtual screen coordinates
             res *= Matrix3x2.CreateTranslation(
-                Output.Position.X, Output.Position.Y);
+                output.Position.X, output.Position.Y);
 
             return res;
         }
