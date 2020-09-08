@@ -232,8 +232,9 @@ namespace TabletDriverLib
                 try
                 {
                     // Iterate through each device string, if one doesn't match then its the wrong configuration.
-                    var str = device.GetDeviceString(matchQuery.Key);
-                    if (!Regex.IsMatch(matchQuery.Value, str))
+                    var input = device.GetDeviceString(matchQuery.Key);
+                    var pattern = matchQuery.Value;
+                    if (!Regex.IsMatch(input, pattern))
                         return false;
                 }
                 catch (Exception ex)
