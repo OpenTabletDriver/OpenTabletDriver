@@ -40,5 +40,7 @@
   },
   "Attributes": {
     "libinputoverride": "1"
-  }
+  },
+  "DeviceStrings": {},
+  "InitializationStrings": []
 }

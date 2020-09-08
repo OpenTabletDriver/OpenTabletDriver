@@ -40,7 +40,7 @@
   },
   "Attributes": {},
   "DeviceStrings": {
-    "201": "HUION_T194_190307"
+    "201": "HUION_T194_\\d{6}$"
   },
   "InitializationStrings": [
     200
