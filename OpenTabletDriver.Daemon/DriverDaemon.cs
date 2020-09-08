@@ -170,6 +170,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
         {
+            absoluteMode.VirtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+
             absoluteMode.Output = new Area
             {
                 Width = Settings.DisplayWidth,
@@ -194,8 +196,6 @@ namespace OpenTabletDriver.Daemon
                 Rotation = Settings.TabletRotation
             };
             Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
-
-            absoluteMode.VirtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
 
             absoluteMode.AreaClipping = Settings.EnableClipping;   
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
