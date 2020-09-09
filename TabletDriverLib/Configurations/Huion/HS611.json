@@ -38,7 +38,9 @@
     "End": null,
     "EndInclusive": false
   },
-  "Attributes": {},
+  "Attributes": {
+    "libinputoverride": "1"
+  },
   "DeviceStrings": {
     "2": "Huion Tablet_HS611"
   },

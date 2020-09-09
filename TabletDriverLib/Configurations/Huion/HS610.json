@@ -38,7 +38,9 @@
     "End": null,
     "EndInclusive": false
   },
-  "Attributes": {},
+  "Attributes": {
+    "libinputoverride": "1"
+  },
   "DeviceStrings": {
     "201": "HUION_T194_\\d{6}$"
   },
