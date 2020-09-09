@@ -40,7 +40,7 @@
   },
   "Attributes": {},
   "DeviceStrings": {
-    "201": "OEM02_T18e_190814"
+      "201": "OEM02_T18e_\\d{6}$"
   },
   "InitializationStrings": [
     200
