@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Numerics;
 using System.Linq;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Platform.Display;
@@ -11,9 +12,9 @@ namespace TabletDriverPlugin.Output
     [PluginIgnore]
     public abstract class AbsoluteOutputMode : BindingHandler, IOutputMode
     {
-        private float[] _rotationMatrix;
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
         private float _minX, _maxX, _minY, _maxY;
+        private Matrix3x2 _transformationMatrix;
 
         private List<IFilter> _filters, _preFilters = new List<IFilter>(), _postFilters = new List<IFilter>();
         public IEnumerable<IFilter> Filters
@@ -72,7 +73,8 @@ namespace TabletDriverPlugin.Output
 
         internal void UpdateCache()
         {
-            _rotationMatrix = Input?.GetRotationMatrix();
+            if (!(Input is null | Output is null | TabletProperties is null))
+                _transformationMatrix = CalculateTransformation(Input, Output, TabletProperties);
             
             _halfDisplayWidth = Output?.Width / 2 ?? 0;
             _halfDisplayHeight = Output?.Height / 2 ?? 0;
@@ -83,6 +85,32 @@ namespace TabletDriverPlugin.Output
             _maxX = Output?.Position.X + Output?.Width - _halfDisplayWidth ?? 0;
             _minY = Output?.Position.Y - _halfDisplayHeight ?? 0;
             _maxY = Output?.Position.Y + Output?.Height - _halfDisplayHeight ?? 0;
+        }
+
+        internal Matrix3x2 CalculateTransformation(Area input, Area output, TabletProperties tablet)
+        {
+            // Convert raw tablet data to millimeters
+            var res = Matrix3x2.CreateScale(
+                tablet.Width / tablet.MaxX,
+                tablet.Height / tablet.MaxY);
+
+            // Translate to the center of input area
+            res *= Matrix3x2.CreateTranslation(
+                -input.Position.X, -input.Position.Y);
+
+            // Apply rotation
+            res *= Matrix3x2.CreateRotation(
+                (float)(input.Rotation * System.Math.PI / 180));
+
+            // Scale millimeters to pixels
+            res *= Matrix3x2.CreateScale(
+                output.Width / input.Width, output.Height / input.Height);
+
+            // Translate output to virtual screen coordinates
+            res *= Matrix3x2.CreateTranslation(
+                output.Position.X, output.Position.Y);
+
+            return res;
         }
 
         public virtual void Read(IDeviceReport report)
@@ -109,40 +137,11 @@ namespace TabletDriverPlugin.Output
             foreach (IFilter filter in _preFilters)
                 pos = filter.Filter(pos);
 
-            // Normalize (ratio of 1)
-            pos.X /= TabletProperties.MaxX;
-            pos.Y /= TabletProperties.MaxY;
-
-            // Scale to tablet dimensions (mm)
-            pos.X *= TabletProperties.Width;
-            pos.Y *= TabletProperties.Height;
-
-            // Adjust area to set origin to 0,0
-            pos -= Input.Position;
-
-            // Rotation
-            if (Input.Rotation != 0f)
-            {
-                var tempCopy = new Point(pos.X, pos.Y);
-                pos.X = (tempCopy.X * _rotationMatrix[0]) + (tempCopy.Y * _rotationMatrix[1]);
-                pos.Y = (tempCopy.X * _rotationMatrix[2]) + (tempCopy.Y * _rotationMatrix[3]);
-            }
-
-            // Move area back
-            pos.X += _halfTabletWidth;
-            pos.Y += _halfTabletHeight;
-
-            // Scale to tablet area (ratio of 1)
-            pos.X /= Input.Width;
-            pos.Y /= Input.Height;
-
-            // Scale to display area
-            pos.X *= Output.Width;
-            pos.Y *= Output.Height;
-
-            // Adjust display offset by center
-            pos.X += Output.Position.X - _halfDisplayWidth;
-            pos.Y += Output.Position.Y - _halfDisplayHeight;
+            // Apply transformation
+            var posVect = new Vector2(pos.X, pos.Y);
+            posVect = Vector2.Transform(posVect, _transformationMatrix);
+            pos.X = posVect.X;
+            pos.Y = posVect.Y;
 
             // Clipping to display bounds
             if (AreaClipping)
