@@ -607,7 +607,7 @@ namespace OpenTabletDriver.UX
             if (enableDaemonWatchdog)
             {
                 // Check if daemon is already active, if not then start it as a subprocess if it exists in the local path.
-                if (!Instance.Exists("OpenTabletDriver.Daemon") && File.Exists(DaemonWatchdog.FileName))
+                if (!Instance.Exists("OpenTabletDriver.Daemon") && DaemonWatchdog.CanExecute)
                 {
                     var watchdog = new DaemonWatchdog();
                     watchdog.Start();
@@ -615,8 +615,8 @@ namespace OpenTabletDriver.UX
                     {
                         var dialogResult = MessageBox.Show(
                             this,
-                            "OpenTabletDriver Fatal Error",
                             "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart OpenTabletDriver?",
+                            "OpenTabletDriver Fatal Error",
                             MessageBoxButtons.YesNo
                         );
                         switch (dialogResult)
@@ -626,13 +626,12 @@ namespace OpenTabletDriver.UX
                                 break;
                             case DialogResult.No:
                             default:
-                                this.Close();
+                                Application.Instance.Quit();
                                 break;
                         }
                     };
                     this.Closing += (sender, e) =>
                     {
-                        watchdog.Stop();
                         watchdog.Dispose();
                     };
                 }

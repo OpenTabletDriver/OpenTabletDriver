@@ -17,17 +17,17 @@ namespace OpenTabletDriver.UX
             StartInfo = 
             {
                 FileName = FileName,
+                Arguments = Arguments,
                 CreateNoWindow = true
             }
         };
 
         private Timer watchdogTimer = new Timer(1000);
 
-        internal static string FileName => SystemInfo.CurrentPlatform switch
-        {
-            RuntimePlatform.Windows => Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.exe"),
-            _                       => Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon")
-        };
+        // This will break if dotnet isn't in PATH
+        private static string FileName => "dotnet";
+        private static string Arguments => Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.dll");
+        internal static bool CanExecute => File.Exists(Arguments);
 
         public void Start()
         {
@@ -43,11 +43,13 @@ namespace OpenTabletDriver.UX
         
         public void Stop()
         {
-            this.watchdogTimer.Stop();
+            this.watchdogTimer?.Stop();
+            this.daemonProcess?.Kill();
         }
 
         public void Dispose()
         {
+            Stop();
             this.watchdogTimer?.Dispose();
             this.daemonProcess?.Dispose();
         }

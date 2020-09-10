@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using TabletDriverPlugin.Logging;
+using JKang.IpcServiceFramework;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -54,6 +55,12 @@ namespace OpenTabletDriver.Daemon
                 catch (NullReferenceException)
                 {
                     // This should have been unsubscribed by the point the server disconnected
+                    break;
+                }
+                catch (IpcCommunicationException ipcex)
+                {
+                    // Something broke in the IPC framework, we should ignore this message to save the operation of the driver.
+                    Log.Exception(ipcex);
                     break;
                 }
             }
