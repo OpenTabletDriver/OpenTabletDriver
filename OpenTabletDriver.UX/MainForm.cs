@@ -14,6 +14,8 @@ using TabletDriverLib.Diagnostics;
 using NativeLib;
 using TabletDriverLib.Plugins;
 using TabletDriverPlugin.Output;
+using System.Threading;
+using System.Diagnostics;
 
 namespace OpenTabletDriver.UX
 {
@@ -575,6 +577,13 @@ namespace OpenTabletDriver.UX
                 _                       => false
             };
 
+            bool enableDaemonWatchdog = SystemInfo.CurrentPlatform switch
+            {
+                RuntimePlatform.Windows => true,
+                RuntimePlatform.MacOS   => true,
+                _                       => false,
+            };
+
             if (enableTrayIcon)
             {
                 var trayIcon = new TrayIcon(this);
@@ -593,6 +602,40 @@ namespace OpenTabletDriver.UX
                     }
                 };
                 Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
+            }
+
+            if (enableDaemonWatchdog)
+            {
+                // Check if daemon is already active, if not then start it as a subprocess if it exists in the local path.
+                if (!Instance.Exists("OpenTabletDriver.Daemon") && File.Exists(DaemonWatchdog.FileName))
+                {
+                    var watchdog = new DaemonWatchdog();
+                    watchdog.Start();
+                    watchdog.DaemonExited += (sender, e) => 
+                    {
+                        var dialogResult = MessageBox.Show(
+                            this,
+                            "OpenTabletDriver Fatal Error",
+                            "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart OpenTabletDriver?",
+                            MessageBoxButtons.YesNo
+                        );
+                        switch (dialogResult)
+                        {
+                            case DialogResult.Yes:
+                                Application.Instance.Restart();
+                                break;
+                            case DialogResult.No:
+                            default:
+                                this.Close();
+                                break;
+                        }
+                    };
+                    this.Closing += (sender, e) =>
+                    {
+                        watchdog.Stop();
+                        watchdog.Dispose();
+                    };
+                }
             }
         }
 
