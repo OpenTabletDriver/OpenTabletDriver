@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TabletDriverLib", "TabletDriverLib\TabletDriverLib.csproj", "{E1407092-4EC3-4FDB-A1F7-27684B889750}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver", "OpenTabletDriver\OpenTabletDriver.csproj", "{E1407092-4EC3-4FDB-A1F7-27684B889750}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeLib", "NativeLib\NativeLib.csproj", "{57A5101A-20F4-41AA-8649-2C3785DD5BA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Native", "OpenTabletDriver.Native\OpenTabletDriver.Native.csproj", "{57A5101A-20F4-41AA-8649-2C3785DD5BA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TabletDriverPlugin", "TabletDriverPlugin\TabletDriverPlugin.csproj", "{1EF3ED59-1D11-4814-907B-4F8C90B9032E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Plugin", "OpenTabletDriver.Plugin\OpenTabletDriver.Plugin.csproj", "{1EF3ED59-1D11-4814-907B-4F8C90B9032E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Daemon", "OpenTabletDriver.Daemon\OpenTabletDriver.Daemon.csproj", "{18F3FBE6-110E-4F14-912F-14273028191C}"
 EndProject

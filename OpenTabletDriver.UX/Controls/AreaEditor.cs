@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using Eto.Drawing;
 using Eto.Forms;
-using TabletDriverLib;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -29,35 +28,35 @@ namespace OpenTabletDriver.UX.Controls
             widthBox.TextBinding.Convert(
                 s => float.TryParse(s, out var v) ? v : 0,
                 f => f.ToString()).BindDataContext(
-                    Binding.Property(
+                    Eto.Forms.Binding.Property(
                         (AreaViewModel d) =>  d.Width));
             
             heightBox = new TextBox();
             heightBox.TextBinding.Convert(
                 s => float.TryParse(s, out var v) ? v : 0,
                 f => f.ToString()).BindDataContext(
-                    Binding.Property(
+                    Eto.Forms.Binding.Property(
                         (AreaViewModel d) =>  d.Height));
             
             xOffsetBox = new TextBox();
             xOffsetBox.TextBinding.Convert(
                 s => float.TryParse(s, out var v) ? v : 0,
                 f => f.ToString()).BindDataContext(
-                    Binding.Property(
+                    Eto.Forms.Binding.Property(
                         (AreaViewModel d) =>  d.X));
             
             yOffsetBox = new TextBox();
             yOffsetBox.TextBinding.Convert(
                 s => float.TryParse(s, out var v) ? v : 0,
                 f => f.ToString()).BindDataContext(
-                    Binding.Property(
+                    Eto.Forms.Binding.Property(
                         (AreaViewModel d) =>  d.Y));
 
             rotationBox = new TextBox();
             rotationBox.TextBinding.Convert(
                 s => float.TryParse(s, out var v) ? v : 0,
                 f => f.ToString()).BindDataContext(
-                    Binding.Property(
+                    Eto.Forms.Binding.Property(
                         (AreaViewModel d) =>  d.Rotation));
 
             var stackLayout = new StackLayout

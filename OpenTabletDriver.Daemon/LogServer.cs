@@ -1,15 +1,12 @@
 using System;
 using System.IO;
-using System.IO.Pipes;
-using Newtonsoft.Json;
-using JKang.IpcServiceFramework.Client;
-using TabletDriverPlugin;
-using TabletDriverLib.Contracts;
-using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using System.Net.Sockets;
-using TabletDriverPlugin.Logging;
 using JKang.IpcServiceFramework;
+using JKang.IpcServiceFramework.Client;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.Daemon
 {

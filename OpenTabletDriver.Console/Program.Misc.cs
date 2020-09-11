@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using TabletDriverLib;
-using TabletDriverLib.Plugins;
+using OpenTabletDriver.Reflection;
 using static System.Console;
 
 namespace OpenTabletDriver.Console

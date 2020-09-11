@@ -4,7 +4,7 @@ using System.IO.Pipes;
 using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using TabletDriverPlugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.UX.Debugging
 {

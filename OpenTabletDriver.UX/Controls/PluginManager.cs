@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using TabletDriverLib;
-using TabletDriverLib.Plugins;
-using TabletDriverPlugin.Attributes;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.UX.Controls
 {

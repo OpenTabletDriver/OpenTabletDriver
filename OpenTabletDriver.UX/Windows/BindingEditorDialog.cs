@@ -1,8 +1,8 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
-using TabletDriverLib.Binding;
-using TabletDriverPlugin.Platform.Pointer;
+using OpenTabletDriver.Binding;
+using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX.Windows
             Return(BindingReference.None);
         }
 
-        private void Return<T>(T binding) where T : TabletDriverPlugin.IBinding
+        private void Return<T>(T binding) where T : OpenTabletDriver.Plugin.IBinding
         {
             var str = BindingTools.GetBindingString(binding);
             var bindRef = BindingReference.FromString(str);

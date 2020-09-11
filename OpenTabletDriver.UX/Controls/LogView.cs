@@ -1,16 +1,16 @@
-using Eto.Forms;
-using JKang.IpcServiceFramework.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using OpenTabletDriver.UX.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using TabletDriverLib.Contracts;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Logging;
+using Eto.Forms;
+using JKang.IpcServiceFramework.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -125,7 +125,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Time",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
+                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
                     }
                 },
                 new GridColumn
@@ -133,7 +133,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Level",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Binding.Property<LogMessage, string>(m => m.Level.GetName())
+                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Level.GetName())
                     }
                 },
                 new GridColumn
@@ -141,7 +141,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Group",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Binding.Property<LogMessage, string>(m => m.Group)
+                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Group)
                     }
                 },
                 new GridColumn
@@ -149,7 +149,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Message",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Binding.Property<LogMessage, string>(m => m.Message)
+                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Message)
                     }
                 }
             }

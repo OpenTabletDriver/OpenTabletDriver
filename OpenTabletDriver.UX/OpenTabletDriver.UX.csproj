@@ -2,7 +2,7 @@
 	
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
-    <VersionPrefix>0.3.2</VersionPrefix>
+    <VersionPrefix>0.4.0</VersionPrefix>
   </PropertyGroup>
   
   <ItemGroup>
@@ -15,7 +15,7 @@
     <PackageReference Include="JKang.IpcServiceFramework.Client.NamedPipe" Version="3.0.5-preview.1" />
     <PackageReference Include="JKang.IpcServiceFramework.Hosting.NamedPipe" Version="3.0.5-preview.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.5" />
-    <ProjectReference Include="..\TabletDriverLib\TabletDriverLib.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
   </ItemGroup>
   
 </Project>

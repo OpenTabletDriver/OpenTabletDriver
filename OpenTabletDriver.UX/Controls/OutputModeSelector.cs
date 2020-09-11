@@ -1,9 +1,9 @@
-using Eto.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TabletDriverLib.Plugins;
-using TabletDriverPlugin.Output;
+using Eto.Forms;
+using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -11,7 +11,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         public OutputModeSelector()
         {
-            var outputModes = from type in TabletDriverLib.PluginManager.GetChildTypes<IOutputMode>()
+            var outputModes = from type in OpenTabletDriver.PluginManager.GetChildTypes<IOutputMode>()
                 where type != typeof(IOutputMode)
                 where type != typeof(AbsoluteOutputMode)
                 where type != typeof(RelativeOutputMode)

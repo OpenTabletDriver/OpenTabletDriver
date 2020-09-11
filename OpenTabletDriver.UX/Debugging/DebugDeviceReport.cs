@@ -1,4 +1,4 @@
-using TabletDriverPlugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.UX.Debugging
 {

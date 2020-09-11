@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
-    <VersionPrefix>0.3.2</VersionPrefix>
+    <VersionPrefix>0.4.0</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
