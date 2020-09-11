@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Display;
 using WaylandNET.Client;
@@ -31,7 +32,7 @@ namespace TabletDriverLib.Interop.Display
                             {
                                 if (output.XdgOutput == null || output.XdgOutput.Version < 2)
                                 {
-                                    output.Position = new Point(x, y);
+                                    output.Position = new Vector2(x, y);
                                     output.Name = make;
                                     output.Description = model;
                                 }
@@ -59,7 +60,7 @@ namespace TabletDriverLib.Interop.Display
                         output.XdgOutput = outputManager.GetXdgOutput(output.WlOutput);
                         output.XdgOutput.LogicalPosition += (xdgOutput, x, y) =>
                         {
-                            output.Position = new Point(x, y);
+                            output.Position = new Vector2(x, y);
                         };
                         output.XdgOutput.LogicalSize += (xdgOutput, width, height) =>
                         {
@@ -104,7 +105,7 @@ namespace TabletDriverLib.Interop.Display
             }
         }
 
-        public Point Position => new Point(0, 0);
+        public Vector2 Position => new Vector2(0, 0);
 
         public override string ToString() => $"Virtual Display ({Width}x{Height}@{Position})";
     }

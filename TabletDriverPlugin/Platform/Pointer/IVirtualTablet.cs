@@ -1,7 +1,9 @@
-﻿namespace TabletDriverPlugin.Platform.Pointer
+﻿using System.Numerics;
+
+namespace TabletDriverPlugin.Platform.Pointer
 {
     public interface IVirtualTablet : IVirtualPointer
     {
-        void SetPosition(Point pos);
+        void SetPosition(Vector2 pos);
     }
 }

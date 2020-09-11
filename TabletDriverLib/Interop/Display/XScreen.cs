@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using NativeLib.Linux.Xorg;
 using TabletDriverPlugin;
@@ -30,13 +31,13 @@ namespace TabletDriverLib.Interop.Display
                 var display = new Interop.Display.Display(
                     monitor.Width,
                     monitor.Height,
-                    new Point(monitor.X - primary.X, monitor.Y - primary.Y),
+                    new Vector2(monitor.X - primary.X, monitor.Y - primary.Y),
                     monitors.IndexOf(monitor) + 1);
                 displays.Add(display);
             }
 
             Displays = displays;
-            Position = new Point(primary.X, primary.Y);
+            Position = new Vector2(primary.X, primary.Y);
         }
 
         private Window Display;
@@ -52,7 +53,7 @@ namespace TabletDriverLib.Interop.Display
             get => XDisplayHeight(Display, 0);
         }
 
-        public Point Position { private set; get; } = new Point(0, 0);
+        public Vector2 Position { private set; get; } = new Vector2(0, 0);
 
         private unsafe IEnumerable<XRRMonitorInfo> GetXRandrDisplays()
         {

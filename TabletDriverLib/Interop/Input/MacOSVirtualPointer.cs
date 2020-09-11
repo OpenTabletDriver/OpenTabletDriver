@@ -3,6 +3,7 @@ using NativeLib.OSX.Generic;
 using NativeLib.OSX.Input;
 using System;
 using System.Linq;
+using System.Numerics;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Pointer;
 
@@ -107,12 +108,12 @@ namespace TabletDriverLib.Interop.Input
             pressedButtons = GetPressedCGButtons();
         }
 
-        protected Point GetPosition()
+        protected Vector2 GetPosition()
         {
             var eventRef = CGEventCreate(IntPtr.Zero);
             CGPoint cursor = CGEventGetLocation(eventRef) + offset;
             CFRelease(eventRef);
-            return new Point((float)cursor.x, (float)cursor.y);
+            return new Vector2((float)cursor.x, (float)cursor.y);
         }
 
         private CGEventType GetMoveEventType()

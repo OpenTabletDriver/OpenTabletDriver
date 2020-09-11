@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using TabletDriverLib;
 using TabletDriverLib.Binding;
@@ -156,7 +157,7 @@ namespace OpenTabletDriver.Console
             {
                 Width = settings.DisplayWidth,
                 Height = settings.DisplayHeight,
-                Position = new Point
+                Position = new Vector2
                 {
                     X = settings.DisplayX,
                     Y = settings.DisplayY
@@ -168,7 +169,7 @@ namespace OpenTabletDriver.Console
             {
                 Width = settings.TabletWidth,
                 Height = settings.TabletHeight,
-                Position = new Point
+                Position = new Vector2
                 {
                     X = settings.TabletX,
                     Y = settings.TabletY

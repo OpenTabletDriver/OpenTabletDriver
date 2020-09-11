@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using HidSharp;
@@ -174,7 +175,7 @@ namespace OpenTabletDriver.Daemon
             {
                 Width = Settings.DisplayWidth,
                 Height = Settings.DisplayHeight,
-                Position = new Point
+                Position = new Vector2
                 {
                     X = Settings.DisplayX,
                     Y = Settings.DisplayY
@@ -186,7 +187,7 @@ namespace OpenTabletDriver.Daemon
             {
                 Width = Settings.TabletWidth,
                 Height = Settings.TabletHeight,
-                Position = new Point
+                Position = new Vector2
                 {
                     X = Settings.TabletX,
                     Y = Settings.TabletY

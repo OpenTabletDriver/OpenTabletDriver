@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using TabletDriverPlugin;
@@ -10,7 +11,7 @@ namespace TabletDriverLib.Interop.Input.Tablet
 
     public class WindowsVirtualTablet : WindowsVirtualPointer, IVirtualTablet
     {
-        public void SetPosition(Point pos)
+        public void SetPosition(Vector2 pos)
         {
             var input = new INPUT
             {
