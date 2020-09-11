@@ -22,7 +22,6 @@ namespace OpenTabletDriver.Vendors.XP_Pen
                     ButtonInt == 32
                 };
             }
-
         }
 
         public bool[] AuxButtons { private set; get; }
