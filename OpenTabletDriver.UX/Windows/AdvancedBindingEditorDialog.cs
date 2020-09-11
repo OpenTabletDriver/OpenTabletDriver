@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Eto.Forms;
-using TabletDriverLib;
-using TabletDriverLib.Binding;
-using TabletDriverLib.Plugins;
-using TabletDriverPlugin;
-using IBinding = TabletDriverPlugin.IBinding;
+using OpenTabletDriver.Binding;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugins;
+using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -21,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows
             BindingPath = currentBinding.Binding?.Path;
             BindingProperty = currentBinding.BindingProperty;
 
-            var bindingTypes = PluginManager.GetChildTypes<TabletDriverPlugin.IBinding>();
+            var bindingTypes = PluginManager.GetChildTypes<OpenTabletDriver.Plugin.IBinding>();
 
             var bindingPath = GetBindingSelector(
                 () => BindingPath,

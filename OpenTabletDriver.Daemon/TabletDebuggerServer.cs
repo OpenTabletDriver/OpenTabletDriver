@@ -2,8 +2,8 @@
 using System.IO;
 using System.IO.Pipes;
 using Newtonsoft.Json;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Tablet;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Daemon
 {

@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using JKang.IpcServiceFramework.Hosting;
-using JKang.IpcServiceFramework.Hosting.NamedPipe;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NativeLib;
-using TabletDriverLib;
-using TabletDriverLib.Contracts;
-using TabletDriverPlugin;
+using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Native;
 
 namespace OpenTabletDriver.Daemon
 {
-    using static Log;
-
     partial class Program
     {
         static async Task Main(string[] args)

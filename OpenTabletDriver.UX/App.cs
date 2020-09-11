@@ -5,9 +5,8 @@ using Eto.Drawing;
 using Eto.Forms;
 using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
-using NativeLib;
-using TabletDriverLib;
-using TabletDriverLib.Contracts;
+using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Native;
 
 namespace OpenTabletDriver.UX
 {

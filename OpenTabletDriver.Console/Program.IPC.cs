@@ -1,7 +1,7 @@
 using System;
 using JKang.IpcServiceFramework.Client;
 using Microsoft.Extensions.DependencyInjection;
-using TabletDriverLib.Contracts;
+using OpenTabletDriver.Contracts;
 
 namespace OpenTabletDriver.Console
 {

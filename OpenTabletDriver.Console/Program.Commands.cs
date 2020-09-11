@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,13 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using TabletDriverLib;
-using TabletDriverLib.Binding;
-using TabletDriverLib.Diagnostics;
-using TabletDriverLib.Plugins;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Output;
-using TabletDriverPlugin.Tablet;
+using Newtonsoft.Json;
+using OpenTabletDriver.Binding;
+using OpenTabletDriver.Diagnostics;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugins;
 using static System.Console;
 
 namespace OpenTabletDriver.Console

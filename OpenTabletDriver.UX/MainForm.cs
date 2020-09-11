@@ -2,20 +2,17 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Eto.Forms;
 using Eto.Drawing;
+using Eto.Forms;
+using OpenTabletDriver.Diagnostics;
+using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugins;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
-using TabletDriverLib;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Tablet;
-using TabletDriverPlugin.Platform.Display;
-using TabletDriverLib.Diagnostics;
-using NativeLib;
-using TabletDriverLib.Plugins;
-using TabletDriverPlugin.Output;
-using System.Threading;
-using System.Diagnostics;
 
 namespace OpenTabletDriver.UX
 {
@@ -231,7 +228,7 @@ namespace OpenTabletDriver.UX
                 displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
             };
             displayAreaEditor.AppendMenuItemSeparator();
-            foreach (var display in TabletDriverLib.Interop.Platform.VirtualScreen.Displays)
+            foreach (var display in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays)
                 displayAreaEditor.AppendMenuItem($"Set to {display}",
                     () =>
                     {
@@ -244,7 +241,7 @@ namespace OpenTabletDriver.UX
                         }
                         else
                         {
-                            virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+                            virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
                             displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                             displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                         }
@@ -677,7 +674,7 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+            var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
             displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
             displayAreaEditor.ViewModel.MaxHeight = virtualScreen.Height;
         }
@@ -704,9 +701,9 @@ namespace OpenTabletDriver.UX
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
-            var virtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+            var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
             var tablet = await App.DriverDaemon.InvokeAsync(d => d.GetTablet());
-            Settings = TabletDriverLib.Settings.Defaults;
+            Settings = OpenTabletDriver.Settings.Defaults;
             Settings.DisplayWidth = virtualScreen.Width;
             Settings.DisplayHeight = virtualScreen.Height;
             Settings.DisplayX = virtualScreen.Width / 2;

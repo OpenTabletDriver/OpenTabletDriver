@@ -5,17 +5,15 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Threading.Tasks;
 using HidSharp;
-using TabletDriverLib;
-using TabletDriverLib.Binding;
-using TabletDriverLib.Contracts;
-using TabletDriverLib.Plugins;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Attributes;
-using TabletDriverPlugin.Logging;
-using TabletDriverPlugin.Output;
-using TabletDriverPlugin.Tablet;
+using OpenTabletDriver.Binding;
+using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugins;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -196,7 +194,7 @@ namespace OpenTabletDriver.Daemon
             };
             Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
-            absoluteMode.VirtualScreen = TabletDriverLib.Interop.Platform.VirtualScreen;
+            absoluteMode.VirtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
 
             absoluteMode.AreaClipping = Settings.EnableClipping;   
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");

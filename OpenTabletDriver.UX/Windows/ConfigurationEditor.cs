@@ -9,10 +9,9 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
-using Newtonsoft.Json;
-using TabletDriverLib.Tablet;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Tablet;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.UX.Windows
 {

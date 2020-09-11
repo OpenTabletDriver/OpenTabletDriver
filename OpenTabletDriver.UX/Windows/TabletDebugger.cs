@@ -2,9 +2,9 @@
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Debugging;
-using TabletDriverLib.Tablet;
-using TabletDriverPlugin.Tablet;
 
 namespace OpenTabletDriver.UX.Windows
 {
