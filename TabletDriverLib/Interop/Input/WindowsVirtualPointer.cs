@@ -1,3 +1,4 @@
+using System.Numerics;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using TabletDriverPlugin;
@@ -11,7 +12,7 @@ namespace TabletDriverLib.Interop.Input
     [PluginIgnore]
     public abstract class WindowsVirtualPointer : IVirtualPointer
     {
-        protected Point _last;
+        protected Vector2 _last;
 
         protected void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {

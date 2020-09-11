@@ -44,7 +44,7 @@ namespace TabletDriverPlugin.Output
             {
                 if (TabletProperties.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    if (Transpose(tabletReport) is Point pos)
+                    if (Transpose(tabletReport) is Vector2 pos)
                     {
                         if (VirtualMouse is IPressureHandler pressureHandler)
                             pressureHandler.SetPressure((float)tabletReport.Pressure / (float)TabletProperties.MaxPressure);
@@ -56,7 +56,7 @@ namespace TabletDriverPlugin.Output
             HandleBinding(report);
         }
         
-        protected Point Transpose(ITabletReport report)
+        protected Vector2? Transpose(ITabletReport report)
         {
             var difference = DateTime.Now - _lastReceived;
             if (difference > ResetTime && _lastReceived != default)
@@ -66,7 +66,7 @@ namespace TabletDriverPlugin.Output
 
             if (_lastReport != null)
             {
-                var pos = new Point(report.Position.X - _lastReport?.Position.X ?? 0, report.Position.Y - _lastReport?.Position.Y ?? 0);
+                var pos = new Vector2(report.Position.X - _lastReport?.Position.X ?? 0, report.Position.Y - _lastReport?.Position.Y ?? 0);
 
                 // Pre Filter
                 foreach (IFilter filter in _preFilters)

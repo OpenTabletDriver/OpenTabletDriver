@@ -1,3 +1,4 @@
+using System.Numerics;
 using TabletDriverPlugin;
 
 namespace TabletDriverPlugin.Tablet
@@ -5,7 +6,7 @@ namespace TabletDriverPlugin.Tablet
     public interface ITabletReport : IDeviceReport
     {
         uint ReportID { get; }
-        Point Position { get; }
+        Vector2 Position { get; }
         uint Pressure { get; }
         bool[] PenButtons { get; }
     }

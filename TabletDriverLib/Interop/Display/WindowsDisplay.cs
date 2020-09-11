@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using NativeLib.Windows;
 using TabletDriverPlugin;
@@ -24,7 +25,7 @@ namespace TabletDriverLib.Interop.Display
                 var display = new Display(
                     monitor.Width,
                     monitor.Height,
-                    new Point(monitor.Left, monitor.Top),
+                    new Vector2(monitor.Left, monitor.Top),
                     monitors.IndexOf(monitor) + 1);
                 displays.Add(display);
             }
@@ -33,7 +34,7 @@ namespace TabletDriverLib.Interop.Display
             var y = primary.Top - monitors.Min(m => m.Top);
 
             Displays = displays;
-            Position = new Point(x, y);
+            Position = new Vector2(x, y);
         }
 
         private static List<DisplayInfo> GetDisplays()
@@ -76,7 +77,7 @@ namespace TabletDriverLib.Interop.Display
             }
         }
 
-        public Point Position { private set; get; }
+        public Vector2 Position { private set; get; }
 
         public IEnumerable<IDisplay> Displays { private set; get; }
 

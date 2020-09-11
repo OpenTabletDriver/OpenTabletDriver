@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using NativeLib.OSX;
 using NativeLib.OSX.Generic;
 using TabletDriverPlugin;
@@ -32,7 +33,7 @@ namespace TabletDriverLib.Interop.Display
             }
         }
 
-        public Point Position => new Point(0, 0);
+        public Vector2 Position => new Vector2(0, 0);
 
         public IEnumerable<IDisplay> Displays => _displays.Value;
 
@@ -53,7 +54,7 @@ namespace TabletDriverLib.Interop.Display
                 select new Display(
                     (float)display.size.width,
                     (float)display.size.height,
-                    new Point(
+                    new Vector2(
                         (float)(display.origin.x - offsetX),
                         (float)(display.origin.y - offsetY)
                     ),

@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using NativeLib.Windows;
 using NativeLib.Windows.Input;
 using TabletDriverPlugin;
@@ -36,7 +37,7 @@ namespace TabletDriverLib.Interop.Input.Mouse
             };
             var inputs = new INPUT[] { input };
             SendInput((uint)inputs.Length, inputs, INPUT.Size);
-            _last = new Point(dX, dY);
+            _last = new Vector2(dX, dY);
         }
     }
 }

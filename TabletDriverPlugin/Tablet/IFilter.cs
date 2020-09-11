@@ -1,8 +1,10 @@
+using System.Numerics;
+
 namespace TabletDriverPlugin.Tablet
 {
     public interface IFilter
     {
-        Point Filter(Point point);
+        Vector2 Filter(Vector2 point);
         FilterStage FilterStage { get; }
     }
 }

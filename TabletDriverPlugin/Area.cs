@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 
 namespace TabletDriverPlugin
 {
@@ -10,7 +11,7 @@ namespace TabletDriverPlugin
         {
         }
 
-        public Area(float width, float height, Point position, float rotation)
+        public Area(float width, float height, Vector2 position, float rotation)
         {
             Width = width;
             Height = height;
@@ -20,7 +21,7 @@ namespace TabletDriverPlugin
 
         public float Width { set; get; } = 0;
         public float Height { set; get; } = 0;
-        public Point Position { set; get; } = new Point();
+        public Vector2 Position { set; get; } = new Vector2();
         public float Rotation { set; get; } = 0;
 
         public float[] GetRotationMatrix()

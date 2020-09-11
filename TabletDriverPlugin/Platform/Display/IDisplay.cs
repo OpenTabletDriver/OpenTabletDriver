@@ -1,3 +1,4 @@
+using System.Numerics;
 using TabletDriverPlugin;
 
 namespace TabletDriverPlugin.Platform.Display
@@ -7,6 +8,6 @@ namespace TabletDriverPlugin.Platform.Display
         int Index { get; }
         float Width { get; }
         float Height { get; }
-        Point Position { get; }
+        Vector2 Position { get; }
     }
 }

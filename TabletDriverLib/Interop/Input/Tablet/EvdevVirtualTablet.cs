@@ -2,6 +2,7 @@
 using NativeLib.Linux.Evdev;
 using NativeLib.Linux.Evdev.Structs;
 using System;
+using System.Numerics;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Platform.Pointer;
 
@@ -49,7 +50,7 @@ namespace TabletDriverLib.Interop.Input.Tablet
             }
         }
 
-        public void SetPosition(Point pos)
+        public void SetPosition(Vector2 pos)
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)pos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)pos.Y);

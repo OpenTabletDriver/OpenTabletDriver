@@ -14,6 +14,7 @@ namespace TabletDriverPlugin.Output
     {
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
         private float _minX, _maxX, _minY, _maxY;
+        private Vector2 _min, _max;
         private Matrix3x2 _transformationMatrix;
 
         private List<IFilter> _filters, _preFilters = new List<IFilter>(), _postFilters = new List<IFilter>();
@@ -85,6 +86,8 @@ namespace TabletDriverPlugin.Output
             _maxX = Output?.Position.X + Output?.Width - _halfDisplayWidth ?? 0;
             _minY = Output?.Position.Y - _halfDisplayHeight ?? 0;
             _maxY = Output?.Position.Y + Output?.Height - _halfDisplayHeight ?? 0;
+            _min = new Vector2(_minX, _minY);
+            _max = new Vector2(_maxX, _maxY);
         }
 
         internal Matrix3x2 CalculateTransformation(Area input, Area output, TabletProperties tablet)
@@ -129,23 +132,20 @@ namespace TabletDriverPlugin.Output
             HandleBinding(report);
         }
 
-        internal Point Transpose(ITabletReport report)
+        internal Vector2 Transpose(ITabletReport report)
         {
-            var pos = new Point(report.Position.X, report.Position.Y);
+            var pos = new Vector2(report.Position.X, report.Position.Y);
 
             // Pre Filter
             foreach (IFilter filter in _preFilters)
                 pos = filter.Filter(pos);
 
             // Apply transformation
-            var posVect = new Vector2(pos.X, pos.Y);
-            posVect = Vector2.Transform(posVect, _transformationMatrix);
-            pos.X = posVect.X;
-            pos.Y = posVect.Y;
+            pos = Vector2.Transform(pos, _transformationMatrix);
 
             // Clipping to display bounds
             if (AreaClipping)
-                pos.Clamp(_minX, _maxX, _minY, _maxY);
+                pos = Vector2.Clamp(pos, _min, _max);
 
             // Post Filter
             foreach (IFilter filter in _postFilters)

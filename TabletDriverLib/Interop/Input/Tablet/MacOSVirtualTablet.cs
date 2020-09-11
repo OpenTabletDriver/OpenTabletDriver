@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
 using NativeLib.OSX;
 using NativeLib.OSX.Generic;
 using NativeLib.OSX.Input;
@@ -13,7 +14,7 @@ namespace TabletDriverLib.Interop.Input.Tablet
 
     public class MacOSVirtualTablet : MacOSVirtualPointer, IVirtualTablet
     {
-        public void SetPosition(Point pos)
+        public void SetPosition(Vector2 pos)
         {
             var newPos = new CGPoint(pos.X, pos.Y) - offset;
             var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, moveEvent, newPos, pressedButtons);

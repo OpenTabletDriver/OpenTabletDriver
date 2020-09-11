@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Tablet;
 
@@ -13,7 +14,7 @@ namespace TabletDriverLib.Vendors.Wacom
             ReportID = (uint)report[9] >> 2;
             var x = ((report[2] * 0x100) + report[3]) << 1;
             var y = ((report[4] * 0x100) + report[5]) << 1;
-            Position = new Point(x, y);
+            Position = new Vector2(x, y);
             Pressure = (uint)(report[6] << 3);
             
             PenButtons = new bool[]
@@ -25,7 +26,7 @@ namespace TabletDriverLib.Vendors.Wacom
 
         public byte[] Raw { private set; get; }
         public uint ReportID { private set; get; }
-        public Point Position { private set; get; }
+        public Vector2 Position { private set; get; }
         public uint Pressure { private set; get; }
         public bool[] PenButtons { private set; get; }
     }

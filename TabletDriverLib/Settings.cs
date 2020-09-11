@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Numerics;
 using Newtonsoft.Json;
 using TabletDriverLib.Binding;
 using TabletDriverPlugin;
@@ -248,7 +249,7 @@ namespace TabletDriverLib
         }
         public Area GetDisplayArea()
         {
-            return new Area(DisplayWidth, DisplayHeight, new Point(DisplayX, DisplayY), 0);
+            return new Area(DisplayWidth, DisplayHeight, new Vector2(DisplayX, DisplayY), 0);
         }
 
         public void SetTabletArea(Area area)
@@ -262,7 +263,7 @@ namespace TabletDriverLib
 
         public Area GetTabletArea()
         {
-            return new Area(TabletWidth, TabletHeight, new Point(TabletX, TabletY), TabletRotation);
+            return new Area(TabletWidth, TabletHeight, new Vector2(TabletX, TabletY), TabletRotation);
         }
 
         #endregion
