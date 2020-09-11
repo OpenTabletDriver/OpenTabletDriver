@@ -11,7 +11,7 @@ using OpenTabletDriver.Diagnostics;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugins;
+using OpenTabletDriver.Reflection;
 using static System.Console;
 
 namespace OpenTabletDriver.Console

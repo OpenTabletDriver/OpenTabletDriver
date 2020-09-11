@@ -13,7 +13,7 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugins;
+using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Daemon
 {

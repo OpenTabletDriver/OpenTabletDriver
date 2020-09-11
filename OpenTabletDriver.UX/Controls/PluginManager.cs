@@ -5,7 +5,7 @@ using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugins;
+using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.UX.Controls
 {

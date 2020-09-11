@@ -7,7 +7,7 @@ using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugins;
+using OpenTabletDriver.Reflection;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Vendors;
 

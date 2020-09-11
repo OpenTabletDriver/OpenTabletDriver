@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugins;
+using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.UX.Controls
 {

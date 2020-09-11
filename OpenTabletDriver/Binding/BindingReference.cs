@@ -1,5 +1,5 @@
 using System;
-using OpenTabletDriver.Plugins;
+using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Binding
 {

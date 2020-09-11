@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Plugin.Attributes;
 
-namespace OpenTabletDriver.Plugins
+namespace OpenTabletDriver.Reflection
 {
     public static class PluginTools
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Plugin.Attributes;
 
-namespace OpenTabletDriver.Plugins
+namespace OpenTabletDriver.Reflection
 {
     public class PluginReference : IEquatable<PluginReference>
     {
