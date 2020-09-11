@@ -31,8 +31,8 @@ jobs:
           dotnet build OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
       - name: Copy Configurations
         run: |
-          cp -vr ./TabletDriverLib/Configurations/ build/linux-x64
-          cp -vr ./TabletDriverLib/Configurations/ build/osx-x64
+          cp -vr ./OpenTabletDriver/Configurations/ build/linux-x64
+          cp -vr ./OpenTabletDriver/Configurations/ build/osx-x64
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@master
         with:
@@ -61,7 +61,7 @@ jobs:
           dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
           dotnet build OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
       - name: Copy Configurations
-        run: Copy-Item -Path "./TabletDriverLib/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
+        run: Copy-Item -Path "./OpenTabletDriver/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
