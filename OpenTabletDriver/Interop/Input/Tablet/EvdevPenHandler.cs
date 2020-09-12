@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Interop.Input.Tablet
 {
-    public class EvdevPenHandler : IVirtualTablet, IPressureHandler
+    public class EvdevPenHandler : EvdevVirtualPointer, IVirtualTablet, IPressureHandler
     {
         public unsafe EvdevPenHandler()
         {
@@ -59,36 +59,7 @@ namespace OpenTabletDriver.Interop.Input.Tablet
             }
         }
 
-        private EvdevDevice Device { set; get; }
         private const int MaxPressure = ushort.MaxValue;
-
-        private EventCode? GetCode(MouseButton button)
-        {
-            return button switch
-            {
-                MouseButton.Right => EventCode.BTN_STYLUS2,
-                MouseButton.Middle => EventCode.BTN_STYLUS3,
-                _                 => null
-            };
-        }
-
-        public void MouseDown(MouseButton button)
-        {
-            if (GetCode(button) is EventCode code)
-            {
-                Device.Write(EventType.EV_KEY, code, 1);
-                Device.Sync();
-            }
-        }
-
-        public void MouseUp(MouseButton button)
-        {
-            if (GetCode(button) is EventCode code)
-            {
-                Device.Write(EventType.EV_KEY, code, 0);
-                Device.Sync();
-            }
-        }
 
         public void SetPosition(Vector2 pos)
         {
@@ -104,5 +75,12 @@ namespace OpenTabletDriver.Interop.Input.Tablet
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_PEN, 1);
             Device.Sync();
         }
+
+        protected override EventCode? GetCode(MouseButton button) => button switch
+        {
+            MouseButton.Right   => EventCode.BTN_STYLUS2,
+            MouseButton.Middle  => EventCode.BTN_STYLUS3,
+            _                   => null
+        };
     }
 }
