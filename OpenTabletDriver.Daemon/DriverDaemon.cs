@@ -285,7 +285,11 @@ namespace OpenTabletDriver.Daemon
                 return true;
             }
             else
+            {
+                pluginDir.Create();
+                Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
                 return false;
+            }
         }
 
         public bool ImportPlugin(string pluginPath)
