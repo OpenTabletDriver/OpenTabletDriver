@@ -5,7 +5,7 @@
     "ProductID": 788,
     "InputReportLength": 10,
     "OutputReportLength": 0,
-    "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV2ReportParser",
+    "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
@@ -14,7 +14,7 @@
     "ProductID": 788,
     "InputReportLength": 11,
     "OutputReportLength": 0,
-    "ReportParser": "TabletDriverLib.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+    "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },

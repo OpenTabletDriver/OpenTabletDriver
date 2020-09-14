@@ -5,7 +5,7 @@
     "ProductID": 3,
     "InputReportLength": 9,
     "OutputReportLength": 0,
-    "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+    "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": "CQEE"
   },
