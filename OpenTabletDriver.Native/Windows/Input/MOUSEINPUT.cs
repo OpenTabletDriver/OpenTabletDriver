@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Native.Windows.Input
     {
         public int dx;
         public int dy;
-        public int mouseData;
+        public uint mouseData;
         public MOUSEEVENTF dwFlags;
         public uint time;
         public UIntPtr dwExtraInfo;
