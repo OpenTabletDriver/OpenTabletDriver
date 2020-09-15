@@ -5,7 +5,7 @@
     "ProductID": 855,
     "InputReportLength": 192,
     "OutputReportLength": 0,
-    "ReportParser": "TabletDriverLib.Vendors.Wacom.IntuosV3ReportParser",
+    "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },

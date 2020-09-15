@@ -14,7 +14,7 @@
     "ProductID": 782,
     "InputReportLength": 11,
     "OutputReportLength": 0,
-    "ReportParser": "TabletDriverLib.Vendors.SkipByteTabletReportParser",
+    "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
     "FeatureInitReport": null,
     "OutputInitReport": null
   },
