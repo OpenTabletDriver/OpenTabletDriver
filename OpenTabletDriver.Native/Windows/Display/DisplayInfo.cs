@@ -14,12 +14,12 @@ namespace OpenTabletDriver.Native.Windows
         public Rect MonitorArea { private set; get; }
         public Rect WorkingArea { private set; get; }
 
-        public int Width => MonitorArea.right - MonitorArea.left;
-        public int Height => MonitorArea.bottom - MonitorArea.top;
-        public int Top => MonitorArea.top;
-        public int Left => MonitorArea.left;
-        public int Bottom => MonitorArea.bottom;
-        public int Right => MonitorArea.right;
+        public int Width => WorkingArea.right - WorkingArea.left;
+        public int Height => WorkingArea.bottom - WorkingArea.top;
+        public int Top => WorkingArea.top;
+        public int Left => WorkingArea.left;
+        public int Bottom => WorkingArea.bottom;
+        public int Right => WorkingArea.right;
         public bool IsPrimary { private set; get; }
 
         public override string ToString()
