@@ -64,6 +64,7 @@ namespace OpenTabletDriver.Interop.Display
         public IEnumerable<IDisplay> Displays { private set; get; }
 
         public int Index => 0;
+        public float Scaling => 1;
 
         public override string ToString()
         {

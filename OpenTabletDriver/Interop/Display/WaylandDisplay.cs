@@ -83,6 +83,7 @@ namespace OpenTabletDriver.Interop.Display
         public IEnumerable<IDisplay> Displays => new IDisplay[] { this }.Concat(_outputs);
 
         public int Index => 0;
+        public float Scaling => 1;
 
         public float Width
         {

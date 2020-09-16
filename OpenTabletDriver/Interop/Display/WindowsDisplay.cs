@@ -25,7 +25,8 @@ namespace OpenTabletDriver.Interop.Display
                     monitor.Width,
                     monitor.Height,
                     new Vector2(monitor.Left, monitor.Top),
-                    monitors.IndexOf(monitor) + 1);
+                    monitors.IndexOf(monitor) + 1,
+                    monitor.Scaling);
                 displays.Add(display);
             }
 
@@ -41,11 +42,25 @@ namespace OpenTabletDriver.Interop.Display
             List<DisplayInfo> displayCollection = new List<DisplayInfo>();
             MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor,  IntPtr dwData)
             {
-                MonitorInfo monitorInfo = new MonitorInfo();
+                MonitorInfoEx monitorInfo = new MonitorInfoEx();
                 monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
                 if (GetMonitorInfo(hMonitor, ref monitorInfo))
                 {
-                    DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work, monitorInfo.flags);
+                    var info = new DevMode();
+                    EnumDisplaySettings(monitorInfo.deviceName, -1, ref info);
+                    GetDpiForMonitor(hMonitor, DpiType.Effective, out var dpi, out _);
+
+                    float scaling = dpi / 96.0f;
+
+                    var monitor = new Rect
+                    {
+                        left = info.dmPositionX,
+                        right = info.dmPositionX + info.dmPelsWidth,
+                        top = info.dmPositionY,
+                        bottom = info.dmPositionY + info.dmPelsHeight
+                    };
+
+                    DisplayInfo displayInfo = new DisplayInfo(monitor, monitorInfo.flags, scaling);
                     displayCollection.Add(displayInfo);
                 }
                 return true;
@@ -78,13 +93,15 @@ namespace OpenTabletDriver.Interop.Display
 
         public Vector2 Position { private set; get; }
 
+        public float Scaling => 1;
+
         public IEnumerable<IDisplay> Displays { private set; get; }
 
         public int Index => 0;
 
         public override string ToString()
         {
-            return $"Virtual Display {Index} ({Width}x{Height}@{Position})";
+            return $"Virtual Display {Index} ({Width}x{Height}@{Position}, {Scaling}x)";
         }
     }
 }
