@@ -8,6 +8,7 @@ using System.Reflection;
 using HidSharp;
 using OpenTabletDriver.Binding;
 using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Migration;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
@@ -57,6 +58,7 @@ namespace OpenTabletDriver.Daemon
             if (Settings == null && settingsFile.Exists)
             {
                 var settings = Settings.Deserialize(settingsFile);
+                settings = SettingsMigrator.Migrate(settings);
                 SetSettings(settings);
             }
         }
