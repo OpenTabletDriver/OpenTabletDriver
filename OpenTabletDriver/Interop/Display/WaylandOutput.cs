@@ -10,7 +10,6 @@ namespace OpenTabletDriver.Interop.Display
         internal ZxdgOutputV1 XdgOutput { set; get; }
 
         public int Index { set; get; }
-        public float Scaling { set; get; }
         public float Width { set; get; }
         public float Height { set; get; }
         public Vector2 Position { set; get; }

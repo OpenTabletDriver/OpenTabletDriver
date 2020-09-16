@@ -4,10 +4,9 @@ namespace OpenTabletDriver.Native.Windows
 {
     public class DisplayInfo
     {
-        public DisplayInfo(Rect monitorArea, uint flags, float scaling = 1)
+        public DisplayInfo(Rect monitorArea, uint flags)
         {
             MonitorArea = monitorArea;
-            Scaling = scaling;
             IsPrimary = ((MONITORINFOF)flags).HasFlag(MONITORINFOF.PRIMARY);
         }
 
@@ -19,7 +18,6 @@ namespace OpenTabletDriver.Native.Windows
         public int Left => MonitorArea.left;
         public int Bottom => MonitorArea.bottom;
         public int Right => MonitorArea.right;
-        public float Scaling { private set; get; }
         public bool IsPrimary { private set; get; }
 
         public override string ToString()

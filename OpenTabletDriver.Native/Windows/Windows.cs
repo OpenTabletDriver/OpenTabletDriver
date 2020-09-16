@@ -22,6 +22,9 @@ namespace OpenTabletDriver.Native.Windows
         [DllImport("Shcore.dll")]
         public static extern int GetDpiForMonitor(IntPtr hmon, DpiType dpiType, out uint dpiX, out uint dpiY);
 
+        [DllImport("Shcore.dll")]
+        public static extern int SetProcessDpiAwareness(int awareness);
+
         #endregion
 
         #region Input

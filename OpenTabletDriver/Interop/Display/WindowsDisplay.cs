@@ -14,6 +14,7 @@ namespace OpenTabletDriver.Interop.Display
     {
         public WindowsDisplay()
         {
+            SetProcessDpiAwareness(2);
             var monitors = GetDisplays().OrderBy(e => e.Left).ToList();
             var primary = monitors.FirstOrDefault(m => m.IsPrimary);
 
@@ -25,8 +26,7 @@ namespace OpenTabletDriver.Interop.Display
                     monitor.Width,
                     monitor.Height,
                     new Vector2(monitor.Left, monitor.Top),
-                    monitors.IndexOf(monitor) + 1,
-                    monitor.Scaling);
+                    monitors.IndexOf(monitor) + 1);
                 displays.Add(display);
             }
 
@@ -48,9 +48,6 @@ namespace OpenTabletDriver.Interop.Display
                 {
                     var info = new DevMode();
                     EnumDisplaySettings(monitorInfo.deviceName, -1, ref info);
-                    GetDpiForMonitor(hMonitor, DpiType.Effective, out var dpi, out _);
-
-                    float scaling = dpi / 96.0f;
 
                     var monitor = new Rect
                     {
@@ -60,7 +57,7 @@ namespace OpenTabletDriver.Interop.Display
                         bottom = info.dmPositionY + info.dmPelsHeight
                     };
 
-                    DisplayInfo displayInfo = new DisplayInfo(monitor, monitorInfo.flags, scaling);
+                    DisplayInfo displayInfo = new DisplayInfo(monitor, monitorInfo.flags);
                     displayCollection.Add(displayInfo);
                 }
                 return true;
@@ -93,15 +90,13 @@ namespace OpenTabletDriver.Interop.Display
 
         public Vector2 Position { private set; get; }
 
-        public float Scaling => 1;
-
         public IEnumerable<IDisplay> Displays { private set; get; }
 
         public int Index => 0;
 
         public override string ToString()
         {
-            return $"Virtual Display {Index} ({Width}x{Height}@{Position}, {Scaling}x)";
+            return $"Virtual Display {Index} ({Width}x{Height}@{Position})";
         }
     }
 }
