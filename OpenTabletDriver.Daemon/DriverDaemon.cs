@@ -202,11 +202,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetRelativeModeSettings(RelativeOutputMode relativeMode)
         {
-            relativeMode.XSensitivity = Settings.XSensitivity;
-            Log.Write("Settings", $"Horizontal Sensitivity: {relativeMode.XSensitivity}");
-
-            relativeMode.YSensitivity = Settings.YSensitivity;
-            Log.Write("Settings", $"Vertical Sensitivity: {relativeMode.YSensitivity}");
+            relativeMode.Sensitivity = new Vector2(Settings.XSensitivity, Settings.YSensitivity);
+            Log.Write("Settings", $"Relative Mode Sensitivity (X, Y): {relativeMode.Sensitivity.ToString()}");
 
             relativeMode.ResetTime = Settings.ResetTime;
             Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
