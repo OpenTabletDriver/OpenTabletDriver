@@ -12,24 +12,10 @@ namespace OpenTabletDriver.Interop.Input.Tablet
     {
         public void SetPosition(Vector2 pos)
         {
-            var input = new INPUT
-            {
-                type = INPUT_TYPE.MOUSE_INPUT,
-                U = new InputUnion
-                {
-                    mi = new MOUSEINPUT
-                    {
-                        dx = (int)(pos.X / Platform.VirtualScreen.Width * 65535),
-                        dy = (int)(pos.Y / Platform.VirtualScreen.Height * 65535),
-                        dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK,
-                        time = 0,
-                        dwExtraInfo = UIntPtr.Zero
-                    }
-                }
-            };
-            var inputs = new INPUT[] { input };
-            SendInput((uint)inputs.Length, inputs, INPUT.Size);
-            _last = pos;
+            inputs[0].U.mi.dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK | MOUSEEVENTF.MOVE_NOCOALESCE;
+            inputs[0].U.mi.dx = (int)(pos.X / Platform.VirtualScreen.Width * 65535);
+            inputs[0].U.mi.dy = (int)(pos.Y / Platform.VirtualScreen.Height * 65535);
+            SendInput(1, inputs, INPUT.Size);
         }
     }
 }

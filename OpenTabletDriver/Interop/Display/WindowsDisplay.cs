@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
 
 namespace OpenTabletDriver.Interop.Display
@@ -14,6 +15,14 @@ namespace OpenTabletDriver.Interop.Display
     {
         public WindowsDisplay()
         {
+            var version = Environment.OSVersion;
+            if (version.Platform == PlatformID.Win32NT
+                && version.Version.Major >= 6
+                && version.Version.Minor >= 2)
+            {
+                Log.Debug("Display", "DPI Awareness enabled");
+                SetProcessDpiAwareness(2);
+            }
             var monitors = GetDisplays().OrderBy(e => e.Left).ToList();
             var primary = monitors.FirstOrDefault(m => m.IsPrimary);
 
@@ -41,11 +50,22 @@ namespace OpenTabletDriver.Interop.Display
             List<DisplayInfo> displayCollection = new List<DisplayInfo>();
             MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor,  IntPtr dwData)
             {
-                MonitorInfo monitorInfo = new MonitorInfo();
+                MonitorInfoEx monitorInfo = new MonitorInfoEx();
                 monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);
                 if (GetMonitorInfo(hMonitor, ref monitorInfo))
                 {
-                    DisplayInfo displayInfo = new DisplayInfo(monitorInfo.monitor, monitorInfo.work, monitorInfo.flags);
+                    var info = new DevMode();
+                    EnumDisplaySettings(monitorInfo.deviceName, -1, ref info);
+
+                    var monitor = new Rect
+                    {
+                        left = info.dmPositionX,
+                        right = info.dmPositionX + info.dmPelsWidth,
+                        top = info.dmPositionY,
+                        bottom = info.dmPositionY + info.dmPelsHeight
+                    };
+
+                    DisplayInfo displayInfo = new DisplayInfo(monitor, monitorInfo.flags);
                     displayCollection.Add(displayInfo);
                 }
                 return true;

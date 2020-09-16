@@ -12,6 +12,7 @@
         RIGHTDOWN = 0x0008,
         RIGHTUP = 0x0010,
         XDOWN = 0x0080,
-        XUP = 0x0100
+        XUP = 0x0100,
+        MOVE_NOCOALESCE = 0x2000
     }
 }
