@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
 
 namespace OpenTabletDriver.Interop.Display
@@ -14,7 +15,14 @@ namespace OpenTabletDriver.Interop.Display
     {
         public WindowsDisplay()
         {
-            SetProcessDpiAwareness(2);
+            var version = Environment.OSVersion;
+            if (version.Platform == PlatformID.Win32NT
+                && version.Version.Major >= 6
+                && version.Version.Minor >= 2)
+            {
+                Log.Debug("Display", "DPI Awareness enabled");
+                SetProcessDpiAwareness(2);
+            }
             var monitors = GetDisplays().OrderBy(e => e.Left).ToList();
             var primary = monitors.FirstOrDefault(m => m.IsPrimary);
 
