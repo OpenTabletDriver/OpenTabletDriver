@@ -297,7 +297,7 @@ namespace OpenTabletDriver
             TipButton = new BindingReference(typeof(OpenTabletDriver.Binding.MouseBinding), "Left"),
             TipActivationPressure = 1,
             PenButtons = new ObservableCollection<string>(new string[2]),
-            AuxButtons = new ObservableCollection<string>(new string[4]),
+            AuxButtons = new ObservableCollection<string>(new string[6]),
             PluginSettings = new Dictionary<string, string>(),
             XSensitivity = 10,
             YSensitivity = 10,
