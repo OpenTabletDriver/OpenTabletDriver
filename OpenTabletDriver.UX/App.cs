@@ -29,6 +29,8 @@ namespace OpenTabletDriver.UX
             );
         }
 
+        public const string PluginRepositoryUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Plugin-Repository";
+
         public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
