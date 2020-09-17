@@ -8,6 +8,7 @@ using System.Reflection;
 using HidSharp;
 using OpenTabletDriver.Binding;
 using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Migration;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
@@ -102,7 +103,7 @@ namespace OpenTabletDriver.Daemon
 
         public void SetSettings(Settings settings)
         {
-            Settings = settings;
+            Settings = SettingsMigrator.Migrate(settings);
             
             Driver.OutputMode = new PluginReference(Settings.OutputMode).Construct<IOutputMode>();
 
