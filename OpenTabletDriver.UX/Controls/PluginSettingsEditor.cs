@@ -4,19 +4,23 @@ using System.Linq;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class PluginManager<T> : Splitter
+    public class PluginSettingsEditor<T> : Panel
     {
-        public PluginManager()
+        public PluginSettingsEditor(string friendlyName = null)
         {
-            Orientation = Orientation.Horizontal;
-            Panel1MinimumSize = 200;
-            Panel1 = new Scrollable { Content = _pluginList };
-            Panel2 = new Scrollable { Content = _settingControls };
+            this.FriendlyName = friendlyName;
+
+            var content = new Splitter();
+            content.Orientation = Orientation.Horizontal;
+            content.Panel1MinimumSize = 200;
+            content.Panel1 = new Scrollable { Content = _pluginList };
+            content.Panel2 = new Scrollable { Content = _settingControls };
 
             Plugins = new List<PluginReference>();
             _pluginList.SelectedIndexChanged += (sender, e) =>
@@ -37,9 +41,42 @@ namespace OpenTabletDriver.UX.Controls
             _pluginList.Items.Clear();
             foreach (var plugin in Plugins)
                 _pluginList.Items.Add(string.IsNullOrWhiteSpace(plugin.Name) ? plugin.Path : plugin.Name);
+
+            if (Plugins.Count == 0)
+            {
+                this.Content = new StackLayout
+                {
+                    Items =
+                    {
+                        new StackLayoutItem(null, true),
+                        new StackLayoutItem($"No plugins containing {(string.IsNullOrWhiteSpace(this.FriendlyName) ? typeof(T).Name : $"{this.FriendlyName.ToLower()}s")} are installed.")
+                        {
+                            HorizontalAlignment = HorizontalAlignment.Center
+                        },
+                        new StackLayoutItem
+                        {
+                            Control = new LinkButton
+                            {
+                                Text = "Plugin Repository",
+                                Command = new Command(
+                                    (s, e) => SystemInfo.Open(App.PluginRepositoryUrl)
+                                )
+                            },
+                            HorizontalAlignment = HorizontalAlignment.Center
+                        },
+                        new StackLayoutItem(null, true)
+                    }
+                };
+            }
+            else
+            {
+                this.Content = content;
+            }
         }
 
         private List<PluginReference> Plugins = new List<PluginReference>();
+
+        public string FriendlyName { set; get; }
 
         private PluginReference _selectedPlugin;
         public PluginReference SelectedPlugin
