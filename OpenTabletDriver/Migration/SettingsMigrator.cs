@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using OpenTabletDriver.Output;
-using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Migration
 {
@@ -15,8 +11,14 @@ namespace OpenTabletDriver.Migration
             
             // Bindings
             settings.TipButton = MigrateNamespace(settings.TipButton);
+
+            while(settings.PenButtons.Count < Settings.PenButtonCount)
+                settings.PenButtons.Add(null);
             for (int i = 0; i < settings.PenButtons.Count; i++)
                 settings.PenButtons[i] = MigrateNamespace(settings.PenButtons[i]);
+
+            while (settings.AuxButtons.Count < Settings.AuxButtonCount)
+                settings.AuxButtons.Add(null);
             for (int i = 0; i < settings.AuxButtons.Count; i++)
                 settings.AuxButtons[i] = MigrateNamespace(settings.AuxButtons[i]);
 
@@ -31,7 +33,7 @@ namespace OpenTabletDriver.Migration
                 return null;
             
             var match = TabletDriverLibRegex.Match(input);
-            return match.Success ? $"{nameof(OpenTabletDriver)}.{match.Groups[0]}" : input;
+            return match.Success ? $"{nameof(OpenTabletDriver)}.{match.Groups[1]}" : input;
         }
     }
 }
