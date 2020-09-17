@@ -58,7 +58,6 @@ namespace OpenTabletDriver.Daemon
             if (Settings == null && settingsFile.Exists)
             {
                 var settings = Settings.Deserialize(settingsFile);
-                settings = SettingsMigrator.Migrate(settings);
                 SetSettings(settings);
             }
         }
@@ -104,7 +103,7 @@ namespace OpenTabletDriver.Daemon
 
         public void SetSettings(Settings settings)
         {
-            Settings = settings;
+            Settings = SettingsMigrator.Migrate(settings);
             
             Driver.OutputMode = new PluginReference(Settings.OutputMode).Construct<IOutputMode>();
 
