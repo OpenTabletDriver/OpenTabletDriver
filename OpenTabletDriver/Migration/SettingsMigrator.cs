@@ -27,6 +27,9 @@ namespace OpenTabletDriver.Migration
 
         private static string MigrateNamespace(string input)
         {
+            if (input == null)
+                return null;
+            
             var match = TabletDriverLibRegex.Match(input);
             return match.Success ? $"{nameof(OpenTabletDriver)}.{match.Groups[0]}" : input;
         }
