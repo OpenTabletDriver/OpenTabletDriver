@@ -69,7 +69,6 @@ namespace OpenTabletDriver.Plugin.Output
                     }
                 }
             }
-            HandleBinding(report);
         }
         
         protected Vector2? Transpose(ITabletReport report)
