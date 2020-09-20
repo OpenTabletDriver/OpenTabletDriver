@@ -24,7 +24,7 @@
     "InputReportLength": 64,
     "OutputReportLength": 0,
     "ReportParser": null,
-    "FeatureInitReport": "AgI=",
+    "FeatureInitReport": null,
     "OutputInitReport": null
   },
   "Width": 152.0,
