@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Timers;
 
 namespace OpenTabletDriver.UX
@@ -28,6 +29,12 @@ namespace OpenTabletDriver.UX
 
         public void Start()
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                daemonProcess.StartInfo.FileName = "OpenTabletDriver.Daemon.exe";
+                daemonProcess.StartInfo.Arguments = null;
+            }
+
             this.daemonProcess.Start();
             this.watchdogTimer.Start();
             this.watchdogTimer.Elapsed += (sender, e) =>
