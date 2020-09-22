@@ -15,7 +15,7 @@
     "InputReportLength": 11,
     "OutputReportLength": 0,
     "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
-    "FeatureInitReport": null,
+    "FeatureInitReport": "AgI=",
     "OutputInitReport": null
   },
   "AuxilaryDeviceIdentifier": {
