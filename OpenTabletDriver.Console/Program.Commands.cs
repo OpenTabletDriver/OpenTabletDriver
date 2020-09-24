@@ -124,7 +124,7 @@ namespace OpenTabletDriver.Console
 
         static async Task SetInputHook(bool isHooked)
         {
-            await DriverDaemon.InvokeAsync(d => d.SetInputHook(isHooked));
+            await Driver.Instance.EnableInput(isHooked);
         }
 
         #endregion
@@ -133,7 +133,7 @@ namespace OpenTabletDriver.Console
             
         static async Task GetCurrentLog()
         {
-            var log = await DriverDaemon.InvokeAsync(d => d.GetCurrentLog());
+            var log = await Driver.Instance.GetCurrentLog();
             foreach (var message in log)
                 await Out.WriteLineAsync(Log.GetStringFormat(message));
         }
@@ -230,7 +230,7 @@ namespace OpenTabletDriver.Console
 
         static async Task Detect()
         {
-            await DriverDaemon.InvokeAsync(d => d.DetectTablets());
+            await Driver.Instance.DetectTablets();
         }
 
         #endregion
@@ -269,7 +269,7 @@ namespace OpenTabletDriver.Console
 
         static async Task GetDiagnostics()
         {
-            var log = await DriverDaemon.InvokeAsync(d => d.GetCurrentLog());
+            var log = await Driver.Instance.GetCurrentLog();
             var diagnostics = new DiagnosticInfo(log);
             await Out.WriteLineAsync(diagnostics.ToString());
         }

@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Plugin
     {
         public static event EventHandler<LogMessage> Output;
 
-        private static void Post(LogMessage message)
+        public static void OnOutput(LogMessage message)
         {
             Output?.Invoke(null, message);
         }
@@ -36,20 +36,20 @@ namespace OpenTabletDriver.Plugin
         public static void Write(string group, string text, LogLevel level = LogLevel.Info)
         {
             var message = new LogMessage(group, text, level);
-            Post(message);
+            OnOutput(message);
         }
 
         public static void Debug(string group, string text)
         {
             var message = new LogMessage(group, text, LogLevel.Debug);
-            Post(message);
+            OnOutput(message);
         }
 
         public static void Exception<T>(T ex) where T : Exception
         {
             // GC.SuppressFinalize(ex);
             var message = new ExceptionLogMessage(typeof(T).FullName, ex.Message, ex.StackTrace);
-            Post(message);
+            OnOutput(message);
             // GC.ReRegisterForFinalize(ex);
         }
     }

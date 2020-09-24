@@ -7,7 +7,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver
 {
-    public class DeviceReader<T> : IDeviceReader<T>, IDisposable where T : IDeviceReport
+    public class DeviceReader<T> : IDisposable where T : IDeviceReport
     {
         public DeviceReader(HidDevice device, IReportParser<T> reportParser)
         {
