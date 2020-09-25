@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using HidSharp;
 using OpenTabletDriver.Binding;
 using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Migration;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -65,7 +66,8 @@ namespace OpenTabletDriver.Daemon
         }
 
         public event EventHandler<LogMessage> Message;
-        public event EventHandler<IDeviceReport> Report;
+        public event EventHandler<DebugTabletReport> TabletReport;
+        public event EventHandler<DebugAuxReport> AuxReport;
         public event EventHandler<TabletProperties> TabletChanged;
 
         public Driver Driver { private set; get; } = new Driver();
@@ -324,11 +326,23 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
-            void OnDeviceReport(object sender, IDeviceReport report) => Report?.Invoke(sender, report);
+            void onDeviceReport(object sender, IDeviceReport report)
+            {
+                if (report is ITabletReport tabletReport)
+                    TabletReport?.Invoke(sender, new DebugTabletReport(tabletReport));
+                if (report is IAuxReport auxReport)
+                    AuxReport?.Invoke(sender, new DebugAuxReport(auxReport));
+            }
             if (enabled)
-                Driver.TabletReader.Report += OnDeviceReport;
+            {
+                Driver.TabletReader.Report += onDeviceReport;
+                Driver.AuxReader.Report += onDeviceReport;
+            }
             else
-                Driver.TabletReader.Report -= OnDeviceReport;
+            {
+                Driver.TabletReader.Report -= onDeviceReport;
+                Driver.AuxReader.Report -= onDeviceReport;
+            }
             return Task.CompletedTask;
         }
 

@@ -72,11 +72,13 @@ namespace OpenTabletDriver.UX.Windows
 
         private void InitializeAsync()
         {
-            App.Driver.Instance.Report += HandleReport;
+            App.Driver.Instance.TabletReport += HandleReport;
+            App.Driver.Instance.AuxReport += HandleReport;
             App.Driver.Instance.SetTabletDebug(true);
             this.Closing += (sender, e) =>
             {
-                App.Driver.Instance.Report -= HandleReport;
+                App.Driver.Instance.TabletReport -= HandleReport;
+                App.Driver.Instance.AuxReport -= HandleReport;
                 App.Driver.Instance.SetTabletDebug(false);
             };
         }
