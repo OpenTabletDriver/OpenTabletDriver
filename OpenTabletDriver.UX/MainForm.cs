@@ -664,6 +664,7 @@ namespace OpenTabletDriver.UX
             {
                 SetTabletAreaDimensions(tablet);
             }
+            App.Driver.Instance.TabletChanged += (sender, tablet) => SetTabletAreaDimensions(tablet);
 
             var settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await App.Driver.Instance.GetSettings() is Settings settings)
@@ -838,8 +839,8 @@ namespace OpenTabletDriver.UX
 
         private void SetTabletAreaDimensions(TabletProperties tablet)
         {
-            tabletAreaEditor.ViewModel.MaxWidth = tablet.Width;
-            tabletAreaEditor.ViewModel.MaxHeight = tablet.Height;
+            tabletAreaEditor.ViewModel.MaxWidth = tablet?.Width ?? 0;
+            tabletAreaEditor.ViewModel.MaxHeight = tablet?.Height ?? 0;
         }
 
         private void UpdateOutputMode(PluginReference pluginRef)

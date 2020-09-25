@@ -26,6 +26,7 @@ namespace OpenTabletDriver.Daemon
             Log.Output += (sender, message) => LogMessages.Add(message);
             Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
             Log.Output += (sender, message) => Message?.Invoke(sender, message);
+            Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
             LoadUserSettings();
 
             HidSharp.DeviceList.Local.Changed += async (sender, e) => 
@@ -65,6 +66,7 @@ namespace OpenTabletDriver.Daemon
 
         public event EventHandler<LogMessage> Message;
         public event EventHandler<IDeviceReport> Report;
+        public event EventHandler<TabletProperties> TabletChanged;
 
         public Driver Driver { private set; get; } = new Driver();
         private Settings Settings { set; get; }
@@ -81,7 +83,9 @@ namespace OpenTabletDriver.Daemon
 
         public Task<bool> SetTablet(TabletProperties tablet)
         {
-            return Task.FromResult(Driver.TryMatch(tablet));
+            var match = Driver.TryMatch(tablet);
+            TabletChanged?.Invoke(this, match ? tablet : null);
+            return Task.FromResult(match);
         }
 
         public Task<TabletProperties> GetTablet()

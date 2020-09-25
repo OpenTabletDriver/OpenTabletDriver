@@ -10,6 +10,7 @@ namespace OpenTabletDriver.Contracts
     {
         event EventHandler<LogMessage> Message;
         event EventHandler<IDeviceReport> Report;
+        event EventHandler<TabletProperties> TabletChanged;
         
         Task WriteMessage(LogMessage message);
 
