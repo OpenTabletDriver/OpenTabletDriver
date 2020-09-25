@@ -13,7 +13,7 @@ namespace OpenTabletDriver.RPC
         {
             this.pipeName = pipeName;
             Reset();
-            var mainTask = Main();
+            _ = Main();
         }
 
         public async Task Main()

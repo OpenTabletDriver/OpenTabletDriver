@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using HidSharp;
-using OpenTabletDriver.Contracts;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 

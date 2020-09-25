@@ -2,12 +2,10 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.RPC;
-using StreamJsonRpc;
 
 namespace OpenTabletDriver.Daemon
 {
