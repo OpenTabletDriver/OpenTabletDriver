@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
@@ -11,23 +10,6 @@ namespace OpenTabletDriver.UX
 {
     public static class App
     {
-        public static void UnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
-        {
-            var appInfo = Driver.Instance.GetApplicationInfo().Result;
-            var exception = (Exception)e.ExceptionObject;
-            File.WriteAllLines(Path.Join(appInfo.AppDataDirectory, "ux.log"),
-                new string[]
-                {
-                    DateTime.Now.ToString(),
-                    exception.GetType().FullName,
-                    exception.Message,
-                    exception.Source,
-                    exception.StackTrace,
-                    exception.TargetSite.Name
-                }
-            );
-        }
-
         public const string PluginRepositoryUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Plugin-Repository";
 
         public static RpcClient<IDriverDaemon> Driver => _daemon.Value;

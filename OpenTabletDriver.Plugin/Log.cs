@@ -45,12 +45,10 @@ namespace OpenTabletDriver.Plugin
             OnOutput(message);
         }
 
-        public static void Exception<T>(T ex) where T : Exception
+        public static void Exception(Exception ex)
         {
-            // GC.SuppressFinalize(ex);
-            var message = new ExceptionLogMessage(typeof(T).FullName, ex.Message, ex.StackTrace);
+            var message = new ExceptionLogMessage(ex.GetType().Name, ex.Message, ex.StackTrace);
             OnOutput(message);
-            // GC.ReRegisterForFinalize(ex);
         }
     }
 }

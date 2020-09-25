@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.IO.Pipes;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
-using OpenTabletDriver.Native;
 using StreamJsonRpc;
 
 namespace OpenTabletDriver.RPC
@@ -23,7 +17,6 @@ namespace OpenTabletDriver.RPC
         {
             await stream.ConnectAsync();
             IsConnected = true;
-            await Task.Delay(250);
             Instance = JsonRpc.Attach<T>(stream);
         }
 
@@ -40,7 +33,12 @@ namespace OpenTabletDriver.RPC
 
         private static NamedPipeClientStream GetStream(string name)
         {
-            return new NamedPipeClientStream(".", name, PipeDirection.InOut, PipeOptions.Asynchronous);
+            return new NamedPipeClientStream(
+                ".",
+                name,
+                PipeDirection.InOut,
+                PipeOptions.Asynchronous | PipeOptions.WriteThrough
+            );
         }
 
         public void Dispose()

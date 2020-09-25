@@ -4,7 +4,7 @@
     <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <VersionPrefix>0.4.0</VersionPrefix>
-    <NoWarn>VSTHRD200</NoWarn>
+    <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

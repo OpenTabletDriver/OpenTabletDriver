@@ -20,8 +20,6 @@ namespace OpenTabletDriver.UX
     {
         public MainForm()
         {
-            Application.Instance.UnhandledException += App.UnhandledException;
-
             Title = "OpenTabletDriver";
             Icon = App.Logo.WithSize(App.Logo.Size);
 
