@@ -67,17 +67,17 @@ namespace OpenTabletDriver.UX.Windows
 
             this.Content = mainLayout;
 
-            InitializeAsync();
+            InitializeDebugger();
         }
 
-        private void InitializeAsync()
+        private void InitializeDebugger()
         {
             App.Driver.Instance.Report += HandleReport;
-            App.Driver.Instance.SetTabletDebug(true);
+            App.Driver.Instance.SetTabletDebug(true).ConfigureAwait(false);
             this.Closing += (sender, e) =>
             {
                 App.Driver.Instance.Report -= HandleReport;
-                App.Driver.Instance.SetTabletDebug(false);
+                App.Driver.Instance.SetTabletDebug(false).ConfigureAwait(false);
             };
         }
 

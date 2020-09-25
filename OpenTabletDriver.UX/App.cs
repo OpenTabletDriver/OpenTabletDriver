@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX
     {
         public static void UnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
         {
-            var appInfo = Driver.Instance.GetApplicationInfo().Result;
+            var appInfo = Driver.Instance.GetApplicationInfo().ConfigureAwait(false).GetAwaiter().GetResult();
             var exception = (Exception)e.ExceptionObject;
             File.WriteAllLines(Path.Join(appInfo.AppDataDirectory, "ux.log"),
                 new string[]

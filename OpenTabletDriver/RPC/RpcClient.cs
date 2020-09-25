@@ -24,11 +24,14 @@ namespace OpenTabletDriver.RPC
             await stream.ConnectAsync();
             IsConnected = true;
             await Task.Delay(250);
-            Instance = JsonRpc.Attach<T>(stream);
+            RpcInstance = new JsonRpc(stream);
+            Instance = RpcInstance.Attach<T>();
+            RpcInstance.StartListening();
         }
 
         private string pipeName;
         private NamedPipeClientStream stream;
+        public JsonRpc RpcInstance { private set; get; }
         public T Instance { private set; get; }
         public bool IsConnected { private set; get; }
 

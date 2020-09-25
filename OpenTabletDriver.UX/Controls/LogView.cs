@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -45,10 +46,10 @@ namespace OpenTabletDriver.UX.Controls
             this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
             this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
 
-            InitializeAsync();
+            InitializeAsync().ConfigureAwait(false);
         }
 
-        private async void InitializeAsync()
+        private async Task InitializeAsync()
         {
             var currentMessages = from message in await App.Driver.Instance.GetCurrentLog()
                 where message is LogMessage

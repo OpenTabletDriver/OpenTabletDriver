@@ -26,9 +26,9 @@ namespace OpenTabletDriver.Daemon
             Log.Output += (sender, message) => LogMessages.Add(message);
             Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
             Log.Output += (sender, message) => Message?.Invoke(sender, message);
-            LoadUserSettings();
+            LoadUserSettingsAsync().ConfigureAwait(false);
 
-            HidSharp.DeviceList.Local.Changed += async (sender, e) => 
+            HidSharp.DeviceList.Local.Changed += (sender, e) => 
             {
                 var newDevices = from device in DeviceList.Local.GetHidDevices()
                     where !CurrentDevices.Any(d => d == device)
@@ -36,14 +36,14 @@ namespace OpenTabletDriver.Daemon
 
                 if (newDevices.Count() > 0)
                 {
-                    if (await GetTablet() == null)
-                        await DetectTablets();
+                    if (GetTablet().ConfigureAwait(false).GetAwaiter().GetResult() == null)
+                        DetectTablets().ConfigureAwait(false);
                 }
                 CurrentDevices = DeviceList.Local.GetHidDevices().ToList();
             };
         }
 
-        private async void LoadUserSettings()
+        private async Task LoadUserSettingsAsync()
         {
             await LoadPlugins();
             await DetectTablets();
@@ -281,20 +281,20 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.Current);
         }
 
-        public Task<bool> LoadPlugins()
+        public async Task<bool> LoadPlugins()
         {
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
                 foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
-                    ImportPlugin(file.FullName);
-                return Task.FromResult(true);
+                    await ImportPlugin(file.FullName);
+                return true;
             }
             else
             {
                 pluginDir.Create();
                 Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
-                return Task.FromResult(false);
+                return false;
             }
         }
 

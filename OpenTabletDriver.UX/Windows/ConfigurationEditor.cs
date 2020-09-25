@@ -60,7 +60,7 @@ namespace OpenTabletDriver.UX.Windows
             deleteConfiguration.Executed += (sender, e) => DeleteConfiguration(SelectedConfiguration);
 
             var generateConfiguration = new Command { ToolBarText = "Generate configuration..." };
-            generateConfiguration.Executed += async (sender, e) => await GenerateConfiguration();
+            generateConfiguration.Executed += (sender, e) => GenerateConfigurationAsync().ConfigureAwait(false);
 
             // Menu
             Menu = new MenuBar
@@ -91,10 +91,10 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            InitializeAsync();
+            InitializeAsync().ConfigureAwait(false);
         }
 
-        private async void InitializeAsync()
+        private async Task InitializeAsync()
         {
             var appinfo = await App.Driver.Instance.GetApplicationInfo();
             var configDir = new DirectoryInfo(appinfo.ConfigurationDirectory);
@@ -213,7 +213,7 @@ namespace OpenTabletDriver.UX.Windows
                 _configList.SelectedIndex = Configurations.Count - 1;
         }
 
-        private async Task GenerateConfiguration()
+        private async Task GenerateConfigurationAsync()
         {
             var dialog = new DeviceListDialog();
             if (await dialog.ShowModalAsync() is HidDevice device)

@@ -25,15 +25,15 @@ namespace OpenTabletDriver.UX
             Title = "OpenTabletDriver";
             Icon = App.Logo.WithSize(App.Logo.Size);
 
-            Content = ConstructPlaceholderControl();
+            Content = ConstructPlaceholderControl("Connecting to OpenTabletDriver Daemon...");
             Menu = ConstructMenu();
 
             ApplyPlatformQuirks();
 
-            InitializeAsync();
+            Application.Instance.AsyncInvoke(() => InitializeAsync().ConfigureAwait(false));
         }
 
-        private Control ConstructPlaceholderControl()
+        private Control ConstructPlaceholderControl(string display)
         {
             return new StackLayout
             {
@@ -47,7 +47,7 @@ namespace OpenTabletDriver.UX
                     },
                     new StackLayoutItem
                     {
-                        Control = "Connecting to OpenTabletDriver Daemon...",
+                        Control = display,
                         HorizontalAlignment = HorizontalAlignment.Center
                     },
                     new StackLayoutItem(null, true)
@@ -149,11 +149,11 @@ namespace OpenTabletDriver.UX
                 Spacing = 5,
                 Items =
                 {
-                    new Button(async (s, e) => await SaveSettings())
+                    new Button((s, e) => Task.Run(() => SaveSettingsAsync()))
                     {
                         Text = "Save"
                     },
-                    new Button(async (s, e) => await ApplySettings())
+                    new Button((s, e) => Task.Run(() => ApplySettingsAsync()))
                     {
                         Text = "Apply"
                     }
@@ -483,22 +483,22 @@ namespace OpenTabletDriver.UX
             aboutCommand.Executed += (sender, e) => App.AboutDialog.ShowDialog(this);
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
-            resetSettings.Executed += async (sender, e) => await ResetSettings(false);
+            resetSettings.Executed += (sender, e) => ResetSettingsAsync(false).ConfigureAwait(false);
 
             var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
-            loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
+            loadSettings.Executed += (sender, e) => LoadSettingsDialogAsync().ConfigureAwait(false);
 
             var saveSettingsAs = new Command { MenuText = "Save settings as...", Shortcut = Application.Instance.CommonModifier | Keys.Shift | Keys.S };
-            saveSettingsAs.Executed += async (sender, e) => await SaveSettingsDialog();
+            saveSettingsAs.Executed += (sender, e) => SaveSettingsDialogAsync().ConfigureAwait(false);
 
             var saveSettings = new Command { MenuText = "Save settings", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveSettings.Executed += async (sender, e) => await SaveSettings();
+            saveSettings.Executed += (sender, e) => Task.Run(() => SaveSettingsAsync()).ConfigureAwait(false);
 
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
-            applySettings.Executed += async (sender, e) => await ApplySettings();
+            applySettings.Executed += (sender, e) => Task.Run(() => ApplySettingsAsync()).ConfigureAwait(false);
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
-            detectTablet.Executed += async (sender, e) => await DetectAllTablets();
+            detectTablet.Executed += (sender, e) => Application.Instance.AsyncInvoke(() => DetectAllTabletsAsync().ConfigureAwait(false));
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             showTabletDebugger.Executed += (sender, e) => ShowTabletDebugger();
@@ -507,7 +507,7 @@ namespace OpenTabletDriver.UX
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
-            exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
+            exportDiagnostics.Executed += (sender, e) => ExportDiagnosticsAsync().ConfigureAwait(false);
 
             return new MenuBar
             {
@@ -637,11 +637,19 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private async void InitializeAsync()
+        private async Task InitializeAsync()
         {
             try
             {
                 await App.Driver.Connect();
+                App.Driver.RpcInstance.Disconnected += (sender, o) =>
+                {
+                    Application.Instance.AsyncInvoke(() =>
+                    {
+                        MessageBox.Show("Fatal: The OpenTabletDriver Daemon has disconnected.", "OpenTabletDriver Fatal Error", MessageBoxType.Error);
+                        Environment.Exit(1);
+                    });
+                };
             }
             catch (TimeoutException)
             {
@@ -682,12 +690,12 @@ namespace OpenTabletDriver.UX
                 catch
                 {
                     MessageBox.Show("Failed to load your current settings. They are either out of date or corrupted.", MessageBoxType.Error);
-                    await ResetSettings();
+                    await ResetSettingsAsync();
                 }
             }
             else
             {
-                await ResetSettings();
+                await ResetSettingsAsync();
             }
 
             var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
@@ -712,7 +720,7 @@ namespace OpenTabletDriver.UX
             get => App.Settings;
         }
 
-        private async Task ResetSettings(bool force = true)
+        private async Task ResetSettingsAsync(bool force = true)
         {
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
@@ -731,7 +739,7 @@ namespace OpenTabletDriver.UX
             await App.Driver.Instance.SetSettings(Settings);
         }
 
-        private async Task LoadSettingsDialog()
+        private async Task LoadSettingsDialogAsync()
         {
             var fileDialog = new OpenFileDialog
             {
@@ -755,7 +763,7 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private async Task SaveSettingsDialog()
+        private async Task SaveSettingsDialogAsync()
         {
             var fileDialog = new SaveFileDialog
             {
@@ -773,37 +781,43 @@ namespace OpenTabletDriver.UX
                     if (Settings is Settings settings)
                     {
                         settings.Serialize(file);
-                        await ApplySettings();
+                        await ApplySettingsAsync();
                     }
                     break;
             }
         }
 
-        private async Task SaveSettings()
+        private async Task SaveSettingsAsync()
         {
             var appInfo = await App.Driver.Instance.GetApplicationInfo();
             if (Settings is Settings settings)
             {
                 settings.Serialize(new FileInfo(appInfo.SettingsFile));
-                await ApplySettings();
+                await ApplySettingsAsync();
             }
         }
 
-        private async Task ApplySettings()
+        private async Task ApplySettingsAsync()
         {
             if (Settings is Settings settings)
                 await App.Driver.Instance.SetSettings(settings);
         }
 
-        private async Task DetectAllTablets()
+        private Task DetectAllTabletsAsync()
         {
-            if (await App.Driver.Instance.DetectTablets() is TabletProperties tablet)
+            var prevContent = Content;
+            Content = ConstructPlaceholderControl("Detecting for tablet...");
+            return Task.Run(async () =>
             {
-                var settings = await App.Driver.Instance.GetSettings();
-                if (settings != null)
-                    await App.Driver.Instance.EnableInput(settings.AutoHook);
-                SetTabletAreaDimensions(tablet);
-            }
+                if (await App.Driver.Instance.DetectTablets() is TabletProperties tablet)
+                {
+                    var settings = await App.Driver.Instance.GetSettings();
+                    if (settings != null)
+                        await App.Driver.Instance.EnableInput(settings.AutoHook);
+                    SetTabletAreaDimensions(tablet);
+                }
+                Application.Instance.AsyncInvoke(() => Content = prevContent);
+            });
         }
 
         private void ShowConfigurationEditor()
@@ -812,7 +826,7 @@ namespace OpenTabletDriver.UX
             configEditor.Show();
         }
 
-        private async Task ExportDiagnostics()
+        private async Task ExportDiagnosticsAsync()
         {
             var log = await App.Driver.Instance.GetCurrentLog();
             var diagnosticDump = new DiagnosticInfo(log);
