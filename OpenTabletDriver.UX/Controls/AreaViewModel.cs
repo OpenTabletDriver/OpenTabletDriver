@@ -1,9 +1,13 @@
-﻿namespace OpenTabletDriver.UX.Controls
+﻿using System.Collections.Generic;
+using Eto.Drawing;
+
+namespace OpenTabletDriver.UX.Controls
 {
     public class AreaViewModel : ViewModelBase
     {
-        private float _w, _h, _x, _y, _r, _fW, _fH;
+        private float _w, _h, _x, _y, _r;
         private string _unit;
+        private IEnumerable<RectangleF> _bg;
 
         public float Width
         {
@@ -34,17 +38,10 @@
             set => this.RaiseAndSetIfChanged(ref _r, value);
             get => _r;
         }
-
-        public float MaxWidth
+        public IEnumerable<RectangleF> Background
         {
-            set => this.RaiseAndSetIfChanged(ref _fW, value);
-            get => _fW;
-        }
-
-        public float MaxHeight
-        {
-            set => this.RaiseAndSetIfChanged(ref _fH, value);
-            get => _fH;
+            set => this.RaiseAndSetIfChanged(ref _bg, value);
+            get => _bg;
         }
 
         public string Unit
