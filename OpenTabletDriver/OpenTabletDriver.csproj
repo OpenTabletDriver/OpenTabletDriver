@@ -4,10 +4,12 @@
     <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <VersionPrefix>0.4.0</VersionPrefix>
+    <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="HidSharpCore" Version="1.1.0" />
+    <PackageReference Include="StreamJsonRpc" Version="2.5.46" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="WaylandNET" Version="0.2.0" />
   </ItemGroup>

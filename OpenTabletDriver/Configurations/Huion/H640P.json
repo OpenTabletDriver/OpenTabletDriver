@@ -42,7 +42,7 @@
     "libinputoverride": "1"
   },
   "DeviceStrings": {
-    "201": "HUION_T173"
+    "201": "HUION_T173_\\d{6}$"
   },
   "InitializationStrings": [
     200

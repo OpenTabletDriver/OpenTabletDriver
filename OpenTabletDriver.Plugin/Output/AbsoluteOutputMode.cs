@@ -128,7 +128,6 @@ namespace OpenTabletDriver.Plugin.Output
                     VirtualTablet.SetPosition(pos);
                 }
             }
-            HandleBinding(report);
         }
 
         internal Vector2 Transpose(ITabletReport report)

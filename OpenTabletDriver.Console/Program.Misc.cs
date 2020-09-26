@@ -10,12 +10,12 @@ namespace OpenTabletDriver.Console
     {
         static async Task<Settings> GetSettings()
         {
-            return await DriverDaemon.InvokeAsync(d => d.GetSettings());
+            return await Driver.Instance.GetSettings();
         }
 
         static async Task ApplySettings(Settings settings)
         {
-            await DriverDaemon.InvokeAsync(d => d.SetSettings(settings));
+            await Driver.Instance.SetSettings(settings);
         }
 
         static async Task ModifySettings(Action<Settings> func)

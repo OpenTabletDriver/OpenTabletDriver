@@ -1,4 +1,4 @@
-using System.Numerics;
+using System;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Attributes;
@@ -11,11 +11,27 @@ namespace OpenTabletDriver.Interop.Input
     [PluginIgnore]
     public abstract class WindowsVirtualPointer : IVirtualPointer
     {
-        protected Vector2 _last;
+        protected INPUT[] inputs = new INPUT[]
+        {
+            new INPUT
+            {
+                type = INPUT_TYPE.MOUSE_INPUT,
+                U = new InputUnion
+                {
+                    mi = new MOUSEINPUT
+                    {
+                        time = 0,
+                        dwExtraInfo = UIntPtr.Zero
+                    }
+                }
+            }
+        };
 
         protected void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
-            mouse_event((uint)arg, (uint)_last.X, (uint)_last.Y, dwData, 0);
+            inputs[0].U.mi.dwFlags = arg;
+            inputs[0].U.mi.mouseData = dwData;
+            SendInput(1, inputs, INPUT.Size);
         }
 
         public void MouseDown(MouseButton button)

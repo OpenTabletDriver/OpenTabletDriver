@@ -13,18 +13,18 @@ namespace OpenTabletDriver.Tablet
             }
             else
             {
-                if (report is IAuxReport auxReport)
+                return report switch
                 {
-                    return $"AuxButtons:[{String.Join(" ", auxReport.AuxButtons)}]";
-                }
-                else if (report is ITabletReport tabletReport)
-                {
-                    return $"ReportID:{tabletReport.ReportID}, Position:[{tabletReport.Position}], Pressure:{tabletReport.Pressure}, PenButtons:[{String.Join(" ", tabletReport.PenButtons)}]";
-                }
-                else
-                {
-                    return $"Raw: {BitConverter.ToString(report.Raw).Replace('-', ' ')}";
-                }
+                    IAuxReport auxReport =>
+                        $"AuxButtons:[{String.Join(" ", auxReport.AuxButtons)}]",
+                    ITabletReport tabletReport =>
+                        $"ReportID:{tabletReport.ReportID}, " + 
+                        $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}], " + 
+                        $"Pressure:{tabletReport.Pressure}, " + 
+                        $"PenButtons:[{String.Join(" ", tabletReport.PenButtons)}]",
+                    _ =>
+                        $"Raw: {BitConverter.ToString(report.Raw).Replace('-', ' ')}"
+                };
             }
         }
     }

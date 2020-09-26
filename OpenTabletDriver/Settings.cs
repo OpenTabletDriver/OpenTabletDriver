@@ -15,6 +15,9 @@ namespace OpenTabletDriver
         {
         }
 
+        internal const int PenButtonCount = 2;
+        internal const int AuxButtonCount = 6;
+
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping;
@@ -296,8 +299,8 @@ namespace OpenTabletDriver
             EnableClipping = true,
             TipButton = new BindingReference(typeof(OpenTabletDriver.Binding.MouseBinding), "Left"),
             TipActivationPressure = 1,
-            PenButtons = new ObservableCollection<string>(new string[2]),
-            AuxButtons = new ObservableCollection<string>(new string[4]),
+            PenButtons = new ObservableCollection<string>(new string[PenButtonCount]),
+            AuxButtons = new ObservableCollection<string>(new string[AuxButtonCount]),
             PluginSettings = new Dictionary<string, string>(),
             XSensitivity = 10,
             YSensitivity = 10,

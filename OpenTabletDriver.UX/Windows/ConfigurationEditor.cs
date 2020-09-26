@@ -96,7 +96,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private async void InitializeAsync()
         {
-            var appinfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
+            var appinfo = await App.Driver.Instance.GetApplicationInfo();
             var configDir = new DirectoryInfo(appinfo.ConfigurationDirectory);
             var sortedConfigs = from config in ReadConfigurations(configDir)
                 orderby config.Name

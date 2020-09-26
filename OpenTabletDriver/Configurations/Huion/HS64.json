@@ -42,10 +42,9 @@
     "libinputoverride": "1"
   },
   "DeviceStrings": {
-    "2": "Huion Tablet_HS64"
+    "201": "HUION_T193_\\d{6}$"
   },
   "InitializationStrings": [
-    201,
     200
   ]
 }

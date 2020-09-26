@@ -31,8 +31,24 @@ namespace OpenTabletDriver.Plugin.Output
         public abstract IVirtualMouse VirtualMouse { get; }
         public IVirtualPointer Pointer => VirtualMouse;
 
-        public float XSensitivity { set; get; }
-        public float YSensitivity { set; get; }
+        private Vector2 _sensitivity;
+        private Vector2 _reportScaleMultiplier;
+        public Vector2 Sensitivity
+        {
+            set
+            {
+                _sensitivity = value;
+                _reportScaleMultiplier = _sensitivity;
+
+                // Normalize (ratio of 1)
+                _reportScaleMultiplier /= new Vector2(TabletProperties.MaxX, TabletProperties.MaxY);
+
+                // Scale to tablet dimensions (mm)
+                _reportScaleMultiplier *= new Vector2(TabletProperties.Width, TabletProperties.Height);
+            }
+            get { return _sensitivity; }
+        }
+
         public TimeSpan ResetTime { set; get; }
 
         private ITabletReport _lastReport;
@@ -53,7 +69,6 @@ namespace OpenTabletDriver.Plugin.Output
                     }
                 }
             }
-            HandleBinding(report);
         }
         
         protected Vector2? Transpose(ITabletReport report)
@@ -71,19 +86,9 @@ namespace OpenTabletDriver.Plugin.Output
                 // Pre Filter
                 foreach (IFilter filter in _preFilters)
                     pos = filter.Filter(pos);
-                
-                // Normalize (ratio of 1)
-                pos.X /= TabletProperties.MaxX;
-                pos.Y /= TabletProperties.MaxY;
 
-                // Scale to tablet dimensions (mm)
-                pos.X *= TabletProperties.Width;
-                pos.Y *= TabletProperties.Height;
+                pos *= _reportScaleMultiplier;
 
-                // Sensitivity setting
-                pos.X *= XSensitivity;
-                pos.Y *= YSensitivity;
-                
                 // Post Filter
                 foreach (IFilter filter in _postFilters)
                     pos = filter.Filter(pos);

@@ -4,15 +4,13 @@ namespace OpenTabletDriver.Native.Windows
 {
     public class DisplayInfo
     {
-        public DisplayInfo(Rect monitorArea, Rect workingArea, uint flags)
+        public DisplayInfo(Rect monitorArea, uint flags)
         {
             MonitorArea = monitorArea;
-            WorkingArea = workingArea;
             IsPrimary = ((MONITORINFOF)flags).HasFlag(MONITORINFOF.PRIMARY);
         }
 
         public Rect MonitorArea { private set; get; }
-        public Rect WorkingArea { private set; get; }
 
         public int Width => MonitorArea.right - MonitorArea.left;
         public int Height => MonitorArea.bottom - MonitorArea.top;

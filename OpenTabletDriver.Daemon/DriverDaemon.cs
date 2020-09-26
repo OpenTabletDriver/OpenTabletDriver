@@ -5,9 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Threading.Tasks;
 using HidSharp;
 using OpenTabletDriver.Binding;
 using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Debugging;
+using OpenTabletDriver.Migration;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
@@ -21,12 +24,13 @@ namespace OpenTabletDriver.Daemon
     {
         public DriverDaemon()
         {
-            Driver = new Driver();
             Log.Output += (sender, message) => LogMessages.Add(message);
             Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
+            Log.Output += (sender, message) => Message?.Invoke(sender, message);
+            Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
             LoadUserSettings();
 
-            HidSharp.DeviceList.Local.Changed += (sender, e) => 
+            HidSharp.DeviceList.Local.Changed += async (sender, e) => 
             {
                 var newDevices = from device in DeviceList.Local.GetHidDevices()
                     where !CurrentDevices.Any(d => d == device)
@@ -34,17 +38,17 @@ namespace OpenTabletDriver.Daemon
 
                 if (newDevices.Count() > 0)
                 {
-                    if (GetTablet() == null)
-                        DetectTablets();
+                    if (await GetTablet() == null)
+                        await DetectTablets();
                 }
                 CurrentDevices = DeviceList.Local.GetHidDevices().ToList();
             };
         }
 
-        private void LoadUserSettings()
+        private async void LoadUserSettings()
         {
-            LoadPlugins();
-            DetectTablets();
+            await LoadPlugins();
+            await DetectTablets();
 
             var appdataDir = new DirectoryInfo(AppInfo.Current.AppDataDirectory);
             if (!appdataDir.Exists)
@@ -57,31 +61,41 @@ namespace OpenTabletDriver.Daemon
             if (Settings == null && settingsFile.Exists)
             {
                 var settings = Settings.Deserialize(settingsFile);
-                SetSettings(settings);
+                await SetSettings(settings);
             }
         }
 
-        public Driver Driver { private set; get; }
+        public event EventHandler<LogMessage> Message;
+        public event EventHandler<DebugTabletReport> TabletReport;
+        public event EventHandler<DebugAuxReport> AuxReport;
+        public event EventHandler<TabletProperties> TabletChanged;
+
+        public Driver Driver { private set; get; } = new Driver();
         private Settings Settings { set; get; }
         private List<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices().ToList();
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
-        private DeviceDebuggerServer TabletDebuggerServer { set; get; }
-        private DeviceDebuggerServer AuxDebuggerServer { set; get; }
-        private LogServer LogServer { set; get; }
 
-        public bool SetTablet(TabletProperties tablet)
+        public Task WriteMessage(LogMessage message)
         {
-            return Driver.TryMatch(tablet);
+            Log.OnOutput(message);
+            return Task.CompletedTask;
         }
 
-        public TabletProperties GetTablet()
+        public Task<bool> SetTablet(TabletProperties tablet)
         {
-            return Driver.TabletReader != null && Driver.TabletReader.Reading ? Driver.TabletProperties : null;
+            var match = Driver.TryMatch(tablet);
+            TabletChanged?.Invoke(this, match ? tablet : null);
+            return Task.FromResult(match);
         }
 
-        public TabletProperties DetectTablets()
+        public Task<TabletProperties> GetTablet()
+        {
+            return Task.FromResult(Driver.TabletReader != null && Driver.TabletReader.Reading ? Driver.TabletProperties : null);
+        }
+
+        public async Task<TabletProperties> DetectTablets()
         {
             var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
             if (configDir.Exists)
@@ -89,8 +103,8 @@ namespace OpenTabletDriver.Daemon
                 foreach (var file in configDir.EnumerateFiles("*.json", SearchOption.AllDirectories))
                 {
                     var tablet = TabletProperties.Read(file);
-                    if (SetTablet(tablet))
-                        return GetTablet();
+                    if (await SetTablet(tablet))
+                        return await GetTablet();
                 }
             }
             else
@@ -100,9 +114,9 @@ namespace OpenTabletDriver.Daemon
             return null;
         }
 
-        public void SetSettings(Settings settings)
+        public Task SetSettings(Settings settings)
         {
-            Settings = settings;
+            Settings = SettingsMigrator.Migrate(settings);
             
             Driver.OutputMode = new PluginReference(Settings.OutputMode).Construct<IOutputMode>();
 
@@ -130,6 +144,7 @@ namespace OpenTabletDriver.Daemon
             }
 
             SetToolSettings();
+            return Task.CompletedTask;
         }
 
         private void SetOutputModeSettings(IOutputMode outputMode)
@@ -202,11 +217,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetRelativeModeSettings(RelativeOutputMode relativeMode)
         {
-            relativeMode.XSensitivity = Settings.XSensitivity;
-            Log.Write("Settings", $"Horizontal Sensitivity: {relativeMode.XSensitivity}");
-
-            relativeMode.YSensitivity = Settings.YSensitivity;
-            Log.Write("Settings", $"Vertical Sensitivity: {relativeMode.YSensitivity}");
+            relativeMode.Sensitivity = new Vector2(Settings.XSensitivity, Settings.YSensitivity);
+            Log.Write("Settings", $"Relative Mode Sensitivity (X, Y): {relativeMode.Sensitivity.ToString()}");
 
             relativeMode.ResetTime = Settings.ResetTime;
             Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
@@ -265,114 +277,79 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        public Settings GetSettings()
+        public Task<Settings> GetSettings()
         {
-            return Settings;
+            return Task.FromResult(Settings);
         }
 
-        public AppInfo GetApplicationInfo()
+        public Task<AppInfo> GetApplicationInfo()
         {
-            return AppInfo.Current;
+            return Task.FromResult(AppInfo.Current);
         }
 
-        public bool LoadPlugins()
+        public Task<bool> LoadPlugins()
         {
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
                 foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
                     ImportPlugin(file.FullName);
-                return true;
+                return Task.FromResult(true);
             }
             else
-                return false;
+            {
+                pluginDir.Create();
+                Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
+                return Task.FromResult(false);
+            }
         }
 
-        public bool ImportPlugin(string pluginPath)
+        public Task<bool> ImportPlugin(string pluginPath)
         {
             if (LoadedPlugins.Any(p => p.FullName == pluginPath))
             {
-                return true;
+                return Task.FromResult(true);
             }
             else
             {
                 var plugin = new FileInfo(pluginPath);
                 LoadedPlugins.Add(plugin);
-                return PluginManager.AddPlugin(plugin);
+                return Task.FromResult(PluginManager.AddPlugin(plugin));
             }
         }
 
-        public void SetInputHook(bool isHooked)
+        public Task EnableInput(bool isHooked)
         {
             Driver.EnableInput = isHooked;
+            return Task.CompletedTask;
         }
 
-        public IEnumerable<Guid> SetTabletDebug(bool isEnabled)
+        public Task SetTabletDebug(bool enabled)
         {
-            if (isEnabled && TabletDebuggerServer == null)
+            void onDeviceReport(object sender, IDeviceReport report)
             {
-                if (Driver.TabletReader != null)
-                {
-                    TabletDebuggerServer = new DeviceDebuggerServer();
-                    yield return TabletDebuggerServer.Identifier;
-                    Driver.TabletReader.Report += TabletDebuggerServer.HandlePacket;
-                }
-                
-                if (Driver.AuxReader != null)
-                {
-                    AuxDebuggerServer = new DeviceDebuggerServer();
-                    yield return AuxDebuggerServer.Identifier;
-                    Driver.AuxReader.Report += AuxDebuggerServer.HandlePacket;
-                }
+                if (report is ITabletReport tabletReport)
+                    TabletReport?.Invoke(sender, new DebugTabletReport(tabletReport));
+                if (report is IAuxReport auxReport)
+                    AuxReport?.Invoke(sender, new DebugAuxReport(auxReport));
             }
-            else if (!isEnabled && TabletDebuggerServer != null)
+            if (enabled)
             {
-                if (Driver.TabletReader != null)
-                {
-                    Driver.TabletReader.Report -= TabletDebuggerServer.HandlePacket;
-                    TabletDebuggerServer.Dispose();
-                    TabletDebuggerServer = null;
-                }
-                
-                if (Driver.AuxReader != null)
-                {
-                    Driver.AuxReader.Report -= AuxDebuggerServer.HandlePacket;
-                    AuxDebuggerServer.Dispose();
-                    AuxDebuggerServer = null;
-                }
+                Driver.TabletReader.Report += onDeviceReport;
+                Driver.AuxReader.Report += onDeviceReport;
             }
-            else if (isEnabled && TabletDebuggerServer != null)
+            else
             {
-                yield return TabletDebuggerServer.Identifier;
-                if (AuxDebuggerServer != null)
-                    yield return AuxDebuggerServer.Identifier;
+                Driver.TabletReader.Report -= onDeviceReport;
+                Driver.AuxReader.Report -= onDeviceReport;
             }
+            return Task.CompletedTask;
         }
 
-        public Guid SetLogOutput(bool isEnabled)
+        public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            if (isEnabled && LogServer == null)
-            {
-                LogServer = new LogServer();
-            }
-            else if (!isEnabled && LogServer != null)
-            {
-                LogServer.Dispose();
-                LogServer = null;
-            }
-            return LogServer?.Identifier ?? Guid.Empty;
-        }
-
-        public IEnumerable<LogMessage> GetCurrentLog()
-        {
-            return LogMessages;
-        }
-
-        public IEnumerable<string> GetChildTypes<T>()
-        {
-            return from type in PluginManager.GetChildTypes<T>()
-                where !type.IsInterface
-                select type.FullName;
+            IEnumerable<LogMessage> messages = LogMessages;
+            return Task.FromResult(messages);
         }
     }
 }
