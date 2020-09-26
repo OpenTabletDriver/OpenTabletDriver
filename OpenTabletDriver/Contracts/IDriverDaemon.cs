@@ -32,6 +32,8 @@ namespace OpenTabletDriver.Contracts
         Task EnableInput(bool isHooked);
         
         Task SetTabletDebug(bool isEnabled);
+        Task<string> RequestDeviceString(int index);
+
         Task<IEnumerable<LogMessage>> GetCurrentLog();
     }
 }

@@ -235,6 +235,16 @@ namespace OpenTabletDriver.Console
 
         #endregion
 
+        #region Debugging
+            
+        static async Task GetString(int index)
+        {
+            var str = await Driver.Instance.RequestDeviceString(index);
+            await Out.WriteLineAsync(str);
+        }
+
+        #endregion
+
         #region List Types
             
         static async Task ListOutputModes()

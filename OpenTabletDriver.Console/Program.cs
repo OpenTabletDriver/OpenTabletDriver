@@ -17,11 +17,13 @@ namespace OpenTabletDriver.Console
             };
             root.AddRange(GenerateIOCommands());
             root.AddRange(GenerateActionCommands());
+            root.AddRange(GenerateDebugCommands());
             root.AddRange(GenerateModifyCommands());
             root.AddRange(GenerateRequestCommands());
             root.AddRange(GenerateListCommands());
             root.AddRange(GenerateScriptingCommands());
 
+            await Driver.Connect();
             await root.InvokeAsync(args);
         }
 
@@ -34,6 +36,11 @@ namespace OpenTabletDriver.Console
         static IEnumerable<Command> GenerateActionCommands()
         {
             yield return CreateCommand(Detect, "Detects tablets");
+        }
+
+        static IEnumerable<Command> GenerateDebugCommands()
+        {
+            yield return CreateCommand<int>(GetString, "Requests a device string");
         }
 
         static IEnumerable<Command> GenerateModifyCommands()
