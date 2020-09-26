@@ -67,6 +67,7 @@ namespace OpenTabletDriver.UX.Windows
 
             this.Content = mainLayout;
 
+            lastTime = DateTime.UtcNow;
             InitializeAsync();
         }
 
@@ -84,6 +85,8 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl;
+        private float reportRate;
+        private DateTime lastTime;
 
         private void HandleReport(object sender, IDeviceReport report)
         {
@@ -91,8 +94,12 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Application.Instance.AsyncInvoke(() => 
                 {
+                    var now = DateTime.UtcNow;
+                    reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
+                    lastTime = now;
                     rawTabCtrl.Content = tabletReport?.StringFormat(true);
-                    tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
+                    tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine)
+                        + $"\nReportRate:{(uint)(1000 / reportRate)}hz";
                 });
             }
             if (report is IAuxReport auxReport)
