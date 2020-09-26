@@ -44,7 +44,9 @@ namespace OpenTabletDriver.Interop.Input.Tablet
                 EventType.EV_KEY,
                 EventCode.BTN_TOUCH,
                 EventCode.BTN_STYLUS,
-                EventCode.BTN_TOOL_PEN
+                EventCode.BTN_TOOL_PEN,
+                EventCode.BTN_STYLUS2,
+                EventCode.BTN_STYLUS3
             );
 
             var result = Device.Initialize();
@@ -78,8 +80,9 @@ namespace OpenTabletDriver.Interop.Input.Tablet
 
         protected override EventCode? GetCode(MouseButton button) => button switch
         {
+            MouseButton.Middle  => EventCode.BTN_STYLUS,
             MouseButton.Right   => EventCode.BTN_STYLUS2,
-            MouseButton.Middle  => EventCode.BTN_STYLUS3,
+            MouseButton.Forward => EventCode.BTN_STYLUS3,
             _                   => null
         };
     }
