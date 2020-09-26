@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Interop.Input.Mouse
             xError = dX % 1;
             yError = dY % 1;
 
-            inputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE | MOUSEEVENTF.MOVE_NOCOALESCE;
+            inputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
             inputs[0].U.mi.dx = (int)dX;
             inputs[0].U.mi.dy = (int)dY;
             SendInput(1, inputs, INPUT.Size);
