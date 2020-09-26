@@ -696,6 +696,7 @@ namespace OpenTabletDriver.UX
             }
 
             displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays
+                where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
 
