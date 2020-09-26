@@ -4,11 +4,8 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using JKang.IpcServiceFramework.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using OpenTabletDriver.Contracts;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.RPC;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -50,44 +47,20 @@ namespace OpenTabletDriver.Daemon
                     new Option(new string[] { "--config", "-c" }, "Configuration directory")
                     {
                         Argument = new Argument<DirectoryInfo> ("config")
-                    },
-                    new Option(new string[] { "--service", "-s"}, "Run as a service")
-                    {
-                        Argument = new Argument<bool>("runAsService")
                     }
                 };
-                rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, bool>((appdata, config, runAsService) => 
+                rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((appdata, config) => 
                 {
                     AppInfo.Current.AppDataDirectory = appdata?.FullName;
                     AppInfo.Current.ConfigurationDirectory = config?.FullName;
-                    RunAsService = runAsService;
                 });
                 rootCommand.Invoke(args);
 
-                Daemon = new DriverDaemon();
-                var hostBuilder = CreateHostBuilder();
-                if (RunAsService && SystemInfo.CurrentPlatform == RuntimePlatform.Windows)
-                    hostBuilder = hostBuilder.UseWindowsService();
-                await hostBuilder.Build().RunAsync();
+                var host = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
+                host.ConnectionStateChanged += (sender, state) => 
+                    Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
+                await Task.Delay(-1);
             }
         }
-
-        static IHostBuilder CreateHostBuilder() => 
-            Host.CreateDefaultBuilder()
-                .ConfigureServices(services => 
-                {
-                    services.AddSingleton<IDriverDaemon, DriverDaemon>((s) => Daemon);
-                })
-                .ConfigureIpcHost(builder => 
-                {
-                    builder.AddNamedPipeEndpoint<IDriverDaemon>("OpenTabletDriver");
-                })
-                .ConfigureLogging(builder => 
-                {
-                });
-
-        static DriverDaemon Daemon { set; get; }
-        static bool Running { set; get; }
-        static bool RunAsService { set; get; }
     }
 }

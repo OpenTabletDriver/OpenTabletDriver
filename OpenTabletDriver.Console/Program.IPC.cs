@@ -1,26 +1,15 @@
 using System;
-using JKang.IpcServiceFramework.Client;
-using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Contracts;
+using OpenTabletDriver.RPC;
 
 namespace OpenTabletDriver.Console
 {
     partial class Program
     {
-        public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
-        private static Lazy<IIpcClient<IDriverDaemon>> _driverDaemon = new Lazy<IIpcClient<IDriverDaemon>>(() => 
+        public static RpcClient<IDriverDaemon> Driver => _driverDaemon.Value;
+        private static Lazy<RpcClient<IDriverDaemon>> _driverDaemon = new Lazy<RpcClient<IDriverDaemon>>(() => 
         {
-            // Register IPC Clients
-            ServiceProvider serviceProvider = new ServiceCollection()
-                .AddNamedPipeIpcClient<IDriverDaemon>("OpenTabletDriver.Console", "OpenTabletDriver")
-                .BuildServiceProvider();
-
-            // Resolve IPC client factory
-            IIpcClientFactory<IDriverDaemon> clientFactory = serviceProvider
-                .GetRequiredService<IIpcClientFactory<IDriverDaemon>>();
-
-            // Create client
-            return clientFactory.CreateClient("OpenTabletDriver.Console");
+            return new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         });
     }
 }

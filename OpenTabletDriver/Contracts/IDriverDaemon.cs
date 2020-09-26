@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -7,23 +9,29 @@ namespace OpenTabletDriver.Contracts
 {
     public interface IDriverDaemon
     {
-        bool SetTablet(TabletProperties tablet);
-        TabletProperties GetTablet();
+        event EventHandler<LogMessage> Message;
+        event EventHandler<DebugTabletReport> TabletReport;
+        event EventHandler<DebugAuxReport> AuxReport;
+        event EventHandler<TabletProperties> TabletChanged;
         
-        TabletProperties DetectTablets();
+        Task WriteMessage(LogMessage message);
 
-        void SetSettings(Settings settings);
-        Settings GetSettings();
-
-        AppInfo GetApplicationInfo();
+        Task<bool> SetTablet(TabletProperties tablet);
+        Task<TabletProperties> GetTablet();
         
-        bool LoadPlugins();
-        bool ImportPlugin(string pluginPath);
+        Task<TabletProperties> DetectTablets();
 
-        void SetInputHook(bool isHooked);
-        IEnumerable<Guid> SetTabletDebug(bool isEnabled);
+        Task SetSettings(Settings settings);
+        Task<Settings> GetSettings();
+
+        Task<AppInfo> GetApplicationInfo();
         
-        Guid SetLogOutput(bool isEnabled);
-        IEnumerable<LogMessage> GetCurrentLog();
+        Task<bool> LoadPlugins();
+        Task<bool> ImportPlugin(string pluginPath);
+
+        Task EnableInput(bool isHooked);
+        
+        Task SetTabletDebug(bool isEnabled);
+        Task<IEnumerable<LogMessage>> GetCurrentLog();
     }
 }

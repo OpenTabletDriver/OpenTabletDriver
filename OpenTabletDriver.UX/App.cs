@@ -1,40 +1,20 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using JKang.IpcServiceFramework.Client;
-using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Contracts;
 using OpenTabletDriver.Native;
+using OpenTabletDriver.RPC;
 
 namespace OpenTabletDriver.UX
 {
     public static class App
     {
-        public async static void UnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
-        {
-            var appInfo = await DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
-            var exception = (Exception)e.ExceptionObject;
-            await File.WriteAllLinesAsync(Path.Join(appInfo.AppDataDirectory, "ux.log"),
-                new string[]
-                {
-                    DateTime.Now.ToString(),
-                    exception.GetType().FullName,
-                    exception.Message,
-                    exception.Source,
-                    exception.StackTrace,
-                    exception.TargetSite.Name
-                }
-            );
-        }
-
         public const string PluginRepositoryUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Plugin-Repository";
 
-        public static IIpcClient<IDriverDaemon> DriverDaemon => _driverDaemon.Value;
+        public static RpcClient<IDriverDaemon> Driver => _daemon.Value;
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
-
         public static Settings Settings { set; get; }
 
         public static AboutDialog AboutDialog => new AboutDialog
@@ -53,19 +33,9 @@ namespace OpenTabletDriver.UX
             Logo = Logo.WithSize(256, 256)
         };
 
-        private static readonly Lazy<IIpcClient<IDriverDaemon>> _driverDaemon = new Lazy<IIpcClient<IDriverDaemon>>(() => 
+        private static readonly Lazy<RpcClient<IDriverDaemon>> _daemon = new Lazy<RpcClient<IDriverDaemon>>(() => 
         {
-            // Register IPC Clients
-            ServiceProvider serviceProvider = new ServiceCollection()
-                .AddNamedPipeIpcClient<IDriverDaemon>("OpenTabletDriverUX", "OpenTabletDriver")
-                .BuildServiceProvider();
-
-            // Resolve IPC client factory
-            IIpcClientFactory<IDriverDaemon> clientFactory = serviceProvider
-                .GetRequiredService<IIpcClientFactory<IDriverDaemon>>();
-
-            // Create client
-            return clientFactory.CreateClient("OpenTabletDriverUX");
+            return new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         });
 
         private static readonly Lazy<Bitmap> _logo = new Lazy<Bitmap>(() => 

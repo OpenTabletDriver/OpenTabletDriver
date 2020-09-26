@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
-using OpenTabletDriver.UX.Debugging;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -72,35 +70,26 @@ namespace OpenTabletDriver.UX.Windows
             InitializeAsync();
         }
 
-        private async void InitializeAsync()
+        private void InitializeAsync()
         {
-            var result = await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(true));
-            var guids = result.ToList();
-
-            if (guids.Count > 0)
+            App.Driver.Instance.TabletReport += HandleReport;
+            App.Driver.Instance.AuxReport += HandleReport;
+            App.Driver.Instance.SetTabletDebug(true);
+            this.Closing += (sender, e) =>
             {
-                var tabletReader = new PipeReader(guids[0]);
-                tabletReader.Report += HandleReport;
-                this.Closing += (sender, e) => tabletReader.Dispose();
-            }
-            
-            if (guids.Count > 1)
-            {
-                var auxReader = new PipeReader(guids[1]);
-                auxReader.Report += HandleReport;
-                this.Closing += (sender, e) => auxReader.Dispose();
-            }
-
-            this.Closing += async (sender, e) => await App.DriverDaemon.InvokeAsync(d => d.SetTabletDebug(false));
+                App.Driver.Instance.TabletReport -= HandleReport;
+                App.Driver.Instance.AuxReport -= HandleReport;
+                App.Driver.Instance.SetTabletDebug(false);
+            };
         }
 
         private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl;
 
-        private async void HandleReport(object sender, IDeviceReport report)
+        private void HandleReport(object sender, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
             {
-                await Application.Instance.InvokeAsync(() => 
+                Application.Instance.AsyncInvoke(() => 
                 {
                     rawTabCtrl.Content = tabletReport?.StringFormat(true);
                     tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
@@ -108,7 +97,7 @@ namespace OpenTabletDriver.UX.Windows
             }
             if (report is IAuxReport auxReport)
             {
-                await Application.Instance.InvokeAsync(() => 
+                Application.Instance.AsyncInvoke(() => 
                 {
                     rawAuxCtrl.Content = auxReport?.StringFormat(true);
                     auxReportCtrl.Content = auxReport?.StringFormat(false).Replace(", ", Environment.NewLine);

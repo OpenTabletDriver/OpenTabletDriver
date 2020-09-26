@@ -20,8 +20,6 @@ namespace OpenTabletDriver.UX
     {
         public MainForm()
         {
-            Application.Instance.UnhandledException += App.UnhandledException;
-
             Title = "OpenTabletDriver";
             Icon = App.Logo.WithSize(App.Logo.Size);
 
@@ -639,37 +637,52 @@ namespace OpenTabletDriver.UX
 
         private async void InitializeAsync()
         {
-            var appInfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
+            try
+            {
+                await App.Driver.Connect();
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show("Daemon connection timed out after some time. Verify that the daemon is running.", "Daemon Connection Timed Out");
+                Application.Instance.Quit();
+            }
+
+            var appInfo = await App.Driver.Instance.GetApplicationInfo();
             var pluginDir = new DirectoryInfo(appInfo.PluginDirectory);
             if (pluginDir.Exists)
             {
                 foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
                 {
-                    await App.DriverDaemon.InvokeAsync(d => d.ImportPlugin(file.FullName));
+                    await App.Driver.Instance.ImportPlugin(file.FullName);
                     PluginManager.AddPlugin(file);
                 }
             }
 
             Content = ConstructMainControls();
 
-            if (await App.DriverDaemon.InvokeAsync(d => d.GetTablet()) is TabletProperties tablet)
+            if (await App.Driver.Instance.GetTablet() is TabletProperties tablet)
             {
                 SetTabletAreaDimensions(tablet);
             }
-            else
-            {
-                await DetectAllTablets();
-            }
+            App.Driver.Instance.TabletChanged += (sender, tablet) => SetTabletAreaDimensions(tablet);
 
             var settingsFile = new FileInfo(appInfo.SettingsFile);
-            if (await App.DriverDaemon.InvokeAsync(d => d.GetSettings()) is Settings settings)
+            if (await App.Driver.Instance.GetSettings() is Settings settings)
             {
                 Settings = settings;
             }
             else if (settingsFile.Exists)
             {
-                Settings = Settings.Deserialize(settingsFile);
-                await App.DriverDaemon.InvokeAsync(d => d.SetSettings(Settings));
+                try
+                {
+                    Settings = Settings.Deserialize(settingsFile);
+                    await App.Driver.Instance.SetSettings(Settings);
+                }
+                catch
+                {
+                    MessageBox.Show("Failed to load your current settings. They are either out of date or corrupted.", MessageBoxType.Error);
+                    await ResetSettings();
+                }
             }
             else
             {
@@ -704,7 +717,7 @@ namespace OpenTabletDriver.UX
                 return;
 
             var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
-            var tablet = await App.DriverDaemon.InvokeAsync(d => d.GetTablet());
+            var tablet = await App.Driver.Instance.GetTablet();
             Settings = OpenTabletDriver.Settings.Defaults;
             Settings.DisplayWidth = virtualScreen.Width;
             Settings.DisplayHeight = virtualScreen.Height;
@@ -714,7 +727,7 @@ namespace OpenTabletDriver.UX
             Settings.TabletHeight = tablet?.Height ?? 0;
             Settings.TabletX = tablet?.Width / 2 ?? 0;
             Settings.TabletY = tablet?.Height / 2 ?? 0;
-            await App.DriverDaemon.InvokeAsync(d => d.SetSettings(Settings));
+            await App.Driver.Instance.SetSettings(Settings);
         }
 
         private async Task LoadSettingsDialog()
@@ -735,7 +748,7 @@ namespace OpenTabletDriver.UX
                     if (file.Exists)
                     {
                         Settings = Settings.Deserialize(file);
-                        await App.DriverDaemon.InvokeAsync(d => d.SetSettings(Settings));
+                        await App.Driver.Instance.SetSettings(Settings);
                     }
                     break;
             }
@@ -767,7 +780,7 @@ namespace OpenTabletDriver.UX
 
         private async Task SaveSettings()
         {
-            var appInfo = await App.DriverDaemon.InvokeAsync(d => d.GetApplicationInfo());
+            var appInfo = await App.Driver.Instance.GetApplicationInfo();
             if (Settings is Settings settings)
             {
                 settings.Serialize(new FileInfo(appInfo.SettingsFile));
@@ -778,16 +791,16 @@ namespace OpenTabletDriver.UX
         private async Task ApplySettings()
         {
             if (Settings is Settings settings)
-                await App.DriverDaemon.InvokeAsync(d => d.SetSettings(settings));
+                await App.Driver.Instance.SetSettings(settings);
         }
 
         private async Task DetectAllTablets()
         {
-            if (await App.DriverDaemon.InvokeAsync(d => d.DetectTablets()) is TabletProperties tablet)
+            if (await App.Driver.Instance.DetectTablets() is TabletProperties tablet)
             {
-                var settings = await App.DriverDaemon.InvokeAsync(d => d.GetSettings());
+                var settings = await App.Driver.Instance.GetSettings();
                 if (settings != null)
-                    await App.DriverDaemon.InvokeAsync(d => d.SetInputHook(settings.AutoHook));
+                    await App.Driver.Instance.EnableInput(settings.AutoHook);
                 SetTabletAreaDimensions(tablet);
             }
         }
@@ -800,7 +813,7 @@ namespace OpenTabletDriver.UX
 
         private async Task ExportDiagnostics()
         {
-            var log = await App.DriverDaemon.InvokeAsync(d => d.GetCurrentLog());
+            var log = await App.Driver.Instance.GetCurrentLog();
             var diagnosticDump = new DiagnosticInfo(log);
             var fileDialog = new SaveFileDialog
             {
@@ -826,8 +839,8 @@ namespace OpenTabletDriver.UX
 
         private void SetTabletAreaDimensions(TabletProperties tablet)
         {
-            tabletAreaEditor.ViewModel.MaxWidth = tablet.Width;
-            tabletAreaEditor.ViewModel.MaxHeight = tablet.Height;
+            tabletAreaEditor.ViewModel.MaxWidth = tablet?.Width ?? 0;
+            tabletAreaEditor.ViewModel.MaxHeight = tablet?.Height ?? 0;
         }
 
         private void UpdateOutputMode(PluginReference pluginRef)

@@ -1,20 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using Eto.Forms;
-using JKang.IpcServiceFramework.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using OpenTabletDriver.Contracts;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class LogView : StackLayout, ILogServer
+    public class LogView : StackLayout
     {
         public LogView()
         {
@@ -56,25 +50,14 @@ namespace OpenTabletDriver.UX.Controls
 
         private async void InitializeAsync()
         {
-            var currentMessages = from message in await App.DriverDaemon.InvokeAsync(d => d.GetCurrentLog())
+            var currentMessages = from message in await App.Driver.Instance.GetCurrentLog()
                 where message is LogMessage
                 select message;
 
             foreach (var message in currentMessages)
                 AddItem(message);
-            
-            var exitHandle = new CancellationTokenSource();
-            var serverGuid = await App.DriverDaemon.InvokeAsync(d => d.SetLogOutput(true));
-            
-            var host = CreateHostBuilder(serverGuid).Build();
-            this.ParentWindow.Closing += async (sender, e) =>
-            {
-                exitHandle.Cancel();
-                host.Dispose();
-                await App.DriverDaemon.InvokeAsync(d => d.SetLogOutput(false));
-            };
 
-            await host.StartAsync(exitHandle.Token);
+            App.Driver.Instance.Message += (sender, message) => AddItem(message);
         }
 
         private void Copy(IEnumerable<LogMessage> messages)
@@ -88,17 +71,6 @@ namespace OpenTabletDriver.UX.Controls
             Clipboard.Instance.Clear();
             Clipboard.Instance.Text = sb.ToString();
         }
-
-        private IHostBuilder CreateHostBuilder(Guid guid) => 
-            Host.CreateDefaultBuilder()
-                .ConfigureServices(services => 
-                {
-                    services.AddSingleton<ILogServer, LogView>((s) => this);
-                })
-                .ConfigureIpcHost(builder => 
-                {
-                    builder.AddNamedPipeEndpoint<ILogServer>(guid.ToString());
-                });
 
         private Control GenerateFilterControl()
         {
@@ -189,13 +161,16 @@ namespace OpenTabletDriver.UX.Controls
 
         private void AddItem(LogMessage message)
         {
-            Messages.Add(message);
+            Application.Instance.Invoke(() => 
+            {
+                Messages.Add(message);
 
-            if (message.Level >= CurrentFilter)
-                Update(Messages.Count - 1);
+                if (message.Level >= CurrentFilter)
+                    Update(Messages.Count - 1);
 
-            if (messageList.SelectedRow == -1)
-                messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
+                if (messageList.SelectedRow == -1)
+                    messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
+            });
         }
 
         private void Refresh()
