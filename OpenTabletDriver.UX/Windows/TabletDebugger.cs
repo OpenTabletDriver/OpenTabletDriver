@@ -35,14 +35,20 @@ namespace OpenTabletDriver.UX.Windows
                 Text = "Aux Report",
                 Padding = App.GroupBoxPadding
             };
-            
+
+            reportRateCtrl = new GroupBox
+            {
+                Text = "Report Rate",
+                Padding = App.GroupBoxPadding
+            };
+
             var mainLayout = new TableLayout
             {
                 Width = 640,
                 Height = 480,
                 Spacing = new Size(5, 5),
                 Padding = new Padding(5),
-                Rows = 
+                Rows =
                 {
                     new TableRow
                     {
@@ -61,6 +67,13 @@ namespace OpenTabletDriver.UX.Windows
                             new TableCell(auxReportCtrl, true)
                         },
                         ScaleHeight = true
+                    },
+                    new TableRow
+                    {
+                        Cells =
+                        {
+                            new TableCell(reportRateCtrl, true)
+                        }
                     }
                 }
             };
@@ -83,7 +96,7 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl;
+        private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl, reportRateCtrl;
         private float reportRate;
         private DateTime lastTime = DateTime.UtcNow;
 
@@ -97,8 +110,8 @@ namespace OpenTabletDriver.UX.Windows
                     reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
                     lastTime = now;
                     rawTabCtrl.Content = tabletReport?.StringFormat(true);
-                    tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine)
-                        + Environment.NewLine + $"ReportRate:{(uint)(1000 / reportRate)}hz";
+                    tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
+                    reportRateCtrl.Content = $"{(uint)(1000 / reportRate)}hz";
                 });
             }
             if (report is IAuxReport auxReport)
