@@ -15,7 +15,7 @@
     "InputReportLength": 11,
     "OutputReportLength": 0,
     "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
-    "FeatureInitReport": null,
+    "FeatureInitReport": "AgI=",
     "OutputInitReport": null
   },
   "AuxilaryDeviceIdentifier": {
