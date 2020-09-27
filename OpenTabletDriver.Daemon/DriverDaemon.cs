@@ -346,6 +346,11 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
+        public Task<string> RequestDeviceString(int index)
+        {
+            return Task.FromResult(Driver.TabletDevice?.GetDeviceString(index) ?? null);
+        }
+
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
             IEnumerable<LogMessage> messages = LogMessages;
