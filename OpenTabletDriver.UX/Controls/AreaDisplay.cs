@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
@@ -26,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls
         
         private void Draw(Graphics graphics)
         {
-            if (ViewModel.Background.Min(d => d.Height) <= 0 | ViewModel.Background.Min(d => d.Width) <= 0)
+            if (ViewModel.FullBackground == null | ViewModel.FullBackground.Width <= 0 | ViewModel.FullBackground.Height <= 0)
             {
                 DrawError(graphics, InvalidSizeError);
                 return;
@@ -37,22 +38,12 @@ namespace OpenTabletDriver.UX.Controls
                 ViewModel.Y - (ViewModel.Height / 2),
                 ViewModel.Width,
                 ViewModel.Height);
-
-            var fullBg = new RectangleF
+            
+            if (foreground.Width > 0 & foreground.Height > 0 & ViewModel.FullBackground.Width > 0 & ViewModel.FullBackground.Height > 0)
             {
-                Left = ViewModel.Background.Min(r => r.Left),
-                Top = ViewModel.Background.Min(r => r.Top),
-                Right = ViewModel.Background.Max(r => r.Right),
-                Bottom = ViewModel.Background.Max(r => r.Bottom),
-            };
-            fullBg.Offset(-2 * fullBg.TopLeft);
-
-            if (foreground.Width > 0 & foreground.Height > 0 & fullBg.Width > 0 & fullBg.Height > 0)
-            {
-                pixelScale = GetRelativeScale(ViewModel.Background.Max(d => d.Width), ViewModel.Background.Max(d => d.Height));
-                foreach (var background in ViewModel.Background)
-                    DrawBackground(graphics, background, SystemColors.WindowBackground, SystemColors.Highlight);
-                DrawForeground(graphics, foreground, fullBg, SystemColors.Highlight);
+                pixelScale = GetRelativeScale(ViewModel.FullBackground.Width, ViewModel.FullBackground.Height);
+                DrawBackground(graphics, ViewModel.Background, (ViewModel.FullBackground * pixelScale), SystemColors.WindowBackground, SystemColors.Highlight);
+                DrawForeground(graphics, foreground, (ViewModel.FullBackground * pixelScale), SystemColors.Highlight);
             }
             else
             {
@@ -60,28 +51,27 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private void DrawBackground(Graphics graphics, RectangleF rect, Color fill, Color border)
+        private void DrawBackground(Graphics graphics, IEnumerable<RectangleF> rects, RectangleF fullBg, Color fill, Color border)
         {
             using (graphics.SaveTransformState())
             {
-                rect *= pixelScale;
-                
-                graphics.TranslateTransform(this.Width / 2, this.Height / 2);
-                graphics.TranslateTransform(-rect.Center);
-                graphics.FillRectangle(fill, rect);
-                graphics.DrawRectangle(border, rect);
+                graphics.TranslateTransform((this.Width - fullBg.Width) / 2, (this.Height - fullBg.Height) / 2);
+                graphics.TranslateTransform(-fullBg.TopLeft);
+                foreach (var rect in rects)
+                {
+                    var scaledRect = rect * pixelScale;
+                    graphics.FillRectangle(fill, scaledRect);
+                    graphics.DrawRectangle(border, scaledRect);
+                }
             }
         }
 
-        private void DrawForeground(Graphics graphics, RectangleF rect, RectangleF bg, Color color)
+        private void DrawForeground(Graphics graphics, RectangleF rect, RectangleF fullBg, Color color)
         {
             using (graphics.SaveTransformState())
             {
                 rect *= pixelScale;
-                bg *= pixelScale;
-
-                graphics.TranslateTransform(bg.TopLeft);
-                graphics.TranslateTransform((this.Width - bg.Width) / 2, (this.Height - bg.Height) / 2);
+                graphics.TranslateTransform((this.Width - fullBg.Width) / 2, (this.Height - fullBg.Height) / 2);
                 graphics.TranslateTransform(rect.Center);
                 graphics.RotateTransform(ViewModel.Rotation);
                 graphics.TranslateTransform(-rect.Center);
@@ -89,7 +79,7 @@ namespace OpenTabletDriver.UX.Controls
                 
                 var originEllipse = new RectangleF(0, 0, 3, 3);
                 originEllipse.Offset(rect.Center - (originEllipse.Size / 2));
-                graphics.FillEllipse(SystemColors.ControlText, originEllipse);
+                graphics.DrawEllipse(SystemColors.ControlText, originEllipse);
 
                 // Ratio text
                 string ratio = Math.Round(ViewModel.Width / ViewModel.Height, 4).ToString();

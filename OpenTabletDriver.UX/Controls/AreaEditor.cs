@@ -245,17 +245,17 @@ namespace OpenTabletDriver.UX.Controls
                 case nameof(ViewModel.Width):
                 case nameof(ViewModel.Height):
                 case nameof(ViewModel.Background):
-                    if (ViewModel.Background == null || ViewModel.Background.Max(d => d.Width) == 0 || ViewModel.Background.Max(d => d.Height) == 0)
+                    if (ViewModel.Background == null || ViewModel.FullBackground == null || ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
                         break;
-                    
-                    if (ViewModel.X + (ViewModel.Width / 2) > ViewModel.Background.Max(d => d.Width))
-                        AreaDisplay.ViewModel.X = ViewModel.Background.Max(d => d.Width) - (ViewModel.Width / 2);
-                    else if (ViewModel.X - (ViewModel.Width / 2) < 0)
-                        AreaDisplay.ViewModel.X = ViewModel.Width / 2;
-                    if (ViewModel.Y + (ViewModel.Height / 2) > ViewModel.Background.Max(d => d.Height))
-                        AreaDisplay.ViewModel.Y = ViewModel.Background.Max(d => d.Height) - (ViewModel.Height / 2);
+
+                    if (ViewModel.Y + (ViewModel.Height / 2) > ViewModel.FullBackground.Height)
+                        AreaDisplay.ViewModel.Y = ViewModel.FullBackground.Height - (ViewModel.Height / 2);
                     else if (ViewModel.Y - (ViewModel.Height / 2) < 0)
                         AreaDisplay.ViewModel.Y = ViewModel.Height / 2;
+                    if (ViewModel.X + (ViewModel.Width / 2) > ViewModel.FullBackground.Width)
+                        AreaDisplay.ViewModel.X = ViewModel.FullBackground.Width - (ViewModel.Width / 2);
+                    else if (ViewModel.X - (ViewModel.Width / 2) < 0)
+                        AreaDisplay.ViewModel.X = ViewModel.Width / 2;
                     break;
             }
         }
