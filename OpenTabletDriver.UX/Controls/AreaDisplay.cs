@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls
         
         private void Draw(Graphics graphics)
         {
-            if (ViewModel.FullBackground == null | ViewModel.FullBackground.Width <= 0 | ViewModel.FullBackground.Height <= 0)
+            if (ViewModel.Background == null | ViewModel.FullBackground.Width <= 0 | ViewModel.FullBackground.Height <= 0)
             {
                 DrawError(graphics, InvalidSizeError);
                 return;
