@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls
         
         private void Draw(Graphics graphics)
         {
-            if (ViewModel.Background.Min(d => d.Height) <= 0 | ViewModel.Background.Min(d => d.Width) <= 0)
+            if (ViewModel.FullBackground == null | ViewModel.FullBackground.Width <= 0 | ViewModel.FullBackground.Height <= 0)
             {
                 DrawError(graphics, InvalidSizeError);
                 return;
@@ -79,7 +79,7 @@ namespace OpenTabletDriver.UX.Controls
                 
                 var originEllipse = new RectangleF(0, 0, 3, 3);
                 originEllipse.Offset(rect.Center - (originEllipse.Size / 2));
-                graphics.FillEllipse(SystemColors.ControlText, originEllipse);
+                graphics.DrawEllipse(SystemColors.ControlText, originEllipse);
 
                 // Ratio text
                 string ratio = Math.Round(ViewModel.Width / ViewModel.Height, 4).ToString();
