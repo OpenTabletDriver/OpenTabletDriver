@@ -1,0 +1,44 @@
+{
+  "Name": "Wacom CTE-430",
+  "DigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 19,
+    "InputReportLength": 8,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": "AgI=",
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 1386,
+    "ProductID": 19,
+    "InputReportLength": 9,
+    "OutputReportLength": 0,
+    "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
+    "FeatureInitReport": "AgI=",
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 0,
+    "ProductID": 0,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "Width": 127.60,
+  "Height": 92.8,
+  "MaxX": 10208.0,
+  "MaxY": 7424.0,
+  "MaxPressure": 511,
+  "ActiveReportID": {
+    "Start": 0,
+    "StartInclusive": false,
+    "End": null,
+    "EndInclusive": false
+  },
+  "Attributes": {},
+  "DeviceStrings": {},
+  "InitializationStrings": []
+}
