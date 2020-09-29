@@ -91,13 +91,26 @@ namespace OpenTabletDriver
             }
             catch (ReflectionTypeLoadException)
             {
-                var types = from assembly in Assembly.GetEntryAssembly().GetReferencedAssemblies()
-                    let loadedAsm = Assembly.Load(assembly)
-                    from type in loadedAsm.DefinedTypes
+                var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    where CanLoadAssembly(assembly)
+                    from type in assembly.DefinedTypes
                     select type;
 
                 return new ObservableCollection<TypeInfo>(types);
             }
         });
+
+        private static bool CanLoadAssembly(Assembly asm)
+        {
+            try
+            {
+                _ = asm.DefinedTypes;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
