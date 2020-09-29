@@ -47,7 +47,6 @@ namespace OpenTabletDriver.UX.Windows
                 Width = 640,
                 Height = 480,
                 Spacing = new Size(5, 5),
-                Padding = new Padding(5),
                 Rows =
                 {
                     new TableRow
@@ -67,18 +66,20 @@ namespace OpenTabletDriver.UX.Windows
                             new TableCell(auxReportCtrl, true)
                         },
                         ScaleHeight = true
-                    },
-                    new TableRow
-                    {
-                        Cells =
-                        {
-                            new TableCell(reportRateCtrl, true)
-                        }
                     }
                 }
             };
 
-            this.Content = mainLayout;
+            this.Content = new StackLayout
+            {
+                Padding = 5,
+                Spacing = 5,
+                Items = 
+                {
+                    new StackLayoutItem(mainLayout, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(reportRateCtrl, HorizontalAlignment.Stretch)
+                }
+            };
 
             InitializeAsync();
         }
