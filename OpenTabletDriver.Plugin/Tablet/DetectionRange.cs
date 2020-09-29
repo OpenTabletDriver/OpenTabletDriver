@@ -29,9 +29,9 @@ namespace OpenTabletDriver.Plugin.Tablet
         public const char RightInclusiveOperator = ']';
         public const char RightExclusiveOperator = ')';
 
-        public bool IsInRange(float value) => 
-            Start.HasValue ? (StartInclusive ? value >= Start : value > Start) : true & 
-            End.HasValue ? (EndInclusive ? value <= End : value < End) : true;
+        public bool IsInRange(float value) =>
+            (Start.HasValue ? (StartInclusive ? value >= Start : value > Start) : true) & 
+            (End.HasValue ? (EndInclusive ? value <= End : value < End) : true);
 
         public override string ToString()
         {
