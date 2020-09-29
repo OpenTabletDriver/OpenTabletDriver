@@ -1,0 +1,44 @@
+{
+    "Name": "Wacom CTL-4100WL",
+    "DigitizerIdentifier": {
+      "VendorID": 1386,
+      "ProductID": 886,
+      "InputReportLength": 192,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null
+    },
+    "AlternateDigitizerIdentifier": {
+      "VendorID": 1386,
+      "ProductID": 886,
+      "InputReportLength": 193,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null
+    },
+    "AuxilaryDeviceIdentifier": {
+      "VendorID": 1386,
+      "ProductID": 884,
+      "InputReportLength": 0,
+      "OutputReportLength": 0,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null
+    },
+    "Width": 152.0,
+    "Height": 95.0,
+    "MaxX": 15200.0,
+    "MaxY": 9500.0,
+    "MaxPressure": 4095,
+    "ActiveReportID": {
+      "Start": 16,
+      "StartInclusive": true,
+      "End": 19,
+      "EndInclusive": false
+    },
+    "Attributes": {},
+    "DeviceStrings": {},
+    "InitializationStrings": []
+  }
