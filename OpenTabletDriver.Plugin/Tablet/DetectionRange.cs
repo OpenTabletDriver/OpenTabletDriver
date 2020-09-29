@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public class DetectionRange
@@ -41,7 +43,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         public static DetectionRange Parse(string str)
         {
             var tokens = str.Split("..", 2);
-            if (tokens.Length == 2)
+            if (tokens.Length == 2 && tokens.All(t => t.Length > 0))
             {
                 string left = tokens[0][1..^0];
                 char leftOp = tokens[0][0];
