@@ -269,7 +269,7 @@ namespace OpenTabletDriver.UX.Windows
                         (o) => SelectedConfiguration.MaxPressure = uint.TryParse(o, out var val) ? val : 0
                     ),
                     GetControl("Active Report ID",
-                        () => SelectedConfiguration.ActiveReportID.ToString(),
+                        () => SelectedConfiguration.ActiveReportID?.ToString() ?? new DetectionRange().ToString(),
                         (o) => SelectedConfiguration.ActiveReportID = DetectionRange.Parse(o)
                     )
                 ),
