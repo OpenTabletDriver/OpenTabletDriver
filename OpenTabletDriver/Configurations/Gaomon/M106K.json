@@ -1,0 +1,50 @@
+{
+  "Name": "Gaomon M106K",
+  "DigitizerIdentifier": {
+    "VendorID": 9580,
+    "ProductID": 110,
+    "InputReportLength": 12,
+    "OutputReportLength": 0,
+    "ReportParser": "OpenTabletDriver.Vendors.Gaomon.GaomonReportParser",
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AlternateDigitizerIdentifier": {
+    "VendorID": 0,
+    "ProductID": 0,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "AuxilaryDeviceIdentifier": {
+    "VendorID": 0,
+    "ProductID": 0,
+    "InputReportLength": 0,
+    "OutputReportLength": 0,
+    "ReportParser": null,
+    "FeatureInitReport": null,
+    "OutputInitReport": null
+  },
+  "Width": 200.0,
+  "Height": 125.0,
+  "MaxX": 40000.0,
+  "MaxY": 25000.0,
+  "MaxPressure": 2047,
+  "ActiveReportID": {
+    "Start": 64,
+    "StartInclusive": true,
+    "End": null,
+    "EndInclusive": false
+  },
+  "Attributes": {
+    "libinputoverride": "1"
+  },
+  "DeviceStrings": {
+    "201": "OEM02_T151_\\d{6}$"
+  },
+  "InitializationStrings": [
+    200
+  ]
+}
