@@ -15,14 +15,13 @@ namespace OpenTabletDriver.Interop.Display
     {
         public WindowsDisplay()
         {
-            var version = Environment.OSVersion;
-            if (version.Platform == PlatformID.Win32NT
-                && version.Version.Major >= 6
-                && version.Version.Minor >= 2)
+            try
             {
-                Log.Debug("Display", "DPI Awareness enabled");
                 SetProcessDpiAwareness(2);
+                Log.Debug("Display", "DPI Awareness enabled");
             }
+            catch { }
+
             var monitors = GetDisplays().OrderBy(e => e.Left).ToList();
             var primary = monitors.FirstOrDefault(m => m.IsPrimary);
 
