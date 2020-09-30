@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -244,18 +245,48 @@ namespace OpenTabletDriver.UX.Controls
                 case nameof(ViewModel.Y):
                 case nameof(ViewModel.Width):
                 case nameof(ViewModel.Height):
-                case nameof(ViewModel.Background):
+                case nameof(ViewModel.Rotation):
                     if (ViewModel.Background == null || ViewModel.FullBackground == null || ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
                         break;
 
-                    if (ViewModel.Y + (ViewModel.Height / 2) > ViewModel.FullBackground.Height)
-                        AreaDisplay.ViewModel.Y = ViewModel.FullBackground.Height - (ViewModel.Height / 2);
-                    else if (ViewModel.Y - (ViewModel.Height / 2) < 0)
-                        AreaDisplay.ViewModel.Y = ViewModel.Height / 2;
-                    if (ViewModel.X + (ViewModel.Width / 2) > ViewModel.FullBackground.Width)
-                        AreaDisplay.ViewModel.X = ViewModel.FullBackground.Width - (ViewModel.Width / 2);
-                    else if (ViewModel.X - (ViewModel.Width / 2) < 0)
-                        AreaDisplay.ViewModel.X = ViewModel.Width / 2;
+                    var origin = new Vector2(ViewModel.X, ViewModel.Y);
+                    var matrix = Matrix3x2.CreateTranslation(-origin);
+                    matrix *= Matrix3x2.CreateRotation((float)(ViewModel.Rotation * Math.PI / 180));
+                    matrix *= Matrix3x2.CreateTranslation(origin);
+
+                    float halfWidth = ViewModel.Width / 2;
+                    float halfHeight = ViewModel.Height / 2;
+
+                    var corners = new Vector2[]
+                    {
+                        Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y - halfHeight), matrix),
+                        Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y + halfHeight), matrix),
+                        Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y + halfHeight), matrix),
+                        Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y - halfHeight), matrix),
+                    };
+
+                    var min = new Vector2(
+                        corners.Min(v => v.X),
+                        corners.Min(v => v.Y)
+                    );
+                    var max = new Vector2(
+                        corners.Max(v => v.X),
+                        corners.Max(v => v.Y)
+                    );
+                    var center = (max - min) / 2;
+
+                    // Bound to minimums
+                    if (min.X < 0)
+                        AreaDisplay.ViewModel.X = center.X;
+                    else if (min.Y < 0)
+                        AreaDisplay.ViewModel.Y = center.Y;
+
+                    // Bound to maximums
+                    if (max.X > ViewModel.FullBackground.Width)
+                        AreaDisplay.ViewModel.X = ViewModel.FullBackground.Width - center.X;
+                    else if (max.Y > ViewModel.FullBackground.Height)
+                        AreaDisplay.ViewModel.Y = ViewModel.FullBackground.Height - center.Y;
+
                     break;
             }
         }
