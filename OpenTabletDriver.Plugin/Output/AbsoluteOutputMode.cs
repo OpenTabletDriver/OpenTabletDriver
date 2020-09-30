@@ -102,7 +102,7 @@ namespace OpenTabletDriver.Plugin.Output
 
             // Apply rotation
             res *= Matrix3x2.CreateRotation(
-                (float)(input.Rotation * System.Math.PI / 180));
+                (float)(-input.Rotation * System.Math.PI / 180));
 
             // Scale millimeters to pixels
             res *= Matrix3x2.CreateScale(
