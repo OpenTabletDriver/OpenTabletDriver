@@ -130,15 +130,15 @@ namespace OpenTabletDriver.UX.Controls
             this.ContextMenu.Items.GetSubmenu("Align").Items.AddRange(
                 new MenuItem[]
                 {
-                    CreateMenuItem("Left", () => ViewModel.X = ViewModel.Width / 2),
-                    CreateMenuItem("Right", () => ViewModel.X = ViewModel.Background.Max(d => d.Width) - (ViewModel.Width / 2)),
-                    CreateMenuItem("Top", () => ViewModel.Y = ViewModel.Height / 2),
-                    CreateMenuItem("Bottom", ()  => ViewModel.Y = ViewModel.Background.Max(d => d.Height) - (ViewModel.Height / 2)),
+                    CreateMenuItem("Left", () => ViewModel.X = GetCenterOffset().X),
+                    CreateMenuItem("Right", () => ViewModel.X = ViewModel.FullBackground.Width - GetCenterOffset().X),
+                    CreateMenuItem("Top", () => ViewModel.Y = GetCenterOffset().Y),
+                    CreateMenuItem("Bottom", ()  => ViewModel.Y = ViewModel.FullBackground.Height - GetCenterOffset().Y),
                     CreateMenuItem("Center", 
                         () => 
                         {
-                            ViewModel.X = ViewModel.Background.Max(d => d.Width) / 2;
-                            ViewModel.Y = ViewModel.Background.Max(d => d.Height) / 2;
+                            ViewModel.X = ViewModel.FullBackground.Center.X;
+                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
                         }
                     )
                 }
@@ -151,18 +151,18 @@ namespace OpenTabletDriver.UX.Controls
                         "Full area",
                         () => 
                         {
-                            ViewModel.Width = ViewModel.Background.Max(d => d.Width);
-                            ViewModel.Height = ViewModel.Background.Max(d => d.Height);
-                            ViewModel.X = ViewModel.Background.Max(d => d.Width) / 2;
-                            ViewModel.Y = ViewModel.Background.Max(d => d.Height) / 2;
+                            ViewModel.Height = ViewModel.FullBackground.Height;
+                            ViewModel.Width = ViewModel.FullBackground.Width;
+                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
+                            ViewModel.X = ViewModel.FullBackground.Center.X;
                         }
                     ),
                     CreateMenuItem(
                         "Quarter area",
                         () => 
                         {
-                            ViewModel.Height = ViewModel.Background.Max(d => d.Height) / 2;
-                            ViewModel.Width = ViewModel.Background.Max(d => d.Width) / 2;
+                            ViewModel.Height = ViewModel.FullBackground.Height / 2;
+                            ViewModel.Width = ViewModel.FullBackground.Width / 2;
                         }
                     )
                 }
@@ -249,47 +249,51 @@ namespace OpenTabletDriver.UX.Controls
                     if (ViewModel.Background == null || ViewModel.FullBackground == null || ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
                         break;
 
-                    var origin = new Vector2(ViewModel.X, ViewModel.Y);
-                    var matrix = Matrix3x2.CreateTranslation(-origin);
-                    matrix *= Matrix3x2.CreateRotation((float)(ViewModel.Rotation * Math.PI / 180));
-                    matrix *= Matrix3x2.CreateTranslation(origin);
+                    var center = GetCenterOffset(out var min, out var max);
 
-                    float halfWidth = ViewModel.Width / 2;
-                    float halfHeight = ViewModel.Height / 2;
-
-                    var corners = new Vector2[]
-                    {
-                        Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y - halfHeight), matrix),
-                        Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y + halfHeight), matrix),
-                        Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y + halfHeight), matrix),
-                        Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y - halfHeight), matrix),
-                    };
-
-                    var min = new Vector2(
-                        corners.Min(v => v.X),
-                        corners.Min(v => v.Y)
-                    );
-                    var max = new Vector2(
-                        corners.Max(v => v.X),
-                        corners.Max(v => v.Y)
-                    );
-                    var center = (max - min) / 2;
-
-                    // Bound to minimums
                     if (min.X < 0)
                         AreaDisplay.ViewModel.X = center.X;
-                    else if (min.Y < 0)
-                        AreaDisplay.ViewModel.Y = center.Y;
-
-                    // Bound to maximums
-                    if (max.X > ViewModel.FullBackground.Width)
+                    else if (max.X > ViewModel.FullBackground.Width)
                         AreaDisplay.ViewModel.X = ViewModel.FullBackground.Width - center.X;
+                    if (min.Y < 0)
+                        AreaDisplay.ViewModel.Y = center.Y;
                     else if (max.Y > ViewModel.FullBackground.Height)
                         AreaDisplay.ViewModel.Y = ViewModel.FullBackground.Height - center.Y;
 
                     break;
             }
         }
+
+        private Vector2 GetCenterOffset(out Vector2 min, out Vector2 max)
+        {
+            var origin = new Vector2(ViewModel.X, ViewModel.Y);
+            var matrix = Matrix3x2.CreateTranslation(-origin);
+            matrix *= Matrix3x2.CreateRotation((float)(ViewModel.Rotation * Math.PI / 180));
+            matrix *= Matrix3x2.CreateTranslation(origin);
+
+            float halfWidth = ViewModel.Width / 2;
+            float halfHeight = ViewModel.Height / 2;
+
+            var corners = new Vector2[]
+            {
+                Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y - halfHeight), matrix),
+                Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y + halfHeight), matrix),
+                Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y + halfHeight), matrix),
+                Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y - halfHeight), matrix),
+            };
+
+            min = new Vector2(
+                corners.Min(v => v.X),
+                corners.Min(v => v.Y)
+            );
+            max = new Vector2(
+                corners.Max(v => v.X),
+                corners.Max(v => v.Y)
+            );
+            return (max - min) / 2;
+        }
+
+        private Vector2 GetCenterOffset() => GetCenterOffset(out _, out _);
 
         public AreaDisplay AreaDisplay { protected set; get; }
 
