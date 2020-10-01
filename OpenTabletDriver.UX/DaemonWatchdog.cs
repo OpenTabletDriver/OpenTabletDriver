@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Timers;
+using OpenTabletDriver.Native;
 
 namespace OpenTabletDriver.UX
 {
@@ -11,20 +12,31 @@ namespace OpenTabletDriver.UX
 
         private Process daemonProcess = new Process
         {
-            StartInfo = 
-            {
-                FileName = FileName,
-                Arguments = Arguments,
-                CreateNoWindow = true
-            }
+            StartInfo = startInfo
         };
 
         private Timer watchdogTimer = new Timer(1000);
 
-        // This will break if dotnet isn't in PATH
-        private static string FileName => "dotnet";
-        private static string Arguments => Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.dll");
-        internal static bool CanExecute => File.Exists(Arguments);
+        private static ProcessStartInfo startInfo => SystemInfo.CurrentPlatform switch
+        {
+            RuntimePlatform.Windows => new ProcessStartInfo
+            {
+                FileName = Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.exe"),
+                Arguments = "",
+                WorkingDirectory = Directory.GetCurrentDirectory(),
+                CreateNoWindow = true
+            },
+            _ => new ProcessStartInfo
+            {
+                FileName = "dotnet",
+                Arguments = Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.dll"),
+
+            }
+        };
+
+        public static bool CanExecute =>
+            File.Exists(startInfo.FileName) || 
+            File.Exists(startInfo.Arguments);
 
         public void Start()
         {
