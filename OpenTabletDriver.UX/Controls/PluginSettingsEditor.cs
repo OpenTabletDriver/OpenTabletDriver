@@ -5,6 +5,7 @@ using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
 
@@ -102,37 +103,55 @@ namespace OpenTabletDriver.UX.Controls
         {
             var type = SelectedPlugin.GetTypeReference<T>();
 
+            // Used to toggle the type's state
             var enableControl = new CheckBox
             {
                 Text = "Enable"
             };
-            enableControl.CheckedBinding.Bind(() => GetPluginEnabled.Invoke(), (obj) => SetPluginEnabled.Invoke(this, obj.Value));
+            enableControl.CheckedBinding.Bind(() => GetPluginEnabled(), (state) => SetPluginEnabled(state.Value));
             yield return enableControl;
-            
+
             foreach (var property in type.GetProperties())
             {
-                var attributes = from attr in property.GetCustomAttributes(false)
-                    where attr is PropertyAttribute
-                    select attr;
-
-                foreach (PropertyAttribute attr in attributes)
+                PropertyAttribute propertyAttr = null;
+                try
                 {
-                    var path = type.FullName + "." + property.Name;
-                    var control = GetControl(property, attr,
-                        () => App.Settings.PluginSettings.TryGetValue(path, out var val) ? val : string.Empty,
-                        (value) => 
-                        {
-                            if (!App.Settings.PluginSettings.TryAdd(path, value))
-                                App.Settings.PluginSettings[path] = value;
-                        });
-
-                    yield return new GroupBox
-                    {
-                        Content = control,
-                        Text = string.IsNullOrWhiteSpace(attr.DisplayName) ? property.Name : attr.DisplayName,
-                        Padding = App.GroupBoxPadding
-                    };
+                    propertyAttr = property.GetCustomAttribute<PropertyAttribute>(false);
+                    if (propertyAttr == null)
+                        continue;
                 }
+                catch (TypeLoadException tlex)
+                {
+                    Log.Write(
+                        "Plugin",
+                        $"Type loading failed for '{tlex.TypeName}'. The plugin '{type.Assembly.GetName().Name}' is out of date.",
+                        LogLevel.Error
+                    );
+                    SetPluginEnabled(false);
+                    break;
+                }
+                
+                var path = type.FullName + "." + property.Name;
+                var control = GetControl(
+                    property,
+                    propertyAttr,
+                    () => App.Settings.PluginSettings.TryGetValue(path, out var val) ? val : string.Empty,
+                    (value) => 
+                    {
+                        if (!App.Settings.PluginSettings.TryAdd(path, value))
+                            App.Settings.PluginSettings[path] = value;
+                    }
+                );
+
+                foreach (var modAttr in property.GetCustomAttributes<ModifierAttribute>(false))
+                    control = ApplyModifierAttributes(control, modAttr);
+
+                yield return new GroupBox
+                {
+                    Content = control,
+                    Text = string.IsNullOrWhiteSpace(propertyAttr.DisplayName) ? property.Name : propertyAttr.DisplayName,
+                    Padding = App.GroupBoxPadding
+                };
             }
             
             var staticMethods = from method in type.GetMethods()
@@ -164,45 +183,70 @@ namespace OpenTabletDriver.UX.Controls
 
         private Control GetControl(PropertyInfo property, PropertyAttribute attr, Func<string> getValue, Action<string> setValue)
         {
-            if (attr is UnitPropertyAttribute unitAttr)
+            switch (attr)
             {
-                var tb = new TextBox();
-                tb.TextBinding.Bind(getValue, setValue);
-                var label = new Label { Text = unitAttr.Unit };
-
-                var layout = new StackLayout
+                case BooleanPropertyAttribute boolAttr:
                 {
-                    Orientation = Orientation.Horizontal,
-                    Spacing = 5,
-                    Items =
+                    var checkBox = new CheckBox
                     {
-                        new StackLayoutItem(tb, true),
-                        new StackLayoutItem(label, VerticalAlignment.Center)
-                    }
-                };                
-                return layout;
-            }
-            else if (attr is BooleanPropertyAttribute boolAttr)
-            {
-                var checkBox = new CheckBox
+                        Text = boolAttr.Description
+                    };
+                    checkBox.CheckedBinding.Convert(
+                        (b) => b.Value.ToString(),
+                        (string str) => bool.TryParse(str, out var val) ? val : false)
+                        .Bind(getValue, setValue);
+                    return checkBox;
+                }
+                case SliderPropertyAttribute sliderAttr:
                 {
-                    Text = boolAttr.Description
-                };
-                checkBox.CheckedBinding.Convert(
-                    (b) => b.Value.ToString(),
-                    (string str) => bool.TryParse(str, out var val) ? val : false)
-                    .Bind(getValue, setValue);
-                return checkBox;
-            }
-            else
-            {
-                var tb = new TextBox();
-                tb.TextBinding.Bind(getValue, setValue);
-                return tb;
+                    var tb = new TextBox
+                    {
+                        ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}",
+                        PlaceholderText = $"{sliderAttr.DefaultValue}"
+                    };
+                    tb.TextBinding.Bind(getValue, setValue);
+                    return tb;
+                }
+                default:
+                {
+                    var tb = new TextBox();
+                    tb.TextBinding.Bind(getValue, setValue);
+                    return tb;
+                }
             }
         }
 
-        public event EventHandler<bool> SetPluginEnabled;
+        private Control ApplyModifierAttributes(Control control, ModifierAttribute attribute)
+        {
+            switch (attribute)
+            {
+                case ToolTipAttribute toolTipAttr:
+                {
+                    control.ToolTip = toolTipAttr.ToolTip;
+                    return control;
+                }
+                // This might cause issues if this is done before another attribute.
+                case UnitAttribute unitAttr:
+                {
+                    var label = new Label { Text = unitAttr.Unit };
+                    var layout = new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Spacing = 5,
+                        Items =
+                        {
+                            new StackLayoutItem(control, true),
+                            new StackLayoutItem(label, VerticalAlignment.Center)
+                        }
+                    };
+                    return layout;
+                }
+                default:
+                    return control;
+            }
+        }
+
+        public Action<bool> SetPluginEnabled;
         public Func<bool> GetPluginEnabled;
     }
 }
