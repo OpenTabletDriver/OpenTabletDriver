@@ -81,7 +81,7 @@ namespace OpenTabletDriver.UX
             filterEditor = ConstructPluginSettingsEditor<IFilter>(
                 "Filter",
                 () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),
-                (sender, enabled) =>
+                (enabled) =>
                 {
                     var path = filterEditor.SelectedPlugin.Path;
                     if (enabled && !App.Settings.Filters.Contains(path))
@@ -94,7 +94,7 @@ namespace OpenTabletDriver.UX
             toolEditor = ConstructPluginSettingsEditor<ITool>(
                 "Tool",
                 () => App.Settings.Tools.Contains(toolEditor.SelectedPlugin.Path),
-                (sender, enabled) =>
+                (enabled) =>
                 {
                     var path = toolEditor.SelectedPlugin.Path;
                     if (enabled && !App.Settings.Tools.Contains(path))
@@ -470,7 +470,7 @@ namespace OpenTabletDriver.UX
             return layout;
         }
 
-        private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, EventHandler<bool> setMethod)
+        private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, Action<bool> setMethod)
         {
             var editor = new PluginSettingsEditor<T>(friendlyName);
             editor.GetPluginEnabled = getMethod;
@@ -646,6 +646,7 @@ namespace OpenTabletDriver.UX
             try
             {
                 await App.Driver.Connect();
+                Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
             }
             catch (TimeoutException)
             {
@@ -796,8 +797,15 @@ namespace OpenTabletDriver.UX
 
         private async Task ApplySettings()
         {
-            if (Settings is Settings settings)
-                await App.Driver.Instance.SetSettings(settings);
+            try
+            {
+                if (Settings is Settings settings)
+                    await App.Driver.Instance.SetSettings(settings);
+            }
+            catch (StreamJsonRpc.RemoteInvocationException riex)
+            {
+                Log.Exception(riex.InnerException);
+            }
         }
 
         private async Task DetectAllTablets()
