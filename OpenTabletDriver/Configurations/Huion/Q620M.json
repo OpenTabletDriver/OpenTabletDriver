@@ -1,0 +1,50 @@
+{
+    "Name": "Huion Q620M",
+    "DigitizerIdentifier": {
+        "VendorID": 9580,
+        "ProductID": 109,
+        "InputReportLength": 12,
+        "OutputReportLength": 0,
+        "ReportParser": null,
+        "FeatureInitReport": null,
+        "OutputInitReport": null
+    },
+    "AlternateDigitizerIdentifier": {
+        "VendorID": 0,
+        "ProductID": 0,
+        "InputReportLength": 0,
+        "OutputReportLength": 0,
+        "ReportParser": null,
+        "FeatureInitReport": null,
+        "OutputInitReport": null
+    },
+    "AuxilaryDeviceIdentifier": {
+        "VendorID": 0,
+        "ProductID": 0,
+        "InputReportLength": 0,
+        "OutputReportLength": 0,
+        "ReportParser": null,
+        "FeatureInitReport": null,
+        "OutputInitReport": null
+    },
+    "Width": 266.7,
+    "Height": 165.1,
+    "MaxX": 53340.0,
+    "MaxY": 33020.0,
+    "MaxPressure": 8191,
+    "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+    },
+    "Attributes": {
+        "libinputoverride": "1"
+    },
+    "DeviceStrings": {
+        "201": "HUION_T18d_\\d{6}$"
+    },
+    "InitializationStrings": [
+        200
+    ]
+}
