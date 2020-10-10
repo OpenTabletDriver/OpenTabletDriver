@@ -1,44 +1,63 @@
 {
   "Name": "Wacom CTH-670",
-  "DigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 223,
-    "InputReportLength": 10,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": "AgI=",
-    "OutputInitReport": null
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 223,
-    "InputReportLength": 11,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
-    "FeatureInitReport": "AgI=",
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 223,
-    "InputReportLength": 64,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 216.48,
-  "Height": 137.0,
-  "MaxX": 21648.0,
-  "MaxY": 13700.0,
-  "MaxPressure": 1023,
-  "ActiveReportID": {
-    "Start": 64,
-    "StartInclusive": false,
-    "End": null,
-    "EndInclusive": false
-  },
-  "Attributes": {},
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  "DigitizerIdentifiers": [
+    {
+      "Width": 216.48,
+      "Height": 137.0,
+      "MaxX": 21648.0,
+      "MaxY": 13700.0,
+      "MaxPressure": 1023,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 223,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 216.48,
+      "Height": 137.0,
+      "MaxX": 21648.0,
+      "MaxY": 13700.0,
+      "MaxPressure": 1023,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 223,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 223,
+      "InputReportLength": 64,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {}
 }

@@ -1,44 +1,63 @@
 {
   "Name": "Wacom CTL-490",
-  "DigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 827,
-    "InputReportLength": 10,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 827,
-    "InputReportLength": 11,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 827,
-    "InputReportLength": 64,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 152.0,
-  "Height": 95.0,
-  "MaxX": 15200.0,
-  "MaxY": 9500.0,
-  "MaxPressure": 2047,
-  "ActiveReportID": {
-    "Start": 0,
-    "StartInclusive": false,
-    "End": null,
-    "EndInclusive": false
-  },
-  "Attributes": {},
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  "DigitizerIdentifiers": [
+    {
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 827,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 827,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 827,
+      "InputReportLength": 64,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {}
 }
