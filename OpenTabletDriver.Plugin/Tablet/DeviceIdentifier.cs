@@ -1,4 +1,6 @@
-﻿namespace OpenTabletDriver.Plugin.Tablet
+﻿using System.Collections.Generic;
+
+namespace OpenTabletDriver.Plugin.Tablet
 {
     public class DeviceIdentifier
     {
@@ -15,12 +17,12 @@
         /// <summary>
         /// The maximum input report length reported by the device.
         /// </summary>
-        public uint InputReportLength { set; get; }
+        public uint? InputReportLength { set; get; }
 
         /// <summary>
         /// The maximum output report length reported by the device.
         /// </summary>
-        public uint OutputReportLength { set; get; }
+        public uint? OutputReportLength { set; get; }
 
         /// <summary>
         /// The device report parser used by the detected device.
@@ -36,5 +38,17 @@
         /// The output report sent to initialize tablet functions.
         /// </summary>
         public byte[] OutputInitReport { set; get; }
+
+        /// <summary>
+        /// Device strings to match against, used for identification.
+        /// </summary>
+        /// <typeparam name="uint">The index to query</typeparam>
+        /// <typeparam name="string">The value to match to the queried index</typeparam>
+        public Dictionary<byte, string> DeviceStrings { set; get; } = new Dictionary<byte, string>();
+
+        /// <summary>
+        /// Device strings to query to initialize device endpoints.
+        /// </summary>
+        public List<byte> InitializationStrings { set; get; } = new List<byte>();
     }
 }

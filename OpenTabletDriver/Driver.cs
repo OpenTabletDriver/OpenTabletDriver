@@ -24,39 +24,42 @@ namespace OpenTabletDriver
         public event EventHandler<IDeviceReport> ReportRecieved;
         
         public bool EnableInput { set; get; }
-        public HidDevice TabletDevice { private set; get; }
 
-        private TabletProperties _tabletProperties;
-        public TabletProperties TabletProperties
+        public TabletConfiguration Tablet { private set; get; }
+
+        private DigitizerIdentifier tabletIdentifier;
+        public DigitizerIdentifier TabletIdentifier
         {
             private set
             {
-                _tabletProperties = value;
+                this.tabletIdentifier = value;
                 if (OutputMode != null)
-                    OutputMode.TabletProperties = TabletProperties;
+                    OutputMode.Tablet = value;
             }
-            get => _tabletProperties;
+            get => this.tabletIdentifier;
         }
+
+        public DeviceIdentifier AuxiliaryIdentifier { private set; get; }
 
         public IOutputMode OutputMode { set; get; }
         
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
 
-        public bool TryMatch(TabletProperties tablet)
+        public bool TryMatch(TabletConfiguration tabletProperties)
         {
-            Log.Write("Detect", $"Searching for tablet '{tablet.Name}'");
+            Log.Write("Detect", $"Searching for tablet '{tabletProperties.Name}'");
             try
             {
-                if (TryMatchTablet(tablet, out var tabletDevice, out var identifier, out var tabletParser) || TryMatchAltTablet(tablet, out tabletDevice, out identifier, out tabletParser))
+                if (TryMatchTablet(tabletProperties, out var tabletDevice, out var identifier, out var tabletParser))
                 {
-                    InitializeTabletDevice(tablet, tabletDevice, identifier, tabletParser);
+                    InitializeTabletDevice(tabletDevice, identifier, tabletParser);
                     
-                    if (TryMatchAuxDevice(tablet, out var auxDevice, out var auxIdentifier, out var auxParser))
+                    if (TryMatchAuxDevice(tabletProperties, out var auxDevice, out var auxIdentifier, out var auxParser))
                     {
                         InitializeAuxDevice(auxDevice, auxIdentifier, auxParser);
                     }
-                    else if (tablet.AuxilaryDeviceIdentifier.VendorID != 0 & tablet.AuxilaryDeviceIdentifier.ProductID != 0)
+                    else if (identifier.VendorID != 0 & identifier.ProductID != 0)
                     {
                         Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Error);
                     }
@@ -67,21 +70,6 @@ namespace OpenTabletDriver
             catch (ArgumentOutOfRangeException ex)
             {
                 Log.Exception(ex);
-                if (SystemInfo.CurrentPlatform == RuntimePlatform.Linux && typeof(UCLogicInfo.VendorIDs).EnumContains(tablet.DigitizerIdentifier.VendorID))
-                {
-                    Log.Write("Detect", "Failed to get device."
-                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Linux-FAQ#notice-for-uclogic-tablet-owners", LogLevel.Error);
-                }
-                else if (SystemInfo.CurrentPlatform == RuntimePlatform.Windows && tablet.DigitizerIdentifier.VendorID == (int)UCLogicInfo.VendorIDs.XP_Pen)
-                {
-                    Log.Write("Detect", "Failed to get device."
-                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Windows-FAQ#my-xp-pen-tablet-fails-to-open-deviceioexception-unable-to-open-hid-class-device", LogLevel.Error);
-                }
-                else
-                {
-                    Log.Write("Detect", "Failed to get device. Visit the wiki for more information: "
-                        + "https://github.com/InfinityGhost/OpenTabletDriver/wiki", LogLevel.Error);
-                }
                 return false;
             }
             catch (Exception ex)
@@ -92,95 +80,81 @@ namespace OpenTabletDriver
             return false;
         }
 
-        internal bool TryMatchTablet(TabletProperties tablet, out HidDevice tabletDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
+        internal bool TryMatchTablet(TabletConfiguration tablet, out HidDevice tabletDevice, out DigitizerIdentifier identifier, out IReportParser<IDeviceReport> parser)
         {
-            var matches = FindMatches(tablet, tablet.DigitizerIdentifier);
+            tabletDevice = null;
+            identifier = null;
+            parser = null;
+            foreach (var id in tablet.DigitizerIdentifiers)
+            {
+                var matches = FindMatches(id);
 
-            if (matches.Count() > 1)
-                Log.Write("Detect", "More than 1 matching tablet has been found.", LogLevel.Warning);
+                if (matches.Count() > 1)
+                    Log.Write("Detect", "More than 1 matching tablet has been found.", LogLevel.Warning);
 
-            tabletDevice = matches.FirstOrDefault();
-            identifier = tablet.DigitizerIdentifier;
-            parser = GetReportParser(tablet.DigitizerIdentifier.ReportParser) ?? new TabletReportParser();
-            
-            return tabletDevice != null;
+                if (matches.FirstOrDefault() is HidDevice dev)
+                {
+                    tabletDevice = dev;
+                    identifier = id;
+                    parser = GetReportParser(id.ReportParser) ?? new TabletReportParser();
+                    return true;
+                }
+            }
+            return false;
         }
 
-        internal bool TryMatchAltTablet(TabletProperties tablet, out HidDevice tabletDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
+        internal bool TryMatchAuxDevice(TabletConfiguration tablet, out HidDevice auxDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
         {
-            if (tablet.AlternateDigitizerIdentifier == null)
+            auxDevice = null;
+            identifier = null;
+            parser = null;
+            foreach (var id in tablet.AuxilaryDeviceIdentifiers)
             {
-                tabletDevice = null;
-                identifier = null;
-                parser = null;
-                return false;
+                var matches = FindMatches(id);
+
+                if (matches.Count() > 1)
+                    Log.Write("Detect", "More than 1 matching auxiliary device has been found.", LogLevel.Warning);
+                
+                if (matches.FirstOrDefault() is HidDevice dev)
+                {
+                    auxDevice = dev;
+                    identifier = id;
+                    parser = GetReportParser(id.ReportParser) ?? new AuxReportParser();
+                }
             }
-
-            var matches = FindMatches(tablet, tablet.AlternateDigitizerIdentifier);
-            
-            if (matches.Count() > 1)
-                Log.Write("Detect", "More than 1 matching alternate tablet has been found.", LogLevel.Warning);
-
-            tabletDevice = matches.FirstOrDefault();
-            identifier = tablet.AlternateDigitizerIdentifier;
-            parser = GetReportParser(tablet.AlternateDigitizerIdentifier.ReportParser) ?? new TabletReportParser();
-
-            return tabletDevice != null;
-        }
-
-        internal bool TryMatchAuxDevice(TabletProperties tablet, out HidDevice auxDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
-        {
-            if (tablet.AuxilaryDeviceIdentifier == null)
-            {
-                auxDevice = null;
-                identifier = null;
-                parser = null;
-                return false;
-            }
-
-            var matches = FindMatches(tablet, tablet.AuxilaryDeviceIdentifier);
-
-            if (matches.Count() > 1)
-                Log.Write("Detect", "More than 1 matching auxiliary device has been found.", LogLevel.Warning);
-            
-            auxDevice = matches.FirstOrDefault();
-            identifier = tablet.AuxilaryDeviceIdentifier;
-            parser = GetReportParser(tablet.AuxilaryDeviceIdentifier.ReportParser) ?? new AuxReportParser();
-
             return auxDevice != null;
         }
 
-        internal void InitializeTabletDevice(TabletProperties tablet, HidDevice tabletDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
+        internal void InitializeTabletDevice(HidDevice tabletDevice, DigitizerIdentifier tablet, IReportParser<IDeviceReport> reportParser)
         {
             TabletReader?.Dispose();
-            TabletProperties = tablet;
-            TabletDevice = tabletDevice;
+            TabletIdentifier = tablet;
 
             Log.Write("Detect", $"Found device '{tabletDevice.GetFriendlyName()}'.");
             Log.Write("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
-            Log.Debug("Detect", $"Device path: {TabletDevice.DevicePath}");
+            Log.Debug("Detect", $"Device path: {tabletDevice.DevicePath}");
 
             if (tablet.InitializationStrings.Count > 0)
             {
                 foreach (var index in tablet.InitializationStrings)
                 {
                     Log.Debug("Detect", $"Initializing index {index}");
-                    TabletDevice.GetDeviceString(index);
+                    tabletDevice.GetDeviceString(index);
                 }
             }
             
-            TabletReader = new DeviceReader<IDeviceReport>(TabletDevice, reportParser);
+            TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
             TabletReader.Start();
             TabletReader.Report += OnReport;
             TabletReader.ReadingChanged += (sender, e) => Reading?.Invoke(sender, e);
             
-            if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
+            if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
                 Log.Debug("Detect", "Setting feature: " + BitConverter.ToString(featureInitReport));
                 TabletReader.ReportStream.SetFeature(featureInitReport);
             }
 
-            if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
+            if (tablet.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
                 Log.Debug("Detect", "Setting output: " + BitConverter.ToString(outputInitReport));
                 TabletReader.ReportStream.Write(outputInitReport);
@@ -190,8 +164,19 @@ namespace OpenTabletDriver
         internal void InitializeAuxDevice(HidDevice auxDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
         {
             AuxReader?.Dispose();
+            AuxiliaryIdentifier = identifier;
+            
             Log.Debug("Detect", $"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
             Log.Debug("Detect", $"Device path: {auxDevice.DevicePath}");
+
+            if (identifier.InitializationStrings.Count > 0)
+            {
+                foreach (var index in identifier.InitializationStrings)
+                {
+                    Log.Debug("Detect", $"Initializing index {index}");
+                    auxDevice.GetDeviceString(index);
+                }
+            }
             
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
             AuxReader.Start();
@@ -210,23 +195,23 @@ namespace OpenTabletDriver
             }
         }
 
-        private IEnumerable<HidDevice> FindMatches(TabletProperties tablet, DeviceIdentifier identifier)
+        private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
         {
             return from device in DeviceList.Local.GetHidDevices()
                 where identifier.VendorID == device.VendorID
                 where identifier.ProductID == device.ProductID
-                where identifier.InputReportLength > 0 ? identifier.InputReportLength == device.GetMaxInputReportLength() : true
-                where identifier.OutputReportLength > 0 ? identifier.OutputReportLength == device.GetMaxOutputReportLength() : true
-                where DeviceMatchesAllStrings(device, tablet)
+                where identifier.InputReportLength == null ? true : identifier.InputReportLength == device.GetMaxInputReportLength()
+                where identifier.OutputReportLength == null ? true : identifier.OutputReportLength == device.GetMaxOutputReportLength()
+                where DeviceMatchesAllStrings(device, identifier)
                 select device;
         }
 
-        private bool DeviceMatchesAllStrings(HidDevice device, TabletProperties tablet)
+        private bool DeviceMatchesAllStrings(HidDevice device, DeviceIdentifier identifier)
         {
-            if (tablet.DeviceStrings == null)
+            if (identifier.DeviceStrings == null || identifier.DeviceStrings.Count == 0)
                 return true;
             
-            foreach (var matchQuery in tablet.DeviceStrings)
+            foreach (var matchQuery in identifier.DeviceStrings)
             {
                 try
                 {
@@ -264,7 +249,7 @@ namespace OpenTabletDriver
 
         private void OnReport(object sender, IDeviceReport report)
         {
-            if (EnableInput && OutputMode?.TabletProperties != null)
+            if (EnableInput && OutputMode?.Tablet != null)
             {
                 OutputMode?.Read(report);
                 if (OutputMode is IBindingHandler<IBinding> handler)
