@@ -427,8 +427,7 @@ namespace OpenTabletDriver.UX.Windows
         
         private static int? ToNullableInt(string str) => int.TryParse(str, out var val) ? val : (int?)null;
         private static int ToInt(string str) => ToNullableInt(str) ?? 0;
-        
-        
+                
         private static uint? ToNullableUInt(string str) => uint.TryParse(str, out var val) ? val : (uint?)null;
         private static uint ToUInt(string str) => ToNullableUInt(str) ?? 0;
 
