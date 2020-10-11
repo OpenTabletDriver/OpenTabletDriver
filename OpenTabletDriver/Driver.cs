@@ -51,17 +51,12 @@ namespace OpenTabletDriver
             Log.Write("Detect", $"Searching for tablet '{config.Name}'");
             try
             {
-                if (TryMatchTablet(config, out var tabletDevice, out var identifier, out var tabletParser))
+                if (TryMatchTablet(config))
                 {
-                    InitializeTabletDevice(tabletDevice, identifier, tabletParser);
-                    
-                    if (TryMatchAuxDevice(config, out var auxDevice, out var auxIdentifier, out var auxParser))
+                    Log.Write("Detect", $"Found tablet '{config.Name}'");
+                    if (!TryMatchAuxDevice(config))
                     {
-                        InitializeAuxDevice(auxDevice, auxIdentifier, auxParser);
-                    }
-                    else if (config.AuxilaryDeviceIdentifiers?.Count > 0)
-                    {
-                        Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Error);
+                        Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Warning);
                     }
                     
                     return true;
@@ -74,58 +69,69 @@ namespace OpenTabletDriver
             return false;
         }
 
-        internal bool TryMatchTablet(TabletConfiguration tablet, out HidDevice tabletDevice, out DigitizerIdentifier identifier, out IReportParser<IDeviceReport> parser)
+        internal bool TryMatchTablet(TabletConfiguration config)
         {
-            tabletDevice = null;
-            identifier = null;
-            parser = null;
-            foreach (var id in tablet.DigitizerIdentifiers)
+            foreach (var identifier in config.DigitizerIdentifiers)
             {
-                var matches = FindMatches(id);
+                var matches = FindMatches(identifier);
 
                 if (matches.Count() > 1)
                     Log.Write("Detect", "More than 1 matching tablet has been found.", LogLevel.Warning);
 
-                if (matches.FirstOrDefault() is HidDevice dev)
+                foreach (HidDevice dev in matches)
                 {
-                    tabletDevice = dev;
-                    identifier = id;
-                    parser = GetReportParser(id.ReportParser) ?? new TabletReportParser();
-                    return true;
+                    // Try every matching device until we initialize successfully
+                    try
+                    {
+                        var parser = GetReportParser(identifier.ReportParser) ?? new TabletReportParser();
+                        InitializeDigitizerDevice(dev, identifier, parser);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Exception(ex);
+                        continue;
+                    }
                 }
             }
-            return false;
+            return config.DigitizerIdentifiers.Count == 0;
         }
 
-        internal bool TryMatchAuxDevice(TabletConfiguration tablet, out HidDevice auxDevice, out DeviceIdentifier identifier, out IReportParser<IDeviceReport> parser)
+        internal bool TryMatchAuxDevice(TabletConfiguration config)
         {
-            auxDevice = null;
-            identifier = null;
-            parser = null;
-            foreach (var id in tablet.AuxilaryDeviceIdentifiers)
+            foreach (var identifier in config.AuxilaryDeviceIdentifiers)
             {
-                var matches = FindMatches(id);
+                var matches = FindMatches(identifier);
 
                 if (matches.Count() > 1)
                     Log.Write("Detect", "More than 1 matching auxiliary device has been found.", LogLevel.Warning);
-                
-                if (matches.FirstOrDefault() is HidDevice dev)
+
+                foreach (HidDevice dev in matches)
                 {
-                    auxDevice = dev;
-                    identifier = id;
-                    parser = GetReportParser(id.ReportParser) ?? new AuxReportParser();
+                    // Try every matching device until we initialize successfully
+                    try
+                    {
+                        var parser = GetReportParser(identifier.ReportParser) ?? new AuxReportParser();
+                        InitializeAuxDevice(dev, identifier, parser);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Exception(ex);
+                        continue;
+                    }
                 }
             }
-            return auxDevice != null;
+            return config.AuxilaryDeviceIdentifiers.Count == 0;
         }
 
-        internal void InitializeTabletDevice(HidDevice tabletDevice, DigitizerIdentifier tablet, IReportParser<IDeviceReport> reportParser)
+        internal void InitializeDigitizerDevice(HidDevice tabletDevice, DigitizerIdentifier tablet, IReportParser<IDeviceReport> reportParser)
         {
             TabletReader?.Dispose();
             TabletIdentifier = tablet;
 
-            Log.Write("Detect", $"Found device '{tabletDevice.GetFriendlyName()}'.");
-            Log.Write("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
+            Log.Debug("Detect", $"Using device '{tabletDevice.GetFriendlyName()}'.");
+            Log.Debug("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
             Log.Debug("Detect", $"Device path: {tabletDevice.DevicePath}");
 
             if (tablet.InitializationStrings.Count > 0)
@@ -160,7 +166,8 @@ namespace OpenTabletDriver
             AuxReader?.Dispose();
             AuxiliaryIdentifier = identifier;
             
-            Log.Debug("Detect", $"Found aux device with report length {auxDevice.GetMaxInputReportLength()}.");
+            Log.Debug("Detect", $"Using auxiliary device '{auxDevice.GetFriendlyName()}'.");
+            Log.Debug("Detect", $"Using auxiliary report parser type '{reportParser.GetType().Name}'.");
             Log.Debug("Detect", $"Device path: {auxDevice.DevicePath}");
 
             if (identifier.InitializationStrings.Count > 0)
