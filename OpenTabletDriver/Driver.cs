@@ -34,7 +34,7 @@ namespace OpenTabletDriver
             {
                 this.tabletIdentifier = value;
                 if (OutputMode != null)
-                    OutputMode.Tablet = value;
+                    OutputMode.Digitizer = value;
             }
             get => this.tabletIdentifier;
         }
@@ -46,20 +46,20 @@ namespace OpenTabletDriver
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
 
-        public bool TryMatch(TabletConfiguration tabletProperties)
+        public bool TryMatch(TabletConfiguration config)
         {
-            Log.Write("Detect", $"Searching for tablet '{tabletProperties.Name}'");
+            Log.Write("Detect", $"Searching for tablet '{config.Name}'");
             try
             {
-                if (TryMatchTablet(tabletProperties, out var tabletDevice, out var identifier, out var tabletParser))
+                if (TryMatchTablet(config, out var tabletDevice, out var identifier, out var tabletParser))
                 {
                     InitializeTabletDevice(tabletDevice, identifier, tabletParser);
                     
-                    if (TryMatchAuxDevice(tabletProperties, out var auxDevice, out var auxIdentifier, out var auxParser))
+                    if (TryMatchAuxDevice(config, out var auxDevice, out var auxIdentifier, out var auxParser))
                     {
                         InitializeAuxDevice(auxDevice, auxIdentifier, auxParser);
                     }
-                    else if (identifier.VendorID != 0 & identifier.ProductID != 0)
+                    else if (config.AuxilaryDeviceIdentifiers?.Count > 0)
                     {
                         Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Error);
                     }
@@ -67,15 +67,9 @@ namespace OpenTabletDriver
                     return true;
                 }
             }
-            catch (ArgumentOutOfRangeException ex)
-            {
-                Log.Exception(ex);
-                return false;
-            }
             catch (Exception ex)
             {
                 Log.Exception(ex);
-                return false;
             }
             return false;
         }
@@ -249,7 +243,7 @@ namespace OpenTabletDriver
 
         private void OnReport(object sender, IDeviceReport report)
         {
-            if (EnableInput && OutputMode?.Tablet != null)
+            if (EnableInput && OutputMode?.Digitizer != null)
             {
                 OutputMode?.Read(report);
                 if (OutputMode is IBindingHandler<IBinding> handler)

@@ -40,10 +40,10 @@ namespace OpenTabletDriver.Plugin.Output
                 _sensitivity = value;
 
                 // Normalize (ratio of 1)
-                _reportScaleMultiplier /= new Vector2(Tablet.MaxX, Tablet.MaxY);
+                _reportScaleMultiplier /= new Vector2(Digitizer.MaxX, Digitizer.MaxY);
 
                 // Scale to tablet dimensions (mm)
-                _reportScaleMultiplier *= new Vector2(Tablet.Width, Tablet.Height);
+                _reportScaleMultiplier *= new Vector2(Digitizer.Width, Digitizer.Height);
             }
             get { return _sensitivity; }
         }
@@ -57,12 +57,12 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (report is ITabletReport tabletReport)
             {
-                if (Tablet.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
                     if (Transpose(tabletReport) is Vector2 pos)
                     {
                         if (VirtualMouse is IPressureHandler pressureHandler)
-                            pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Tablet.MaxPressure);
+                            pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
                         
                         VirtualMouse.Move(pos.X, pos.Y);
                     }

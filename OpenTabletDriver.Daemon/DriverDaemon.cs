@@ -27,10 +27,7 @@ namespace OpenTabletDriver.Daemon
             Log.Output += (sender, message) => LogMessages.Add(message);
             Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
             Log.Output += (sender, message) => Message?.Invoke(sender, message);
-            Driver.Reading += async (sender, isReading) =>
-            {
-                TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
-            };
+            Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
             
             LoadUserSettings();
 
@@ -192,7 +189,7 @@ namespace OpenTabletDriver.Daemon
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
             
-            outputMode.Tablet = Driver.TabletIdentifier;
+            outputMode.Digitizer = Driver.TabletIdentifier;
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)

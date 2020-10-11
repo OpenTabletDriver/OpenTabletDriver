@@ -33,15 +33,15 @@ namespace OpenTabletDriver.Plugin.Output
             get => _filters;
         }
         
-        private DigitizerIdentifier _tabletProperties;
-        public override DigitizerIdentifier Tablet
+        private DigitizerIdentifier _digitizer;
+        public override DigitizerIdentifier Digitizer
         {
             set
             {
-                _tabletProperties = value;
+                _digitizer = value;
                 UpdateCache();
             }
-            get => _tabletProperties;
+            get => _digitizer;
         }
 
         private Area _displayArea, _tabletArea;
@@ -73,8 +73,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         internal void UpdateCache()
         {
-            if (!(Input is null | Output is null | Tablet is null))
-                _transformationMatrix = CalculateTransformation(Input, Output, Tablet);
+            if (!(Input is null | Output is null | Digitizer is null))
+                _transformationMatrix = CalculateTransformation(Input, Output, Digitizer);
             
             _halfDisplayWidth = Output?.Width / 2 ?? 0;
             _halfDisplayHeight = Output?.Height / 2 ?? 0;
@@ -119,10 +119,10 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (report is ITabletReport tabletReport)
             {
-                if (Tablet.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
                     if (VirtualTablet is IPressureHandler pressureHandler)
-                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Tablet.MaxPressure);
+                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
                     
                     var pos = Transpose(tabletReport);
                     VirtualTablet.SetPosition(pos);
