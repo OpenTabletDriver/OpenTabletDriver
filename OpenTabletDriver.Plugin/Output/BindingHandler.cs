@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public class BindingHandler : IBindingHandler<IBinding>
     {
-        public virtual TabletProperties TabletProperties { set; get; }
+        public virtual DigitizerIdentifier Digitizer { set; get; }
 
         public float TipActivationPressure { set; get; }
         public IBinding TipBinding { set; get; } = null;
@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         public void HandleBinding(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport && TabletProperties.ActiveReportID.IsInRange(tabletReport.ReportID))
+            if (report is ITabletReport tabletReport && Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 HandlePenBinding(tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxBinding(auxReport);
@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (TipBinding != null && TipActivationPressure != 0)
             {
-                float pressurePercent = (float)report.Pressure / TabletProperties.MaxPressure * 100f;
+                float pressurePercent = (float)report.Pressure / Digitizer.MaxPressure * 100f;
 
                 if (pressurePercent >= TipActivationPressure && !TipState)
                     TipBinding.Press();

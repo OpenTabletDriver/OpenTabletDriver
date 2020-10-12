@@ -1,50 +1,35 @@
 {
   "Name": "Huion H430P",
-  "DigitizerIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 109,
-    "InputReportLength": 12,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 121.92,
-  "Height": 76.2,
-  "MaxX": 24384.0,
-  "MaxY": 15240.0,
-  "MaxPressure": 4095,
-  "ActiveReportID": {
-    "Start": 64,
-    "StartInclusive": true,
-    "End": null,
-    "EndInclusive": false
-  },
+  "DigitizerIdentifiers": [
+    {
+      "Width": 121.92,
+      "Height": 76.2,
+      "MaxX": 24384.0,
+      "MaxY": 15240.0,
+      "MaxPressure": 4095,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T176_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
-  },
-  "DeviceStrings": {
-    "201": "HUION_T176_\\d{6}$"
-  },
-  "InitializationStrings": [
-    200
-  ]
+  }
 }

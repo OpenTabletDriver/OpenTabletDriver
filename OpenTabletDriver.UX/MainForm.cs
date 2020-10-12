@@ -667,7 +667,7 @@ namespace OpenTabletDriver.UX
 
             Content = ConstructMainControls();
 
-            if (await App.Driver.Instance.GetTablet() is TabletProperties tablet)
+            if (await App.Driver.Instance.GetTablet() is TabletStatus tablet)
             {
                 SetTabletAreaDimensions(tablet);
             }
@@ -730,10 +730,10 @@ namespace OpenTabletDriver.UX
             Settings.DisplayHeight = virtualScreen.Height;
             Settings.DisplayX = virtualScreen.Width / 2;
             Settings.DisplayY = virtualScreen.Height / 2;
-            Settings.TabletWidth = tablet?.Width ?? 0;
-            Settings.TabletHeight = tablet?.Height ?? 0;
-            Settings.TabletX = tablet?.Width / 2 ?? 0;
-            Settings.TabletY = tablet?.Height / 2 ?? 0;
+            Settings.TabletWidth = tablet?.TabletIdentifier?.Width ?? 0;
+            Settings.TabletHeight = tablet?.TabletIdentifier?.Height ?? 0;
+            Settings.TabletX = tablet?.TabletIdentifier?.Width / 2 ?? 0;
+            Settings.TabletY = tablet?.TabletIdentifier?.Height / 2 ?? 0;
             await App.Driver.Instance.SetSettings(Settings);
         }
 
@@ -810,7 +810,7 @@ namespace OpenTabletDriver.UX
 
         private async Task DetectAllTablets()
         {
-            if (await App.Driver.Instance.DetectTablets() is TabletProperties tablet)
+            if (await App.Driver.Instance.DetectTablets() is TabletStatus tablet)
             {
                 var settings = await App.Driver.Instance.GetSettings();
                 if (settings != null)
@@ -851,13 +851,13 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private void SetTabletAreaDimensions(TabletProperties tablet)
+        private void SetTabletAreaDimensions(TabletStatus tablet)
         {
             if (tablet != null)
             {
                 tabletAreaEditor.ViewModel.Background = new RectangleF[]
                 {
-                    new RectangleF(0, 0, tablet.Width, tablet.Height)
+                    new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height)
                 };
             }
             else

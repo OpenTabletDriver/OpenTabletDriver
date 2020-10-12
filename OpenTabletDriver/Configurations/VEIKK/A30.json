@@ -1,46 +1,31 @@
 {
   "Name": "VEIKK A30",
-  "DigitizerIdentifier": {
-    "VendorID": 12267,
-    "ProductID": 2,
-    "InputReportLength": 9,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": "CQEE"
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 254.0,
-  "Height": 152.4,
-  "MaxX": 50800.0,
-  "MaxY": 30480.0,
-  "MaxPressure": 8191,
-  "ActiveReportID": {
-    "Start": 64,
-    "StartInclusive": false,
-    "End": null,
-    "EndInclusive": false
-  },
+  "DigitizerIdentifiers": [
+    {
+      "Width": 254.0,
+      "Height": 152.4,
+      "MaxX": 50800.0,
+      "MaxY": 30480.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 12267,
+      "ProductID": 2,
+      "InputReportLength": 9,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "CQEE",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
-  },
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  }
 }

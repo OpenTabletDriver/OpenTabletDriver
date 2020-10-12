@@ -1,46 +1,31 @@
 {
   "Name": "XP-Pen Deco 01 v2",
-  "DigitizerIdentifier": {
-    "VendorID": 10429,
-    "ProductID": 2306,
-    "InputReportLength": 10,
-    "OutputReportLength": 8,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": "ArAE"
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 254.0,
-  "Height": 158.75,
-  "MaxX": 25400.0,
-  "MaxY": 15875.0,
-  "MaxPressure": 8191,
-  "ActiveReportID": {
-    "Start": 128,
-    "StartInclusive": false,
-    "End": null,
-    "EndInclusive": false
-  },
+  "DigitizerIdentifiers": [
+    {
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 25400.0,
+      "MaxY": 15875.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 128,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 2306,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
-  },
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  }
 }

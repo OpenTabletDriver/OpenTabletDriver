@@ -1,44 +1,63 @@
 {
   "Name": "Wacom CTL-6100",
-  "DigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 888,
-    "InputReportLength": 192,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 888,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 888,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 216.0,
-  "Height": 135.0,
-  "MaxX": 21600.0,
-  "MaxY": 13500.0,
-  "MaxPressure": 4095,
-  "ActiveReportID": {
-    "Start": 16,
-    "StartInclusive": true,
-    "End": null,
-    "EndInclusive": false
-  },
-  "Attributes": {},
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  "DigitizerIdentifiers": [
+    {
+      "Width": 216.0,
+      "Height": 135.0,
+      "MaxX": 21600.0,
+      "MaxY": 13500.0,
+      "MaxPressure": 4095,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 888,
+      "InputReportLength": 192,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 216.0,
+      "Height": 135.0,
+      "MaxX": 21600.0,
+      "MaxY": 13500.0,
+      "MaxPressure": 4095,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 888,
+      "InputReportLength": null,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 888,
+      "InputReportLength": null,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {}
 }

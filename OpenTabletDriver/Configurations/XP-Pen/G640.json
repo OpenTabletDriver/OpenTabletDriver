@@ -1,46 +1,31 @@
 {
   "Name": "XP-Pen G640",
-  "DigitizerIdentifier": {
-    "VendorID": 10429,
-    "ProductID": 148,
-    "InputReportLength": 8,
-    "OutputReportLength": 8,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": "ArAC"
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 160.0,
-  "Height": 100.0,
-  "MaxX": 32000.0,
-  "MaxY": 20000.0,
-  "MaxPressure": 8191,
-  "ActiveReportID": {
-    "Start": 64,
-    "StartInclusive": false,
-    "End": null,
-    "EndInclusive": false
-  },
+  "DigitizerIdentifiers": [
+    {
+      "Width": 160.0,
+      "Height": 100.0,
+      "MaxX": 32000.0,
+      "MaxY": 20000.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 148,
+      "InputReportLength": 8,
+      "OutputReportLength": 8,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAC",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
-  },
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  }
 }

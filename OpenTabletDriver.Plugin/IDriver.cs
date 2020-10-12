@@ -10,9 +10,11 @@ namespace OpenTabletDriver.Plugin
         event EventHandler<IDeviceReport> ReportRecieved;
 
         bool EnableInput { set; get; }
-        TabletProperties TabletProperties { get; }
+        TabletConfiguration Tablet { get; }
+        DigitizerIdentifier TabletIdentifier { get; }
+        DeviceIdentifier AuxiliaryIdentifier { get; }
         IOutputMode OutputMode { set; get; }
 
-        bool TryMatch(TabletProperties tablet);
+        bool TryMatch(TabletConfiguration tablet);
     }
 }

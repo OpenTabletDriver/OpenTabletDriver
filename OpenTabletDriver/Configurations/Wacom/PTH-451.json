@@ -1,44 +1,63 @@
 {
   "Name": "Wacom PTH-451",
-  "DigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 788,
-    "InputReportLength": 10,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 788,
-    "InputReportLength": 11,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 788,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 157.0,
-  "Height": 98.0,
-  "MaxX": 31496.0,
-  "MaxY": 19685.0,
-  "MaxPressure": 2047,
-  "ActiveReportID": {
-    "Start": 0,
-    "StartInclusive": false,
-    "End": null,
-    "EndInclusive": false
-  },
-  "Attributes": {},
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  "DigitizerIdentifiers": [
+    {
+      "Width": 157.0,
+      "Height": 98.0,
+      "MaxX": 31496.0,
+      "MaxY": 19685.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 788,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 157.0,
+      "Height": 98.0,
+      "MaxX": 31496.0,
+      "MaxY": 19685.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 788,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 788,
+      "InputReportLength": null,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {}
 }
