@@ -134,13 +134,10 @@ namespace OpenTabletDriver
             Log.Debug("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
             Log.Debug("Detect", $"Device path: {tabletDevice.DevicePath}");
 
-            if (tablet.InitializationStrings.Count > 0)
+            foreach (byte index in tablet.InitializationStrings)
             {
-                foreach (var index in tablet.InitializationStrings)
-                {
-                    Log.Debug("Detect", $"Initializing index {index}");
-                    tabletDevice.GetDeviceString(index);
-                }
+                Log.Debug("Detect", $"Initializing index {index}");
+                tabletDevice.GetDeviceString(index);
             }
             
             TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
@@ -170,13 +167,10 @@ namespace OpenTabletDriver
             Log.Debug("Detect", $"Using auxiliary report parser type '{reportParser.GetType().Name}'.");
             Log.Debug("Detect", $"Device path: {auxDevice.DevicePath}");
 
-            if (identifier.InitializationStrings.Count > 0)
+            foreach (byte index in identifier.InitializationStrings)
             {
-                foreach (var index in identifier.InitializationStrings)
-                {
-                    Log.Debug("Detect", $"Initializing index {index}");
-                    auxDevice.GetDeviceString(index);
-                }
+                Log.Debug("Detect", $"Initializing index {index}");
+                auxDevice.GetDeviceString(index);
             }
             
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
