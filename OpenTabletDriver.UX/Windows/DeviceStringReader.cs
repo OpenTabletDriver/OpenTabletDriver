@@ -104,13 +104,20 @@ namespace OpenTabletDriver.UX.Windows
 
         private async void SendRequest(object sender, EventArgs args)
         {
-            if (int.TryParse(vendorIdText.Text, out var vid) &&
-                int.TryParse(productIdText.Text, out var pid) &&
-                int.TryParse(stringIndexText.Text, out var index))
+            if (int.TryParse(stringIndexText.Text, out var index))
             {
                 try
                 {
-                    var deviceString = await App.Driver.Instance.RequestDeviceString(vid, pid, index);
+                    string deviceString;
+                    if (int.TryParse(vendorIdText.Text, out var vid) &&
+                        int.TryParse(productIdText.Text, out var pid))
+                    {
+                        deviceString = await App.Driver.Instance.RequestDeviceString(vid, pid, index);
+                    }
+                    else
+                    {
+                        deviceString = await App.Driver.Instance.RequestDeviceString(index);
+                    }
                     deviceStringText.Text = deviceString;
                 }
                 catch (Exception e)
