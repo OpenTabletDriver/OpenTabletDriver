@@ -507,6 +507,9 @@ namespace OpenTabletDriver.UX
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             showTabletDebugger.Executed += (sender, e) => ShowTabletDebugger();
 
+            var deviceStringReader = new Command { MenuText = "Device String Reader..." };
+            deviceStringReader.Executed += (sender, e) => ShowDeviceStringReader();
+
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
@@ -538,6 +541,7 @@ namespace OpenTabletDriver.UX
                         {
                             detectTablet,
                             showTabletDebugger,
+                            deviceStringReader,
                             configurationEditor
                         }
                     },
@@ -823,6 +827,12 @@ namespace OpenTabletDriver.UX
         {
             var configEditor = new ConfigurationEditor();
             configEditor.Show();
+        }
+
+        private void ShowDeviceStringReader()
+        {
+            var stringReader = new DeviceStringReader();
+            stringReader.Show();
         }
 
         private async Task ExportDiagnostics()

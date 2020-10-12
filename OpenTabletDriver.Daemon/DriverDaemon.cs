@@ -361,6 +361,15 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(Driver.TabletReader?.Device?.GetDeviceString(index) ?? null);
         }
 
+        public Task<string> RequestDeviceString(int vendorID, int productID, int index)
+        {
+            return Task.Run(() =>
+            {
+                HidDevice tablet = DeviceList.Local.GetHidDevices(vendorID, productID).FirstOrDefault();
+                return tablet.GetDeviceString(index);
+            });
+        }
+
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
             IEnumerable<LogMessage> messages = LogMessages;
