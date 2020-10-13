@@ -2,6 +2,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenTabletDriver.Plugin;
@@ -52,7 +53,17 @@ namespace OpenTabletDriver.Daemon
                 rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((appdata, config) => 
                 {
                     AppInfo.Current.AppDataDirectory = appdata?.FullName;
-                    AppInfo.Current.ConfigurationDirectory = config?.FullName;
+                    if (config != null && Directory.Exists(config.FullName))
+                    {
+                        AppInfo.Current.ConfigurationDirectory = config.FullName;
+                    }
+                    else if (!Directory.Exists(AppInfo.Current.ConfigurationDirectory))
+                    {
+                        AppInfo.Current.ConfigurationDirectory = Path.Join(
+                            Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+                            "Configurations"
+                        );
+                    }
                 });
                 rootCommand.Invoke(args);
 
