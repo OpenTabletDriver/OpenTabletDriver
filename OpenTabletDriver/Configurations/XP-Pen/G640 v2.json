@@ -4,8 +4,8 @@
     {
       "Width": 160.0,
       "Height": 100.0,
-      "MaxX": 32000.0,
-      "MaxY": 20000.0,
+      "MaxX": 16000.0,
+      "MaxY": 10000.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
