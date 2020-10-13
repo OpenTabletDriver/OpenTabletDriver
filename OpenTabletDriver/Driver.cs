@@ -6,6 +6,7 @@ using HidSharp;
 using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Reflection;
 using OpenTabletDriver.Tablet;
@@ -40,6 +41,8 @@ namespace OpenTabletDriver
         }
 
         public DeviceIdentifier AuxiliaryIdentifier { private set; get; }
+
+        public IVirtualScreen VirtualScreen { get; } = Interop.Platform.VirtualScreen;
 
         public IOutputMode OutputMode { set; get; }
         

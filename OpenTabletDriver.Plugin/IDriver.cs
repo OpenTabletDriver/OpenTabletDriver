@@ -1,5 +1,6 @@
 using System;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin
@@ -13,6 +14,7 @@ namespace OpenTabletDriver.Plugin
         TabletConfiguration Tablet { get; }
         DigitizerIdentifier TabletIdentifier { get; }
         DeviceIdentifier AuxiliaryIdentifier { get; }
+        IVirtualScreen VirtualScreen { get; }
         IOutputMode OutputMode { set; get; }
 
         bool TryMatch(TabletConfiguration tablet);
