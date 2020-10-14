@@ -51,7 +51,7 @@ namespace OpenTabletDriver
             {
                 return AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
             }
-            catch (BadImageFormatException e)
+            catch (BadImageFormatException)
             {
                 Log.Write("Plugin", $"Failed to initialize {path}, incompatible plugin", LogLevel.Warning);
                 return null;
