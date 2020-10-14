@@ -12,42 +12,33 @@ namespace OpenTabletDriver.Interop
 
         public void MouseDown(MouseButton button)
         {
-            if (button != MouseButton.None)
+            if (GetCode(button) is EventCode code)
             {
-                Device.Write(EventType.EV_KEY, GetCode(button), 1);
+                Device.Write(EventType.EV_KEY, code, 1);
                 Device.Sync();
             }
         }
 
         public void MouseUp(MouseButton button)
         {
-            if (button != MouseButton.None)
+            if (GetCode(button) is EventCode code)
             {
-                Device.Write(EventType.EV_KEY, GetCode(button), 0);
+                Device.Write(EventType.EV_KEY, code, 0);
                 Device.Sync();
             }
         }
 
-        protected EventCode GetCode(MouseButton button)
+        protected virtual EventCode? GetCode(MouseButton button) => button switch
         {
-            switch (button)
-            {
-                case MouseButton.Left:
-                    return EventCode.BTN_LEFT;
-                case MouseButton.Middle:
-                    return EventCode.BTN_MIDDLE;
-                case MouseButton.Right:
-                    return EventCode.BTN_RIGHT;
-                case MouseButton.Forward:
-                    return EventCode.BTN_FORWARD;
-                case MouseButton.Backward:
-                    return EventCode.BTN_BACK;
-                default:
-                    return 0;
-            }
-        }
+            MouseButton.Left     => EventCode.BTN_LEFT,
+            MouseButton.Middle   => EventCode.BTN_MIDDLE,
+            MouseButton.Right    => EventCode.BTN_RIGHT,
+            MouseButton.Forward  => EventCode.BTN_FORWARD,
+            MouseButton.Backward => EventCode.BTN_BACK,
+            _                    => null
+        };
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             Device?.Dispose();
         }

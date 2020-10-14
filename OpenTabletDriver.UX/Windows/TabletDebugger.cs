@@ -35,14 +35,19 @@ namespace OpenTabletDriver.UX.Windows
                 Text = "Aux Report",
                 Padding = App.GroupBoxPadding
             };
-            
+
+            reportRateCtrl = new GroupBox
+            {
+                Text = "Report Rate",
+                Padding = App.GroupBoxPadding
+            };
+
             var mainLayout = new TableLayout
             {
                 Width = 640,
                 Height = 480,
                 Spacing = new Size(5, 5),
-                Padding = new Padding(5),
-                Rows = 
+                Rows =
                 {
                     new TableRow
                     {
@@ -65,7 +70,16 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            this.Content = mainLayout;
+            this.Content = new StackLayout
+            {
+                Padding = 5,
+                Spacing = 5,
+                Items = 
+                {
+                    new StackLayoutItem(mainLayout, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(reportRateCtrl, HorizontalAlignment.Stretch)
+                }
+            };
 
             InitializeAsync();
         }
@@ -83,7 +97,9 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl;
+        private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl, reportRateCtrl;
+        private float reportRate;
+        private DateTime lastTime = DateTime.UtcNow;
 
         private void HandleReport(object sender, IDeviceReport report)
         {
@@ -91,8 +107,12 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Application.Instance.AsyncInvoke(() => 
                 {
+                    var now = DateTime.UtcNow;
+                    reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
+                    lastTime = now;
                     rawTabCtrl.Content = tabletReport?.StringFormat(true);
                     tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
+                    reportRateCtrl.Content = $"{(uint)(1000 / reportRate)}hz";
                 });
             }
             if (report is IAuxReport auxReport)

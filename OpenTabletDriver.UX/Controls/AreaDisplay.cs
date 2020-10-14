@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -25,31 +27,94 @@ namespace OpenTabletDriver.UX.Controls
         
         private void Draw(Graphics graphics)
         {
-            if (ViewModel.MaxHeight <= 0 | ViewModel.MaxWidth <= 0)
+            if (ViewModel.Background == null | ViewModel.FullBackground.Width <= 0 | ViewModel.FullBackground.Height <= 0)
             {
-                var errSize = graphics.MeasureString(Font, InvalidSizeError);
-                var x = (Width / 2) - (errSize.Width / 2);
-                var y = (Height / 2) - (errSize.Height / 2);
-                graphics.DrawText(Font, TextBrush, x, y, InvalidSizeError);
+                DrawError(graphics, InvalidSizeError);
                 return;
             }
 
-            var background = new RectangleF(0, 0, ViewModel.MaxWidth, ViewModel.MaxHeight);
             var foreground = new RectangleF(
                 ViewModel.X - (ViewModel.Width / 2),
                 ViewModel.Y - (ViewModel.Height / 2),
                 ViewModel.Width,
                 ViewModel.Height);
             
-            pixelScale = GetRelativeScale(background.Width, background.Height);
+            if (foreground.Width > 0 & foreground.Height > 0 & ViewModel.FullBackground.Width > 0 & ViewModel.FullBackground.Height > 0)
+            {
+                pixelScale = GetRelativeScale(ViewModel.FullBackground.Width, ViewModel.FullBackground.Height);
+                DrawBackground(graphics, ViewModel.Background, (ViewModel.FullBackground * pixelScale), SystemColors.WindowBackground, SystemColors.Highlight);
+                DrawForeground(graphics, foreground, (ViewModel.FullBackground * pixelScale), SystemColors.Highlight);
+            }
+            else
+            {
+                DrawError(graphics, "Invalid area size.");
+            }
+        }
 
-            DrawBackgroundRect(graphics, background, SystemColors.WindowBackground, SystemColors.Highlight);
-            DrawForegroundRect(graphics, foreground, SystemColors.Highlight);
+        private void DrawBackground(Graphics graphics, IEnumerable<RectangleF> rects, RectangleF fullBg, Color fill, Color border)
+        {
+            using (graphics.SaveTransformState())
+            {
+                graphics.TranslateTransform((this.Width - fullBg.Width) / 2, (this.Height - fullBg.Height) / 2);
+                graphics.TranslateTransform(-fullBg.TopLeft);
+                foreach (var rect in rects)
+                {
+                    var scaledRect = rect * pixelScale;
+                    graphics.FillRectangle(fill, scaledRect);
+                    graphics.DrawRectangle(border, scaledRect);
+                }
+            }
+        }
+
+        private void DrawForeground(Graphics graphics, RectangleF rect, RectangleF fullBg, Color color)
+        {
+            using (graphics.SaveTransformState())
+            {
+                rect *= pixelScale;
+                graphics.TranslateTransform((this.Width - fullBg.Width) / 2, (this.Height - fullBg.Height) / 2);
+                graphics.TranslateTransform(rect.Center);
+                graphics.RotateTransform(ViewModel.Rotation);
+                graphics.TranslateTransform(-rect.Center);
+                graphics.FillRectangle(color, rect);
+                
+                var originEllipse = new RectangleF(0, 0, 3, 3);
+                originEllipse.Offset(rect.Center - (originEllipse.Size / 2));
+                graphics.DrawEllipse(SystemColors.ControlText, originEllipse);
+
+                // Ratio text
+                string ratio = Math.Round(ViewModel.Width / ViewModel.Height, 4).ToString();
+                SizeF ratioMeasure = graphics.MeasureString(Font, ratio);
+                var ratioPos = new PointF(
+                    rect.Center.X - (ratioMeasure.Width / 2),
+                    rect.Center.Y + (ratioMeasure.Height / 2)
+                );
+                graphics.DrawText(Font, TextBrush, ratioPos, ratio);
+                
+                // Width Text
+                string widthText = $"{ViewModel.Width}{ViewModel.Unit}";
+                var widthPos = rect.MiddleTop - (graphics.MeasureString(Font, widthText) / 2);
+                graphics.DrawText(Font, TextBrush, widthPos, widthText);
+
+                // Height Text
+                string heightText = $"{ViewModel.Height}{ViewModel.Unit}";
+                var heightSize = graphics.MeasureString(Font, heightText) / 2;
+                var heightPos = new PointF(-rect.MiddleLeft.Y - heightSize.Width, rect.MiddleLeft.X - heightSize.Height);
+                graphics.RotateTransform(-90);
+                graphics.DrawText(Font, TextBrush, heightPos, heightText);
+            }
+        }
+
+        private void DrawError(Graphics graphics, string errorText)
+        {
+            var errSize = graphics.MeasureString(Font, errorText);
+            var x = (this.Width / 2) - (errSize.Width / 2);
+            var y = (this.Height / 2) - (errSize.Height / 2);
+            graphics.DrawText(Font, TextBrush, x, y, errorText);
         }
 
         private float GetRelativeScale(float width, float height)
         {
-            return GetScale(Width, Height, width, height);
+            return GetScale(this.Width - this.Padding.Size.Width, this.Height - this.Padding.Size.Height, width, height);
         }
 
         private float GetScale(float baseWidth, float baseHeight, float width, float height)
@@ -66,60 +131,7 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private void DrawForegroundRect(Graphics graphics, RectangleF foreground, Color color)
-        {
-            var width = (foreground.Width * pixelScale) - Padding.Horizontal;
-            var height = (foreground.Height * pixelScale) - Padding.Vertical;
-            
-            var x = (foreground.X * pixelScale);
-            var y = (foreground.Y * pixelScale);
-
-            var offsetX = Width - (ViewModel.MaxWidth * pixelScale) + Padding.Horizontal;
-            if (offsetX / 2 > 0)
-                x += offsetX / 2;
-
-            var offsetY = Height - (ViewModel.MaxHeight * pixelScale) + Padding.Vertical;
-            if (offsetY > 0)
-                y += offsetY / 2;
-
-            // Set rotation origin to center of rectangle
-            var drawRect = new RectangleF(-width / 2, -height / 2, width, height);
-            graphics.TranslateTransform(x + (width / 2), y + (height / 2));
-            graphics.RotateTransform(ViewModel.Rotation);
-
-            graphics.FillRectangle(color, drawRect);
-
-            var ratio = Math.Round(ViewModel.Width / ViewModel.Height, 4).ToString();
-            var ratioPos = drawRect.Center - (graphics.MeasureString(Font, ratio) / 2);
-            graphics.DrawText(Font, TextBrush, ratioPos, ratio);
-            
-            var widthText = $"{ViewModel.Width}{ViewModel.Unit}";
-            var widthPos = drawRect.MiddleTop - (graphics.MeasureString(Font, widthText) / 2);
-            graphics.DrawText(Font, TextBrush, widthPos, widthText);
-
-            var heightText = $"{ViewModel.Height}{ViewModel.Unit}";
-            var heightCenterPos = new PointF(graphics.MeasureString(Font, heightText) / 2);
-            var heightPos = new PointF(drawRect.MiddleLeft.X - heightCenterPos.Y, drawRect.MiddleLeft.Y + heightCenterPos.X);
-            graphics.TranslateTransform(heightPos);
-            graphics.RotateTransform(-90);
-            graphics.DrawText(Font, TextBrush, 0f, 0f, heightText);
-        }
-
-        private void DrawBackgroundRect(Graphics graphics, RectangleF rect, Color fill, Color border)
-        {
-            var centerPoint = new PointF(Width / 2, Height / 2);
-
-            var width = (rect.Width * pixelScale) - Padding.Horizontal;
-            var height = (rect.Height * pixelScale) - Padding.Vertical;
-            var x = ((float)Width - width) / 2;
-            var y = ((float)Height - height) / 2;
-            
-            var drawRect = new RectangleF(x, y, width, height);
-            graphics.FillRectangle(fill, drawRect);
-            graphics.DrawRectangle(border, drawRect);
-        }
-
-        private static readonly Font Font = new Font(SystemFont.Default, 8);
+        private static readonly Font Font = SystemFonts.User(8);
         private static readonly Brush TextBrush = new SolidBrush(SystemColors.ControlText);
 
         private float pixelScale;

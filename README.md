@@ -2,28 +2,36 @@
 
 # OpenTabletDriver
 
-OpenTabletDriver is an open source tablet configurator. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
+OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
-## Releases
+<p align="middle">
+  <img src="https://i.imgur.com/hxEVlMa.png" height="350"/>
+  <img src="https://i.imgur.com/Pdbd4b7.png" height="350"/>
+</p>
 
-You can grab the latest release below. Make sure to download the right version for your platform.
+# Supported Tablets
 
-- [Latest Release](https://github.com/InfinityGhost/OpenTabletDriver/releases)
-- [Windows Installation Script](https://gist.github.com/InfinityGhost/c6461a53a3b60f8549fe28c7e517d4f1)
-- [Arch User Repository (opentabletdriver-git)](https://aur.archlinux.org/packages/opentabletdriver-git)
+All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
 
-## Running OpenTabletDriver
+- [Supported Tablets](https://github.com/InfinityGhost/OpenTabletDriver/projects/4)
+
+# Installation
+
+- [Installation guide](https://github.com/InfinityGhost/OpenTabletDriver/wiki/Installation-Guide)
+
+# Running OpenTabletDriver binaries
 
 OpenTabletDriver functions as two separate processes that interact with each other seamlessly. The active program that does all of the tablet data handling is `OpenTabletDriver.Daemon`, while the GUI frontend is `OpenTabletDriver.UX.*`, where `*` depends on your platform<sup>1</sup>. The daemon must be started in order for anything to work, however the GUI is unnecessary. If you have existing settings, they should apply when the daemon starts.
 
 > <sup>1</sup>Windows uses `Wpf`, Linux uses `Gtk`, and MacOS uses `MacOS` respectively. This for the most part can be ignored if you don't build it from source as only the correct version will be provided.
 
-## Building OpenTabletDriver
+## Building OpenTabletDriver from source
 
 The requirements to build OpenTabletDriver are consistent across all platforms. Running OpenTabletDriver on each platform requires different dependencies.
 
 ### All platforms
-- .NET Core 3.1 SDK
+
+- .NET 5 SDK
 
 #### Windows
 
@@ -38,7 +46,7 @@ No other dependencies.
 
 #### MacOS [Experimental]
 
-- .NET 5 SDK
+No other dependencies.
 
 # Features
 
@@ -72,12 +80,8 @@ No other dependencies.
   - Output modes
   - Tools
 
-# Improving OpenTabletDriver
+# Contributing to OpenTabletDriver
 
-If you wish to help improve OpenTabletDriver, please [check out the pinned issues](https://github.com/InfinityGhost/OpenTabletDriver/issues).
+If you wish to contribute to OpenTabletDriver, check out the [issue tracker](https://github.com/InfinityGhost/OpenTabletDriver/issues).
 
-# Tablet Support
-
-All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
-
-- [Tablet support project](https://github.com/InfinityGhost/OpenTabletDriver/projects/4)
+If you have any suggestions, [open an issue ticket](https://github.com/InfinityGhost/OpenTabletDriver/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).

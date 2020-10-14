@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -17,7 +18,7 @@ namespace OpenTabletDriver.UX.Controls
             var toolbar = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
-                Padding = 5,
+                Padding = new Padding(0, 5, 0, 0),
                 Spacing = 5,
                 HorizontalContentAlignment = HorizontalAlignment.Left,
                 Items = 

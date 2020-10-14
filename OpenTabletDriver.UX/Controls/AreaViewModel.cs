@@ -1,56 +1,74 @@
-﻿namespace OpenTabletDriver.UX.Controls
+﻿using System.Collections.Generic;
+using System.Linq;
+using Eto.Drawing;
+
+namespace OpenTabletDriver.UX.Controls
 {
     public class AreaViewModel : ViewModelBase
     {
-        private float _w, _h, _x, _y, _r, _fW, _fH;
-        private string _unit;
+        private float w, h, x, y, r;
+        private string unit;
+        private IEnumerable<RectangleF> bg;
+        private RectangleF fullbg;
 
         public float Width
         {
-            set => this.RaiseAndSetIfChanged(ref _w, value);
-            get => _w;
+            set => this.RaiseAndSetIfChanged(ref this.w, value);
+            get => this.w;
         }
         
         public float Height
         {
-            set => this.RaiseAndSetIfChanged(ref _h, value);
-            get => _h;
+            set => this.RaiseAndSetIfChanged(ref this.h, value);
+            get => this.h;
         }
 
         public float X
         {
-            set => this.RaiseAndSetIfChanged(ref _x, value);
-            get => _x;
+            set => this.RaiseAndSetIfChanged(ref this.x, value);
+            get => this.x;
         }
 
         public float Y
         {
-            set => this.RaiseAndSetIfChanged(ref _y, value);
-            get => _y;
+            set => this.RaiseAndSetIfChanged(ref this.y, value);
+            get => this.y;
         }
 
         public float Rotation
         {
-            set => this.RaiseAndSetIfChanged(ref _r, value);
-            get => _r;
+            set => this.RaiseAndSetIfChanged(ref this.r, value);
+            get => this.r;
+        }
+        public IEnumerable<RectangleF> Background
+        {
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this.bg, value);
+                if (Background != null)
+                {
+                    this.FullBackground = new RectangleF
+                    {
+                        Left = this.Background.Min(r => r.Left),
+                        Top = this.Background.Min(r => r.Top),
+                        Right = this.Background.Max(r => r.Right),
+                        Bottom = this.Background.Max(r => r.Bottom),
+                    };
+                }
+            }
+            get => this.bg;
         }
 
-        public float MaxWidth
+        public RectangleF FullBackground
         {
-            set => this.RaiseAndSetIfChanged(ref _fW, value);
-            get => _fW;
-        }
-
-        public float MaxHeight
-        {
-            set => this.RaiseAndSetIfChanged(ref _fH, value);
-            get => _fH;
+            private set => this.RaiseAndSetIfChanged(ref this.fullbg, value);
+            get => this.fullbg;
         }
 
         public string Unit
         {
-            set => this.RaiseAndSetIfChanged(ref _unit, value);
-            get => _unit;
+            set => this.RaiseAndSetIfChanged(ref unit, value);
+            get => unit;
         }
     }
 }

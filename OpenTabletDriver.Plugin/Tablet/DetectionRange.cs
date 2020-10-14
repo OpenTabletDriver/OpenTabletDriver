@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public class DetectionRange
@@ -29,9 +31,9 @@ namespace OpenTabletDriver.Plugin.Tablet
         public const char RightInclusiveOperator = ']';
         public const char RightExclusiveOperator = ')';
 
-        public bool IsInRange(float value) => 
-            Start.HasValue ? (StartInclusive ? value >= Start : value > Start) : true & 
-            End.HasValue ? (EndInclusive ? value <= End : value < End) : true;
+        public bool IsInRange(float value) =>
+            (Start.HasValue ? (StartInclusive ? value >= Start : value > Start) : true) & 
+            (End.HasValue ? (EndInclusive ? value <= End : value < End) : true);
 
         public override string ToString()
         {
@@ -41,7 +43,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         public static DetectionRange Parse(string str)
         {
             var tokens = str.Split("..", 2);
-            if (tokens.Length == 2)
+            if (tokens.Length == 2 && tokens.All(t => t.Length > 0))
             {
                 string left = tokens[0][1..^0];
                 char leftOp = tokens[0][0];

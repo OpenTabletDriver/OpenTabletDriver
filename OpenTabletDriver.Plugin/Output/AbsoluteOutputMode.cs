@@ -33,15 +33,15 @@ namespace OpenTabletDriver.Plugin.Output
             get => _filters;
         }
         
-        private TabletProperties _tabletProperties;
-        public override TabletProperties TabletProperties
+        private DigitizerIdentifier _digitizer;
+        public override DigitizerIdentifier Digitizer
         {
             set
             {
-                _tabletProperties = value;
+                _digitizer = value;
                 UpdateCache();
             }
-            get => _tabletProperties;
+            get => _digitizer;
         }
 
         private Area _displayArea, _tabletArea;
@@ -73,8 +73,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         internal void UpdateCache()
         {
-            if (!(Input is null | Output is null | TabletProperties is null))
-                _transformationMatrix = CalculateTransformation(Input, Output, TabletProperties);
+            if (!(Input is null | Output is null | Digitizer is null))
+                _transformationMatrix = CalculateTransformation(Input, Output, Digitizer);
             
             _halfDisplayWidth = Output?.Width / 2 ?? 0;
             _halfDisplayHeight = Output?.Height / 2 ?? 0;
@@ -89,7 +89,7 @@ namespace OpenTabletDriver.Plugin.Output
             _max = new Vector2(_maxX, _maxY);
         }
 
-        internal Matrix3x2 CalculateTransformation(Area input, Area output, TabletProperties tablet)
+        internal Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
         {
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(
@@ -102,7 +102,7 @@ namespace OpenTabletDriver.Plugin.Output
 
             // Apply rotation
             res *= Matrix3x2.CreateRotation(
-                (float)(input.Rotation * System.Math.PI / 180));
+                (float)(-input.Rotation * System.Math.PI / 180));
 
             // Scale millimeters to pixels
             res *= Matrix3x2.CreateScale(
@@ -119,10 +119,10 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (report is ITabletReport tabletReport)
             {
-                if (TabletProperties.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
                     if (VirtualTablet is IPressureHandler pressureHandler)
-                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)TabletProperties.MaxPressure);
+                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
                     
                     var pos = Transpose(tabletReport);
                     VirtualTablet.SetPosition(pos);

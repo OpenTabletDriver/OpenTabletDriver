@@ -1,5 +1,7 @@
 using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -21,43 +23,42 @@ namespace OpenTabletDriver.UX.Controls
             AreaDisplay.Bind(c => c.ViewModel.X, ViewModel, m => m.X);
             AreaDisplay.Bind(c => c.ViewModel.Y, ViewModel, m => m.Y);
             AreaDisplay.Bind(c => c.ViewModel.Rotation, ViewModel, m => m.Rotation);
-            AreaDisplay.Bind(c => c.ViewModel.MaxWidth, ViewModel, m => m.MaxWidth);
-            AreaDisplay.Bind(c => c.ViewModel.MaxHeight, ViewModel, m => m.MaxHeight);
+            AreaDisplay.Bind(c => c.ViewModel.Background, ViewModel, m => m.Background);
+
+            float parseFloat(string s)
+            {
+                return !string.IsNullOrWhiteSpace(s) ? (float.TryParse(s, out var v) ? v : 1) : 0;
+            }
 
             widthBox = new TextBox();
             widthBox.TextBinding.Convert(
-                s => float.TryParse(s, out var v) ? v : 0,
-                f => f.ToString()).BindDataContext(
-                    Eto.Forms.Binding.Property(
-                        (AreaViewModel d) =>  d.Width));
+                s => parseFloat(s),
+                v => $"{v}"
+            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Width));
             
             heightBox = new TextBox();
             heightBox.TextBinding.Convert(
-                s => float.TryParse(s, out var v) ? v : 0,
-                f => f.ToString()).BindDataContext(
-                    Eto.Forms.Binding.Property(
-                        (AreaViewModel d) =>  d.Height));
+                s => parseFloat(s),
+                v => $"{v}"
+            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Height));
             
             xOffsetBox = new TextBox();
             xOffsetBox.TextBinding.Convert(
-                s => float.TryParse(s, out var v) ? v : 0,
-                f => f.ToString()).BindDataContext(
-                    Eto.Forms.Binding.Property(
-                        (AreaViewModel d) =>  d.X));
+                s => parseFloat(s),
+                v => $"{v}"
+            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.X));
             
             yOffsetBox = new TextBox();
             yOffsetBox.TextBinding.Convert(
-                s => float.TryParse(s, out var v) ? v : 0,
-                f => f.ToString()).BindDataContext(
-                    Eto.Forms.Binding.Property(
-                        (AreaViewModel d) =>  d.Y));
+                s => parseFloat(s),
+                v => $"{v}"
+            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Y));
 
             rotationBox = new TextBox();
             rotationBox.TextBinding.Convert(
-                s => float.TryParse(s, out var v) ? v : 0,
-                f => f.ToString()).BindDataContext(
-                    Eto.Forms.Binding.Property(
-                        (AreaViewModel d) =>  d.Rotation));
+                s => parseFloat(s),
+                v => $"{v}"
+            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Rotation));
 
             var stackLayout = new StackLayout
             {
@@ -68,31 +69,41 @@ namespace OpenTabletDriver.UX.Controls
                     new GroupBox
                     {
                         Text = "Width",
-                        Content = AppendUnit(widthBox, unit)
+                        Content = AppendUnit(widthBox, unit),
+                        ToolTip = $"Width of the area"
                     },
                     new GroupBox
                     {
                         Text = "Height",
-                        Content = AppendUnit(heightBox, unit)
+                        Content = AppendUnit(heightBox, unit),
+                        ToolTip = $"Height of the area"
                     },
                     new GroupBox
                     {
                         Text = "X Offset",
-                        Content = AppendUnit(xOffsetBox, unit)
+                        Content = AppendUnit(xOffsetBox, unit),
+                        ToolTip = $"Center X coordinate of the area"
                     },
                     new GroupBox
                     {
                         Text = "Y Offset",
-                        Content = AppendUnit(yOffsetBox, unit)
-                    },
+                        Content = AppendUnit(yOffsetBox, unit),
+                        ToolTip = $"Center Y coordinate of the area"
+                    }
+                }
+            };
+
+            if (enableRotation)
+            {
+                stackLayout.Items.Add(
                     new GroupBox
                     {
                         Text = "Rotation", 
                         Content = AppendUnit(rotationBox, "°"),
-                        Visible = enableRotation
+                        ToolTip = $"Rotation of the area about the center"
                     }
-                }
-            };
+                );
+            }
 
             foreach (var item in stackLayout.Items)
             {
@@ -106,25 +117,28 @@ namespace OpenTabletDriver.UX.Controls
                 Border = BorderType.None
             };
 
-            TableCell[] cells = 
+            Content = new StackLayout
             {
-                new TableCell(scrollview),
-                new TableCell(AreaDisplay, true)
+                Orientation = Orientation.Horizontal,
+                Items =
+                {
+                    new StackLayoutItem(scrollview, VerticalAlignment.Center),
+                    new StackLayoutItem(AreaDisplay, VerticalAlignment.Stretch, true)
+                }
             };
-            Content = TableLayout.Horizontal(5, cells);
 
             this.ContextMenu.Items.GetSubmenu("Align").Items.AddRange(
                 new MenuItem[]
                 {
-                    CreateMenuItem("Left", () => ViewModel.X = ViewModel.Width / 2),
-                    CreateMenuItem("Right", () => ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2)),
-                    CreateMenuItem("Top", () => ViewModel.Y = ViewModel.Height / 2),
-                    CreateMenuItem("Bottom", ()  => ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2)),
+                    CreateMenuItem("Left", () => ViewModel.X = GetCenterOffset().X),
+                    CreateMenuItem("Right", () => ViewModel.X = ViewModel.FullBackground.Width - GetCenterOffset().X),
+                    CreateMenuItem("Top", () => ViewModel.Y = GetCenterOffset().Y),
+                    CreateMenuItem("Bottom", ()  => ViewModel.Y = ViewModel.FullBackground.Height - GetCenterOffset().Y),
                     CreateMenuItem("Center", 
                         () => 
                         {
-                            ViewModel.X = ViewModel.MaxWidth / 2;
-                            ViewModel.Y = ViewModel.MaxHeight / 2;
+                            ViewModel.X = ViewModel.FullBackground.Center.X;
+                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
                         }
                     )
                 }
@@ -137,18 +151,18 @@ namespace OpenTabletDriver.UX.Controls
                         "Full area",
                         () => 
                         {
-                            ViewModel.Height = ViewModel.MaxHeight;
-                            ViewModel.Width = ViewModel.MaxWidth;
-                            ViewModel.Y = ViewModel.MaxHeight / 2;
-                            ViewModel.X = ViewModel.MaxWidth / 2;
+                            ViewModel.Height = ViewModel.FullBackground.Height;
+                            ViewModel.Width = ViewModel.FullBackground.Width;
+                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
+                            ViewModel.X = ViewModel.FullBackground.Center.X;
                         }
                     ),
                     CreateMenuItem(
                         "Quarter area",
                         () => 
                         {
-                            ViewModel.Height = ViewModel.MaxHeight / 2;
-                            ViewModel.Width = ViewModel.MaxWidth / 2;
+                            ViewModel.Height = ViewModel.FullBackground.Height / 2;
+                            ViewModel.Width = ViewModel.FullBackground.Width / 2;
                         }
                     )
                 }
@@ -231,22 +245,55 @@ namespace OpenTabletDriver.UX.Controls
                 case nameof(ViewModel.Y):
                 case nameof(ViewModel.Width):
                 case nameof(ViewModel.Height):
-                case nameof(ViewModel.MaxWidth):
-                case nameof(ViewModel.MaxHeight):
-                    if (ViewModel.MaxWidth == 0 || ViewModel.MaxHeight == 0)
+                case nameof(ViewModel.Rotation):
+                    if (ViewModel.Background == null || ViewModel.FullBackground == null || ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
                         break;
-                    
-                    if (ViewModel.X + (ViewModel.Width / 2) > ViewModel.MaxWidth)
-                        AreaDisplay.ViewModel.X = ViewModel.MaxWidth - (ViewModel.Width / 2);
-                    else if (ViewModel.X - (ViewModel.Width / 2) < 0)
-                        AreaDisplay.ViewModel.X = ViewModel.Width / 2;
-                    if (ViewModel.Y + (ViewModel.Height / 2) > ViewModel.MaxHeight)
-                        AreaDisplay.ViewModel.Y = ViewModel.MaxHeight - (ViewModel.Height / 2);
-                    else if (ViewModel.Y - (ViewModel.Height / 2) < 0)
-                        AreaDisplay.ViewModel.Y = ViewModel.Height / 2;
+
+                    var center = GetCenterOffset(out var min, out var max);
+
+                    if (min.X < 0)
+                        AreaDisplay.ViewModel.X = center.X;
+                    else if (max.X > ViewModel.FullBackground.Width)
+                        AreaDisplay.ViewModel.X = ViewModel.FullBackground.Width - center.X;
+                    if (min.Y < 0)
+                        AreaDisplay.ViewModel.Y = center.Y;
+                    else if (max.Y > ViewModel.FullBackground.Height)
+                        AreaDisplay.ViewModel.Y = ViewModel.FullBackground.Height - center.Y;
+
                     break;
             }
         }
+
+        private Vector2 GetCenterOffset(out Vector2 min, out Vector2 max)
+        {
+            var origin = new Vector2(ViewModel.X, ViewModel.Y);
+            var matrix = Matrix3x2.CreateTranslation(-origin);
+            matrix *= Matrix3x2.CreateRotation((float)(ViewModel.Rotation * Math.PI / 180));
+            matrix *= Matrix3x2.CreateTranslation(origin);
+
+            float halfWidth = ViewModel.Width / 2;
+            float halfHeight = ViewModel.Height / 2;
+
+            var corners = new Vector2[]
+            {
+                Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y - halfHeight), matrix),
+                Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y + halfHeight), matrix),
+                Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y + halfHeight), matrix),
+                Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y - halfHeight), matrix),
+            };
+
+            min = new Vector2(
+                corners.Min(v => v.X),
+                corners.Min(v => v.Y)
+            );
+            max = new Vector2(
+                corners.Max(v => v.X),
+                corners.Max(v => v.Y)
+            );
+            return (max - min) / 2;
+        }
+
+        private Vector2 GetCenterOffset() => GetCenterOffset(out _, out _);
 
         public AreaDisplay AreaDisplay { protected set; get; }
 

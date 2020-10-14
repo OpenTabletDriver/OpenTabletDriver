@@ -28,6 +28,7 @@ namespace OpenTabletDriver.Daemon
             Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
             Log.Output += (sender, message) => Message?.Invoke(sender, message);
             Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
+            
             LoadUserSettings();
 
             HidSharp.DeviceList.Local.Changed += async (sender, e) => 
@@ -68,7 +69,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<LogMessage> Message;
         public event EventHandler<DebugTabletReport> TabletReport;
         public event EventHandler<DebugAuxReport> AuxReport;
-        public event EventHandler<TabletProperties> TabletChanged;
+        public event EventHandler<TabletStatus> TabletChanged;
 
         public Driver Driver { private set; get; } = new Driver();
         private Settings Settings { set; get; }
@@ -83,26 +84,35 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
-        public Task<bool> SetTablet(TabletProperties tablet)
+        public async Task<bool> SetTablet(TabletConfiguration tablet)
         {
             var match = Driver.TryMatch(tablet);
-            TabletChanged?.Invoke(this, match ? tablet : null);
-            return Task.FromResult(match);
+            TabletChanged?.Invoke(this, match ? await GetTablet() : null);
+            return match;
         }
 
-        public Task<TabletProperties> GetTablet()
+        public Task<TabletStatus> GetTablet()
         {
-            return Task.FromResult(Driver.TabletReader != null && Driver.TabletReader.Reading ? Driver.TabletProperties : null);
+            TabletStatus tablet = null;
+            if (Driver.TabletReader != null && Driver.TabletReader.Reading)
+            {
+                tablet = new TabletStatus(
+                    Driver.Tablet,
+                    Driver.TabletIdentifier,
+                    Driver.AuxiliaryIdentifier
+                );
+            }
+            return Task.FromResult(tablet);
         }
 
-        public async Task<TabletProperties> DetectTablets()
+        public async Task<TabletStatus> DetectTablets()
         {
             var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
             if (configDir.Exists)
             {
                 foreach (var file in configDir.EnumerateFiles("*.json", SearchOption.AllDirectories))
                 {
-                    var tablet = TabletProperties.Read(file);
+                    var tablet = TabletConfiguration.Read(file);
                     if (await SetTablet(tablet))
                         return await GetTablet();
                 }
@@ -179,7 +189,7 @@ namespace OpenTabletDriver.Daemon
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
             
-            outputMode.TabletProperties = Driver.TabletProperties;
+            outputMode.Digitizer = Driver.TabletIdentifier;
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
@@ -344,6 +354,11 @@ namespace OpenTabletDriver.Daemon
                 Driver.AuxReader.Report -= onDeviceReport;
             }
             return Task.CompletedTask;
+        }
+
+        public Task<string> RequestDeviceString(int index)
+        {
+            return Task.FromResult(Driver.TabletReader?.Device?.GetDeviceString(index) ?? null);
         }
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()

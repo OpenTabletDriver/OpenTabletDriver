@@ -1,49 +1,34 @@
 {
   "Name": "Huion H610 Pro",
-  "DigitizerIdentifier": {
-    "VendorID": 9580,
-    "ProductID": 109,
-    "InputReportLength": 4,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 0,
-    "ProductID": 0,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 254.0,
-  "Height": 158.75,
-  "MaxX": 40000.0,
-  "MaxY": 25000.0,
-  "MaxPressure": 8191,
-  "ActiveReportID": {
-    "Start": 64,
-    "StartInclusive": true,
-    "End": null,
-    "EndInclusive": false
-  },
+  "DigitizerIdentifiers": [
+    {
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 40000.0,
+      "MaxY": 25000.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 4,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "200": "HVAN",
+        "121": "HA60"
+      },
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
-  },
-  "DeviceStrings": {
-    "200": "HVAN",
-    "121": "HA60"
-  },
-  "InitializationStrings": []
+  }
 }

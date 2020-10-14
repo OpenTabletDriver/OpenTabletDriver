@@ -12,14 +12,14 @@ namespace OpenTabletDriver.Contracts
         event EventHandler<LogMessage> Message;
         event EventHandler<DebugTabletReport> TabletReport;
         event EventHandler<DebugAuxReport> AuxReport;
-        event EventHandler<TabletProperties> TabletChanged;
+        event EventHandler<TabletStatus> TabletChanged;
         
         Task WriteMessage(LogMessage message);
 
-        Task<bool> SetTablet(TabletProperties tablet);
-        Task<TabletProperties> GetTablet();
+        Task<bool> SetTablet(TabletConfiguration tablet);
+        Task<TabletStatus> GetTablet();
         
-        Task<TabletProperties> DetectTablets();
+        Task<TabletStatus> DetectTablets();
 
         Task SetSettings(Settings settings);
         Task<Settings> GetSettings();
@@ -32,6 +32,8 @@ namespace OpenTabletDriver.Contracts
         Task EnableInput(bool isHooked);
         
         Task SetTabletDebug(bool isEnabled);
+        Task<string> RequestDeviceString(int index);
+
         Task<IEnumerable<LogMessage>> GetCurrentLog();
     }
 }

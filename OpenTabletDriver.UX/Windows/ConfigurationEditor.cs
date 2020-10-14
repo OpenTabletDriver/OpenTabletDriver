@@ -12,9 +12,12 @@ using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.UX.Controls;
 
 namespace OpenTabletDriver.UX.Windows
 {
+    using static ControlBuilder;
+
     public class ConfigurationEditor : Form
     {
         public ConfigurationEditor()
@@ -101,12 +104,12 @@ namespace OpenTabletDriver.UX.Windows
             var sortedConfigs = from config in ReadConfigurations(configDir)
                 orderby config.Name
                 select config;
-            Configurations = new List<TabletProperties>(sortedConfigs);
+            Configurations = new List<TabletConfiguration>(sortedConfigs);
             _configList.SelectedIndex = 0;
         }
 
-        private List<TabletProperties> _configs;
-        private List<TabletProperties> Configurations
+        private List<TabletConfiguration> _configs;
+        private List<TabletConfiguration> Configurations
         {
             set
             {
@@ -118,18 +121,13 @@ namespace OpenTabletDriver.UX.Windows
             get => _configs;
         }
         
-        private TabletProperties _selected;
-        private TabletProperties SelectedConfiguration
+        private TabletConfiguration _selected;
+        private TabletConfiguration SelectedConfiguration
         {
             set
             {
                 _selected = value;
-                _configControls.Items.Clear();
-                foreach (var control in GeneratePropertyControls())
-                {
-                    var item = new StackLayoutItem(control, HorizontalAlignment.Stretch);
-                    _configControls.Items.Add(item);
-                }
+                Refresh();
             }
             get => _selected;
         }
@@ -140,14 +138,14 @@ namespace OpenTabletDriver.UX.Windows
             Spacing = 5,
         };
 
-        private List<TabletProperties> ReadConfigurations(DirectoryInfo dir)
+        private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
             var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                select TabletProperties.Read(file);
-            return new List<TabletProperties>(configs);
+                select TabletConfiguration.Read(file);
+            return new List<TabletConfiguration>(configs);
         }
 
-        private void WriteConfigurations(IEnumerable<TabletProperties> configs, DirectoryInfo dir)
+        private void WriteConfigurations(IEnumerable<TabletConfiguration> configs, DirectoryInfo dir)
         {
             var regex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
             foreach (var config in configs)
@@ -198,7 +196,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private void CreateNewConfiguration()
         {
-            var newTablet = new TabletProperties
+            var newTablet = new TabletConfiguration
             {
                 Name = "New Tablet"
             };
@@ -206,7 +204,7 @@ namespace OpenTabletDriver.UX.Windows
             _configList.SelectedIndex = Configurations.IndexOf(newTablet);
         }
 
-        private void DeleteConfiguration(TabletProperties config)
+        private void DeleteConfiguration(TabletConfiguration config)
         {
             Configurations = Configurations.Where(c => c != config).ToList();
             if (SelectedConfiguration == config)
@@ -220,15 +218,18 @@ namespace OpenTabletDriver.UX.Windows
             {
                 try
                 {
-                    var generatedConfig = new TabletProperties
+                    var generatedConfig = new TabletConfiguration
                     {
                         Name = device.GetManufacturer() + " " + device.GetProductName(),
-                        DigitizerIdentifier = new DeviceIdentifier
+                        DigitizerIdentifiers =
                         {
-                            VendorID = device.VendorID,
-                            ProductID = device.ProductID,
-                            InputReportLength = (uint)device.GetMaxInputReportLength(),
-                            OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                            new DigitizerIdentifier
+                            {
+                                VendorID = device.VendorID,
+                                ProductID = device.ProductID,
+                                InputReportLength = (uint)device.GetMaxInputReportLength(),
+                                OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                            }
                         }
                     };
                     Configurations = Configurations.Append(generatedConfig).ToList();
@@ -241,391 +242,204 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        private IEnumerable<Control> GeneratePropertyControls() => new Control[]
-            {
-                GetControl("Name",
-                    () => SelectedConfiguration.Name,
-                    (o) => SelectedConfiguration.Name = o
-                ),
-                GetExpander("Tablet Specifications", isExpanded: true,
-                    GetControl("Width (mm)",
-                        () => SelectedConfiguration.Width.ToString(),
-                        (o) => SelectedConfiguration.Width = float.TryParse(o, out var val) ? val : 0f
-                    ),
-                    GetControl("Height (mm)",
-                        () => SelectedConfiguration.Height.ToString(),
-                        (o) => SelectedConfiguration.Height = float.TryParse(o, out var val) ? val : 0f
-                    ),
-                    GetControl("Max X (px)",
-                        () => SelectedConfiguration.MaxX.ToString(),
-                        (o) => SelectedConfiguration.MaxX = float.TryParse(o, out var val) ? val : 0f
-                    ),
-                    GetControl("Max Y (px)",
-                        () => SelectedConfiguration.MaxY.ToString(),
-                        (o) => SelectedConfiguration.MaxY = float.TryParse(o, out var val) ? val : 0f
-                    ),
-                    GetControl("Max Pressure",
-                        () => SelectedConfiguration.MaxPressure.ToString(),
-                        (o) => SelectedConfiguration.MaxPressure = uint.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Active Report ID",
-                        () => SelectedConfiguration.ActiveReportID.ToString(),
-                        (o) => SelectedConfiguration.ActiveReportID = DetectionRange.Parse(o)
-                    )
-                ),
-                GetExpander("Tablet Identifiers", isExpanded: false,
-                    GetControl("Vendor ID",
-                        () => SelectedConfiguration.DigitizerIdentifier.VendorID.ToString(),
-                        (o) => SelectedConfiguration.DigitizerIdentifier.VendorID = int.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Product ID",
-                        () => SelectedConfiguration.DigitizerIdentifier.ProductID.ToString(),
-                        (o) => SelectedConfiguration.DigitizerIdentifier.ProductID = int.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Input Report Length",
-                        () => SelectedConfiguration.DigitizerIdentifier.InputReportLength.ToString(),
-                        (o) => SelectedConfiguration.DigitizerIdentifier.InputReportLength = uint.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Output Report Length",
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputReportLength.ToString(),
-                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputReportLength = uint.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Report Parser",
-                        () => SelectedConfiguration.DigitizerIdentifier.ReportParser,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.ReportParser = o,
-                        placeholder: typeof(TabletReportParser).FullName
-                    ),
-                    GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.FeatureInitReport = ToByteArray(o)
-                    ),
-                    GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.DigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.DigitizerIdentifier.OutputInitReport = ToByteArray(o)
-                    )
-                ),
-                GetExpander("Alternate Tablet Identifiers", isExpanded: false,
-                    GetControl("Vendor ID",
-                        () => SelectedConfiguration.AlternateDigitizerIdentifier.VendorID.ToString(),
-                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.VendorID = int.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Product ID",
-                        () => SelectedConfiguration.AlternateDigitizerIdentifier.ProductID.ToString(),
-                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.ProductID = int.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Input Report Length",
-                        () => SelectedConfiguration.AlternateDigitizerIdentifier.InputReportLength.ToString(),
-                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.InputReportLength = uint.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Output Report Length",
-                        () => SelectedConfiguration.AlternateDigitizerIdentifier.OutputReportLength.ToString(),
-                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.OutputReportLength = uint.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Report Parser",
-                        () => SelectedConfiguration.AlternateDigitizerIdentifier.ReportParser,
-                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.ReportParser = o,
-                        placeholder: typeof(TabletReportParser).FullName
-                    ),
-                    GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.AlternateDigitizerIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.FeatureInitReport = ToByteArray(o)
-                    ),
-                    GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.AlternateDigitizerIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.AlternateDigitizerIdentifier.OutputInitReport = ToByteArray(o)
-                    )
-                ),
-                GetExpander("Auxiliary Device Identifiers", isExpanded: false,
-                    GetControl("Vendor ID",
-                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.VendorID.ToString(),
-                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.VendorID = int.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Product ID",
-                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.ProductID.ToString(),
-                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.ProductID = int.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Input Report Length",
-                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.InputReportLength.ToString(),
-                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.InputReportLength = uint.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Output Report Length",
-                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputReportLength.ToString(),
-                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputReportLength = uint.TryParse(o, out var val) ? val : 0
-                    ),
-                    GetControl("Report Parser",
-                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.ReportParser,
-                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.ReportParser = o,
-                        placeholder: typeof(AuxReportParser).FullName
-                    ),
-                    GetControl("Feature Initialization Report",
-                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.FeatureInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.FeatureInitReport = ToByteArray(o)
-                    ),
-                    GetControl("Output Initialization Report", 
-                        () => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputInitReport is byte[] report ? ToHexString(report) : string.Empty,
-                        (o) => SelectedConfiguration.AuxilaryDeviceIdentifier.OutputInitReport = ToByteArray(o)
-                    )
-                ),
-                GetExpander("Advanced", isExpanded: false,
-                    GetDictionaryControl("Attributes",
-                        () => SelectedConfiguration.Attributes,
-                        (o) => SelectedConfiguration.Attributes = o
-                    ),
-                    GetDictionaryControl("Device Strings",
+        private void Refresh()
+        {
+            _configControls.Items.Clear();
+            _configControls.AddControls(MakePropertyControls());
+        }
+
+        private IEnumerable<Control> MakePropertyControls()
+        {
+            yield return MakeInput("Name",
+                () => SelectedConfiguration.Name,
+                (o) => SelectedConfiguration.Name = o
+            );
+
+            var digitizerStack = MakeStack();
+            digitizerStack.Items.Add(
+                MakeStackItem(
+                    MakeButton(
+                        "Add",
                         () =>
                         {
-                            var dictionaryBuffer = new Dictionary<string, string>();
-                            foreach (var pair in SelectedConfiguration.DeviceStrings)
-                                dictionaryBuffer.Add($"{pair.Key}", pair.Value);
-                            return dictionaryBuffer;
-                        },
-                        (o) =>
-                        {
-                            SelectedConfiguration.DeviceStrings.Clear();
-                            foreach (KeyValuePair<string, string> pair in o)
-                                if (byte.TryParse(pair.Key, out var keyByte))
-                                    SelectedConfiguration.DeviceStrings.Add(keyByte, pair.Value);
-                        }
-                    ),
-                    GetListControl("Initialization String Indexes",
-                        () =>
-                        {
-                            var listBuffer = new List<string>();
-                            foreach (var value in SelectedConfiguration.InitializationStrings)
-                                listBuffer.Add($"{value}");
-                            return listBuffer;
-                        },
-                        (o) =>
-                        {
-                            SelectedConfiguration.InitializationStrings.Clear();
-                            foreach (string value in o)
-                                if (byte.TryParse(value, out var byteValue))
-                                    SelectedConfiguration.InitializationStrings.Add(byteValue);
+                            SelectedConfiguration.DigitizerIdentifiers.Add(new DigitizerIdentifier());
+                            Refresh();
                         }
                     )
                 )
-            };
+            );
 
-        private GroupBox GetControl(string groupName, Func<string> getValue, Action<string> setValue, string placeholder = null)
-        {
-            var textBox = new TextBox
+            foreach (var digitizerIdentifier in SelectedConfiguration.DigitizerIdentifiers)
             {
-                PlaceholderText = placeholder
-            };
-            textBox.TextBinding.Bind(getValue, setValue);
-            return new GroupBox
-            {
-                Text = groupName,
-                Padding = App.GroupBoxPadding,
-                Content = textBox
-            };
-        }
+                var expander = MakeExpander("Digitizer Identifier", isExpanded: false);
+                var stack = (StackLayout)expander.Content;
+                stack.AddControls(MakeDigitizerIdentifierControls(digitizerIdentifier));
+                stack.AddControl(
+                    MakeButton(
+                        "Remove",
+                        () => 
+                        {
+                            SelectedConfiguration.DigitizerIdentifiers.Remove(digitizerIdentifier);
+                            Refresh();
+                        }
+                    )
+                );
 
-        private Expander GetExpander(string groupName, bool isExpanded, params Control[] controls)
-        {
-            var stack = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Spacing = 5
-            };
-
-            var expander = new Expander
-            {
-                Header = groupName,
-                Content = stack,
-                Expanded = isExpanded,
-                Padding = new Padding(0, 5, 0, 0)
-            };
-            
-            foreach (var ctrl in controls)
-            {
-                var stackitem = new StackLayoutItem
-                {
-                    HorizontalAlignment = HorizontalAlignment.Stretch,
-                    Control = ctrl
-                };
-                stack.Items.Add(ctrl);
+                digitizerStack.AddControl(MakeGroup(null, expander));
             }
+            yield return MakeGroup("Digitizer Identifiers", digitizerStack);
 
-            return expander;
+            var auxStack = MakeStack();
+            auxStack.AddControl(
+                MakeButton(
+                    "Add",
+                    () =>
+                    {
+                        SelectedConfiguration.AuxilaryDeviceIdentifiers.Add(new DeviceIdentifier());
+                        Refresh();
+                    }
+                )
+            );
+
+            foreach (var auxIdentifier in SelectedConfiguration.AuxilaryDeviceIdentifiers)
+            {
+                var expander = MakeExpander("Auxiliary Identifier", isExpanded: false);
+                var stack = (StackLayout)expander.Content;
+                stack.AddControls(GetDeviceIdentifierControls(auxIdentifier));
+                stack.AddControl(
+                    MakeButton(
+                        "Remove",
+                        () => 
+                        {
+                            SelectedConfiguration.AuxilaryDeviceIdentifiers.Remove(auxIdentifier);
+                            Refresh();
+                        }
+                    )
+                );
+                
+                auxStack.AddControl(MakeGroup(null, expander));
+            }
+            yield return MakeGroup("Auxiliary Device Identifiers", auxStack);
+
+            yield return MakeDictionary("Attributes",
+                () => SelectedConfiguration.Attributes,
+                (o) => SelectedConfiguration.Attributes = o
+            );
         }
 
-        private Control GetListControl(
-            string groupName,
-            Func<IEnumerable<string>> getValue,
-            Action<IEnumerable<string>> setValue
-        )
+        private IEnumerable<Control> GetDeviceIdentifierControls(DeviceIdentifier id)
         {
-            var textArea = new TextArea();
-            textArea.TextBinding.Bind(
-                () => 
+            yield return MakeInput("Vendor ID",
+                () => id.VendorID.ToString(),
+                (o) => id.VendorID = ToInt(o)
+            );
+            yield return MakeInput("Product ID",
+                () => id.ProductID.ToString(),
+                (o) => id.ProductID = ToInt(o)
+            );
+            yield return MakeInput("Input Report Length",
+                () => id.InputReportLength.ToString(),
+                (o) => id.InputReportLength = ToNullableUInt(o)
+            );
+            yield return MakeInput("Output Report Length",
+                () => id.OutputReportLength.ToString(),
+                (o) => id.OutputReportLength = ToNullableUInt(o)
+            );
+            yield return MakeInput("Report Parser",
+                () => id.ReportParser,
+                (o) => id.ReportParser = o,
+                id is DigitizerIdentifier ? typeof(TabletReportParser).FullName : typeof(AuxReportParser).FullName
+            );
+            yield return MakeInput("Feature Initialization Report",
+                () => ToHexString(id.FeatureInitReport),
+                (o) => id.FeatureInitReport = ToByteArray(o)
+            );
+            yield return MakeInput("Output Initialization Report",
+                () => ToHexString(id.OutputInitReport),
+                (o) => id.OutputInitReport = ToByteArray(o)
+            );
+            yield return MakeDictionary("Device Strings",
+                () =>
                 {
-                    StringBuilder buffer = new StringBuilder();
-                    foreach (string value in getValue())
-                        buffer.AppendLine(value);
-                    return buffer.ToString();
+                    var dictionaryBuffer = new Dictionary<string, string>();
+                    foreach (var pair in id.DeviceStrings)
+                        dictionaryBuffer.Add($"{pair.Key}", pair.Value);
+                    return dictionaryBuffer;
                 },
-                (o) => 
+                (o) =>
                 {
-                    setValue(o.Split(Environment.NewLine));
+                    id.DeviceStrings.Clear();
+                    foreach (KeyValuePair<string, string> pair in o)
+                        if (byte.TryParse(pair.Key, out var keyByte))
+                            id.DeviceStrings.Add(keyByte, pair.Value);
                 }
             );
-            return new GroupBox
-            {
-                Text = groupName,
-                Padding = App.GroupBoxPadding,
-                Content = textArea
-            };
+            yield return MakeList("Initialization String Indexes",
+                () =>
+                {
+                    var listBuffer = new List<string>();
+                    foreach (var value in id.InitializationStrings)
+                        listBuffer.Add($"{value}");
+                    return listBuffer;
+                },
+                (o) =>
+                {
+                    id.InitializationStrings.Clear();
+                    foreach (string value in o)
+                        if (byte.TryParse(value, out var byteValue))
+                            id.InitializationStrings.Add(byteValue);
+                }
+            );
         }
 
-        private GroupBox GetDictionaryControl(
-            string groupName,
-            Func<Dictionary<string, string>> getValue,
-            Action<Dictionary<string, string>> setValue
-        )
+        private IEnumerable<Control> MakeDigitizerIdentifierControls(DigitizerIdentifier id)
         {
-            var entries = new StackLayout
-            {
-                Spacing = 5,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch
-            };
-            
-            foreach (var pair in getValue())
-                entries.Items.Add(GetDictionaryEntryControl(getValue, setValue, pair.Key, pair.Value));
-
-            var actions = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Items = 
-                {
-                    new Button((sender, e) => entries.Items.Add(GetDictionaryEntryControl(getValue, setValue)))
-                    {
-                        Text = "+"
-                    }
-                }
-            };
-
-            var layout = new TableLayout
-            {
-                Spacing = new Size(5, 5),
-                Rows =
-                {
-                    new TableRow
-                    {
-                        ScaleHeight = true,
-                        Cells = 
-                        {
-                            new TableCell
-                            {
-                                ScaleWidth = true,
-                                Control = entries
-                            }
-                        }
-                    },
-                    new TableRow
-                    {
-                        ScaleHeight = false,
-                        Cells =
-                        {
-                            new TableCell
-                            {
-                                ScaleWidth = true,
-                                Control = actions
-                            }
-                        }
-                    }
-                }
-            };
-
-            return new GroupBox
-            {
-                Text = groupName,
-                Padding = App.GroupBoxPadding,
-                Content = layout
-            };
+            yield return MakeInput("Width (mm)",
+                () => id.Width.ToString(),
+                (o) => id.Width = ToFloat(o)
+            );
+            yield return MakeInput("Height (mm)",
+                () => id.Height.ToString(),
+                (o) => id.Height = ToFloat(o)
+            );
+            yield return MakeInput("Max X (px)",
+                () => id.MaxX.ToString(),
+                (o) => id.MaxX = ToFloat(o)
+            );
+            yield return MakeInput("Max Y (px)",
+                () => id.MaxY.ToString(),
+                (o) => id.MaxY = ToFloat(o)
+            );
+            yield return MakeInput("Max Pressure",
+                () => id.MaxPressure.ToString(),
+                (o) => id.MaxPressure = ToUInt(o)
+            );
+            yield return MakeInput("Active Report ID",
+                () => id.ActiveReportID?.ToString() ?? new DetectionRange().ToString(),
+                (o) => id.ActiveReportID = DetectionRange.Parse(o)
+            );
+            foreach (var control in GetDeviceIdentifierControls(id))
+                yield return control;
         }
 
-        StackLayoutItem GetDictionaryEntryControl(
-            Func<Dictionary<string, string>> getValue,
-            Action<Dictionary<string, string>> setValue,
-            string startKey = null,
-            string startValue = null
-        )
-        {
-            var keyBox = new TextBox
-            {
-                PlaceholderText = "Key",
-                ToolTip = 
-                    "The dictionary entry's key. This is what is indexed to find a value." + Environment.NewLine +
-                    "If left empty, the entry will be removed on save or apply."
-            };
-
-            var valueBox = new TextBox
-            {
-                PlaceholderText = "Value",
-                ToolTip = "The dictionary entry's value. This is what is retrieved when indexing with the specified key."
-            };
-
-            string oldKey = startKey;
-            keyBox.TextBinding.Bind(
-                () => startKey,
-                (key) =>
-                {
-                    var dict = getValue();
-                    var value = valueBox.Text;
-
-                    if (string.IsNullOrWhiteSpace(key))
-                        dict.Remove(key);
-                    else if (!dict.TryAdd(key, value))
-                        dict[key] = value;
-                    
-                    if (oldKey != null)
-                        dict.Remove(oldKey);
-                    oldKey = key;
-
-                    setValue(dict);
-                }
-            );
-
-            valueBox.TextBinding.Bind(
-                () => startValue,
-                (value) =>
-                {
-                    var dict = getValue();
-                    var key = keyBox.Text;
-
-                    if (!dict.TryAdd(key, value))
-                        dict[key] = value;
-
-                    setValue(dict);
-                }
-            );
-
-            var stackLayout = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                Spacing = 5,
-                Items =
-                {
-                    new StackLayoutItem
-                    {
-                        Control = keyBox,
-                        Expand = true
-                    },
-                    new StackLayoutItem
-                    {
-                        Control = valueBox,
-                        Expand = true
-                    }
-                }
-            };
-            
-            return new StackLayoutItem(stackLayout, true);
-        }
+        private static float? ToNullableFloat(string str) => float.TryParse(str, out var val) ? val : (float?)null;
+        private static float ToFloat(string str) => ToNullableFloat(str) ?? 0f;
+        
+        private static int? ToNullableInt(string str) => int.TryParse(str, out var val) ? val : (int?)null;
+        private static int ToInt(string str) => ToNullableInt(str) ?? 0;
+                
+        private static uint? ToNullableUInt(string str) => uint.TryParse(str, out var val) ? val : (uint?)null;
+        private static uint ToUInt(string str) => ToNullableUInt(str) ?? 0;
 
         private static bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
-        private static string ToHexString(byte[] value) => "0x" + BitConverter.ToString(value).Replace("-", " 0x") ?? string.Empty;
+        
+        private static string ToHexString(byte[] value)
+        {
+            if (value is byte[] array)
+                return "0x" + BitConverter.ToString(array).Replace("-", " 0x") ?? string.Empty;
+            else
+                return string.Empty;
+        }
         
         private static byte[] ToByteArray(string hex)
         {

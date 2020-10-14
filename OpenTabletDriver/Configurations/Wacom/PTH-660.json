@@ -1,44 +1,63 @@
 {
   "Name": "Wacom PTH-660",
-  "DigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 855,
-    "InputReportLength": 192,
-    "OutputReportLength": 0,
-    "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AlternateDigitizerIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 855,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "AuxilaryDeviceIdentifier": {
-    "VendorID": 1386,
-    "ProductID": 855,
-    "InputReportLength": 0,
-    "OutputReportLength": 0,
-    "ReportParser": null,
-    "FeatureInitReport": null,
-    "OutputInitReport": null
-  },
-  "Width": 226.0,
-  "Height": 150.0,
-  "MaxX": 44800.0,
-  "MaxY": 29600.0,
-  "MaxPressure": 8191,
-  "ActiveReportID": {
-    "Start": 16,
-    "StartInclusive": true,
-    "End": null,
-    "EndInclusive": false
-  },
-  "Attributes": {},
-  "DeviceStrings": {},
-  "InitializationStrings": []
+  "DigitizerIdentifiers": [
+    {
+      "Width": 226.0,
+      "Height": 150.0,
+      "MaxX": 44800.0,
+      "MaxY": 29600.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 855,
+      "InputReportLength": 192,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 226.0,
+      "Height": 150.0,
+      "MaxX": 44800.0,
+      "MaxY": 29600.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 855,
+      "InputReportLength": null,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 855,
+      "InputReportLength": null,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {}
 }

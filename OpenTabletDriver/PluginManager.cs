@@ -26,8 +26,7 @@ namespace OpenTabletDriver
                 var asm = ImportAssembly(file.FullName);
                 foreach (var type in GetLoadableTypes(asm))
                 {
-                    var attr = type.GetCustomAttribute(typeof(SupportedPlatformAttribute), true) as SupportedPlatformAttribute;
-                    if (attr == null || attr.IsCurrentPlatform)
+                    if (TypeIsSupported(type))
                         Types.Add(type.GetTypeInfo());
                 }
                 return true;
@@ -36,6 +35,12 @@ namespace OpenTabletDriver
             {
                 return false;
             }
+        }
+
+        public static bool TypeIsSupported(Type type)
+        {
+            var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
+            return attr?.IsCurrentPlatform ?? true;
         }
 
         private static Assembly ImportAssembly(string path)
@@ -85,19 +90,34 @@ namespace OpenTabletDriver
             {
                 var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
                     from type in assembly.DefinedTypes
+                    where TypeIsSupported(type)
                     select type;
                     
                 return new ObservableCollection<TypeInfo>(types);
             }
             catch (ReflectionTypeLoadException)
             {
-                var types = from assembly in Assembly.GetEntryAssembly().GetReferencedAssemblies()
-                    let loadedAsm = Assembly.Load(assembly)
-                    from type in loadedAsm.DefinedTypes
+                var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                    where CanLoadAssembly(assembly)
+                    from type in assembly.DefinedTypes
+                    where TypeIsSupported(type)
                     select type;
 
                 return new ObservableCollection<TypeInfo>(types);
             }
         });
+
+        private static bool CanLoadAssembly(Assembly asm)
+        {
+            try
+            {
+                _ = asm.DefinedTypes;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

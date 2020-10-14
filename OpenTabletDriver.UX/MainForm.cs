@@ -81,7 +81,7 @@ namespace OpenTabletDriver.UX
             filterEditor = ConstructPluginSettingsEditor<IFilter>(
                 "Filter",
                 () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),
-                (sender, enabled) =>
+                (enabled) =>
                 {
                     var path = filterEditor.SelectedPlugin.Path;
                     if (enabled && !App.Settings.Filters.Contains(path))
@@ -94,7 +94,7 @@ namespace OpenTabletDriver.UX
             toolEditor = ConstructPluginSettingsEditor<ITool>(
                 "Tool",
                 () => App.Settings.Tools.Contains(toolEditor.SelectedPlugin.Path),
-                (sender, enabled) =>
+                (enabled) =>
                 {
                     var path = toolEditor.SelectedPlugin.Path;
                     if (enabled && !App.Settings.Tools.Contains(path))
@@ -134,6 +134,7 @@ namespace OpenTabletDriver.UX
                     new TabPage
                     {
                         Text = "Console",
+                        Padding = 5,
                         Content = new LogView()
                     }
                 }
@@ -184,8 +185,10 @@ namespace OpenTabletDriver.UX
 
         private Control ConstructTabletArea()
         {
-            tabletAreaEditor = new AreaEditor("mm", true);
+            tabletAreaEditor = new AreaEditor("mm", enableRotation: true);
             tabletAreaEditor.AreaDisplay.InvalidSizeError = "No tablet detected.";
+            tabletAreaEditor.AreaDisplay.ToolTip =
+                "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
 
             this.SettingsChanged += (settings) =>
             {
@@ -220,6 +223,9 @@ namespace OpenTabletDriver.UX
         private Control ConstructDisplayArea()
         {
             displayAreaEditor = new AreaEditor("px");
+            displayAreaEditor.AreaDisplay.ToolTip =
+                "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
+
             this.SettingsChanged += (settings) =>
             {
                 displayAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
@@ -464,7 +470,7 @@ namespace OpenTabletDriver.UX
             return layout;
         }
 
-        private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, EventHandler<bool> setMethod)
+        private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, Action<bool> setMethod)
         {
             var editor = new PluginSettingsEditor<T>(friendlyName);
             editor.GetPluginEnabled = getMethod;
@@ -640,6 +646,7 @@ namespace OpenTabletDriver.UX
             try
             {
                 await App.Driver.Connect();
+                Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
             }
             catch (TimeoutException)
             {
@@ -660,7 +667,7 @@ namespace OpenTabletDriver.UX
 
             Content = ConstructMainControls();
 
-            if (await App.Driver.Instance.GetTablet() is TabletProperties tablet)
+            if (await App.Driver.Instance.GetTablet() is TabletStatus tablet)
             {
                 SetTabletAreaDimensions(tablet);
             }
@@ -689,9 +696,9 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
-            displayAreaEditor.ViewModel.MaxWidth = virtualScreen.Width;
-            displayAreaEditor.ViewModel.MaxHeight = virtualScreen.Height;
+            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays
+                where !(disp is IVirtualScreen)
+                select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
 
         private Control absoluteConfig, relativeConfig, nullConfig;
@@ -723,10 +730,10 @@ namespace OpenTabletDriver.UX
             Settings.DisplayHeight = virtualScreen.Height;
             Settings.DisplayX = virtualScreen.Width / 2;
             Settings.DisplayY = virtualScreen.Height / 2;
-            Settings.TabletWidth = tablet?.Width ?? 0;
-            Settings.TabletHeight = tablet?.Height ?? 0;
-            Settings.TabletX = tablet?.Width / 2 ?? 0;
-            Settings.TabletY = tablet?.Height / 2 ?? 0;
+            Settings.TabletWidth = tablet?.TabletIdentifier?.Width ?? 0;
+            Settings.TabletHeight = tablet?.TabletIdentifier?.Height ?? 0;
+            Settings.TabletX = tablet?.TabletIdentifier?.Width / 2 ?? 0;
+            Settings.TabletY = tablet?.TabletIdentifier?.Height / 2 ?? 0;
             await App.Driver.Instance.SetSettings(Settings);
         }
 
@@ -790,13 +797,20 @@ namespace OpenTabletDriver.UX
 
         private async Task ApplySettings()
         {
-            if (Settings is Settings settings)
-                await App.Driver.Instance.SetSettings(settings);
+            try
+            {
+                if (Settings is Settings settings)
+                    await App.Driver.Instance.SetSettings(settings);
+            }
+            catch (StreamJsonRpc.RemoteInvocationException riex)
+            {
+                Log.Exception(riex.InnerException);
+            }
         }
 
         private async Task DetectAllTablets()
         {
-            if (await App.Driver.Instance.DetectTablets() is TabletProperties tablet)
+            if (await App.Driver.Instance.DetectTablets() is TabletStatus tablet)
             {
                 var settings = await App.Driver.Instance.GetSettings();
                 if (settings != null)
@@ -837,10 +851,19 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private void SetTabletAreaDimensions(TabletProperties tablet)
+        private void SetTabletAreaDimensions(TabletStatus tablet)
         {
-            tabletAreaEditor.ViewModel.MaxWidth = tablet?.Width ?? 0;
-            tabletAreaEditor.ViewModel.MaxHeight = tablet?.Height ?? 0;
+            if (tablet != null)
+            {
+                tabletAreaEditor.ViewModel.Background = new RectangleF[]
+                {
+                    new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height)
+                };
+            }
+            else
+            {
+                tabletAreaEditor.ViewModel.Background = null;
+            }
         }
 
         private void UpdateOutputMode(PluginReference pluginRef)
