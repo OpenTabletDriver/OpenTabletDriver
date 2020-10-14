@@ -24,6 +24,8 @@ namespace OpenTabletDriver
             if (file.Extension == ".dll")
             {
                 var asm = ImportAssembly(file.FullName);
+                if (asm is null) { return false; }
+
                 foreach (var type in GetLoadableTypes(asm))
                 {
                     if (TypeIsSupported(type))
@@ -45,7 +47,15 @@ namespace OpenTabletDriver
 
         private static Assembly ImportAssembly(string path)
         {
-            return AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+            try
+            {
+                return AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
+            }
+            catch (BadImageFormatException e)
+            {
+                Log.Write("Plugin", $"Failed to initialize {path}, incompatible plugin", LogLevel.Warning);
+                return null;
+            }
         }
 
         private static IEnumerable<Type> GetLoadableTypes(Assembly asm)
