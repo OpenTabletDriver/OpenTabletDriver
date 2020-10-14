@@ -24,7 +24,8 @@ namespace OpenTabletDriver
             if (file.Extension == ".dll")
             {
                 var asm = ImportAssembly(file.FullName);
-                if (asm is null) { return false; }
+                if (asm is null) 
+                    return false;
 
                 foreach (var type in GetLoadableTypes(asm))
                 {
