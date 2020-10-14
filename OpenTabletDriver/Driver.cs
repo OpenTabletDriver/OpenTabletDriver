@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using HidSharp;
 using OpenTabletDriver.Native;
@@ -54,7 +55,7 @@ namespace OpenTabletDriver
             Log.Write("Detect", $"Searching for tablet '{config.Name}'");
             try
             {
-                if (TryMatchTablet(config))
+                if (TryMatchDigitizer(config))
                 {
                     Log.Write("Detect", $"Found tablet '{config.Name}'");
                     if (!TryMatchAuxDevice(config))
@@ -72,14 +73,14 @@ namespace OpenTabletDriver
             return false;
         }
 
-        internal bool TryMatchTablet(TabletConfiguration config)
+        internal bool TryMatchDigitizer(TabletConfiguration config)
         {
             foreach (var identifier in config.DigitizerIdentifiers)
             {
                 var matches = FindMatches(identifier);
 
                 if (matches.Count() > 1)
-                    Log.Write("Detect", "More than 1 matching tablet has been found.", LogLevel.Warning);
+                    Log.Write("Detect", "More than 1 matching digitizer has been found.", LogLevel.Warning);
 
                 foreach (HidDevice dev in matches)
                 {
@@ -139,24 +140,23 @@ namespace OpenTabletDriver
 
             foreach (byte index in tablet.InitializationStrings)
             {
-                Log.Debug("Detect", $"Initializing index {index}");
+                Log.Debug("Device", $"Initializing index {index}");
                 tabletDevice.GetDeviceString(index);
             }
             
             TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
-            TabletReader.Start();
             TabletReader.Report += OnReport;
             TabletReader.ReadingChanged += (sender, e) => Reading?.Invoke(sender, e);
             
             if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Detect", "Setting feature: " + BitConverter.ToString(featureInitReport));
+                Log.Debug("Device", "Setting feature: " + BitConverter.ToString(featureInitReport));
                 TabletReader.ReportStream.SetFeature(featureInitReport);
             }
 
             if (tablet.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Detect", "Setting output: " + BitConverter.ToString(outputInitReport));
+                Log.Debug("Device", "Setting output: " + BitConverter.ToString(outputInitReport));
                 TabletReader.ReportStream.Write(outputInitReport);
             }
         }
@@ -172,23 +172,22 @@ namespace OpenTabletDriver
 
             foreach (byte index in identifier.InitializationStrings)
             {
-                Log.Debug("Detect", $"Initializing index {index}");
+                Log.Debug("Device", $"Initializing index {index}");
                 auxDevice.GetDeviceString(index);
             }
             
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
-            AuxReader.Start();
             AuxReader.Report += OnReport;
 
             if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Detect", "Setting aux feature: " + BitConverter.ToString(featureInitReport));
+                Log.Debug("Device", "Setting aux feature: " + BitConverter.ToString(featureInitReport));
                 AuxReader.ReportStream.SetFeature(featureInitReport);
             }
 
             if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Detect", "Setting aux output: " + BitConverter.ToString(outputInitReport));
+                Log.Debug("Device", "Setting aux output: " + BitConverter.ToString(outputInitReport));
                 AuxReader.ReportStream.Write(outputInitReport);
             }
         }
@@ -236,11 +235,11 @@ namespace OpenTabletDriver
 
         public void Dispose()
         {
-            TabletReader.Stop();
+            TabletReader.Dispose();
             TabletReader.Report -= OnReport;
             TabletReader = null;
             
-            AuxReader.Stop();
+            AuxReader.Dispose();
             AuxReader.Report -= OnReport;
             AuxReader = null;
         }

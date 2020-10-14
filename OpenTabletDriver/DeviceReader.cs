@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using HidSharp;
 using OpenTabletDriver.Plugin;
@@ -18,6 +19,8 @@ namespace OpenTabletDriver
                 IsBackground = true,
                 Priority = ThreadPriority.BelowNormal,
             };
+            Setup();
+            WorkerThread.Start();
         }
 
         public virtual HidDevice Device { protected set; get; }
@@ -40,48 +43,6 @@ namespace OpenTabletDriver
 
         private Thread WorkerThread;
 
-        public virtual void Start()
-        {
-            Setup();
-            WorkerThread.Start();
-        }
-
-        public virtual void Stop()
-        {
-            Reading = false;
-        }
-
-        public virtual void Dispose()
-        {
-            Stop();
-            ReportStream?.Dispose();
-        }
-
-        private void Setup()
-        {
-            var config = new OpenConfiguration();
-            config.SetOption(OpenOption.Priority, OpenPriority.Low);
-            for (int retries = 3; retries > 0; retries--)
-            {
-                if (Device.TryOpen(config, out var stream, out var exception))
-                {
-                    ReportStream = (HidStream)stream;
-                    break;
-                }
-                else
-                {                    
-                    Log.Write("Detect", $"{exception}; Retrying {retries} more times", LogLevel.Error);
-                    Thread.Sleep(1000);
-                }
-            }
-            
-            if (ReportStream == null)
-            {
-                Log.Write("Detect", "Failed to open tablet. Make sure you have required permissions to open device streams.", LogLevel.Error);
-                return;
-            }
-        }
-
         protected void Main()
         {
             try
@@ -97,7 +58,11 @@ namespace OpenTabletDriver
             }
             catch (ObjectDisposedException dex)
             {
-                Log.Debug("Detect", $"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
+                Log.Debug("Device", $"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
+            }
+            catch (IOException ioex) when (ioex.Message == "I/O disconnected.")
+            {
+                Log.Write("Device", "Device disconnected.");
             }
             catch (Exception ex)
             {
@@ -107,6 +72,27 @@ namespace OpenTabletDriver
             {
                 Reading = false;
             }
+        }
+
+        private void Setup()
+        {
+            try
+            {
+                var config = new OpenConfiguration();
+                config.SetOption(OpenOption.Priority, OpenPriority.Low);
+                ReportStream = Device.Open(config);
+            }
+            catch (Exception ex)
+            {
+                Log.Write("Device", "Failed to open stream.", LogLevel.Error);
+                Log.Exception(ex);
+            }
+        }
+
+        public virtual void Dispose()
+        {
+            Reading = false;
+            ReportStream?.Dispose();
         }
     }
 }
