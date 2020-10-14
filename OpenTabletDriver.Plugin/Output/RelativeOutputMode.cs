@@ -38,6 +38,7 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 _sensitivity = value;
+                _reportScaleMultiplier = _sensitivity;
 
                 // Normalize (ratio of 1)
                 _reportScaleMultiplier /= new Vector2(Digitizer.MaxX, Digitizer.MaxY);
