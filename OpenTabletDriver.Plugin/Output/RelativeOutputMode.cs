@@ -32,19 +32,17 @@ namespace OpenTabletDriver.Plugin.Output
         public IVirtualPointer Pointer => VirtualMouse;
 
         private Vector2 _sensitivity;
-        private Vector2 _reportScaleMultiplier;
         public Vector2 Sensitivity
         {
             set
             {
                 _sensitivity = value;
-                _reportScaleMultiplier = _sensitivity;
 
                 // Normalize (ratio of 1)
-                _reportScaleMultiplier /= new Vector2(Digitizer.MaxX, Digitizer.MaxY);
+                _sensitivity /= new Vector2(Digitizer.MaxX, Digitizer.MaxY);
 
                 // Scale to tablet dimensions (mm)
-                _reportScaleMultiplier *= new Vector2(Digitizer.Width, Digitizer.Height);
+                _sensitivity *= new Vector2(Digitizer.Width, Digitizer.Height);
             }
             get { return _sensitivity; }
         }
@@ -87,7 +85,7 @@ namespace OpenTabletDriver.Plugin.Output
                 foreach (IFilter filter in _preFilters)
                     pos = filter.Filter(pos);
 
-                pos *= _reportScaleMultiplier;
+                pos *= _sensitivity;
 
                 // Post Filter
                 foreach (IFilter filter in _postFilters)
