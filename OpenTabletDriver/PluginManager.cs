@@ -21,17 +21,11 @@ namespace OpenTabletDriver
         
         public static bool AddPlugin(FileInfo file)
         {
-            if (file.Extension == ".dll")
+            if (file.Extension == ".dll" && ImportAssembly(file.FullName) is Assembly asm)
             {
-                var asm = ImportAssembly(file.FullName);
-                if (asm is null) 
-                    return false;
-
                 foreach (var type in GetLoadableTypes(asm))
-                {
                     if (TypeIsSupported(type))
                         Types.Add(type.GetTypeInfo());
-                }
                 return true;
             }
             else
