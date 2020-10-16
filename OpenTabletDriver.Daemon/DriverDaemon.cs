@@ -121,6 +121,7 @@ namespace OpenTabletDriver.Daemon
             {
                 Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", LogLevel.Error);
             }
+            Log.Write("Detect", "No tablet found.");
             return null;
         }
 
