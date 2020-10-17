@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using OpenTabletDriver.Native;
 
 namespace OpenTabletDriver
@@ -13,7 +14,25 @@ namespace OpenTabletDriver
         public string ConfigurationDirectory
         {
             set => _configDirectory = value;
-            get => _configDirectory ?? _defaultConfigurationDirectory.Value;
+            // get => _configDirectory ?? _defaultConfigurationDirectory.Value;
+            get
+            {
+                if (Directory.Exists(_configDirectory))
+                {
+                    return _configDirectory;
+                }
+                else if (Directory.Exists(_defaultConfigurationDirectory.Value))
+                {
+                    return _defaultConfigurationDirectory.Value;
+                }
+                else
+                {
+                    return Path.Join(
+                        Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+                        "Configurations"
+                    );
+                }
+            }
         }
 
         public string AppDataDirectory
