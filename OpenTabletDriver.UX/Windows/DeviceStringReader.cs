@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -16,7 +17,7 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Text = "Send Request"
             };
-            sendRequestButton.Click += SendRequest;
+            sendRequestButton.Click += SendRequestWithTimeout;
 
             this.vendorIdText = new TextBox
             {
@@ -102,29 +103,44 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private async void SendRequest(object sender, EventArgs args)
+        private async void SendRequestWithTimeout(object sender, EventArgs args)
         {
-            if (int.TryParse(stringIndexText.Text, out var index))
+            var request = Task.Run(SendRequest);
+            var timeout = Task.Delay(TimeSpan.FromSeconds(5));
+            var completed = await Task.WhenAny(request, timeout);
+            if (completed == timeout)
+            {
+                MessageBox.Show("Operation timed-out", MessageBoxType.Error);
+                return;
+            }
+            else
             {
                 try
                 {
-                    string deviceString;
-                    if (int.TryParse(vendorIdText.Text, out var vid) &&
-                        int.TryParse(productIdText.Text, out var pid))
-                    {
-                        deviceString = await App.Driver.Instance.RequestDeviceString(vid, pid, index);
-                    }
-                    else
-                    {
-                        deviceString = await App.Driver.Instance.RequestDeviceString(index);
-                    }
-                    deviceStringText.Text = deviceString;
+                    deviceStringText.Text = await request;
                 }
                 catch (Exception e)
                 {
                     MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error);
                 }
             }
+        }
+
+        private Task<string> SendRequest()
+        {
+            if (int.TryParse(stringIndexText.Text, out var index))
+            {
+                if (int.TryParse(vendorIdText.Text, out var vid) &&
+                    int.TryParse(productIdText.Text, out var pid))
+                {
+                    return App.Driver.Instance.RequestDeviceString(vid, pid, index);
+                }
+                else
+                {
+                    return App.Driver.Instance.RequestDeviceString(index);
+                }
+            }
+            return Task.FromResult("");
         }
 
         private readonly Button sendRequestButton;
