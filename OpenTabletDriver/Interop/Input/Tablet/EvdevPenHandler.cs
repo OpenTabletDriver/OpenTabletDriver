@@ -10,6 +10,9 @@ namespace OpenTabletDriver.Interop.Input.Tablet
 {
     public class EvdevPenHandler : EvdevVirtualPointer, IVirtualTablet, IPressureHandler
     {
+        private const int Max = 1 << 28;
+        private Vector2 ScreenScale = new Vector2(Platform.VirtualScreen.Width, Platform.VirtualScreen.Height);
+
         public unsafe EvdevPenHandler()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
@@ -19,16 +22,16 @@ namespace OpenTabletDriver.Interop.Input.Tablet
 
             var xAbs = new input_absinfo
             {
-                maximum = (int)Platform.VirtualScreen.Width,
-                resolution = short.MaxValue
+                maximum = Max,
+                resolution = 100
             };
             input_absinfo* xPtr = &xAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_X, (IntPtr)xPtr);
 
             var yAbs = new input_absinfo
             {
-                maximum = (int)Platform.VirtualScreen.Height,
-                resolution = short.MaxValue
+                maximum = Max,
+                resolution = 100
             };
             input_absinfo* yPtr = &yAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
@@ -65,8 +68,9 @@ namespace OpenTabletDriver.Interop.Input.Tablet
 
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)pos.X);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)pos.Y);
+            var newPos = pos / ScreenScale * Max;
+            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)newPos.X);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)newPos.Y);
             Device.Sync();
         }
 
