@@ -33,6 +33,7 @@ namespace OpenTabletDriver.Contracts
         
         Task SetTabletDebug(bool isEnabled);
         Task<string> RequestDeviceString(int index);
+        Task<string> RequestDeviceString(int vendorID, int productID, int index);
 
         Task<IEnumerable<LogMessage>> GetCurrentLog();
     }

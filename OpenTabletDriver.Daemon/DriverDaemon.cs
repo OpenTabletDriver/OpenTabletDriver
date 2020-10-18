@@ -362,6 +362,22 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(Driver.TabletReader?.Device?.GetDeviceString(index) ?? null);
         }
 
+        public Task<string> RequestDeviceString(int vid, int pid, int index)
+        {
+            HidDevice tablet = null;
+            foreach (var device in DeviceList.Local.GetHidDevices(vendorID: vid, productID: pid))
+            {
+                tablet = device;
+                break;
+            }
+            if (tablet == null)
+            {
+                throw new Exception("Device not found");
+            }
+
+            return Task.FromResult(tablet.GetDeviceString(index));
+        }
+
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
             IEnumerable<LogMessage> messages = LogMessages;
