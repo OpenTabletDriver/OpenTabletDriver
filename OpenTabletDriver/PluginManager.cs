@@ -16,16 +16,18 @@ namespace OpenTabletDriver
         public static Collection<TypeInfo> Types
         {
             set => _types = value;
-            get => _types ??= allTypes.Value;
+            get => _types ??= new ObservableCollection<TypeInfo>(allTypes.Value);
         }
-        
+
+        private static readonly Assembly pluginAsm = Assembly.GetAssembly(typeof(IDriver));
+        private static readonly Type[] pluginAsmTypes = pluginAsm.GetExportedTypes();
+
         public static bool AddPlugin(FileInfo file)
         {
             if (file.Extension == ".dll" && ImportAssembly(file.FullName) is Assembly asm)
             {
-                foreach (var type in GetLoadableTypes(asm))
-                    if (TypeIsSupported(type))
-                        Types.Add(type.GetTypeInfo());
+                foreach (var type in GetTypes(asm))
+                    Types.Add(type);
                 return true;
             }
             else
@@ -34,10 +36,53 @@ namespace OpenTabletDriver
             }
         }
 
-        public static bool TypeIsSupported(Type type)
+        public static T ConstructObject<T>(string name, object[] args = null) where T : class
         {
-            var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
-            return attr?.IsCurrentPlatform ?? true;
+            args ??= new object[0];
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var type = Types.FirstOrDefault(t => t.FullName == name);
+                var matchingConstructors = from ctor in type?.GetConstructors()
+                    let parameters = ctor.GetParameters()
+                    where parameters.Length == args.Length
+                    where ParametersValid(parameters, args)
+                    select ctor;
+                
+                var constructor = matchingConstructors.FirstOrDefault();
+                return (T)constructor?.Invoke(args) ?? null;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
+        {
+            var children = from type in Types
+                where typeof(T).IsAssignableFrom(type)
+                select type;
+            
+            return new List<TypeInfo>(children);
+        }
+
+        private static IEnumerable<TypeInfo> GetTypes(Assembly asm)
+        {
+            try
+            {
+                return from type in asm.DefinedTypes
+                    where TypeIsSupported(type)
+                    where TypeImplementsPlugin(type)
+                    select type.GetTypeInfo();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                Log.Write("Plugin", $"Failed to get one or more types. The plugin '{asm.GetName().Name}' is likely out of date.", LogLevel.Error);
+                return from type in e.Types.Where(t => t != null)
+                    where TypeIsSupported(type)
+                    where TypeImplementsPlugin(type)
+                    select type.GetTypeInfo();
+            }
         }
 
         private static Assembly ImportAssembly(string path)
@@ -53,64 +98,28 @@ namespace OpenTabletDriver
             }
         }
 
-        private static IEnumerable<Type> GetLoadableTypes(Assembly asm)
+        private static bool ParametersValid(ParameterInfo[] parameters, object[] args)
         {
-            try
+            for (int i = 0; i < parameters.Length; i++)
             {
-                return asm.GetTypes();
+                var parameter = parameters[i];
+                var arg = args[i];
+                if (!parameter.ParameterType.IsAssignableFrom(arg.GetType()))
+                    return false;
             }
-            catch (ReflectionTypeLoadException e)
-            {
-                Log.Write("Plugin", $"Failed to get one or more types. The plugin '{asm.GetName().Name}' is likely out of date.", LogLevel.Error);
-                return e.Types.Where(t => t != null);
-            }
+            return true;
         }
 
-        public static T ConstructObject<T>(string name) where T : class
+        private static bool TypeIsSupported(Type type)
         {
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                var type = Types.FirstOrDefault(t => t.FullName == name);
-                var ctor = type?.GetConstructors().FirstOrDefault(c => c.GetParameters().Length == 0);
-                var parameters = new object[] {};
-                return (T)ctor?.Invoke(parameters) ?? null;
-            }
-            else
-            {
-                return null;
-            }
+            var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
+            return attr?.IsCurrentPlatform ?? true;
         }
 
-        public static IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
+        private static bool TypeImplementsPlugin(Type type)
         {
-            var children = from type in Types
-                where typeof(T).IsAssignableFrom(type)
-                select type;
-            return new List<TypeInfo>(children);
+            return pluginAsmTypes.Any(t => t.IsAssignableFrom(type));
         }
-
-        private static Lazy<Collection<TypeInfo>> allTypes = new Lazy<Collection<TypeInfo>>(() => 
-        {
-            try
-            {
-                var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                    from type in assembly.DefinedTypes
-                    where TypeIsSupported(type)
-                    select type;
-                    
-                return new ObservableCollection<TypeInfo>(types);
-            }
-            catch (ReflectionTypeLoadException)
-            {
-                var types = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                    where CanLoadAssembly(assembly)
-                    from type in assembly.DefinedTypes
-                    where TypeIsSupported(type)
-                    select type;
-
-                return new ObservableCollection<TypeInfo>(types);
-            }
-        });
 
         private static bool CanLoadAssembly(Assembly asm)
         {
@@ -124,5 +133,13 @@ namespace OpenTabletDriver
                 return false;
             }
         }
+
+        private static Lazy<IEnumerable<TypeInfo>> allTypes = new Lazy<IEnumerable<TypeInfo>>(() => 
+        {
+            return from asm in AppDomain.CurrentDomain.GetAssemblies()
+                where CanLoadAssembly(asm)
+                from type in GetTypes(asm)
+                select type;
+        });
     }
 }
