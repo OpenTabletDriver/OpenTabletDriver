@@ -62,7 +62,7 @@ namespace OpenTabletDriver.UX.Controls
 
             var stackLayout = new StackLayout
             {
-                Orientation = Orientation.Vertical,
+                Orientation = Orientation.Horizontal,
                 Spacing = 5,
                 Items = 
                 {
@@ -119,11 +119,11 @@ namespace OpenTabletDriver.UX.Controls
 
             Content = new StackLayout
             {
-                Orientation = Orientation.Horizontal,
+                Orientation = Orientation.Vertical,
                 Items =
                 {
-                    new StackLayoutItem(scrollview, VerticalAlignment.Center),
-                    new StackLayoutItem(AreaDisplay, VerticalAlignment.Stretch, true)
+                    new StackLayoutItem(AreaDisplay, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(scrollview, HorizontalAlignment.Center)
                 }
             };
 
