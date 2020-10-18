@@ -37,7 +37,7 @@ namespace OpenTabletDriver
 
         private readonly Lazy<string> defaultAppDataDirectory = new Lazy<string>(() => 
         {
-            var path = Path.Join(Environment.CurrentDirectory, "userdata");
+            var path = Path.Join(ProgramDirectory, "userdata");
             var fallbackPath = SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
