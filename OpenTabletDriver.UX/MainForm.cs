@@ -511,7 +511,7 @@ namespace OpenTabletDriver.UX
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => SystemInfo.OpenFileDirectory(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (sender, e) => SystemInfo.Open(AppInfo.Current.PluginDirectory, true);
 
             var pluginsRepository = new Command { MenuText = "Open plugins repository..." };
             pluginsRepository.Executed += (sender, e) => SystemInfo.Open(App.PluginRepositoryUrl);
