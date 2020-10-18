@@ -9,53 +9,43 @@ namespace OpenTabletDriver
     {
         public static readonly AppInfo Current = new AppInfo();
 
-        private string _configDirectory, _appDataDirectory;
+        private string configDirectory, appDataDirectory;
         
         public string ConfigurationDirectory
         {
-            set => _configDirectory = value;
-            // get => _configDirectory ?? _defaultConfigurationDirectory.Value;
-            get
-            {
-                if (Directory.Exists(_configDirectory))
-                {
-                    return _configDirectory;
-                }
-                else if (Directory.Exists(_defaultConfigurationDirectory.Value))
-                {
-                    return _defaultConfigurationDirectory.Value;
-                }
-                else
-                {
-                    return Path.Join(
-                        Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
-                        "Configurations"
-                    );
-                }
-            }
+            set => this.configDirectory = value;
+            get => this.configDirectory ?? this.defaultConfigurationDirectory.Value;
         }
 
         public string AppDataDirectory
         {
-            set => _appDataDirectory = value;
-            get => _appDataDirectory ?? _defaultAppDataDirectory.Value;
+            set => this.appDataDirectory = value;
+            get => this.appDataDirectory ?? this.defaultAppDataDirectory.Value;
         }
 
         public string SettingsFile => Path.Join(AppDataDirectory, "settings.json");
         public string PluginDirectory => Path.Join(AppDataDirectory, "Plugins");
 
-        private static readonly Lazy<string> _defaultConfigurationDirectory = new Lazy<string>(() => 
-            Path.Join(Environment.CurrentDirectory, "Configurations"));
+        private static string ProgramDirectory => Assembly.GetEntryAssembly().Location;
 
-        private static readonly Lazy<string> _defaultAppDataDirectory = new Lazy<string>(() => 
+        private readonly Lazy<string> defaultConfigurationDirectory = new Lazy<string>(() => 
         {
-            return SystemInfo.CurrentPlatform switch
+            var path = Path.Join(Environment.CurrentDirectory, "Configurations");
+            var fallbackPath = Path.Join(ProgramDirectory, "Configurations");
+            return Directory.Exists(path) ? path : Directory.Exists(fallbackPath) ? fallbackPath : null;
+        });
+
+        private readonly Lazy<string> defaultAppDataDirectory = new Lazy<string>(() => 
+        {
+            var path = SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
                 RuntimePlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
                 RuntimePlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
                 _                       => null
             };
+            var fallbackPath = Path.Join(Environment.CurrentDirectory, "userdata");
+            return Directory.Exists(path) ? path : Directory.Exists(fallbackPath) ? fallbackPath : null;
         });
     }
 }
