@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Native
             }
         }
 
-        public static void Open(string path, bool alternative = false)
+        public static void Open(string path)
         {
             switch (CurrentPlatform)
             {
@@ -34,10 +34,7 @@ namespace OpenTabletDriver.Native
                     Process.Start(startInfo);
                     break;
                 case RuntimePlatform.Linux:
-                    if (alternative)
-                        Process.Start("dbus-send", $"--session --dest=org.freedesktop.FileManager1 --type=method_call /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowFolders array:string:\"file:{path}\" string:\"\"");
-                    else
-                        Process.Start("xdg-open", path);
+                    Process.Start("xdg-open", path);
                     break;
                 case RuntimePlatform.MacOS:
                 case RuntimePlatform.FreeBSD:
