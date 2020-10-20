@@ -12,6 +12,7 @@ using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Reflection;
 using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Tools;
 using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX
@@ -266,7 +267,8 @@ namespace OpenTabletDriver.UX
         {
             var control = new OutputModeSelector
             {
-                Width = 300
+                Width = 300,
+                ReadOnly = true
             };
             control.SelectedModeChanged += (sender, mode) =>
             {
@@ -318,7 +320,7 @@ namespace OpenTabletDriver.UX
 
         private Control ConstructSensitivityEditor(string header, Action<string> setValue, Func<string> getValue, string unit = null)
         {
-            var textbox = new TextBox();
+            var textbox = new NumberBox();
             this.SettingsChanged += (settings) =>
             {
                 textbox.TextBinding.Bind(getValue, setValue);
@@ -380,7 +382,7 @@ namespace OpenTabletDriver.UX
                     MinValue = 0,
                     MaxValue = 100
                 };
-                var tipPressureBox = new TextBox();
+                var tipPressureBox = new NumberBox();
 
                 tipPressureSlider.ValueChanged += (sender, e) => 
                 {

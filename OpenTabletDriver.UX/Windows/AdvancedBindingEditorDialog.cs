@@ -154,8 +154,14 @@ namespace OpenTabletDriver.UX.Windows
 
         private Control GetPropertySelector(ComboBox bindingSelector, Func<string> getValue, Action<string> setValue)
         {
-            var selector = new ComboBox();
-            var generic = new TextBox();
+            var selector = new ComboBox
+            {
+                ReadOnly = true
+            };
+            var generic = new TextBox
+            {
+                ReadOnly = true
+            };
             generic.TextBinding.Bind(getValue, setValue);
 
             var groupBox = new GroupBox

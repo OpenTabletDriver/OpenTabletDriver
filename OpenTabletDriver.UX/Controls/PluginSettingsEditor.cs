@@ -8,6 +8,7 @@ using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -186,33 +187,29 @@ namespace OpenTabletDriver.UX.Controls
             switch (attr)
             {
                 case BooleanPropertyAttribute boolAttr:
-                {
                     var checkBox = new CheckBox
                     {
                         Text = boolAttr.Description
                     };
                     checkBox.CheckedBinding.Convert(
                         (b) => b.Value.ToString(),
-                        (string str) => bool.TryParse(str, out var val) ? val : false)
+                        (string str) => bool.TryParse(str, out var val))
                         .Bind(getValue, setValue);
                     return checkBox;
-                }
+
                 case SliderPropertyAttribute sliderAttr:
-                {
-                    var tb = new TextBox
+                    var nb = new NumberBox
                     {
                         ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}",
                         PlaceholderText = $"{sliderAttr.DefaultValue}"
                     };
-                    tb.TextBinding.Bind(getValue, setValue);
-                    return tb;
-                }
+                    nb.TextBinding.Bind(getValue, setValue);
+                    return nb;
+
                 default:
-                {
                     var tb = new TextBox();
                     tb.TextBinding.Bind(getValue, setValue);
                     return tb;
-                }
             }
         }
 
@@ -221,13 +218,11 @@ namespace OpenTabletDriver.UX.Controls
             switch (attribute)
             {
                 case ToolTipAttribute toolTipAttr:
-                {
                     control.ToolTip = toolTipAttr.ToolTip;
                     return control;
-                }
+
                 // This might cause issues if this is done before another attribute.
                 case UnitAttribute unitAttr:
-                {
                     var label = new Label { Text = unitAttr.Unit };
                     var layout = new StackLayout
                     {
@@ -240,7 +235,23 @@ namespace OpenTabletDriver.UX.Controls
                         }
                     };
                     return layout;
-                }
+
+                case InputRestrictionAttribute inputAttr:
+                    if (control is TextBox textBox)
+                    {
+                        switch (inputAttr.Restriction)
+                        {
+                            case InputRestriction.Number:
+                                textBox.TextChanging += UXTools.RestrictToNumber;
+                                break;
+                            case InputRestriction.Custom:
+                                textBox.TextChanging += (_, args) => inputAttr.CustomRestrictor(args.Text);
+                                break;
+                        }
+                        return textBox;
+                    }
+                    return control;
+
                 default:
                     return control;
             }

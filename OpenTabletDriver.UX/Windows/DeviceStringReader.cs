@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -19,15 +20,15 @@ namespace OpenTabletDriver.UX.Windows
             };
             sendRequestButton.Click += SendRequestWithTimeout;
 
-            this.vendorIdText = new TextBox
+            this.vendorIdText = new NumberBox
             {
                 PlaceholderText = "Decimal Representation"
             };
-            this.productIdText = new TextBox
+            this.productIdText = new NumberBox
             {
                 PlaceholderText = "Decimal Representation"
             };
-            this.stringIndexText = new TextBox
+            this.stringIndexText = new NumberBox
             {
                 PlaceholderText = "[1..255]"
             };
@@ -37,22 +38,12 @@ namespace OpenTabletDriver.UX.Windows
                 ReadOnly = true
             };
 
-            static void restrictToNumbers(object sender, TextChangingEventArgs args)
-            {
-                if (!int.TryParse(args.NewText, out int result))
-                {
-                    args.Cancel = true;
-                }
-            }
-
             this.vendorIdCtrl = new GroupBox
             {
                 Text = "VendorID",
                 Padding = App.GroupBoxPadding,
                 Content = vendorIdText
             };
-
-            vendorIdText.TextChanging += restrictToNumbers;
 
             this.productIdCtrl = new GroupBox
             {
@@ -61,16 +52,12 @@ namespace OpenTabletDriver.UX.Windows
                 Content = productIdText
             };
 
-            productIdText.TextChanging += restrictToNumbers;
-
             this.stringIndexCtrl = new GroupBox
             {
                 Text = "String Index",
                 Padding = App.GroupBoxPadding,
                 Content = stringIndexText
             };
-
-            stringIndexText.TextChanging += restrictToNumbers;
 
             var deviceInfoInput = new TableLayout
             {

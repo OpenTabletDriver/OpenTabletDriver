@@ -4,6 +4,7 @@ using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -30,31 +31,31 @@ namespace OpenTabletDriver.UX.Controls
                 return !string.IsNullOrWhiteSpace(s) ? (float.TryParse(s, out var v) ? v : 1) : 0;
             }
 
-            widthBox = new TextBox();
+            widthBox = new NumberBox();
             widthBox.TextBinding.Convert(
                 s => parseFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Width));
             
-            heightBox = new TextBox();
+            heightBox = new NumberBox();
             heightBox.TextBinding.Convert(
                 s => parseFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Height));
             
-            xOffsetBox = new TextBox();
+            xOffsetBox = new NumberBox();
             xOffsetBox.TextBinding.Convert(
                 s => parseFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.X));
             
-            yOffsetBox = new TextBox();
+            yOffsetBox = new NumberBox();
             yOffsetBox.TextBinding.Convert(
                 s => parseFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Y));
 
-            rotationBox = new TextBox();
+            rotationBox = new NumberBox();
             rotationBox.TextBinding.Convert(
                 s => parseFloat(s),
                 v => $"{v}"
