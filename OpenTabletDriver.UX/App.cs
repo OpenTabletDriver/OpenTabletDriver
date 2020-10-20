@@ -11,6 +11,7 @@ namespace OpenTabletDriver.UX
     public static class App
     {
         public const string PluginRepositoryUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Plugin-Repository";
+        public const string FaqUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki#frequently-asked-questions";
 
         public static RpcClient<IDriverDaemon> Driver => _daemon.Value;
         public static Bitmap Logo => _logo.Value;

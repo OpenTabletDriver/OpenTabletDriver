@@ -513,6 +513,15 @@ namespace OpenTabletDriver.UX
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
+            var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
+            pluginsDirectory.Executed += (sender, e) => SystemInfo.Open(AppInfo.Current.PluginDirectory);
+
+            var pluginsRepository = new Command { MenuText = "Open plugins repository..." };
+            pluginsRepository.Executed += (sender, e) => SystemInfo.Open(App.PluginRepositoryUrl);
+
+            var faqUrl = new Command { MenuText = "Open FAQ Page..." };
+            faqUrl.Executed += (sender, e) => SystemInfo.Open(App.FaqUrl);
+
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
 
@@ -545,11 +554,22 @@ namespace OpenTabletDriver.UX
                             configurationEditor
                         }
                     },
+                    // Plugins submenu
+                    new ButtonMenuItem
+                    {
+                        Text = "Plugins",
+                        Items =
+                        {
+                            pluginsDirectory,
+                            pluginsRepository
+                        }
+                    },
                     new ButtonMenuItem
                     {
                         Text = "&Help",
                         Items =
                         {
+                            faqUrl,
                             exportDiagnostics
                         }
                     }
