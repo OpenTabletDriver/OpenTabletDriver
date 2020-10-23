@@ -83,7 +83,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     new StackLayoutItem(deviceInfoInput, HorizontalAlignment.Stretch, true),
                     new StackLayoutItem(stringIndexCtrl, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(sendRequestButton, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(sendRequestButton, HorizontalAlignment.Stretch, false),
                     new StackLayoutItem(),
                     new StackLayoutItem(deviceStringText, HorizontalAlignment.Stretch, true)
                 }
@@ -92,7 +92,10 @@ namespace OpenTabletDriver.UX.Windows
 
         private async void SendRequestWithTimeout(object sender, EventArgs args)
         {
-            var request = Task.Run(SendRequest);
+            var strIndex = stringIndexText.Text;
+            var strVid = vendorIdText.Text;
+            var strPid = productIdText.Text;
+            var request = Task.Run(() => SendRequest(strIndex, strVid, strPid));
             var timeout = Task.Delay(TimeSpan.FromSeconds(5));
             var completed = await Task.WhenAny(request, timeout);
             if (completed == timeout)
@@ -113,12 +116,12 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        private Task<string> SendRequest()
+        private Task<string> SendRequest(string strIndex, string strVid, string strPid)
         {
-            if (int.TryParse(stringIndexText.Text, out var index))
+            if (int.TryParse(strIndex, out var index))
             {
-                if (int.TryParse(vendorIdText.Text, out var vid) &&
-                    int.TryParse(productIdText.Text, out var pid))
+                if (int.TryParse(strVid, out var vid) &&
+                    int.TryParse(strPid, out var pid))
                 {
                     return App.Driver.Instance.RequestDeviceString(vid, pid, index);
                 }
