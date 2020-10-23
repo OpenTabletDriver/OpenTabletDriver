@@ -21,7 +21,7 @@ namespace OpenTabletDriver
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping;
-        private string _outputMode, _tipButton;
+        private string _outputMode, _tipButton, _wheelPos, _wheelNeg;
 
         private ObservableCollection<string> _filters = new ObservableCollection<string>(), 
             _penButtons = new ObservableCollection<string>(),
@@ -222,6 +222,20 @@ namespace OpenTabletDriver
         {
             set => this.RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;
+        }
+
+        [JsonProperty("WheelPos")]
+        public string WheelPos
+        {
+            set => this.RaiseAndSetIfChanged(ref _wheelPos, value);
+            get => _wheelPos;
+        }
+
+        [JsonProperty("WheelNeg")]
+        public string WheelNeg
+        {
+            set => this.RaiseAndSetIfChanged(ref _wheelNeg, value);
+            get => _wheelNeg;
         }
 
         [JsonProperty("PluginSettings")]

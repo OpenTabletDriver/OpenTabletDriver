@@ -441,6 +441,41 @@ namespace OpenTabletDriver.UX
                 }
                 layout.Items.Add(new StackLayoutItem(penBindingLayout, true));
 
+                // Wheel Bindings
+                var wheelBindingLayout = new StackLayout
+                {
+                    Spacing = 5
+                };
+                {
+                    var wheelBindingControl = new BindingDisplay(Settings.WheelPos);
+                    wheelBindingControl.BindingUpdated += (sender, binding) =>
+                    {
+                        Settings.WheelPos = binding.ToString();
+                    };
+                    var wheelBindingGroup = new GroupBox
+                    {
+                        Text = "Wheel Positive",
+                        Padding = App.GroupBoxPadding,
+                        Content = wheelBindingControl
+                    };
+                    wheelBindingLayout.Items.Add(new StackLayoutItem(wheelBindingGroup, HorizontalAlignment.Stretch, true));
+                }
+                {
+                    var wheelBindingControl = new BindingDisplay(Settings.WheelNeg);
+                    wheelBindingControl.BindingUpdated += (sender, binding) =>
+                    {
+                        Settings.WheelNeg = binding.ToString();
+                    };
+                    var wheelBindingGroup = new GroupBox
+                    {
+                        Text = "Wheel Negative",
+                        Padding = App.GroupBoxPadding,
+                        Content = wheelBindingControl
+                    };
+                    wheelBindingLayout.Items.Add(new StackLayoutItem(wheelBindingGroup, HorizontalAlignment.Stretch, true));
+                }
+                layout.Items.Add(new StackLayoutItem(wheelBindingLayout, true));
+
                 // Aux Bindings
                 var auxBindingLayout = new StackLayout
                 {

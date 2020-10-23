@@ -22,9 +22,11 @@ namespace OpenTabletDriver.Vendors.XP_Pen
                     ButtonInt == 32
                 };
             }
+            AuxWheel = 0;
         }
 
         public bool[] AuxButtons { private set; get; }
         public byte[] Raw { private set; get; }
+        public int AuxWheel { private set; get; }
     }
 }

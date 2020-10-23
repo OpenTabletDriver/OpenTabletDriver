@@ -256,6 +256,10 @@ namespace OpenTabletDriver.Daemon
 
                 Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
             }
+
+            bindingHandler.AuxWheelBindings[1] = BindingTools.GetBinding(Settings.WheelPos);
+            bindingHandler.AuxWheelBindings[-1] = BindingTools.GetBinding(Settings.WheelNeg);
+            Log.Write("Settings", $"Wheel Bindings: " + string.Join(", ", bindingHandler.AuxWheelBindings));
         }
 
         private void SetToolSettings()

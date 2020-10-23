@@ -14,5 +14,6 @@ namespace OpenTabletDriver.Debugging
         }
 
         public bool[] AuxButtons { set; get; }
+        public int AuxWheel { private set; get; }
     }
 }

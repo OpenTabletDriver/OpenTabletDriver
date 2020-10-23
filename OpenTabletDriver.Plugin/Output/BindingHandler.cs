@@ -13,8 +13,10 @@ namespace OpenTabletDriver.Plugin.Output
         public IBinding TipBinding { set; get; } = null;
         public Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
         public Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
+        public Dictionary<int, IBinding> AuxWheelBindings { set; get; } = new Dictionary<int, IBinding>();
 
         private bool TipState = false;
+        private int WheelState = 0;
         private IList<bool> PenButtonStates = new bool[2];
         private IList<bool> AuxButtonStates = new bool[6];
 
@@ -64,6 +66,27 @@ namespace OpenTabletDriver.Plugin.Output
                         binding.Release();
                 }
                 AuxButtonStates[auxButton] = report.AuxButtons[auxButton];
+            }
+
+            if (report.AuxWheel != WheelState)
+            {
+                if (WheelState == 0 || report.AuxWheel == 0)
+                    WheelState = report.AuxWheel;
+                else
+                {
+                    int change = report.AuxWheel - WheelState;
+                    WheelState = report.AuxWheel;
+
+                    if (change > 1) change = -1;
+                    if (change < -1) change = 1;
+
+                    if (AuxWheelBindings.TryGetValue(change, out var binding) && binding != null)
+                    {
+                        binding.Press();
+                        //System.Threading.Thread.Sleep(10);
+                        binding.Release();
+                    }
+                }
             }
         }
     }
