@@ -10,7 +10,6 @@ namespace OpenTabletDriver.Plugin.Tablet
         Dictionary<int, T> AuxButtonBindings { set; get; }
         Dictionary<int, T> AuxWheelBindings { set; get; }
 
-
         void HandleBinding(IDeviceReport report);
     }
 }

@@ -25,7 +25,10 @@ namespace OpenTabletDriver.Plugin.Output
             if (report is ITabletReport tabletReport && Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 HandlePenBinding(tabletReport);
             if (report is IAuxReport auxReport)
+            {
                 HandleAuxBinding(auxReport);
+                HandleWheel(auxReport);
+            }
         }
 
         private void HandlePenBinding(ITabletReport report)
@@ -67,7 +70,10 @@ namespace OpenTabletDriver.Plugin.Output
                 }
                 AuxButtonStates[auxButton] = report.AuxButtons[auxButton];
             }
+        }
 
+        private void HandleWheel(IAuxReport report)
+        {
             if (report.AuxWheel != WheelState)
             {
                 if (WheelState == 0 || report.AuxWheel == 0)
@@ -83,7 +89,6 @@ namespace OpenTabletDriver.Plugin.Output
                     if (AuxWheelBindings.TryGetValue(change, out var binding) && binding != null)
                     {
                         binding.Press();
-                        //System.Threading.Thread.Sleep(10);
                         binding.Release();
                     }
                 }
