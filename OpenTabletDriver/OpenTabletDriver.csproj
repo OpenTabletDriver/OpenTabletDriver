@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="HidSharpCore" Version="1.1.0" />
-    <PackageReference Include="StreamJsonRpc" Version="2.5.46" />
+    <PackageReference Include="StreamJsonRpc" Version="2.6.121" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="WaylandNET" Version="0.2.0" />
   </ItemGroup>
