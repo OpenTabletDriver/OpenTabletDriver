@@ -54,6 +54,7 @@ namespace OpenTabletDriver.Console
             yield return CreateCommand<int>(SetResetTime, "Sets the reset time in milliseconds");
             yield return CreateCommand<bool>(SetAutoHook, "Sets whether the driver should automatically enable on start");
             yield return CreateCommand<bool>(SetEnableClipping, "Sets whether inputs should be limited to the specified areas");
+            yield return CreateCommand<bool>(SetIgnoreOutsideArea, "Sets whether inputs outside of the area should be ignored");
             yield return CreateCommand<bool>(SetLockAspectRatio, "Sets whether to lock tablet width/height to display width/height ratio");
         }
 

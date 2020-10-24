@@ -211,6 +211,12 @@ namespace OpenTabletDriver.UX
                 areaClipping.Checked = settings.EnableClipping;
             };
 
+            var ignoreOutsideArea = tabletAreaEditor.AppendCheckBoxMenuItem("Ignore reports outside area", (value) => Settings.EnableIgnoreOutsideArea = value);
+            this.SettingsChanged += (settings) =>
+            {
+                ignoreOutsideArea.Checked = settings.EnableIgnoreOutsideArea;
+            };
+
             var tabletAreaGroup = new GroupBox
             {
                 Text = "Tablet Area",
