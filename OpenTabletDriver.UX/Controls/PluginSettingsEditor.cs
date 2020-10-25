@@ -130,13 +130,13 @@ namespace OpenTabletDriver.UX.Controls
                     SetPluginEnabled(false);
                     break;
                 }
-                
+
                 var path = type.FullName + "." + property.Name;
                 var control = GetControl(
                     property,
                     propertyAttr,
                     () => App.Settings.PluginSettings.TryGetValue(path, out var val) ? val : string.Empty,
-                    (value) => 
+                    (value) =>
                     {
                         if (!App.Settings.PluginSettings.TryAdd(path, value))
                             App.Settings.PluginSettings[path] = value;
@@ -153,16 +153,16 @@ namespace OpenTabletDriver.UX.Controls
                     Padding = App.GroupBoxPadding
                 };
             }
-            
+
             var staticMethods = from method in type.GetMethods()
-                where method.IsStatic
-                select method;
-            
+                                where method.IsStatic
+                                select method;
+
             foreach (var method in staticMethods)
             {
                 var attributes = from attr in method.GetCustomAttributes(false)
-                    where attr is ActionAttribute
-                    select attr;
+                                 where attr is ActionAttribute
+                                 select attr;
 
                 foreach (ActionAttribute attr in attributes)
                 {
@@ -186,33 +186,33 @@ namespace OpenTabletDriver.UX.Controls
             switch (attr)
             {
                 case BooleanPropertyAttribute boolAttr:
-                {
-                    var checkBox = new CheckBox
                     {
-                        Text = boolAttr.Description
-                    };
-                    checkBox.CheckedBinding.Convert(
-                        (b) => b.Value.ToString(),
-                        (string str) => bool.TryParse(str, out var val) ? val : false)
-                        .Bind(getValue, setValue);
-                    return checkBox;
-                }
+                        var checkBox = new CheckBox
+                        {
+                            Text = boolAttr.Description
+                        };
+                        checkBox.CheckedBinding.Convert(
+                            (b) => b.Value.ToString(),
+                            (string str) => bool.TryParse(str, out var val) ? val : false)
+                            .Bind(getValue, setValue);
+                        return checkBox;
+                    }
                 case SliderPropertyAttribute sliderAttr:
-                {
-                    var tb = new TextBox
                     {
-                        ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}",
-                        PlaceholderText = $"{sliderAttr.DefaultValue}"
-                    };
-                    tb.TextBinding.Bind(getValue, setValue);
-                    return tb;
-                }
+                        var tb = new TextBox
+                        {
+                            ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}",
+                            PlaceholderText = $"{sliderAttr.DefaultValue}"
+                        };
+                        tb.TextBinding.Bind(getValue, setValue);
+                        return tb;
+                    }
                 default:
-                {
-                    var tb = new TextBox();
-                    tb.TextBinding.Bind(getValue, setValue);
-                    return tb;
-                }
+                    {
+                        var tb = new TextBox();
+                        tb.TextBinding.Bind(getValue, setValue);
+                        return tb;
+                    }
             }
         }
 
@@ -221,26 +221,26 @@ namespace OpenTabletDriver.UX.Controls
             switch (attribute)
             {
                 case ToolTipAttribute toolTipAttr:
-                {
-                    control.ToolTip = toolTipAttr.ToolTip;
-                    return control;
-                }
+                    {
+                        control.ToolTip = toolTipAttr.ToolTip;
+                        return control;
+                    }
                 // This might cause issues if this is done before another attribute.
                 case UnitAttribute unitAttr:
-                {
-                    var label = new Label { Text = unitAttr.Unit };
-                    var layout = new StackLayout
                     {
-                        Orientation = Orientation.Horizontal,
-                        Spacing = 5,
-                        Items =
+                        var label = new Label { Text = unitAttr.Unit };
+                        var layout = new StackLayout
+                        {
+                            Orientation = Orientation.Horizontal,
+                            Spacing = 5,
+                            Items =
                         {
                             new StackLayoutItem(control, true),
                             new StackLayoutItem(label, VerticalAlignment.Center)
                         }
-                    };
-                    return layout;
-                }
+                        };
+                        return layout;
+                    }
                 default:
                     return control;
             }

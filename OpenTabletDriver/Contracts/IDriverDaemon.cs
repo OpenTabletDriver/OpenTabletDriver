@@ -13,24 +13,30 @@ namespace OpenTabletDriver.Contracts
         event EventHandler<DebugTabletReport> TabletReport;
         event EventHandler<DebugAuxReport> AuxReport;
         event EventHandler<TabletStatus> TabletChanged;
-        
+
         Task WriteMessage(LogMessage message);
 
         Task<bool> SetTablet(TabletConfiguration tablet);
         Task<TabletStatus> GetTablet();
-        
+
         Task<TabletStatus> DetectTablets();
+
+        Task SetProfiles(Profiles profiles);
+        Task<Profiles> GetProfiles();
+
+        Task SetConfig(Config config);
+        Task<Config> GetConfig();
 
         Task SetSettings(Settings settings);
         Task<Settings> GetSettings();
 
         Task<AppInfo> GetApplicationInfo();
-        
+
         Task<bool> LoadPlugins();
         Task<bool> ImportPlugin(string pluginPath);
 
         Task EnableInput(bool isHooked);
-        
+
         Task SetTabletDebug(bool isEnabled);
         Task<string> RequestDeviceString(int index);
         Task<string> RequestDeviceString(int vendorID, int productID, int index);

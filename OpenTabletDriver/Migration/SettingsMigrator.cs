@@ -8,11 +8,11 @@ namespace OpenTabletDriver.Migration
         {
             // Output mode
             settings.OutputMode = MigrateNamespace(settings.OutputMode);
-            
+
             // Bindings
             settings.TipButton = MigrateNamespace(settings.TipButton);
 
-            while(settings.PenButtons.Count < Settings.PenButtonCount)
+            while (settings.PenButtons.Count < Settings.PenButtonCount)
                 settings.PenButtons.Add(null);
             for (int i = 0; i < settings.PenButtons.Count; i++)
                 settings.PenButtons[i] = MigrateNamespace(settings.PenButtons[i]);
@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Migration
         {
             if (input == null)
                 return null;
-            
+
             var match = TabletDriverLibRegex.Match(input);
             return match.Success ? $"{nameof(OpenTabletDriver)}.{match.Groups[1]}" : input;
         }

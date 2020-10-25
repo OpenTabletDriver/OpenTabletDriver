@@ -284,7 +284,7 @@ namespace OpenTabletDriver.UX
         private Control ConstructSensitivityControls()
         {
             var xSensBox = ConstructSensitivityEditor(
-                "X Sensitivity", 
+                "X Sensitivity",
                 (s) => App.Settings.XSensitivity = float.TryParse(s, out var val) ? val : 0f,
                 () => App.Settings.XSensitivity.ToString(),
                 "px/mm"
@@ -295,7 +295,7 @@ namespace OpenTabletDriver.UX
                 () => App.Settings.YSensitivity.ToString(),
                 "px/mm"
             );
-            
+
             var resetTimeBox = ConstructSensitivityEditor(
                 "Reset Time",
                 (s) => App.Settings.ResetTime = TimeSpan.TryParse(s, out var val) ? val : TimeSpan.FromMilliseconds(100),
@@ -330,12 +330,12 @@ namespace OpenTabletDriver.UX
             {
                 var unitControl = new Label
                 {
-                    Text = unit, 
+                    Text = unit,
                     VerticalAlignment = VerticalAlignment.Center
                 };
                 layout.Rows[0].Cells.Add(unitControl);
             }
-            
+
             return new GroupBox
             {
                 Text = header,
@@ -363,7 +363,7 @@ namespace OpenTabletDriver.UX
                 {
                     Spacing = 5
                 };
-                
+
                 var tipBindingControl = new BindingDisplay(Settings.TipButton);
                 tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding.ToString();
 
@@ -382,7 +382,7 @@ namespace OpenTabletDriver.UX
                 };
                 var tipPressureBox = new TextBox();
 
-                tipPressureSlider.ValueChanged += (sender, e) => 
+                tipPressureSlider.ValueChanged += (sender, e) =>
                 {
                     settings.TipActivationPressure = tipPressureSlider.Value;
                     tipPressureBox.Text = Settings.TipActivationPressure.ToString();
@@ -395,11 +395,11 @@ namespace OpenTabletDriver.UX
                     tipPressureSlider.Value = (int)Settings.TipActivationPressure;
                 };
                 tipPressureBox.Text = Settings.TipActivationPressure.ToString();
-                
+
                 var tipPressureLayout = new StackLayout
                 {
                     Orientation = Orientation.Horizontal,
-                    Items = 
+                    Items =
                     {
                         new StackLayoutItem(tipPressureSlider, VerticalAlignment.Center, true),
                         new StackLayoutItem(tipPressureBox, VerticalAlignment.Center, false)
@@ -588,7 +588,7 @@ namespace OpenTabletDriver.UX
             this.Padding = SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.MacOS => new Padding(10),
-                _                     => new Padding(0)
+                _ => new Padding(0)
             };
 
             this.ClientSize = SystemInfo.CurrentPlatform switch
@@ -600,15 +600,15 @@ namespace OpenTabletDriver.UX
             bool enableTrayIcon = SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => true,
-                RuntimePlatform.MacOS   => true,
-                _                       => false
+                RuntimePlatform.MacOS => true,
+                _ => false
             };
 
             bool enableDaemonWatchdog = SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => true,
-                RuntimePlatform.MacOS   => true,
-                _                       => false,
+                RuntimePlatform.MacOS => true,
+                _ => false,
             };
 
             if (enableTrayIcon)
@@ -638,7 +638,7 @@ namespace OpenTabletDriver.UX
                 {
                     var watchdog = new DaemonWatchdog();
                     watchdog.Start();
-                    watchdog.DaemonExited += (sender, e) => 
+                    watchdog.DaemonExited += (sender, e) =>
                     {
                         var dialogResult = MessageBox.Show(
                             this,
@@ -697,16 +697,54 @@ namespace OpenTabletDriver.UX
             }
             App.Driver.Instance.TabletChanged += (sender, tablet) => SetTabletAreaDimensions(tablet);
 
-            var settingsFile = new FileInfo(appInfo.SettingsFile);
+            var configfile = new FileInfo(appInfo.ConfigFile);
+            if (await App.Driver.Instance.GetConfig() is Config config)
+            {
+                Config = config;
+            }
+            else if (configfile.Exists)
+            {
+                try
+                {
+                    Config = Config.Deserialize(configfile);
+                    await App.Driver.Instance.SetConfig(Config);
+                }
+                catch
+                {
+                    MessageBox.Show("Failed to load your current config. They are either out of date or corrupted.", MessageBoxType.Error);
+                    await ResetConfig();
+                }
+            }
+
+            var profilesDir = new FileInfo(appInfo.ProfileDirectory);
+            if (await App.Driver.Instance.GetProfiles() is Profiles profiles)
+            {
+                Profiles = profiles;
+            }
+            else if (profilesDir.Exists)
+            {
+                try
+                {
+                    Profiles = new Profiles();
+                    Profiles.Load(profilesDir.FullName);
+                    await App.Driver.Instance.SetProfiles(Profiles);
+                }
+                catch
+                {
+                    MessageBox.Show("Failed to load your current settings. They are either out of date or corrupted.", MessageBoxType.Error);
+                    await ResetProfiles();
+                }
+            }
+
             if (await App.Driver.Instance.GetSettings() is Settings settings)
             {
                 Settings = settings;
             }
-            else if (settingsFile.Exists)
+            else if (Profiles.GetProfile(Config.CurrentProfile).Settings != null)
             {
                 try
                 {
-                    Settings = Settings.Deserialize(settingsFile);
+                    Settings = Profiles.GetProfile(Config.CurrentProfile).Settings;
                     await App.Driver.Instance.SetSettings(Settings);
                 }
                 catch
@@ -721,8 +759,8 @@ namespace OpenTabletDriver.UX
             }
 
             displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays
-                where !(disp is IVirtualScreen)
-                select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
+                                                     where !(disp is IVirtualScreen)
+                                                     select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
 
         private Control absoluteConfig, relativeConfig, nullConfig;
@@ -731,6 +769,8 @@ namespace OpenTabletDriver.UX
         private PluginSettingsEditor<IFilter> filterEditor;
         private PluginSettingsEditor<ITool> toolEditor;
 
+        public event Action<Config> ConfigChanged;
+        public event Action<Profiles> ProfilesChanged;
         public event Action<Settings> SettingsChanged;
         public Settings Settings
         {
@@ -740,6 +780,24 @@ namespace OpenTabletDriver.UX
                 SettingsChanged?.Invoke(Settings);
             }
             get => App.Settings;
+        }
+        public Config Config
+        {
+            set
+            {
+                App.Config = value;
+                ConfigChanged?.Invoke(Config);
+            }
+            get => App.Config;
+        }
+        public Profiles Profiles
+        {
+            set
+            {
+                App.Profiles = value;
+                ProfilesChanged?.Invoke(Profiles);
+            }
+            get => App.Profiles;
         }
 
         private async Task ResetSettings(bool force = true)
@@ -759,6 +817,24 @@ namespace OpenTabletDriver.UX
             Settings.TabletX = tablet?.TabletIdentifier?.Width / 2 ?? 0;
             Settings.TabletY = tablet?.TabletIdentifier?.Height / 2 ?? 0;
             await App.Driver.Instance.SetSettings(Settings);
+        }
+
+        private async Task ResetConfig(bool force = true)
+        {
+            if (!force && MessageBox.Show("Reset config to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
+                return;
+
+            Config = OpenTabletDriver.Config.Defaults;
+            await App.Driver.Instance.SetConfig(Config);
+        }
+
+        private async Task ResetProfiles(bool force = true)
+        {
+            if (!force && MessageBox.Show("Reset profiles to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
+                return;
+
+            Profiles.Default();
+            await App.Driver.Instance.SetProfiles(Profiles);
         }
 
         private async Task LoadSettingsDialog()
@@ -811,10 +887,9 @@ namespace OpenTabletDriver.UX
 
         private async Task SaveSettings()
         {
-            var appInfo = await App.Driver.Instance.GetApplicationInfo();
-            if (Settings is Settings settings)
+            if (Profiles is Profiles profiles)
             {
-                settings.Serialize(new FileInfo(appInfo.SettingsFile));
+                Profiles.GetProfile(Config.CurrentProfile).Save();
                 await ApplySettings();
             }
         }
@@ -929,7 +1004,7 @@ namespace OpenTabletDriver.UX
                             outputConfig.Items.Remove(item);
                         }
                     }
-                    
+
                     setVisibilityWorkaround(absoluteConfig, showAbsolute, 0);
                     setVisibilityWorkaround(relativeConfig, showRelative, 1);
                     setVisibilityWorkaround(nullConfig, showNull, 2);

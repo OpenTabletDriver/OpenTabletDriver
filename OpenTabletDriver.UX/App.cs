@@ -17,6 +17,8 @@ namespace OpenTabletDriver.UX
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
         public static Settings Settings { set; get; }
+        public static Config Config { set; get; }
+        public static Profiles Profiles { set; get; }
 
         public static AboutDialog AboutDialog => new AboutDialog
         {
@@ -34,23 +36,23 @@ namespace OpenTabletDriver.UX
             Logo = Logo.WithSize(256, 256)
         };
 
-        private static readonly Lazy<RpcClient<IDriverDaemon>> _daemon = new Lazy<RpcClient<IDriverDaemon>>(() => 
+        private static readonly Lazy<RpcClient<IDriverDaemon>> _daemon = new Lazy<RpcClient<IDriverDaemon>>(() =>
         {
             return new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         });
 
-        private static readonly Lazy<Bitmap> _logo = new Lazy<Bitmap>(() => 
+        private static readonly Lazy<Bitmap> _logo = new Lazy<Bitmap>(() =>
         {
             var dataStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png");
             return new Bitmap(dataStream);
         });
 
-        private static readonly Lazy<Padding> _groupBoxPadding = new Lazy<Padding>(() => 
+        private static readonly Lazy<Padding> _groupBoxPadding = new Lazy<Padding>(() =>
         {
             return SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => new Padding(0),
-                _                       => new Padding(5)
+                _ => new Padding(5)
             };
         });
     }

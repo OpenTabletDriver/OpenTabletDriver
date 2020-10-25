@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OpenTabletDriver.Daemon": {
+      "commandName": "Project",
+      "commandLineArgs": "-c D:\\Programing\\OTD\\OpenTabletDriver\\OpenTabletDriver\\Configurations"
+    }
+  }
+}

@@ -28,14 +28,14 @@ namespace OpenTabletDriver.Daemon
             Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
             Log.Output += (sender, message) => Message?.Invoke(sender, message);
             Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
-            
+
             LoadUserSettings();
 
-            HidSharp.DeviceList.Local.Changed += async (sender, e) => 
+            HidSharp.DeviceList.Local.Changed += async (sender, e) =>
             {
                 var newDevices = from device in DeviceList.Local.GetHidDevices()
-                    where !CurrentDevices.Any(d => d == device)
-                    select device;
+                                 where !CurrentDevices.Any(d => d == device)
+                                 select device;
 
                 if (newDevices.Count() > 0)
                 {
@@ -58,10 +58,18 @@ namespace OpenTabletDriver.Daemon
                 Log.Write("Settings", $"Created OpenTabletDriver application data directory: {appdataDir.FullName}");
             }
 
-            var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
-            if (Settings == null && settingsFile.Exists)
+            var profilesDir = new DirectoryInfo(AppInfo.Current.ProfileDirectory);
+            if (Profiles == null && profilesDir.Exists)
             {
-                var settings = Settings.Deserialize(settingsFile);
+                Profiles = new Profiles();
+                Profiles.Load(profilesDir.FullName);
+            }
+
+            var configFile = new FileInfo(AppInfo.Current.ConfigFile);
+            if (Config == null && configFile.Exists)
+            {
+                var config = Config.Deserialize(configFile);
+                var settings = Profiles.GetProfile(config.CurrentProfile).Settings;
                 await SetSettings(settings);
             }
         }
@@ -72,6 +80,8 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<TabletStatus> TabletChanged;
 
         public Driver Driver { private set; get; } = new Driver();
+        private Config Config { set; get; }
+        private Profiles Profiles { set; get; }
         private Settings Settings { set; get; }
         private List<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices().ToList();
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
@@ -125,10 +135,25 @@ namespace OpenTabletDriver.Daemon
             return null;
         }
 
+        public Task SetConfig(Config config)
+        {
+            Config = config;
+            SetProfiles(Profiles);
+            return Task.CompletedTask;
+        }
+
+        public Task SetProfiles(Profiles profiles)
+        {
+            Profiles = profiles;
+            var settings = Profiles.GetProfile(Config.CurrentProfile).Settings;
+            SetSettings(settings);
+            return Task.CompletedTask;
+        }
+
         public Task SetSettings(Settings settings)
         {
             Settings = SettingsMigrator.Migrate(settings);
-            
+
             Driver.OutputMode = new PluginReference(Settings.OutputMode).Construct<IOutputMode>();
 
             if (Driver.OutputMode != null)
@@ -138,7 +163,7 @@ namespace OpenTabletDriver.Daemon
 
             if (Driver.OutputMode is IOutputMode outputMode)
                 SetOutputModeSettings(outputMode);
-            
+
             if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
                 SetAbsoluteModeSettings(absoluteMode);
 
@@ -161,16 +186,16 @@ namespace OpenTabletDriver.Daemon
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
             outputMode.Filters = from filterPath in Settings?.Filters
-                let filter = new PluginReference(filterPath).Construct<IFilter>()
-                where filter != null
-                select filter;
+                                 let filter = new PluginReference(filterPath).Construct<IFilter>()
+                                 where filter != null
+                                 select filter;
 
             foreach (var filter in outputMode.Filters)
             {
                 foreach (var property in filter.GetType().GetProperties())
                 {
                     var settingPath = filter.GetType().FullName + "." + property.Name;
-                    if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
+                    if (property.GetCustomAttribute<PropertyAttribute>(false) != null &&
                         Settings.PluginSettings.TryGetValue(settingPath, out var strValue))
                     {
                         try
@@ -189,7 +214,7 @@ namespace OpenTabletDriver.Daemon
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
-            
+
             outputMode.Digitizer = Driver.TabletIdentifier;
         }
 
@@ -222,7 +247,7 @@ namespace OpenTabletDriver.Daemon
 
             absoluteMode.VirtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
 
-            absoluteMode.AreaClipping = Settings.EnableClipping;   
+            absoluteMode.AreaClipping = Settings.EnableClipping;
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
         }
 
@@ -264,16 +289,16 @@ namespace OpenTabletDriver.Daemon
             {
                 runningTool.Dispose();
             }
-            
+
             foreach (var toolName in Settings.Tools)
             {
                 var plugin = new PluginReference(toolName);
                 var type = plugin.GetTypeReference<ITool>();
-                
+
                 var tool = plugin.Construct<ITool>();
                 foreach (var property in type.GetProperties())
                 {
-                    if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
+                    if (property.GetCustomAttribute<PropertyAttribute>(false) != null &&
                         Settings.PluginSettings.TryGetValue(type.FullName + "." + property.Name, out var strValue))
                     {
                         var value = Convert.ChangeType(strValue, property.PropertyType);
@@ -291,6 +316,16 @@ namespace OpenTabletDriver.Daemon
         public Task<Settings> GetSettings()
         {
             return Task.FromResult(Settings);
+        }
+
+        public Task<Profiles> GetProfiles()
+        {
+            return Task.FromResult(Profiles);
+        }
+
+        public Task<Config> GetConfig()
+        {
+            return Task.FromResult(Config);
         }
 
         public Task<AppInfo> GetApplicationInfo()
