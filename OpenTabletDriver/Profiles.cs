@@ -11,13 +11,13 @@ using System.Xml.Linq;
 
 namespace OpenTabletDriver
 {
-    public class Profiles
+    public class Profiles: List<Profile>
     {
-        private List<Profile> ProfileList = new List<Profile>();
+        public Profiles() { }
 
-        public Profiles() {}
+        public static readonly Profiles Current = new Profiles();
             
-        public void Load(string ProfileDirectory)
+        public Profiles Load(string ProfileDirectory)
         {
             var profileDir = new DirectoryInfo(ProfileDirectory);
             if (profileDir.Exists)
@@ -25,21 +25,45 @@ namespace OpenTabletDriver
                 foreach (var profileFile in profileDir.EnumerateFiles("*.json", SearchOption.AllDirectories))
                 {
                     Log.Write("Profile", $"Loading profile: {profileFile.Name}", LogLevel.Info);
-                    ProfileList.Add( new Profile(profileFile));
+                    var profile = new Profile();
+                    Current.Add(profile.Load(profileFile));
                 }
             };
+            return Current;
         }
 
         public Profile GetProfile(string ProfileName)
         {
-            return ProfileList.Where(i => i.ProfileName == ProfileName).FirstOrDefault();
+            foreach (Profile profile in this)
+            {
+                if (profile.ProfileName == ProfileName)
+                {
+                    return profile;
+                }
+            }
+            return null;
         }
 
         public void Default()
         {
-            foreach (Profile profile in ProfileList)
+            if (Current.Count == 0)
+            {
+                var profile = new Profile();
+                profile.Settings = Settings.Defaults;
+                profile.ProfileName = "Default";
+                profile.ProfileFile = Path.Join(AppInfo.Current.ProfileDirectory, "Default.json");
+                Current.Add(profile);
+            };
+            foreach (Profile profile in Current)
             {
                 profile.Settings = Settings.Defaults;
+            }
+        }
+        public void Save()
+        {
+            foreach (Profile profile in Current)
+            {
+                profile.Save();
             }
         }
 
@@ -47,20 +71,23 @@ namespace OpenTabletDriver
 
     public class Profile : Notifier
     {
-        public Profile(FileInfo profileFile)
+        public Profile() { }
+            
+        public Profile Load(FileInfo profileFile)
         {
             ProfileName = Path.GetFileNameWithoutExtension(profileFile.Name);
             Settings = Settings.Deserialize(profileFile);
-            _profileFile = profileFile;
+            ProfileFile = profileFile.FullName;
+            return this;
         }
 
         private string _profileName;
-        private FileInfo _profileFile;
+        private string _profileFile;
         private Settings _settings;
 
         public void Save()
         {
-            Settings.Serialize(_profileFile);
+            Settings.Serialize(new FileInfo(_profileFile));
         }
 
 
@@ -72,8 +99,14 @@ namespace OpenTabletDriver
 
         public string ProfileName
         {
-            set => RaiseAndSetIfChanged(ref _profileName, value != "{Disable}" ? value : null);
+            set => RaiseAndSetIfChanged(ref _profileName, value != null ? value : "Default");
             get => _profileName;
+        }
+
+        public string ProfileFile
+        {
+            set => RaiseAndSetIfChanged(ref _profileFile, value != null ? value : "");
+            get => _profileFile;
         }
     }
 }

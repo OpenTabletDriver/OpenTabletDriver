@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -525,6 +527,7 @@ namespace OpenTabletDriver.UX
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
 
+
             return new MenuBar
             {
                 Items =
@@ -572,7 +575,7 @@ namespace OpenTabletDriver.UX
                             faqUrl,
                             exportDiagnostics
                         }
-                    }
+                    },
                 },
                 ApplicationItems =
                 {
@@ -716,25 +719,7 @@ namespace OpenTabletDriver.UX
                 }
             }
 
-            var profilesDir = new FileInfo(appInfo.ProfileDirectory);
-            if (await App.Driver.Instance.GetProfiles() is Profiles profiles)
-            {
-                Profiles = profiles;
-            }
-            else if (profilesDir.Exists)
-            {
-                try
-                {
-                    Profiles = new Profiles();
-                    Profiles.Load(profilesDir.FullName);
-                    await App.Driver.Instance.SetProfiles(Profiles);
-                }
-                catch
-                {
-                    MessageBox.Show("Failed to load your current settings. They are either out of date or corrupted.", MessageBoxType.Error);
-                    await ResetProfiles();
-                }
-            }
+            Profiles = await App.Driver.Instance.GetProfiles();
 
             if (await App.Driver.Instance.GetSettings() is Settings settings)
             {
@@ -887,9 +872,11 @@ namespace OpenTabletDriver.UX
 
         private async Task SaveSettings()
         {
-            if (Profiles is Profiles profiles)
+            if (Profiles.Current is Profiles profiles)
             {
-                Profiles.GetProfile(Config.CurrentProfile).Save();
+                var profile = Profiles.GetProfile(Config.CurrentProfile);
+                profile.Settings = Settings;
+                profile.Save();
                 await ApplySettings();
             }
         }

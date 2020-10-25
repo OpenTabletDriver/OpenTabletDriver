@@ -59,17 +59,37 @@ namespace OpenTabletDriver.Daemon
             }
 
             var profilesDir = new DirectoryInfo(AppInfo.Current.ProfileDirectory);
-            if (Profiles == null && profilesDir.Exists)
+            if (!profilesDir.Exists)
             {
-                Profiles = new Profiles();
-                Profiles.Load(profilesDir.FullName);
+                profilesDir.Create();
+                Log.Write("Profile", $"Created OpenTabletDriver profiles directory: {profilesDir.FullName}");
+                Profiles.Current.Default();
+                Profiles.Current.Save();
+            }
+            else
+            {
+                Profiles.Current.Load(profilesDir.FullName);
+            }
+
+            if (Profiles.Current.Count == 0)
+            {
+                Profiles.Current.Default();
+                Profiles.Current.Save();
             }
 
             var configFile = new FileInfo(AppInfo.Current.ConfigFile);
             if (Config == null && configFile.Exists)
             {
                 var config = Config.Deserialize(configFile);
-                var settings = Profiles.GetProfile(config.CurrentProfile).Settings;
+                var settings = Profiles.Current.GetProfile(config.CurrentProfile).Settings;
+                await SetSettings(settings);
+            }
+            else
+            {
+                Config = Config.Defaults;
+                Config.Serialize(configFile);
+                var config = Config.Deserialize(configFile);
+                var settings = Profiles.Current.GetProfile(config.CurrentProfile).Settings;
                 await SetSettings(settings);
             }
         }
@@ -138,14 +158,15 @@ namespace OpenTabletDriver.Daemon
         public Task SetConfig(Config config)
         {
             Config = config;
-            SetProfiles(Profiles);
+            SetProfiles(Profiles.Current);
             return Task.CompletedTask;
         }
 
         public Task SetProfiles(Profiles profiles)
         {
             Profiles = profiles;
-            var settings = Profiles.GetProfile(Config.CurrentProfile).Settings;
+            var profile = Profiles.Current.GetProfile(Config.CurrentProfile);
+            var settings = profile.Settings;
             SetSettings(settings);
             return Task.CompletedTask;
         }
@@ -320,7 +341,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<Profiles> GetProfiles()
         {
-            return Task.FromResult(Profiles);
+            return Task.FromResult(Profiles.Current);
         }
 
         public Task<Config> GetConfig()
