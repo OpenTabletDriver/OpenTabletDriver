@@ -11,12 +11,12 @@ using System.Xml.Linq;
 
 namespace OpenTabletDriver
 {
-    public class Profiles: List<Profile>
+    public class Profiles : List<Profile>
     {
         public Profiles() { }
 
         public static readonly Profiles Current = new Profiles();
-            
+
         public Profiles Load(string ProfileDirectory)
         {
             var profileDir = new DirectoryInfo(ProfileDirectory);
@@ -28,7 +28,7 @@ namespace OpenTabletDriver
                     var profile = new Profile();
                     Current.Add(profile.Load(profileFile));
                 }
-            };
+            }
             return Current;
         }
 
@@ -53,7 +53,7 @@ namespace OpenTabletDriver
                 profile.ProfileName = "Default";
                 profile.ProfileFile = Path.Join(AppInfo.Current.ProfileDirectory, "Default.json");
                 Current.Add(profile);
-            };
+            }
             foreach (Profile profile in Current)
             {
                 profile.Settings = Settings.Defaults;
@@ -65,48 +65,6 @@ namespace OpenTabletDriver
             {
                 profile.Save();
             }
-        }
-
-    }
-
-    public class Profile : Notifier
-    {
-        public Profile() { }
-            
-        public Profile Load(FileInfo profileFile)
-        {
-            ProfileName = Path.GetFileNameWithoutExtension(profileFile.Name);
-            Settings = Settings.Deserialize(profileFile);
-            ProfileFile = profileFile.FullName;
-            return this;
-        }
-
-        private string _profileName;
-        private string _profileFile;
-        private Settings _settings;
-
-        public void Save()
-        {
-            Settings.Serialize(new FileInfo(_profileFile));
-        }
-
-
-        public Settings Settings
-        {
-            set => RaiseAndSetIfChanged(ref _settings, value != null ? value : null);
-            get => _settings;
-        }
-
-        public string ProfileName
-        {
-            set => RaiseAndSetIfChanged(ref _profileName, value != null ? value : "Default");
-            get => _profileName;
-        }
-
-        public string ProfileFile
-        {
-            set => RaiseAndSetIfChanged(ref _profileFile, value != null ? value : "");
-            get => _profileFile;
         }
     }
 }
