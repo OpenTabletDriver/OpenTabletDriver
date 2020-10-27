@@ -23,6 +23,7 @@ namespace OpenTabletDriver
         {
             if (file.Extension == ".dll" && ImportAssembly(file.FullName) is Assembly asm)
             {
+                Log.Write("Plugin", $"Loading plugin: {file.Name}", LogLevel.Info);
                 foreach (var type in GetLoadableTypes(asm))
                     if (TypeIsSupported(type))
                         Types.Add(type.GetTypeInfo());
