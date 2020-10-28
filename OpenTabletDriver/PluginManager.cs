@@ -118,7 +118,19 @@ namespace OpenTabletDriver
 
         private static bool TypeImplementsPlugin(Type type)
         {
-            return pluginAsmTypes.Any(t => t.IsAssignableFrom(type));
+            if (pluginAsmTypes.Any(t => t.IsAssignableFrom(type)))
+            {
+                // Fast way to check if the type is in the assembly
+                return true;
+            }
+            else
+            {
+                // Check all interfaces for a generic
+                var genericTypes = from i in type.GetInterfaces()
+                    where i.GenericTypeArguments.Count() > 0
+                    select i.GetGenericTypeDefinition();
+                return genericTypes.Count() > 0 ? genericTypes.All(t => TypeImplementsPlugin(t)) : false;
+            }
         }
 
         private static bool CanLoadAssembly(Assembly asm)
