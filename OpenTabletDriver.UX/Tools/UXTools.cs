@@ -1,5 +1,4 @@
 using Eto.Forms;
-using System;
 using System.Text.RegularExpressions;
 
 namespace OpenTabletDriver.UX.Tools
