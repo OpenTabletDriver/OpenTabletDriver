@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HidSharp;
 using OpenTabletDriver.Binding;
@@ -276,6 +277,11 @@ namespace OpenTabletDriver.Daemon
                     if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
                         Settings.PluginSettings.TryGetValue(type.FullName + "." + property.Name, out var strValue))
                     {
+                        var hexAttr = property.GetCustomAttribute<InputRestrictionAttribute>(false);
+                        if (hexAttr != null && hexAttr.Restriction == RestrictionType.Hex)
+                        {
+                            strValue = Regex.Replace(strValue, "^0x", "");
+                        }
                         var value = Convert.ChangeType(strValue, property.PropertyType);
                         property.SetValue(tool, value);
                     }
