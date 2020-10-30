@@ -5,6 +5,11 @@ namespace OpenTabletDriver.Plugin.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public class InputRestrictionAttribute : ModifierAttribute
     {
+        public InputRestrictionAttribute(InputRestriction restriction)
+        {
+            Restriction = restriction;
+        }
+
         public InputRestrictionAttribute(InputRestriction restriction, Func<string, bool> customRestrictor)
         {
             Restriction = restriction;

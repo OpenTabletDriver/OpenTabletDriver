@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using Eto.Forms;
 
-namespace OpenTabletDriver.UX.Tools
+namespace OpenTabletDriver.UX.Controls
 {
     public class NumberBox : TextBox
     {
