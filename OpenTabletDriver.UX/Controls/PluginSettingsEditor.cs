@@ -8,7 +8,6 @@ using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
-using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Controls
 {

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.UX.Tools;
+using OpenTabletDriver.UX.Controls;
 
 namespace OpenTabletDriver.UX.Windows
 {
