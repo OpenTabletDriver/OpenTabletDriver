@@ -242,7 +242,7 @@ namespace OpenTabletDriver.UX.Controls
                         switch (inputAttr.Restriction)
                         {
                             case InputRestriction.Number:
-                                textBox.TextChanging += UXTools.RestrictToNumber;
+                                textBox.TextChanging += NumberBox.RestrictToNumber;
                                 break;
                             case InputRestriction.Custom:
                                 textBox.TextChanging += (_, args) =>
