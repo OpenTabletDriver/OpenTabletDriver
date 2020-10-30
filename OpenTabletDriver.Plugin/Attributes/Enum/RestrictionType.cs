@@ -1,8 +1,9 @@
 namespace OpenTabletDriver.Plugin.Attributes
 {
-    public enum InputRestriction
+    public enum RestrictionType
     {
         Number,
+        Hex,
         Custom
     }
 }

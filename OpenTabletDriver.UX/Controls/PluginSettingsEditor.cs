@@ -248,15 +248,21 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         switch (inputAttr.Restriction)
                         {
-                            case InputRestriction.Number:
-                                textBox.TextChanging += NumberBox.RestrictToNumber;
+                            case RestrictionType.Number:
+                            {
+                                textBox.TextChanging += (_, args) => args.Cancel = NumberBox.StaticRestrictor(args.NewText);
                                 break;
-                            case InputRestriction.Custom:
-                                textBox.TextChanging += (_, args) =>
-                                {
-                                    args.Cancel = inputAttr.CustomRestrictor(args.NewText);
-                                };
+                            }
+                            case RestrictionType.Hex:
+                            {
+                                textBox.TextChanging += (_, args) => args.Cancel = HexBox.StaticRestrictor(args.NewText);
                                 break;
+                            }
+                            case RestrictionType.Custom:
+                            {
+                                textBox.TextChanging += (_, args) => args.Cancel = inputAttr.CustomRestrictor(args.NewText);
+                                break;
+                            }
                         }
                         return textBox;
                     }

@@ -1,18 +1,12 @@
 using System.Text.RegularExpressions;
-using Eto.Forms;
+using OpenTabletDriver.UX.Controls;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Tools
 {
-    public class NumberBox : TextBox
+    public class NumberBox : RestrictedTextBox<double>
     {
-        public NumberBox()
-        {
-            TextChanging += RestrictToNumber;
-        }
-
-        public static void RestrictToNumber(object _, TextChangingEventArgs args)
-        {
-            args.Cancel = !Regex.IsMatch(args.NewText, "^-*[0-9]*[\\.,]*[0-9]*$");
-        }
+        public override double Value => double.TryParse(this.Text, out var val) ? val : 0;
+        public override bool Restrictor(string str) => StaticRestrictor(str);
+        public static bool StaticRestrictor(string str) => !Regex.IsMatch(str, "^-*[0-9]*[\\.,]*[0-9]*$");
     }
 }
