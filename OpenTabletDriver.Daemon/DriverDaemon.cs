@@ -277,7 +277,7 @@ namespace OpenTabletDriver.Daemon
                     if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
                         Settings.PluginSettings.TryGetValue(type.FullName + "." + property.Name, out var strValue))
                     {
-                        dynamic value;
+                        object value;
                         var hexAttr = property.GetCustomAttribute<InputRestrictionAttribute>(false);
                         if (hexAttr != null && hexAttr.Restriction == RestrictionType.Hex)
                         {
