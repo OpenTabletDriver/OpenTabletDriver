@@ -12,9 +12,9 @@ namespace OpenTabletDriver.Plugin.Output
     public abstract class AbsoluteOutputMode : BindingHandler, IOutputMode
     {
         private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
+        private float _minX, _maxX, _minY, _maxY;
         private Vector2 _min, _max;
         private Matrix3x2 _transformationMatrix;
-        private Matrix3x2 _areaCheckMatrix;
 
         private List<IFilter> _filters, _preFilters = new List<IFilter>(), _postFilters = new List<IFilter>();
         public IEnumerable<IFilter> Filters
@@ -70,22 +70,17 @@ namespace OpenTabletDriver.Plugin.Output
         public abstract IVirtualTablet VirtualTablet { get; }
         public IVirtualPointer Pointer => VirtualTablet;
         public bool AreaClipping { set; get; }
-        public bool IgnoreOutsideArea { set; get; }
+        public bool AreaLimiting { set; get; }
 
         internal void UpdateCache()
         {
             if (!(Input is null | Output is null | Digitizer is null))
-            {
                 _transformationMatrix = CalculateTransformation(Input, Output, Digitizer);
-                _areaCheckMatrix = CalculateAreaCheckMatrix(Input, Digitizer);
-            }
 
             _halfDisplayWidth = Output?.Width / 2 ?? 0;
             _halfDisplayHeight = Output?.Height / 2 ?? 0;
             _halfTabletWidth = Input?.Width / 2 ?? 0;
             _halfTabletHeight = Input?.Height / 2 ?? 0;
-
-            float _minX, _maxX, _minY, _maxY;
 
             _minX = Output?.Position.X - _halfDisplayWidth ?? 0;
             _maxX = Output?.Position.X + Output?.Width - _halfDisplayWidth ?? 0;
@@ -122,47 +117,22 @@ namespace OpenTabletDriver.Plugin.Output
             return res;
         }
 
-        internal Matrix3x2 CalculateAreaCheckMatrix(Area input, DigitizerIdentifier tablet)
-        {
-            // Convert raw tablet data to millimeters
-            var res = Matrix3x2.CreateScale(
-                tablet.Width / tablet.MaxX,
-                tablet.Height / tablet.MaxY);
-
-            // Translate to the center of input area
-            res *= Matrix3x2.CreateTranslation(
-                -input.Position.X, -input.Position.Y);
-
-            // Apply rotation
-            res *= Matrix3x2.CreateRotation(
-                (float)(-input.Rotation * System.Math.PI / 180));
-
-            // Scale millimeters to unit
-            res *= Matrix3x2.CreateScale(
-                1 / input.Width, 1 / input.Height);
-
-            return res;
-        }
-
         public virtual void Read(IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
             {
                 if (Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    if (IgnoreOutsideArea && !IsInsideArea(tabletReport))
-                        return;
-
                     if (VirtualTablet is IPressureHandler pressureHandler)
                         pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
 
-                    var pos = Transpose(tabletReport);
-                    VirtualTablet.SetPosition(pos);
+                    if (Transpose(tabletReport) is Vector2 pos)
+                        VirtualTablet.SetPosition(pos);
                 }
             }
         }
 
-        internal Vector2 Transpose(ITabletReport report)
+        internal Vector2? Transpose(ITabletReport report)
         {
             var pos = new Vector2(report.Position.X, report.Position.Y);
 
@@ -174,6 +144,10 @@ namespace OpenTabletDriver.Plugin.Output
             pos = Vector2.Transform(pos, _transformationMatrix);
 
             // Clipping to display bounds
+            var clippedPoint = Vector2.Clamp(pos, _min, _max);
+            if (AreaLimiting && clippedPoint != pos)
+                return null;
+
             if (AreaClipping)
                 pos = Vector2.Clamp(pos, _min, _max);
 
@@ -182,18 +156,6 @@ namespace OpenTabletDriver.Plugin.Output
                 pos = filter.Filter(pos);
 
             return pos;
-        }
-
-        internal bool IsInsideArea(ITabletReport report)
-        {
-            var pos = new Vector2(report.Position.X, report.Position.Y);
-            pos = Vector2.Transform(pos, _areaCheckMatrix);
-
-            if (pos.X < -0.5 | pos.X > 0.5 |
-                pos.Y < -0.5 | pos.Y > 0.5)
-                return false;
-            else
-                return true;
         }
     }
 }

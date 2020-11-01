@@ -102,9 +102,9 @@ namespace OpenTabletDriver.Console
             await ModifySettings(s => s.EnableClipping = isEnabled);
         }
 
-        static async Task SetIgnoreOutsideArea(bool isEnabled)
+        static async Task SetEnableAreaLimiting(bool isEnabled)
         {
-            await ModifySettings(s => s.EnableIgnoreOutsideArea = isEnabled);
+            await ModifySettings(s => s.EnableAreaLimiting = isEnabled);
         }
 
         static async Task SetLockAspectRatio(bool isEnabled)
@@ -204,7 +204,7 @@ namespace OpenTabletDriver.Console
             var settings = await GetSettings();
             await Out.WriteLineAsync($"Auto hook: {settings.AutoHook}");
             await Out.WriteLineAsync($"Area clipping: {settings.EnableClipping}");
-            await Out.WriteLineAsync($"Ignore reports outside area: {settings.EnableIgnoreOutsideArea}");
+            await Out.WriteLineAsync($"Tablet area limiting: {settings.EnableAreaLimiting}");
             await Out.WriteLineAsync($"Lock aspect ratio: {settings.LockAspectRatio}");
         }
         

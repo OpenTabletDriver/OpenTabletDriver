@@ -20,7 +20,7 @@ namespace OpenTabletDriver
 
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _tP;
         private TimeSpan _rT;
-        private bool _lockar, _sizeChanging, _autoHook, _clipping, _ignoreOutsideArea;
+        private bool _lockar, _sizeChanging, _autoHook, _clipping, _AreaLimiting;
         private string _outputMode, _tipButton;
 
         private ObservableCollection<string> _filters = new ObservableCollection<string>(), 
@@ -156,10 +156,10 @@ namespace OpenTabletDriver
         }
 
         [JsonProperty("EnableIgnoreOutsideArea")]
-        public bool EnableIgnoreOutsideArea
+        public bool EnableAreaLimiting
         {
-            set => this.RaiseAndSetIfChanged(ref _ignoreOutsideArea, value);
-            get => _ignoreOutsideArea;
+            set => this.RaiseAndSetIfChanged(ref _AreaLimiting, value);
+            get => _AreaLimiting;
         }
 
         [JsonProperty("LockAspectRatio")]
