@@ -10,17 +10,17 @@ namespace OpenTabletDriver.UX.Controls.Generic
             Func<string> getValue,
             Action<string> setValue,
             string placeholder = null
-        ) : this()
+        )
         {
+            var textBox = new TextBox
+            {
+                PlaceholderText = placeholder
+            };
             textBox.TextBinding.Bind(getValue, setValue);
+            base.Content = textBox;
+
             base.Text = name;
         }
 
-        protected InputBox()
-        {
-            this.Content = textBox;
-        }
-
-        private TextBox textBox = new TextBox();
     }
 }
