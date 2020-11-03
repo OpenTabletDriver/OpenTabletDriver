@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,9 +11,12 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Windows
 {
+    using static ParseTools;
+
     public class ConfigurationEditor : Form
     {
         public ConfigurationEditor()
@@ -25,20 +27,20 @@ namespace OpenTabletDriver.UX.Windows
             base.Icon = App.Logo.WithSize(App.Logo.Size);
 
             // Main Controls
-            _configList.SelectedIndexChanged += (sender, e) => 
+            this.configList.SelectedIndexChanged += (sender, e) => 
             {
-                if (_configList.SelectedIndex >= 0)
-                    SelectedConfiguration = Configurations[_configList.SelectedIndex];
+                if (this.configList.SelectedIndex >= 0)
+                    SelectedConfiguration = Configurations[this.configList.SelectedIndex];
             };
             
             base.Content = new Splitter
             {
                 Orientation = Orientation.Horizontal,
                 Panel1MinimumSize = 200,
-                Panel1 = _configList,
+                Panel1 = this.configList,
                 Panel2 = new Scrollable
                 { 
-                    Content = _configControls,
+                    Content = this.configControls,
                     Padding = new Padding(5)
                 },
             };
@@ -106,35 +108,37 @@ namespace OpenTabletDriver.UX.Windows
                 orderby config.Name
                 select config;
             Configurations = new List<TabletConfiguration>(sortedConfigs);
-            _configList.SelectedIndex = 0;
+            this.configList.SelectedIndex = 0;
         }
 
-        private List<TabletConfiguration> _configs;
+        private List<TabletConfiguration> configs;
         private List<TabletConfiguration> Configurations
         {
             set
             {
-                _configs = value;
-                _configList.Items.Clear();
+                this.configs = value;
+                this.configList.Items.Clear();
                 foreach (var config in Configurations)
-                    _configList.Items.Add(config.Name);
+                    this.configList.Items.Add(config.Name);
             }
-            get => _configs;
+            get => this.configs;
         }
         
-        private TabletConfiguration _selected;
+        private TabletConfiguration selected;
         private TabletConfiguration SelectedConfiguration
         {
             set
             {
-                _selected = value;
+                this.selected = value;
                 Refresh();
             }
-            get => _selected;
+            get => this.selected;
         }
 
-        private ListBox _configList = new ListBox();
-        private StackView _configControls = new StackView();
+        private ListBox configList = new ListBox();
+        private StackView configControls = new StackView();
+
+        private static readonly Regex NameRegex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
 
         private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
@@ -145,10 +149,9 @@ namespace OpenTabletDriver.UX.Windows
 
         private void WriteConfigurations(IEnumerable<TabletConfiguration> configs, DirectoryInfo dir)
         {
-            var regex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
             foreach (var config in configs)
             {
-                var match = regex.Match(config.Name);
+                var match = NameRegex.Match(config.Name);
                 var manufacturer = match.Groups["Manufacturer"].Value;
                 var tabletName = match.Groups["TabletName"].Value;
 
@@ -199,14 +202,14 @@ namespace OpenTabletDriver.UX.Windows
                 Name = "New Tablet"
             };
             Configurations = Configurations.Append(newTablet).ToList();
-            _configList.SelectedIndex = Configurations.IndexOf(newTablet);
+            this.configList.SelectedIndex = Configurations.IndexOf(newTablet);
         }
 
         private void DeleteConfiguration(TabletConfiguration config)
         {
             Configurations = Configurations.Where(c => c != config).ToList();
             if (SelectedConfiguration == config)
-                _configList.SelectedIndex = Configurations.Count - 1;
+                this.configList.SelectedIndex = Configurations.Count - 1;
         }
 
         private async Task GenerateConfiguration()
@@ -231,7 +234,7 @@ namespace OpenTabletDriver.UX.Windows
                         }
                     };
                     Configurations = Configurations.Append(generatedConfig).ToList();
-                    _configList.SelectedIndex = Configurations.IndexOf(generatedConfig);
+                    this.configList.SelectedIndex = Configurations.IndexOf(generatedConfig);
                 }
                 catch (Exception ex)
                 {
@@ -242,8 +245,8 @@ namespace OpenTabletDriver.UX.Windows
 
         private void Refresh()
         {
-            _configControls.Items.Clear();
-            _configControls.AddControls(MakePropertyControls());
+            this.configControls.Items.Clear();
+            this.configControls.AddControls(MakePropertyControls());
         }
 
         private IEnumerable<Control> MakePropertyControls()
@@ -256,7 +259,7 @@ namespace OpenTabletDriver.UX.Windows
             var digitizerStack = new StackView();
             digitizerStack.AddControl(
                 new Button(
-                    (_, e) =>
+                    (_, _) =>
                     {
                         SelectedConfiguration.DigitizerIdentifiers.Add(new DigitizerIdentifier());
                         Refresh();
@@ -273,7 +276,7 @@ namespace OpenTabletDriver.UX.Windows
                 expander.StackView.AddControls(MakeDigitizerIdentifierControls(digitizerIdentifier));
                 expander.StackView.AddControl(
                     new Button(
-                        (_, e) => 
+                        (_, _) => 
                         {
                             SelectedConfiguration.DigitizerIdentifiers.Remove(digitizerIdentifier);
                             Refresh();
@@ -291,7 +294,7 @@ namespace OpenTabletDriver.UX.Windows
             var auxStack = new StackView();
             auxStack.AddControl(
                 new Button(
-                    (_, e) =>
+                    (_, _) =>
                     {
                         SelectedConfiguration.AuxilaryDeviceIdentifiers.Add(new DeviceIdentifier());
                         Refresh();
@@ -305,10 +308,10 @@ namespace OpenTabletDriver.UX.Windows
             foreach (var auxIdentifier in SelectedConfiguration.AuxilaryDeviceIdentifiers)
             {
                 var expander = new ExpanderBase("Auxiliary Identifier", isExpanded: false);
-                expander.StackView.AddControls(GetDeviceIdentifierControls(auxIdentifier));
+                expander.StackView.AddControls(GetDeviceIdentifierControls(auxIdentifier, typeof(AuxReportParser)));
                 expander.StackView.AddControl(
                     new Button(
-                        (_, e) => 
+                        (_, _) => 
                         {
                             SelectedConfiguration.AuxilaryDeviceIdentifiers.Remove(auxIdentifier);
                             Refresh();
@@ -329,7 +332,7 @@ namespace OpenTabletDriver.UX.Windows
             );
         }
 
-        private IEnumerable<Control> GetDeviceIdentifierControls(DeviceIdentifier id)
+        private IEnumerable<Control> GetDeviceIdentifierControls(DeviceIdentifier id, Type reportParser)
         {
             yield return new InputBox("Vendor ID",
                 () => id.VendorID.ToString(),
@@ -350,7 +353,7 @@ namespace OpenTabletDriver.UX.Windows
             yield return new InputBox("Report Parser",
                 () => id.ReportParser,
                 (o) => id.ReportParser = o,
-                id is DigitizerIdentifier ? typeof(TabletReportParser).FullName : typeof(AuxReportParser).FullName
+                reportParser.FullName
             );
             yield return new InputBox("Feature Initialization Report",
                 () => ToHexString(id.FeatureInitReport),
@@ -422,41 +425,8 @@ namespace OpenTabletDriver.UX.Windows
                 () => id.ActiveReportID?.ToString() ?? new DetectionRange().ToString(),
                 (o) => id.ActiveReportID = DetectionRange.Parse(o)
             );
-            foreach (var control in GetDeviceIdentifierControls(id))
+            foreach (var control in GetDeviceIdentifierControls(id, typeof(TabletReportParser)))
                 yield return control;
-        }
-
-        private static float? ToNullableFloat(string str) => float.TryParse(str, out var val) ? val : (float?)null;
-        private static float ToFloat(string str) => ToNullableFloat(str) ?? 0f;
-        
-        private static int? ToNullableInt(string str) => int.TryParse(str, out var val) ? val : (int?)null;
-        private static int ToInt(string str) => ToNullableInt(str) ?? 0;
-                
-        private static uint? ToNullableUInt(string str) => uint.TryParse(str, out var val) ? val : (uint?)null;
-        private static uint ToUInt(string str) => ToNullableUInt(str) ?? 0;
-
-        private static bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
-        
-        private static string ToHexString(byte[] value)
-        {
-            if (value is byte[] array)
-                return "0x" + BitConverter.ToString(array).Replace("-", " 0x") ?? string.Empty;
-            else
-                return string.Empty;
-        }
-        
-        private static byte[] ToByteArray(string hex)
-        {
-            var raw = hex.Split(' ');
-            byte[] buffer = new byte[raw.Length];
-            for (int i = 0; i < raw.Length; i++)
-            {
-                if (TryGetHexValue(raw[i], out var val))
-                    buffer[i] = val;
-                else
-                    return null;
-            }
-            return buffer;
         }
     }
 }
