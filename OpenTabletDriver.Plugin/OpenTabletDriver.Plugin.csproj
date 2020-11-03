@@ -11,6 +11,7 @@
     <Description>Library used to create OpenTabletDriver plugins.</Description>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@
     <TargetFrameworks>netcoreapp3.1;net5-windows</TargetFrameworks>
     <VersionPrefix>0.4.1</VersionPrefix>
     <ApplicationIcon>../OpenTabletDriver.UX/Assets/otd.ico</ApplicationIcon>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   
   <ItemGroup>
