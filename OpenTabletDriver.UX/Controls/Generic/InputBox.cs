@@ -21,6 +21,5 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
             base.Text = name;
         }
-
     }
 }
