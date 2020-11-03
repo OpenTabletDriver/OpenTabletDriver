@@ -14,22 +14,16 @@ namespace OpenTabletDriver.UX.Controls.Generic
         {
         }
 
-        protected void AddItem(DictionaryEntry item)
-        {
-            item.Destroy += RemoveItem;
-            this.entries.Items.Add(item);
-        }
-
         protected void AddItem(KeyValuePair<string, string> pair)
         {
             var item = new DictionaryEntry(getValue, setValue, pair.Key, pair.Value);
-            AddItem(item);
+            base.AddItem(item);
         }
 
         protected override void CreateItem()
         {
             var item = new DictionaryEntry(getValue, setValue);
-            AddItem(item);
+            base.AddItem(item);
         }
 
         protected override void RemoveItem(object sender, EventArgs e)

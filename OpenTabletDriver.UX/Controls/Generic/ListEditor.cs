@@ -12,20 +12,12 @@ namespace OpenTabletDriver.UX.Controls.Generic
             Action<IList<string>> setValue
         ) : base(name, getValue, setValue)
         {
-            // Workaround for weird layout bug that only affects this control
-            (base.Content as StackLayout).Spacing = 0;
-        }
-
-        protected void AddItem(ListEntry item)
-        {
-            item.Destroy += RemoveItem;
-            this.entries.Items.Add(item);
         }
 
         protected void AddItem(int index)
         {
             var item = new ListEntry(getValue, setValue, index);
-            AddItem(item);
+            base.AddItem(item);
         }
 
         protected override void CreateItem()
