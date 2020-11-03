@@ -685,15 +685,8 @@ namespace OpenTabletDriver.UX
             }
 
             var appInfo = await App.Driver.Instance.GetApplicationInfo();
-            var pluginDir = new DirectoryInfo(appInfo.PluginDirectory);
-            if (pluginDir.Exists)
-            {
-                foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
-                {
-                    await App.Driver.Instance.ImportPlugin(file.FullName);
-                    PluginManager.AddPlugin(file);
-                }
-            }
+
+            await PluginManager.LoadPluginsAsync(silent: true);
 
             Content = ConstructMainControls();
 
