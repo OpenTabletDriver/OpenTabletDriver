@@ -390,6 +390,8 @@ namespace OpenTabletDriver.UX.Windows
                     foreach (string value in o)
                         if (byte.TryParse(value, out var byteValue))
                             id.InitializationStrings.Add(byteValue);
+                        else
+                            id.InitializationStrings.Add(0);
                 }
             );
         }

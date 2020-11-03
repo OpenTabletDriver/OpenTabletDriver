@@ -7,26 +7,32 @@ namespace OpenTabletDriver.UX.Controls.Generic
     public class DictionaryEntry : StackLayoutItem
     {
         public DictionaryEntry(
-            Dictionary<string, string> source,
+            Func<Dictionary<string, string>> getValue,
+            Action<Dictionary<string, string>> setValue,
             string startKey = null,
             string startValue = null
         ) : this()
         {
-            this.dict = source;
+            this.getValue = getValue;
+            this.setValue = setValue;
+
             string oldKey = startKey;
             keyBox.TextBinding.Bind(
                 () => startKey,
                 (key) =>
                 {
-                    var value = valueBox.Text;
-                    if (string.IsNullOrWhiteSpace(key))
-                        this.dict.Remove(key);
-                    else if (!source.TryAdd(key, value))
-                        this.dict[key] = value;
-                    
-                    if (oldKey != null)
-                        this.dict.Remove(oldKey);
-                    oldKey = key;
+                    Modify(dict =>
+                    {
+                        var value = valueBox.Text;
+                        if (string.IsNullOrWhiteSpace(key))
+                            dict.Remove(key);
+                        else if (!dict.TryAdd(key, value))
+                            dict[key] = value;
+
+                        if (oldKey != null)
+                            dict.Remove(oldKey);
+                        oldKey = key;
+                    });
                 }
             );
 
@@ -35,9 +41,11 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 (value) =>
                 {
                     var key = keyBox.Text;
-
-                    if (!this.dict.TryAdd(key, value))
-                        this.dict[key] = value;
+                    Modify(dict =>
+                    {
+                        if (!dict.TryAdd(key, value))
+                            dict[key] = value;
+                    });
                 }
             );
         }
@@ -47,7 +55,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             this.keyBox = new TextBox
             {
                 PlaceholderText = "Key",
-                ToolTip = 
+                ToolTip =
                     "The dictionary entry's key. This is what is indexed to find a value." + Environment.NewLine +
                     "If left empty, the entry will be removed on save or apply."
             };
@@ -72,17 +80,17 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 {
                     new StackLayoutItem
                     {
-                        Control = keyBox,
+                        Control = this.keyBox,
                         Expand = true
                     },
                     new StackLayoutItem
                     {
-                        Control = valueBox,
+                        Control = this.valueBox,
                         Expand = true
                     },
                     new StackLayoutItem
                     {
-                        Control = deleteButton,
+                        Control = this.deleteButton,
                         Expand = false
                     }
                 }
@@ -93,13 +101,25 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected void OnDestroy()
         {
-            if (this.dict.ContainsKey(this.keyBox.Text))
-                this.dict.Remove(this.keyBox.Text);
+            Modify(dict =>
+            {
+                if (dict.ContainsKey(this.keyBox.Text))
+                    dict.Remove(this.keyBox.Text);
+            });
 
             this.Destroy?.Invoke(this, new EventArgs());
         }
 
-        private Dictionary<string, string> dict;
+        private Func<Dictionary<string, string>> getValue;
+        private Action<Dictionary<string, string>> setValue;
+
+        protected void Modify(Action<Dictionary<string, string>> modify)
+        {
+            var dict = getValue();
+            modify(dict);
+            setValue(dict);
+        }
+
         private TextBox keyBox, valueBox;
         private Button deleteButton;
 
