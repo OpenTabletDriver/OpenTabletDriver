@@ -15,7 +15,13 @@ namespace OpenTabletDriver
     public static class PluginManager
     {
         public static IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
+
         private static bool Silent;
+        private readonly static PluginContext fallbackPluginContext = new PluginContext();
+        private readonly static List<PluginContext> plugins = new List<PluginContext>();
+        private readonly static ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
+        private readonly static IReadOnlyCollection<Type> libTypes =
+            Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes().ToArray();
 
         public static async Task LoadPluginsAsync(bool silent = false)
         {
@@ -25,26 +31,15 @@ namespace OpenTabletDriver
         public static void LoadPlugins(bool silent)
         {
             Silent = silent;
-            static void loadPlugin(PluginContext context, string plugin)
-            {
-                try
-                {
-                    context.LoadFromAssemblyPath(plugin);
-                }
-                catch
-                {
-                    var pluginFile = new FileInfo(plugin);
-                    Log($"Failed loading assembly '{pluginFile.Name}'", LogLevel.Error);
-                }
-            }
 
             pluginTypes.Clear();
 
-            (from asm in AssemblyLoadContext.Default.Assemblies
-                from type in asm.DefinedTypes
-                where type.IsPublic && type.IsPluginType()
-                select type)
-            .AsParallel().ForAll(t => pluginTypes.Add(t.GetTypeInfo()));
+            var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
+                                from type in asm.DefinedTypes
+                                where type.IsPublic && type.IsPluginType()
+                                select type;
+
+            internalTypes.AsParallel().ForAll(t => pluginTypes.Add(t.GetTypeInfo()));
 
             // "Plugins" are directories that contain managed and unmanaged dll
             //  These dlls are loaded into a PluginContext per directory
@@ -53,16 +48,12 @@ namespace OpenTabletDriver
             {
                 var pluginName = new DirectoryInfo(dir).Name;
                 if (plugins.Any((p) => p.PluginName == pluginName))
-                {
                     return;
-                }
 
                 Log($"Loading plugin '{pluginName}'");
                 var context = new PluginContext(pluginName);
                 foreach(var plugin in Directory.EnumerateFiles(dir, "*.dll", SearchOption.AllDirectories))
-                {
-                    loadPlugin(context, plugin);
-                }
+                    LoadPlugin(context, plugin);
 
                 plugins.Add(context);
             });
@@ -75,7 +66,7 @@ namespace OpenTabletDriver
             {
                 var pluginFile = new FileInfo(plugin);
                 Log($"Loading deprecated plugin '{plugin}'");
-                loadPlugin(fallbackPluginContext, plugin);
+                LoadPlugin(fallbackPluginContext, plugin);
             }
 
             // Populate PluginTypes so UX and Daemon can access them
@@ -87,20 +78,34 @@ namespace OpenTabletDriver
             LoadPluginTypes(fallbackPluginContext);
         }
 
+        private static void LoadPlugin(PluginContext context, string plugin)
+        {
+            try
+            {
+                context.LoadFromAssemblyPath(plugin);
+            }
+            catch
+            {
+                var pluginFile = new FileInfo(plugin);
+                Log($"Failed loading assembly '{pluginFile.Name}'", LogLevel.Error);
+            }
+        }
+
         private static void LoadPluginTypes(PluginContext context)
         {
-            (from asm in context.Assemblies
-                from type in asm.GetExportedTypes()
-                where type.IsPluginType()
-                select type)
-            .AsParallel().ForAll(type =>
+            var types = from asm in context.Assemblies
+                        from type in asm.GetExportedTypes()
+                        where type.IsPluginType()
+                        select type;
+
+            types.AsParallel().ForAll(type =>
             {
                 if (!type.IsPlatformSupported())
                 {
-                    Log($"Plugin '{type.FullName}' incompatible to current OS", LogLevel.Debug);
+                    Log($"Plugin '{type.FullName}' incompatible to current OS", LogLevel.Warning);
                     return;
                 }
-                if (!type.IsPluginIgnored())
+                if (type.IsPluginIgnored())
                 {
                     Log($"Plugin '{type.FullName}' ignored", LogLevel.Debug);
                     return;
@@ -113,25 +118,13 @@ namespace OpenTabletDriver
                 }
                 catch
                 {
-                    Log($"Plugin '{type.FullName}' incompatible", LogLevel.Debug);
+                    Log($"Plugin '{type.FullName}' incompatible", LogLevel.Warning);
                 }
             });
         }
 
         public static T ConstructObject<T>(string name, object[] args = null) where T : class
         {
-            static bool parametersValid(ParameterInfo[] parameters, object[] args)
-            {
-                for (int i = 0; i < parameters.Length; i++)
-                {
-                    var parameter = parameters[i];
-                    var arg = args[i];
-                    if (!parameter.ParameterType.IsAssignableFrom(arg.GetType()))
-                        return false;
-                }
-                return true;
-            }
-
             args ??= new object[0];
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -141,7 +134,7 @@ namespace OpenTabletDriver
                     var matchingConstructors = from ctor in type?.GetConstructors()
                                                let parameters = ctor.GetParameters()
                                                where parameters.Length == args.Length
-                                               where parametersValid(parameters, args)
+                                               where args.IsValidParameterFor(parameters)
                                                select ctor;
 
                     var constructor = matchingConstructors.FirstOrDefault();
@@ -164,11 +157,23 @@ namespace OpenTabletDriver
             return children.ToArray();
         }
 
+        private static bool IsValidParameterFor(this object[] args, ParameterInfo[] parameters)
+        {
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                var parameter = parameters[i];
+                var arg = args[i];
+                if (!parameter.ParameterType.IsAssignableFrom(arg.GetType()))
+                    return false;
+            }
+            return true;
+        }
+
         private static bool IsPluginType(this Type type)
         {
             return !type.IsAbstract && !type.IsInterface &&
-                libTypes.Any(t => t.IsAssignableFrom(type) || type.GetInterfaces().Any(
-                x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
+                libTypes.Any(t => t.IsAssignableFrom(type) ||
+                    type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
         }
 
         private static bool IsPlatformSupported(this Type type)
@@ -177,16 +182,10 @@ namespace OpenTabletDriver
             return attr?.IsCurrentPlatform ?? true;
         }
 
-        private static void Log(string msg, LogLevel level = LogLevel.Info)
+        public static void Log(string msg, LogLevel level = LogLevel.Info)
         {
             if (!Silent)
                 Plugin.Log.Write("Plugin", msg, level);
         }
-
-        private readonly static PluginContext fallbackPluginContext = new PluginContext();
-        private readonly static List<PluginContext> plugins = new List<PluginContext>();
-        private readonly static ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
-        private readonly static IReadOnlyCollection<Type> libTypes =
-            Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes().ToArray();
     }
 }
