@@ -246,7 +246,7 @@ namespace OpenTabletDriver.UX.Controls
                 case nameof(ViewModel.Width):
                 case nameof(ViewModel.Height):
                 case nameof(ViewModel.Rotation):
-                    if (ViewModel.Background == null || ViewModel.FullBackground == null || ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
+                    if (ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
                         break;
 
                     var center = GetCenterOffset(out var min, out var max);

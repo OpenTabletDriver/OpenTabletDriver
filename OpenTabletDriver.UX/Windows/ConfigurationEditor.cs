@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Eto.Drawing;
@@ -12,20 +11,18 @@ using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
-using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    using static ControlBuilder;
-
     public class ConfigurationEditor : Form
     {
         public ConfigurationEditor()
         {
-            Title = "Configuration Editor";
-            ClientSize = new Size(960 - 50, 730 - 50);
-            MinimumSize = new Size(960 - 50, 730 - 50);
-            Icon = App.Logo.WithSize(App.Logo.Size);
+            base.Title = "Configuration Editor";
+            base.ClientSize = new Size(960 - 50, 730 - 50);
+            base.MinimumSize = new Size(960 - 50, 730 - 50);
+            base.Icon = App.Logo.WithSize(App.Logo.Size);
 
             // Main Controls
             _configList.SelectedIndexChanged += (sender, e) => 
@@ -34,7 +31,7 @@ namespace OpenTabletDriver.UX.Windows
                     SelectedConfiguration = Configurations[_configList.SelectedIndex];
             };
             
-            Content = new Splitter
+            base.Content = new Splitter
             {
                 Orientation = Orientation.Horizontal,
                 Panel1MinimumSize = 200,
@@ -53,8 +50,11 @@ namespace OpenTabletDriver.UX.Windows
             var loadDirectory = new Command { MenuText = "Load configurations...", Shortcut = Application.Instance.CommonModifier | Keys.O };
             loadDirectory.Executed += (sender, e) => LoadConfigurationsDialog();
 
-            var saveDirectory = new Command { MenuText = "Save configurations...", Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.S };
-            saveDirectory.Executed += (sender, e) => SaveConfigurationsDialog();
+            var saveDirectory = new Command { MenuText = "Save configurations", Shortcut = Application.Instance.CommonModifier | Keys.S };
+            saveDirectory.Executed += (sender, e) => WriteConfigurations(Configurations, new DirectoryInfo(AppInfo.Current.ConfigurationDirectory));
+
+            var saveToDirectory = new Command { MenuText = "Save configurations to...", Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.S };
+            saveToDirectory.Executed += (sender, e) => SaveConfigurationsDialog();
 
             var newConfiguration = new Command { ToolBarText = "New configuration", Shortcut = Application.Instance.CommonModifier | Keys.N };
             newConfiguration.Executed += (sender, e) => CreateNewConfiguration();
@@ -66,7 +66,7 @@ namespace OpenTabletDriver.UX.Windows
             generateConfiguration.Executed += async (sender, e) => await GenerateConfiguration();
 
             // Menu
-            Menu = new MenuBar
+            base.Menu = new MenuBar
             {
                 Items =
                 {
@@ -77,14 +77,15 @@ namespace OpenTabletDriver.UX.Windows
                         Items =
                         {
                             loadDirectory,
-                            saveDirectory
+                            saveDirectory,
+                            saveToDirectory
                         }
                     }
                 },
                 QuitItem = quitCommand
             };
 
-            ToolBar = new ToolBar
+            base.ToolBar = new ToolBar
             {
                 Items =
                 {
@@ -94,10 +95,10 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            InitializeAsync();
+            _ = InitializeAsync();
         }
 
-        private async void InitializeAsync()
+        private async Task InitializeAsync()
         {
             var appinfo = await App.Driver.Instance.GetApplicationInfo();
             var configDir = new DirectoryInfo(appinfo.ConfigurationDirectory);
@@ -133,10 +134,7 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private ListBox _configList = new ListBox();
-        private StackLayout _configControls = new StackLayout
-        {
-            Spacing = 5,
-        };
+        private StackView _configControls = new StackView();
 
         private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
@@ -250,78 +248,82 @@ namespace OpenTabletDriver.UX.Windows
 
         private IEnumerable<Control> MakePropertyControls()
         {
-            yield return MakeInput("Name",
+            yield return new InputBox("Name",
                 () => SelectedConfiguration.Name,
                 (o) => SelectedConfiguration.Name = o
             );
 
-            var digitizerStack = MakeStack();
-            digitizerStack.Items.Add(
-                MakeStackItem(
-                    MakeButton(
-                        "Add",
-                        () =>
-                        {
-                            SelectedConfiguration.DigitizerIdentifiers.Add(new DigitizerIdentifier());
-                            Refresh();
-                        }
-                    )
+            var digitizerStack = new StackView();
+            digitizerStack.AddControl(
+                new Button(
+                    (_, e) =>
+                    {
+                        SelectedConfiguration.DigitizerIdentifiers.Add(new DigitizerIdentifier());
+                        Refresh();
+                    }
                 )
+                {
+                    Text = "Add"
+                }
             );
 
             foreach (var digitizerIdentifier in SelectedConfiguration.DigitizerIdentifiers)
             {
-                var expander = MakeExpander("Digitizer Identifier", isExpanded: false);
-                var stack = (StackLayout)expander.Content;
-                stack.AddControls(MakeDigitizerIdentifierControls(digitizerIdentifier));
-                stack.AddControl(
-                    MakeButton(
-                        "Remove",
-                        () => 
+                var expander = new ExpanderBase("Digitizer Identifier", isExpanded: false);
+                expander.StackView.AddControls(MakeDigitizerIdentifierControls(digitizerIdentifier));
+                expander.StackView.AddControl(
+                    new Button(
+                        (_, e) => 
                         {
                             SelectedConfiguration.DigitizerIdentifiers.Remove(digitizerIdentifier);
                             Refresh();
                         }
                     )
+                    {
+                        Text = "Remove"
+                    }
                 );
 
-                digitizerStack.AddControl(MakeGroup(null, expander));
+                digitizerStack.AddControl(new GroupBoxBase(null, expander));
             }
-            yield return MakeGroup("Digitizer Identifiers", digitizerStack);
+            yield return new GroupBoxBase("Digitizer Identifiers", digitizerStack);
 
-            var auxStack = MakeStack();
+            var auxStack = new StackView();
             auxStack.AddControl(
-                MakeButton(
-                    "Add",
-                    () =>
+                new Button(
+                    (_, e) =>
                     {
                         SelectedConfiguration.AuxilaryDeviceIdentifiers.Add(new DeviceIdentifier());
                         Refresh();
                     }
                 )
+                {
+                    Text = "Add"
+                }
             );
 
             foreach (var auxIdentifier in SelectedConfiguration.AuxilaryDeviceIdentifiers)
             {
-                var expander = MakeExpander("Auxiliary Identifier", isExpanded: false);
-                var stack = (StackLayout)expander.Content;
-                stack.AddControls(GetDeviceIdentifierControls(auxIdentifier));
-                stack.AddControl(
-                    MakeButton(
-                        "Remove",
-                        () => 
+                var expander = new ExpanderBase("Auxiliary Identifier", isExpanded: false);
+                expander.StackView.AddControls(GetDeviceIdentifierControls(auxIdentifier));
+                expander.StackView.AddControl(
+                    new Button(
+                        (_, e) => 
                         {
                             SelectedConfiguration.AuxilaryDeviceIdentifiers.Remove(auxIdentifier);
                             Refresh();
                         }
                     )
+                    {
+                        Text = "Remove"
+                    }
                 );
                 
-                auxStack.AddControl(MakeGroup(null, expander));
+                auxStack.AddControl(new GroupBoxBase(null, expander));
             }
-            yield return MakeGroup("Auxiliary Device Identifiers", auxStack);
+            yield return new GroupBoxBase("Auxiliary Device Identifiers", auxStack);
 
-            yield return MakeDictionary("Attributes",
+            yield return new DictionaryEditor("Attributes",
                 () => SelectedConfiguration.Attributes,
                 (o) => SelectedConfiguration.Attributes = o
             );
@@ -329,36 +331,36 @@ namespace OpenTabletDriver.UX.Windows
 
         private IEnumerable<Control> GetDeviceIdentifierControls(DeviceIdentifier id)
         {
-            yield return MakeInput("Vendor ID",
+            yield return new InputBox("Vendor ID",
                 () => id.VendorID.ToString(),
                 (o) => id.VendorID = ToInt(o)
             );
-            yield return MakeInput("Product ID",
+            yield return new InputBox("Product ID",
                 () => id.ProductID.ToString(),
                 (o) => id.ProductID = ToInt(o)
             );
-            yield return MakeInput("Input Report Length",
+            yield return new InputBox("Input Report Length",
                 () => id.InputReportLength.ToString(),
                 (o) => id.InputReportLength = ToNullableUInt(o)
             );
-            yield return MakeInput("Output Report Length",
+            yield return new InputBox("Output Report Length",
                 () => id.OutputReportLength.ToString(),
                 (o) => id.OutputReportLength = ToNullableUInt(o)
             );
-            yield return MakeInput("Report Parser",
+            yield return new InputBox("Report Parser",
                 () => id.ReportParser,
                 (o) => id.ReportParser = o,
                 id is DigitizerIdentifier ? typeof(TabletReportParser).FullName : typeof(AuxReportParser).FullName
             );
-            yield return MakeInput("Feature Initialization Report",
+            yield return new InputBox("Feature Initialization Report",
                 () => ToHexString(id.FeatureInitReport),
                 (o) => id.FeatureInitReport = ToByteArray(o)
             );
-            yield return MakeInput("Output Initialization Report",
+            yield return new InputBox("Output Initialization Report",
                 () => ToHexString(id.OutputInitReport),
                 (o) => id.OutputInitReport = ToByteArray(o)
             );
-            yield return MakeDictionary("Device Strings",
+            yield return new DictionaryEditor("Device Strings",
                 () =>
                 {
                     var dictionaryBuffer = new Dictionary<string, string>();
@@ -374,7 +376,7 @@ namespace OpenTabletDriver.UX.Windows
                             id.DeviceStrings.Add(keyByte, pair.Value);
                 }
             );
-            yield return MakeList("Initialization String Indexes",
+            yield return new ListEditor("Initialization String Indexes",
                 () =>
                 {
                     var listBuffer = new List<string>();
@@ -394,27 +396,27 @@ namespace OpenTabletDriver.UX.Windows
 
         private IEnumerable<Control> MakeDigitizerIdentifierControls(DigitizerIdentifier id)
         {
-            yield return MakeInput("Width (mm)",
+            yield return new InputBox("Width (mm)",
                 () => id.Width.ToString(),
                 (o) => id.Width = ToFloat(o)
             );
-            yield return MakeInput("Height (mm)",
+            yield return new InputBox("Height (mm)",
                 () => id.Height.ToString(),
                 (o) => id.Height = ToFloat(o)
             );
-            yield return MakeInput("Max X (px)",
+            yield return new InputBox("Max X (px)",
                 () => id.MaxX.ToString(),
                 (o) => id.MaxX = ToFloat(o)
             );
-            yield return MakeInput("Max Y (px)",
+            yield return new InputBox("Max Y (px)",
                 () => id.MaxY.ToString(),
                 (o) => id.MaxY = ToFloat(o)
             );
-            yield return MakeInput("Max Pressure",
+            yield return new InputBox("Max Pressure",
                 () => id.MaxPressure.ToString(),
                 (o) => id.MaxPressure = ToUInt(o)
             );
-            yield return MakeInput("Active Report ID",
+            yield return new InputBox("Active Report ID",
                 () => id.ActiveReportID?.ToString() ?? new DetectionRange().ToString(),
                 (o) => id.ActiveReportID = DetectionRange.Parse(o)
             );

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -33,11 +32,13 @@ namespace OpenTabletDriver.UX.Controls
                 return;
             }
 
-            var foreground = new RectangleF(
-                ViewModel.X - (ViewModel.Width / 2),
-                ViewModel.Y - (ViewModel.Height / 2),
-                ViewModel.Width,
-                ViewModel.Height);
+            var foreground = new RectangleF
+            {
+                X = ViewModel.X - (ViewModel.Width / 2),
+                Y = ViewModel.Y - (ViewModel.Height / 2),
+                Width = ViewModel.Width,
+                Height = ViewModel.Height
+            };
             
             if (foreground.Width > 0 & foreground.Height > 0 & ViewModel.FullBackground.Width > 0 & ViewModel.FullBackground.Height > 0)
             {
