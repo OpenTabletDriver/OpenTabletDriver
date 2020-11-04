@@ -16,15 +16,15 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected void AddItem(int index)
         {
-            var item = new ListEntry(getValue, setValue, index);
+            var item = new ListEntry(base.getValue, base.setValue, index);
             base.AddItem(item);
         }
 
         protected override void CreateItem()
         {
-            var list = getValue();
+            var list = base.getValue();
             list.Add(null);
-            setValue(list);
+            base.setValue(list);
 
             AddItem(list.Count - 1);
         }
@@ -37,7 +37,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         protected override void Refresh()
         {
             entries.Items.Clear();
-            for (int i = 0; i < this.getValue().Count; i++)
+            for (int i = 0; i < base.getValue().Count; i++)
                 AddItem(i);
         }
     }

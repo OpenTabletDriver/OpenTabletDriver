@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             base.Control = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
-                VerticalContentAlignment = Eto.Forms.VerticalAlignment.Center,
+                VerticalContentAlignment = contentAlignment,
                 Spacing = 5,
                 Items =
                 {
@@ -42,6 +42,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                         {
                             Content = this.deleteButton
                         },
+                        VerticalAlignment = deleteButtonAlignment,
                         Expand = false
                     }
                 }
@@ -67,5 +68,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
         
         protected Container controlContainer;
         protected Button deleteButton;
+
+        protected VerticalAlignment deleteButtonAlignment = Eto.Forms.VerticalAlignment.Bottom;
+        protected VerticalAlignment contentAlignment = Eto.Forms.VerticalAlignment.Center;
     }
 }

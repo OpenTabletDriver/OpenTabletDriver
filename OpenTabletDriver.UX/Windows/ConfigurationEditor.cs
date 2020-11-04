@@ -10,6 +10,7 @@ using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
 
@@ -246,218 +247,32 @@ namespace OpenTabletDriver.UX.Windows
         private void Refresh()
         {
             this.configControls.Items.Clear();
-            this.configControls.AddControls(MakePropertyControls());
+            this.configControls.AddControls(GetPropertyControls());
         }
 
-        private IEnumerable<Control> MakePropertyControls()
+        private IEnumerable<Control> GetPropertyControls()
         {
             yield return new InputBox("Name",
                 () => SelectedConfiguration.Name,
                 (o) => SelectedConfiguration.Name = o
             );
 
-            var digitizerStack = new StackView();
-            var addDigitizerButton = new Button((_, _) =>
-            {
-                SelectedConfiguration.DigitizerIdentifiers.Add(new DigitizerIdentifier());
-                Refresh();
-            })
-            {
-                Text = "+"
-            };
+            yield return new DigitizerIdentifierEditor(
+                "Digitizer Identifiers",
+                () => SelectedConfiguration.DigitizerIdentifiers,
+                (o) => SelectedConfiguration.DigitizerIdentifiers = o
+            );
 
-            foreach (var digitizerIdentifier in SelectedConfiguration.DigitizerIdentifiers)
-            {
-                var container = new StackView(GetDigitizerIdentifierControls(digitizerIdentifier));
-                var removeButton = new Button((_, _) =>
-                {
-                    SelectedConfiguration.DigitizerIdentifiers.Remove(digitizerIdentifier);
-                    Refresh();
-                })
-                {
-                    Text = "-"
-                };
-
-                var expander = new ExpanderBase("Digitizer Identifier", isExpanded: false)
-                {
-                    Content = container
-                };
-                
-                var content = new StackLayout
-                {
-                    Orientation = Orientation.Horizontal,
-                    Spacing = 5,
-                    Items = 
-                    {
-                        new StackLayoutItem
-                        {
-                            Control = expander,
-                            Expand = true
-                        },
-                        new StackLayoutItem
-                        {
-                            Control = removeButton,
-                            VerticalAlignment = VerticalAlignment.Top
-                        }
-                    }
-                };
-
-                digitizerStack.AddControl(content, HorizontalAlignment.Stretch);
-            }
-            digitizerStack.AddControl(addDigitizerButton, HorizontalAlignment.Right);
-            yield return new GroupBoxBase("Digitizer Identifiers", digitizerStack);
-
-            var auxStack = new StackView();
-            var addAuxButton = new Button((_, _) =>
-            {
-                SelectedConfiguration.AuxilaryDeviceIdentifiers.Add(new DeviceIdentifier());
-                Refresh();
-            })
-            {
-                Text = "+"
-            };
-
-            foreach (var auxIdentifier in SelectedConfiguration.AuxilaryDeviceIdentifiers)
-            {
-                var container = new StackView(GetDeviceIdentifierControls(auxIdentifier, typeof(AuxReportParser)));
-                var removeButton = new Button((_, _) =>
-                {
-                    SelectedConfiguration.AuxilaryDeviceIdentifiers.Remove(auxIdentifier);
-                    Refresh();
-                })
-                {
-                    Text = "-"
-                };
-
-                var expander = new ExpanderBase("Digitizer Identifier", isExpanded: false)
-                {
-                    Content = container
-                };
-                
-                var content = new StackLayout
-                {
-                    Orientation = Orientation.Horizontal,
-                    Spacing = 5,
-                    Items = 
-                    {
-                        new StackLayoutItem
-                        {
-                            Control = expander,
-                            Expand = true
-                        },
-                        new StackLayoutItem
-                        {
-                            Control = removeButton,
-                            VerticalAlignment = VerticalAlignment.Top
-                        }
-                    }
-                };
-                auxStack.AddControl(content);
-            }
-            auxStack.AddControl(addAuxButton, HorizontalAlignment.Right);
-            yield return new GroupBoxBase("Auxiliary Device Identifiers", auxStack);
+            yield return new AuxiliaryIdentifierEditor(
+                "Auxiliary Device Identifiers",
+                () => SelectedConfiguration.AuxilaryDeviceIdentifiers,
+                (o) => SelectedConfiguration.AuxilaryDeviceIdentifiers = o
+            );
 
             yield return new DictionaryEditor("Attributes",
                 () => SelectedConfiguration.Attributes,
                 (o) => SelectedConfiguration.Attributes = o
             );
-        }
-
-        private IEnumerable<Control> GetDeviceIdentifierControls(DeviceIdentifier id, Type reportParser)
-        {
-            yield return new InputBox("Vendor ID",
-                () => id.VendorID.ToString(),
-                (o) => id.VendorID = ToInt(o)
-            );
-            yield return new InputBox("Product ID",
-                () => id.ProductID.ToString(),
-                (o) => id.ProductID = ToInt(o)
-            );
-            yield return new InputBox("Input Report Length",
-                () => id.InputReportLength.ToString(),
-                (o) => id.InputReportLength = ToNullableUInt(o)
-            );
-            yield return new InputBox("Output Report Length",
-                () => id.OutputReportLength.ToString(),
-                (o) => id.OutputReportLength = ToNullableUInt(o)
-            );
-            yield return new InputBox("Report Parser",
-                () => id.ReportParser,
-                (o) => id.ReportParser = o,
-                reportParser.FullName
-            );
-            yield return new InputBox("Feature Initialization Report",
-                () => ToHexString(id.FeatureInitReport),
-                (o) => id.FeatureInitReport = ToByteArray(o)
-            );
-            yield return new InputBox("Output Initialization Report",
-                () => ToHexString(id.OutputInitReport),
-                (o) => id.OutputInitReport = ToByteArray(o)
-            );
-            yield return new DictionaryEditor("Device Strings",
-                () =>
-                {
-                    var dictionaryBuffer = new Dictionary<string, string>();
-                    foreach (var pair in id.DeviceStrings)
-                        dictionaryBuffer.Add($"{pair.Key}", pair.Value);
-                    return dictionaryBuffer;
-                },
-                (o) =>
-                {
-                    id.DeviceStrings.Clear();
-                    foreach (KeyValuePair<string, string> pair in o)
-                        if (byte.TryParse(pair.Key, out var keyByte))
-                            id.DeviceStrings.Add(keyByte, pair.Value);
-                }
-            );
-            yield return new ListEditor("Initialization String Indexes",
-                () =>
-                {
-                    var listBuffer = new List<string>();
-                    foreach (var value in id.InitializationStrings)
-                        listBuffer.Add($"{value}");
-                    return listBuffer;
-                },
-                (o) =>
-                {
-                    id.InitializationStrings.Clear();
-                    foreach (string value in o)
-                        if (byte.TryParse(value, out var byteValue))
-                            id.InitializationStrings.Add(byteValue);
-                        else
-                            id.InitializationStrings.Add(0);
-                }
-            );
-        }
-
-        private IEnumerable<Control> GetDigitizerIdentifierControls(DigitizerIdentifier id)
-        {
-            yield return new InputBox("Width (mm)",
-                () => id.Width.ToString(),
-                (o) => id.Width = ToFloat(o)
-            );
-            yield return new InputBox("Height (mm)",
-                () => id.Height.ToString(),
-                (o) => id.Height = ToFloat(o)
-            );
-            yield return new InputBox("Max X (px)",
-                () => id.MaxX.ToString(),
-                (o) => id.MaxX = ToFloat(o)
-            );
-            yield return new InputBox("Max Y (px)",
-                () => id.MaxY.ToString(),
-                (o) => id.MaxY = ToFloat(o)
-            );
-            yield return new InputBox("Max Pressure",
-                () => id.MaxPressure.ToString(),
-                (o) => id.MaxPressure = ToUInt(o)
-            );
-            yield return new InputBox("Active Report ID",
-                () => id.ActiveReportID?.ToString() ?? new DetectionRange().ToString(),
-                (o) => id.ActiveReportID = DetectionRange.Parse(o)
-            );
-            foreach (var control in GetDeviceIdentifierControls(id, typeof(TabletReportParser)))
-                yield return control;
         }
     }
 }
