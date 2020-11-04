@@ -17,8 +17,9 @@ namespace OpenTabletDriver
         public static IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
 
         private static bool Silent;
+        private readonly static object logLock = new object();
         private readonly static PluginContext fallbackPluginContext = new PluginContext();
-        private readonly static List<PluginContext> plugins = new List<PluginContext>();
+        private readonly static ConcurrentBag<PluginContext> plugins = new ConcurrentBag<PluginContext>();
         private readonly static ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
         private readonly static IReadOnlyCollection<Type> libTypes =
             Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes().ToArray();
@@ -52,7 +53,7 @@ namespace OpenTabletDriver
 
                 Log($"Loading plugin '{pluginName}'");
                 var context = new PluginContext(pluginName);
-                foreach(var plugin in Directory.EnumerateFiles(dir, "*.dll", SearchOption.AllDirectories))
+                foreach(var plugin in Directory.EnumerateFiles(dir, "*.dll", SearchOption.TopDirectoryOnly))
                     LoadPlugin(context, plugin);
 
                 plugins.Add(context);
@@ -185,7 +186,10 @@ namespace OpenTabletDriver
         public static void Log(string msg, LogLevel level = LogLevel.Info)
         {
             if (!Silent)
-                Plugin.Log.Write("Plugin", msg, level);
+            {
+                lock (logLock)
+                    Plugin.Log.Write("Plugin", msg, level);
+            }
         }
     }
 }

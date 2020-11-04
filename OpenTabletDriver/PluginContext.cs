@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver
@@ -58,8 +59,28 @@ namespace OpenTabletDriver
                 return IntPtr.Zero;
             }
 
-            var libraryFile = Directory.EnumerateFiles(Path.Join(this.PluginPath, "runtimes"), $"{unmanagedDllName}.*", SearchOption.AllDirectories).FirstOrDefault();
-            return LoadUnmanagedDllFromPath(libraryFile);
+            var libraryFile = Directory.EnumerateFiles(Path.Join(this.PluginPath, "runtimes"), ToDllName(unmanagedDllName), SearchOption.AllDirectories).FirstOrDefault();
+            try
+            {
+                return LoadUnmanagedDllFromPath(libraryFile);
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
+        }
+
+        private static string ToDllName(string dllName)
+        {
+            var platformDll = SystemInfo.CurrentPlatform switch
+            {
+                RuntimePlatform.Windows => $"{dllName}.dll",
+                RuntimePlatform.Linux => $"lib{dllName}.so",
+                RuntimePlatform.MacOS => $"lib{dllName}.dylib",
+                _ => null
+            };
+
+            return platformDll;
         }
     }
 }
