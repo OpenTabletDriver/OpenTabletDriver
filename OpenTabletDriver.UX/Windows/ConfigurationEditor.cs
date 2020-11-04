@@ -27,19 +27,19 @@ namespace OpenTabletDriver.UX.Windows
             base.Icon = App.Logo.WithSize(App.Logo.Size);
 
             // Main Controls
-            this.configList.SelectedIndexChanged += (sender, e) => 
+            this.configList.SelectedIndexChanged += (sender, e) =>
             {
                 if (this.configList.SelectedIndex >= 0)
                     SelectedConfiguration = Configurations[this.configList.SelectedIndex];
             };
-            
+
             base.Content = new Splitter
             {
                 Orientation = Orientation.Horizontal,
                 Panel1MinimumSize = 200,
                 Panel1 = this.configList,
                 Panel2 = new Scrollable
-                { 
+                {
                     Content = this.configControls,
                     Padding = new Padding(5)
                 },
@@ -105,8 +105,8 @@ namespace OpenTabletDriver.UX.Windows
             var appinfo = await App.Driver.Instance.GetApplicationInfo();
             var configDir = new DirectoryInfo(appinfo.ConfigurationDirectory);
             var sortedConfigs = from config in ReadConfigurations(configDir)
-                orderby config.Name
-                select config;
+                                orderby config.Name
+                                select config;
             Configurations = new List<TabletConfiguration>(sortedConfigs);
             this.configList.SelectedIndex = 0;
         }
@@ -123,7 +123,7 @@ namespace OpenTabletDriver.UX.Windows
             }
             get => this.configs;
         }
-        
+
         private TabletConfiguration selected;
         private TabletConfiguration SelectedConfiguration
         {
@@ -143,7 +143,7 @@ namespace OpenTabletDriver.UX.Windows
         private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
             var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                select TabletConfiguration.Read(file);
+                          select TabletConfiguration.Read(file);
             return new List<TabletConfiguration>(configs);
         }
 
@@ -257,73 +257,104 @@ namespace OpenTabletDriver.UX.Windows
             );
 
             var digitizerStack = new StackView();
-            digitizerStack.AddControl(
-                new Button(
-                    (_, _) =>
-                    {
-                        SelectedConfiguration.DigitizerIdentifiers.Add(new DigitizerIdentifier());
-                        Refresh();
-                    }
-                )
-                {
-                    Text = "Add"
-                }
-            );
+            var addDigitizerButton = new Button((_, _) =>
+            {
+                SelectedConfiguration.DigitizerIdentifiers.Add(new DigitizerIdentifier());
+                Refresh();
+            })
+            {
+                Text = "+"
+            };
 
             foreach (var digitizerIdentifier in SelectedConfiguration.DigitizerIdentifiers)
             {
-                var expander = new ExpanderBase("Digitizer Identifier", isExpanded: false);
-                expander.StackView.AddControls(MakeDigitizerIdentifierControls(digitizerIdentifier));
-                expander.StackView.AddControl(
-                    new Button(
-                        (_, _) => 
-                        {
-                            SelectedConfiguration.DigitizerIdentifiers.Remove(digitizerIdentifier);
-                            Refresh();
-                        }
-                    )
-                    {
-                        Text = "Remove"
-                    }
-                );
+                var container = new StackView(GetDigitizerIdentifierControls(digitizerIdentifier));
+                var removeButton = new Button((_, _) =>
+                {
+                    SelectedConfiguration.DigitizerIdentifiers.Remove(digitizerIdentifier);
+                    Refresh();
+                })
+                {
+                    Text = "-"
+                };
 
-                digitizerStack.AddControl(new GroupBoxBase(null, expander));
+                var expander = new ExpanderBase("Digitizer Identifier", isExpanded: false)
+                {
+                    Content = container
+                };
+                
+                var content = new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    Spacing = 5,
+                    Items = 
+                    {
+                        new StackLayoutItem
+                        {
+                            Control = expander,
+                            Expand = true
+                        },
+                        new StackLayoutItem
+                        {
+                            Control = removeButton,
+                            VerticalAlignment = VerticalAlignment.Top
+                        }
+                    }
+                };
+
+                digitizerStack.AddControl(content, HorizontalAlignment.Stretch);
             }
+            digitizerStack.AddControl(addDigitizerButton, HorizontalAlignment.Right);
             yield return new GroupBoxBase("Digitizer Identifiers", digitizerStack);
 
             var auxStack = new StackView();
-            auxStack.AddControl(
-                new Button(
-                    (_, _) =>
-                    {
-                        SelectedConfiguration.AuxilaryDeviceIdentifiers.Add(new DeviceIdentifier());
-                        Refresh();
-                    }
-                )
-                {
-                    Text = "Add"
-                }
-            );
+            var addAuxButton = new Button((_, _) =>
+            {
+                SelectedConfiguration.AuxilaryDeviceIdentifiers.Add(new DeviceIdentifier());
+                Refresh();
+            })
+            {
+                Text = "+"
+            };
 
             foreach (var auxIdentifier in SelectedConfiguration.AuxilaryDeviceIdentifiers)
             {
-                var expander = new ExpanderBase("Auxiliary Identifier", isExpanded: false);
-                expander.StackView.AddControls(GetDeviceIdentifierControls(auxIdentifier, typeof(AuxReportParser)));
-                expander.StackView.AddControl(
-                    new Button(
-                        (_, _) => 
-                        {
-                            SelectedConfiguration.AuxilaryDeviceIdentifiers.Remove(auxIdentifier);
-                            Refresh();
-                        }
-                    )
-                    {
-                        Text = "Remove"
-                    }
-                );
+                var container = new StackView(GetDeviceIdentifierControls(auxIdentifier, typeof(AuxReportParser)));
+                var removeButton = new Button((_, _) =>
+                {
+                    SelectedConfiguration.AuxilaryDeviceIdentifiers.Remove(auxIdentifier);
+                    Refresh();
+                })
+                {
+                    Text = "-"
+                };
+
+                var expander = new ExpanderBase("Digitizer Identifier", isExpanded: false)
+                {
+                    Content = container
+                };
                 
-                auxStack.AddControl(new GroupBoxBase(null, expander));
+                var content = new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    Spacing = 5,
+                    Items = 
+                    {
+                        new StackLayoutItem
+                        {
+                            Control = expander,
+                            Expand = true
+                        },
+                        new StackLayoutItem
+                        {
+                            Control = removeButton,
+                            VerticalAlignment = VerticalAlignment.Top
+                        }
+                    }
+                };
+                auxStack.AddControl(content);
             }
+            auxStack.AddControl(addAuxButton, HorizontalAlignment.Right);
             yield return new GroupBoxBase("Auxiliary Device Identifiers", auxStack);
 
             yield return new DictionaryEditor("Attributes",
@@ -399,7 +430,7 @@ namespace OpenTabletDriver.UX.Windows
             );
         }
 
-        private IEnumerable<Control> MakeDigitizerIdentifierControls(DigitizerIdentifier id)
+        private IEnumerable<Control> GetDigitizerIdentifierControls(DigitizerIdentifier id)
         {
             yield return new InputBox("Width (mm)",
                 () => id.Width.ToString(),
