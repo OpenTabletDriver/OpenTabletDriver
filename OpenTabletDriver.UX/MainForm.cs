@@ -902,12 +902,9 @@ namespace OpenTabletDriver.UX
         {
             if (tablet != null)
             {
-                tabletAreaEditor.ViewModel.Background = new RectangleF[]
-                {
-                    new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height)
-                };
+                tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height));
 
-                if (Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
+                if (Settings != null && Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
                 {
                     Settings.TabletWidth = tablet.TabletIdentifier.Width;
                     Settings.TabletHeight = tablet.TabletIdentifier.Height;
@@ -915,7 +912,7 @@ namespace OpenTabletDriver.UX
             }
             else
             {
-                tabletAreaEditor.ViewModel.Background = null;
+                tabletAreaEditor.SetBackground(null);
             }
         }
 

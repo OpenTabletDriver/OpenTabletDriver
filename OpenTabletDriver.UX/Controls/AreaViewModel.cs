@@ -55,6 +55,10 @@ namespace OpenTabletDriver.UX.Controls
                         Bottom = this.Background.Max(r => r.Bottom),
                     };
                 }
+                else
+                {
+                    this.FullBackground = RectangleF.Empty;
+                }
             }
             get => this.bg;
         }
