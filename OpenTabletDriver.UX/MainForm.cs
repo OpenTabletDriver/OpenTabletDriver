@@ -148,7 +148,7 @@ namespace OpenTabletDriver.UX
                 Spacing = 5,
                 Items =
                 {
-                    new Button(async (s, e) => await SaveSettings())
+                    new Button(async (s, e) => await SaveSettings(Settings))
                     {
                         Text = "Save"
                     },
@@ -496,7 +496,7 @@ namespace OpenTabletDriver.UX
             saveSettingsAs.Executed += async (sender, e) => await SaveSettingsDialog();
 
             var saveSettings = new Command { MenuText = "Save settings", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveSettings.Executed += async (sender, e) => await SaveSettings();
+            saveSettings.Executed += async (sender, e) => await SaveSettings(Settings);
 
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
@@ -809,11 +809,28 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private async Task SaveSettings()
+        private async Task SaveSettings(Settings settings)
         {
-            var appInfo = await App.Driver.Instance.GetApplicationInfo();
-            if (Settings is Settings settings)
+            if (settings != null)
             {
+                if (settings.TabletWidth == 0 || settings.TabletHeight == 0)
+                {
+                    var result = MessageBox.Show(
+                        "Warning: Your tablet area is invalid. Saving this configuration may cause problems." + Environment.NewLine +
+                        "Are you sure you want to save your configuration?",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxType.Warning
+                    );
+                    switch (result)
+                    {
+                        case DialogResult.Yes:
+                            break;
+                        default:
+                            return;
+                    }
+                }
+
+                var appInfo = await App.Driver.Instance.GetApplicationInfo();
                 settings.Serialize(new FileInfo(appInfo.SettingsFile));
                 await ApplySettings();
             }
@@ -889,6 +906,12 @@ namespace OpenTabletDriver.UX
                 {
                     new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height)
                 };
+
+                if (Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
+                {
+                    Settings.TabletWidth = tablet.TabletIdentifier.Width;
+                    Settings.TabletHeight = tablet.TabletIdentifier.Height;
+                }
             }
             else
             {
