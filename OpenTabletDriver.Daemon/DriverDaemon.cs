@@ -224,6 +224,9 @@ namespace OpenTabletDriver.Daemon
 
             absoluteMode.AreaClipping = Settings.EnableClipping;   
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
+
+            absoluteMode.AreaLimiting = Settings.EnableAreaLimiting;
+            Log.Write("Settings", $"Ignoring reports outside area: {(absoluteMode.AreaLimiting ? "Enabled" : "Disabled")}");
         }
 
         private void SetRelativeModeSettings(RelativeOutputMode relativeMode)
