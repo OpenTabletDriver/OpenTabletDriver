@@ -17,7 +17,6 @@ namespace OpenTabletDriver
         public static IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
 
         private static bool Silent;
-        private readonly static object logLock = new object();
         private readonly static PluginContext fallbackPluginContext = new PluginContext();
         private readonly static ConcurrentBag<PluginContext> plugins = new ConcurrentBag<PluginContext>();
         private readonly static ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
@@ -74,9 +73,9 @@ namespace OpenTabletDriver
 
             // Populate PluginTypes so UX and Daemon can access them
 
-            Parallel.ForEach(plugins, (context, _, index) =>
+            Parallel.ForEach(plugins, (loadedContext, _, index) =>
             {
-                LoadPluginTypes(context);
+                LoadPluginTypes(loadedContext);
             });
             LoadPluginTypes(fallbackPluginContext);
         }
@@ -97,6 +96,7 @@ namespace OpenTabletDriver
         private static void LoadPluginTypes(PluginContext context)
         {
             var types = from asm in context.Assemblies
+                        where asm.IsLoadable()
                         from type in asm.GetExportedTypes()
                         where type.IsPluginType()
                         select type;
@@ -105,7 +105,7 @@ namespace OpenTabletDriver
             {
                 if (!type.IsPlatformSupported())
                 {
-                    Log($"Plugin '{type.FullName}' incompatible to current OS", LogLevel.Warning);
+                    Log($"Plugin '{type.FullName}' incompatible with current OS", LogLevel.Warning);
                     return;
                 }
                 if (type.IsPluginIgnored())
@@ -185,13 +185,24 @@ namespace OpenTabletDriver
             return attr?.IsCurrentPlatform ?? true;
         }
 
+        private static bool IsLoadable(this Assembly asm)
+        {
+            try
+            {
+                _ = asm.DefinedTypes;
+                return true;
+            }
+            catch
+            {
+                Log($"Plugin '{asm.GetName().Name}' can't be loaded and is likely out of date.");
+                return false;
+            }
+        }
+
         public static void Log(string msg, LogLevel level = LogLevel.Info)
         {
             if (!Silent)
-            {
-                lock (logLock)
-                    Plugin.Log.Write("Plugin", msg, level);
-            }
+                Plugin.Log.Write("Plugin", msg, level);
         }
     }
 }
