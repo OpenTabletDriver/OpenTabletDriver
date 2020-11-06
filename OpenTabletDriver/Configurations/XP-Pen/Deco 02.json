@@ -2,15 +2,15 @@
   "Name": "XP-Pen Deco 02",
   "DigitizerIdentifiers": [
     {
-      "Width": 254.0,
-      "Height": 143.0,
-      "MaxX": 22000.0,
-      "MaxY": 14000.0,
+      "Width": 223.52,
+      "Height": 139.7,
+      "MaxX": 22352.0,
+      "MaxY": 13970,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 128,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
         "EndInclusive": false
       },
       "VendorID": 10429,
