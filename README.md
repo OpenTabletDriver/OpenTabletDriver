@@ -85,4 +85,4 @@ No other dependencies.
 
 If you wish to contribute to OpenTabletDriver, check out the [issue tracker](https://github.com/InfinityGhost/OpenTabletDriver/issues).
 
-If you have any suggestions, [open an issue ticket](https://github.com/InfinityGhost/OpenTabletDriver/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
+If you have any issues or suggestions, [open an issue ticket](https://github.com/InfinityGhost/OpenTabletDriver/issues/new/choose).
