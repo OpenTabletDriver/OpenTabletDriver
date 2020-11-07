@@ -90,7 +90,8 @@ namespace OpenTabletDriver.Daemon
         public async Task<bool> SetTablet(TabletConfiguration tablet)
         {
             var match = Driver.TryMatch(tablet);
-            TabletChanged?.Invoke(this, match ? await GetTablet() : null);
+            if (match)
+                TabletChanged?.Invoke(this, await GetTablet());
             return match;
         }
 
