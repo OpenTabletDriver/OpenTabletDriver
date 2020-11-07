@@ -5,9 +5,9 @@
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
 <p align="middle">
-  <img src="https://i.imgur.com/XDYf62e.png" height="350" width="410"/>
-  <img src="https://i.imgur.com/jBW8NpU.png" height="350" width="410"/>
-  <img src="https://i.imgur.com/ZLCy6wz.png" height="350" width="410"/>
+  <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
+  <img src="https://i.imgur.com/jBW8NpU.png" width="410" align="middle"/>
+  <img src="https://i.imgur.com/ZLCy6wz.png" width="410" align="middle"/>
 </p>
 
 # Supported Tablets
