@@ -5,6 +5,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <VersionPrefix>0.4.1</VersionPrefix>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

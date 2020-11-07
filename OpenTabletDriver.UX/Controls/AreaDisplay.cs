@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -12,8 +11,6 @@ namespace OpenTabletDriver.UX.Controls
         {
             this.DataContext = new AreaViewModel();
             this.Paint += (sender, e) => Draw(e.Graphics);
-            this.MouseDown += (sender, e) => BeginAreaDrag(e.Buttons);
-            this.MouseUp += (sender, e) => EndAreaDrag(e.Buttons);
             
             ViewModel.Unit = unit;
             ViewModel.PropertyChanged += (sender, e) => this.Invalidate();
@@ -33,17 +30,19 @@ namespace OpenTabletDriver.UX.Controls
                 return;
             }
 
-            var foreground = new RectangleF(
-                ViewModel.X - (ViewModel.Width / 2),
-                ViewModel.Y - (ViewModel.Height / 2),
-                ViewModel.Width,
-                ViewModel.Height);
+            var foreground = new RectangleF
+            {
+                X = ViewModel.X - (ViewModel.Width / 2),
+                Y = ViewModel.Y - (ViewModel.Height / 2),
+                Width = ViewModel.Width,
+                Height = ViewModel.Height
+            };
             
             if (foreground.Width > 0 & foreground.Height > 0 & ViewModel.FullBackground.Width > 0 & ViewModel.FullBackground.Height > 0)
             {
-                pixelScale = GetRelativeScale(ViewModel.FullBackground.Width, ViewModel.FullBackground.Height);
-                DrawBackground(graphics, ViewModel.Background, (ViewModel.FullBackground * pixelScale), SystemColors.WindowBackground, SystemColors.Highlight);
-                DrawForeground(graphics, foreground, (ViewModel.FullBackground * pixelScale), SystemColors.Highlight);
+                PixelScale = GetRelativeScale(ViewModel.FullBackground.Width, ViewModel.FullBackground.Height);
+                DrawBackground(graphics, ViewModel.Background, (ViewModel.FullBackground * PixelScale), SystemColors.WindowBackground, SystemColors.Highlight);
+                DrawForeground(graphics, foreground, (ViewModel.FullBackground * PixelScale), SystemColors.Highlight);
             }
             else
             {
@@ -59,7 +58,7 @@ namespace OpenTabletDriver.UX.Controls
                 graphics.TranslateTransform(-fullBg.TopLeft);
                 foreach (var rect in rects)
                 {
-                    var scaledRect = rect * pixelScale;
+                    var scaledRect = rect * PixelScale;
                     graphics.FillRectangle(fill, scaledRect);
                     graphics.DrawRectangle(border, scaledRect);
                 }
@@ -70,7 +69,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             using (graphics.SaveTransformState())
             {
-                rect *= pixelScale;
+                rect *= PixelScale;
                 graphics.TranslateTransform((this.Width - fullBg.Width) / 2, (this.Height - fullBg.Height) / 2);
                 graphics.TranslateTransform(rect.Center);
                 graphics.RotateTransform(ViewModel.Rotation);
@@ -134,36 +133,8 @@ namespace OpenTabletDriver.UX.Controls
         private static readonly Font Font = SystemFonts.User(8);
         private static readonly Brush TextBrush = new SolidBrush(SystemColors.ControlText);
 
-        private float pixelScale;
-        private PointF? lastMouseLocation;
+        public float PixelScale { protected set; get; }
 
         public string InvalidSizeError { set; get; } = "Invalid area size";
-
-        private void BeginAreaDrag(MouseButtons buttons)
-        {
-            if (buttons.HasFlag(MouseButtons.Primary))
-                this.MouseMove += MoveArea;
-        }
-
-        private void EndAreaDrag(MouseButtons buttons)
-        {
-            if (buttons.HasFlag(MouseButtons.Primary))
-            {
-                this.MouseMove -= MoveArea;
-                lastMouseLocation = null;
-            }
-        }
-        
-        private void MoveArea(object sender, MouseEventArgs e)
-        {
-            if (lastMouseLocation is PointF lastPos)
-            {
-                var delta = lastPos - e.Location;
-                ViewModel.X -= delta.X / pixelScale;
-                ViewModel.Y -= delta.Y / pixelScale;
-                Invalidate();
-            }
-            lastMouseLocation = e.Location;
-        }
     }
 }

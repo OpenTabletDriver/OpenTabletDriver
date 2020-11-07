@@ -4,9 +4,13 @@ using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Controls
 {
+    using static ParseTools;
+    
     public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
     {
         public AreaEditor(string unit, bool enableRotation = false)
@@ -24,39 +28,36 @@ namespace OpenTabletDriver.UX.Controls
             AreaDisplay.Bind(c => c.ViewModel.Y, ViewModel, m => m.Y);
             AreaDisplay.Bind(c => c.ViewModel.Rotation, ViewModel, m => m.Rotation);
             AreaDisplay.Bind(c => c.ViewModel.Background, ViewModel, m => m.Background);
-
-            float parseFloat(string s)
-            {
-                return !string.IsNullOrWhiteSpace(s) ? (float.TryParse(s, out var v) ? v : 1) : 0;
-            }
+            AreaDisplay.MouseDown += (sender, e) => BeginAreaDrag(e.Buttons);
+            AreaDisplay.MouseUp += (sender, e) => EndAreaDrag(e.Buttons);
 
             widthBox = new TextBox();
             widthBox.TextBinding.Convert(
-                s => parseFloat(s),
+                s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Width));
             
             heightBox = new TextBox();
             heightBox.TextBinding.Convert(
-                s => parseFloat(s),
+                s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Height));
             
             xOffsetBox = new TextBox();
             xOffsetBox.TextBinding.Convert(
-                s => parseFloat(s),
+                s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.X));
             
             yOffsetBox = new TextBox();
             yOffsetBox.TextBinding.Convert(
-                s => parseFloat(s),
+                s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Y));
 
             rotationBox = new TextBox();
             rotationBox.TextBinding.Convert(
-                s => parseFloat(s),
+                s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Rotation));
 
@@ -195,24 +196,7 @@ namespace OpenTabletDriver.UX.Controls
             get => (AreaViewModel)this.DataContext;
         }
 
-        private Control AppendUnit(Control control, string unit)
-        {
-            return TableLayout.Horizontal(
-                5,
-                new TableCell(control, true),
-                new Label
-                {
-                    Text = unit,
-                    VerticalAlignment = VerticalAlignment.Center,
-                });
-        }
-
-        private Command CreateMenuItem(string menuText, Action handler)
-        {
-            var command = new Command { MenuText = menuText };
-            command.Executed += (sender, e) => handler();
-            return command;
-        }
+        public void SetBackground(params RectangleF[] bgs) => ViewModel.Background = bgs;
 
         public Command AppendMenuItem(string menuText, Action handler)
         {
@@ -237,6 +221,38 @@ namespace OpenTabletDriver.UX.Controls
             this.ContextMenu.Items.AddSeparator();
         }
 
+        private Control AppendUnit(Control control, string unit)
+        {
+            return new StackView
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Items =
+                {
+                    new StackLayoutItem
+                    {
+                        Control = control,
+                        Expand = true
+                    },
+                    new StackLayoutItem
+                    {
+                        Control = new Label
+                        {
+                            Text = unit,
+                            VerticalAlignment = VerticalAlignment.Center,
+                        }
+                    }
+                }
+            };
+        }
+
+        private Command CreateMenuItem(string menuText, Action handler)
+        {
+            var command = new Command { MenuText = menuText };
+            command.Executed += (sender, e) => handler();
+            return command;
+        }
+
         private void LimitArea(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -246,7 +262,7 @@ namespace OpenTabletDriver.UX.Controls
                 case nameof(ViewModel.Width):
                 case nameof(ViewModel.Height):
                 case nameof(ViewModel.Rotation):
-                    if (ViewModel.Background == null || ViewModel.FullBackground == null || ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
+                    if (ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
                         break;
 
                     var center = GetCenterOffset(out var min, out var max);
@@ -295,8 +311,36 @@ namespace OpenTabletDriver.UX.Controls
 
         private Vector2 GetCenterOffset() => GetCenterOffset(out _, out _);
 
-        public AreaDisplay AreaDisplay { protected set; get; }
+        protected void BeginAreaDrag(MouseButtons buttons)
+        {
+            if (buttons.HasFlag(MouseButtons.Primary) && AreaValid)
+                this.MouseMove += MoveArea;
+        }
 
+        protected void EndAreaDrag(MouseButtons buttons)
+        {
+            if (buttons.HasFlag(MouseButtons.Primary))
+            {
+                this.MouseMove -= MoveArea;
+                this.lastMouseLocation = null;
+            }
+        }
+        
+        protected void MoveArea(object sender, MouseEventArgs e)
+        {
+            if (lastMouseLocation is PointF lastPos)
+            {
+                var delta = lastPos - e.Location;
+                ViewModel.X -= delta.X / AreaDisplay.PixelScale;
+                ViewModel.Y -= delta.Y / AreaDisplay.PixelScale;
+            }
+            this.lastMouseLocation = e.Location;
+        }
+
+        public AreaDisplay AreaDisplay { protected set; get; }
+        public bool AreaValid => ViewModel.Width != 0 && ViewModel.Height != 0 && ViewModel.FullBackground != RectangleF.Empty;
+
+        private PointF? lastMouseLocation;
         private TextBox widthBox, heightBox, xOffsetBox, yOffsetBox, rotationBox;
     }
 }
