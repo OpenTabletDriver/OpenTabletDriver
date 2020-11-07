@@ -2,8 +2,8 @@
 	
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
-    <VersionPrefix>0.4.1</VersionPrefix>
+    <TargetFrameworks>net5</TargetFrameworks>
+    <VersionPrefix>0.4.2</VersionPrefix>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
