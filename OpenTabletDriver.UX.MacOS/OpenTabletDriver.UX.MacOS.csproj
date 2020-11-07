@@ -5,6 +5,7 @@
     <TargetFrameworks>netcoreapp3.1;net5</TargetFrameworks>
     <VersionPrefix>0.4.1</VersionPrefix>
     <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

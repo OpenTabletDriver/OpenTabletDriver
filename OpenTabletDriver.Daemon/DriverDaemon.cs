@@ -25,9 +25,12 @@ namespace OpenTabletDriver.Daemon
     {
         public DriverDaemon()
         {
-            Log.Output += (sender, message) => LogMessages.Add(message);
-            Log.Output += (sender, message) => Console.WriteLine(Log.GetStringFormat(message));
-            Log.Output += (sender, message) => Message?.Invoke(sender, message);
+            Log.Output += (sender, message) =>
+            {
+                LogMessages.Add(message);
+                Console.WriteLine(Log.GetStringFormat(message));
+                Message?.Invoke(sender, message);
+            };
             Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
             
             LoadUserSettings();
@@ -43,7 +46,7 @@ namespace OpenTabletDriver.Daemon
                     if (await GetTablet() == null)
                         await DetectTablets();
                 }
-                CurrentDevices = DeviceList.Local.GetHidDevices().ToList();
+                CurrentDevices = DeviceList.Local.GetHidDevices();
             };
         }
 
@@ -74,7 +77,7 @@ namespace OpenTabletDriver.Daemon
 
         public Driver Driver { private set; get; } = new Driver();
         private Settings Settings { set; get; }
-        private List<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices().ToList();
+        private IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
         private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
@@ -133,9 +136,7 @@ namespace OpenTabletDriver.Daemon
             Driver.OutputMode = new PluginReference(Settings.OutputMode).Construct<IOutputMode>();
 
             if (Driver.OutputMode != null)
-            {
                 Log.Write("Settings", $"Output mode: {Driver.OutputMode.GetType().FullName}");
-            }
 
             if (Driver.OutputMode is IOutputMode outputMode)
                 SetOutputModeSettings(outputMode);
@@ -225,6 +226,9 @@ namespace OpenTabletDriver.Daemon
 
             absoluteMode.AreaClipping = Settings.EnableClipping;   
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
+
+            absoluteMode.AreaLimiting = Settings.EnableAreaLimiting;
+            Log.Write("Settings", $"Ignoring reports outside area: {(absoluteMode.AreaLimiting ? "Enabled" : "Disabled")}");
         }
 
         private void SetRelativeModeSettings(RelativeOutputMode relativeMode)

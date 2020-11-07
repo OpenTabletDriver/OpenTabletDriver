@@ -9,53 +9,49 @@ namespace OpenTabletDriver
     {
         public static readonly AppInfo Current = new AppInfo();
 
-        private string _configDirectory, _appDataDirectory;
+        private string configDirectory, appDataDirectory;
         
         public string ConfigurationDirectory
         {
-            set => _configDirectory = value;
-            // get => _configDirectory ?? _defaultConfigurationDirectory.Value;
-            get
-            {
-                if (Directory.Exists(_configDirectory))
-                {
-                    return _configDirectory;
-                }
-                else if (Directory.Exists(_defaultConfigurationDirectory.Value))
-                {
-                    return _defaultConfigurationDirectory.Value;
-                }
-                else
-                {
-                    return Path.Join(
-                        Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
-                        "Configurations"
-                    );
-                }
-            }
+            set => this.configDirectory = value;
+            get => this.configDirectory ??= DefaultConfigurationDirectory;
         }
 
         public string AppDataDirectory
         {
-            set => _appDataDirectory = value;
-            get => _appDataDirectory ?? _defaultAppDataDirectory.Value;
+            set => this.appDataDirectory = value;
+            get => this.appDataDirectory ??= DefaultAppDataDirectory;
         }
 
         public string SettingsFile => Path.Join(AppDataDirectory, "settings.json");
         public string PluginDirectory => Path.Join(AppDataDirectory, "Plugins");
 
-        private static readonly Lazy<string> _defaultConfigurationDirectory = new Lazy<string>(() => 
-            Path.Join(Environment.CurrentDirectory, "Configurations"));
+        private static string ProgramDirectory => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
-        private static readonly Lazy<string> _defaultAppDataDirectory = new Lazy<string>(() => 
+        private static string DefaultConfigurationDirectory
         {
-            return SystemInfo.CurrentPlatform switch
+            get
             {
-                RuntimePlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
-                RuntimePlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
-                RuntimePlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
-                _                       => null
-            };
-        });
+                var path = Path.Join(ProgramDirectory, "Configurations");
+                var fallbackPath = Path.Join(Environment.CurrentDirectory, "Configurations");
+                return Directory.Exists(path) ? path : fallbackPath;
+            }
+        }
+
+        private static string DefaultAppDataDirectory
+        {
+            get
+            {
+                var path = Path.Join(ProgramDirectory, "userdata");
+                var fallbackPath = SystemInfo.CurrentPlatform switch
+                {
+                    RuntimePlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
+                    RuntimePlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
+                    RuntimePlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
+                    _                       => null
+                };
+                return Directory.Exists(path) ? path : fallbackPath;
+            }
+        }
     }
 }

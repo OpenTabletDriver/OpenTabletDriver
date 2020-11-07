@@ -1,0 +1,51 @@
+{
+  "Name": "Wacom FT-0405-U",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 129.6416,
+      "Height": 94.2848,
+      "MaxX": 5104.0,
+      "MaxY": 3712.0,
+      "MaxPressure": 511,
+      "ActiveReportID": {
+        "Start": 72,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 96,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 129.6416,
+      "Height": 94.2848,
+      "MaxX": 5104.0,
+      "MaxY": 3712.0,
+      "MaxPressure": 511,
+      "ActiveReportID": {
+        "Start": 72,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 96,
+      "InputReportLength": 9,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}

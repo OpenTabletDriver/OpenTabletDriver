@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Plugin.Output
             }
             get => _filters;
         }
-        
+
         private DigitizerIdentifier _digitizer;
         public override DigitizerIdentifier Digitizer
         {
@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private Area _displayArea, _tabletArea;
-        
+
         public Area Input
         {
             set
@@ -70,12 +70,13 @@ namespace OpenTabletDriver.Plugin.Output
         public abstract IVirtualTablet VirtualTablet { get; }
         public IVirtualPointer Pointer => VirtualTablet;
         public bool AreaClipping { set; get; }
+        public bool AreaLimiting { set; get; }
 
         internal void UpdateCache()
         {
             if (!(Input is null | Output is null | Digitizer is null))
                 _transformationMatrix = CalculateTransformation(Input, Output, Digitizer);
-            
+
             _halfDisplayWidth = Output?.Width / 2 ?? 0;
             _halfDisplayHeight = Output?.Height / 2 ?? 0;
             _halfTabletWidth = Input?.Width / 2 ?? 0;
@@ -85,6 +86,7 @@ namespace OpenTabletDriver.Plugin.Output
             _maxX = Output?.Position.X + Output?.Width - _halfDisplayWidth ?? 0;
             _minY = Output?.Position.Y - _halfDisplayHeight ?? 0;
             _maxY = Output?.Position.Y + Output?.Height - _halfDisplayHeight ?? 0;
+
             _min = new Vector2(_minX, _minY);
             _max = new Vector2(_maxX, _maxY);
         }
@@ -123,14 +125,14 @@ namespace OpenTabletDriver.Plugin.Output
                 {
                     if (VirtualTablet is IPressureHandler pressureHandler)
                         pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
-                    
-                    var pos = Transpose(tabletReport);
-                    VirtualTablet.SetPosition(pos);
+
+                    if (Transpose(tabletReport) is Vector2 pos)
+                        VirtualTablet.SetPosition(pos);
                 }
             }
         }
 
-        internal Vector2 Transpose(ITabletReport report)
+        internal Vector2? Transpose(ITabletReport report)
         {
             var pos = new Vector2(report.Position.X, report.Position.Y);
 
@@ -142,6 +144,10 @@ namespace OpenTabletDriver.Plugin.Output
             pos = Vector2.Transform(pos, _transformationMatrix);
 
             // Clipping to display bounds
+            var clippedPoint = Vector2.Clamp(pos, _min, _max);
+            if (AreaLimiting && clippedPoint != pos)
+                return null;
+
             if (AreaClipping)
                 pos = Vector2.Clamp(pos, _min, _max);
 
