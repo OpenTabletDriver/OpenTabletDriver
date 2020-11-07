@@ -25,6 +25,15 @@ namespace OpenTabletDriver
             where type.IsAbstract || type.IsInterface
             select type;
 
+        public static IEnumerable<string> GetLoadedPluginNames()
+        {
+            foreach (var plugin in plugins)
+                yield return plugin.PluginName;
+
+            foreach (var asm in fallbackPluginContext.Assemblies)
+                yield return asm.GetName().Name + " (Deprecated)";
+        }
+
         public static async Task LoadPluginsAsync()
         {
             await Task.Run(LoadPlugins);

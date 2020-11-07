@@ -519,6 +519,9 @@ namespace OpenTabletDriver.UX
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
+            var pluginManager = new Command { MenuText = "Plugin Manager" };
+            pluginManager.Executed += (sender, e) => ShowPluginManager();
+
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
             pluginsDirectory.Executed += (sender, e) => SystemInfo.Open(AppInfo.Current.PluginDirectory);
 
@@ -566,6 +569,7 @@ namespace OpenTabletDriver.UX
                         Text = "Plugins",
                         Items =
                         {
+                            pluginManager,
                             pluginsDirectory,
                             pluginsRepository
                         }
@@ -863,6 +867,12 @@ namespace OpenTabletDriver.UX
         {
             var configEditor = new ConfigurationEditor();
             configEditor.Show();
+        }
+
+        private void ShowPluginManager()
+        {
+            var pluginManager = new PluginManagerWindow();
+            pluginManager.Show();
         }
 
         private void ShowDeviceStringReader()
