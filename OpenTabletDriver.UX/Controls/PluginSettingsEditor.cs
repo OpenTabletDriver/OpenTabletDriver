@@ -249,12 +249,12 @@ namespace OpenTabletDriver.UX.Controls
                         {
                             case RestrictionType.Number:
                             {
-                                textBox.TextChanging += (_, args) => args.Cancel = NumberBox.StaticRestrictor(args.NewText);
+                                textBox.TextChanging += (_, args) => args.Cancel = !NumberBox.IsNumber(args.NewText);
                                 break;
                             }
                             case RestrictionType.Hex:
                             {
-                                textBox.TextChanging += (_, args) => args.Cancel = HexBox.StaticRestrictor(args.NewText);
+                                textBox.TextChanging += (_, args) => args.Cancel = !HexBox.IsHex(args.NewText);
                                 break;
                             }
                             case RestrictionType.Custom:
