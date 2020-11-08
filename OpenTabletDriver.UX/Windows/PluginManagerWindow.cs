@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -13,14 +14,14 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Plugin Manager";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
+            this.ClientSize = new Size(700, 280);
+            this.AllowDrop = true;
 
             this.pluginNameList = PluginManager.GetLoadedPluginNames().ToList();
 
-            this.AllowDrop = true;
-
             this.panel = new Panel()
             {
-                MinimumSize = new Size(700, 280)
+                AllowDrop = true
             };
 
             this.dropArea = new StackLayout()
@@ -71,9 +72,9 @@ namespace OpenTabletDriver.UX.Windows
             this.panel.Content = split;
             this.Content = panel;
 
-            this.DragEnter += ShowDrop;
-            this.DragLeave += LeaveDrop;
-            this.dropArea.DragDrop += PluginInstall;
+            this.panel.DragEnter += ShowDrop;
+            this.panel.DragLeave += LeaveDrop;
+            this.panel.DragDrop += DragDropPluginInstall;
         }
 
         private void ShowDrop(object _, DragEventArgs args)
@@ -92,7 +93,7 @@ namespace OpenTabletDriver.UX.Windows
                             if (uri.IsFile && File.Exists(uri.LocalPath))
                             {
                                 var fileInfo = new FileInfo(uri.LocalPath);
-                                if (fileInfo.Extension == "zip" || fileInfo.Extension == "dll")
+                                if (fileInfo.Extension == ".zip" || fileInfo.Extension == ".dll")
                                 {
                                     return true;
                                 }
@@ -102,18 +103,14 @@ namespace OpenTabletDriver.UX.Windows
                         if (supportedType)
                         {
                             dropArea.Items[1].Control = dragDropSupported;
-                            var size = split.Panel2.Size;
                             this.panel.Content = dropArea;
-                            split.Panel2.Size = size;
                             args.Effects = DragEffects.Copy;
                         }
                     }
                     else
                     {
                         dropArea.Items[1].Control = dragDropNotSupported;
-                        var size = split.Panel2.Size;
                         this.panel.Content = dropArea;
-                        split.Panel2.Size = size;
                     }
                 }
             }
@@ -122,12 +119,10 @@ namespace OpenTabletDriver.UX.Windows
 
         private void LeaveDrop(object _, DragEventArgs args)
         {
-            var size = split.Panel2.Size;
             this.panel.Content = split;
-            split.Panel2.Size = size;
         }
 
-        private void PluginInstall(object _, DragEventArgs args)
+        private void DragDropPluginInstall(object _, DragEventArgs args)
         {
             try
             {
@@ -141,15 +136,15 @@ namespace OpenTabletDriver.UX.Windows
                             var fileInfo = new FileInfo(uri.LocalPath);
                             switch (fileInfo.Extension)
                             {
-                                case "zip":
-                                    ZipFile.ExtractToDirectory(uri.LocalPath, Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name), true);
-                                    PluginManager.LoadPlugins();
-                                    pluginList.DataStore = pluginNameList = PluginManager.GetLoadedPluginNames().ToList();
+                                case ".zip":
+                                    ZipFile.ExtractToDirectory(uri.LocalPath,
+                                        Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name.Replace(".zip", string.Empty)),
+                                        true);
+                                    LoadNewPlugins().ConfigureAwait(false);
                                     break;
-                                case "dll":
+                                case ".dll":
                                     File.Copy(uri.LocalPath, AppInfo.Current.PluginDirectory, true);
-                                    PluginManager.LoadPlugins();
-                                    pluginList.DataStore = pluginNameList = PluginManager.GetLoadedPluginNames().ToList();
+                                    LoadNewPlugins().ConfigureAwait(false);
                                     break;
                             }
                         }
@@ -159,13 +154,21 @@ namespace OpenTabletDriver.UX.Windows
             catch {}
         }
 
+        private async Task LoadNewPlugins()
+        {
+            await App.Driver.Instance.LoadPlugins();
+            await PluginManager.LoadPluginsAsync();
+            await MainForm.FormInstance.ReloadUX();
+            pluginList.DataStore = pluginNameList = PluginManager.GetLoadedPluginNames().ToList();
+        }
+
         private List<string> pluginNameList;
         private readonly Panel panel;
         private readonly Splitter split;
         private readonly ListBox pluginList;
         private readonly StackLayout dragInstruction;
         private readonly StackLayout dropArea;
-        private const string dragDropSupported = "Drop plugin zip here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
+        private const string dragDropSupported = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
         private const string dragDropNotSupported = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
     }
 }

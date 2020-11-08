@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Daemon
                 Message?.Invoke(sender, message);
             };
             Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
-            
+
             LoadUserSettings();
 
             HidSharp.DeviceList.Local.Changed += async (sender, e) => 

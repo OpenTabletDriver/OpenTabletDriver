@@ -18,6 +18,8 @@ namespace OpenTabletDriver.UX
 {
     public partial class MainForm : Form
     {
+        public static MainForm FormInstance { get; private set; }
+
         public MainForm()
         {
             Title = "OpenTabletDriver";
@@ -29,6 +31,7 @@ namespace OpenTabletDriver.UX
             ApplyPlatformQuirks();
 
             InitializeAsync();
+            FormInstance = this;
         }
 
         private Control ConstructPlaceholderControl()
@@ -51,6 +54,18 @@ namespace OpenTabletDriver.UX
                     new StackLayoutItem(null, true)
                 }
             };
+        }
+
+        public async Task ReloadUX()
+        {
+            Content = ConstructMainControls();
+
+            if (await App.Driver.Instance.GetTablet() is TabletStatus tablet)
+            {
+                SetTabletAreaDimensions(tablet);
+            }
+
+            await LoadSettings();
         }
 
         private Control ConstructMainControls()
@@ -700,7 +715,13 @@ namespace OpenTabletDriver.UX
             }
             App.Driver.Instance.TabletChanged += (sender, tablet) => SetTabletAreaDimensions(tablet);
 
-            var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
+            await LoadSettings(AppInfo.Current);
+        }
+
+        private async Task LoadSettings(AppInfo appInfo = null)
+        {
+            appInfo ??= await App.Driver.Instance.GetApplicationInfo();
+            var settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await App.Driver.Instance.GetSettings() is Settings settings)
             {
                 Settings = settings;
@@ -723,9 +744,9 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays
-                where !(disp is IVirtualScreen)
-                select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
+            displayAreaEditor.ViewModel.Background = from disp in Interop.Platform.VirtualScreen.Displays
+                                                     where !(disp is IVirtualScreen)
+                                                     select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
 
         private Control absoluteConfig, relativeConfig, nullConfig;
