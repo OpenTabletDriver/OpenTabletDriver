@@ -162,7 +162,7 @@ namespace OpenTabletDriver.UX.Controls
 
         private void AddItem(LogMessage message)
         {
-            Application.Instance.Invoke(() => 
+            Application.Instance.AsyncInvoke(() => 
             {
                 Messages.Add(message);
 
