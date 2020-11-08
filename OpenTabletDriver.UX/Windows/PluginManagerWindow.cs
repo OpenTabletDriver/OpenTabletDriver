@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -20,19 +21,19 @@ namespace OpenTabletDriver.UX.Windows
             this.AllowDrop = true;
             this.Menu = ConstructMenu();
 
-            this.pluginNameList = PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
+            this.pluginList = PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
 
-            this.panel = new Panel()
+            this.panel = new Panel
             {
                 AllowDrop = true
             };
 
-            this.dropArea = new StackLayout()
+            this.dropArea = new StackLayout
             {
                 Items =
                 {
                     new StackLayoutItem(null, true),
-                    new StackLayoutItem()
+                    new StackLayoutItem
                     {
                         Control = dragDropSupported,
                         HorizontalAlignment = HorizontalAlignment.Center
@@ -50,17 +51,17 @@ namespace OpenTabletDriver.UX.Windows
                 FixedPanel = SplitterFixedPanel.Panel2
             };
 
-            this.pluginList = new ListBox()
+            this.pluginListBox = new ListBox
             {
-                DataStore = pluginNameList
+                DataStore = pluginList
             };
 
-            this.dragInstruction = new StackLayout()
+            this.dragInstruction = new StackLayout
             {
                 Items =
                 {
                     new StackLayoutItem(null, true),
-                    new StackLayoutItem()
+                    new StackLayoutItem
                     {
                         Control = "Drag and drop plugin zips/dlls to install!   o(≧▽≦)o",
                         HorizontalAlignment = HorizontalAlignment.Center
@@ -69,7 +70,7 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            split.Panel1 = pluginList;
+            split.Panel1 = pluginListBox;
             split.Panel2 = dragInstruction;
 
             this.panel.Content = split;
@@ -171,6 +172,7 @@ namespace OpenTabletDriver.UX.Windows
         private void InstallFile(string filePath)
         {
             var fileInfo = new FileInfo(filePath);
+            Log.Write("Plugin", $"Installing plugin: '{fileInfo.Name}'");
             switch (fileInfo.Extension)
             {
                 case ".zip":
@@ -189,19 +191,22 @@ namespace OpenTabletDriver.UX.Windows
             await App.Driver.Instance.LoadPlugins();
             await PluginManager.LoadPluginsAsync();
             await MainForm.FormInstance.ReloadUX();
-            pluginList.DataStore = pluginNameList = PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
+            pluginListBox.DataStore = pluginList = PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
         }
 
         private MenuBar ConstructMenu()
         {
-            var installPlugin = new Command() { MenuText = "Install plugin..." };
+            var installPlugin = new Command { MenuText = "Install plugin..." };
             installPlugin.Executed += FileDialogPluginInstall;
 
             var pluginsRepository = new Command { MenuText = "Get more plugins..." };
             pluginsRepository.Executed += (_, o) => SystemInfo.Open(App.PluginRepositoryUrl);
 
+            var loadPlugins = new Command { MenuText = "Load plugins" };
+            loadPlugins.Executed += (_, o) => LoadNewPlugins().ConfigureAwait(false);
+
             var quitCommand = new Command { MenuText = "Exit" };
-            quitCommand.Executed += (_, o) => this.Dispose(true);
+            quitCommand.Executed += (_, o) => this.Close();
 
             return new MenuBar()
             {
@@ -214,10 +219,10 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private List<string> pluginNameList;
+        private List<string> pluginList;
         private readonly Panel panel;
         private readonly Splitter split;
-        private readonly ListBox pluginList;
+        private readonly ListBox pluginListBox;
         private readonly StackLayout dragInstruction;
         private readonly StackLayout dropArea;
         private const string dragDropSupported = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
