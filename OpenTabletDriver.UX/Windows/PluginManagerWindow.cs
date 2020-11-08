@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -5,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Native;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -16,8 +18,9 @@ namespace OpenTabletDriver.UX.Windows
             this.Icon = App.Logo.WithSize(App.Logo.Size);
             this.ClientSize = new Size(700, 280);
             this.AllowDrop = true;
+            this.Menu = ConstructMenu();
 
-            this.pluginNameList = PluginManager.GetLoadedPluginNames().ToList();
+            this.pluginNameList = PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
 
             this.panel = new Panel()
             {
@@ -133,25 +136,52 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         if (uri.IsFile && File.Exists(uri.LocalPath))
                         {
-                            var fileInfo = new FileInfo(uri.LocalPath);
-                            switch (fileInfo.Extension)
-                            {
-                                case ".zip":
-                                    ZipFile.ExtractToDirectory(uri.LocalPath,
-                                        Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name.Replace(".zip", string.Empty)),
-                                        true);
-                                    LoadNewPlugins().ConfigureAwait(false);
-                                    break;
-                                case ".dll":
-                                    File.Copy(uri.LocalPath, AppInfo.Current.PluginDirectory, true);
-                                    LoadNewPlugins().ConfigureAwait(false);
-                                    break;
-                            }
+                            InstallFile(uri.LocalPath);
                         }
                     }
+                    LoadNewPlugins().ConfigureAwait(false);
                 }
             }
             catch {}
+        }
+
+        private void FileDialogPluginInstall(object _, EventArgs args)
+        {
+            var dialog = new OpenFileDialog()
+            {
+                Title = "Choose plugin to install...",
+                Filters =
+                {
+                    new FileFilter("OTD Plugin (.zip)", ".zip"),
+                    new FileFilter("Deprecated Plugin (.dll)", ".dll")
+                },
+                MultiSelect = true
+            };
+            dialog.ShowDialog(this);
+            foreach(var file in dialog.Filenames)
+            {
+                InstallFile(file);
+            }
+            if (dialog.Filenames.Any())
+            {
+                LoadNewPlugins().ConfigureAwait(false);
+            }
+        }
+
+        private void InstallFile(string filePath)
+        {
+            var fileInfo = new FileInfo(filePath);
+            switch (fileInfo.Extension)
+            {
+                case ".zip":
+                    ZipFile.ExtractToDirectory(filePath,
+                        Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name.Replace(".zip", string.Empty)),
+                        true);
+                    break;
+                case ".dll":
+                    File.Copy(filePath, AppInfo.Current.PluginDirectory, true);
+                    break;
+            }
         }
 
         private async Task LoadNewPlugins()
@@ -159,7 +189,29 @@ namespace OpenTabletDriver.UX.Windows
             await App.Driver.Instance.LoadPlugins();
             await PluginManager.LoadPluginsAsync();
             await MainForm.FormInstance.ReloadUX();
-            pluginList.DataStore = pluginNameList = PluginManager.GetLoadedPluginNames().ToList();
+            pluginList.DataStore = pluginNameList = PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
+        }
+
+        private MenuBar ConstructMenu()
+        {
+            var installPlugin = new Command() { MenuText = "Install plugin..." };
+            installPlugin.Executed += FileDialogPluginInstall;
+
+            var pluginsRepository = new Command { MenuText = "Get more plugins..." };
+            pluginsRepository.Executed += (_, o) => SystemInfo.Open(App.PluginRepositoryUrl);
+
+            var quitCommand = new Command { MenuText = "Exit" };
+            quitCommand.Executed += (_, o) => this.Dispose(true);
+
+            return new MenuBar()
+            {
+                ApplicationItems =
+                {
+                    installPlugin,
+                    pluginsRepository
+                },
+                QuitItem = quitCommand
+            };
         }
 
         private List<string> pluginNameList;
