@@ -60,7 +60,7 @@ namespace OpenTabletDriver
             {
                 Log.Debug("Device", $"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
             }
-            catch (IOException ioex) when (ioex.Message == "I/O disconnected.")
+            catch (IOException ioex) when (ioex.Message == "I/O disconnected." || ioex.Message == "Operation failed after some time.")
             {
                 Log.Write("Device", "Device disconnected.");
             }
