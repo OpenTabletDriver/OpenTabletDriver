@@ -87,13 +87,6 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
-        public async Task<bool> SetTablet(TabletConfiguration tablet)
-        {
-            var match = Driver.TryMatch(tablet);
-            TabletChanged?.Invoke(this, match ? await GetTablet() : null);
-            return match;
-        }
-
         public Task<TabletStatus> GetTablet()
         {
             TabletStatus tablet = null;
@@ -116,7 +109,7 @@ namespace OpenTabletDriver.Daemon
                 foreach (var file in configDir.EnumerateFiles("*.json", SearchOption.AllDirectories))
                 {
                     var tablet = TabletConfiguration.Read(file);
-                    if (await SetTablet(tablet))
+                    if (Driver.TryMatch(tablet))
                         return await GetTablet();
                 }
             }

@@ -906,20 +906,23 @@ namespace OpenTabletDriver.UX
 
         private void SetTabletAreaDimensions(TabletStatus tablet)
         {
-            if (tablet != null)
+            Application.Instance.AsyncInvoke(() =>
             {
-                tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height));
-
-                if (Settings != null && Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
+                if (tablet != null)
                 {
-                    Settings.TabletWidth = tablet.TabletIdentifier.Width;
-                    Settings.TabletHeight = tablet.TabletIdentifier.Height;
+                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height));
+
+                    if (Settings != null && Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
+                    {
+                        Settings.TabletWidth = tablet.TabletIdentifier.Width;
+                        Settings.TabletHeight = tablet.TabletIdentifier.Height;
+                    }
                 }
-            }
-            else
-            {
-                tabletAreaEditor.SetBackground(null);
-            }
+                else
+                {
+                    tabletAreaEditor.SetBackground(null);
+                }
+            });
         }
 
         private void UpdateOutputMode(PluginReference pluginRef)

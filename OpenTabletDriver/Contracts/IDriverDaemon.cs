@@ -16,9 +16,7 @@ namespace OpenTabletDriver.Contracts
         
         Task WriteMessage(LogMessage message);
 
-        Task<bool> SetTablet(TabletConfiguration tablet);
         Task<TabletStatus> GetTablet();
-        
         Task<TabletStatus> DetectTablets();
 
         Task SetSettings(Settings settings);
