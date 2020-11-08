@@ -14,21 +14,23 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.100-preview.8.20417.9
+          dotnet-version: 5.0.100-rc.2.20479.15
       - name: Linux Build
         env:
           runtime: linux-x64
+          framework: net5
         run: |
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
-          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
-          dotnet build OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
+          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
+          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
+          dotnet build OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
       - name: MacOS Build
         env:
           runtime: osx-x64
+          framework: net5
         run: |
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework net5 -o build/$runtime
-          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
-          dotnet build OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj --configuration Release --runtime $runtime --framework netcoreapp3.1 -o build/$runtime
+          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
+          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
+          dotnet build OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
       - name: Copy Configurations
         run: |
           cp -vr ./OpenTabletDriver/Configurations/ build/linux-x64
@@ -52,14 +54,15 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.100-preview.8.20417.9
+          dotnet-version: 5.0.100-rc.2.20479.15
       - name: Windows Publish
         env:
           runtime: win-x64
+          framework: net5
         run: |
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
-          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
-          dotnet build OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $ENV:runtime --framework netcoreapp3.1 -o build/$ENV:runtime
+          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
+          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
+          dotnet build OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $ENV:runtime --framework $ENV:framework-windows -o build/$ENV:runtime
       - name: Copy Configurations
         run: Copy-Item -Path "./OpenTabletDriver/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
       - name: Upload Windows artifacts

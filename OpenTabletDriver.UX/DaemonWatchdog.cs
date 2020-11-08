@@ -1,7 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Timers;
+using Eto.Forms;
 using OpenTabletDriver.Native;
 
 namespace OpenTabletDriver.UX
@@ -26,11 +28,15 @@ namespace OpenTabletDriver.UX
                 WorkingDirectory = Directory.GetCurrentDirectory(),
                 CreateNoWindow = true
             },
+            RuntimePlatform.MacOS => new ProcessStartInfo
+            {
+                FileName = Path.Join(AppContext.BaseDirectory, "OpenTabletDriver.Daemon"),
+                Arguments = $"-c {Path.Join(AppContext.BaseDirectory, "Configurations")}"
+            },
             _ => new ProcessStartInfo
             {
                 FileName = "dotnet",
-                Arguments = Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.dll"),
-
+                Arguments = Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.dll")
             }
         };
 
