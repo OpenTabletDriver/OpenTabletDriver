@@ -38,7 +38,7 @@ namespace OpenTabletDriver
             var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
                                 from type in asm.DefinedTypes
                                 where type.IsPublic && !(type.IsInterface || type.IsAbstract)
-                                where type.IsPluginType()
+                                where type.IsPluginType() && type.IsPlatformSupported()
                                 select type;
 
             internalTypes.AsParallel().ForAll(t => pluginTypes.Add(t.GetTypeInfo()));
@@ -116,7 +116,7 @@ namespace OpenTabletDriver
                 try
                 {
                     var pluginTypeInfo = type.GetTypeInfo();
-                    if (!pluginTypes.Any((t) => t == pluginTypeInfo))
+                    if (!pluginTypes.Contains(pluginTypeInfo))
                         pluginTypes.Add(pluginTypeInfo);
                 }
                 catch
