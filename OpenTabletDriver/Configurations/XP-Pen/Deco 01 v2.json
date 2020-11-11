@@ -8,7 +8,7 @@
       "MaxY": 15875.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 128,
+        "Start": 64,
         "StartInclusive": false,
         "End": null,
         "EndInclusive": false
@@ -17,6 +17,28 @@
       "ProductID": 2306,
       "InputReportLength": 10,
       "OutputReportLength": 8,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 25400.0,
+      "MaxY": 15875.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 2309,
+      "InputReportLength": 12,
+      "OutputReportLength": 10,
       "ReportParser": null,
       "FeatureInitReport": null,
       "OutputInitReport": "ArAE",
