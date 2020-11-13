@@ -2,15 +2,15 @@
   "Name": "XP-Pen Star 03v2",
   "DigitizerIdentifiers": [
     {
-      "Width": 260.0,
-      "Height": 170.0,
-      "MaxX": 52000.0,
-      "MaxY": 34000.0,
+      "Width": 254.0,
+      "Height": 152.4,
+      "MaxX": 50800.0,
+      "MaxY": 30480.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 128,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
         "EndInclusive": false
       },
       "VendorID": 10429,
