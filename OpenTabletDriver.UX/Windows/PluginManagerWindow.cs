@@ -17,16 +17,11 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Plugin Manager";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.ClientSize = new Size(700, 280);
+            this.MinimumSize = new Size(700, 350);
             this.AllowDrop = true;
             this.Menu = ConstructMenu();
 
             this.pluginList = PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
-
-            this.panel = new Panel
-            {
-                AllowDrop = true
-            };
 
             this.dropArea = new StackLayout
             {
@@ -39,46 +34,45 @@ namespace OpenTabletDriver.UX.Windows
                         HorizontalAlignment = HorizontalAlignment.Center
                     },
                     new StackLayoutItem(null, true)
-                },
-                AllowDrop = true
+                }
             };
 
-            this.split = new Splitter()
+            var contextCommand = new Command();
+            contextCommand.Executed += (_, _) => ShowPluginFolder();
+
+            var contextMenu = new ContextMenu();
+            var showPluginFolder = contextMenu.Items.Add(contextCommand);
+            showPluginFolder.Text = "Show in folder...";
+            contextMenu.Opening += (_, _) =>
             {
-                Orientation = Orientation.Vertical,
-                Panel1MinimumSize = 240,
-                Panel2MinimumSize = 40,
-                FixedPanel = SplitterFixedPanel.Panel2
+                var index = pluginListBox.SelectedIndex;
+                if (index >= 0 && index < pluginList.Count)
+                    showPluginFolder.Visible = true;
+                else
+                    showPluginFolder.Visible = false;
             };
 
             this.pluginListBox = new ListBox
             {
-                DataStore = pluginList
+                DataStore = pluginList,
+                ContextMenu = contextMenu
             };
 
-            this.dragInstruction = new StackLayout
+            this.split = new StackLayout
             {
                 Items =
                 {
-                    new StackLayoutItem(null, true),
-                    new StackLayoutItem
-                    {
-                        Control = "Drag and drop plugin zips/dlls to install!   o(≧▽≦)o",
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    },
-                    new StackLayoutItem(null, true)
-                }
+                    new StackLayoutItem(pluginListBox, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem(dragInstruction, HorizontalAlignment.Center, false)
+                },
+                Orientation = Orientation.Vertical
             };
 
-            split.Panel1 = pluginListBox;
-            split.Panel2 = dragInstruction;
+            this.Content = split;
 
-            this.panel.Content = split;
-            this.Content = panel;
-
-            this.panel.DragEnter += ShowDrop;
-            this.panel.DragLeave += LeaveDrop;
-            this.panel.DragDrop += DragDropPluginInstall;
+            this.DragEnter += ShowDrop;
+            this.DragLeave += LeaveDrop;
+            this.DragDrop += DragDropPluginInstall;
         }
 
         private void ShowDrop(object _, DragEventArgs args)
@@ -107,14 +101,15 @@ namespace OpenTabletDriver.UX.Windows
                         if (supportedType)
                         {
                             dropArea.Items[1].Control = dragDropSupported;
-                            this.panel.Content = dropArea;
+                            this.Content = dropArea;
                             args.Effects = DragEffects.Copy;
                         }
                     }
                     else
                     {
                         dropArea.Items[1].Control = dragDropNotSupported;
-                        this.panel.Content = dropArea;
+                        this.Content = dropArea;
+                        args.Effects = DragEffects.None;
                     }
                 }
             }
@@ -123,7 +118,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private void LeaveDrop(object _, DragEventArgs args)
         {
-            this.panel.Content = split;
+            this.Content = split;
         }
 
         private void DragDropPluginInstall(object _, DragEventArgs args)
@@ -158,13 +153,13 @@ namespace OpenTabletDriver.UX.Windows
                 },
                 MultiSelect = true
             };
-            dialog.ShowDialog(this);
-            foreach(var file in dialog.Filenames)
+
+            if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
-                InstallFile(file);
-            }
-            if (dialog.Filenames.Any())
-            {
+                foreach(var file in dialog.Filenames)
+                {
+                    InstallFile(file);
+                }
                 LoadNewPlugins().ConfigureAwait(false);
             }
         }
@@ -172,17 +167,33 @@ namespace OpenTabletDriver.UX.Windows
         private void InstallFile(string filePath)
         {
             var fileInfo = new FileInfo(filePath);
-            Log.Write("Plugin", $"Installing plugin: '{fileInfo.Name}'");
             switch (fileInfo.Extension)
             {
                 case ".zip":
-                    ZipFile.ExtractToDirectory(filePath,
-                        Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name.Replace(".zip", string.Empty)),
-                        true);
+                {
+                        var path = Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name.Replace(".zip", string.Empty));
+                        Log.Write("Plugin", $"Installing plugin zip: '{fileInfo.Name}'");
+                        if (Directory.Exists(path))
+                        {
+                            Log.Write("Plugin", updateNotSupported, LogLevel.Error);
+                            MessageBox.Show(updateNotSupported, MessageBoxType.Error);
+                        }
+                        else
+                            ZipFile.ExtractToDirectory(filePath, path, true);
                     break;
+                }
                 case ".dll":
-                    File.Copy(filePath, AppInfo.Current.PluginDirectory, true);
+                {
+                    Log.Write("Plugin", $"Installing plugin dll: '{fileInfo.Name}'");
+                    if (File.Exists(Path.Join(AppInfo.Current.PluginDirectory, filePath)))
+                    {
+                        Log.Write("Plugin", updateNotSupported, LogLevel.Error);
+                        MessageBox.Show(updateNotSupported, MessageBoxType.Error);
+                    }
+                    else
+                        File.Copy(filePath, AppInfo.Current.PluginDirectory, true);
                     break;
+                }
             }
         }
 
@@ -219,13 +230,29 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
+        private void ShowPluginFolder()
+        {
+            var plugin = pluginList[pluginListBox.SelectedIndex];
+            var path = Path.Join(AppInfo.Current.PluginDirectory, plugin);
+            if (Directory.Exists(path))
+                SystemInfo.Open(path);
+            else
+                SystemInfo.Open(AppInfo.Current.PluginDirectory);
+        }
+
         private List<string> pluginList;
-        private readonly Panel panel;
-        private readonly Splitter split;
         private readonly ListBox pluginListBox;
-        private readonly StackLayout dragInstruction;
+        private readonly StackLayout split;
         private readonly StackLayout dropArea;
+        private readonly Label dragInstruction = new Label
+        {
+            Text = "Drag and drop plugin zips/dlls to install!   o(≧▽≦)o",
+            VerticalAlignment = VerticalAlignment.Center,
+            Size = new Size(-1, 30)
+        };
+
         private const string dragDropSupported = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
         private const string dragDropNotSupported = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
+        private const string updateNotSupported = "Updating plugins during runtime are not supported";
     }
 }
