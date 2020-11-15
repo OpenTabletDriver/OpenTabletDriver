@@ -18,7 +18,6 @@ namespace OpenTabletDriver.Contracts
 
         Task LoadPlugins();
 
-        Task<bool> SetTablet(TabletConfiguration tablet);
         Task<TabletStatus> GetTablet();
         Task<TabletStatus> DetectTablets();
 
