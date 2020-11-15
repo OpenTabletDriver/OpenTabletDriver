@@ -3,10 +3,12 @@ using OpenTabletDriver.Interop.Display;
 using OpenTabletDriver.Interop.Input.Keyboard;
 using OpenTabletDriver.Interop.Input.Mouse;
 using OpenTabletDriver.Interop.Input.Tablet;
+using OpenTabletDriver.Interop.Timer;
 using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Interop
 {
@@ -19,6 +21,14 @@ namespace OpenTabletDriver.Interop
         public static IVirtualKeyboard KeyboardHandler => _keyboardHandler.Value;
         
         public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
+        
+        public static ITimer Timer => SystemInfo.CurrentPlatform switch
+        {
+            RuntimePlatform.Windows => new WindowsTimer(),
+            RuntimePlatform.Linux   => new LinuxTimer(),
+            RuntimePlatform.MacOS   => new MacOSTimer(),
+            _                       => new FallbackTimer()
+        };
 
         private static Lazy<IVirtualTablet> _virtualTablet = new Lazy<IVirtualTablet>(() =>
         {

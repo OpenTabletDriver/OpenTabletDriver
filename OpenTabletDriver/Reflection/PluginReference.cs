@@ -47,6 +47,11 @@ namespace OpenTabletDriver.Reflection
             return PluginManager.ConstructObject<T>(Path);
         }
 
+        public T Construct<T>(params object[] args) where T : class
+        {
+            return PluginManager.ConstructObject<T>(Path, args);
+        }
+
         public TypeInfo GetTypeReference<T>()
         {
             var types = from type in PluginManager.GetChildTypes<T>()

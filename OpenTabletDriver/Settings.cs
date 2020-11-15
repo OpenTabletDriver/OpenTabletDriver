@@ -23,11 +23,12 @@ namespace OpenTabletDriver
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting;
         private string _outputMode, _tipButton;
 
-        private ObservableCollection<string> _filters = new ObservableCollection<string>(), 
+        private ObservableCollection<string> _filters = new ObservableCollection<string>(),
             _penButtons = new ObservableCollection<string>(),
             _auxButtons = new ObservableCollection<string>(),
-            _tools = new ObservableCollection<string>();
-            
+            _tools = new ObservableCollection<string>(),
+            _interpolators = new ObservableCollection<string>();
+
         private Dictionary<string, string> _pluginSettings = new Dictionary<string, string>();
 
         #region General Settings
@@ -243,6 +244,13 @@ namespace OpenTabletDriver
         {
             set => this.RaiseAndSetIfChanged(ref _tools, value);
             get => _tools;
+        }
+
+        [JsonProperty("Interpolators")]
+        public ObservableCollection<string> Interpolators
+        {
+            set => RaiseAndSetIfChanged(ref _interpolators, value);
+            get => _interpolators;
         }
 
         #endregion

@@ -10,12 +10,14 @@ using HidSharp;
 using OpenTabletDriver.Binding;
 using OpenTabletDriver.Contracts;
 using OpenTabletDriver.Debugging;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Migration;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Daemon
@@ -30,7 +32,7 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.Reading += async (sender, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
+            Driver.Reading += async (isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
             
             LoadUserSettings();
 
@@ -149,6 +151,7 @@ namespace OpenTabletDriver.Daemon
             }
 
             SetToolSettings();
+            SetInterpolatorSettings();
             return Task.CompletedTask;
         }
 
@@ -285,6 +288,38 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
+        private void SetInterpolatorSettings()
+        {
+            foreach (var interpolator in Driver.Interpolators)
+                interpolator.Dispose();
+            
+            Driver.Interpolators.Clear();
+            if (Settings.Interpolators != null)
+            {
+                foreach (var interpolatorName in Settings.Interpolators)
+                {
+                    var plugin = new PluginReference(interpolatorName);
+                    var type = plugin.GetTypeReference<Interpolator>();
+
+                    var interpolator = plugin.Construct<Interpolator>(Platform.Timer);
+                    foreach (var property in type.GetProperties())
+                    {
+                        if (property.GetCustomAttribute<PropertyAttribute>(false) != null &&
+                            Settings.PluginSettings.TryGetValue(type.FullName + "." + property.Name, out var strValue))
+                        {
+                            var value = Convert.ChangeType(strValue, property.PropertyType);
+                            property.SetValue(interpolator, value);
+                        }
+                    }
+
+                    Driver.Interpolators.Add(interpolator);
+                    interpolator.Enabled = true;
+
+                    Log.Write("Settings", $"Interpolator: {interpolator}");
+                }
+            }
+        }
+
         public Task<Settings> GetSettings()
         {
             return Task.FromResult(Settings);
@@ -334,12 +369,12 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
-            void onDeviceReport(object sender, IDeviceReport report)
+            void onDeviceReport(IDeviceReport report)
             {
                 if (report is ITabletReport tabletReport)
-                    TabletReport?.Invoke(sender, new DebugTabletReport(tabletReport));
+                    TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
                 if (report is IAuxReport auxReport)
-                    AuxReport?.Invoke(sender, new DebugAuxReport(auxReport));
+                    AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
             }
             if (enabled)
             {
