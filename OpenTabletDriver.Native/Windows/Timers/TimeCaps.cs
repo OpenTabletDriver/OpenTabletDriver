@@ -7,5 +7,5 @@ namespace OpenTabletDriver.Native.Windows.Timers
     {
         public uint wPeriodMin;
         public uint wPeriodMax;
-    };
+    }
 }
