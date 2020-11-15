@@ -76,7 +76,7 @@ namespace OpenTabletDriver.Daemon
 
         public Driver Driver { private set; get; } = new Driver();
         private Settings Settings { set; get; }
-        private List<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices().ToList();
+        private IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
 

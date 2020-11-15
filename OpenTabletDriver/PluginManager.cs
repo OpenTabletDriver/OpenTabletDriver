@@ -54,7 +54,7 @@ namespace OpenTabletDriver
 
                 Log($"Loading plugin '{pluginName}'");
                 var context = new PluginContext(pluginName);
-                foreach(var plugin in Directory.EnumerateFiles(dir, "*.dll", SearchOption.TopDirectoryOnly))
+                foreach(var plugin in Directory.EnumerateFiles(dir, "*.dll"))
                     LoadPlugin(context, plugin);
 
                 plugins.Add(context);
@@ -64,7 +64,7 @@ namespace OpenTabletDriver
             // This fallback does not support loading unmanaged dll if the default loader fails
             // We don't worry with duplicate entries here since CLR won't load duplicate assemblies of the same file
 
-            foreach(var plugin in Directory.EnumerateFiles(AppInfo.Current.PluginDirectory))
+            foreach(var plugin in Directory.EnumerateFiles(AppInfo.Current.PluginDirectory, "*.dll"))
             {
                 var pluginFile = new FileInfo(plugin);
                 Log($"Loading deprecated plugin '{plugin}'");

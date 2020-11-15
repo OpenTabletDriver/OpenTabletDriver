@@ -72,15 +72,13 @@ namespace OpenTabletDriver
 
         private static string ToDllName(string dllName)
         {
-            var platformDll = SystemInfo.CurrentPlatform switch
+            return SystemInfo.CurrentPlatform switch
             {
                 RuntimePlatform.Windows => $"{dllName}.dll",
                 RuntimePlatform.Linux => $"lib{dllName}.so",
                 RuntimePlatform.MacOS => $"lib{dllName}.dylib",
                 _ => null
             };
-
-            return platformDll;
         }
     }
 }
