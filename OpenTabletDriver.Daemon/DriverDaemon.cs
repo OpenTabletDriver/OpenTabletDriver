@@ -277,15 +277,10 @@ namespace OpenTabletDriver.Daemon
                     }
                 }
 
-                try
-                {
-                    tool.Initialize();
+                if (tool.Initialize())
                     Tools.Add(tool);
-                } 
-                catch (Exception e)
-                {
-                    Log.Write("Tool", $"Failed to initialize {plugin.Name} tool: {e.Message}", LogLevel.Error);
-                }
+                else
+                    Log.Write("Tool", $"Failed to initialize {plugin.Name} tool.", LogLevel.Error);
             }
         }
 
