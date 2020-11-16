@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
+using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
@@ -36,16 +37,15 @@ namespace OpenTabletDriver
             pluginTypes.Clear();
 
             var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
-                                from type in asm.DefinedTypes
-                                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
-                                where type.IsPluginType() && type.IsPlatformSupported()
-                                select type;
+                from type in asm.DefinedTypes
+                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
+                where type.IsPluginType() && type.IsPlatformSupported()
+                select type;
 
             internalTypes.AsParallel().ForAll(t => pluginTypes.Add(t.GetTypeInfo()));
 
             // "Plugins" are directories that contain managed and unmanaged dll
             //  These dlls are loaded into a PluginContext per directory
-
             Parallel.ForEach(Directory.GetDirectories(AppInfo.Current.PluginDirectory), (dir, state, index) =>
             {
                 var pluginName = new DirectoryInfo(dir).Name;
@@ -63,16 +63,14 @@ namespace OpenTabletDriver
             // If there are plugins found outside subdirectories then load into FallbackPluginContext
             // This fallback does not support loading unmanaged dll if the default loader fails
             // We don't worry with duplicate entries here since CLR won't load duplicate assemblies of the same file
-
             foreach(var plugin in Directory.EnumerateFiles(AppInfo.Current.PluginDirectory, "*.dll"))
             {
                 var pluginFile = new FileInfo(plugin);
-                Log($"Loading deprecated plugin '{plugin}'");
+                Log($"Loading independent plugin '{plugin}'");
                 LoadPlugin(fallbackPluginContext, plugin);
             }
 
             // Populate PluginTypes so UX and Daemon can access them
-
             Parallel.ForEach(plugins, (loadedContext, _, index) =>
             {
                 LoadPluginTypes(loadedContext);
@@ -105,14 +103,12 @@ namespace OpenTabletDriver
             {
                 if (!type.IsPlatformSupported())
                 {
-                    Log($"Plugin '{type.FullName}' incompatible with current OS", LogLevel.Warning);
+                    Log($"Plugin '{type.FullName}' is not supported on {SystemInfo.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
                 if (type.IsPluginIgnored())
-                {
-                    Log($"Plugin '{type.FullName}' ignored", LogLevel.Debug);
                     return;
-                }
+
                 try
                 {
                     var pluginTypeInfo = type.GetTypeInfo();
@@ -135,10 +131,10 @@ namespace OpenTabletDriver
                 {
                     var type = PluginTypes.FirstOrDefault(t => t.FullName == name);
                     var matchingConstructors = from ctor in type?.GetConstructors()
-                                               let parameters = ctor.GetParameters()
-                                               where parameters.Length == args.Length
-                                               where args.IsValidParameterFor(parameters)
-                                               select ctor;
+                        let parameters = ctor.GetParameters()
+                        where parameters.Length == args.Length
+                        where args.IsValidParameterFor(parameters)
+                        select ctor;
 
                     var constructor = matchingConstructors.FirstOrDefault();
                     return (T)constructor?.Invoke(args) ?? null;
@@ -154,8 +150,8 @@ namespace OpenTabletDriver
         public static IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
             var children = from type in PluginTypes
-                           where typeof(T).IsAssignableFrom(type)
-                           select type;
+                where typeof(T).IsAssignableFrom(type)
+                select type;
 
             return children.ToArray();
         }
