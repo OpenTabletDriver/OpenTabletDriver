@@ -22,8 +22,8 @@ namespace OpenTabletDriver
         private readonly static ConcurrentBag<PluginContext> plugins = new ConcurrentBag<PluginContext>();
         private readonly static ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
         private readonly static IEnumerable<Type> libTypes = from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
-                                                             where type.IsAbstract || type.IsInterface
-                                                             select type;
+            where type.IsAbstract || type.IsInterface
+            select type;
 
         public static async Task LoadPluginsAsync(bool silent = false)
         {
@@ -94,10 +94,10 @@ namespace OpenTabletDriver
         private static void LoadPluginTypes(PluginContext context)
         {
             var types = from asm in context.Assemblies
-                        where asm.IsLoadable()
-                        from type in asm.GetExportedTypes()
-                        where type.IsPluginType()
-                        select type;
+                where asm.IsLoadable()
+                from type in asm.GetExportedTypes()
+                where type.IsPluginType()
+                select type;
 
             types.AsParallel().ForAll(type =>
             {
