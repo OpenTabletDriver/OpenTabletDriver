@@ -4,8 +4,8 @@
     {
       "Width": 254.0,
       "Height": 158.75,
-      "MaxX": 40000.0,
-      "MaxY": 25000.0,
+      "MaxX": 50800.0,
+      "MaxY": 31750.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -15,16 +15,43 @@
       },
       "VendorID": 9580,
       "ProductID": 109,
-      "InputReportLength": 4,
+      "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": null,
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "200": "HVAN",
-        "121": "HA60"
+        "201": "HUION_T175_\\d{6}$"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [
+		"200"
+	  ]
+    },
+    {
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 50800.0,
+      "MaxY": 31750.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T175_\\d{6}$"
+      },
+      "InitializationStrings": [
+		"200"
+	  ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
