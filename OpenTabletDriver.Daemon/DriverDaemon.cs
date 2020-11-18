@@ -77,7 +77,6 @@ namespace OpenTabletDriver.Daemon
         public Driver Driver { private set; get; } = new Driver();
         private Settings Settings { set; get; }
         private IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
-        private Collection<FileInfo> LoadedPlugins { set; get; } = new Collection<FileInfo>();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
 
@@ -226,7 +225,7 @@ namespace OpenTabletDriver.Daemon
         private void SetRelativeModeSettings(RelativeOutputMode relativeMode)
         {
             relativeMode.Sensitivity = new Vector2(Settings.XSensitivity, Settings.YSensitivity);
-            Log.Write("Settings", $"Relative Mode Sensitivity (X, Y): {relativeMode.Sensitivity.ToString()}");
+            Log.Write("Settings", $"Relative Mode Sensitivity (X, Y): {relativeMode.Sensitivity}");
 
             relativeMode.ResetTime = Settings.ResetTime;
             Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
@@ -295,34 +294,17 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.Current);
         }
 
-        public Task<bool> LoadPlugins()
+        public async Task LoadPlugins()
         {
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
-                foreach (var file in pluginDir.EnumerateFiles("*.dll", SearchOption.AllDirectories))
-                    ImportPlugin(file.FullName);
-                return Task.FromResult(true);
+                await PluginManager.LoadPluginsAsync();
             }
             else
             {
                 pluginDir.Create();
                 Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
-                return Task.FromResult(false);
-            }
-        }
-
-        public Task<bool> ImportPlugin(string pluginPath)
-        {
-            if (LoadedPlugins.Any(p => p.FullName == pluginPath))
-            {
-                return Task.FromResult(true);
-            }
-            else
-            {
-                var plugin = new FileInfo(pluginPath);
-                LoadedPlugins.Add(plugin);
-                return Task.FromResult(PluginManager.AddPlugin(plugin));
             }
         }
 

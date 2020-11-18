@@ -1,40 +1,124 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver
 {
     public static class PluginManager
     {
-        private static Collection<TypeInfo> _types;
-        public static Collection<TypeInfo> Types
+        public static IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
+
+        private readonly static PluginContext fallbackPluginContext = new PluginContext();
+        private readonly static ConcurrentBag<PluginContext> plugins = new ConcurrentBag<PluginContext>();
+        private readonly static ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
+        private readonly static IEnumerable<Type> libTypes = from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
+            where type.IsAbstract || type.IsInterface
+            select type;
+
+        public static async Task LoadPluginsAsync()
         {
-            set => _types = value;
-            get => _types ??= new ObservableCollection<TypeInfo>(allTypes.Value);
+            await Task.Run(LoadPlugins);
         }
 
-        private static readonly Assembly pluginAsm = Assembly.GetAssembly(typeof(IDriver));
-        private static readonly Type[] pluginAsmTypes = pluginAsm.GetExportedTypes();
-
-        public static bool AddPlugin(FileInfo file)
+        public static void LoadPlugins()
         {
-            if (file.Extension == ".dll" && ImportAssembly(file.FullName) is Assembly asm)
+            pluginTypes.Clear();
+
+            var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
+                from type in asm.DefinedTypes
+                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
+                where type.IsPluginType() && type.IsPlatformSupported()
+                select type;
+
+            internalTypes.AsParallel().ForAll(t => pluginTypes.Add(t.GetTypeInfo()));
+
+            // "Plugins" are directories that contain managed and unmanaged dll
+            //  These dlls are loaded into a PluginContext per directory
+            Parallel.ForEach(Directory.GetDirectories(AppInfo.Current.PluginDirectory), (dir, state, index) =>
             {
-                Log.Write("Plugin", $"Loading plugin: {file.Name}", LogLevel.Info);
-                foreach (var type in GetTypes(asm))
-                    Types.Add(type.GetTypeInfo());
-                return true;
-            }
-            else
+                var pluginName = new DirectoryInfo(dir).Name;
+                if (plugins.Any((p) => p.PluginName == pluginName))
+                    return;
+
+                Log.Write("Plugin", $"Loading plugin '{pluginName}'");
+                var context = new PluginContext(pluginName);
+                foreach(var plugin in Directory.EnumerateFiles(dir, "*.dll"))
+                    LoadPlugin(context, plugin);
+
+                plugins.Add(context);
+            });
+
+            // If there are plugins found outside subdirectories then load into FallbackPluginContext
+            // This fallback does not support loading unmanaged dll if the default loader fails
+            // We don't worry with duplicate entries here since CLR won't load duplicate assemblies of the same file
+            foreach(var plugin in Directory.EnumerateFiles(AppInfo.Current.PluginDirectory, "*.dll"))
             {
-                return false;
+                var pluginFile = new FileInfo(plugin);
+                var name = Regex.Match(pluginFile.Name, $"^(.+?){pluginFile.Extension}").Groups[1].Value;
+                Log.Write("Plugin", $"Loading independent plugin '{name}'");
+                LoadPlugin(fallbackPluginContext, plugin);
             }
+
+            // Populate PluginTypes so UX and Daemon can access them
+            Parallel.ForEach(plugins, (loadedContext, _, index) =>
+            {
+                LoadPluginTypes(loadedContext);
+            });
+            LoadPluginTypes(fallbackPluginContext);
+        }
+
+        private static void LoadPlugin(PluginContext context, string plugin)
+        {
+            try
+            {
+                context.LoadFromAssemblyPath(plugin);
+            }
+            catch
+            {
+                var pluginFile = new FileInfo(plugin);
+                Log.Write("Plugin", $"Failed loading assembly '{pluginFile.Name}'", LogLevel.Error);
+            }
+        }
+
+        private static void LoadPluginTypes(PluginContext context)
+        {
+            var types = from asm in context.Assemblies
+                where asm.IsLoadable()
+                from type in asm.GetExportedTypes()
+                where type.IsPluginType()
+                select type;
+
+            types.AsParallel().ForAll(type =>
+            {
+                if (!type.IsPlatformSupported())
+                {
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInfo.CurrentPlatform}", LogLevel.Info);
+                    return;
+                }
+                if (type.IsPluginIgnored())
+                    return;
+
+                try
+                {
+                    var pluginTypeInfo = type.GetTypeInfo();
+                    if (!pluginTypes.Contains(pluginTypeInfo))
+                        pluginTypes.Add(pluginTypeInfo);
+                }
+                catch
+                {
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' incompatible", LogLevel.Warning);
+                }
+            });
         }
 
         public static T ConstructObject<T>(string name, object[] args = null) where T : class
@@ -42,64 +126,36 @@ namespace OpenTabletDriver
             args ??= new object[0];
             if (!string.IsNullOrWhiteSpace(name))
             {
-                var type = Types.FirstOrDefault(t => t.FullName == name);
-                var matchingConstructors = from ctor in type?.GetConstructors()
-                    let parameters = ctor.GetParameters()
-                    where parameters.Length == args.Length
-                    where ParametersValid(parameters, args)
-                    select ctor;
-                
-                var constructor = matchingConstructors.FirstOrDefault();
-                return (T)constructor?.Invoke(args) ?? null;
+                try
+                {
+                    var type = PluginTypes.FirstOrDefault(t => t.FullName == name);
+                    var matchingConstructors = from ctor in type?.GetConstructors()
+                        let parameters = ctor.GetParameters()
+                        where parameters.Length == args.Length
+                        where args.IsValidParameterFor(parameters)
+                        select ctor;
+
+                    var constructor = matchingConstructors.FirstOrDefault();
+                    return (T)constructor?.Invoke(args) ?? null;
+                }
+                catch
+                {
+                    Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
+                }
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         public static IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
-            var children = from type in Types
+            var children = from type in PluginTypes
                 where typeof(T).IsAssignableFrom(type)
                 select type;
-            
-            return new List<TypeInfo>(children);
+
+            return children.ToArray();
         }
 
-        private static IEnumerable<TypeInfo> GetTypes(Assembly asm)
-        {
-            try
-            {
-                return from type in asm.DefinedTypes
-                    where TypeIsSupported(type)
-                    where TypeImplementsPlugin(type)
-                    select type.GetTypeInfo();
-            }
-            catch (ReflectionTypeLoadException e)
-            {
-                Log.Write("Plugin", $"Failed to get one or more types. The plugin '{asm.GetName().Name}' is likely out of date.", LogLevel.Error);
-                return from type in e.Types.Where(t => t != null)
-                    where TypeIsSupported(type)
-                    where TypeImplementsPlugin(type)
-                    select type.GetTypeInfo();
-            }
-        }
-
-        private static Assembly ImportAssembly(string path)
-        {
-            try
-            {
-                return AssemblyLoadContext.Default.LoadFromAssemblyPath(path);
-            }
-            catch (BadImageFormatException)
-            {
-                Log.Write("Plugin", $"Failed to initialize {path}, incompatible plugin", LogLevel.Warning);
-                return null;
-            }
-        }
-
-        private static bool ParametersValid(ParameterInfo[] parameters, object[] args)
+        private static bool IsValidParameterFor(this object[] args, ParameterInfo[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -111,30 +167,20 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool TypeIsSupported(Type type)
+        private static bool IsPluginType(this Type type)
+        {
+            return !type.IsAbstract && !type.IsInterface &&
+                libTypes.Any(t => t.IsAssignableFrom(type) ||
+                    type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
+        }
+
+        private static bool IsPlatformSupported(this Type type)
         {
             var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
             return attr?.IsCurrentPlatform ?? true;
         }
 
-        private static bool TypeImplementsPlugin(Type type)
-        {
-            if (pluginAsmTypes.Any(t => t.IsAssignableFrom(type)))
-            {
-                // Fast way to check if the type is in the assembly
-                return true;
-            }
-            else
-            {
-                // Check all interfaces for a generic
-                var genericTypes = from i in type.GetInterfaces()
-                    where i.GenericTypeArguments.Count() > 0
-                    select i.GetGenericTypeDefinition();
-                return genericTypes.Count() > 0 ? genericTypes.All(t => TypeImplementsPlugin(t)) : false;
-            }
-        }
-
-        private static bool CanLoadAssembly(Assembly asm)
+        private static bool IsLoadable(this Assembly asm)
         {
             try
             {
@@ -143,16 +189,10 @@ namespace OpenTabletDriver
             }
             catch
             {
+                var asmName = asm.GetName();
+                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
                 return false;
             }
         }
-
-        private static Lazy<IEnumerable<TypeInfo>> allTypes = new Lazy<IEnumerable<TypeInfo>>(() => 
-        {
-            return from asm in AppDomain.CurrentDomain.GetAssemblies()
-                where CanLoadAssembly(asm)
-                from type in GetTypes(asm)
-                select type;
-        });
     }
 }

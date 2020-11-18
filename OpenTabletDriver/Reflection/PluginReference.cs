@@ -7,11 +7,7 @@ namespace OpenTabletDriver.Reflection
 {
     public class PluginReference : IEquatable<PluginReference>
     {
-        protected PluginReference()
-        {
-        }
-
-        public PluginReference(string path) : this()
+        public PluginReference(string path)
         {
             Path = path;
             Name = GetName(path);
@@ -30,7 +26,7 @@ namespace OpenTabletDriver.Reflection
 
         internal static string GetName(string path)
         {
-            if (PluginManager.Types.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
+            if (PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
             {
                 var attrs = plugin.GetCustomAttributes(true);
                 var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
