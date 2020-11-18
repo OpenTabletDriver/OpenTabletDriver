@@ -7,7 +7,7 @@ namespace OpenTabletDriver
 {
     public class AppInfo
     {
-        public static readonly AppInfo Current = new AppInfo();
+        public static AppInfo Current { set; get; } = new AppInfo();
 
         private string configDirectory, appDataDirectory;
         

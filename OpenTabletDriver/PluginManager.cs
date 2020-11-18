@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -17,7 +18,6 @@ namespace OpenTabletDriver
     {
         public static IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
 
-        private static bool Silent;
         private readonly static PluginContext fallbackPluginContext = new PluginContext();
         private readonly static ConcurrentBag<PluginContext> plugins = new ConcurrentBag<PluginContext>();
         private readonly static ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
@@ -25,15 +25,13 @@ namespace OpenTabletDriver
             where type.IsAbstract || type.IsInterface
             select type;
 
-        public static async Task LoadPluginsAsync(bool silent = false)
+        public static async Task LoadPluginsAsync()
         {
-            await Task.Run(() => LoadPlugins(silent));
+            await Task.Run(LoadPlugins);
         }
 
-        public static void LoadPlugins(bool silent)
+        public static void LoadPlugins()
         {
-            Silent = silent;
-
             pluginTypes.Clear();
 
             var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
@@ -52,7 +50,7 @@ namespace OpenTabletDriver
                 if (plugins.Any((p) => p.PluginName == pluginName))
                     return;
 
-                Log($"Loading plugin '{pluginName}'");
+                Log.Write("Plugin", $"Loading plugin '{pluginName}'");
                 var context = new PluginContext(pluginName);
                 foreach(var plugin in Directory.EnumerateFiles(dir, "*.dll"))
                     LoadPlugin(context, plugin);
@@ -66,7 +64,8 @@ namespace OpenTabletDriver
             foreach(var plugin in Directory.EnumerateFiles(AppInfo.Current.PluginDirectory, "*.dll"))
             {
                 var pluginFile = new FileInfo(plugin);
-                Log($"Loading independent plugin '{plugin}'");
+                var name = Regex.Match(pluginFile.Name, $"^(.+?){pluginFile.Extension}").Groups[1].Value;
+                Log.Write("Plugin", $"Loading independent plugin '{name}'");
                 LoadPlugin(fallbackPluginContext, plugin);
             }
 
@@ -87,7 +86,7 @@ namespace OpenTabletDriver
             catch
             {
                 var pluginFile = new FileInfo(plugin);
-                Log($"Failed loading assembly '{pluginFile.Name}'", LogLevel.Error);
+                Log.Write("Plugin", $"Failed loading assembly '{pluginFile.Name}'", LogLevel.Error);
             }
         }
 
@@ -103,7 +102,7 @@ namespace OpenTabletDriver
             {
                 if (!type.IsPlatformSupported())
                 {
-                    Log($"Plugin '{type.FullName}' is not supported on {SystemInfo.CurrentPlatform}", LogLevel.Info);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInfo.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
                 if (type.IsPluginIgnored())
@@ -117,7 +116,7 @@ namespace OpenTabletDriver
                 }
                 catch
                 {
-                    Log($"Plugin '{type.FullName}' incompatible", LogLevel.Warning);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' incompatible", LogLevel.Warning);
                 }
             });
         }
@@ -141,7 +140,7 @@ namespace OpenTabletDriver
                 }
                 catch
                 {
-                    Log($"Unable to construct object '{name}'", LogLevel.Error);
+                    Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
                 }
             }
             return null;
@@ -190,15 +189,10 @@ namespace OpenTabletDriver
             }
             catch
             {
-                Log($"Plugin '{asm.GetName().Name}' can't be loaded and is likely out of date.");
+                var asmName = asm.GetName();
+                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
                 return false;
             }
-        }
-
-        public static void Log(string msg, LogLevel level = LogLevel.Info)
-        {
-            if (!Silent)
-                Plugin.Log.Write("Plugin", msg, level);
         }
     }
 }

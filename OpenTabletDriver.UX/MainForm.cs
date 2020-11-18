@@ -676,7 +676,6 @@ namespace OpenTabletDriver.UX
             try
             {
                 await App.Driver.Connect();
-                Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
             }
             catch (TimeoutException)
             {
@@ -684,9 +683,10 @@ namespace OpenTabletDriver.UX
                 Application.Instance.Quit();
             }
 
-            var appInfo = await App.Driver.Instance.GetApplicationInfo();
+            AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
 
-            await PluginManager.LoadPluginsAsync(silent: true);
+            await PluginManager.LoadPluginsAsync();
+            Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
 
             Content = ConstructMainControls();
 
@@ -696,7 +696,7 @@ namespace OpenTabletDriver.UX
             }
             App.Driver.Instance.TabletChanged += (sender, tablet) => SetTabletAreaDimensions(tablet);
 
-            var settingsFile = new FileInfo(appInfo.SettingsFile);
+            var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
             if (await App.Driver.Instance.GetSettings() is Settings settings)
             {
                 Settings = settings;

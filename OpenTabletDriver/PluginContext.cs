@@ -55,7 +55,7 @@ namespace OpenTabletDriver
             // Default behaviour failed, search <plugin>/runtimes for the dll
             if (this.PluginPath == null)
             {
-                PluginManager.Log($"Obsolete plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
+                Log.Write("Plugin", $"Obsolete plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
                 return IntPtr.Zero;
             }
 
