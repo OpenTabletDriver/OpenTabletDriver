@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -10,11 +11,11 @@ namespace OpenTabletDriver.Vendors.Wacom
             Raw = report;
 
             ReportID = (uint)report[9] >> 2;
-            var x = ((report[2] * 0x100) + report[3]) << 1;
-            var y = ((report[4] * 0x100) + report[5]) << 1;
+            var x = BitConverter.ToUInt16(report, 2) << 1 | ((report[9] >> 1) & 1);
+            var y = BitConverter.ToUInt16(report, 4) << 1 | (report[9] & 1);
             Position = new Vector2(x, y);
-            Pressure = (uint)(report[6] << 3);
-            
+            Pressure = (uint)((report[6] << 3) | ((report[7] & 0xC0) >> 5) | (report[1] & 1));
+
             PenButtons = new bool[]
             {
                 (report[1] & (1 << 1)) != 0,
