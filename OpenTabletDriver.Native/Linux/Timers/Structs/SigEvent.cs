@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.Linux.Timers.Structs
 {
-
     [StructLayout(LayoutKind.Explicit, Size = 64, Pack = 1)]
     public struct SigEvent
     {
