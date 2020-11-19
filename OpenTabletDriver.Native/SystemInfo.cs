@@ -27,18 +27,18 @@ namespace OpenTabletDriver.Native
             switch (CurrentPlatform)
             {
                 case RuntimePlatform.Windows:
-                    var startInfo = new ProcessStartInfo("cmd", $"/c start {path.Replace("&", "^&")}")
+                    var startInfo = new ProcessStartInfo("cmd", $"/c start \"{path.Replace("&", "^&")}\"")
                     {
                         CreateNoWindow = true
                     };
                     Process.Start(startInfo);
                     break;
                 case RuntimePlatform.Linux:
-                    Process.Start("xdg-open", path);
+                    Process.Start("xdg-open", $"\"{path}\"");
                     break;
                 case RuntimePlatform.MacOS:
                 case RuntimePlatform.FreeBSD:
-                    Process.Start("open", path);
+                    Process.Start("open", $"\"{path}\"");
                     break;
             }
         }
