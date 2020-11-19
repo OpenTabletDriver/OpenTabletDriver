@@ -4,8 +4,11 @@ using OpenTabletDriver.Native.Linux.Timers.Structs;
 
 namespace OpenTabletDriver.Native.Linux.Timers
 {
+    public delegate void TimerCallback(SigVal a);
+
     public static class Timers
     {
+
         [DllImport("librt", EntryPoint = "timer_create", SetLastError = true)]
         public static extern ERRNO TimerCreate(ClockID clockID, ref SigEvent eventPtr, out IntPtr timerID);
 

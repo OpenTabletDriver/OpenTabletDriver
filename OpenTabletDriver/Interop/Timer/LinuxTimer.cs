@@ -46,7 +46,7 @@ namespace OpenTabletDriver.Interop.Timer
                     Log.Write("LinuxTimer", $"Failed creating timer: {(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                 }
 
-                var interval = Interval * 1000 * 1000;
+                double interval = Interval * 1000 * 1000;
 
                 timeSpec = new TimerSpec
                 {
@@ -103,13 +103,7 @@ namespace OpenTabletDriver.Interop.Timer
             }
         }
 
-        public bool Stop(int milliseconds)
-        {
-            Stop();
-            return true; // waiting not implemented
-        }
-
-        private void Callback(SigVal a)
+        private void Callback(SigVal _)
         {
             Elapsed();
         }
@@ -121,14 +115,7 @@ namespace OpenTabletDriver.Interop.Timer
 
         public bool Enabled { private set; get; }
 
-        private double _interval;
-        public float Interval {
-            set
-            {
-                _interval = value;
-            }
-            get => (float)_interval;
-        }
+        public float Interval { set; get; }
 
         public event Action Elapsed;
     }

@@ -15,18 +15,4 @@ namespace OpenTabletDriver.Native.Linux.Timers
         SGICycle,
         TAI
     }
-
-    public enum SigEv
-    {
-        Signal,
-        None,
-        Thread,
-        ThreadID
-    }
-
-    public enum TimerFlag
-    {
-        Default,
-        AbsoluteTime
-    }
 }

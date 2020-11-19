@@ -21,12 +21,12 @@ namespace OpenTabletDriver.Interop.Timer
             callbackHandle = GCHandle.Alloc(callbackDelegate);
         }
 
-        public void Start()
+        public unsafe void Start()
         {
             lock (stateLock)
             {
                 var caps = new TimeCaps();
-                timeGetDevCaps(ref caps, (uint)Marshal.SizeOf(caps));
+                timeGetDevCaps(ref caps, (uint)sizeof(TimeCaps));
                 timeBeginPeriod(Math.Clamp((uint)Interval, caps.wPeriodMin, caps.wPeriodMax));
                 Enabled = true;
                 timerId = timeSetEvent(1, 1, callbackDelegate, IntPtr.Zero, EventType.TIME_PERIODIC);
@@ -41,12 +41,6 @@ namespace OpenTabletDriver.Interop.Timer
                 timeEndPeriod((uint)Interval);
                 Enabled = false;
             }
-        }
-
-        public bool Stop(int milliseconds)
-        {
-            Stop();
-            return true; // waiting not implemented
         }
 
         private void Callback(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)

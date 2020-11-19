@@ -57,16 +57,6 @@ namespace OpenTabletDriver.Interop.Timer
             this.runTimer = false;
         }
 
-        public bool Stop(int timeoutInMilliSec)
-        {
-            this.runTimer = false;
-
-            if (!Enabled)
-                return true;
-            else
-                return this.threadTimer.Join(timeoutInMilliSec);
-        }
-
         void NotificationTimer()
         {
             float nextNotification = 0;

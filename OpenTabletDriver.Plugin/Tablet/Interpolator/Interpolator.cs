@@ -89,6 +89,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         public virtual void Dispose()
         {
             Enabled = false;
+            this.scheduler.Dispose();
         }
     }
 }
