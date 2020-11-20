@@ -47,7 +47,7 @@ namespace OpenTabletDriver.Console
         {
             yield return CreateCommand<float, float, float, float>(SetDisplayArea, "Sets the display area");
             yield return CreateCommand<float, float, float, float, float>(SetTabletArea, "Sets the tablet area");
-            yield return CreateCommand<float, float>(SetSensitivity, "Sets the relative sensitivity");
+            yield return CreateCommand<float, float, float>(SetSensitivity, "Sets the relative sensitivity");
             yield return CreateCommand<string, string, float>(SetTipBinding, "Sets the current tip binding");
             yield return CreateCommand<string, string, int>(SetPenBinding, "Sets the current pen button bindings");
             yield return CreateCommand<string, string, int>(SetAuxBinding, "Sets the current express key bindings");
