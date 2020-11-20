@@ -32,24 +32,41 @@ namespace OpenTabletDriver.Plugin.Output
         public IVirtualPointer Pointer => VirtualMouse;
 
         private Vector2 _sensitivity;
+        private float _rotation;
+        private Matrix3x2 _transformationMatrix;
         public Vector2 Sensitivity
         {
             set
             {
                 _sensitivity = value;
-
-                // Normalize (ratio of 1)
-                _sensitivity /= new Vector2(Digitizer.MaxX, Digitizer.MaxY);
-
-                // Scale to tablet dimensions (mm)
-                _sensitivity *= new Vector2(Digitizer.Width, Digitizer.Height);
+                UpdateTransformMatrix();
             }
             get { return _sensitivity; }
         }
 
+        public float Rotation
+        {
+            set
+            {
+                _rotation = value;
+                UpdateTransformMatrix();
+            }
+            get { return _rotation; }
+        }
+
+        private void UpdateTransformMatrix()
+        {
+            _transformationMatrix = Matrix3x2.CreateRotation(
+                (float)(_rotation * System.Math.PI / 180));
+
+            _transformationMatrix *= Matrix3x2.CreateScale(
+                _sensitivity.X * ((Digitizer?.Width / Digitizer?.MaxX) ?? 0.01f),
+                _sensitivity.Y * ((Digitizer?.Height / Digitizer?.MaxY) ?? 0.01f));
+        }
+
         public TimeSpan ResetTime { set; get; }
 
-        private ITabletReport _lastReport;
+        private Vector2? _lastPos;
         private DateTime _lastReceived;
 
         public virtual void Read(IDeviceReport report)
@@ -72,33 +89,24 @@ namespace OpenTabletDriver.Plugin.Output
         protected Vector2? Transpose(ITabletReport report)
         {
             var difference = DateTime.Now - _lastReceived;
-            if (difference > ResetTime && _lastReceived != default)
-            {
-                _lastReport = null;
-            }
-
-            if (_lastReport != null)
-            {
-                var pos = new Vector2(report.Position.X - _lastReport?.Position.X ?? 0, report.Position.Y - _lastReport?.Position.Y ?? 0);
-
-                // Pre Filter
-                foreach (IFilter filter in _preFilters)
-                    pos = filter.Filter(pos);
-
-                pos *= _sensitivity;
-
-                // Post Filter
-                foreach (IFilter filter in _postFilters)
-                    pos = filter.Filter(pos);
-
-                _lastReport = report;
-                return pos;
-            }
-            
-            _lastReport = report;
             _lastReceived = DateTime.Now;
-            
-            return null;
+
+            var pos = report.Position;
+
+            // Pre Filter
+            foreach (IFilter filter in _preFilters)
+                pos = filter.Filter(pos);
+
+            pos = Vector2.Transform(pos, _transformationMatrix);
+
+            // Post Filter
+            foreach (IFilter filter in _postFilters)
+                pos = filter.Filter(pos);
+
+            var delta = pos - _lastPos;
+            _lastPos = pos;
+
+            return (difference > ResetTime && _lastReceived != default) ? null : delta;
         }
     }
 }

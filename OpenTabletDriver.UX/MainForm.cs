@@ -301,7 +301,12 @@ namespace OpenTabletDriver.UX
                 () => App.Settings.YSensitivity.ToString(),
                 "px/mm"
             );
-            
+            var rotationBox = ConstructSensitivityEditor(
+                "Rotation",
+                (s) => App.Settings.RelRotation = float.TryParse(s, out var val) ? val : 0f,
+                () => App.Settings.RelRotation.ToString(),
+                "degrees"
+            );
             var resetTimeBox = ConstructSensitivityEditor(
                 "Reset Time",
                 (s) => App.Settings.ResetTime = TimeSpan.TryParse(s, out var val) ? val : TimeSpan.FromMilliseconds(100),
@@ -317,6 +322,7 @@ namespace OpenTabletDriver.UX
                 {
                     new StackLayoutItem(xSensBox, true),
                     new StackLayoutItem(ySensBox, true),
+                    new StackLayoutItem(rotationBox, true),
                     new StackLayoutItem(resetTimeBox, true)
                 }
             };

@@ -18,7 +18,7 @@ namespace OpenTabletDriver
         internal const int PenButtonCount = 2;
         internal const int AuxButtonCount = 6;
 
-        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _tP;
+        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting;
         private string _outputMode, _tipButton;
@@ -192,6 +192,13 @@ namespace OpenTabletDriver
             get => _yS;
         }
 
+        [JsonProperty("RelRotation")]
+        public float RelRotation
+        {
+            set => this.RaiseAndSetIfChanged(ref _relRot, value);
+            get => _relRot;
+        }
+
         [JsonProperty("RelativeResetDelay")]
         public TimeSpan ResetTime
         {
@@ -311,6 +318,7 @@ namespace OpenTabletDriver
             PluginSettings = new Dictionary<string, string>(),
             XSensitivity = 10,
             YSensitivity = 10,
+            RelRotation = 0,
             ResetTime = TimeSpan.FromMilliseconds(100)
         };
 
