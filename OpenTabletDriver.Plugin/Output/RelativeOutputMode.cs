@@ -56,6 +56,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         private void UpdateTransformMatrix()
         {
+            _lastReceived = default;  // Prevents cursor from jumping on sensitivity change
             _transformationMatrix = Matrix3x2.CreateRotation(
                 (float)(_rotation * System.Math.PI / 180));
 
@@ -106,7 +107,7 @@ namespace OpenTabletDriver.Plugin.Output
             var delta = pos - _lastPos;
             _lastPos = pos;
 
-            return (difference > ResetTime && _lastReceived != default) ? null : delta;
+            return (difference > ResetTime) ? null : delta;
         }
     }
 }
