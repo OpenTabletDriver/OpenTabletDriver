@@ -11,6 +11,7 @@ namespace OpenTabletDriver.UX.Controls
 {
     public class LogView : StackLayout
     {
+        private object logLock = new object();
         public LogView()
         {
             this.Orientation = Orientation.Vertical;
@@ -162,26 +163,24 @@ namespace OpenTabletDriver.UX.Controls
 
         private void AddItem(LogMessage message)
         {
-            Application.Instance.AsyncInvoke(() => 
+            lock (logLock)
             {
-                Messages.Add(message);
+                Application.Instance.AsyncInvoke(() =>
+                {
+                    Messages.Add(message);
 
-                if (message.Level >= CurrentFilter)
-                    Update(Messages.Count - 1);
+                    if (message.Level >= CurrentFilter)
+                        Update(Messages.Count - 1);
 
-                if (messageList.SelectedRow == -1)
-                    messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
-            });
+                    if (messageList.SelectedRow == -1)
+                        messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
+                });
+            }
         }
 
         private void Refresh()
         {
             Update(0, Messages.Count - 1);
-        }
-
-        public void Post(LogMessage message)
-        {
-            Application.Instance.AsyncInvoke(() => AddItem(message));
         }
     }
 }
