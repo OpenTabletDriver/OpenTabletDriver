@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -177,7 +178,7 @@ namespace OpenTabletDriver.UX.Controls
                         if (messageList.SelectedRow == -1)
                             messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
                     }
-                    catch { }
+                    catch (ArgumentOutOfRangeException) { }
                 }
             });
         }
