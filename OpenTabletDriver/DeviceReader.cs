@@ -26,20 +26,20 @@ namespace OpenTabletDriver
         public virtual HidDevice Device { protected set; get; }
         public virtual HidStream ReportStream { protected set; get; }
         public IReportParser<T> Parser { private set; get; }
-        public virtual event Action<T> Report;
-        
+        public virtual event EventHandler<T> Report;
+
         private bool _reading;
         public bool Reading
         {
             protected set
             {
                 _reading = value;
-                ReadingChanged?.Invoke(Reading);
+                ReadingChanged?.Invoke(this, Reading);
             }
             get => _reading;
         }
-        
-        public event Action<bool> ReadingChanged;
+
+        public event EventHandler<bool> ReadingChanged;
 
         private Thread WorkerThread;
 
@@ -53,7 +53,7 @@ namespace OpenTabletDriver
                 {
                     var data = ReportStream.Read();
                     var report = Parser.Parse(data);
-                    Report?.Invoke(report);
+                    Report?.Invoke(this, report);
                 }
             }
             catch (ObjectDisposedException dex)

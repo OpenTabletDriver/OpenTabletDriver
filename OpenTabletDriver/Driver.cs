@@ -24,8 +24,8 @@ namespace OpenTabletDriver
             Info.GetDriverInstance = () => this;
         }
         
-        public event Action<bool> Reading;
-        public event Action<IDeviceReport> ReportRecieved;
+        public event EventHandler<bool> Reading;
+        public event EventHandler<IDeviceReport> ReportRecieved;
         
         public bool EnableInput { set; get; }
 
@@ -147,11 +147,11 @@ namespace OpenTabletDriver
                 Log.Debug("Device", $"Initializing index {index}");
                 tabletDevice.GetDeviceString(index);
             }
-            
+
             TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
             TabletReader.Report += OnReport;
-            TabletReader.ReadingChanged += (state) => Reading?.Invoke(state);
-            
+            TabletReader.ReadingChanged += (_, state) => Reading?.Invoke(this, state);
+
             if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
                 Log.Debug("Device", "Setting feature: " + BitConverter.ToString(featureInitReport));
@@ -248,9 +248,9 @@ namespace OpenTabletDriver
             AuxReader = null;
         }
 
-        public void OnReport(IDeviceReport report)
+        public void OnReport(object _, IDeviceReport report)
         {
-            this.ReportRecieved?.Invoke(report);
+            this.ReportRecieved?.Invoke(this, report);
             InjectReport(report);
         }
 

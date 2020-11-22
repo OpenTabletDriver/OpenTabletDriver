@@ -32,8 +32,8 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.Reading += async (isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
-            
+            Driver.Reading += async (_, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
+
             LoadUserSettings();
 
             HidSharp.DeviceList.Local.Changed += async (sender, e) => 
@@ -369,7 +369,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
-            void onDeviceReport(IDeviceReport report)
+            void onDeviceReport(object _, IDeviceReport report)
             {
                 if (report is ITabletReport tabletReport)
                     TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));

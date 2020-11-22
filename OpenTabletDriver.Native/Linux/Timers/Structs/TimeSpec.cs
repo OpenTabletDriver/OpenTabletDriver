@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 namespace OpenTabletDriver.Native.Linux.Timers.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct TimerSpec
+    public struct TimeSpec
     {
-        public TimeSpec interval;
-        public TimeSpec value;
+        public long sec;
+        public long nsec;
     }
 }

@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             get => this.enabled;
         }
 
-        protected virtual void HandleReport(IDeviceReport report)
+        protected virtual void HandleReport(object _, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport && !(report is ISyntheticReport))
             {
