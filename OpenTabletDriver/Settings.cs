@@ -192,8 +192,8 @@ namespace OpenTabletDriver
             get => _yS;
         }
 
-        [JsonProperty("RelRotation")]
-        public float RelRotation
+        [JsonProperty("RelativeRotation")]
+        public float RelativeRotation
         {
             set => this.RaiseAndSetIfChanged(ref _relRot, value);
             get => _relRot;
@@ -318,7 +318,7 @@ namespace OpenTabletDriver
             PluginSettings = new Dictionary<string, string>(),
             XSensitivity = 10,
             YSensitivity = 10,
-            RelRotation = 0,
+            RelativeRotation = 0,
             ResetTime = TimeSpan.FromMilliseconds(100)
         };
 

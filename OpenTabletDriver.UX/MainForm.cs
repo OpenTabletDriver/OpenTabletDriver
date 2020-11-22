@@ -303,8 +303,8 @@ namespace OpenTabletDriver.UX
             );
             var rotationBox = ConstructSensitivityEditor(
                 "Rotation",
-                (s) => App.Settings.RelRotation = float.TryParse(s, out var val) ? val : 0f,
-                () => App.Settings.RelRotation.ToString(),
+                (s) => App.Settings.RelativeRotation = float.TryParse(s, out var val) ? val : 0f,
+                () => App.Settings.RelativeRotation.ToString(),
                 "degrees"
             );
             var resetTimeBox = ConstructSensitivityEditor(
