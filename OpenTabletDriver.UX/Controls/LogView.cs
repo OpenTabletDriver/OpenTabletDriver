@@ -172,8 +172,12 @@ namespace OpenTabletDriver.UX.Controls
                     if (message.Level >= CurrentFilter)
                         Update(Messages.Count - 1);
 
-                    if (messageList.SelectedRow == -1)
-                        messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
+                    try
+                    {
+                        if (messageList.SelectedRow == -1)
+                            messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
+                    }
+                    catch { }
                 }
             });
         }
