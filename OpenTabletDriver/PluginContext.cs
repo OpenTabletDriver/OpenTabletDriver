@@ -53,7 +53,8 @@ namespace OpenTabletDriver
                 throw new NotImplementedException();
             }
 
-            var libraryFile = Directory.EnumerateFiles(Path.Join(this.PluginPath, "runtimes"), ToDllName(unmanagedDllName), SearchOption.AllDirectories).FirstOrDefault();
+            var runtimeFolder = new DirectoryInfo(Path.Join(this.PluginPath, "runtimes"));
+            var libraryFile = runtimeFolder.Exists ? Directory.EnumerateFiles(runtimeFolder.FullName, ToDllName(unmanagedDllName), SearchOption.AllDirectories).FirstOrDefault() : null;
             if (!string.IsNullOrEmpty(libraryFile))
                 return LoadUnmanagedDllFromPath(libraryFile);
             else
