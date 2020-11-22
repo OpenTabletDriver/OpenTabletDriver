@@ -163,9 +163,9 @@ namespace OpenTabletDriver.UX.Controls
 
         private void AddItem(LogMessage message)
         {
-            lock (logLock)
+            Application.Instance.AsyncInvoke(() =>
             {
-                Application.Instance.AsyncInvoke(() =>
+                lock (logLock)
                 {
                     Messages.Add(message);
 
@@ -174,8 +174,8 @@ namespace OpenTabletDriver.UX.Controls
 
                     if (messageList.SelectedRow == -1)
                         messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
-                });
-            }
+                }
+            });
         }
 
         private void Refresh()
