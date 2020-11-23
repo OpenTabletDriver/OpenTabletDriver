@@ -251,10 +251,10 @@ namespace OpenTabletDriver
         public void OnReport(object _, IDeviceReport report)
         {
             this.ReportRecieved?.Invoke(this, report);
-            InjectReport(report);
+            HandleReport(report);
         }
 
-        public void InjectReport(IDeviceReport report)
+        public void HandleReport(IDeviceReport report)
         {
             if (EnableInput && OutputMode?.Digitizer != null)
             {

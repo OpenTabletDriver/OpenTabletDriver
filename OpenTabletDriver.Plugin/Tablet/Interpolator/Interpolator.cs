@@ -77,7 +77,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                 if (((DateTime.UtcNow - this.lastTime).TotalMilliseconds < limit) && this.inRange)
                 {
                     var report = Interpolate();
-                    Info.Driver.InjectReport(report);
+                    Info.Driver.HandleReport(report);
                 }
                 else
                 {
