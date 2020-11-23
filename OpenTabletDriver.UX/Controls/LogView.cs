@@ -12,7 +12,6 @@ namespace OpenTabletDriver.UX.Controls
 {
     public class LogView : StackLayout
     {
-        private object logLock = new object();
         public LogView()
         {
             this.Orientation = Orientation.Vertical;
@@ -26,7 +25,7 @@ namespace OpenTabletDriver.UX.Controls
                 Items = 
                 {
                     GenerateFilterControl(),
-                    new Button((sender, e) => Copy(GetFilteredMessages()))
+                    new Button((sender, e) => Copy(Messages))
                     {
                         Text = "Copy All"
                     }
@@ -44,7 +43,8 @@ namespace OpenTabletDriver.UX.Controls
                     copyCommand
                 }
             };
-            
+            messageList.DataStore = Messages;
+
             this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
             this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
 
@@ -63,7 +63,7 @@ namespace OpenTabletDriver.UX.Controls
             App.Driver.Instance.Message += (sender, message) => AddItem(message);
         }
 
-        private void Copy(IEnumerable<LogMessage> messages)
+        private static void Copy(IEnumerable<LogMessage> messages)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var message in messages)
@@ -90,7 +90,7 @@ namespace OpenTabletDriver.UX.Controls
             return filter;
         }
 
-        private GridView<LogMessage> messageList = new GridView<LogMessage>
+        private readonly GridView<LogMessage> messageList = new GridView<LogMessage>
         {
             AllowMultipleSelection = true,
             Columns =
@@ -130,62 +130,26 @@ namespace OpenTabletDriver.UX.Controls
             }
         };
 
-        private List<LogMessage> Messages { set; get; } = new List<LogMessage>();
+        private readonly LogDataStore Messages = new LogDataStore();
 
-        private LogLevel _currentFilter = LogLevel.Info;
-        public LogLevel CurrentFilter
-        {
-            set
-            {
-                _currentFilter = value;
-                Refresh();
-            }
-            get => _currentFilter;
-        }
-
-        private IEnumerable<LogMessage> GetFilteredMessages()
-        {
-            return from message in Messages
-                where message.Level >= CurrentFilter
-                select message;
-        }
-
-        private void Update(int index)
-        {
-            messageList.DataStore = GetFilteredMessages();
-            messageList.ReloadData(index);
-        }
-
-        private void Update(int startIndex, int endIndex)
-        {
-            messageList.DataStore = GetFilteredMessages();
-            messageList.ReloadData(new Range<int>(startIndex, endIndex));
+        public LogLevel CurrentFilter {
+            set => Messages.ActiveFilter = value;
+            get => Messages.ActiveFilter;
         }
 
         private void AddItem(LogMessage message)
         {
             Application.Instance.AsyncInvoke(() =>
             {
-                lock (logLock)
+                Messages.Add(message);
+
+                try
                 {
-                    Messages.Add(message);
-
-                    if (message.Level >= CurrentFilter)
-                        Update(Messages.Count - 1);
-
-                    try
-                    {
-                        if (messageList.SelectedRow == -1)
-                            messageList.ScrollToRow(GetFilteredMessages().Count() - 1);
-                    }
-                    catch (ArgumentOutOfRangeException) { }
+                    if (messageList.SelectedRow == -1)
+                        messageList.ScrollToRow(Messages.Count - 1);
                 }
+                catch (ArgumentOutOfRangeException) { }
             });
-        }
-
-        private void Refresh()
-        {
-            Update(0, Messages.Count - 1);
         }
     }
 }
