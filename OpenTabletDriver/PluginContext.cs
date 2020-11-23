@@ -50,7 +50,7 @@ namespace OpenTabletDriver
             if (this.PluginPath == null)
             {
                 Log.Write("Plugin", $"Independent plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
 
             var runtimeFolder = new DirectoryInfo(Path.Join(this.PluginPath, "runtimes"));
