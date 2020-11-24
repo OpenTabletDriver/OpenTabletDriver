@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Reflection;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Vendors;
@@ -49,6 +51,8 @@ namespace OpenTabletDriver
         
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
+
+        public Collection<Interpolator> Interpolators { set; get; } = new Collection<Interpolator>();
 
         public bool TryMatch(TabletConfiguration config)
         {
@@ -143,11 +147,11 @@ namespace OpenTabletDriver
                 Log.Debug("Device", $"Initializing index {index}");
                 tabletDevice.GetDeviceString(index);
             }
-            
+
             TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
             TabletReader.Report += OnReport;
-            TabletReader.ReadingChanged += (sender, e) => Reading?.Invoke(sender, e);
-            
+            TabletReader.ReadingChanged += (_, state) => Reading?.Invoke(this, state);
+
             if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
                 Log.Debug("Device", "Setting feature: " + BitConverter.ToString(featureInitReport));
@@ -244,16 +248,21 @@ namespace OpenTabletDriver
             AuxReader = null;
         }
 
-        private void OnReport(object sender, IDeviceReport report)
+        public void OnReport(object _, IDeviceReport report)
+        {
+            this.ReportRecieved?.Invoke(this, report);
+            HandleReport(report);
+        }
+
+        public void HandleReport(IDeviceReport report)
         {
             if (EnableInput && OutputMode?.Digitizer != null)
             {
-                OutputMode?.Read(report);
-                if (OutputMode is IBindingHandler<IBinding> handler)
-                    handler.HandleBinding(report);
+                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
+                    OutputMode.Read(report);
+                if (OutputMode is IBindingHandler<IBinding> bindingHandler)
+                    bindingHandler.HandleBinding(report);
             }
-
-            this.ReportRecieved?.Invoke(this, report);
         }
     }
 }

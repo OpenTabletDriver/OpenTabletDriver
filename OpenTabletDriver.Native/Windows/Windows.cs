@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows.Input;
+using OpenTabletDriver.Native.Windows.Timers;
 
 namespace OpenTabletDriver.Native.Windows
 {
@@ -31,6 +32,28 @@ namespace OpenTabletDriver.Native.Windows
 
         [DllImport("user32.dll")]
         public static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs, int cbSize);
+
+        #endregion
+
+        #region Timers
+
+        public delegate void TimerCallback(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2);
+
+        [DllImport("winmm.dll", SetLastError = true)]
+        public static extern uint timeGetDevCaps(ref TimeCaps timeCaps, uint sizeTimeCaps);
+
+        [DllImport("winmm.dll", SetLastError = true)]
+        public static extern uint timeBeginPeriod(uint uMilliseconds);
+
+        [DllImport("winmm.dll", SetLastError = true)]
+        public static extern uint timeEndPeriod(uint uMilliseconds);
+
+        [DllImport("winmm.dll", SetLastError = true)]
+        public static extern uint timeSetEvent(uint msDelay, uint msResolution, TimerCallback handler,
+            IntPtr data, EventType eventType);
+
+        [DllImport("winmm.dll", SetLastError = true)]
+        public static extern uint timeKillEvent(uint timerEventId);
 
         #endregion
     }

@@ -14,8 +14,7 @@ namespace OpenTabletDriver.Native.OSX
     {
         private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
         private const string Foundation = "/System/Library/Frameworks/Foundation.framework/Foundation";
-        private const string IOKit = "/System/Library/Frameworks/IOKit.framework/IOKit";
-        
+
         [DllImport(Foundation)]
         public static extern void CFRelease(IntPtr handle);
 
