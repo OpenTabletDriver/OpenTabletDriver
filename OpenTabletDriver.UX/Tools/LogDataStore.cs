@@ -1,38 +1,34 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
-using System.Linq;
 
 namespace OpenTabletDriver.UX.Tools
 {
-    public class LogDataStore : INotifyCollectionChanged, ICollection<LogMessage>, IEnumerable<LogMessage>
+    public class LogDataStore : INotifyCollectionChanged, IEnumerable<LogMessage>
     {
-        private readonly ConcurrentBag<LogMessage> data = new ConcurrentBag<LogMessage>();
-        private readonly ConcurrentBag<LogMessage> filteredData = new ConcurrentBag<LogMessage>();
+        private readonly ConcurrentQueue<LogMessage> messages = new ConcurrentQueue<LogMessage>();
 
-        private LogLevel activeFilter = LogLevel.Info;
-        public LogLevel ActiveFilter
+        private IEnumerable<LogMessage> filteredMessages =>
+            from message in this.messages
+                where message.Level >= Filter
+                select message;
+
+        private LogLevel filter = LogLevel.Info;
+        public LogLevel Filter
         {
             set
             {
-                activeFilter = value;
-                filteredData.Clear();
-                foreach (var msg in data)
-                {
-                    if (msg.Level >= value)
-                        filteredData.Add(msg);
-                }
-                var notif = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-                CollectionChanged?.Invoke(this, notif);
+                this.filter = value;
+                OnCollectionChanged();
             }
-            get => activeFilter;
+            get => this.filter;
         }
 
-        public int Count => filteredData.Count;
+        public int Count => filteredMessages.Count();
 
         public bool IsReadOnly => false;
 
@@ -40,48 +36,31 @@ namespace OpenTabletDriver.UX.Tools
 
         public void Add(LogMessage message)
         {
-            data.Add(message);
-
-            if (message.Level >= ActiveFilter)
-            {
-                filteredData.Add(message);
-                var notif = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, message);
-                CollectionChanged?.Invoke(this, notif);
-            }
+            this.messages.Enqueue(message);
+            if (message.Level >= this.Filter)
+                OnCollectionChanged(NotifyCollectionChangedAction.Add, message);
         }
 
-        public void Clear()
+        protected virtual void OnCollectionChanged(NotifyCollectionChangedAction action = NotifyCollectionChangedAction.Reset)
         {
-            data.Clear();
-            filteredData.Clear();
-
-            var notif = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-            CollectionChanged?.Invoke(this, notif);
+            var args = new NotifyCollectionChangedEventArgs(action);
+            CollectionChanged?.Invoke(this, args);
         }
 
-        public bool Contains(LogMessage item)
+        protected void OnCollectionChanged(NotifyCollectionChangedAction action, object obj)
         {
-            return filteredData.Contains(item);
-        }
-
-        public void CopyTo(LogMessage[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
+            var args = new NotifyCollectionChangedEventArgs(action, obj);
+            CollectionChanged?.Invoke(this, args);
         }
 
         public IEnumerator<LogMessage> GetEnumerator()
         {
-            return ((IEnumerable<LogMessage>)filteredData).GetEnumerator();
-        }
-
-        public bool Remove(LogMessage item)
-        {
-            throw new NotImplementedException();
+            return (this.filteredMessages as IEnumerable<LogMessage>).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable)filteredData).GetEnumerator();
+            return (this.filteredMessages as IEnumerable).GetEnumerator();
         }
     }
 }
