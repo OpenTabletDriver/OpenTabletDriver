@@ -90,6 +90,8 @@ namespace OpenTabletDriver.Interop.Timer
 
         public void Dispose()
         {
+            if (Enabled)
+                Stop();
         }
     }
 }

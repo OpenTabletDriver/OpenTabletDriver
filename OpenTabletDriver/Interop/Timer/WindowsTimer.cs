@@ -50,6 +50,8 @@ namespace OpenTabletDriver.Interop.Timer
 
         public void Dispose()
         {
+            if (Enabled)
+                Stop();
             callbackHandle.Free();
             GC.SuppressFinalize(this);
         }
