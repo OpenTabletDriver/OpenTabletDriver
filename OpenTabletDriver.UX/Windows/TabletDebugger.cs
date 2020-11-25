@@ -42,6 +42,31 @@ namespace OpenTabletDriver.UX.Windows
                 Padding = App.GroupBoxPadding
             };
 
+            rawTabCtrl.Content = rawTabText = new Label
+            {
+                Font = new Font(FontFamilies.Monospace, textSize)
+            };
+
+            tabReportCtrl.Content = tabReportText = new Label
+            {
+                Font = new Font(FontFamilies.Monospace, textSize)
+            };
+
+            rawAuxCtrl.Content = rawAuxText = new Label
+            {
+                Font = new Font(FontFamilies.Monospace, textSize)
+            };
+
+            auxReportCtrl.Content = auxReportText = new Label
+            {
+                Font = new Font(FontFamilies.Monospace, textSize)
+            };
+
+            reportRateCtrl.Content = reportRateText = new Label
+            {
+                Font = new Font(FontFamilies.Monospace, textSize)
+            };
+
             var mainLayout = new TableLayout
             {
                 Width = 640,
@@ -98,6 +123,8 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl, reportRateCtrl;
+        private Label rawTabText, tabReportText, rawAuxText, auxReportText, reportRateText;
+        private float textSize = 10;
         private float reportRate;
         private DateTime lastTime = DateTime.UtcNow;
 
@@ -110,17 +137,17 @@ namespace OpenTabletDriver.UX.Windows
                     var now = DateTime.UtcNow;
                     reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
                     lastTime = now;
-                    rawTabCtrl.Content = tabletReport?.StringFormat(true);
-                    tabReportCtrl.Content = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
-                    reportRateCtrl.Content = $"{(uint)(1000 / reportRate)}hz";
+                    rawTabText.Text = tabletReport?.StringFormat(true);
+                    tabReportText.Text = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
+                    reportRateText.Text = $"{(uint)(1000 / reportRate)}hz";
                 });
             }
             if (report is IAuxReport auxReport)
             {
                 Application.Instance.AsyncInvoke(() => 
                 {
-                    rawAuxCtrl.Content = auxReport?.StringFormat(true);
-                    auxReportCtrl.Content = auxReport?.StringFormat(false).Replace(", ", Environment.NewLine);
+                    rawAuxText.Text = auxReport?.StringFormat(true);
+                    auxReportText.Text = auxReport?.StringFormat(false).Replace(", ", Environment.NewLine);
                 });
             }
         }
