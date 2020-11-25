@@ -58,7 +58,7 @@ namespace OpenTabletDriver.Plugin.Output
         {
             _lastReceived = default;  // Prevents cursor from jumping on sensitivity change
             _transformationMatrix = Matrix3x2.CreateRotation(
-                (float)(_rotation * System.Math.PI / 180));
+                (float)(-_rotation * System.Math.PI / 180));
 
             _transformationMatrix *= Matrix3x2.CreateScale(
                 _sensitivity.X * ((Digitizer?.Width / Digitizer?.MaxX) ?? 0.01f),
