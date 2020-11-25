@@ -8,11 +8,11 @@ namespace OpenTabletDriver.Interop.Timer
 {
     using static Windows;
 
-    internal class WindowsTimer : ITimer
+    internal class WindowsTimer : ITimer, IDisposable
     {
         private uint timerId;
-        private TimerCallback callbackDelegate;
-        private GCHandle callbackHandle;
+        private readonly TimerCallback callbackDelegate;
+        private readonly GCHandle callbackHandle;
         private readonly object stateLock = new object();
 
         public WindowsTimer()
@@ -26,10 +26,10 @@ namespace OpenTabletDriver.Interop.Timer
             lock (stateLock)
             {
                 var caps = new TimeCaps();
-                timeGetDevCaps(ref caps, (uint)sizeof(TimeCaps));
-                timeBeginPeriod(Math.Clamp((uint)Interval, caps.wPeriodMin, caps.wPeriodMax));
+                _ = timeGetDevCaps(ref caps, (uint)sizeof(TimeCaps));
+                _ = timeBeginPeriod(Math.Clamp((uint)Interval, caps.wPeriodMin, caps.wPeriodMax));
                 Enabled = true;
-                timerId = timeSetEvent(1, 1, callbackDelegate, IntPtr.Zero, EventType.TIME_PERIODIC);
+                timerId = timeSetEvent(0, 1, callbackDelegate, IntPtr.Zero, EventType.TIME_PERIODIC);
             }
         }
 
@@ -37,16 +37,15 @@ namespace OpenTabletDriver.Interop.Timer
         {
             lock (stateLock)
             {
-                timeKillEvent(timerId);
-                timeEndPeriod((uint)Interval);
+                _ = timeKillEvent(timerId);
+                _ = timeEndPeriod((uint)Interval);
                 Enabled = false;
             }
         }
 
         private void Callback(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
         {
-            if (Enabled)
-                Elapsed();
+            Elapsed();
         }
 
         public void Dispose()

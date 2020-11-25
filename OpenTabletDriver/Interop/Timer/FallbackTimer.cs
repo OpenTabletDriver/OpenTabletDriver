@@ -5,13 +5,13 @@ using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Interop.Timer
 {
-    internal class FallbackTimer : ITimer
+    internal class FallbackTimer : ITimer, IDisposable
     {
         public event Action Elapsed;
 
-        private Thread threadTimer = null;
+        private Thread threadTimer;
         private float ignoreEventIfLateBy = float.MaxValue;
-        private float timerInterval = 0;
+        private float timerInterval;
         private bool runTimer = true;
 
         public FallbackTimer()
@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Interop.Timer
 
             this.runTimer = true;
 
-            this.threadTimer = new Thread(NotificationTimer)
+            this.threadTimer = new Thread(ThreadMain)
             {
                 Priority = ThreadPriority.Highest
             };
@@ -57,7 +57,7 @@ namespace OpenTabletDriver.Interop.Timer
             this.runTimer = false;
         }
 
-        void NotificationTimer()
+        void ThreadMain()
         {
             float nextNotification = 0;
             float elapsedMilliseconds;

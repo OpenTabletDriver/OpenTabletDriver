@@ -315,7 +315,6 @@ namespace OpenTabletDriver.Daemon
                     }
 
                     Driver.Interpolators.Add(interpolator);
-                    interpolator.Enabled = true;
 
                     Log.Write("Settings", $"Interpolator: {interpolator}");
                 }

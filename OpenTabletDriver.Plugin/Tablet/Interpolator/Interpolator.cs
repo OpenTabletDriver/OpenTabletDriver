@@ -17,10 +17,24 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         public abstract void UpdateState(SyntheticTabletReport report);
 
         protected double reportMsAvg = 5.0f;
-        protected bool enabled, inRange;
+        protected bool enabled;
         protected ITimer scheduler;
         protected DateTime lastTime = DateTime.UtcNow;
         protected readonly object stateLock = new object();
+
+        protected bool inRange;
+        protected bool InRange
+        {
+            set
+            {
+                if (this.inRange != value)
+                {
+                    this.Enabled = value;
+                    this.inRange = value;
+                }
+            }
+            get => inRange;
+        }
 
         [Property("Hertz"), Unit("hz")]
         public float Hertz { get; set; } = 1000.0f;
@@ -54,7 +68,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                         var timeNow = DateTime.UtcNow;
                         this.reportMsAvg += ((timeNow - this.lastTime).TotalMilliseconds - this.reportMsAvg) / 50.0f;
                         this.lastTime = timeNow;
-                        this.inRange = true;
+                        this.InRange = true;
 
                         if (Enabled)
                         {
@@ -64,7 +78,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                 }
                 else
                 {
-                    this.inRange = false;
+                    this.InRange = false;
                 }
             }
         }
@@ -74,14 +88,14 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             lock (this.stateLock)
             {
                 var limit = Limiter.Transform(this.reportMsAvg);
-                if (((DateTime.UtcNow - this.lastTime).TotalMilliseconds < limit) && this.inRange)
+                if (((DateTime.UtcNow - this.lastTime).TotalMilliseconds < limit) && this.InRange)
                 {
                     var report = Interpolate();
                     Info.Driver.HandleReport(report);
                 }
                 else
                 {
-                    this.inRange = false;
+                    this.InRange = false;
                 }
             }
         }
@@ -89,7 +103,10 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         public virtual void Dispose()
         {
             Enabled = false;
+            this.scheduler.Elapsed -= InterpolateHook;
+            Info.Driver.ReportRecieved -= HandleReport;
             this.scheduler.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
