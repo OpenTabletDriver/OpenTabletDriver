@@ -57,7 +57,7 @@ namespace OpenTabletDriver.Interop.Timer
             this.runTimer = false;
         }
 
-        void ThreadMain()
+        private void ThreadMain()
         {
             float nextNotification = 0;
             float elapsedMilliseconds;
