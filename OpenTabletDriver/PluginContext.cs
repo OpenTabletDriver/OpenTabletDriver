@@ -47,27 +47,18 @@ namespace OpenTabletDriver
 
         protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
         {
-            // Try to load unmanaged dll using the default behaviour
-            var baseLoad = base.LoadUnmanagedDll(unmanagedDllName);
-            if (baseLoad != IntPtr.Zero)
-                return baseLoad;
-
-            // Default behaviour failed, search <plugin>/runtimes for the dll
             if (this.PluginPath == null)
             {
-                Log.Write("Plugin", $"Obsolete plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
-                return IntPtr.Zero;
+                Log.Write("Plugin", $"Independent plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
+                throw new NotSupportedException();
             }
 
-            var libraryFile = Directory.EnumerateFiles(Path.Join(this.PluginPath, "runtimes"), ToDllName(unmanagedDllName), SearchOption.AllDirectories).FirstOrDefault();
-            try
-            {
+            var runtimeFolder = new DirectoryInfo(Path.Join(this.PluginPath, "runtimes"));
+            var libraryFile = runtimeFolder.Exists ? Directory.EnumerateFiles(runtimeFolder.FullName, ToDllName(unmanagedDllName), SearchOption.AllDirectories).FirstOrDefault() : null;
+            if (!string.IsNullOrEmpty(libraryFile))
                 return LoadUnmanagedDllFromPath(libraryFile);
-            }
-            catch
-            {
+            else
                 return IntPtr.Zero;
-            }
         }
 
         private static string ToDllName(string dllName)
