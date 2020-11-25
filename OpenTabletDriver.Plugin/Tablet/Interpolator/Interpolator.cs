@@ -104,7 +104,8 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         {
             if (!isDisposed)
             {
-                Enabled = false;
+                if (Enabled)
+                    Enabled = false;
                 this.scheduler.Elapsed -= InterpolateHook;
                 Info.Driver.ReportRecieved -= HandleReport;
                 this.scheduler.Dispose();
