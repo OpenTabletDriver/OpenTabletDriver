@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin;
@@ -16,6 +17,9 @@ namespace OpenTabletDriver.UX.Controls
         {
             this.Orientation = Orientation.Vertical;
 
+            var filterSelector = new FilterComboBox();
+            filterSelector.FilterChanged += (sender, filter) => this.messageStore.Filter = filter;
+
             var toolbar = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
@@ -24,8 +28,8 @@ namespace OpenTabletDriver.UX.Controls
                 HorizontalContentAlignment = HorizontalAlignment.Left,
                 Items = 
                 {
-                    GenerateFilterControl(),
-                    new Button((sender, e) => Copy(Messages))
+                    filterSelector,
+                    new Button((sender, e) => Copy(this.messageStore))
                     {
                         Text = "Copy All"
                     }
@@ -36,6 +40,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 MenuText = "Copy"
             };
+
             messageList.ContextMenu = new ContextMenu
             {
                 Items = 
@@ -43,51 +48,38 @@ namespace OpenTabletDriver.UX.Controls
                     copyCommand
                 }
             };
-            messageList.DataStore = Messages;
+
+            messageList.DataStore = this.messageStore;
+            this.messageStore.CollectionChanged += (sender, e) =>
+            {
+                Application.Instance.AsyncInvoke(() => 
+                {
+                    if (this.messageStore.Count > 0)
+                    {
+                        if (messageList.SelectedRow == -1)
+                            messageList.ScrollToRow(this.messageStore.Count - 1);
+                        else
+                            messageList.ScrollToRow(messageList.SelectedRow);
+                    }
+                });
+            };
 
             this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
             this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
 
-            InitializeAsync();
+            _ = InitializeAsync();
         }
 
-        private async void InitializeAsync()
+        private async Task InitializeAsync()
         {
             var currentMessages = from message in await App.Driver.Instance.GetCurrentLog()
                 where message is LogMessage
                 select message;
 
             foreach (var message in currentMessages)
-                AddItem(message);
+                AddMessage(message);
 
-            App.Driver.Instance.Message += (sender, message) => AddItem(message);
-        }
-
-        private static void Copy(IEnumerable<LogMessage> messages)
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (var message in messages)
-            {
-                var line = Log.GetStringFormat(message);
-                sb.AppendLine(line);
-            }
-            Clipboard.Instance.Clear();
-            Clipboard.Instance.Text = sb.ToString();
-        }
-
-        private Control GenerateFilterControl()
-        {
-            var filter = new ComboBox();
-            var filterItems = EnumTools.GetValues<LogLevel>();
-            foreach (var item in filterItems)
-                filter.Items.Add(item.GetName());
-            filter.SelectedKey = CurrentFilter.GetName();
-            filter.SelectedIndexChanged += (sender, e) => 
-            {
-                CurrentFilter = filterItems[filter.SelectedIndex];
-            };
-
-            return filter;
+            App.Driver.Instance.Message += (sender, message) => AddMessage(message);
         }
 
         private readonly GridView<LogMessage> messageList = new GridView<LogMessage>
@@ -130,26 +122,45 @@ namespace OpenTabletDriver.UX.Controls
             }
         };
 
-        private readonly LogDataStore Messages = new LogDataStore();
+        private readonly LogDataStore messageStore = new LogDataStore();
 
-        public LogLevel CurrentFilter {
-            set => Messages.ActiveFilter = value;
-            get => Messages.ActiveFilter;
+        private void AddMessage(LogMessage message)
+        {
+            Application.Instance.AsyncInvoke(() => this.messageStore.Add(message));
         }
 
-        private void AddItem(LogMessage message)
+        private static void Copy(IEnumerable<LogMessage> messages)
         {
-            Application.Instance.AsyncInvoke(() =>
+            StringBuilder sb = new StringBuilder();
+            foreach (var message in messages)
             {
-                Messages.Add(message);
+                var line = Log.GetStringFormat(message);
+                sb.AppendLine(line);
+            }
+            Clipboard.Instance.Clear();
+            Clipboard.Instance.Text = sb.ToString();
+        }
 
-                try
-                {
-                    if (messageList.SelectedRow == -1)
-                        messageList.ScrollToRow(Messages.Count - 1);
-                }
-                catch (ArgumentOutOfRangeException) { }
-            });
+        private class FilterComboBox  : ComboBox
+        {
+            public FilterComboBox(LogLevel activeFilter = LogLevel.Info)
+            {
+                foreach (var item in logLevels)
+                    base.Items.Add(item.GetName());
+
+                base.SelectedKey = activeFilter.GetName();
+                base.SelectedIndexChanged += (sender, e) => OnFilterChanged(base.SelectedIndex);
+            }
+            
+            private static readonly LogLevel[] logLevels = EnumTools.GetValues<LogLevel>();
+
+            public event EventHandler<LogLevel> FilterChanged;
+
+            protected virtual void OnFilterChanged(int index)
+            {
+                var filter = logLevels[index];
+                FilterChanged?.Invoke(this, filter);
+            }
         }
     }
 }
