@@ -59,12 +59,13 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetSensitivity(float xSens, float ySens)
+        static async Task SetSensitivity(float xSens, float ySens, float rotation = 0)
         {
             await ModifySettings(s => 
             {
                 s.XSensitivity = xSens;
                 s.YSensitivity = ySens;
+                s.RelativeRotation = rotation;
             });
         }
 
@@ -188,6 +189,7 @@ namespace OpenTabletDriver.Console
             var settings = await GetSettings();
             await Out.WriteLineAsync($"Horizontal Sensitivity: {settings.XSensitivity}px/mm");
             await Out.WriteLineAsync($"Vertical Sensitivity: {settings.YSensitivity}px/mm");
+            await Out.WriteLineAsync($"Relative mode rotation: {settings.RelativeRotation}degrees");
             await Out.WriteLineAsync($"Reset time: {settings.ResetTime}");
         }
 

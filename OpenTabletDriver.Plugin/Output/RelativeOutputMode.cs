@@ -11,46 +11,75 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : BindingHandler, IOutputMode
     {
-        private List<IFilter> _filters, _preFilters = new List<IFilter>(), _postFilters = new List<IFilter>();
+        private List<IFilter> filters, preFilters = new List<IFilter>(), postFilters = new List<IFilter>();
+        private Vector2? lastPos;
+        private DateTime lastReceived;
+        private Matrix3x2 transformationMatrix;
+
         public IEnumerable<IFilter> Filters
         {
             set
             {
-                _filters = value.ToList();
-                _preFilters.Clear();
-                _postFilters.Clear();
-                foreach (IFilter filter in _filters)
-                    if (filter.FilterStage == FilterStage.PreTranspose)
-                        _preFilters.Add(filter);
-                    else if (filter.FilterStage == FilterStage.PostTranspose)
-                        _postFilters.Add(filter);
+                this.filters = value.ToList();
+                this.preFilters.Clear();
+                this.postFilters.Clear();
+
+                foreach (var filter in this.filters)
+                {
+                    switch (filter.FilterStage)
+                    {
+                        case FilterStage.PreTranspose:
+                            this.preFilters.Add(filter);
+                            break;
+                        case FilterStage.PostTranspose:
+                            this.postFilters.Add(filter);
+                            break;
+                        default:
+                            throw new NotSupportedException();
+                    }
+                }
             }
-            get => _filters;
+            get => this.filters;
         }
 
         public abstract IVirtualMouse VirtualMouse { get; }
         public IVirtualPointer Pointer => VirtualMouse;
 
-        private Vector2 _sensitivity;
+        private Vector2 sensitivity;
         public Vector2 Sensitivity
         {
             set
             {
-                _sensitivity = value;
-
-                // Normalize (ratio of 1)
-                _sensitivity /= new Vector2(Digitizer.MaxX, Digitizer.MaxY);
-
-                // Scale to tablet dimensions (mm)
-                _sensitivity *= new Vector2(Digitizer.Width, Digitizer.Height);
+                this.sensitivity = value;
+                UpdateTransformMatrix();
             }
-            get { return _sensitivity; }
+            get => this.sensitivity;
+        }
+
+        private float rotation;
+        public float Rotation
+        {
+            set
+            {
+                this.rotation = value;
+                UpdateTransformMatrix();
+            }
+            get => this.rotation;
+        }
+
+        private void UpdateTransformMatrix()
+        {
+            this.lastReceived = default;  // Prevents cursor from jumping on sensitivity change
+
+            this.transformationMatrix = Matrix3x2.CreateRotation(
+                (float)(-Rotation * System.Math.PI / 180));
+
+            this.transformationMatrix *= Matrix3x2.CreateScale(
+                sensitivity.X * ((Digitizer?.Width / Digitizer?.MaxX) ?? 0.01f),
+                sensitivity.Y * ((Digitizer?.Height / Digitizer?.MaxY) ?? 0.01f));
         }
 
         public TimeSpan ResetTime { set; get; }
-
-        private ITabletReport _lastReport;
-        private DateTime _lastReceived;
 
         public virtual void Read(IDeviceReport report)
         {
@@ -62,43 +91,34 @@ namespace OpenTabletDriver.Plugin.Output
                     {
                         if (VirtualMouse is IPressureHandler pressureHandler)
                             pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
-                        
+
                         VirtualMouse.Move(pos.X, pos.Y);
                     }
                 }
             }
         }
-        
+
         protected Vector2? Transpose(ITabletReport report)
         {
-            var difference = DateTime.Now - _lastReceived;
-            if (difference > ResetTime && _lastReceived != default)
-            {
-                _lastReport = null;
-            }
+            var difference = DateTime.Now - this.lastReceived;
+            this.lastReceived = DateTime.Now;
 
-            if (_lastReport != null)
-            {
-                var pos = new Vector2(report.Position.X - _lastReport?.Position.X ?? 0, report.Position.Y - _lastReport?.Position.Y ?? 0);
+            var pos = report.Position;
 
-                // Pre Filter
-                foreach (IFilter filter in _preFilters)
-                    pos = filter.Filter(pos);
+            // Pre Filter
+            foreach (IFilter filter in this.preFilters)
+                pos = filter.Filter(pos);
 
-                pos *= _sensitivity;
+            pos = Vector2.Transform(pos, this.transformationMatrix);
 
-                // Post Filter
-                foreach (IFilter filter in _postFilters)
-                    pos = filter.Filter(pos);
+            // Post Filter
+            foreach (IFilter filter in this.postFilters)
+                pos = filter.Filter(pos);
 
-                _lastReport = report;
-                return pos;
-            }
-            
-            _lastReport = report;
-            _lastReceived = DateTime.Now;
-            
-            return null;
+            var delta = pos - this.lastPos;
+            this.lastPos = pos;
+
+            return (difference > ResetTime) ? null : delta;
         }
     }
 }

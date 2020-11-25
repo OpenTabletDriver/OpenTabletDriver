@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
@@ -11,59 +12,67 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class AbsoluteOutputMode : BindingHandler, IOutputMode
     {
-        private float _halfDisplayWidth, _halfDisplayHeight, _halfTabletWidth, _halfTabletHeight;
-        private float _minX, _maxX, _minY, _maxY;
-        private Vector2 _min, _max;
-        private Matrix3x2 _transformationMatrix;
+        private List<IFilter> filters, preFilters = new List<IFilter>(), postFilters = new List<IFilter>();
+        private Vector2 min, max;
+        private Matrix3x2 transformationMatrix;
 
-        private List<IFilter> _filters, _preFilters = new List<IFilter>(), _postFilters = new List<IFilter>();
         public IEnumerable<IFilter> Filters
         {
             set
             {
-                _filters = value.ToList();
-                _preFilters.Clear();
-                _postFilters.Clear();
-                foreach (IFilter filter in _filters)
-                    if (filter.FilterStage == FilterStage.PreTranspose)
-                        _preFilters.Add(filter);
-                    else if (filter.FilterStage == FilterStage.PostTranspose)
-                        _postFilters.Add(filter);
+                this.filters = value.ToList();
+                this.preFilters.Clear();
+                this.postFilters.Clear();
+
+                foreach (var filter in this.filters)
+                {
+                    switch (filter.FilterStage)
+                    {
+                        case FilterStage.PreTranspose:
+                            this.preFilters.Add(filter);
+                            break;
+                        case FilterStage.PostTranspose:
+                            this.postFilters.Add(filter);
+                            break;
+                        default:
+                            throw new NotSupportedException();
+                    }
+                }
             }
-            get => _filters;
+            get => this.filters;
         }
 
-        private DigitizerIdentifier _digitizer;
+        private DigitizerIdentifier digitizer;
         public override DigitizerIdentifier Digitizer
         {
             set
             {
-                _digitizer = value;
-                UpdateCache();
+                this.digitizer = value;
+                UpdateTransformMatrix();
             }
-            get => _digitizer;
+            get => this.digitizer;
         }
 
-        private Area _displayArea, _tabletArea;
+        private Area outputArea, inputArea;
 
         public Area Input
         {
             set
             {
-                _tabletArea = value;
-                UpdateCache();
+                this.inputArea = value;
+                UpdateTransformMatrix();
             }
-            get => _tabletArea;
+            get => this.inputArea;
         }
 
         public Area Output
         {
             set
             {
-                _displayArea = value;
-                UpdateCache();
+                this.outputArea = value;
+                UpdateTransformMatrix();
             }
-            get => _displayArea;
+            get => this.outputArea;
         }
 
         public IVirtualScreen VirtualScreen { set; get; }
@@ -72,26 +81,24 @@ namespace OpenTabletDriver.Plugin.Output
         public bool AreaClipping { set; get; }
         public bool AreaLimiting { set; get; }
 
-        internal void UpdateCache()
+        internal void UpdateTransformMatrix()
         {
             if (!(Input is null | Output is null | Digitizer is null))
-                _transformationMatrix = CalculateTransformation(Input, Output, Digitizer);
+                this.transformationMatrix = CalculateTransformation(Input, Output, Digitizer);
 
-            _halfDisplayWidth = Output?.Width / 2 ?? 0;
-            _halfDisplayHeight = Output?.Height / 2 ?? 0;
-            _halfTabletWidth = Input?.Width / 2 ?? 0;
-            _halfTabletHeight = Input?.Height / 2 ?? 0;
+            var halfDisplayWidth = Output?.Width / 2 ?? 0;
+            var halfDisplayHeight = Output?.Height / 2 ?? 0;
 
-            _minX = Output?.Position.X - _halfDisplayWidth ?? 0;
-            _maxX = Output?.Position.X + Output?.Width - _halfDisplayWidth ?? 0;
-            _minY = Output?.Position.Y - _halfDisplayHeight ?? 0;
-            _maxY = Output?.Position.Y + Output?.Height - _halfDisplayHeight ?? 0;
+            var minX = Output?.Position.X - halfDisplayWidth ?? 0;
+            var maxX = Output?.Position.X + Output?.Width - halfDisplayWidth ?? 0;
+            var minY = Output?.Position.Y - halfDisplayHeight ?? 0;
+            var maxY = Output?.Position.Y + Output?.Height - halfDisplayHeight ?? 0;
 
-            _min = new Vector2(_minX, _minY);
-            _max = new Vector2(_maxX, _maxY);
+            this.min = new Vector2(minX, minY);
+            this.max = new Vector2(maxX, maxY);
         }
 
-        internal Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
+        internal static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
         {
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(
@@ -137,22 +144,22 @@ namespace OpenTabletDriver.Plugin.Output
             var pos = new Vector2(report.Position.X, report.Position.Y);
 
             // Pre Filter
-            foreach (IFilter filter in _preFilters)
+            foreach (IFilter filter in this.preFilters)
                 pos = filter.Filter(pos);
 
             // Apply transformation
-            pos = Vector2.Transform(pos, _transformationMatrix);
+            pos = Vector2.Transform(pos, this.transformationMatrix);
 
             // Clipping to display bounds
-            var clippedPoint = Vector2.Clamp(pos, _min, _max);
+            var clippedPoint = Vector2.Clamp(pos, this.min, this.max);
             if (AreaLimiting && clippedPoint != pos)
                 return null;
 
             if (AreaClipping)
-                pos = Vector2.Clamp(pos, _min, _max);
+                pos = clippedPoint;
 
             // Post Filter
-            foreach (IFilter filter in _postFilters)
+            foreach (IFilter filter in this.postFilters)
                 pos = filter.Filter(pos);
 
             return pos;
