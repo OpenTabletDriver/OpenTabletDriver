@@ -100,13 +100,24 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             }
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            Enabled = false;
-            this.scheduler.Elapsed -= InterpolateHook;
-            Info.Driver.ReportRecieved -= HandleReport;
-            this.scheduler.Dispose();
-            GC.SuppressFinalize(this);
+            if (!isDisposed)
+            {
+                Enabled = false;
+                this.scheduler.Elapsed -= InterpolateHook;
+                Info.Driver.ReportRecieved -= HandleReport;
+                this.scheduler.Dispose();
+                GC.SuppressFinalize(this);
+                isDisposed = true;
+            }
         }
+
+        ~Interpolator()
+        {
+            Dispose();
+        }
+
+        private bool isDisposed;
     }
 }
