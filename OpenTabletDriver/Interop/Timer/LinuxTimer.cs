@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Interop.Timer
 {
     using static Timers;
 
-    internal class LinuxTimer : ITimer
+    internal class LinuxTimer : ITimer, IDisposable
     {
         private IntPtr timerID;
         private readonly TimerCallback callbackDelegate;
@@ -53,7 +53,7 @@ namespace OpenTabletDriver.Interop.Timer
                     interval = new TimeSpec
                     {
                         sec = 0,
-                        nsec = (long)(interval)
+                        nsec = (long)interval
                     },
                     value = new TimeSpec
                     {
@@ -64,7 +64,7 @@ namespace OpenTabletDriver.Interop.Timer
 
                 var oldTimeSpec = new TimerSpec();
 
-                var setErr = TimerSetTime(timerID, 0, ref timeSpec, ref oldTimeSpec);
+                var setErr = TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, ref oldTimeSpec);
                 if (setErr != ERRNO.NONE)
                 {
                     Log.Write("LinuxTimer", $"Failed activating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
@@ -110,12 +110,15 @@ namespace OpenTabletDriver.Interop.Timer
 
         public void Dispose()
         {
+            if (Enabled)
+                Stop();
             callbackHandle.Free();
+            GC.SuppressFinalize(this);
         }
 
         public bool Enabled { private set; get; }
 
-        public float Interval { set; get; }
+        public float Interval { set; get; } = 1;
 
         public event Action Elapsed;
     }
