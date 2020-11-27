@@ -56,7 +56,7 @@ namespace OpenTabletDriver.UX
             };
         }
 
-        public async Task ReloadUX()
+        public async Task Refresh()
         {
             Content = ConstructMainControls();
 

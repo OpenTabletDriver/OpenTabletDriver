@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -22,6 +21,11 @@ namespace OpenTabletDriver.UX.Windows
             this.Menu = ConstructMenu();
 
             this.pluginList = PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
+
+            this.panel = new Panel
+            {
+                AllowDrop = true
+            };
 
             this.dropArea = new StackLayout
             {
@@ -68,11 +72,12 @@ namespace OpenTabletDriver.UX.Windows
                 Orientation = Orientation.Vertical
             };
 
-            this.Content = split;
+            this.panel.Content = this.split;
+            this.Content = this.panel;
 
-            this.DragEnter += ShowDrop;
-            this.DragLeave += LeaveDrop;
-            this.DragDrop += DragDropPluginInstall;
+            this.panel.DragEnter += ShowDrop;
+            this.panel.DragLeave += LeaveDrop;
+            this.panel.DragDrop += DragDropPluginInstall;
         }
 
         private void ShowDrop(object _, DragEventArgs args)
@@ -83,7 +88,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     // Skip if running on bugged platform
                     // https://github.com/picoe/Eto/issues/1812
-                    if (args.Data.Uris != null && args.Data.Uris.Count() > 0)
+                    if (args.Data.Uris != null && args.Data.Uris.Length > 0)
                     {
                         var uriList = args.Data.Uris;
                         var supportedType = uriList.All(uri =>
@@ -101,14 +106,14 @@ namespace OpenTabletDriver.UX.Windows
                         if (supportedType)
                         {
                             dropArea.Items[1].Control = dragDropSupported;
-                            this.Content = dropArea;
+                            this.panel.Content = dropArea;
                             args.Effects = DragEffects.Copy;
                         }
                     }
                     else
                     {
                         dropArea.Items[1].Control = dragDropNotSupported;
-                        this.Content = dropArea;
+                        this.panel.Content = dropArea;
                         args.Effects = DragEffects.None;
                     }
                 }
@@ -118,14 +123,14 @@ namespace OpenTabletDriver.UX.Windows
 
         private void LeaveDrop(object _, DragEventArgs args)
         {
-            this.Content = split;
+            this.panel.Content = split;
         }
 
         private void DragDropPluginInstall(object _, DragEventArgs args)
         {
             try
             {
-                if (args.Data.ContainsUris && args.Data.Uris != null && args.Data.Uris.Count() > 0)
+                if (args.Data.ContainsUris && args.Data.Uris != null && args.Data.Uris.Length > 0)
                 {
                     var uriList = args.Data.Uris;
                     foreach (var uri in uriList)
@@ -141,15 +146,14 @@ namespace OpenTabletDriver.UX.Windows
             catch {}
         }
 
-        private void FileDialogPluginInstall(object _, EventArgs args)
+        private void FileDialogPluginInstall()
         {
             var dialog = new OpenFileDialog()
             {
                 Title = "Choose plugin to install...",
                 Filters =
                 {
-                    new FileFilter("OTD Plugin (.zip)", ".zip"),
-                    new FileFilter("Deprecated Plugin (.dll)", ".dll")
+                    new FileFilter("OTD Plugin (.zip .dll)", ".zip", ".dll")
                 },
                 MultiSelect = true
             };
@@ -164,7 +168,7 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        private void InstallFile(string filePath)
+        private static void InstallFile(string filePath)
         {
             var fileInfo = new FileInfo(filePath);
             switch (fileInfo.Extension)
@@ -201,23 +205,23 @@ namespace OpenTabletDriver.UX.Windows
         {
             await App.Driver.Instance.LoadPlugins();
             await PluginManager.LoadPluginsAsync();
-            await MainForm.FormInstance.ReloadUX();
-            pluginListBox.DataStore = pluginList = PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
+            await MainForm.FormInstance.Refresh();
+            this.pluginListBox.DataStore = pluginList = PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
         }
 
         private MenuBar ConstructMenu()
         {
             var installPlugin = new Command { MenuText = "Install plugin..." };
-            installPlugin.Executed += FileDialogPluginInstall;
+            installPlugin.Executed += (_, _) => FileDialogPluginInstall();
 
             var pluginsRepository = new Command { MenuText = "Get more plugins..." };
-            pluginsRepository.Executed += (_, o) => SystemInfo.Open(App.PluginRepositoryUrl);
+            pluginsRepository.Executed += (_, _) => SystemInfo.Open(App.PluginRepositoryUrl);
 
-            var loadPlugins = new Command { MenuText = "Load plugins" };
-            loadPlugins.Executed += (_, o) => LoadNewPlugins().ConfigureAwait(false);
+            var loadPlugins = new Command { MenuText = "Manually load plugins..." };
+            loadPlugins.Executed += (_, _) => ManualLoad();
 
             var quitCommand = new Command { MenuText = "Exit" };
-            quitCommand.Executed += (_, o) => this.Close();
+            quitCommand.Executed += (_, _) => this.Close();
 
             return new MenuBar()
             {
@@ -228,6 +232,14 @@ namespace OpenTabletDriver.UX.Windows
                 },
                 QuitItem = quitCommand
             };
+        }
+
+        private void ManualLoad()
+        {
+            var result = MessageBox.Show("Manually loading plugins are not recommended. Are you sure you want to continue?",
+                                          MessageBoxButtons.YesNo, MessageBoxType.Warning);
+            if (result == DialogResult.Yes || result == DialogResult.Ok)
+                LoadNewPlugins().ConfigureAwait(false);
         }
 
         private void ShowPluginFolder()
@@ -241,6 +253,7 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private List<string> pluginList;
+        private readonly Panel panel; // Windows can't receive drag n drop events from Form, so use Panel as proxy
         private readonly ListBox pluginListBox;
         private readonly StackLayout split;
         private readonly StackLayout dropArea;
