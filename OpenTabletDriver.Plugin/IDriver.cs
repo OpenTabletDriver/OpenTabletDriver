@@ -17,6 +17,7 @@ namespace OpenTabletDriver.Plugin
         IVirtualScreen VirtualScreen { get; }
         IOutputMode OutputMode { set; get; }
 
+        void HandleReport(IDeviceReport report);
         bool TryMatch(TabletConfiguration tablet);
     }
 }
