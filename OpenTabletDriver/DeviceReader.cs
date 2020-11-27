@@ -17,16 +17,24 @@ namespace OpenTabletDriver
             {
                 Name = "OpenTabletDriver Device Reader",
                 IsBackground = true,
-                Priority = ThreadPriority.BelowNormal,
+                Priority = ThreadPriority.AboveNormal,
             };
-            Setup();
-            WorkerThread.Start();
+
+            try
+            {
+                ReportStream = Device.Open();
+                WorkerThread.Start();
+            }
+            catch
+            {
+                throw new IOException("Failed to open stream");
+            }
         }
 
-        public virtual HidDevice Device { protected set; get; }
-        public virtual HidStream ReportStream { protected set; get; }
+        public HidDevice Device { protected set; get; }
+        public HidStream ReportStream { protected set; get; }
         public IReportParser<T> Parser { private set; get; }
-        public virtual event EventHandler<T> Report;
+        public event EventHandler<T> Report;
 
         private bool _reading;
         public bool Reading
@@ -41,7 +49,7 @@ namespace OpenTabletDriver
 
         public event EventHandler<bool> ReadingChanged;
 
-        private Thread WorkerThread;
+        private readonly Thread WorkerThread;
 
         protected void Main()
         {
@@ -74,22 +82,7 @@ namespace OpenTabletDriver
             }
         }
 
-        private void Setup()
-        {
-            try
-            {
-                var config = new OpenConfiguration();
-                config.SetOption(OpenOption.Priority, OpenPriority.Low);
-                ReportStream = Device.Open(config);
-            }
-            catch (Exception ex)
-            {
-                Log.Write("Device", "Failed to open stream.", LogLevel.Error);
-                Log.Exception(ex);
-            }
-        }
-
-        public virtual void Dispose()
+        public void Dispose()
         {
             Reading = false;
             ReportStream?.Dispose();
