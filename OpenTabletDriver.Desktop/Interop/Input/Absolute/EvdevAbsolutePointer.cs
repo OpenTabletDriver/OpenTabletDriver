@@ -6,11 +6,11 @@ using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace OpenTabletDriver.Desktop.Interop.Input.Tablet
+namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualPointer, IVirtualTablet
+    public class EvdevAbsolutePointer : EvdevVirtualMouse, IAbsolutePointer
     {
-        public unsafe EvdevVirtualTablet()
+        public unsafe EvdevAbsolutePointer()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Tablet");
 

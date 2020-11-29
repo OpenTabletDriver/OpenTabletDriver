@@ -76,9 +76,9 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<LogMessage> Message;
         public event EventHandler<DebugTabletReport> TabletReport;
         public event EventHandler<DebugAuxReport> AuxReport;
-        public event EventHandler<TabletStatus> TabletChanged;
+        public event EventHandler<TabletState> TabletChanged;
 
-        public Driver Driver { private set; get; } = new Driver();
+        public DesktopDriver Driver { private set; get; } = new DesktopDriver();
         private Settings Settings { set; get; }
         private IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
@@ -95,21 +95,12 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
-        public Task<TabletStatus> GetTablet()
+        public Task<TabletState> GetTablet()
         {
-            TabletStatus tablet = null;
-            if (Driver.TabletReader != null && Driver.TabletReader.Reading)
-            {
-                tablet = new TabletStatus(
-                    Driver.Tablet,
-                    Driver.TabletIdentifier,
-                    Driver.AuxiliaryIdentifier
-                );
-            }
-            return Task.FromResult(tablet);
+            return Task.FromResult(Driver.Tablet);
         }
 
-        public async Task<TabletStatus> DetectTablets()
+        public async Task<TabletState> DetectTablets()
         {
             var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
             if (configDir.Exists)
@@ -152,8 +143,8 @@ namespace OpenTabletDriver.Daemon
             if (Driver.OutputMode is RelativeOutputMode relativeMode)
                 SetRelativeModeSettings(relativeMode);
 
-            if (Driver.OutputMode is IBindingHandler<IBinding> bindingHandler)
-                SetBindingHandlerSettings(bindingHandler);
+            SetBindingHandlerSettings();
+                
 
             if (Settings.AutoHook)
             {
@@ -198,7 +189,7 @@ namespace OpenTabletDriver.Daemon
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
             
-            outputMode.Digitizer = Driver.TabletIdentifier;
+            outputMode.Tablet = Driver.Tablet;
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
@@ -228,8 +219,6 @@ namespace OpenTabletDriver.Daemon
             };
             Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
-            absoluteMode.VirtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
-
             absoluteMode.AreaClipping = Settings.EnableClipping;   
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
 
@@ -249,26 +238,26 @@ namespace OpenTabletDriver.Daemon
             Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
         }
 
-        private void SetBindingHandlerSettings(IBindingHandler<IBinding> bindingHandler)
+        private void SetBindingHandlerSettings()
         {
-            bindingHandler.TipBinding = BindingTools.GetBinding(Settings.TipButton);
-            bindingHandler.TipActivationPressure = Settings.TipActivationPressure;
-            Log.Write("Settings", $"Tip Binding: '{(bindingHandler.TipBinding is IBinding binding ? binding.ToString() : "None")}'@{bindingHandler.TipActivationPressure}%");
+            BindingHandler.TipBinding = BindingTools.GetBinding(Settings.TipButton);
+            BindingHandler.TipActivationPressure = Settings.TipActivationPressure;
+            Log.Write("Settings", $"Tip Binding: '{(BindingHandler.TipBinding is IBinding binding ? binding.ToString() : "None")}'@{BindingHandler.TipActivationPressure}%");
 
             if (Settings.PenButtons != null)
             {
                 for (int index = 0; index < Settings.PenButtons.Count; index++)
-                    bindingHandler.PenButtonBindings[index] = BindingTools.GetBinding(Settings.PenButtons[index]);
+                    BindingHandler.PenButtonBindings[index] = BindingTools.GetBinding(Settings.PenButtons[index]);
 
-                Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
+                Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", BindingHandler.PenButtonBindings));
             }
 
             if (Settings.AuxButtons != null)
             {
                 for (int index = 0; index < Settings.AuxButtons.Count; index++)
-                    bindingHandler.AuxButtonBindings[index] = BindingTools.GetBinding(Settings.AuxButtons[index]);
+                    BindingHandler.AuxButtonBindings[index] = BindingTools.GetBinding(Settings.AuxButtons[index]);
 
-                Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
+                Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", BindingHandler.AuxButtonBindings));
             }
         }
 

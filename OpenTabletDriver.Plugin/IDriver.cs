@@ -11,9 +11,7 @@ namespace OpenTabletDriver.Plugin
         event EventHandler<IDeviceReport> ReportRecieved;
 
         bool EnableInput { set; get; }
-        TabletConfiguration Tablet { get; }
-        DigitizerIdentifier TabletIdentifier { get; }
-        DeviceIdentifier AuxiliaryIdentifier { get; }
+        TabletState Tablet { get; }
         IOutputMode OutputMode { set; get; }
 
         void HandleReport(IDeviceReport report);

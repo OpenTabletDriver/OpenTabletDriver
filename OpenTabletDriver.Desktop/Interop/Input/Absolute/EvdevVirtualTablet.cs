@@ -6,14 +6,14 @@ using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace OpenTabletDriver.Desktop.Interop.Input.Tablet
+namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevPenHandler : EvdevVirtualPointer, IVirtualTablet, IPressureHandler
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
     {
         private const int Max = 1 << 28;
         private Vector2 ScreenScale = new Vector2(Platform.VirtualScreen.Width, Platform.VirtualScreen.Height);
 
-        public unsafe EvdevPenHandler()
+        public unsafe EvdevVirtualTablet()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 

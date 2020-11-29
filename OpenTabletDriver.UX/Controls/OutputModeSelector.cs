@@ -17,7 +17,11 @@ namespace OpenTabletDriver.UX.Controls
                 select new PluginReference(type);
 
             OutputModes = new List<PluginReference>(outputModes);
-            this.SelectedIndexChanged += (sender, e) => SelectedMode = OutputModes[this.SelectedIndex];
+            this.SelectedIndexChanged += (sender, e) =>
+            {
+                if (this.SelectedIndex >= 0)
+                    SelectedMode = OutputModes[this.SelectedIndex];
+            };
         }
 
         public event EventHandler<PluginReference> SelectedModeChanged;

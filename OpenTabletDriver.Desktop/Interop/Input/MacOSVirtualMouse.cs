@@ -10,9 +10,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
-    public abstract class MacOSVirtualPointer : IVirtualPointer
+    public abstract class MacOSVirtualMouse : IVirtualMouse
     {
-        protected MacOSVirtualPointer()
+        protected MacOSVirtualMouse()
         {
             var primary = Platform.VirtualScreen.Displays.FirstOrDefault();
             offset = new CGPoint(primary.Position.X, primary.Position.Y);

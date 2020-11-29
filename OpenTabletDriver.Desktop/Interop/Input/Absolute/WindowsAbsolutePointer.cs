@@ -4,11 +4,11 @@ using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace OpenTabletDriver.Desktop.Interop.Input.Tablet
+namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static Windows;
 
-    public class WindowsVirtualTablet : WindowsVirtualPointer, IVirtualTablet
+    public class WindowsAbsolutePointer : WindowsVirtualMouse, IAbsolutePointer
     {
         public void SetPosition(Vector2 pos)
         {

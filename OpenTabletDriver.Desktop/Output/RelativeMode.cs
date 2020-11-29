@@ -6,8 +6,8 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Output
 {
     [PluginName("Relative Mode")]
-    public class RelativeMode : RelativeOutputMode
+    public class RelativeMode : RelativeOutputMode, IPointerOutputMode<IRelativePointer>
     {
-        public override IVirtualMouse VirtualMouse => Platform.VirtualMouse;
+        public override IRelativePointer Pointer => Platform.VirtualMouse;
     }
 }

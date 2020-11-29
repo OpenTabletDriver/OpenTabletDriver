@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Binding
@@ -9,7 +10,12 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName("Mouse Button Binding")]
     public class MouseBinding : IBinding, IValidateBinding
     {
-        private IVirtualPointer pointer => Info.Driver.OutputMode.Pointer;
+        private IVirtualMouse pointer => Info.Driver.OutputMode switch
+        {
+            IPointerOutputMode<IRelativePointer> outputMode => outputMode.Pointer as IVirtualMouse,
+            IPointerOutputMode<IAbsolutePointer> outputMode => outputMode.Pointer as IVirtualMouse,
+            _ => null
+        };
         
         public string Property { set; get; }
         
@@ -18,7 +24,7 @@ namespace OpenTabletDriver.Desktop.Binding
             get 
             {
                 if (Enum.TryParse<MouseButton>(Property, true, out var mouseButton))
-                    return () => pointer.MouseDown(mouseButton);
+                    return () => pointer?.MouseDown(mouseButton);
                 else
                     return null;
             }
@@ -29,7 +35,7 @@ namespace OpenTabletDriver.Desktop.Binding
             get
             {
                 if (Enum.TryParse<MouseButton>(Property, true, out var mouseButton))
-                    return () => pointer.MouseUp(mouseButton);
+                    return () => pointer?.MouseUp(mouseButton);
                 else
                     return null;
             }

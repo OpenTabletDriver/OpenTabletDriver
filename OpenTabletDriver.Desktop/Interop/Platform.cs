@@ -1,8 +1,8 @@
 using System;
 using OpenTabletDriver.Desktop.Interop.Display;
+using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
-using OpenTabletDriver.Desktop.Interop.Input.Mouse;
-using OpenTabletDriver.Desktop.Interop.Input.Tablet;
+using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
 using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -14,9 +14,8 @@ namespace OpenTabletDriver.Desktop.Interop
 {
     public static class Platform
     {
-        public static IVirtualPointer VirtualPointer => _virtualMouse.IsValueCreated ? (IVirtualPointer)VirtualMouse : VirtualTablet;
-        public static IVirtualTablet VirtualTablet => _virtualTablet.Value;
-        public static IVirtualMouse VirtualMouse => _virtualMouse.Value;
+        public static IAbsolutePointer VirtualTablet => _virtualTablet.Value;
+        public static IRelativePointer VirtualMouse => _virtualMouse.Value;
 
         public static IVirtualKeyboard KeyboardHandler => _keyboardHandler.Value;
         
@@ -29,24 +28,24 @@ namespace OpenTabletDriver.Desktop.Interop
             _                       => new FallbackTimer()
         };
 
-        private static Lazy<IVirtualTablet> _virtualTablet = new Lazy<IVirtualTablet>(() =>
+        private static Lazy<IAbsolutePointer> _virtualTablet = new Lazy<IAbsolutePointer>(() =>
         {
             return SystemInfo.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => new WindowsVirtualTablet(),
-                RuntimePlatform.Linux   => new EvdevVirtualTablet(),
-                RuntimePlatform.MacOS   => new MacOSVirtualTablet(),
+                RuntimePlatform.Windows => new WindowsAbsolutePointer(),
+                RuntimePlatform.Linux   => new EvdevAbsolutePointer(),
+                RuntimePlatform.MacOS   => new MacOSAbsolutePointer(),
                 _                       => null
             };
         });
 
-        private static Lazy<IVirtualMouse> _virtualMouse = new Lazy<IVirtualMouse>(() => 
+        private static Lazy<IRelativePointer> _virtualMouse = new Lazy<IRelativePointer>(() => 
         {
             return SystemInfo.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => new WindowsVirtualMouse(),
-                RuntimePlatform.Linux   => new EvdevVirtualMouse(),
-                RuntimePlatform.MacOS   => new MacOSVirtualMouse(),
+                RuntimePlatform.Windows => new WindowsRelativePointer(),
+                RuntimePlatform.Linux   => new EvdevRelativePointer(),
+                RuntimePlatform.MacOS   => new MacOSRelativePointer(),
                 _                       => null
             };
         });

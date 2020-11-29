@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Contracts
 {
@@ -11,12 +12,12 @@ namespace OpenTabletDriver.Desktop.Contracts
         event EventHandler<LogMessage> Message;
         event EventHandler<DebugTabletReport> TabletReport;
         event EventHandler<DebugAuxReport> AuxReport;
-        event EventHandler<TabletStatus> TabletChanged;
+        event EventHandler<TabletState> TabletChanged;
 
         Task WriteMessage(LogMessage message);
 
-        Task<TabletStatus> GetTablet();
-        Task<TabletStatus> DetectTablets();
+        Task<TabletState> GetTablet();
+        Task<TabletState> DetectTablets();
 
         Task SetSettings(Settings settings);
         Task<Settings> GetSettings();

@@ -717,7 +717,7 @@ namespace OpenTabletDriver.UX
 
             Content = ConstructMainControls();
 
-            if (await App.Driver.Instance.GetTablet() is TabletStatus tablet)
+            if (await App.Driver.Instance.GetTablet() is TabletState tablet)
             {
                 SetTabletAreaDimensions(tablet);
             }
@@ -781,10 +781,10 @@ namespace OpenTabletDriver.UX
             Settings.DisplayHeight = virtualScreen.Height;
             Settings.DisplayX = virtualScreen.Width / 2;
             Settings.DisplayY = virtualScreen.Height / 2;
-            Settings.TabletWidth = tablet?.TabletIdentifier?.Width ?? 0;
-            Settings.TabletHeight = tablet?.TabletIdentifier?.Height ?? 0;
-            Settings.TabletX = tablet?.TabletIdentifier?.Width / 2 ?? 0;
-            Settings.TabletY = tablet?.TabletIdentifier?.Height / 2 ?? 0;
+            Settings.TabletWidth = tablet?.Digitizer?.Width ?? 0;
+            Settings.TabletHeight = tablet?.Digitizer?.Height ?? 0;
+            Settings.TabletX = tablet?.Digitizer?.Width / 2 ?? 0;
+            Settings.TabletY = tablet?.Digitizer?.Height / 2 ?? 0;
             await App.Driver.Instance.SetSettings(Settings);
         }
 
@@ -878,7 +878,7 @@ namespace OpenTabletDriver.UX
 
         private async Task DetectAllTablets()
         {
-            if (await App.Driver.Instance.DetectTablets() is TabletStatus tablet)
+            if (await App.Driver.Instance.DetectTablets() is TabletState tablet)
             {
                 var settings = await App.Driver.Instance.GetSettings();
                 if (settings != null)
@@ -925,18 +925,18 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private void SetTabletAreaDimensions(TabletStatus tablet)
+        private void SetTabletAreaDimensions(TabletState tablet)
         {
             Application.Instance.AsyncInvoke(() =>
             {
                 if (tablet != null)
                 {
-                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height));
+                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height));
 
                     if (Settings != null && Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
                     {
-                        Settings.TabletWidth = tablet.TabletIdentifier.Width;
-                        Settings.TabletHeight = tablet.TabletIdentifier.Height;
+                        Settings.TabletWidth = tablet.Digitizer.Width;
+                        Settings.TabletHeight = tablet.Digitizer.Height;
                     }
                 }
                 else

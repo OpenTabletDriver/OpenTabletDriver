@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     using static Windows;
 
     [PluginIgnore]
-    public abstract class WindowsVirtualPointer : IVirtualPointer
+    public abstract class WindowsVirtualMouse : IVirtualMouse
     {
         protected INPUT[] inputs = new INPUT[]
         {

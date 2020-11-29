@@ -4,11 +4,11 @@ using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace OpenTabletDriver.Desktop.Interop.Input.Tablet
+namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static OSX;
 
-    public class MacOSVirtualTablet : MacOSVirtualPointer, IVirtualTablet
+    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
     {
         public void SetPosition(Vector2 pos)
         {
