@@ -21,6 +21,7 @@ namespace OpenTabletDriver.Contracts
 
         Task SetSettings(Settings settings);
         Task<Settings> GetSettings();
+        Task ResetSettings();
 
         Task<AppInfo> GetApplicationInfo();
 

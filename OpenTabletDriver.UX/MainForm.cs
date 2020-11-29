@@ -773,18 +773,8 @@ namespace OpenTabletDriver.UX
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
-            var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
-            var tablet = await App.Driver.Instance.GetTablet();
-            Settings = OpenTabletDriver.Settings.Defaults;
-            Settings.DisplayWidth = virtualScreen.Width;
-            Settings.DisplayHeight = virtualScreen.Height;
-            Settings.DisplayX = virtualScreen.Width / 2;
-            Settings.DisplayY = virtualScreen.Height / 2;
-            Settings.TabletWidth = tablet?.TabletIdentifier?.Width ?? 0;
-            Settings.TabletHeight = tablet?.TabletIdentifier?.Height ?? 0;
-            Settings.TabletX = tablet?.TabletIdentifier?.Width / 2 ?? 0;
-            Settings.TabletY = tablet?.TabletIdentifier?.Height / 2 ?? 0;
-            await App.Driver.Instance.SetSettings(Settings);
+            await App.Driver.Instance.ResetSettings();
+            Settings = await App.Driver.Instance.GetSettings();
         }
 
         private async Task LoadSettingsDialog()

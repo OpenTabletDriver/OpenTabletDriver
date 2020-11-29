@@ -69,6 +69,8 @@ namespace OpenTabletDriver.Daemon
                 var settings = Settings.Deserialize(settingsFile);
                 await SetSettings(settings);
             }
+            else
+                await ResetSettings();
         }
 
         public event EventHandler<LogMessage> Message;
@@ -151,6 +153,25 @@ namespace OpenTabletDriver.Daemon
 
             SetToolSettings();
             SetInterpolatorSettings();
+            return Task.CompletedTask;
+        }
+
+        public Task ResetSettings()
+        {
+            var settings = Settings.Defaults;
+            var virtualScreen = Platform.VirtualScreen;
+            var tablet = Driver.TabletIdentifier;
+
+            settings.DisplayWidth = virtualScreen.Width;
+            settings.DisplayHeight = virtualScreen.Height;
+            settings.DisplayX = virtualScreen.Width / 2;
+            settings.DisplayY = virtualScreen.Height / 2;
+            settings.TabletWidth = tablet?.Width ?? 0;
+            settings.TabletHeight = tablet?.Height ?? 0;
+            settings.TabletX = tablet?.Width / 2 ?? 0;
+            settings.TabletY = tablet?.Height / 2 ?? 0;
+
+            SetSettings(settings);
             return Task.CompletedTask;
         }
 
