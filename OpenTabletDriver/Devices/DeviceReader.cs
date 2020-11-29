@@ -5,7 +5,7 @@ using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver
+namespace OpenTabletDriver.Devices
 {
     public class DeviceReader<T> : IDisposable where T : IDeviceReport
     {

@@ -2,18 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using HidSharp;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Reflection;
 using OpenTabletDriver.Tablet;
-using OpenTabletDriver.Vendors;
 
 namespace OpenTabletDriver
 {
@@ -22,10 +19,21 @@ namespace OpenTabletDriver
         public Driver()
         {
             Info.GetDriverInstance = () => this;
+
+            DeviceList.Local.Changed += (sender, e) => 
+            {
+                var newList = DeviceList.Local.GetHidDevices();
+                DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(CurrentDevices, newList));
+                CurrentDevices = newList;
+            };
         }
         
         public event EventHandler<bool> Reading;
         public event EventHandler<IDeviceReport> ReportRecieved;
+        public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
+        public event EventHandler<TabletState> TabletChanged;
+
+        protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
         
         public bool EnableInput { set; get; }
 
@@ -37,7 +45,8 @@ namespace OpenTabletDriver
                 // Stored locally to avoid re-detecting to switch output modes
                 this.tablet = value;
                 if (OutputMode != null)
-                    OutputMode.Tablet = value;
+                    OutputMode.Tablet = Tablet;
+                TabletChanged?.Invoke(this, Tablet);
             }
             get => this.tablet;
         }
@@ -74,7 +83,7 @@ namespace OpenTabletDriver
             return false;
         }
 
-        internal bool TryMatchDigitizer(TabletConfiguration config, out DigitizerIdentifier digitizerIdentifier)
+        protected bool TryMatchDigitizer(TabletConfiguration config, out DigitizerIdentifier digitizerIdentifier)
         {
             digitizerIdentifier = default;
             foreach (var identifier in config.DigitizerIdentifiers)
@@ -104,7 +113,7 @@ namespace OpenTabletDriver
             return config.DigitizerIdentifiers.Count == 0;
         }
 
-        internal bool TryMatchAuxDevice(TabletConfiguration config, out DeviceIdentifier auxIdentifier)
+        protected bool TryMatchAuxDevice(TabletConfiguration config, out DeviceIdentifier auxIdentifier)
         {
             auxIdentifier = default;
             foreach (var identifier in config.AuxilaryDeviceIdentifiers)
@@ -134,7 +143,7 @@ namespace OpenTabletDriver
             return config.AuxilaryDeviceIdentifiers.Count == 0;
         }
 
-        internal void InitializeDigitizerDevice(HidDevice tabletDevice, DigitizerIdentifier tablet, IReportParser<IDeviceReport> reportParser)
+        protected void InitializeDigitizerDevice(HidDevice tabletDevice, DigitizerIdentifier tablet, IReportParser<IDeviceReport> reportParser)
         {
             TabletReader?.Dispose();
 
@@ -149,8 +158,13 @@ namespace OpenTabletDriver
             }
 
             TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
-            TabletReader.Report += OnReport;
-            TabletReader.ReadingChanged += (_, state) => Reading?.Invoke(this, state);
+            TabletReader.Report += HandleDeviceReaderReport;
+            TabletReader.ReadingChanged += (_, state) =>
+            {
+                Reading?.Invoke(this, state);
+                if (state == false)
+                    Tablet = null;
+            };
 
             if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
@@ -165,7 +179,7 @@ namespace OpenTabletDriver
             }
         }
 
-        internal void InitializeAuxDevice(HidDevice auxDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
+        protected void InitializeAuxDevice(HidDevice auxDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
         {
             AuxReader?.Dispose();
             
@@ -180,7 +194,7 @@ namespace OpenTabletDriver
             }
             
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
-            AuxReader.Report += OnReport;
+            AuxReader.Report += HandleDeviceReaderReport;
 
             if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
@@ -195,7 +209,7 @@ namespace OpenTabletDriver
             }
         }
 
-        private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
+        protected IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
         {
             return from device in DeviceList.Local.GetHidDevices()
                 where identifier.VendorID == device.VendorID
@@ -206,7 +220,7 @@ namespace OpenTabletDriver
                 select device;
         }
 
-        private bool DeviceMatchesAllStrings(HidDevice device, DeviceIdentifier identifier)
+        protected bool DeviceMatchesAllStrings(HidDevice device, DeviceIdentifier identifier)
         {
             if (identifier.DeviceStrings == null || identifier.DeviceStrings.Count == 0)
                 return true;
@@ -230,7 +244,7 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private IReportParser<IDeviceReport> GetReportParser(string parserName) 
+        protected IReportParser<IDeviceReport> GetReportParser(string parserName) 
         {
             var parserRef = new PluginReference(parserName);
             return parserRef.Construct<IReportParser<IDeviceReport>>();
@@ -239,15 +253,15 @@ namespace OpenTabletDriver
         public void Dispose()
         {
             TabletReader.Dispose();
-            TabletReader.Report -= OnReport;
+            TabletReader.Report -= HandleDeviceReaderReport;
             TabletReader = null;
             
             AuxReader.Dispose();
-            AuxReader.Report -= OnReport;
+            AuxReader.Report -= HandleDeviceReaderReport;
             AuxReader = null;
         }
 
-        public void OnReport(object _, IDeviceReport report)
+        private void HandleDeviceReaderReport(object _, IDeviceReport report)
         {
             this.ReportRecieved?.Invoke(this, report);
             HandleReport(report);

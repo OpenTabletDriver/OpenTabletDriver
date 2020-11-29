@@ -34,23 +34,14 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.Reading += async (_, isReading) => TabletChanged?.Invoke(this, isReading ? await GetTablet() : null);
+            Driver.TabletChanged += (sender, tablet) => TabletChanged?.Invoke(sender, tablet);
+            Driver.DevicesChanged += async (sender, args) =>
+            {
+                if (await GetTablet() == null && args.Additions.Count() > 0)
+                    await DetectTablets();
+            };
 
             LoadUserSettings();
-
-            HidSharp.DeviceList.Local.Changed += async (sender, e) => 
-            {
-                var newDevices = from device in DeviceList.Local.GetHidDevices()
-                    where !CurrentDevices.Any(d => d == device)
-                    select device;
-
-                if (newDevices.Count() > 0)
-                {
-                    if (await GetTablet() == null)
-                        await DetectTablets();
-                }
-                CurrentDevices = DeviceList.Local.GetHidDevices();
-            };
         }
 
         private async void LoadUserSettings()
@@ -80,7 +71,6 @@ namespace OpenTabletDriver.Daemon
 
         public DesktopDriver Driver { private set; get; } = new DesktopDriver();
         private Settings Settings { set; get; }
-        private IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
 
@@ -118,7 +108,7 @@ namespace OpenTabletDriver.Daemon
                 }
             }
             else
-            {
+            { 
                 Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", LogLevel.Error);
             }
             Log.Write("Detect", "No tablet found.");
