@@ -65,7 +65,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ClearBinding(object sender, EventArgs e)
         {
-            Return(BindingReference.None);
+            Return(null);
         }
 
         private void Return<T>(T binding) where T : OpenTabletDriver.Plugin.IBinding

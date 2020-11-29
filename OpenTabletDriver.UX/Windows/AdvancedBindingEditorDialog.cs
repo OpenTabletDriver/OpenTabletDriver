@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
@@ -16,10 +17,10 @@ namespace OpenTabletDriver.UX.Windows
             Result = currentBinding;
             Padding = 5;
 
-            BindingPath = currentBinding.Binding?.Path;
-            BindingProperty = currentBinding.BindingProperty;
+            BindingPath = currentBinding?.Path;
+            BindingProperty = currentBinding?.BindingProperty;
 
-            var bindingTypes = PluginManager.GetChildTypes<OpenTabletDriver.Plugin.IBinding>();
+            var bindingTypes = AppInfo.PluginManager.GetChildTypes<OpenTabletDriver.Plugin.IBinding>();
 
             var bindingPath = GetBindingSelector(
                 () => BindingPath,
@@ -118,7 +119,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ClearBinding(object sender, EventArgs e)
         {
-            Close(BindingReference.None);
+            Close(null);
         }
 
         private void ApplyBinding(object sender, EventArgs e)
@@ -129,9 +130,9 @@ namespace OpenTabletDriver.UX.Windows
         private GroupBox GetBindingSelector(Func<string> getValue, Action<string> setValue)
         {
             var selector = new ComboBox();
-            var items = from type in PluginManager.GetChildTypes<IBinding>()
+            var items = from type in AppInfo.PluginManager.GetChildTypes<IBinding>()
                 where !type.IsInterface
-                let pluginRef = new PluginReference(type)
+                let pluginRef = AppInfo.PluginManager.GetPluginReference(type)
                 select new ListItem
                 {
                     Text = pluginRef.Name,
@@ -167,7 +168,7 @@ namespace OpenTabletDriver.UX.Windows
 
             void updateControl()
             {
-                var pluginRef = new PluginReference(BindingPath);
+                var pluginRef = AppInfo.PluginManager.GetPluginReference(BindingPath);
                 var type = pluginRef.GetTypeReference<IBinding>();
                 if (typeof(IValidateBinding).IsAssignableFrom(type))
                 {

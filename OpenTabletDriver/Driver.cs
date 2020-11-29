@@ -14,7 +14,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
 {
-    public class Driver : IDriver, IDisposable
+    public abstract class Driver : IDriver, IDisposable
     {
         public Driver()
         {
@@ -34,6 +34,8 @@ namespace OpenTabletDriver
         public event EventHandler<TabletState> TabletChanged;
 
         protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
+
+        protected abstract PluginManager PluginManager { get; }
         
         public bool EnableInput { set; get; }
 
@@ -246,7 +248,7 @@ namespace OpenTabletDriver
 
         protected IReportParser<IDeviceReport> GetReportParser(string parserName) 
         {
-            var parserRef = new PluginReference(parserName);
+            var parserRef = PluginManager.GetPluginReference(parserName);
             return parserRef.Construct<IReportParser<IDeviceReport>>();
         }
 

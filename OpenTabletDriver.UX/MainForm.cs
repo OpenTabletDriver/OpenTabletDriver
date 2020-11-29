@@ -712,7 +712,7 @@ namespace OpenTabletDriver.UX
 
             AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
 
-            await PluginManager.LoadPluginsAsync();
+            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
             Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
 
             Content = ConstructMainControls();

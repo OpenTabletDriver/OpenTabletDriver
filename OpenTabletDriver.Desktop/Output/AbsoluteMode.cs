@@ -12,7 +12,6 @@ namespace OpenTabletDriver.Desktop.Output
     [PluginName("Absolute Mode")]
     public class AbsoluteMode : AbsoluteOutputMode, IPointerOutputMode<IAbsolutePointer>
     {
-        public override IVirtualScreen VirtualScreen => Platform.VirtualScreen;
         public override IAbsolutePointer Pointer => Platform.VirtualTablet;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Reflection;
 
@@ -11,10 +12,10 @@ namespace OpenTabletDriver.UX.Controls
     {
         public OutputModeSelector()
         {
-            var outputModes = from type in OpenTabletDriver.PluginManager.GetChildTypes<IOutputMode>()
+            var outputModes = from type in AppInfo.PluginManager.GetChildTypes<IOutputMode>()
                 where !type.IsAbstract
                 where !type.IsInterface
-                select new PluginReference(type);
+                select AppInfo.PluginManager.GetPluginReference(type);
 
             OutputModes = new List<PluginReference>(outputModes);
             this.SelectedIndexChanged += (sender, e) =>

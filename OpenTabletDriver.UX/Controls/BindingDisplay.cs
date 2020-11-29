@@ -37,10 +37,10 @@ namespace OpenTabletDriver.UX.Controls
             set
             {
                 _binding = value;
-                Text = Binding.ToDisplayString();
+                Text = Binding?.ToDisplayString();
                 BindingUpdated?.Invoke(this, Binding);
             }
-            get => _binding ?? BindingReference.None;
+            get => _binding;
         }
     }
 }

@@ -75,7 +75,6 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.outputArea;
         }
 
-        public abstract IVirtualScreen VirtualScreen { get; }
         public abstract IAbsolutePointer Pointer { get; }
 
         public bool AreaClipping { set; get; }

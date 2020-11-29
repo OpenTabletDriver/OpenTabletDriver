@@ -8,6 +8,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
 using Newtonsoft.Json;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;

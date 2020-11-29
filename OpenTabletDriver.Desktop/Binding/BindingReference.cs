@@ -3,35 +3,25 @@ using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
-    public class BindingReference
+    public class BindingReference : PluginReference
     {
-        public BindingReference()
+        public BindingReference(string bindingPath, string bindingProperty = null)
+            : base(AppInfo.PluginManager, bindingPath)
         {
-        }
-
-        public BindingReference(string bindingPath, string bindingProperty = null) : this()
-        {
-            Binding = new PluginReference(bindingPath);
             BindingProperty = bindingProperty;
         }
 
-        public BindingReference(Type type, string bindingProperty = null) : this(type.FullName, bindingProperty)
+        public BindingReference(Type type, string bindingProperty = null)
+            : this(type.FullName, bindingProperty)
         {
         }
 
-        public PluginReference Binding { private set; get; }
-        public string BindingProperty { set; get; }
-
-        public static readonly BindingReference None = new BindingReference
-        {
-            Binding = null,
-            BindingProperty = null
-        };
+        public string BindingProperty { get; }
 
         public static BindingReference FromString(string full)
         {
             if (string.IsNullOrWhiteSpace(full))
-                return None;
+                return null;
             
             return new BindingReference(
                 BindingTools.GetBindingPath(full),
@@ -41,12 +31,12 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public override string ToString()
         {
-            return this.Equals(None) ? null : BindingTools.GetBindingString(Binding.Path, BindingProperty);
+            return BindingTools.GetBindingString(this.Path, this.BindingProperty);
         }
 
         public string ToDisplayString()
         {
-            return this.Equals(None) ? null : BindingTools.GetBindingString(Binding.ToString(), BindingProperty);
+            return BindingTools.GetBindingString(this.Name, this.BindingProperty);
         }
 
         public static implicit operator string(BindingReference bindingRef)

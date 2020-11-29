@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Reflection;
+using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Desktop.Binding
             if (!string.IsNullOrWhiteSpace(full))
             {
                 var tokens = full.Contains(", ") ? full.Split(", ", 2) : full.Split(": ", 2);
-                var pluginRef = new PluginReference(tokens[0]);
+                var pluginRef = AppInfo.PluginManager.GetPluginReference(tokens[0]);
                 var binding = pluginRef.Construct<IBinding>();
                 if (binding != null)
                     binding.Property = tokens[1];

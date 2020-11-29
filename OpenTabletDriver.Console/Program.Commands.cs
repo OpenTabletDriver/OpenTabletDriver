@@ -6,13 +6,13 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Diagnostics;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Reflection;
 using static System.Console;
 
 namespace OpenTabletDriver.Console
@@ -221,7 +221,7 @@ namespace OpenTabletDriver.Console
         {
             var settings = await GetSettings();
             var filters = from path in settings.Filters
-                select new PluginReference(path);
+                select AppInfo.PluginManager.GetPluginReference(path);
             await Out.WriteLineAsync("Filters: " + string.Join(", ", filters));
         }
 
@@ -229,7 +229,7 @@ namespace OpenTabletDriver.Console
         {
             var settings = await GetSettings();
             var tools = from path in settings.Tools
-                select new PluginReference(path);
+                select AppInfo.PluginManager.GetPluginReference(path);
             await Out.WriteLineAsync("Tools: " + string.Join(", ", tools));
         }
 

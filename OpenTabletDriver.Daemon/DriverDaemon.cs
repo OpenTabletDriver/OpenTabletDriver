@@ -8,12 +8,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using HidSharp;
 using Newtonsoft.Json;
-using OpenTabletDriver.Desktop.Binding;
-using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
@@ -119,7 +120,7 @@ namespace OpenTabletDriver.Daemon
         {
             Settings = SettingsMigrator.Migrate(settings);
             
-            Driver.OutputMode = new PluginReference(Settings.OutputMode).Construct<IOutputMode>();
+            Driver.OutputMode = AppInfo.PluginManager.GetPluginReference(Settings.OutputMode).Construct<IOutputMode>();
 
             if (Driver.OutputMode != null)
                 Log.Write("Settings", $"Output mode: {Driver.OutputMode.GetType().FullName}");
@@ -149,7 +150,7 @@ namespace OpenTabletDriver.Daemon
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
             outputMode.Filters = from filterPath in Settings?.Filters
-                let filter = new PluginReference(filterPath).Construct<IFilter>()
+                let filter = AppInfo.PluginManager.GetPluginReference(filterPath).Construct<IFilter>()
                 where filter != null
                 select filter;
 
@@ -259,7 +260,7 @@ namespace OpenTabletDriver.Daemon
             
             foreach (var toolName in Settings.Tools)
             {
-                var plugin = new PluginReference(toolName);
+                var plugin = AppInfo.PluginManager.GetPluginReference(toolName);
                 var type = plugin.GetTypeReference<ITool>();
                 
                 var tool = plugin.Construct<ITool>();
@@ -290,7 +291,7 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var interpolatorName in Settings.Interpolators)
                 {
-                    var plugin = new PluginReference(interpolatorName);
+                    var plugin = AppInfo.PluginManager.GetPluginReference(interpolatorName);
                     var type = plugin.GetTypeReference<Interpolator>();
 
                     var interpolator = plugin.Construct<Interpolator>(Platform.Timer);
@@ -321,18 +322,19 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.Current);
         }
 
-        public async Task LoadPlugins()
+        public Task LoadPlugins()
         {
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
-                await PluginManager.LoadPluginsAsync();
+                AppInfo.PluginManager.LoadPlugins(pluginDir);
             }
             else
             {
                 pluginDir.Create();
                 Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
             }
+            return Task.CompletedTask;
         }
 
         public Task EnableInput(bool isHooked)
