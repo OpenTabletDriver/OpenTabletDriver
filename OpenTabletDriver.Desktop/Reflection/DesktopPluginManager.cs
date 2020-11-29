@@ -111,7 +111,6 @@ namespace OpenTabletDriver.Desktop.Reflection
             });
         }
 
-
         protected static bool IsLoadable(Assembly asm)
         {
             try
