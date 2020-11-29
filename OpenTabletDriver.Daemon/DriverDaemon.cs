@@ -134,7 +134,6 @@ namespace OpenTabletDriver.Daemon
                 SetRelativeModeSettings(relativeMode);
 
             SetBindingHandlerSettings();
-                
 
             if (Settings.AutoHook)
             {
