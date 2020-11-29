@@ -10,10 +10,11 @@ namespace OpenTabletDriver.Vendors.Wacom
 
             AuxButtons = new bool[]
             {
-                (report[0] & (1 << 0)) != 0,
-                (report[0] & (1 << 1)) != 0,
-                (report[0] & (1 << 2)) != 0,
-                (report[0] & (1 << 3)) != 0
+                (report[1] & (1 << 0)) != 0,
+                (report[1] & (1 << 1)) != 0,
+                (report[1] & (1 << 2)) != 0,
+                (report[1] & (1 << 3)) != 0,
+                (report[1] & (1 << 4)) != 0
             };
         }
         
