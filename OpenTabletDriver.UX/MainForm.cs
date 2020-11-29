@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Diagnostics;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
@@ -260,7 +261,7 @@ namespace OpenTabletDriver.UX
                 displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
             };
             displayAreaEditor.AppendMenuItemSeparator();
-            foreach (var display in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays)
+            foreach (var display in OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen.Displays)
                 displayAreaEditor.AppendMenuItem($"Set to {display}",
                     () =>
                     {
@@ -273,7 +274,7 @@ namespace OpenTabletDriver.UX
                         }
                         else
                         {
-                            virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
+                            virtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
                             displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                             displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                         }
@@ -745,7 +746,7 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays
+            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen.Displays
                 where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
@@ -773,9 +774,9 @@ namespace OpenTabletDriver.UX
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
-            var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
+            var virtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
             var tablet = await App.Driver.Instance.GetTablet();
-            Settings = OpenTabletDriver.Settings.Defaults;
+            Settings = Settings.Defaults;
             Settings.DisplayWidth = virtualScreen.Width;
             Settings.DisplayHeight = virtualScreen.Height;
             Settings.DisplayX = virtualScreen.Width / 2;

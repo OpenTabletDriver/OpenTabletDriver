@@ -7,11 +7,13 @@ using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using HidSharp;
-using OpenTabletDriver.Binding;
-using OpenTabletDriver.Contracts;
+using Newtonsoft.Json;
+using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Debugging;
-using OpenTabletDriver.Interop;
-using OpenTabletDriver.Migration;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
@@ -82,6 +84,11 @@ namespace OpenTabletDriver.Daemon
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
 
+        private static JsonSerializer JsonSerializer = new JsonSerializer
+        {
+            Formatting = Formatting.Indented
+        };
+
         public Task WriteMessage(LogMessage message)
         {
             Log.OnOutput(message);
@@ -109,9 +116,14 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var file in configDir.EnumerateFiles("*.json", SearchOption.AllDirectories))
                 {
-                    var tablet = TabletConfiguration.Read(file);
-                    if (Driver.TryMatch(tablet))
-                        return await GetTablet();
+                    using (var fs = file.OpenRead())
+                    using (var sr = new StreamReader(fs))
+                    using (var jr = new JsonTextReader(sr))
+                    {
+                        var tablet = JsonSerializer.Deserialize<TabletConfiguration>(jr);
+                        if (Driver.TryMatch(tablet))
+                            return await GetTablet();
+                    }
                 }
             }
             else
@@ -216,7 +228,7 @@ namespace OpenTabletDriver.Daemon
             };
             Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
-            absoluteMode.VirtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
+            absoluteMode.VirtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
 
             absoluteMode.AreaClipping = Settings.EnableClipping;   
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");

@@ -14,7 +14,6 @@ namespace OpenTabletDriver.Plugin
         TabletConfiguration Tablet { get; }
         DigitizerIdentifier TabletIdentifier { get; }
         DeviceIdentifier AuxiliaryIdentifier { get; }
-        IVirtualScreen VirtualScreen { get; }
         IOutputMode OutputMode { set; get; }
 
         void HandleReport(IDeviceReport report);

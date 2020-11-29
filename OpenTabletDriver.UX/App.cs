@@ -2,9 +2,10 @@
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Native;
-using OpenTabletDriver.RPC;
 
 namespace OpenTabletDriver.UX
 {

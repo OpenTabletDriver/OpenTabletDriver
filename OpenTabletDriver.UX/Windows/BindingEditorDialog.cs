@@ -1,7 +1,7 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Binding;
+using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.UX.Windows

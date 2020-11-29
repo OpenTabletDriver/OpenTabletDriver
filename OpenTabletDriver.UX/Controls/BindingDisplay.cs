@@ -1,6 +1,6 @@
 using System;
 using Eto.Forms;
-using OpenTabletDriver.Binding;
+using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls

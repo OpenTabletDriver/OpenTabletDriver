@@ -45,8 +45,6 @@ namespace OpenTabletDriver
 
         public DeviceIdentifier AuxiliaryIdentifier { private set; get; }
 
-        public IVirtualScreen VirtualScreen => Interop.Platform.VirtualScreen;
-
         public IOutputMode OutputMode { set; get; }
         
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }

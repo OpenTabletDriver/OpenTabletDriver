@@ -14,7 +14,7 @@
   
   <ItemGroup>
     <PackageReference Include="Eto.Forms" Version="2.5.7" />
-    <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
   </ItemGroup>
   
 </Project>

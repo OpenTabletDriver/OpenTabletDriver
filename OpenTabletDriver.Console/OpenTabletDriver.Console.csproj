@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20303.1" />
-    <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
   </ItemGroup>
 
 </Project>

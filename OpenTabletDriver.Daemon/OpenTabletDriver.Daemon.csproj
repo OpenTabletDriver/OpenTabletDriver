@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
   </ItemGroup>
 
   <ItemGroup>

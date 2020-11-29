@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Eto.Forms;
-using OpenTabletDriver.Binding;
+using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
 using IBinding = OpenTabletDriver.Plugin.IBinding;
