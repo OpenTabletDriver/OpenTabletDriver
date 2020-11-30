@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Reflection
 {
-    public abstract class PluginManager
+    public class PluginManager
     {
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;        
         protected readonly ConcurrentBag<PluginContext> plugins = new ConcurrentBag<PluginContext>();

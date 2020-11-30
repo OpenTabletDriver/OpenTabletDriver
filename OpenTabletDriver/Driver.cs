@@ -14,7 +14,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
 {
-    public abstract class Driver : IDriver, IDisposable
+    public class Driver : IDriver, IDisposable
     {
         public Driver()
         {
@@ -35,7 +35,7 @@ namespace OpenTabletDriver
 
         protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
 
-        protected abstract PluginManager PluginManager { get; }
+        protected virtual PluginManager PluginManager { get; } = new PluginManager();
         
         public bool EnableInput { set; get; }
 
