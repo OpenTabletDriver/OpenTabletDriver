@@ -4,7 +4,7 @@ using System.Runtime.Loader;
 
 namespace OpenTabletDriver.Reflection
 {
-    public abstract class PluginContext : AssemblyLoadContext
+    public class PluginContext : AssemblyLoadContext
     {
         protected const string PLUGIN_ASSEMBLY_NAMESPACE = nameof(OpenTabletDriver.Plugin);
         protected static readonly Assembly PluginAssembly = Default.Assemblies.FirstOrDefault(asm => asm.GetName().FullName == PLUGIN_ASSEMBLY_NAMESPACE);

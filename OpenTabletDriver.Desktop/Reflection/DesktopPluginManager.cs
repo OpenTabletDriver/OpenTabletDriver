@@ -1,7 +1,7 @@
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using OpenTabletDriver.Native;
@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class DesktopPluginManager : PluginManager
     {
-        public DesktopPluginManager(DirectoryInfo directory)
+        public DesktopPluginManager(DirectoryInfo directory) : base()
         {
             FallbackPluginContext = new DesktopPluginContext(directory);
         }
@@ -23,20 +23,10 @@ namespace OpenTabletDriver.Desktop.Reflection
         }
 
         protected PluginContext FallbackPluginContext { get; }
+        protected ConcurrentBag<PluginContext> PluginContexts { get; } = new ConcurrentBag<PluginContext>();
 
         public void LoadPlugins(DirectoryInfo directory)
         {
-            pluginTypes.Clear();
-
-            var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
-                from type in asm.DefinedTypes
-                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
-                where IsPluginType(type)
-                where IsPlatformSupported(type)
-                select type;
-
-            internalTypes.AsParallel().ForAll(t => pluginTypes.Add(t.GetTypeInfo()));
-
             // "Plugins" are directories that contain managed and unmanaged dll
             //  These dlls are loaded into a PluginContext per directory
             Parallel.ForEach(directory.GetDirectories(), (dir, state, index) =>
@@ -46,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 foreach (var plugin in Directory.EnumerateFiles(dir.FullName, "*.dll"))
                     LoadPlugin(context, plugin);
 
-                plugins.Add(context);
+                PluginContexts.Add(context);
             });
 
             // If there are plugins found outside subdirectories then load into FallbackPluginContext
@@ -60,7 +50,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
 
             // Populate PluginTypes so UX and Daemon can access them
-            Parallel.ForEach(plugins, (loadedContext, _, index) =>
+            Parallel.ForEach(PluginContexts, (loadedContext, _, index) =>
             {
                 LoadPluginTypes(loadedContext);
             });
@@ -83,10 +73,10 @@ namespace OpenTabletDriver.Desktop.Reflection
         protected void LoadPluginTypes(PluginContext context)
         {
             var types = from asm in context.Assemblies
-                        where IsLoadable(asm)
-                        from type in asm.GetExportedTypes()
-                        where IsPluginType(type)
-                        select type;
+                where IsLoadable(asm)
+                from type in asm.GetExportedTypes()
+                where IsPluginType(type)
+                select type;
 
             types.AsParallel().ForAll(type =>
             {

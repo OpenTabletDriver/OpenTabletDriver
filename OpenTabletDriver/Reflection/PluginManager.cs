@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 
@@ -10,11 +11,22 @@ namespace OpenTabletDriver.Reflection
 {
     public class PluginManager
     {
-        public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;        
-        protected readonly ConcurrentBag<PluginContext> plugins = new ConcurrentBag<PluginContext>();
-        protected readonly ConcurrentBag<TypeInfo> pluginTypes = new ConcurrentBag<TypeInfo>();
-        
-        protected readonly static IEnumerable<Type> libTypes = 
+        public PluginManager()
+        {
+            var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
+                from type in asm.DefinedTypes
+                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
+                where IsPluginType(type)
+                where IsPlatformSupported(type)
+                select type;
+
+            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
+        }
+
+        public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
+        protected readonly ConcurrentBag<TypeInfo> pluginTypes;
+
+        protected readonly static IEnumerable<Type> libTypes =
             from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
                 where type.IsAbstract || type.IsInterface
                 select type;
