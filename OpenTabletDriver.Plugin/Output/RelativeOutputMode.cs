@@ -9,7 +9,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Plugin.Output
 {
     [PluginIgnore]
-    public abstract class RelativeOutputMode : BindingHandler, IOutputMode
+    public abstract class RelativeOutputMode : IOutputMode
     {
         private List<IFilter> filters, preFilters = new List<IFilter>(), postFilters = new List<IFilter>();
         private Vector2? lastPos;
@@ -42,8 +42,18 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.filters;
         }
 
-        public abstract IVirtualMouse VirtualMouse { get; }
-        public IVirtualPointer Pointer => VirtualMouse;
+        public abstract IRelativePointer Pointer { get; }
+
+        private TabletState tablet;
+        public TabletState Tablet
+        {
+            set
+            {
+                this.tablet = value;
+                UpdateTransformMatrix();
+            }
+            get => this.tablet;
+        }
 
         private Vector2 sensitivity;
         public Vector2 Sensitivity
@@ -75,8 +85,8 @@ namespace OpenTabletDriver.Plugin.Output
                 (float)(-Rotation * System.Math.PI / 180));
 
             this.transformationMatrix *= Matrix3x2.CreateScale(
-                sensitivity.X * ((Digitizer?.Width / Digitizer?.MaxX) ?? 0.01f),
-                sensitivity.Y * ((Digitizer?.Height / Digitizer?.MaxY) ?? 0.01f));
+                sensitivity.X * ((Tablet?.Digitizer.Width / Tablet?.Digitizer.MaxX) ?? 0.01f),
+                sensitivity.Y * ((Tablet?.Digitizer.Height / Tablet?.Digitizer.MaxY) ?? 0.01f));
         }
 
         public TimeSpan ResetTime { set; get; }
@@ -85,20 +95,15 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (report is ITabletReport tabletReport)
             {
-                if (Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    if (Transpose(tabletReport) is Vector2 pos)
-                    {
-                        if (VirtualMouse is IPressureHandler pressureHandler)
-                            pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
-
-                        VirtualMouse.Move(pos.X, pos.Y);
-                    }
+                    if (Transpose(tabletReport) is Vector2 position)
+                        Pointer.Translate(position);
                 }
             }
         }
 
-        protected Vector2? Transpose(ITabletReport report)
+        public Vector2? Transpose(ITabletReport report)
         {
             var difference = DateTime.Now - this.lastReceived;
             this.lastReceived = DateTime.Now;

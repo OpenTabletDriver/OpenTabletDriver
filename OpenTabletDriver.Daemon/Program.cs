@@ -4,8 +4,9 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.RPC;
 
 namespace OpenTabletDriver.Daemon
 {
