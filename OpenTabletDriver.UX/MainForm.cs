@@ -732,7 +732,7 @@ namespace OpenTabletDriver.UX
             {
                 try
                 {
-                    Settings = Settings.Deserialize(settingsFile);
+                    Settings = Serialization.Deserialize<Settings>(settingsFile);
                     await App.Driver.Instance.SetSettings(Settings);
                 }
                 catch
@@ -805,7 +805,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        Settings = Settings.Deserialize(file);
+                        Settings = Serialization.Deserialize<Settings>(file);
                         await App.Driver.Instance.SetSettings(Settings);
                     }
                     break;
@@ -829,7 +829,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (Settings is Settings settings)
                     {
-                        settings.Serialize(file);
+                        Serialization.Serialize(file, settings);
                         await ApplySettings();
                     }
                     break;
@@ -858,7 +858,7 @@ namespace OpenTabletDriver.UX
                 }
 
                 var appInfo = await App.Driver.Instance.GetApplicationInfo();
-                settings.Serialize(new FileInfo(appInfo.SettingsFile));
+                Serialization.Serialize(new FileInfo(appInfo.SettingsFile), settings);
                 await ApplySettings();
             }
         }

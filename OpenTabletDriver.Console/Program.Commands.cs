@@ -23,14 +23,14 @@ namespace OpenTabletDriver.Console
             
         static async Task LoadSettings(FileInfo file)
         {
-            var settings = Settings.Deserialize(file);
+            var settings = Serialization.Deserialize<Settings>(file);
             await ApplySettings(settings);
         }
 
         static async Task SaveSettings(FileInfo file)
         {
             var settings = await GetSettings();
-            settings.Serialize(file);
+            Serialization.Serialize(file, settings);
         }
 
         #endregion

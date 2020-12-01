@@ -292,26 +292,6 @@ namespace OpenTabletDriver.Desktop
 
         #endregion
 
-        #region Json Serialization
-
-        public static Settings Deserialize(FileInfo file)
-        {
-            using (var stream = file.OpenRead())
-            using (var sr = new StreamReader(stream))
-            {
-                var str = sr.ReadToEnd();
-                return JsonConvert.DeserializeObject<Settings>(str);
-            }
-        }
-
-        public void Serialize(FileInfo file)
-        {
-            var str = JsonConvert.SerializeObject(this, Formatting.Indented);
-            File.WriteAllText(file.FullName, str);
-        }
-
-        #endregion
-
         #region Defaults
 
         public static readonly Settings Defaults = new Settings

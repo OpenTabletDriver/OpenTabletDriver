@@ -143,33 +143,10 @@ namespace OpenTabletDriver.UX.Windows
 
         private static readonly Regex NameRegex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
 
-        private static readonly JsonSerializer ConfigurationSerializer = new JsonSerializer
-        {
-            Formatting = Formatting.Indented
-        };
-
-        private TabletConfiguration DeserializeConfiguration(FileInfo file)
-        {
-            using (var stream = file.OpenRead())
-            using (var sr = new StreamReader(stream))
-            using (var jr = new JsonTextReader(sr))
-                return ConfigurationSerializer.Deserialize<TabletConfiguration>(jr);
-        }
-
-        private void SerializeConfiguration(FileInfo file, TabletConfiguration configuration)
-        {
-            if (file.Exists)
-                file.Delete();
-            
-            using (var sw = file.CreateText())
-            using (var jw = new JsonTextWriter(sw))
-                ConfigurationSerializer.Serialize(jw, configuration);
-        }
-
         private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
             var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                select DeserializeConfiguration(file);
+                select Serialization.Deserialize<TabletConfiguration>(file);
             return new List<TabletConfiguration>(configs);
         }
 
@@ -185,7 +162,7 @@ namespace OpenTabletDriver.UX.Windows
                 var file = new FileInfo(path);
                 if (!file.Directory.Exists)
                     file.Directory.Create();
-                SerializeConfiguration(file, config);
+                Serialization.Serialize(file, config);
             }
         }
 

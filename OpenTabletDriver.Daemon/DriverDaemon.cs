@@ -60,7 +60,7 @@ namespace OpenTabletDriver.Daemon
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
             if (Settings == null && settingsFile.Exists)
             {
-                var settings = Settings.Deserialize(settingsFile);
+                var settings = Serialization.Deserialize<Settings>(settingsFile);
                 await SetSettings(settings);
             }
         }
@@ -74,11 +74,6 @@ namespace OpenTabletDriver.Daemon
         private Settings Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
-
-        private static JsonSerializer JsonSerializer = new JsonSerializer
-        {
-            Formatting = Formatting.Indented
-        };
 
         public Task WriteMessage(LogMessage message)
         {
@@ -98,14 +93,9 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var file in configDir.EnumerateFiles("*.json", SearchOption.AllDirectories))
                 {
-                    using (var fs = file.OpenRead())
-                    using (var sr = new StreamReader(fs))
-                    using (var jr = new JsonTextReader(sr))
-                    {
-                        var tablet = JsonSerializer.Deserialize<TabletConfiguration>(jr);
-                        if (Driver.TryMatch(tablet))
-                            return await GetTablet();
-                    }
+                    var tablet = Serialization.Deserialize<TabletConfiguration>(file);
+                    if (Driver.TryMatch(tablet))
+                        return await GetTablet();
                 }
             }
             else
