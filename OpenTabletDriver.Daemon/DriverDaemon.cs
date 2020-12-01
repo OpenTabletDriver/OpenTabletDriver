@@ -142,8 +142,8 @@ namespace OpenTabletDriver.Daemon
         public Task ResetSettings()
         {
             var settings = Settings.Defaults;
-            var virtualScreen = Platform.VirtualScreen;
-            var tablet = Driver.TabletIdentifier;
+            var virtualScreen = SystemInterop.VirtualScreen;
+            var tablet = Driver.Tablet.Digitizer;
 
             settings.DisplayWidth = virtualScreen.Width;
             settings.DisplayHeight = virtualScreen.Height;
