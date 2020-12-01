@@ -1,19 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	
-  <PropertyGroup>
+  <PropertyGroup Label="Project Properties">
     <TargetFrameworks>net5</TargetFrameworks>
-    <VersionPrefix>0.4.2</VersionPrefix>
+    <VersionPrefix>0.5.0</VersionPrefix>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   
-  <ItemGroup>
+  <ItemGroup Label="Resources">
     <EmbeddedResource Include="Assets\*.ico" />
     <EmbeddedResource Include="Assets\*.png" />
   </ItemGroup>
-  
-  <ItemGroup>
+
+  <ItemGroup Label="NuGet Packages">
     <PackageReference Include="Eto.Forms" Version="2.5.7" />
+  </ItemGroup>
+  
+  <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
   </ItemGroup>
   
