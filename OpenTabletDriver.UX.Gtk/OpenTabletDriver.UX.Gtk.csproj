@@ -1,23 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+
+  <PropertyGroup Label="Project Properties">
+    <OutputType>Exe</OutputType>
     <TargetFrameworks>net5</TargetFrameworks>
-    <VersionPrefix>0.4.2</VersionPrefix>
+    <VersionPrefix>0.5.0</VersionPrefix>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
-    <StartAction>Project</StartAction>
-    <ExternalConsole>false</ExternalConsole>
-  </PropertyGroup>
+  <ItemGroup Label="NuGet Packages">
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.8" />
+  </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.7" />
-  </ItemGroup>
-	
 </Project>

@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+  <PropertyGroup Label="Project Properties">
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net5-windows</TargetFrameworks>
-    <VersionPrefix>0.4.2</VersionPrefix>
+    <VersionPrefix>0.5.0</VersionPrefix>
     <ApplicationIcon>../OpenTabletDriver.UX/Assets/otd.ico</ApplicationIcon>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
+
+  <ItemGroup Label="NuGet Packages">
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.6" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.7" />
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
   </ItemGroup>
 
 </Project>

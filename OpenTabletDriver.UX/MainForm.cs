@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Diagnostics;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Diagnostics;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -61,7 +62,7 @@ namespace OpenTabletDriver.UX
 
             var outputModeSelector = ConstructOutputModeSelector();
             absoluteConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup);
-            relativeConfig = ConstructSensitivityControls();
+            relativeConfig = new SensitivityEditor();
             nullConfig = new Panel();
 
             outputConfig = new StackLayout
@@ -76,8 +77,6 @@ namespace OpenTabletDriver.UX
                     new StackLayoutItem(outputModeSelector, HorizontalAlignment.Left, false)
                 }
             };
-
-            var bindingLayout = ConstructBindingLayout();
 
             filterEditor = ConstructPluginSettingsEditor<IFilter>(
                 "Filter",
@@ -131,7 +130,7 @@ namespace OpenTabletDriver.UX
                     new TabPage
                     {
                         Text = "Bindings",
-                        Content = bindingLayout
+                        Content = new BindingEditor()
                     },
                     new TabPage
                     {
@@ -194,7 +193,7 @@ namespace OpenTabletDriver.UX
             return new StackLayout
             {
                 Visible = false,
-                Spacing = SystemInfo.CurrentPlatform == RuntimePlatform.Windows ? 0 : 5,
+                Spacing = SystemInterop.CurrentPlatform == PluginPlatform.Windows ? 0 : 5,
                 Items =
                 {
                     new StackLayoutItem(displayControl, HorizontalAlignment.Stretch, true),
@@ -210,7 +209,7 @@ namespace OpenTabletDriver.UX
             tabletAreaEditor.AreaDisplay.ToolTip =
                 "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
 
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 tabletAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
                 tabletAreaEditor.Bind(c => c.ViewModel.Height, settings, m => m.TabletHeight);
@@ -220,19 +219,19 @@ namespace OpenTabletDriver.UX
             };
 
             var lockAr = tabletAreaEditor.AppendCheckBoxMenuItem("Lock aspect ratio", (value) => Settings.LockAspectRatio = value);
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 lockAr.Checked = settings.LockAspectRatio;
             };
 
             var areaClipping = tabletAreaEditor.AppendCheckBoxMenuItem("Area clipping", (value) => Settings.EnableClipping = value);
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 areaClipping.Checked = settings.EnableClipping;
             };
 
             var ignoreOutsideArea = tabletAreaEditor.AppendCheckBoxMenuItem("Ignore reports outside area", (value) => Settings.EnableAreaLimiting = value);
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 ignoreOutsideArea.Checked = settings.EnableAreaLimiting;
             };
@@ -252,7 +251,7 @@ namespace OpenTabletDriver.UX
             displayAreaEditor.AreaDisplay.ToolTip =
                 "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
 
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 displayAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
                 displayAreaEditor.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
@@ -260,8 +259,11 @@ namespace OpenTabletDriver.UX
                 displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
             };
             displayAreaEditor.AppendMenuItemSeparator();
-            foreach (var display in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays)
-                displayAreaEditor.AppendMenuItem($"Set to {display}",
+
+            foreach (var display in SystemInterop.VirtualScreen.Displays)
+            {
+                displayAreaEditor.AppendMenuItem(
+                    $"Set to {display}",
                     () =>
                     {
                         displayAreaEditor.ViewModel.Width = display.Width;
@@ -273,11 +275,13 @@ namespace OpenTabletDriver.UX
                         }
                         else
                         {
-                            virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
+                            virtualScreen = SystemInterop.VirtualScreen;
                             displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                             displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                         }
-                    });
+                    }
+                );
+            }
 
             var displayAreaGroup = new GroupBox
             {
@@ -299,207 +303,12 @@ namespace OpenTabletDriver.UX
                 App.Settings.OutputMode = mode.Path;
                 UpdateOutputMode(mode);
             };
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode);
                 control.SelectedIndex = control.OutputModes.IndexOf(mode);
             };
             return control;
-        }
-
-        private Control ConstructSensitivityControls()
-        {
-            var xSensBox = ConstructSensitivityEditor(
-                "X Sensitivity", 
-                (s) => App.Settings.XSensitivity = float.TryParse(s, out var val) ? val : 0f,
-                () => App.Settings.XSensitivity.ToString(),
-                "px/mm"
-            );
-            var ySensBox = ConstructSensitivityEditor(
-                "Y Sensitivity",
-                (s) => App.Settings.YSensitivity = float.TryParse(s, out var val) ? val : 0f,
-                () => App.Settings.YSensitivity.ToString(),
-                "px/mm"
-            );
-            var rotationBox = ConstructSensitivityEditor(
-                "Rotation",
-                (s) => App.Settings.RelativeRotation = float.TryParse(s, out var val) ? val : 0f,
-                () => App.Settings.RelativeRotation.ToString(),
-                "degrees"
-            );
-            var resetTimeBox = ConstructSensitivityEditor(
-                "Reset Time",
-                (s) => App.Settings.ResetTime = TimeSpan.TryParse(s, out var val) ? val : TimeSpan.FromMilliseconds(100),
-                () => App.Settings.ResetTime.ToString()
-            );
-
-            return new StackLayout
-            {
-                Visible = false,
-                Spacing = 5,
-                Orientation = Orientation.Horizontal,
-                Items =
-                {
-                    new StackLayoutItem(xSensBox, true),
-                    new StackLayoutItem(ySensBox, true),
-                    new StackLayoutItem(rotationBox, true),
-                    new StackLayoutItem(resetTimeBox, true)
-                }
-            };
-        }
-
-        private Control ConstructSensitivityEditor(string header, Action<string> setValue, Func<string> getValue, string unit = null)
-        {
-            var textbox = new TextBox();
-            this.SettingsChanged += (settings) =>
-            {
-                textbox.TextBinding.Bind(getValue, setValue);
-            };
-
-            var layout = TableLayout.Horizontal(5, new TableCell(textbox, true));
-
-            if (unit != null)
-            {
-                var unitControl = new Label
-                {
-                    Text = unit, 
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                layout.Rows[0].Cells.Add(unitControl);
-            }
-            
-            return new GroupBox
-            {
-                Text = header,
-                Padding = App.GroupBoxPadding,
-                Content = layout
-            };
-        }
-
-        private Control ConstructBindingLayout()
-        {
-            var layout = new StackLayout()
-            {
-                Orientation = Orientation.Horizontal,
-                Padding = new Padding(5),
-                Spacing = 5
-            };
-
-            this.SettingsChanged += (settings) =>
-            {
-                // Clear layout
-                layout.Items.Clear();
-
-                // Tip Binding
-                var tipBindingLayout = new StackLayout
-                {
-                    Spacing = 5
-                };
-                
-                var tipBindingControl = new BindingDisplay(Settings.TipButton);
-                tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding.ToString();
-
-                var tipBindingGroup = new GroupBox
-                {
-                    Text = "Tip Binding",
-                    Padding = App.GroupBoxPadding,
-                    Content = tipBindingControl
-                };
-                tipBindingLayout.Items.Add(new StackLayoutItem(tipBindingGroup, HorizontalAlignment.Stretch, true));
-
-                var tipPressureSlider = new Slider
-                {
-                    MinValue = 0,
-                    MaxValue = 100
-                };
-                var tipPressureBox = new TextBox();
-
-                tipPressureSlider.ValueChanged += (sender, e) => 
-                {
-                    settings.TipActivationPressure = tipPressureSlider.Value;
-                    tipPressureBox.Text = Settings.TipActivationPressure.ToString();
-                    tipPressureBox.CaretIndex = tipPressureBox.Text.Length;
-                };
-
-                tipPressureBox.TextChanged += (sender, e) =>
-                {
-                    Settings.TipActivationPressure = float.TryParse(tipPressureBox.Text, out var val) ? val : 0f;
-                    tipPressureSlider.Value = (int)Settings.TipActivationPressure;
-                };
-                tipPressureBox.Text = Settings.TipActivationPressure.ToString();
-                
-                var tipPressureLayout = new StackLayout
-                {
-                    Orientation = Orientation.Horizontal,
-                    Items = 
-                    {
-                        new StackLayoutItem(tipPressureSlider, VerticalAlignment.Center, true),
-                        new StackLayoutItem(tipPressureBox, VerticalAlignment.Center, false)
-                    }
-                };
-
-                var tipPressureGroup = new GroupBox
-                {
-                    Text = "Tip Activation Pressure",
-                    Padding = App.GroupBoxPadding,
-                    Content = tipPressureLayout
-                };
-                tipBindingLayout.Items.Add(new StackLayoutItem(tipPressureGroup, HorizontalAlignment.Stretch, true));
-                layout.Items.Add(new StackLayoutItem(tipBindingLayout, true));
-
-                // Pen Bindings
-                var penBindingLayout = new StackLayout
-                {
-                    Spacing = 5
-                };
-                for (int i = 0; i < Settings.PenButtons.Count; i++)
-                {
-                    var penBindingControl = new BindingDisplay(Settings.PenButtons[i])
-                    {
-                        Tag = i
-                    };
-                    penBindingControl.BindingUpdated += (sender, binding) =>
-                    {
-                        var index = (int)(sender as BindingDisplay).Tag;
-                        Settings.PenButtons[index] = binding.ToString();
-                    };
-                    var penBindingGroup = new GroupBox
-                    {
-                        Text = $"Pen Button {i + 1}",
-                        Padding = App.GroupBoxPadding,
-                        Content = penBindingControl
-                    };
-                    penBindingLayout.Items.Add(new StackLayoutItem(penBindingGroup, HorizontalAlignment.Stretch, true));
-                }
-                layout.Items.Add(new StackLayoutItem(penBindingLayout, true));
-
-                // Aux Bindings
-                var auxBindingLayout = new StackLayout
-                {
-                    Spacing = 5
-                };
-                for (int i = 0; i < Settings.AuxButtons.Count; i++)
-                {
-                    var auxBindingControl = new BindingDisplay(Settings.AuxButtons[i])
-                    {
-                        Tag = i
-                    };
-                    auxBindingControl.BindingUpdated += (sender, binding) =>
-                    {
-                        int index = (int)(sender as BindingDisplay).Tag;
-                        Settings.AuxButtons[index] = binding.ToString();
-                    };
-                    var auxBindingGroup = new GroupBox
-                    {
-                        Text = $"Express Key {i + 1}",
-                        Padding = App.GroupBoxPadding,
-                        Content = auxBindingControl
-                    };
-                    auxBindingLayout.Items.Add(new StackLayoutItem(auxBindingGroup, HorizontalAlignment.Stretch, true));
-                }
-                layout.Items.Add(new StackLayoutItem(auxBindingLayout, true));
-            };
-            return layout;
         }
 
         private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, Action<bool> setMethod)
@@ -546,13 +355,13 @@ namespace OpenTabletDriver.UX
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => SystemInfo.Open(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (sender, e) => SystemInterop.Open(AppInfo.Current.PluginDirectory);
 
             var pluginsRepository = new Command { MenuText = "Open plugins repository..." };
-            pluginsRepository.Executed += (sender, e) => SystemInfo.Open(App.PluginRepositoryUrl);
+            pluginsRepository.Executed += (sender, e) => SystemInterop.Open(App.PluginRepositoryUrl);
 
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => SystemInfo.Open(App.FaqUrl);
+            faqUrl.Executed += (sender, e) => SystemInterop.Open(App.FaqUrl);
 
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
@@ -617,29 +426,29 @@ namespace OpenTabletDriver.UX
 
         private void ApplyPlatformQuirks()
         {
-            this.Padding = SystemInfo.CurrentPlatform switch
+            this.Padding = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.MacOS => new Padding(10),
+                PluginPlatform.MacOS => new Padding(10),
                 _                     => new Padding(0)
             };
 
-            this.ClientSize = SystemInfo.CurrentPlatform switch
+            this.ClientSize = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.MacOS => new Size(970, 770),
+                PluginPlatform.MacOS => new Size(970, 770),
                 _ => new Size(960, 760)
             };
 
-            bool enableTrayIcon = SystemInfo.CurrentPlatform switch
+            bool enableTrayIcon = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => true,
-                RuntimePlatform.MacOS   => true,
+                PluginPlatform.Windows => true,
+                PluginPlatform.MacOS   => true,
                 _                       => false
             };
 
-            bool enableDaemonWatchdog = SystemInfo.CurrentPlatform switch
+            bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => true,
-                RuntimePlatform.MacOS   => true,
+                PluginPlatform.Windows => true,
+                PluginPlatform.MacOS   => true,
                 _                       => false,
             };
 
@@ -670,7 +479,7 @@ namespace OpenTabletDriver.UX
                 {
                     var watchdog = new DaemonWatchdog();
                     watchdog.Start();
-                    watchdog.DaemonExited += (sender, e) => 
+                    watchdog.DaemonExited += (sender, e) =>
                     {
                         var dialogResult = MessageBox.Show(
                             this,
@@ -711,12 +520,12 @@ namespace OpenTabletDriver.UX
 
             AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
 
-            await PluginManager.LoadPluginsAsync();
+            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
             Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
 
             Content = ConstructMainControls();
 
-            if (await App.Driver.Instance.GetTablet() is TabletStatus tablet)
+            if (await App.Driver.Instance.GetTablet() is TabletState tablet)
             {
                 SetTabletAreaDimensions(tablet);
             }
@@ -731,7 +540,7 @@ namespace OpenTabletDriver.UX
             {
                 try
                 {
-                    Settings = Settings.Deserialize(settingsFile);
+                    Settings = Serialization.Deserialize<Settings>(settingsFile);
                     await App.Driver.Instance.SetSettings(Settings);
                 }
                 catch
@@ -745,7 +554,7 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays
+            displayAreaEditor.ViewModel.Background = from disp in SystemInterop.VirtualScreen.Displays
                 where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
@@ -757,14 +566,9 @@ namespace OpenTabletDriver.UX
         private PluginSettingsEditor<ITool> toolEditor;
         private PluginSettingsEditor<Interpolator> interpolatorEditor;
 
-        public event Action<Settings> SettingsChanged;
         public Settings Settings
         {
-            set
-            {
-                App.Settings = value;
-                SettingsChanged?.Invoke(Settings);
-            }
+            set => App.Settings = value;
             get => App.Settings;
         }
 
@@ -773,18 +577,8 @@ namespace OpenTabletDriver.UX
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
-            var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
-            var tablet = await App.Driver.Instance.GetTablet();
-            Settings = OpenTabletDriver.Settings.Defaults;
-            Settings.DisplayWidth = virtualScreen.Width;
-            Settings.DisplayHeight = virtualScreen.Height;
-            Settings.DisplayX = virtualScreen.Width / 2;
-            Settings.DisplayY = virtualScreen.Height / 2;
-            Settings.TabletWidth = tablet?.TabletIdentifier?.Width ?? 0;
-            Settings.TabletHeight = tablet?.TabletIdentifier?.Height ?? 0;
-            Settings.TabletX = tablet?.TabletIdentifier?.Width / 2 ?? 0;
-            Settings.TabletY = tablet?.TabletIdentifier?.Height / 2 ?? 0;
-            await App.Driver.Instance.SetSettings(Settings);
+            await App.Driver.Instance.ResetSettings();
+            Settings = await App.Driver.Instance.GetSettings();
         }
 
         private async Task LoadSettingsDialog()
@@ -804,7 +598,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        Settings = Settings.Deserialize(file);
+                        Settings = Serialization.Deserialize<Settings>(file);
                         await App.Driver.Instance.SetSettings(Settings);
                     }
                     break;
@@ -828,7 +622,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (Settings is Settings settings)
                     {
-                        settings.Serialize(file);
+                        Serialization.Serialize(file, settings);
                         await ApplySettings();
                     }
                     break;
@@ -857,7 +651,7 @@ namespace OpenTabletDriver.UX
                 }
 
                 var appInfo = await App.Driver.Instance.GetApplicationInfo();
-                settings.Serialize(new FileInfo(appInfo.SettingsFile));
+                Serialization.Serialize(new FileInfo(appInfo.SettingsFile), settings);
                 await ApplySettings();
             }
         }
@@ -877,7 +671,7 @@ namespace OpenTabletDriver.UX
 
         private async Task DetectAllTablets()
         {
-            if (await App.Driver.Instance.DetectTablets() is TabletStatus tablet)
+            if (await App.Driver.Instance.DetectTablets() is TabletState tablet)
             {
                 var settings = await App.Driver.Instance.GetSettings();
                 if (settings != null)
@@ -924,18 +718,18 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private void SetTabletAreaDimensions(TabletStatus tablet)
+        private void SetTabletAreaDimensions(TabletState tablet)
         {
             Application.Instance.AsyncInvoke(() =>
             {
                 if (tablet != null)
                 {
-                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height));
+                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height));
 
                     if (Settings != null && Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
                     {
-                        Settings.TabletWidth = tablet.TabletIdentifier.Width;
-                        Settings.TabletHeight = tablet.TabletIdentifier.Height;
+                        Settings.TabletWidth = tablet.Digitizer.Width;
+                        Settings.TabletHeight = tablet.Digitizer.Height;
                     }
                 }
                 else
@@ -951,9 +745,9 @@ namespace OpenTabletDriver.UX
             bool showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
             bool showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
             bool showNull = !(showAbsolute | showRelative);
-            switch (SystemInfo.CurrentPlatform)
+            switch (SystemInterop.CurrentPlatform)
             {
-                case RuntimePlatform.Linux:
+                case PluginPlatform.Linux:
                     absoluteConfig.Visible = showAbsolute;
                     relativeConfig.Visible = showRelative;
                     nullConfig.Visible = showNull;
@@ -978,7 +772,7 @@ namespace OpenTabletDriver.UX
                             outputConfig.Items.Remove(item);
                         }
                     }
-                    
+
                     setVisibilityWorkaround(absoluteConfig, showAbsolute, 0);
                     setVisibilityWorkaround(relativeConfig, showRelative, 1);
                     setVisibilityWorkaround(nullConfig, showNull, 2);

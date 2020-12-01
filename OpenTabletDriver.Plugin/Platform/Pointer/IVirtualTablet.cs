@@ -1,9 +1,7 @@
-﻿using System.Numerics;
-
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
-    public interface IVirtualTablet : IVirtualPointer
+    public interface IVirtualTablet
     {
-        void SetPosition(Vector2 pos);
+        void SetPressure(float percentage);
     }
 }

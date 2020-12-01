@@ -1,10 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Timers;
-using Eto.Forms;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
@@ -19,16 +18,16 @@ namespace OpenTabletDriver.UX
 
         private Timer watchdogTimer = new Timer(1000);
 
-        private static ProcessStartInfo startInfo => SystemInfo.CurrentPlatform switch
+        private static ProcessStartInfo startInfo => SystemInterop.CurrentPlatform switch
         {
-            RuntimePlatform.Windows => new ProcessStartInfo
+            PluginPlatform.Windows => new ProcessStartInfo
             {
                 FileName = Path.Join(Directory.GetCurrentDirectory(), "OpenTabletDriver.Daemon.exe"),
                 Arguments = "",
                 WorkingDirectory = Directory.GetCurrentDirectory(),
                 CreateNoWindow = true
             },
-            RuntimePlatform.MacOS => new ProcessStartInfo
+            PluginPlatform.MacOS => new ProcessStartInfo
             {
                 FileName = Path.Join(AppContext.BaseDirectory, "OpenTabletDriver.Daemon"),
                 Arguments = $"-c {Path.Join(AppContext.BaseDirectory, "Configurations")}"

@@ -61,7 +61,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         {
             if (report is ITabletReport tabletReport && !(report is ISyntheticReport))
             {
-                if (Info.Driver.TabletIdentifier.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (Info.Driver.Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
                     lock (this.stateLock)
                     {

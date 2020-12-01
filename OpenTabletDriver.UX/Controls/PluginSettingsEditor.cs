@@ -4,7 +4,8 @@ using System.Linq;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
@@ -30,9 +31,9 @@ namespace OpenTabletDriver.UX.Controls
                     SelectedPlugin = Plugins[_pluginList.SelectedIndex];
             };
 
-            foreach (var type in PluginManager.GetChildTypes<T>())
+            foreach (var type in AppInfo.PluginManager.GetChildTypes<T>())
             {
-                var pluginRef = new PluginReference(type);
+                var pluginRef = AppInfo.PluginManager.GetPluginReference(type);
                 if (type != typeof(T) && !Plugins.Contains(pluginRef))
                 {
                     Plugins.Add(pluginRef);
@@ -60,7 +61,7 @@ namespace OpenTabletDriver.UX.Controls
                             {
                                 Text = "Plugin Repository",
                                 Command = new Command(
-                                    (s, e) => SystemInfo.Open(App.PluginRepositoryUrl)
+                                    (s, e) => SystemInterop.Open(App.PluginRepositoryUrl)
                                 )
                             },
                             HorizontalAlignment = HorizontalAlignment.Center
