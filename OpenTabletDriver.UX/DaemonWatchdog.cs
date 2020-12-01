@@ -1,10 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Timers;
-using Eto.Forms;
 using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {

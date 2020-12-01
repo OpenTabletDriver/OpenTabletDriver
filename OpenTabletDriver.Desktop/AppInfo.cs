@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {

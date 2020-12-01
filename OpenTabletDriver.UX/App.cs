@@ -7,6 +7,7 @@ using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {

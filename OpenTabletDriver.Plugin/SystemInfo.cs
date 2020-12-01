@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using OpenTabletDriver.Native;
 
-namespace OpenTabletDriver.Native
+namespace OpenTabletDriver.Plugin
 {
     public static class SystemInfo
     {

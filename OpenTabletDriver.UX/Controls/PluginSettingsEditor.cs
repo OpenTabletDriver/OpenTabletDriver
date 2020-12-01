@@ -5,7 +5,6 @@ using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
