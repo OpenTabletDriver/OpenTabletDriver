@@ -17,14 +17,14 @@ namespace OpenTabletDriver.Desktop
 
         public string ConfigurationDirectory
         {
-            set => configDirectory = value;
-            get => configDirectory ??= DefaultConfigurationDirectory;
+            set => this.configDirectory = value;
+            get => this.configDirectory ??= DefaultConfigurationDirectory;
         }
 
         public string AppDataDirectory
         {
-            set => appDataDirectory = value;
-            get => appDataDirectory ??= DefaultAppDataDirectory;
+            set => this.appDataDirectory = value;
+            get => this.appDataDirectory ??= DefaultAppDataDirectory;
         }
 
         public string SettingsFile => Path.Join(AppDataDirectory, "settings.json");
@@ -50,9 +50,9 @@ namespace OpenTabletDriver.Desktop
                 var fallbackPath = SystemInfo.CurrentPlatform switch
                 {
                     RuntimePlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
-                    RuntimePlatform.Linux => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
-                    RuntimePlatform.MacOS => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
-                    _ => null
+                    RuntimePlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
+                    RuntimePlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
+                    _                       => null
                 };
                 return Directory.Exists(path) ? path : fallbackPath;
             }

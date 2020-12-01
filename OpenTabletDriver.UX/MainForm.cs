@@ -398,7 +398,7 @@ namespace OpenTabletDriver.UX
                 };
                 
                 var tipBindingControl = new BindingDisplay(Settings.TipButton);
-                tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding.ToString();
+                tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding;
 
                 var tipBindingGroup = new GroupBox
                 {
@@ -462,7 +462,7 @@ namespace OpenTabletDriver.UX
                     penBindingControl.BindingUpdated += (sender, binding) =>
                     {
                         var index = (int)(sender as BindingDisplay).Tag;
-                        Settings.PenButtons[index] = binding.ToString();
+                        Settings.PenButtons[index] = binding;
                     };
                     var penBindingGroup = new GroupBox
                     {
@@ -488,7 +488,7 @@ namespace OpenTabletDriver.UX
                     auxBindingControl.BindingUpdated += (sender, binding) =>
                     {
                         int index = (int)(sender as BindingDisplay).Tag;
-                        Settings.AuxButtons[index] = binding.ToString();
+                        Settings.AuxButtons[index] = binding;
                     };
                     var auxBindingGroup = new GroupBox
                     {

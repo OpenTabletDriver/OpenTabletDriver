@@ -41,7 +41,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public static implicit operator string(BindingReference bindingRef)
         {
-            return bindingRef.ToString();
+            return bindingRef?.ToString();
         }
     }
 }
