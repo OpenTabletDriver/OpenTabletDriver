@@ -100,20 +100,5 @@ namespace OpenTabletDriver.Desktop.Reflection
                 }
             });
         }
-
-        protected static bool IsLoadable(Assembly asm)
-        {
-            try
-            {
-                _ = asm.DefinedTypes;
-                return true;
-            }
-            catch
-            {
-                var asmName = asm.GetName();
-                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
-                return false;
-            }
-        }
     }
 }
