@@ -3,7 +3,7 @@
   "DigitizerIdentifiers": [
     {
       "Width": 147.6,
-      "Height": 92.3,
+      "Height": 92.25,
       "MaxX": 14760.0,
       "MaxY": 9225.0,
       "MaxPressure": 511,
@@ -25,7 +25,7 @@
     },
     {
       "Width": 147.6,
-      "Height": 92.3,
+      "Height": 92.25,
       "MaxX": 14760.0,
       "MaxY": 9225.0,
       "MaxPressure": 511,
