@@ -1,7 +1,8 @@
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
-    public interface IVirtualMouse : IVirtualPointer
+    public interface IVirtualMouse
     {
-        void Move(float dX, float dY);
+        void MouseDown(MouseButton button);
+        void MouseUp(MouseButton button);
     }
 }

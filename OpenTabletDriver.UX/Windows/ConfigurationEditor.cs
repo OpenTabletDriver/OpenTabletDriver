@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
+using Newtonsoft.Json;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
@@ -144,7 +146,7 @@ namespace OpenTabletDriver.UX.Windows
         private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
             var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                          select TabletConfiguration.Read(file);
+                select Serialization.Deserialize<TabletConfiguration>(file);
             return new List<TabletConfiguration>(configs);
         }
 
@@ -160,7 +162,7 @@ namespace OpenTabletDriver.UX.Windows
                 var file = new FileInfo(path);
                 if (!file.Directory.Exists)
                     file.Directory.Create();
-                config.Write(file);
+                Serialization.Serialize(file, config);
             }
         }
 

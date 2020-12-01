@@ -1,7 +1,7 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Binding;
+using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.UX.Windows
@@ -65,7 +65,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ClearBinding(object sender, EventArgs e)
         {
-            Return(BindingReference.None);
+            Return(null);
         }
 
         private void Return<T>(T binding) where T : OpenTabletDriver.Plugin.IBinding

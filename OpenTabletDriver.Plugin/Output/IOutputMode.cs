@@ -8,7 +8,6 @@ namespace OpenTabletDriver.Plugin.Output
     {
         void Read(IDeviceReport report);
         IEnumerable<IFilter> Filters { set; get; }
-        DigitizerIdentifier Digitizer { set; get; }
-        IVirtualPointer Pointer { get; }
+        TabletState Tablet { set; get; }
     }
 }

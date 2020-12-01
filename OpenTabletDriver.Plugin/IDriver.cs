@@ -9,12 +9,10 @@ namespace OpenTabletDriver.Plugin
     {
         event EventHandler<bool> Reading;
         event EventHandler<IDeviceReport> ReportRecieved;
+        event EventHandler<TabletState> TabletChanged;
 
         bool EnableInput { set; get; }
-        TabletConfiguration Tablet { get; }
-        DigitizerIdentifier TabletIdentifier { get; }
-        DeviceIdentifier AuxiliaryIdentifier { get; }
-        IVirtualScreen VirtualScreen { get; }
+        TabletState Tablet { get; }
         IOutputMode OutputMode { set; get; }
 
         void HandleReport(IDeviceReport report);

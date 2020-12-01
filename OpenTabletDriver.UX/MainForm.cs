@@ -4,7 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Diagnostics;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
@@ -260,7 +261,7 @@ namespace OpenTabletDriver.UX
                 displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
             };
             displayAreaEditor.AppendMenuItemSeparator();
-            foreach (var display in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays)
+            foreach (var display in OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen.Displays)
                 displayAreaEditor.AppendMenuItem($"Set to {display}",
                     () =>
                     {
@@ -273,7 +274,7 @@ namespace OpenTabletDriver.UX
                         }
                         else
                         {
-                            virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
+                            virtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
                             displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                             displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                         }
@@ -397,7 +398,7 @@ namespace OpenTabletDriver.UX
                 };
                 
                 var tipBindingControl = new BindingDisplay(Settings.TipButton);
-                tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding.ToString();
+                tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding;
 
                 var tipBindingGroup = new GroupBox
                 {
@@ -461,7 +462,7 @@ namespace OpenTabletDriver.UX
                     penBindingControl.BindingUpdated += (sender, binding) =>
                     {
                         var index = (int)(sender as BindingDisplay).Tag;
-                        Settings.PenButtons[index] = binding.ToString();
+                        Settings.PenButtons[index] = binding;
                     };
                     var penBindingGroup = new GroupBox
                     {
@@ -487,7 +488,7 @@ namespace OpenTabletDriver.UX
                     auxBindingControl.BindingUpdated += (sender, binding) =>
                     {
                         int index = (int)(sender as BindingDisplay).Tag;
-                        Settings.AuxButtons[index] = binding.ToString();
+                        Settings.AuxButtons[index] = binding;
                     };
                     var auxBindingGroup = new GroupBox
                     {
@@ -711,12 +712,12 @@ namespace OpenTabletDriver.UX
 
             AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
 
-            await PluginManager.LoadPluginsAsync();
+            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
             Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
 
             Content = ConstructMainControls();
 
-            if (await App.Driver.Instance.GetTablet() is TabletStatus tablet)
+            if (await App.Driver.Instance.GetTablet() is TabletState tablet)
             {
                 SetTabletAreaDimensions(tablet);
             }
@@ -731,7 +732,7 @@ namespace OpenTabletDriver.UX
             {
                 try
                 {
-                    Settings = Settings.Deserialize(settingsFile);
+                    Settings = Serialization.Deserialize<Settings>(settingsFile);
                     await App.Driver.Instance.SetSettings(Settings);
                 }
                 catch
@@ -745,7 +746,7 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Interop.Platform.VirtualScreen.Displays
+            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen.Displays
                 where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
@@ -773,17 +774,17 @@ namespace OpenTabletDriver.UX
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
-            var virtualScreen = OpenTabletDriver.Interop.Platform.VirtualScreen;
+            var virtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
             var tablet = await App.Driver.Instance.GetTablet();
-            Settings = OpenTabletDriver.Settings.Defaults;
+            Settings = Settings.Defaults;
             Settings.DisplayWidth = virtualScreen.Width;
             Settings.DisplayHeight = virtualScreen.Height;
             Settings.DisplayX = virtualScreen.Width / 2;
             Settings.DisplayY = virtualScreen.Height / 2;
-            Settings.TabletWidth = tablet?.TabletIdentifier?.Width ?? 0;
-            Settings.TabletHeight = tablet?.TabletIdentifier?.Height ?? 0;
-            Settings.TabletX = tablet?.TabletIdentifier?.Width / 2 ?? 0;
-            Settings.TabletY = tablet?.TabletIdentifier?.Height / 2 ?? 0;
+            Settings.TabletWidth = tablet?.Digitizer?.Width ?? 0;
+            Settings.TabletHeight = tablet?.Digitizer?.Height ?? 0;
+            Settings.TabletX = tablet?.Digitizer?.Width / 2 ?? 0;
+            Settings.TabletY = tablet?.Digitizer?.Height / 2 ?? 0;
             await App.Driver.Instance.SetSettings(Settings);
         }
 
@@ -804,7 +805,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        Settings = Settings.Deserialize(file);
+                        Settings = Serialization.Deserialize<Settings>(file);
                         await App.Driver.Instance.SetSettings(Settings);
                     }
                     break;
@@ -828,7 +829,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (Settings is Settings settings)
                     {
-                        settings.Serialize(file);
+                        Serialization.Serialize(file, settings);
                         await ApplySettings();
                     }
                     break;
@@ -857,7 +858,7 @@ namespace OpenTabletDriver.UX
                 }
 
                 var appInfo = await App.Driver.Instance.GetApplicationInfo();
-                settings.Serialize(new FileInfo(appInfo.SettingsFile));
+                Serialization.Serialize(new FileInfo(appInfo.SettingsFile), settings);
                 await ApplySettings();
             }
         }
@@ -877,7 +878,7 @@ namespace OpenTabletDriver.UX
 
         private async Task DetectAllTablets()
         {
-            if (await App.Driver.Instance.DetectTablets() is TabletStatus tablet)
+            if (await App.Driver.Instance.DetectTablets() is TabletState tablet)
             {
                 var settings = await App.Driver.Instance.GetSettings();
                 if (settings != null)
@@ -924,18 +925,18 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private void SetTabletAreaDimensions(TabletStatus tablet)
+        private void SetTabletAreaDimensions(TabletState tablet)
         {
             Application.Instance.AsyncInvoke(() =>
             {
                 if (tablet != null)
                 {
-                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.TabletIdentifier.Width, tablet.TabletIdentifier.Height));
+                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height));
 
                     if (Settings != null && Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
                     {
-                        Settings.TabletWidth = tablet.TabletIdentifier.Width;
-                        Settings.TabletHeight = tablet.TabletIdentifier.Height;
+                        Settings.TabletWidth = tablet.Digitizer.Width;
+                        Settings.TabletHeight = tablet.Digitizer.Height;
                     }
                 }
                 else

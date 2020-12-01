@@ -2,9 +2,11 @@
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Contracts;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Migration;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Native;
-using OpenTabletDriver.RPC;
 
 namespace OpenTabletDriver.UX
 {
@@ -16,7 +18,13 @@ namespace OpenTabletDriver.UX
         public static RpcClient<IDriverDaemon> Driver => _daemon.Value;
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
-        public static Settings Settings { set; get; }
+        
+        private static Settings settings;
+        public static Settings Settings
+        {
+            set => settings = SettingsMigrator.Migrate(value);
+            get => settings;
+        }
 
         public static AboutDialog AboutDialog => new AboutDialog
         {
