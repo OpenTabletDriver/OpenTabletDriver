@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Desktop
 
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
         private TimeSpan _rT;
-        private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting;
+        private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;
         private string _outputMode, _tipButton;
 
         private ObservableCollection<string> _filters = new ObservableCollection<string>(),
@@ -52,6 +52,20 @@ namespace OpenTabletDriver.Desktop
         {
             set => RaiseAndSetIfChanged(ref _autoHook, value);
             get => _autoHook;
+        }
+
+        [JsonProperty("LockUsableAreaDisplay")]
+        public bool LockUsableAreaDisplay
+        {
+            set => this.RaiseAndSetIfChanged(ref _lockUsableAreaDisplay, value);
+            get => _lockUsableAreaDisplay;
+        }
+
+        [JsonProperty("LockUsableAreaTablet")]
+        public bool LockUsableAreaTablet
+        {
+            set => this.RaiseAndSetIfChanged(ref _lockUsableAreaTablet, value);
+            get => _lockUsableAreaTablet;
         }
 
         #endregion

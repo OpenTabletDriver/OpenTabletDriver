@@ -171,18 +171,6 @@ namespace OpenTabletDriver.UX.Controls
 
             AppendMenuItemSeparator();
             
-            AppendCheckBoxMenuItem(
-                "Lock to usable area",
-                lockToMax =>
-                {
-                    if (lockToMax)
-                        ViewModel.PropertyChanged += LimitArea;
-                    else
-                        ViewModel.PropertyChanged -= LimitArea;
-                },
-                defaultValue: true
-            );
-            
             this.MouseDown += (sender, e) =>
             {
                 if (e.Buttons.HasFlag(MouseButtons.Alternate))
@@ -253,7 +241,7 @@ namespace OpenTabletDriver.UX.Controls
             return command;
         }
 
-        private void LimitArea(object sender, PropertyChangedEventArgs e)
+        public void LimitArea(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {

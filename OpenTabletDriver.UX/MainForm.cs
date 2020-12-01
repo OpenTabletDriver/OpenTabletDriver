@@ -209,6 +209,23 @@ namespace OpenTabletDriver.UX
             tabletAreaEditor.AreaDisplay.ToolTip =
                 "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
 
+            void lockToMaxArea(AreaEditor editor, bool lockToMax)
+            {
+                if (lockToMax)
+                    editor.ViewModel.PropertyChanged += editor.LimitArea;
+                else
+                    editor.ViewModel.PropertyChanged -= editor.LimitArea;
+            }
+
+            var lockUsableTabletArea = tabletAreaEditor.AppendCheckBoxMenuItem(
+                "Lock to usable area",
+                value =>
+                {
+                    lockToMaxArea(tabletAreaEditor, value);
+                    Settings.LockUsableAreaTablet = value;
+                }
+            );
+            
             App.SettingsChanged += (settings) =>
             {
                 tabletAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
@@ -216,6 +233,8 @@ namespace OpenTabletDriver.UX
                 tabletAreaEditor.Bind(c => c.ViewModel.X, settings, m => m.TabletX);
                 tabletAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.TabletY);
                 tabletAreaEditor.Bind(c => c.ViewModel.Rotation, settings, m => m.TabletRotation);
+                lockUsableTabletArea.Checked = settings.LockUsableAreaTablet;
+                lockToMaxArea(tabletAreaEditor, settings.LockUsableAreaTablet);
             };
 
             var lockAr = tabletAreaEditor.AppendCheckBoxMenuItem("Lock aspect ratio", (value) => Settings.LockAspectRatio = value);
@@ -251,13 +270,33 @@ namespace OpenTabletDriver.UX
             displayAreaEditor.AreaDisplay.ToolTip =
                 "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
 
+            void lockToMaxArea(AreaEditor editor, bool lockToMax)
+            {
+                if (lockToMax)
+                    editor.ViewModel.PropertyChanged += editor.LimitArea;
+                else
+                    editor.ViewModel.PropertyChanged -= editor.LimitArea;
+            }
+
+            var lockUsableDisplayArea = displayAreaEditor.AppendCheckBoxMenuItem(
+                "Lock to usable area",
+                value =>
+                {
+                    lockToMaxArea(displayAreaEditor, value);
+                    Settings.LockUsableAreaDisplay = value;
+                }
+            );
+            
             App.SettingsChanged += (settings) =>
             {
                 displayAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
                 displayAreaEditor.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
                 displayAreaEditor.Bind(c => c.ViewModel.X, settings, m => m.DisplayX);
                 displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
+                lockUsableDisplayArea.Checked = settings.LockUsableAreaDisplay;
+                lockToMaxArea(displayAreaEditor, settings.LockUsableAreaDisplay);
             };
+
             displayAreaEditor.AppendMenuItemSeparator();
 
             foreach (var display in SystemInterop.VirtualScreen.Displays)
