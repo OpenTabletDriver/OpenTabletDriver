@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
     public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
     {
         private const int Max = 1 << 28;
-        private Vector2 ScreenScale = new Vector2(Platform.VirtualScreen.Width, Platform.VirtualScreen.Height);
+        private Vector2 ScreenScale = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height);
 
         public unsafe EvdevVirtualTablet()
         {

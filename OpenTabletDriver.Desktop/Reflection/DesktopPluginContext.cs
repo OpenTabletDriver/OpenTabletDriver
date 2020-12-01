@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
 
@@ -49,11 +49,11 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static string ToDllName(string dllName)
         {
-            return SystemInfo.CurrentPlatform switch
+            return SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => $"{dllName}.dll",
-                RuntimePlatform.Linux => $"lib{dllName}.so",
-                RuntimePlatform.MacOS => $"lib{dllName}.dylib",
+                PluginPlatform.Windows => $"{dllName}.dll",
+                PluginPlatform.Linux => $"lib{dllName}.so",
+                PluginPlatform.MacOS => $"lib{dllName}.dylib",
                 _ => null
             };
         }

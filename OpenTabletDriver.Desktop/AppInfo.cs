@@ -1,9 +1,8 @@
 using System;
 using System.IO;
-using System.Reflection;
-using System.Text.Json.Serialization;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {
@@ -47,11 +46,11 @@ namespace OpenTabletDriver.Desktop
             get
             {
                 var path = Path.Join(ProgramDirectory, "userdata");
-                var fallbackPath = SystemInfo.CurrentPlatform switch
+                var fallbackPath = SystemInterop.CurrentPlatform switch
                 {
-                    RuntimePlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
-                    RuntimePlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
-                    RuntimePlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
+                    PluginPlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
+                    PluginPlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
+                    PluginPlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
                     _                       => null
                 };
                 return Directory.Exists(path) ? path : fallbackPath;

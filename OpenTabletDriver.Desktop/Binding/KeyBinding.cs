@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
-using OpenTabletDriver.Native;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
@@ -12,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName("Key Binding")]
     public class KeyBinding : IBinding, IValidateBinding
     {
-        private IVirtualKeyboard keyboard => Platform.KeyboardHandler;
+        private IVirtualKeyboard keyboard => SystemInterop.VirtualKeyboard;
 
         public string Property { set; get; }
 
@@ -28,11 +27,11 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public string[] ValidProperties
         {
-            get => SystemInfo.CurrentPlatform switch
+            get => SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
-                RuntimePlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys.ToArray(),
-                RuntimePlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
+                PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
+                PluginPlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys.ToArray(),
+                PluginPlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
                 _                       => null
             };
         } 

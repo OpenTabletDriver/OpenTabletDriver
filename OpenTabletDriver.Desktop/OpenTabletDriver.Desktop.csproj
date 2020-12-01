@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Project References">
+    <ProjectReference Include="..\OpenTabletDriver.Native\OpenTabletDriver.Native.csproj" />
     <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
   </ItemGroup>
 
