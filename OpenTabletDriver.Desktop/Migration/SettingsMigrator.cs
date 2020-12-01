@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace OpenTabletDriver.Desktop.Migration
@@ -25,15 +26,29 @@ namespace OpenTabletDriver.Desktop.Migration
             return settings;
         }
 
-        private static Regex TabletDriverLibRegex = new Regex(@"TabletDriverLib\.(.+?)$");
+        private static readonly Dictionary<Regex, string> namespaceMigrationDict = new Dictionary<Regex, string>
+        {
+            { new Regex(@"TabletDriverLib\.(.+?)$"), $"OpenTabletDriver.{{0}}" },
+            { new Regex(@"OpenTabletDriver\.Binding\.(.+?)$"), $"OpenTabletDriver.Desktop.Binding.{{0}}" },
+            { new Regex(@"OpenTabletDriver\.Output\.(.+?)$"), $"OpenTabletDriver.Desktop.Output.{{0}}" }
+        };
 
         private static string MigrateNamespace(string input)
         {
-            if (input == null)
-                return null;
-            
-            var match = TabletDriverLibRegex.Match(input);
-            return match.Success ? $"{nameof(OpenTabletDriver)}.{match.Groups[1]}" : input;
+            if (string.IsNullOrWhiteSpace(input))
+                return input;
+
+            foreach (var pair in namespaceMigrationDict)
+            {
+                var regex = pair.Key;
+                var replacement = pair.Value;
+
+                var match = regex.Match(input);
+                if (match.Success)
+                    input = string.Format(replacement, match.Groups[1]);
+            }
+
+            return input;
         }
     }
 }
