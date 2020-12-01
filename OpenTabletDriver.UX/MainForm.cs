@@ -62,7 +62,7 @@ namespace OpenTabletDriver.UX
 
             var outputModeSelector = ConstructOutputModeSelector();
             absoluteConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup);
-            relativeConfig = ConstructSensitivityControls();
+            relativeConfig = new SensitivityEditor();
             nullConfig = new Panel();
 
             outputConfig = new StackLayout
@@ -77,8 +77,6 @@ namespace OpenTabletDriver.UX
                     new StackLayoutItem(outputModeSelector, HorizontalAlignment.Left, false)
                 }
             };
-
-            var bindingLayout = ConstructBindingLayout();
 
             filterEditor = ConstructPluginSettingsEditor<IFilter>(
                 "Filter",
@@ -132,7 +130,7 @@ namespace OpenTabletDriver.UX
                     new TabPage
                     {
                         Text = "Bindings",
-                        Content = bindingLayout
+                        Content = new BindingEditor()
                     },
                     new TabPage
                     {
@@ -211,7 +209,7 @@ namespace OpenTabletDriver.UX
             tabletAreaEditor.AreaDisplay.ToolTip =
                 "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
 
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 tabletAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
                 tabletAreaEditor.Bind(c => c.ViewModel.Height, settings, m => m.TabletHeight);
@@ -221,19 +219,19 @@ namespace OpenTabletDriver.UX
             };
 
             var lockAr = tabletAreaEditor.AppendCheckBoxMenuItem("Lock aspect ratio", (value) => Settings.LockAspectRatio = value);
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 lockAr.Checked = settings.LockAspectRatio;
             };
 
             var areaClipping = tabletAreaEditor.AppendCheckBoxMenuItem("Area clipping", (value) => Settings.EnableClipping = value);
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 areaClipping.Checked = settings.EnableClipping;
             };
 
             var ignoreOutsideArea = tabletAreaEditor.AppendCheckBoxMenuItem("Ignore reports outside area", (value) => Settings.EnableAreaLimiting = value);
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 ignoreOutsideArea.Checked = settings.EnableAreaLimiting;
             };
@@ -253,7 +251,7 @@ namespace OpenTabletDriver.UX
             displayAreaEditor.AreaDisplay.ToolTip =
                 "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
 
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 displayAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
                 displayAreaEditor.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
@@ -305,207 +303,12 @@ namespace OpenTabletDriver.UX
                 App.Settings.OutputMode = mode.Path;
                 UpdateOutputMode(mode);
             };
-            this.SettingsChanged += (settings) =>
+            App.SettingsChanged += (settings) =>
             {
                 var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode);
                 control.SelectedIndex = control.OutputModes.IndexOf(mode);
             };
             return control;
-        }
-
-        private Control ConstructSensitivityControls()
-        {
-            var xSensBox = ConstructSensitivityEditor(
-                "X Sensitivity",
-                (s) => App.Settings.XSensitivity = float.TryParse(s, out var val) ? val : 0f,
-                () => App.Settings.XSensitivity.ToString(),
-                "px/mm"
-            );
-            var ySensBox = ConstructSensitivityEditor(
-                "Y Sensitivity",
-                (s) => App.Settings.YSensitivity = float.TryParse(s, out var val) ? val : 0f,
-                () => App.Settings.YSensitivity.ToString(),
-                "px/mm"
-            );
-            var rotationBox = ConstructSensitivityEditor(
-                "Rotation",
-                (s) => App.Settings.RelativeRotation = float.TryParse(s, out var val) ? val : 0f,
-                () => App.Settings.RelativeRotation.ToString(),
-                "degrees"
-            );
-            var resetTimeBox = ConstructSensitivityEditor(
-                "Reset Time",
-                (s) => App.Settings.ResetTime = TimeSpan.TryParse(s, out var val) ? val : TimeSpan.FromMilliseconds(100),
-                () => App.Settings.ResetTime.ToString()
-            );
-
-            return new StackLayout
-            {
-                Visible = false,
-                Spacing = 5,
-                Orientation = Orientation.Horizontal,
-                Items =
-                {
-                    new StackLayoutItem(xSensBox, true),
-                    new StackLayoutItem(ySensBox, true),
-                    new StackLayoutItem(rotationBox, true),
-                    new StackLayoutItem(resetTimeBox, true)
-                }
-            };
-        }
-
-        private Control ConstructSensitivityEditor(string header, Action<string> setValue, Func<string> getValue, string unit = null)
-        {
-            var textbox = new TextBox();
-            this.SettingsChanged += (settings) =>
-            {
-                textbox.TextBinding.Bind(getValue, setValue);
-            };
-
-            var layout = TableLayout.Horizontal(5, new TableCell(textbox, true));
-
-            if (unit != null)
-            {
-                var unitControl = new Label
-                {
-                    Text = unit,
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                layout.Rows[0].Cells.Add(unitControl);
-            }
-
-            return new GroupBox
-            {
-                Text = header,
-                Padding = App.GroupBoxPadding,
-                Content = layout
-            };
-        }
-
-        private Control ConstructBindingLayout()
-        {
-            var layout = new StackLayout()
-            {
-                Orientation = Orientation.Horizontal,
-                Padding = new Padding(5),
-                Spacing = 5
-            };
-
-            this.SettingsChanged += (settings) =>
-            {
-                // Clear layout
-                layout.Items.Clear();
-
-                // Tip Binding
-                var tipBindingLayout = new StackLayout
-                {
-                    Spacing = 5
-                };
-
-                var tipBindingControl = new BindingDisplay(Settings.TipButton);
-                tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding;
-
-                var tipBindingGroup = new GroupBox
-                {
-                    Text = "Tip Binding",
-                    Padding = App.GroupBoxPadding,
-                    Content = tipBindingControl
-                };
-                tipBindingLayout.Items.Add(new StackLayoutItem(tipBindingGroup, HorizontalAlignment.Stretch, true));
-
-                var tipPressureSlider = new Slider
-                {
-                    MinValue = 0,
-                    MaxValue = 100
-                };
-                var tipPressureBox = new TextBox();
-
-                tipPressureSlider.ValueChanged += (sender, e) =>
-                {
-                    settings.TipActivationPressure = tipPressureSlider.Value;
-                    tipPressureBox.Text = Settings.TipActivationPressure.ToString();
-                    tipPressureBox.CaretIndex = tipPressureBox.Text.Length;
-                };
-
-                tipPressureBox.TextChanged += (sender, e) =>
-                {
-                    Settings.TipActivationPressure = float.TryParse(tipPressureBox.Text, out var val) ? val : 0f;
-                    tipPressureSlider.Value = (int)Settings.TipActivationPressure;
-                };
-                tipPressureBox.Text = Settings.TipActivationPressure.ToString();
-
-                var tipPressureLayout = new StackLayout
-                {
-                    Orientation = Orientation.Horizontal,
-                    Items =
-                    {
-                        new StackLayoutItem(tipPressureSlider, VerticalAlignment.Center, true),
-                        new StackLayoutItem(tipPressureBox, VerticalAlignment.Center, false)
-                    }
-                };
-
-                var tipPressureGroup = new GroupBox
-                {
-                    Text = "Tip Activation Pressure",
-                    Padding = App.GroupBoxPadding,
-                    Content = tipPressureLayout
-                };
-                tipBindingLayout.Items.Add(new StackLayoutItem(tipPressureGroup, HorizontalAlignment.Stretch, true));
-                layout.Items.Add(new StackLayoutItem(tipBindingLayout, true));
-
-                // Pen Bindings
-                var penBindingLayout = new StackLayout
-                {
-                    Spacing = 5
-                };
-                for (int i = 0; i < Settings.PenButtons.Count; i++)
-                {
-                    var penBindingControl = new BindingDisplay(Settings.PenButtons[i])
-                    {
-                        Tag = i
-                    };
-                    penBindingControl.BindingUpdated += (sender, binding) =>
-                    {
-                        var index = (int)(sender as BindingDisplay).Tag;
-                        Settings.PenButtons[index] = binding;
-                    };
-                    var penBindingGroup = new GroupBox
-                    {
-                        Text = $"Pen Button {i + 1}",
-                        Padding = App.GroupBoxPadding,
-                        Content = penBindingControl
-                    };
-                    penBindingLayout.Items.Add(new StackLayoutItem(penBindingGroup, HorizontalAlignment.Stretch, true));
-                }
-                layout.Items.Add(new StackLayoutItem(penBindingLayout, true));
-
-                // Aux Bindings
-                var auxBindingLayout = new StackLayout
-                {
-                    Spacing = 5
-                };
-                for (int i = 0; i < Settings.AuxButtons.Count; i++)
-                {
-                    var auxBindingControl = new BindingDisplay(Settings.AuxButtons[i])
-                    {
-                        Tag = i
-                    };
-                    auxBindingControl.BindingUpdated += (sender, binding) =>
-                    {
-                        int index = (int)(sender as BindingDisplay).Tag;
-                        Settings.AuxButtons[index] = binding;
-                    };
-                    var auxBindingGroup = new GroupBox
-                    {
-                        Text = $"Express Key {i + 1}",
-                        Padding = App.GroupBoxPadding,
-                        Content = auxBindingControl
-                    };
-                    auxBindingLayout.Items.Add(new StackLayoutItem(auxBindingGroup, HorizontalAlignment.Stretch, true));
-                }
-                layout.Items.Add(new StackLayoutItem(auxBindingLayout, true));
-            };
-            return layout;
         }
 
         private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, Action<bool> setMethod)
@@ -763,14 +566,9 @@ namespace OpenTabletDriver.UX
         private PluginSettingsEditor<ITool> toolEditor;
         private PluginSettingsEditor<Interpolator> interpolatorEditor;
 
-        public event Action<Settings> SettingsChanged;
         public Settings Settings
         {
-            set
-            {
-                App.Settings = value;
-                SettingsChanged?.Invoke(Settings);
-            }
+            set => App.Settings = value;
             get => App.Settings;
         }
 

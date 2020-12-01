@@ -20,10 +20,15 @@ namespace OpenTabletDriver.UX
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
         
+        public static event Action<Settings> SettingsChanged;
         private static Settings settings;
         public static Settings Settings
         {
-            set => settings = SettingsMigrator.Migrate(value);
+            set
+            {
+                settings = SettingsMigrator.Migrate(value);
+                SettingsChanged?.Invoke(Settings);
+            }
             get => settings;
         }
 
