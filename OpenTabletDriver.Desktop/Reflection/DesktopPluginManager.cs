@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
 
@@ -81,7 +82,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (!IsPlatformSupported(type))
                 {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInfo.CurrentPlatform}", LogLevel.Info);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
                 if (type.IsPluginIgnored())

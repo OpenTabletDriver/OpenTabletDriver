@@ -6,7 +6,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -195,7 +195,7 @@ namespace OpenTabletDriver.UX
             return new StackLayout
             {
                 Visible = false,
-                Spacing = SystemInfo.CurrentPlatform == RuntimePlatform.Windows ? 0 : 5,
+                Spacing = SystemInterop.CurrentPlatform == PluginPlatform.Windows ? 0 : 5,
                 Items =
                 {
                     new StackLayoutItem(displayControl, HorizontalAlignment.Stretch, true),
@@ -261,9 +261,9 @@ namespace OpenTabletDriver.UX
                 displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
             };
             displayAreaEditor.AppendMenuItemSeparator();
-            foreach (var display in OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen.Displays)
+            foreach (var display in SystemInterop.VirtualScreen.Displays)
                 displayAreaEditor.AppendMenuItem($"Set to {display}",
-                    () =>
+                    (Action)(() =>
                     {
                         displayAreaEditor.ViewModel.Width = display.Width;
                         displayAreaEditor.ViewModel.Height = display.Height;
@@ -274,11 +274,11 @@ namespace OpenTabletDriver.UX
                         }
                         else
                         {
-                            virtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
+                            virtualScreen = OpenTabletDriver.Desktop.Interop.SystemInterop.VirtualScreen;
                             displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                             displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                         }
-                    });
+                    }));
 
             var displayAreaGroup = new GroupBox
             {
@@ -547,13 +547,13 @@ namespace OpenTabletDriver.UX
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => SystemInfo.Open(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (sender, e) => SystemInterop.Open(AppInfo.Current.PluginDirectory);
 
             var pluginsRepository = new Command { MenuText = "Open plugins repository..." };
-            pluginsRepository.Executed += (sender, e) => SystemInfo.Open(App.PluginRepositoryUrl);
+            pluginsRepository.Executed += (sender, e) => SystemInterop.Open(App.PluginRepositoryUrl);
 
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => SystemInfo.Open(App.FaqUrl);
+            faqUrl.Executed += (sender, e) => SystemInterop.Open(App.FaqUrl);
 
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
@@ -618,29 +618,29 @@ namespace OpenTabletDriver.UX
 
         private void ApplyPlatformQuirks()
         {
-            this.Padding = SystemInfo.CurrentPlatform switch
+            this.Padding = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.MacOS => new Padding(10),
+                PluginPlatform.MacOS => new Padding(10),
                 _                     => new Padding(0)
             };
 
-            this.ClientSize = SystemInfo.CurrentPlatform switch
+            this.ClientSize = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.MacOS => new Size(970, 770),
+                PluginPlatform.MacOS => new Size(970, 770),
                 _ => new Size(960, 760)
             };
 
-            bool enableTrayIcon = SystemInfo.CurrentPlatform switch
+            bool enableTrayIcon = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => true,
-                RuntimePlatform.MacOS   => true,
+                PluginPlatform.Windows => true,
+                PluginPlatform.MacOS   => true,
                 _                       => false
             };
 
-            bool enableDaemonWatchdog = SystemInfo.CurrentPlatform switch
+            bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => true,
-                RuntimePlatform.MacOS   => true,
+                PluginPlatform.Windows => true,
+                PluginPlatform.MacOS   => true,
                 _                       => false,
             };
 
@@ -746,7 +746,7 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            displayAreaEditor.ViewModel.Background = from disp in OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen.Displays
+            displayAreaEditor.ViewModel.Background = from disp in SystemInterop.VirtualScreen.Displays
                 where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
         }
@@ -774,7 +774,7 @@ namespace OpenTabletDriver.UX
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
-            var virtualScreen = OpenTabletDriver.Desktop.Interop.Platform.VirtualScreen;
+            var virtualScreen = SystemInterop.VirtualScreen;
             var tablet = await App.Driver.Instance.GetTablet();
             Settings = Settings.Defaults;
             Settings.DisplayWidth = virtualScreen.Width;
@@ -952,9 +952,9 @@ namespace OpenTabletDriver.UX
             bool showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
             bool showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
             bool showNull = !(showAbsolute | showRelative);
-            switch (SystemInfo.CurrentPlatform)
+            switch (SystemInterop.CurrentPlatform)
             {
-                case RuntimePlatform.Linux:
+                case PluginPlatform.Linux:
                     absoluteConfig.Visible = showAbsolute;
                     relativeConfig.Visible = showRelative;
                     nullConfig.Visible = showNull;

@@ -60,7 +60,7 @@ namespace OpenTabletDriver.UX.Controls
                             {
                                 Text = "Plugin Repository",
                                 Command = new Command(
-                                    (s, e) => SystemInfo.Open(App.PluginRepositoryUrl)
+                                    (s, e) => Desktop.Interop.SystemInterop.Open(App.PluginRepositoryUrl)
                                 )
                             },
                             HorizontalAlignment = HorizontalAlignment.Center

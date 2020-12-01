@@ -284,7 +284,7 @@ namespace OpenTabletDriver.Daemon
                     var plugin = AppInfo.PluginManager.GetPluginReference(interpolatorName);
                     var type = plugin.GetTypeReference<Interpolator>();
 
-                    var interpolator = plugin.Construct<Interpolator>(Platform.Timer);
+                    var interpolator = plugin.Construct<Interpolator>(SystemInterop.Timer);
                     foreach (var property in type.GetProperties())
                     {
                         if (property.GetCustomAttribute<PropertyAttribute>(false) != null &&
