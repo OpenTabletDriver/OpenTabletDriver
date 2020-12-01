@@ -1,4 +1,5 @@
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
