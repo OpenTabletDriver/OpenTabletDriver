@@ -261,9 +261,12 @@ namespace OpenTabletDriver.UX
                 displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
             };
             displayAreaEditor.AppendMenuItemSeparator();
+
             foreach (var display in SystemInterop.VirtualScreen.Displays)
-                displayAreaEditor.AppendMenuItem($"Set to {display}",
-                    (Action)(() =>
+            {
+                displayAreaEditor.AppendMenuItem(
+                    $"Set to {display}",
+                    () =>
                     {
                         displayAreaEditor.ViewModel.Width = display.Width;
                         displayAreaEditor.ViewModel.Height = display.Height;
@@ -274,11 +277,13 @@ namespace OpenTabletDriver.UX
                         }
                         else
                         {
-                            virtualScreen = OpenTabletDriver.Desktop.Interop.SystemInterop.VirtualScreen;
+                            virtualScreen = SystemInterop.VirtualScreen;
                             displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                             displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                         }
-                    }));
+                    }
+                );
+            }
 
             var displayAreaGroup = new GroupBox
             {
@@ -311,7 +316,7 @@ namespace OpenTabletDriver.UX
         private Control ConstructSensitivityControls()
         {
             var xSensBox = ConstructSensitivityEditor(
-                "X Sensitivity", 
+                "X Sensitivity",
                 (s) => App.Settings.XSensitivity = float.TryParse(s, out var val) ? val : 0f,
                 () => App.Settings.XSensitivity.ToString(),
                 "px/mm"
@@ -363,12 +368,12 @@ namespace OpenTabletDriver.UX
             {
                 var unitControl = new Label
                 {
-                    Text = unit, 
+                    Text = unit,
                     VerticalAlignment = VerticalAlignment.Center
                 };
                 layout.Rows[0].Cells.Add(unitControl);
             }
-            
+
             return new GroupBox
             {
                 Text = header,
@@ -396,7 +401,7 @@ namespace OpenTabletDriver.UX
                 {
                     Spacing = 5
                 };
-                
+
                 var tipBindingControl = new BindingDisplay(Settings.TipButton);
                 tipBindingControl.BindingUpdated += (s, binding) => Settings.TipButton = binding;
 
@@ -415,7 +420,7 @@ namespace OpenTabletDriver.UX
                 };
                 var tipPressureBox = new TextBox();
 
-                tipPressureSlider.ValueChanged += (sender, e) => 
+                tipPressureSlider.ValueChanged += (sender, e) =>
                 {
                     settings.TipActivationPressure = tipPressureSlider.Value;
                     tipPressureBox.Text = Settings.TipActivationPressure.ToString();
@@ -428,11 +433,11 @@ namespace OpenTabletDriver.UX
                     tipPressureSlider.Value = (int)Settings.TipActivationPressure;
                 };
                 tipPressureBox.Text = Settings.TipActivationPressure.ToString();
-                
+
                 var tipPressureLayout = new StackLayout
                 {
                     Orientation = Orientation.Horizontal,
-                    Items = 
+                    Items =
                     {
                         new StackLayoutItem(tipPressureSlider, VerticalAlignment.Center, true),
                         new StackLayoutItem(tipPressureBox, VerticalAlignment.Center, false)
@@ -671,7 +676,7 @@ namespace OpenTabletDriver.UX
                 {
                     var watchdog = new DaemonWatchdog();
                     watchdog.Start();
-                    watchdog.DaemonExited += (sender, e) => 
+                    watchdog.DaemonExited += (sender, e) =>
                     {
                         var dialogResult = MessageBox.Show(
                             this,
@@ -979,7 +984,7 @@ namespace OpenTabletDriver.UX
                             outputConfig.Items.Remove(item);
                         }
                     }
-                    
+
                     setVisibilityWorkaround(absoluteConfig, showAbsolute, 0);
                     setVisibilityWorkaround(relativeConfig, showRelative, 1);
                     setVisibilityWorkaround(nullConfig, showNull, 2);
