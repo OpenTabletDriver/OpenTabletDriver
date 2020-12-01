@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                 _ = timeGetDevCaps(ref caps, (uint)sizeof(TimeCaps));
                 _ = timeBeginPeriod(Math.Clamp((uint)Interval, caps.wPeriodMin, caps.wPeriodMax));
                 Enabled = true;
-                timerId = timeSetEvent(0, 1, callbackDelegate, IntPtr.Zero, EventType.TIME_PERIODIC);
+                timerId = timeSetEvent(1, 1, callbackDelegate, IntPtr.Zero, EventType.TIME_PERIODIC);
             }
         }
 
