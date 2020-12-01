@@ -1,6 +1,6 @@
 using System;
-using OpenTabletDriver.Contracts;
-using OpenTabletDriver.RPC;
+using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.RPC;
 
 namespace OpenTabletDriver.Console
 {
