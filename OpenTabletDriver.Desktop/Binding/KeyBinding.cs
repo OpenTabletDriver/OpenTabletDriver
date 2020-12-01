@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName("Key Binding")]
     public class KeyBinding : IBinding, IValidateBinding
     {
-        private IVirtualKeyboard keyboard => SystemInterop.KeyboardHandler;
+        private IVirtualKeyboard keyboard => SystemInterop.VirtualKeyboard;
 
         public string Property { set; get; }
 

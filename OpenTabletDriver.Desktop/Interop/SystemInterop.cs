@@ -16,64 +16,6 @@ namespace OpenTabletDriver.Desktop.Interop
 {
     public static class SystemInterop
     {
-        public static IAbsolutePointer VirtualTablet => _virtualTablet.Value;
-        public static IRelativePointer VirtualMouse => _virtualMouse.Value;
-
-        public static IVirtualKeyboard KeyboardHandler => _keyboardHandler.Value;
-        
-        public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
-        
-        public static ITimer Timer => CurrentPlatform switch
-        {
-            PluginPlatform.Windows => new WindowsTimer(),
-            PluginPlatform.Linux   => new LinuxTimer(),
-            _                       => new FallbackTimer()
-        };
-
-        private static Lazy<IAbsolutePointer> _virtualTablet = new Lazy<IAbsolutePointer>(() =>
-        {
-            return CurrentPlatform switch
-            {
-                PluginPlatform.Windows => new WindowsAbsolutePointer(),
-                PluginPlatform.Linux   => new EvdevAbsolutePointer(),
-                PluginPlatform.MacOS   => new MacOSAbsolutePointer(),
-                _                       => null
-            };
-        });
-
-        private static Lazy<IRelativePointer> _virtualMouse = new Lazy<IRelativePointer>(() => 
-        {
-            return CurrentPlatform switch
-            {
-                PluginPlatform.Windows => new WindowsRelativePointer(),
-                PluginPlatform.Linux   => new EvdevRelativePointer(),
-                PluginPlatform.MacOS   => new MacOSRelativePointer(),
-                _                       => null
-            };
-        });
-
-        private static Lazy<IVirtualKeyboard> _keyboardHandler = new Lazy<IVirtualKeyboard>(() => 
-        {
-            return CurrentPlatform switch
-            {
-                PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-                PluginPlatform.Linux   => new EvdevVirtualKeyboard(),
-                PluginPlatform.MacOS   => new MacOSVirtualKeyboard(),
-                _                       => null
-            };
-        });
-
-        private static Lazy<IVirtualScreen> _virtualScreen = new Lazy<IVirtualScreen>(() => 
-        {
-            return CurrentPlatform switch
-            {
-                PluginPlatform.Windows => new WindowsDisplay(),
-                PluginPlatform.Linux   => GetLinuxScreen(),
-                PluginPlatform.MacOS   => new MacOSDisplay(),
-                _                       => null
-            };
-        });
-
         public static PluginPlatform CurrentPlatform
         {
             get
@@ -112,14 +54,59 @@ namespace OpenTabletDriver.Desktop.Interop
             }
         }
 
-        private static IVirtualScreen GetLinuxScreen()
+        public static IAbsolutePointer AbsolutePointer => _absolutePointer.Value;
+        public static IRelativePointer RelativePointer => _relativePointer.Value;
+        public static IVirtualKeyboard VirtualKeyboard => _virtualKeyboard.Value;
+        public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
+
+        public static ITimer Timer => CurrentPlatform switch
+        {
+            PluginPlatform.Windows => new WindowsTimer(),
+            PluginPlatform.Linux   => new LinuxTimer(),
+            _                      => new FallbackTimer()
+        };
+
+        private static Lazy<IAbsolutePointer> _absolutePointer = new Lazy<IAbsolutePointer>(() => CurrentPlatform switch
+        {
+            PluginPlatform.Windows => new WindowsAbsolutePointer(),
+            PluginPlatform.Linux   => new EvdevAbsolutePointer(),
+            PluginPlatform.MacOS   => new MacOSAbsolutePointer(),
+            _                      => null
+        });
+
+        private static Lazy<IRelativePointer> _relativePointer = new Lazy<IRelativePointer>(() => CurrentPlatform switch
+        {
+            PluginPlatform.Windows => new WindowsRelativePointer(),
+            PluginPlatform.Linux   => new EvdevRelativePointer(),
+            PluginPlatform.MacOS   => new MacOSRelativePointer(),
+            _                      => null
+        });
+
+        private static Lazy<IVirtualKeyboard> _virtualKeyboard = new Lazy<IVirtualKeyboard>(() => CurrentPlatform switch
+        {
+            PluginPlatform.Windows => new WindowsVirtualKeyboard(),
+            PluginPlatform.Linux   => new EvdevVirtualKeyboard(),
+            PluginPlatform.MacOS   => new MacOSVirtualKeyboard(),
+            _                      => null
+        });
+
+        private static Lazy<IVirtualScreen> _virtualScreen = new Lazy<IVirtualScreen>(() => CurrentPlatform switch
+        {
+            PluginPlatform.Windows => new WindowsDisplay(),
+            PluginPlatform.Linux   => ConstructLinuxDisplay(),
+            PluginPlatform.MacOS   => new MacOSDisplay(),
+            _                      => null
+        });
+
+        private static IVirtualScreen ConstructLinuxDisplay()
         {
             if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
                 return new WaylandDisplay();
             else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
                 return new XScreen();
-            else
-                throw new Exception("Neither Wayland nor X11 were detected. Make sure DISPLAY or WAYLAND_DISPLAY is set.");
+            
+            Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
+            return new XScreen();
         }
     }
 }
