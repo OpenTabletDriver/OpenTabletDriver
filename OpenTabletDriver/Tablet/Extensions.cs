@@ -1,5 +1,6 @@
 using System;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 
 namespace OpenTabletDriver.Tablet
 {
@@ -22,10 +23,21 @@ namespace OpenTabletDriver.Tablet
                         $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}], " + 
                         $"Pressure:{tabletReport.Pressure}, " + 
                         $"PenButtons:[{String.Join(" ", tabletReport.PenButtons)}]",
+                    ITouchReport tabletReport => FormatTouchReport(tabletReport),
                     _ =>
                         $"Raw: {BitConverter.ToString(report.Raw).Replace('-', ' ')}"
                 };
             }
+        }
+
+        private static string FormatTouchReport(ITouchReport report)
+        {
+            string res = "";
+            foreach(var i in report.Touches)
+            {
+                res += (i?.AsString + ", ") ?? "";
+            }
+            return res;
         }
     }
 }

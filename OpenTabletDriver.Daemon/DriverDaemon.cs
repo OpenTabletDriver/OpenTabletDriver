@@ -21,6 +21,7 @@ using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Daemon
@@ -68,6 +69,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<LogMessage> Message;
         public event EventHandler<DebugTabletReport> TabletReport;
         public event EventHandler<DebugAuxReport> AuxReport;
+        public event EventHandler<DebugTouchReport> TouchReport;
         public event EventHandler<TabletState> TabletChanged;
 
         public DesktopDriver Driver { private set; get; } = new DesktopDriver();
@@ -341,6 +343,8 @@ namespace OpenTabletDriver.Daemon
                     TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
                 if (report is IAuxReport auxReport)
                     AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
+                if (report is ITouchReport touchReport)
+                    TouchReport?.Invoke(this, new DebugTouchReport(touchReport));
             }
             if (enabled)
             {

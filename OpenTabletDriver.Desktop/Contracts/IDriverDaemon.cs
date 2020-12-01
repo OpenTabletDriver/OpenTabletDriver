@@ -12,6 +12,7 @@ namespace OpenTabletDriver.Desktop.Contracts
         event EventHandler<LogMessage> Message;
         event EventHandler<DebugTabletReport> TabletReport;
         event EventHandler<DebugAuxReport> AuxReport;
+        event EventHandler<DebugTouchReport> TouchReport;
         event EventHandler<TabletState> TabletChanged;
 
         Task WriteMessage(LogMessage message);
