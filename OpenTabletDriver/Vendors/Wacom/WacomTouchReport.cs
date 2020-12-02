@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Vendors.Wacom
         public WacomTouchReport(byte[] report, WacomTouchReport? previous = null)
         {
             Raw = report;
-            Touches = previous?.Touches ?? new TouchPoint?[maxPoints];
+            Touches = previous?.Touches ?? new TouchPoint[maxPoints];
 
             var nChunks = Raw[1];
             for (var i = 0; i < nChunks; ++i)
@@ -37,7 +37,7 @@ namespace OpenTabletDriver.Vendors.Wacom
                         Y = (Raw[5 + offset] << 4) | (Raw[6 + offset] & 0xF)
                     },
                     Pressure = Raw[7 + offset],
-                    SomeOtherPressure = Raw[8 + offset]
+                    Confidence = Raw[8 + offset]
                 };
             }
         }
@@ -57,6 +57,6 @@ namespace OpenTabletDriver.Vendors.Wacom
         public const int maxPoints = 16;
 
         public byte[] Raw { private set; get; }
-        public TouchPoint?[] Touches { private set; get; }
+        public TouchPoint[] Touches { private set; get; }
     }
 }

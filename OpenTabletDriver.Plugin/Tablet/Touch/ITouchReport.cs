@@ -2,6 +2,6 @@
 {
     public interface ITouchReport : IDeviceReport
     {
-        TouchPoint?[] Touches { get; }
+        TouchPoint[] Touches { get; }
     }
 }

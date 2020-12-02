@@ -2,15 +2,15 @@
 
 namespace OpenTabletDriver.Plugin.Tablet.Touch
 {
-    public struct TouchPoint
+    public class TouchPoint
     {
         public byte TouchID;
         public Vector2 Position;
         public byte Pressure;
-        public byte SomeOtherPressure;
-        public string AsString
+        public byte Confidence;
+        public override string ToString()
         {
-            get { return $"point #{TouchID}: {Position}; pressure = {Pressure} ({SomeOtherPressure})"; }
+            return $"point #{TouchID}: {Position}; pressure = {Pressure} ({Confidence})";
         }
     }
 }

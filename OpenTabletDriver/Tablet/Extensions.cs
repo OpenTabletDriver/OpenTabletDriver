@@ -35,7 +35,7 @@ namespace OpenTabletDriver.Tablet
             string res = "";
             foreach(var i in report.Touches)
             {
-                res += (i?.AsString + ", ") ?? "";
+                res += (i?.ToString() + ", ") ?? ", ";
             }
             return res;
         }
