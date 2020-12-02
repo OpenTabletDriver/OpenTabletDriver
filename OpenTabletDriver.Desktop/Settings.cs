@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Numerics;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Plugin;
 
@@ -323,6 +325,18 @@ namespace OpenTabletDriver.Desktop
             RelativeRotation = 0,
             ResetTime = TimeSpan.FromMilliseconds(100)
         };
+
+        #endregion
+
+        #region Error Handling
+            
+        [OnError]
+        private void HandleSerializerError(StreamingContext context, ErrorContext errorContext)
+        {
+            // Ignore error and continue. We want to recover as much as we can from the broken file.
+            Log.Exception(errorContext.Error);
+            errorContext.Handled = true;
+        }
 
         #endregion
     }
