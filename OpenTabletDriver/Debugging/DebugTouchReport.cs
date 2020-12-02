@@ -15,6 +15,6 @@ namespace OpenTabletDriver.Debugging
             this.Touches = tabletReport.Touches;
         }
 
-        public TouchPoint?[] Touches { set; get; }
+        public TouchPoint[] Touches { set; get; }
     }
 }
