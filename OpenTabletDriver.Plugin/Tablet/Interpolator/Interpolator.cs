@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Timers;
 
@@ -18,6 +20,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 
         protected double reportMsAvg = 5.0f;
         protected bool enabled;
+        protected List<IFilter> filters = new List<IFilter>();
         protected ITimer scheduler;
         protected DateTime lastTime = DateTime.UtcNow;
         protected readonly object stateLock = new object();
@@ -57,6 +60,12 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             get => this.enabled;
         }
 
+        public virtual IEnumerable<IFilter> Filters
+        {
+            set => this.filters = value.ToList();
+            get => this.filters;
+        }
+
         protected virtual void HandleReport(object _, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport && !(report is ISyntheticReport))
@@ -72,7 +81,10 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 
                         if (Enabled)
                         {
-                            UpdateState(new SyntheticTabletReport(tabletReport));
+                            var synthesizedReport = new SyntheticTabletReport(tabletReport);
+                            foreach (var filter in this.filters)
+                                synthesizedReport.Position = filter.Filter(synthesizedReport.Position);
+                            UpdateState(synthesizedReport);
                         }
                     }
                 }
