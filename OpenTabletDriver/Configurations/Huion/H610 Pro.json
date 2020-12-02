@@ -24,8 +24,8 @@
         "201": "HUION_T175_\\d{6}$"
       },
       "InitializationStrings": [
-		"200"
-	  ]
+        "200"
+      ]
     },
     {
       "Width": 254.0,
@@ -50,8 +50,8 @@
         "201": "HUION_T175_\\d{6}$"
       },
       "InitializationStrings": [
-		"200"
-	  ]
+        "200"
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
