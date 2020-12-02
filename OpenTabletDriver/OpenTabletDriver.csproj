@@ -25,4 +25,10 @@
     <ProjectReference Include="..\OpenTabletDriver.Plugin\OpenTabletDriver.Plugin.csproj" />
   </ItemGroup>
 
+  <ItemGroup Label="Configurations">
+    <EmbeddedResource Include=".\Configurations\*\*.json">
+      <IncludeInPackage>true</IncludeInPackage>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
