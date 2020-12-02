@@ -5,7 +5,7 @@ using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
@@ -61,7 +61,7 @@ namespace OpenTabletDriver.UX.Controls
                             {
                                 Text = "Plugin Repository",
                                 Command = new Command(
-                                    (s, e) => SystemInfo.Open(App.PluginRepositoryUrl)
+                                    (s, e) => SystemInterop.Open(App.PluginRepositoryUrl)
                                 )
                             },
                             HorizontalAlignment = HorizontalAlignment.Center

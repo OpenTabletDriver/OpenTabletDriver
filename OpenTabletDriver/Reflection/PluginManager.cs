@@ -14,6 +14,7 @@ namespace OpenTabletDriver.Reflection
         public PluginManager()
         {
             var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
+                where IsLoadable(asm)
                 from type in asm.DefinedTypes
                 where type.IsPublic && !(type.IsInterface || type.IsAbstract)
                 where IsPluginType(type)
@@ -92,6 +93,21 @@ namespace OpenTabletDriver.Reflection
         {
             var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
             return attr?.IsCurrentPlatform ?? true;
+        }
+
+        protected virtual bool IsLoadable(Assembly asm)
+        {
+            try
+            {
+                _ = asm.DefinedTypes;
+                return true;
+            }
+            catch
+            {
+                var asmName = asm.GetName();
+                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
+                return false;
+            }
         }
     }
 }

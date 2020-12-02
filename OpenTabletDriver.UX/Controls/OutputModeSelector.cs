@@ -15,6 +15,7 @@ namespace OpenTabletDriver.UX.Controls
             var outputModes = from type in AppInfo.PluginManager.GetChildTypes<IOutputMode>()
                 where !type.IsAbstract
                 where !type.IsInterface
+                orderby type.Name
                 select AppInfo.PluginManager.GetPluginReference(type);
 
             OutputModes = new List<PluginReference>(outputModes);

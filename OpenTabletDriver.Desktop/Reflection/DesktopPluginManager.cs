@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
 
@@ -82,7 +82,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (!IsPlatformSupported(type))
                 {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInfo.CurrentPlatform}", LogLevel.Info);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
                 if (type.IsPluginIgnored())
@@ -99,21 +99,6 @@ namespace OpenTabletDriver.Desktop.Reflection
                     Log.Write("Plugin", $"Plugin '{type.FullName}' incompatible", LogLevel.Warning);
                 }
             });
-        }
-
-        protected static bool IsLoadable(Assembly asm)
-        {
-            try
-            {
-                _ = asm.DefinedTypes;
-                return true;
-            }
-            catch
-            {
-                var asmName = asm.GetName();
-                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
-                return false;
-            }
         }
     }
 }

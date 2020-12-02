@@ -4,9 +4,10 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.RPC;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
@@ -19,10 +20,15 @@ namespace OpenTabletDriver.UX
         public static Bitmap Logo => _logo.Value;
         public static Padding GroupBoxPadding => _groupBoxPadding.Value;
         
+        public static event Action<Settings> SettingsChanged;
         private static Settings settings;
         public static Settings Settings
         {
-            set => settings = SettingsMigrator.Migrate(value);
+            set
+            {
+                settings = SettingsMigrator.Migrate(value);
+                SettingsChanged?.Invoke(Settings);
+            }
             get => settings;
         }
 
@@ -55,9 +61,9 @@ namespace OpenTabletDriver.UX
 
         private static readonly Lazy<Padding> _groupBoxPadding = new Lazy<Padding>(() => 
         {
-            return SystemInfo.CurrentPlatform switch
+            return SystemInterop.CurrentPlatform switch
             {
-                RuntimePlatform.Windows => new Padding(0),
+                PluginPlatform.Windows => new Padding(0),
                 _                       => new Padding(5)
             };
         });

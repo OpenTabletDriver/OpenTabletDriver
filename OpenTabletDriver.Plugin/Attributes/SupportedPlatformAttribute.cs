@@ -11,11 +11,12 @@ namespace OpenTabletDriver.Plugin.Attributes
             this.Platform = platform;
         }
 
-        public PluginPlatform Platform { private set; get; }
+        public PluginPlatform Platform { get; }
 
         public bool IsCurrentPlatform => 
             (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Platform.HasFlag(PluginPlatform.Windows)) ||
             (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Platform.HasFlag(PluginPlatform.Linux)) ||
-            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Platform.HasFlag(PluginPlatform.MacOS));
+            (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Platform.HasFlag(PluginPlatform.MacOS)) ||
+            (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD) && Platform.HasFlag(PluginPlatform.FreeBSD));
     }
 }

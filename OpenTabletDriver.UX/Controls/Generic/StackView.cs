@@ -17,26 +17,24 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected StackView()
         {
-            base.HorizontalContentAlignment = defaultAlignment;
+            base.HorizontalContentAlignment = defaultHorizontalAlignment;
+            base.VerticalContentAlignment = defaultVerticalAlignment;
             base.Spacing = 5;
         }
 
-        private const HorizontalAlignment defaultAlignment = HorizontalAlignment.Stretch;
+        private const HorizontalAlignment defaultHorizontalAlignment = HorizontalAlignment.Stretch;
+        private const VerticalAlignment defaultVerticalAlignment = VerticalAlignment.Stretch;
 
-        public void AddControl(Control ctrl, HorizontalAlignment alignment = defaultAlignment)
+        public void AddControl(Control ctrl, bool expand = false)
         {
-            var newItem = new StackLayoutItem
-            {
-                Control = ctrl,
-                HorizontalAlignment = alignment
-            };
+            var newItem = new StackLayoutItem(ctrl, expand);
             base.Items.Add(newItem);
         }
 
-        public void AddControls(IEnumerable<Control> controls, HorizontalAlignment alignment = defaultAlignment)
+        public void AddControls(IEnumerable<Control> controls)
         {
             foreach (var ctrl in controls)
-                AddControl(ctrl, alignment);
+                AddControl(ctrl);
         }
     }
 }
