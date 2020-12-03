@@ -151,6 +151,13 @@ namespace OpenTabletDriver.UX.Controls
                 base.VerticalContentAlignment = VerticalAlignment.Top;
             }
 
+            private static readonly IReadOnlyList<Type> GenericallyConvertableTypes = new Type[]
+            {
+                typeof(int),
+                typeof(uint),
+                typeof(double)
+            };
+
             public void Refresh(PluginSettingStore store)
             {
                 this.Items.Clear();
@@ -249,12 +256,23 @@ namespace OpenTabletDriver.UX.Controls
                     };
                     tb.TextChanged += (sender, e) => setting.SetValue(float.TryParse(tb.Text, out var val) ? val : 0f);
 
-                    if (property.GetCustomAttributes<SliderPropertyAttribute>() is SliderPropertyAttribute sliderAttr)
+                    if (property.GetCustomAttribute<SliderPropertyAttribute>() is SliderPropertyAttribute sliderAttr)
                     {
                         // TODO: replace with slider when possible (https://github.com/picoe/Eto/issues/1772)
                         tb.ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}";
                         tb.PlaceholderText = $"{sliderAttr.DefaultValue}";
+                        if (setting.Value == null)
+                            setting.SetValue(sliderAttr.DefaultValue);
                     }
+                    return tb;
+                }
+                else if (GenericallyConvertableTypes.Contains(property.PropertyType))
+                {
+                    var tb = new TextBox
+                    {
+                        Text = $"{setting.GetValue(property.PropertyType)}"
+                    };
+                    tb.TextChanged += (sender, e) => setting.SetValue(Convert.ChangeType(tb.Text, property.PropertyType) ?? 0);
                     return tb;
                 }
                 throw new NotSupportedException($"'{property.PropertyType}' is not supported by {nameof(PluginSettingStoreEditor)}");
