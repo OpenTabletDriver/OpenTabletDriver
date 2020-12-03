@@ -178,9 +178,10 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
-            outputMode.Filters = from store in Settings.Filters
+            var filters = from store in Settings.Filters
                 where store.Enable == true
                 select store.Construct<IFilter>();
+            outputMode.Filters = filters.ToList();
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");

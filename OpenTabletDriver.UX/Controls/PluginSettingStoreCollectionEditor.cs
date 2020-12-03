@@ -160,10 +160,10 @@ namespace OpenTabletDriver.UX.Controls
             private IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
             {
                 var type = store.GetPluginReference().GetTypeReference<TSource>();
-                return GetControlsFor(store, type);
+                return GetControlsForType(store, type);
             }
 
-            private IEnumerable<Control> GetControlsFor(PluginSettingStore store, Type type)
+            private IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)
             {
                 var properties = from property in type.GetProperties()
                     let attrs = property.GetCustomAttributes(true)
@@ -177,7 +177,6 @@ namespace OpenTabletDriver.UX.Controls
             private Control GetControlForProperty(PluginSettingStore store, PropertyInfo property)
             {
                 var attr = property.GetCustomAttribute<PropertyAttribute>();
-                Control control = null;
                 PluginSetting setting = store[property];
 
                 if (setting == null)
@@ -186,6 +185,27 @@ namespace OpenTabletDriver.UX.Controls
                     store.Settings.Add(setting);
                 }
 
+                var control = GetControlForSetting(property, setting);
+
+                if (control != null)
+                {
+                    // Apply all visual modifier attributes
+                    foreach (ModifierAttribute modifierAttr in property.GetCustomAttributes<ModifierAttribute>())
+                        control = ApplyModifierAttribute(control, modifierAttr);
+
+                    return new GroupBoxBase(
+                        attr.DisplayName ?? property.Name,
+                        control
+                    );
+                }
+                else
+                {
+                    throw new NullReferenceException($"{nameof(control)} is null. This is likely due to {property.PropertyType.Name} being an unsupported type.");
+                }
+            }
+
+            private Control GetControlForSetting(PropertyInfo property, PluginSetting setting)
+            {
                 if (property.PropertyType == typeof(string))
                 {
                     var textbox = new TextBox
@@ -193,16 +213,13 @@ namespace OpenTabletDriver.UX.Controls
                         Text = setting.GetValue<string>()
                     };
                     textbox.TextChanged += (sender, e) => setting.SetValue(textbox.Text);
-
-                    control = textbox;
+                    return textbox;
                 }
                 else if (property.PropertyType == typeof(bool))
                 {
                     string description = property.Name;
                     if (property.GetCustomAttribute<BooleanPropertyAttribute>() is BooleanPropertyAttribute attribute)
-                    {
                         description = attribute.Description;
-                    }
 
                     var checkbox = new CheckBox
                     {
@@ -210,8 +227,7 @@ namespace OpenTabletDriver.UX.Controls
                         Checked = setting.GetValue<bool>()
                     };
                     checkbox.CheckedChanged += (sender, e) => setting.SetValue((bool)checkbox.Checked);
-
-                    control = checkbox;
+                    return checkbox;
                 }
                 else if (property.PropertyType == typeof(float))
                 {
@@ -227,28 +243,12 @@ namespace OpenTabletDriver.UX.Controls
                         tb.ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}";
                         tb.PlaceholderText = $"{sliderAttr.DefaultValue}";
                     }
-
-                    control = tb;
+                    return tb;
                 }
-
-                if (control != null)
-                {
-                    // Apply all visual modifier attributes
-                    foreach (ModifierAttribute modifierAttr in property.GetCustomAttributes<ModifierAttribute>())
-                        control = ApplyModifierAttributes(control, modifierAttr);
-
-                    return new GroupBoxBase(
-                        attr.DisplayName ?? property.Name,
-                        control
-                    );
-                }
-                else
-                {
-                    throw new NullReferenceException($"{nameof(control)} was null. It is likely that the {nameof(PropertyAttribute)} wasn't handled.");
-                }
+                throw new NotSupportedException($"'{property.PropertyType}' is not supported by {nameof(PluginSettingStoreEditor)}");
             }
 
-            private Control ApplyModifierAttributes(Control control, ModifierAttribute attribute)
+            private Control ApplyModifierAttribute(Control control, ModifierAttribute attribute)
             {
                 switch (attribute)
                 {

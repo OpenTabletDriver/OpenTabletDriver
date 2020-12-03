@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    [JsonObject(ItemTypeNameHandling = TypeNameHandling.All)]
     public class PluginSetting
     {
         public PluginSetting(string property, object value)
