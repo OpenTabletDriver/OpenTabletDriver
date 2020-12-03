@@ -38,30 +38,31 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public void SetValue(object value)
         {
-            if (value is string stringVal)
-                Value = stringVal;
-            else if (value is int intVal)
-                Value = intVal;
-            else if (value is uint uintVal)
-                Value = uintVal;
-            else if (value is float floatVal)
-                Value = floatVal;
-            else if (value is double doubleVal)
-                Value = doubleVal;
-            else if (value is Enum enumVal)
-                Value = JObject.FromObject(enumVal);
-            else
-                Value = JObject.FromObject(value);
+            Value = value switch
+            {
+                string val => val,
+                bool val => val,
+                int val => val,
+                uint val => val,
+                float val => val,
+                double val => val,
+                DateTime val => val,
+                TimeSpan val => val,
+                Guid val => val,
+                Uri val => val,
+                Enum val => JObject.FromObject(val),
+                _ => value != null ? JObject.FromObject(value) : null
+            };
         }
 
         public T GetValue<T>()
         {
-            return Value.ToObject<T>() ?? default(T);
+            return Value != null ? Value.ToObject<T>() : default(T);
         }
 
         public object GetValue(Type asType)
         {
-            return Value.ToObject(asType);
+            return Value?.ToObject(asType);
         }
     }
 }
