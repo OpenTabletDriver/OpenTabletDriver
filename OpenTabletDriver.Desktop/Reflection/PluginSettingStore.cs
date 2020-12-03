@@ -56,8 +56,8 @@ namespace OpenTabletDriver.Desktop.Reflection
                 select property;
 
             foreach (var setting in Settings)
-                if (properties.FirstOrDefault(d => d.Name == setting.PropertyName) is PropertyInfo property)
-                    property.SetValue(target, setting.Value);
+                if (properties.FirstOrDefault(d => d.Name == setting.Property) is PropertyInfo property)
+                    property.SetValue(target, setting.GetValue(property.PropertyType));
         }
 
         private static ObservableCollection<PluginSetting> GetSettingsForType(Type targetType, object source = null)
@@ -68,7 +68,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return new ObservableCollection<PluginSetting>(settings);
         }
 
-        public PluginSetting this[string propertyName] => Settings.FirstOrDefault(s => s.PropertyName == propertyName);
+        public PluginSetting this[string propertyName] => Settings.FirstOrDefault(s => s.Property == propertyName);
         public PluginSetting this[PropertyInfo property] => this[property.Name];
     }
 }

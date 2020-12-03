@@ -192,7 +192,7 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         Text = setting.GetValue<string>()
                     };
-                    textbox.TextChanged += (sender, e) => setting.Value = textbox.Text;
+                    textbox.TextChanged += (sender, e) => setting.SetValue(textbox.Text);
 
                     control = textbox;
                 }
@@ -209,7 +209,7 @@ namespace OpenTabletDriver.UX.Controls
                         Text = description,
                         Checked = setting.GetValue<bool>()
                     };
-                    checkbox.CheckedChanged += (sender, e) => setting.Value = (bool)checkbox.Checked;
+                    checkbox.CheckedChanged += (sender, e) => setting.SetValue((bool)checkbox.Checked);
 
                     control = checkbox;
                 }
@@ -219,7 +219,7 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         Text = $"{setting.GetValue<float>()}"
                     };
-                    tb.TextChanged += (sender, e) => setting.Value = float.TryParse(tb.Text, out var val) ? val : 0f;
+                    tb.TextChanged += (sender, e) => setting.SetValue(float.TryParse(tb.Text, out var val) ? val : 0f);
 
                     if (property.GetCustomAttributes<SliderPropertyAttribute>() is SliderPropertyAttribute sliderAttr)
                     {
