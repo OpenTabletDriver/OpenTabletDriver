@@ -143,7 +143,7 @@ namespace OpenTabletDriver.Daemon
         {
             var settings = Settings.Defaults;
             var virtualScreen = SystemInterop.VirtualScreen;
-            var tablet = Driver.Tablet.Digitizer;
+            var tablet = Driver.Tablet?.Digitizer;
 
             settings.DisplayWidth = virtualScreen.Width;
             settings.DisplayHeight = virtualScreen.Height;
@@ -160,32 +160,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
-            outputMode.Filters = from filterPath in Settings?.Filters
-                let filter = AppInfo.PluginManager.GetPluginReference(filterPath).Construct<IFilter>()
-                where filter != null
-                select filter;
-
-            foreach (var filter in outputMode.Filters)
-            {
-                foreach (var property in filter.GetType().GetProperties())
-                {
-                    var settingPath = filter.GetType().FullName + "." + property.Name;
-                    if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
-                        Settings.PluginSettings.TryGetValue(settingPath, out var strValue))
-                    {
-                        try
-                        {
-                            var value = Convert.ChangeType(strValue, property.PropertyType);
-                            property.SetValue(filter, value);
-                        }
-                        catch (FormatException)
-                        {
-                            Log.Write("Settings", $"Invalid filter setting for '{property.Name}', this setting will be cleared.");
-                            Settings.PluginSettings.Remove(settingPath);
-                        }
-                    }
-                }
-            }
+            outputMode.Filters = from filter in Settings.Filters
+                select filter.Construct<IFilter>();
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
@@ -241,14 +217,18 @@ namespace OpenTabletDriver.Daemon
 
         private void SetBindingHandlerSettings()
         {
-            BindingHandler.TipBinding = BindingTools.GetBinding(Settings.TipButton);
+            BindingHandler.TipBinding = Settings.TipButton?.Construct<IBinding>();
             BindingHandler.TipActivationPressure = Settings.TipActivationPressure;
             Log.Write("Settings", $"Tip Binding: '{(BindingHandler.TipBinding is IBinding binding ? binding.ToString() : "None")}'@{BindingHandler.TipActivationPressure}%");
-
+    
             if (Settings.PenButtons != null)
             {
                 for (int index = 0; index < Settings.PenButtons.Count; index++)
-                    BindingHandler.PenButtonBindings[index] = BindingTools.GetBinding(Settings.PenButtons[index]);
+                {
+                    var bind = Settings.PenButtons[index]?.Construct<IBinding>();
+                    if (!BindingHandler.PenButtonBindings.TryAdd(index, bind))
+                        BindingHandler.PenButtonBindings[index] = bind;
+                }
 
                 Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", BindingHandler.PenButtonBindings));
             }
@@ -256,7 +236,11 @@ namespace OpenTabletDriver.Daemon
             if (Settings.AuxButtons != null)
             {
                 for (int index = 0; index < Settings.AuxButtons.Count; index++)
-                    BindingHandler.AuxButtonBindings[index] = BindingTools.GetBinding(Settings.AuxButtons[index]);
+                {
+                    var bind = Settings.AuxButtons[index]?.Construct<IBinding>();
+                    if (!BindingHandler.AuxButtonBindings.TryAdd(index, bind))
+                        BindingHandler.AuxButtonBindings[index] = bind;
+                }
 
                 Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", BindingHandler.AuxButtonBindings));
             }
@@ -269,26 +253,17 @@ namespace OpenTabletDriver.Daemon
                 runningTool.Dispose();
             }
             
-            foreach (var toolName in Settings.Tools)
+            foreach (ToggleablePluginSettingStore store in Settings.Tools)
             {
-                var plugin = AppInfo.PluginManager.GetPluginReference(toolName);
-                var type = plugin.GetTypeReference<ITool>();
-                
-                var tool = plugin.Construct<ITool>();
-                foreach (var property in type.GetProperties())
-                {
-                    if (property.GetCustomAttribute<PropertyAttribute>(false) != null && 
-                        Settings.PluginSettings.TryGetValue(type.FullName + "." + property.Name, out var strValue))
-                    {
-                        var value = Convert.ChangeType(strValue, property.PropertyType);
-                        property.SetValue(tool, value);
-                    }
-                }
+                if (store.Enable == false)
+                    continue;
+
+                var tool = store.Construct<ITool>();
 
                 if (tool.Initialize())
                     Tools.Add(tool);
                 else
-                    Log.Write("Tool", $"Failed to initialize {plugin.Name} tool.", LogLevel.Error);
+                    Log.Write("Tool", $"Failed to initialize {store.GetPluginReference().Name} tool.", LogLevel.Error);
             }
         }
 
@@ -296,26 +271,16 @@ namespace OpenTabletDriver.Daemon
         {
             foreach (var interpolator in Driver.Interpolators)
                 interpolator.Dispose();
-            
             Driver.Interpolators.Clear();
+            
             if (Settings.Interpolators != null)
             {
-                foreach (var interpolatorName in Settings.Interpolators)
+                foreach (ToggleablePluginSettingStore store in Settings.Interpolators)
                 {
-                    var plugin = AppInfo.PluginManager.GetPluginReference(interpolatorName);
-                    var type = plugin.GetTypeReference<Interpolator>();
+                    if (store.Enable == false)
+                        continue;
 
-                    var interpolator = plugin.Construct<Interpolator>(SystemInterop.Timer);
-                    foreach (var property in type.GetProperties())
-                    {
-                        if (property.GetCustomAttribute<PropertyAttribute>(false) != null &&
-                            Settings.PluginSettings.TryGetValue(type.FullName + "." + property.Name, out var strValue))
-                        {
-                            var value = Convert.ChangeType(strValue, property.PropertyType);
-                            property.SetValue(interpolator, value);
-                        }
-                    }
-
+                    var interpolator = store.Construct<Interpolator>(SystemInterop.Timer);
                     Driver.Interpolators.Add(interpolator);
 
                     Log.Write("Settings", $"Interpolator: {interpolator}");

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.Desktop.Migration
 {
@@ -11,17 +13,23 @@ namespace OpenTabletDriver.Desktop.Migration
             settings.OutputMode = MigrateNamespace(settings.OutputMode);
             
             // Bindings
-            settings.TipButton = MigrateNamespace(settings.TipButton);
+            settings.TipButton.Path = MigrateNamespace(settings.TipButton.Path);
 
             while(settings.PenButtons.Count < Settings.PenButtonCount)
                 settings.PenButtons.Add(null);
             for (int i = 0; i < settings.PenButtons.Count; i++)
-                settings.PenButtons[i] = MigrateNamespace(settings.PenButtons[i]);
+            {
+                if (settings.PenButtons[i] is PluginSettingStore store)
+                    store.Path = MigrateNamespace(settings.PenButtons[i].Path);
+            }
 
             while (settings.AuxButtons.Count < Settings.AuxButtonCount)
                 settings.AuxButtons.Add(null);
             for (int i = 0; i < settings.AuxButtons.Count; i++)
-                settings.AuxButtons[i] = MigrateNamespace(settings.AuxButtons[i]);
+            {
+                if (settings.AuxButtons[i] is PluginSettingStore store)
+                    store.Path = MigrateNamespace(settings.AuxButtons[i].Path);
+            }
 
             return settings;
         }

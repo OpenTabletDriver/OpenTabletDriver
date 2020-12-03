@@ -1,10 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Numerics;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
@@ -21,27 +20,26 @@ namespace OpenTabletDriver.Desktop
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;
-        private string _outputMode, _tipButton;
+        private string _outputMode;
+        private PluginSettingStore _tipButton;
 
-        private ObservableCollection<string> _filters = new ObservableCollection<string>(),
-            _penButtons = new ObservableCollection<string>(),
-            _auxButtons = new ObservableCollection<string>(),
-            _tools = new ObservableCollection<string>(),
-            _interpolators = new ObservableCollection<string>();
-
-        private Dictionary<string, string> _pluginSettings = new Dictionary<string, string>();
+        private PluginSettingStoreCollection _filters = new PluginSettingStoreCollection(),
+            _penButtons = new PluginSettingStoreCollection(),
+            _auxButtons = new PluginSettingStoreCollection(),
+            _tools = new PluginSettingStoreCollection(),
+            _interpolators = new PluginSettingStoreCollection();
 
         #region General Settings
 
         [JsonProperty("OutputMode")]
         public string OutputMode
         {
-            set => RaiseAndSetIfChanged(ref _outputMode, value != "{Disable}" ? value : null);
+            set => RaiseAndSetIfChanged(ref _outputMode, value);
             get => _outputMode;
         }
 
         [JsonProperty("Filters")]
-        public ObservableCollection<string> Filters
+        public PluginSettingStoreCollection Filters
         {
             set => RaiseAndSetIfChanged(ref _filters, value);
             get => _filters;
@@ -233,42 +231,35 @@ namespace OpenTabletDriver.Desktop
         }
 
         [JsonProperty("TipButton")]
-        public string TipButton
+        public PluginSettingStore TipButton
         {
             set => RaiseAndSetIfChanged(ref _tipButton, value);
             get => _tipButton;
         }
 
         [JsonProperty("PenButtons")]
-        public ObservableCollection<string> PenButtons
+        public PluginSettingStoreCollection PenButtons
         {
             set => RaiseAndSetIfChanged(ref _penButtons, value);
             get => _penButtons;
         }
 
         [JsonProperty("AuxButtons")]
-        public ObservableCollection<string> AuxButtons
+        public PluginSettingStoreCollection AuxButtons
         {
             set => RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;
         }
 
-        [JsonProperty("PluginSettings")]
-        public Dictionary<string, string> PluginSettings
-        {
-            set => RaiseAndSetIfChanged(ref _pluginSettings, value);
-            get => _pluginSettings;
-        }
-
         [JsonProperty("Tools")]
-        public ObservableCollection<string> Tools
+        public PluginSettingStoreCollection Tools
         {
             set => RaiseAndSetIfChanged(ref _tools, value);
             get => _tools;
         }
 
         [JsonProperty("Interpolators")]
-        public ObservableCollection<string> Interpolators
+        public PluginSettingStoreCollection Interpolators
         {
             set => RaiseAndSetIfChanged(ref _interpolators, value);
             get => _interpolators;
@@ -313,11 +304,10 @@ namespace OpenTabletDriver.Desktop
             OutputMode = typeof(Output.AbsoluteMode).FullName,
             AutoHook = true,
             EnableClipping = true,
-            TipButton = new BindingReference(typeof(MouseBinding), "Left"),
+            TipButton = new PluginSettingStore(new MouseBinding { Property = "Left" }),
             TipActivationPressure = 1,
-            PenButtons = new ObservableCollection<string>(new string[PenButtonCount]),
-            AuxButtons = new ObservableCollection<string>(new string[AuxButtonCount]),
-            PluginSettings = new Dictionary<string, string>(),
+            PenButtons = new PluginSettingStoreCollection(),
+            AuxButtons = new PluginSettingStoreCollection(),
             XSensitivity = 10,
             YSensitivity = 10,
             RelativeRotation = 0,

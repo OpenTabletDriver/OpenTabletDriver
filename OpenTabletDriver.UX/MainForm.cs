@@ -7,6 +7,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -78,44 +79,27 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            filterEditor = ConstructPluginSettingsEditor<IFilter>(
-                "Filter",
-                () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),
-                (enabled) =>
-                {
-                    var path = filterEditor.SelectedPlugin.Path;
-                    if (enabled && !App.Settings.Filters.Contains(path))
-                        App.Settings.Filters.Add(path);
-                    else if (!enabled && App.Settings.Filters.Contains(path))
-                        App.Settings.Filters.Remove(path);
-                }
+            filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
+                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Filters, true),
+                "Filter"
             );
 
-            toolEditor = ConstructPluginSettingsEditor<ITool>(
-                "Tool",
-                () => App.Settings.Tools.Contains(toolEditor.SelectedPlugin.Path),
-                (enabled) =>
-                {
-                    var path = toolEditor.SelectedPlugin.Path;
-                    if (enabled && !App.Settings.Tools.Contains(path))
-                        App.Settings.Tools.Add(path);
-                    else if (!enabled && App.Settings.Tools.Contains(path))
-                        App.Settings.Tools.Remove(path);
-                }
+            toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
+                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Tools, true),
+                "Tool"
             );
 
-            interpolatorEditor = ConstructPluginSettingsEditor<Interpolator>(
-                "Interpolator",
-                () => App.Settings.Interpolators.Contains(interpolatorEditor.SelectedPlugin.Path),
-                (enabled) =>
-                {
-                    var path = interpolatorEditor.SelectedPlugin.Path;
-                    if (enabled && !App.Settings.Interpolators.Contains(path))
-                        App.Settings.Interpolators.Add(path);
-                    else if (!enabled && App.Settings.Interpolators.Contains(path))
-                        App.Settings.Interpolators.Remove(path);
-                }
+            interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
+                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Interpolators),
+                "Interpolator"
             );
+
+            App.SettingsChanged += (settings) => 
+            {
+                filterEditor.CollectionReference.SetTarget(App.Settings?.Filters);
+                toolEditor.CollectionReference.SetTarget(App.Settings?.Tools);
+                interpolatorEditor.CollectionReference.SetTarget(App.Settings?.Interpolators);
+            };
 
             // Main Content
             var tabControl = new TabControl
@@ -348,14 +332,6 @@ namespace OpenTabletDriver.UX
                 control.SelectedIndex = control.OutputModes.IndexOf(mode);
             };
             return control;
-        }
-
-        private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, Action<bool> setMethod)
-        {
-            var editor = new PluginSettingsEditor<T>(friendlyName);
-            editor.GetPluginEnabled = getMethod;
-            editor.SetPluginEnabled += setMethod;
-            return editor;
         }
 
         private MenuBar ConstructMenu()
@@ -601,9 +577,9 @@ namespace OpenTabletDriver.UX
         private Control absoluteConfig, relativeConfig, nullConfig;
         private StackLayout outputConfig;
         private AreaEditor displayAreaEditor, tabletAreaEditor;
-        private PluginSettingsEditor<IFilter> filterEditor;
-        private PluginSettingsEditor<ITool> toolEditor;
-        private PluginSettingsEditor<Interpolator> interpolatorEditor;
+        private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
+        private PluginSettingStoreCollectionEditor<ITool> toolEditor;
+        private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
 
         public Settings Settings
         {
