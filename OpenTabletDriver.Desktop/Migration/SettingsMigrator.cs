@@ -13,23 +13,18 @@ namespace OpenTabletDriver.Desktop.Migration
             settings.OutputMode = MigrateNamespace(settings.OutputMode);
             
             // Bindings
-            settings.TipButton.Path = MigrateNamespace(settings.TipButton.Path);
+            if (settings.TipButton is PluginSettingStore tipStore)
+                MigrateNamespace(tipStore);
 
             while(settings.PenButtons.Count < Settings.PenButtonCount)
                 settings.PenButtons.Add(null);
-            for (int i = 0; i < settings.PenButtons.Count; i++)
-            {
-                if (settings.PenButtons[i] is PluginSettingStore store)
-                    store.Path = MigrateNamespace(settings.PenButtons[i].Path);
-            }
+            foreach (PluginSettingStore store in settings.PenButtons)
+                MigrateNamespace(store);
 
             while (settings.AuxButtons.Count < Settings.AuxButtonCount)
                 settings.AuxButtons.Add(null);
-            for (int i = 0; i < settings.AuxButtons.Count; i++)
-            {
-                if (settings.AuxButtons[i] is PluginSettingStore store)
-                    store.Path = MigrateNamespace(settings.AuxButtons[i].Path);
-            }
+            foreach (PluginSettingStore store in settings.AuxButtons)
+                MigrateNamespace(store);
 
             return settings;
         }
@@ -40,6 +35,14 @@ namespace OpenTabletDriver.Desktop.Migration
             { new Regex(@"OpenTabletDriver\.Binding\.(.+?)$"), $"OpenTabletDriver.Desktop.Binding.{{0}}" },
             { new Regex(@"OpenTabletDriver\.Output\.(.+?)$"), $"OpenTabletDriver.Desktop.Output.{{0}}" }
         };
+
+        private static void MigrateNamespace(PluginSettingStore store)
+        {
+            if (store != null)
+            {
+                store.Path = MigrateNamespace(store.Path);
+            }
+        }
 
         private static string MigrateNamespace(string input)
         {
