@@ -60,7 +60,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
                 else
                 {
-                    var newStore = new ToggleablePluginSettingStore(reference.GetTypeReference<TSource>(), null);
+                    var newStore = new PluginSettingStore(reference.GetTypeReference<TSource>(), false);
                     storeCollection.Add(newStore);
                     settingStoreEditor.Refresh(newStore);
                 }
@@ -143,20 +143,13 @@ namespace OpenTabletDriver.UX.Controls
             {
                 this.Items.Clear();
 
-                if (store is ToggleablePluginSettingStore toggleStore)
+                var enableButton = new CheckBox
                 {
-                    var enableButton = new CheckBox
-                    {
-                        Text = $"Enable {toggleStore.GetPluginReference().Name ?? toggleStore.Path}",
-                        Checked = toggleStore.Enable,
-                    };
-                    enableButton.CheckedChanged += (sender, e) => toggleStore.Enable = enableButton.Checked ?? false;
-                    AddControl(enableButton);
-                }
-                else
-                {
-                    throw new Exception($"{nameof(store)} was not of type {nameof(ToggleablePluginSettingStore)}");
-                }
+                    Text = $"Enable {store.GetPluginReference().Name ?? store.Path}",
+                    Checked = store.Enable
+                };
+                enableButton.CheckedChanged += (sender, e) => store.Enable = enableButton.Checked ?? false;
+                AddControl(enableButton);
 
                 foreach (var control in GetControlsForStore(store))
                 {

@@ -17,7 +17,7 @@ namespace OpenTabletDriver.UX.Windows
             Padding = 5;
 
             BindingPath = currentBinding?.Path;
-            BindingProperty = currentBinding?["Property"].GetValue<string>();
+            BindingProperty = currentBinding?["Property"]?.GetValue<string>();
 
             var bindingTypes = AppInfo.PluginManager.GetChildTypes<OpenTabletDriver.Plugin.IBinding>();
 

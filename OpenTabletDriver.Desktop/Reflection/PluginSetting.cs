@@ -1,6 +1,4 @@
-using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Desktop.Reflection

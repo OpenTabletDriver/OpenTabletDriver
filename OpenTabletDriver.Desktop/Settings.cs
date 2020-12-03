@@ -296,24 +296,5 @@ namespace OpenTabletDriver.Desktop
         }
 
         #endregion
-
-        #region Defaults
-
-        public static readonly Settings Defaults = new Settings
-        {
-            OutputMode = typeof(Output.AbsoluteMode).FullName,
-            AutoHook = true,
-            EnableClipping = true,
-            TipButton = new PluginSettingStore(new MouseBinding { Property = "Left" }),
-            TipActivationPressure = 1,
-            PenButtons = new PluginSettingStoreCollection(),
-            AuxButtons = new PluginSettingStoreCollection(),
-            XSensitivity = 10,
-            YSensitivity = 10,
-            RelativeRotation = 0,
-            ResetTime = TimeSpan.FromMilliseconds(100)
-        };
-
-        #endregion
     }
 }

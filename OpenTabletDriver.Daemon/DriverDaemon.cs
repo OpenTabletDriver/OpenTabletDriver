@@ -14,6 +14,7 @@ using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
+using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -141,27 +142,45 @@ namespace OpenTabletDriver.Daemon
 
         public Task ResetSettings()
         {
-            var settings = Settings.Defaults;
             var virtualScreen = SystemInterop.VirtualScreen;
             var tablet = Driver.Tablet?.Digitizer;
 
-            settings.DisplayWidth = virtualScreen.Width;
-            settings.DisplayHeight = virtualScreen.Height;
-            settings.DisplayX = virtualScreen.Width / 2;
-            settings.DisplayY = virtualScreen.Height / 2;
-            settings.TabletWidth = tablet?.Width ?? 0;
-            settings.TabletHeight = tablet?.Height ?? 0;
-            settings.TabletX = tablet?.Width / 2 ?? 0;
-            settings.TabletY = tablet?.Height / 2 ?? 0;
-
-            SetSettings(settings);
+            var defaults = new Settings
+            {
+                OutputMode = typeof(AbsoluteMode).FullName,
+                DisplayWidth = virtualScreen.Width,
+                DisplayHeight = virtualScreen.Height,
+                DisplayX = virtualScreen.Width / 2,
+                DisplayY = virtualScreen.Height / 2,
+                TabletWidth = tablet?.Width ?? 0,
+                TabletHeight = tablet?.Height ?? 0,
+                TabletX = tablet?.Width / 2 ?? 0,
+                TabletY = tablet?.Height / 2 ?? 0,
+                AutoHook = true,
+                EnableClipping = true,
+                TipButton = new PluginSettingStore(
+                    new MouseBinding
+                    {
+                        Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
+                    }
+                ),
+                TipActivationPressure = 1,
+                PenButtons = new PluginSettingStoreCollection(),
+                AuxButtons = new PluginSettingStoreCollection(),
+                XSensitivity = 10,
+                YSensitivity = 10,
+                RelativeRotation = 0,
+                ResetTime = TimeSpan.FromMilliseconds(100)
+            };
+            SetSettings(defaults);
             return Task.CompletedTask;
         }
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
-            outputMode.Filters = from filter in Settings.Filters
-                select filter.Construct<IFilter>();
+            outputMode.Filters = from store in Settings.Filters
+                where store.Enable == true
+                select store.Construct<IFilter>();
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
@@ -249,11 +268,10 @@ namespace OpenTabletDriver.Daemon
         private void SetToolSettings()
         {
             foreach (var runningTool in Tools)
-            {
                 runningTool.Dispose();
-            }
+            Tools.Clear();
             
-            foreach (ToggleablePluginSettingStore store in Settings.Tools)
+            foreach (PluginSettingStore store in Settings.Tools)
             {
                 if (store.Enable == false)
                     continue;
@@ -273,18 +291,15 @@ namespace OpenTabletDriver.Daemon
                 interpolator.Dispose();
             Driver.Interpolators.Clear();
             
-            if (Settings.Interpolators != null)
+            foreach (PluginSettingStore store in Settings.Interpolators)
             {
-                foreach (ToggleablePluginSettingStore store in Settings.Interpolators)
-                {
-                    if (store.Enable == false)
-                        continue;
+                if (store.Enable == false)
+                    continue;
 
-                    var interpolator = store.Construct<Interpolator>(SystemInterop.Timer);
-                    Driver.Interpolators.Add(interpolator);
+                var interpolator = store.Construct<Interpolator>(SystemInterop.Timer);
+                Driver.Interpolators.Add(interpolator);
 
-                    Log.Write("Settings", $"Interpolator: {interpolator}");
-                }
+                Log.Write("Settings", $"Interpolator: {interpolator}");
             }
         }
 
