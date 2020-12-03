@@ -25,7 +25,6 @@ namespace OpenTabletDriver.UX.Controls
             this.baseControl.Panel2 = new Scrollable { Content = settingStoreEditor };
 
             sourceSelector.SelectedSourceChanged += (sender, reference) => UpdateSelectedStore(reference);
-            sourceSelector.SelectedIndex = 0;
 
             if (sourceSelector.Plugins.Count == 0)
             {
@@ -38,6 +37,12 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         public WeakReference<PluginSettingStoreCollection> CollectionReference { get; }
+
+        public void UpdateStore(PluginSettingStoreCollection storeCollection)
+        {
+            CollectionReference.SetTarget(storeCollection);
+            sourceSelector.Refresh();
+        }
 
         private Splitter baseControl = new Splitter
         {
@@ -113,6 +118,13 @@ namespace OpenTabletDriver.UX.Controls
             public PluginReference SelectedSource { protected set; get; }
 
             public event EventHandler<PluginReference> SelectedSourceChanged;
+
+            public void Refresh()
+            {
+                var lastIndex = this.SelectedIndex;
+                this.SelectedIndex = -1;
+                this.SelectedIndex = lastIndex;
+            }
 
             protected override void OnSelectedIndexChanged(EventArgs e)
             {

@@ -96,9 +96,9 @@ namespace OpenTabletDriver.UX
 
             App.SettingsChanged += (settings) => 
             {
-                filterEditor.CollectionReference.SetTarget(App.Settings?.Filters);
-                toolEditor.CollectionReference.SetTarget(App.Settings?.Tools);
-                interpolatorEditor.CollectionReference.SetTarget(App.Settings?.Interpolators);
+                filterEditor.UpdateStore(App.Settings?.Filters);                
+                toolEditor.UpdateStore(App.Settings?.Tools);
+                interpolatorEditor.UpdateStore(App.Settings?.Interpolators);
             };
 
             // Main Content
