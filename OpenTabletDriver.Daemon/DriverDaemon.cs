@@ -240,7 +240,7 @@ namespace OpenTabletDriver.Daemon
         {
             BindingHandler.TipBinding = Settings.TipButton?.Construct<IBinding>();
             BindingHandler.TipActivationPressure = Settings.TipActivationPressure;
-            Log.Write("Settings", $"Tip Binding: '{(BindingHandler.TipBinding is IBinding binding ? binding.ToString() : "None")}'@{BindingHandler.TipActivationPressure}%");
+            Log.Write("Settings", $"Tip Binding: [{BindingHandler.TipBinding}]@{BindingHandler.TipActivationPressure}%");
     
             if (Settings.PenButtons != null)
             {

@@ -151,11 +151,20 @@ namespace OpenTabletDriver.UX.Controls
                 base.VerticalContentAlignment = VerticalAlignment.Top;
             }
 
-            private static readonly IReadOnlyList<Type> GenericallyConvertableTypes = new Type[]
+            private static readonly IReadOnlyDictionary<Type, Func<PropertyInfo, PluginSetting, Control>> genericControls 
+                = new Dictionary<Type, Func<PropertyInfo, PluginSetting, Control>>
             {
-                typeof(int),
-                typeof(uint),
-                typeof(double)
+                { typeof(sbyte), (a,b) => GetNumericMaskedTextBox<sbyte>(a,b) },
+                { typeof(byte), (a,b) => GetNumericMaskedTextBox<byte>(a,b) },
+                { typeof(short), (a,b) => GetNumericMaskedTextBox<short>(a,b) },
+                { typeof(ushort), (a,b) => GetNumericMaskedTextBox<ushort>(a,b) },
+                { typeof(int), (a,b) => GetNumericMaskedTextBox<int>(a,b) },
+                { typeof(uint), (a,b) => GetNumericMaskedTextBox<uint>(a,b) },
+                { typeof(long), (a,b) => GetNumericMaskedTextBox<long>(a,b) },
+                { typeof(ulong), (a,b) => GetNumericMaskedTextBox<ulong>(a,b) },
+                { typeof(double), (a,b) => GetNumericMaskedTextBox<double>(a,b) },
+                { typeof(DateTime), (a,b) => GetMaskedTextBox<DateTime>(a,b) },
+                { typeof(TimeSpan), (a,b) => GetMaskedTextBox<TimeSpan>(a,b) }
             };
 
             public void Refresh(PluginSettingStore store)
@@ -250,11 +259,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
                 else if (property.PropertyType == typeof(float))
                 {
-                    var tb = new TextBox
-                    {
-                        Text = $"{setting.GetValue<float>()}"
-                    };
-                    tb.TextChanged += (sender, e) => setting.SetValue(float.TryParse(tb.Text, out var val) ? val : 0f);
+                    var tb = GetNumericMaskedTextBox<float>(property, setting);
 
                     if (property.GetCustomAttribute<SliderPropertyAttribute>() is SliderPropertyAttribute sliderAttr)
                     {
@@ -266,14 +271,9 @@ namespace OpenTabletDriver.UX.Controls
                     }
                     return tb;
                 }
-                else if (GenericallyConvertableTypes.Contains(property.PropertyType))
+                else if (genericControls.TryGetValue(property.PropertyType, out var getGenericTextBox))
                 {
-                    var tb = new TextBox
-                    {
-                        Text = $"{setting.GetValue(property.PropertyType)}"
-                    };
-                    tb.TextChanged += (sender, e) => setting.SetValue(Convert.ChangeType(tb.Text, property.PropertyType) ?? 0);
-                    return tb;
+                    return getGenericTextBox(property, setting);
                 }
                 throw new NotSupportedException($"'{property.PropertyType}' is not supported by {nameof(PluginSettingStoreEditor)}");
             }
@@ -306,6 +306,26 @@ namespace OpenTabletDriver.UX.Controls
                     default:
                         return control;
                 }
+            }
+
+            private static NumericMaskedTextBox<T> GetNumericMaskedTextBox<T>(PropertyInfo property, PluginSetting setting)
+            {
+                var tb = new NumericMaskedTextBox<T>
+                {
+                    Value = setting.GetValue<T>()
+                };
+                tb.ValueChanged += (sender, e) => setting.SetValue(tb.Value);
+                return tb;
+            }
+
+            private static MaskedTextBox<T> GetMaskedTextBox<T>(PropertyInfo property, PluginSetting setting)
+            {
+                var tb = new MaskedTextBox<T>
+                {
+                    Value = setting.GetValue<T>()
+                };
+                tb.ValueChanged += (sender, e) => setting.SetValue(tb.Value);
+                return tb;
             }
         }
     }
