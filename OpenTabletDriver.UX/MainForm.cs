@@ -7,6 +7,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
@@ -323,13 +324,14 @@ namespace OpenTabletDriver.UX
             };
             control.SelectedModeChanged += (sender, mode) =>
             {
-                App.Settings.OutputMode = mode.Path;
+                App.Settings.OutputMode = PluginSettingStore.FromPath(mode.Path);
                 UpdateOutputMode(mode);
             };
             App.SettingsChanged += (settings) =>
             {
-                var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode);
-                control.SelectedIndex = control.OutputModes.IndexOf(mode);
+                var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode?.Path) ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
+                if (mode != null)
+                    control.SelectedIndex = control.OutputModes.IndexOf(mode);
             };
             return control;
         }
@@ -555,7 +557,7 @@ namespace OpenTabletDriver.UX
             {
                 try
                 {
-                    Settings = Serialization.Deserialize<Settings>(settingsFile);
+                    Settings = Settings.Deserialize(settingsFile);
                     await App.Driver.Instance.SetSettings(Settings);
                 }
                 catch
@@ -613,7 +615,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        Settings = Serialization.Deserialize<Settings>(file);
+                        Settings = Settings.Deserialize(file);
                         await App.Driver.Instance.SetSettings(Settings);
                     }
                     break;
@@ -637,7 +639,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (Settings is Settings settings)
                     {
-                        Serialization.Serialize(file, settings);
+                        settings.Serialize(file);
                         await ApplySettings();
                     }
                     break;
@@ -666,7 +668,7 @@ namespace OpenTabletDriver.UX
                 }
 
                 var appInfo = await App.Driver.Instance.GetApplicationInfo();
-                Serialization.Serialize(new FileInfo(appInfo.SettingsFile), settings);
+                settings.Serialize(new FileInfo(appInfo.SettingsFile));
                 await ApplySettings();
             }
         }

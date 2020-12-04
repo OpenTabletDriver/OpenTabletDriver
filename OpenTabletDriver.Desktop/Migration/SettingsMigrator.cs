@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Migration
         public static Settings Migrate(Settings settings)
         {
             // Output mode
-            settings.OutputMode = MigrateNamespace(settings.OutputMode);
+            MigrateNamespace(settings.OutputMode);
             
             // Bindings
             if (settings.TipButton is PluginSettingStore tipStore)
@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Migration
             { new Regex(@"OpenTabletDriver\.Output\.(.+?)$"), $"OpenTabletDriver.Desktop.Output.{{0}}" }
         };
 
-        private static void MigrateNamespace(PluginSettingStore store)
+        public static void MigrateNamespace(PluginSettingStore store)
         {
             if (store != null)
             {
@@ -44,7 +44,7 @@ namespace OpenTabletDriver.Desktop.Migration
             }
         }
 
-        private static string MigrateNamespace(string input)
+        public static string MigrateNamespace(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return input;

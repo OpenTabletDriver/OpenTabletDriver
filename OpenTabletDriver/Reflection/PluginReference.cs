@@ -49,10 +49,12 @@ namespace OpenTabletDriver.Reflection
 
         public TypeInfo GetTypeReference<T>()
         {
-            var types = from type in PluginManager.GetChildTypes<T>()
-                where type.FullName == Path
-                select type;
-            return types.FirstOrDefault();
+            return PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == this.Path);
+        }
+
+        public TypeInfo GetTypeReference()
+        {
+            return PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == this.Path);
         }
 
         public bool Equals(PluginReference other) => this.Path == other.Path;

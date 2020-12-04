@@ -23,14 +23,14 @@ namespace OpenTabletDriver.Console
             
         static async Task LoadSettings(FileInfo file)
         {
-            var settings = Serialization.Deserialize<Settings>(file);
+            var settings = Settings.Deserialize(file);
             await ApplySettings(settings);
         }
 
         static async Task SaveSettings(FileInfo file)
         {
             var settings = await GetSettings();
-            Serialization.Serialize(file, settings);
+            settings.Serialize(file);
         }
 
         #endregion
@@ -131,7 +131,7 @@ namespace OpenTabletDriver.Console
 
         static async Task SetOutputMode(string mode)
         {
-            await ModifySettings(s => s.OutputMode = mode);
+            await ModifySettings(s => s.OutputMode = new PluginSettingStore(mode));
         }
 
         static async Task SetFilters(IEnumerable<string> filters)

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
@@ -20,8 +23,7 @@ namespace OpenTabletDriver.Desktop
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;
-        private string _outputMode;
-        private PluginSettingStore _tipButton;
+        private PluginSettingStore _outputMode, _tipButton;
 
         private PluginSettingStoreCollection _filters = new PluginSettingStoreCollection(),
             _penButtons = new PluginSettingStoreCollection(),
@@ -32,7 +34,7 @@ namespace OpenTabletDriver.Desktop
         #region General Settings
 
         [JsonProperty("OutputMode")]
-        public string OutputMode
+        public PluginSettingStore OutputMode
         {
             set => RaiseAndSetIfChanged(ref _outputMode, value);
             get => _outputMode;
@@ -295,6 +297,68 @@ namespace OpenTabletDriver.Desktop
             return new Area(TabletWidth, TabletHeight, new Vector2(TabletX, TabletY), TabletRotation);
         }
 
+        #endregion
+
+        #region Custom Serialization
+
+        static Settings()
+        {
+            serializer.Error += SerializationErrorHandler;
+        }
+
+        private static readonly JsonSerializer serializer = new JsonSerializer
+        {
+            Formatting = Formatting.Indented
+        };
+
+        private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+        {
+            args.ErrorContext.Handled = true;
+            if (args.ErrorContext.Path is string path)
+            {
+                var property = args.CurrentObject.GetType().GetProperty(path);
+                if (property != null && property.PropertyType == typeof(PluginSettingStore))
+                {
+                    var match = propertyValueRegex.Match(args.ErrorContext.Error.Message);
+                    if (match.Success)
+                    {
+                        var objPath = SettingsMigrator.MigrateNamespace(match.Groups[1].Value);
+                        var newValue = PluginSettingStore.FromPath(objPath);
+                        if (newValue != null)
+                        {
+                            property.SetValue(args.CurrentObject, newValue);
+                            Log.Write("Settings", $"Migrated {path} to {nameof(PluginSettingStore)}");
+                            return;
+                        }
+                    }
+                }
+                Log.Write("Settings", $"Unable to migrate {path}", LogLevel.Error);
+                return;
+            }
+            Log.Exception(args.ErrorContext.Error);
+        }
+
+        private static Regex propertyValueRegex = new Regex(PROPERTY_VALUE_REGEX, RegexOptions.Compiled);
+        private const string PROPERTY_VALUE_REGEX = "\\\"(.+?)\\\"";
+
+        public static Settings Deserialize(FileInfo file)
+        {
+            using (var stream = file.OpenRead())
+            using (var sr = new StreamReader(stream))
+            using (var jr = new JsonTextReader(sr))
+                return serializer.Deserialize<Settings>(jr);
+        }
+
+        public void Serialize(FileInfo file)
+        {
+            if (file.Exists)
+                file.Delete();
+
+            using (var sw = file.CreateText())
+            using (var jw = new JsonTextWriter(sw))
+                serializer.Serialize(jw, this);
+        }
+        
         #endregion
     }
 }

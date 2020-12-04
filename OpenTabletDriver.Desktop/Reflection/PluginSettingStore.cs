@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -44,6 +41,12 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T Construct<T>() where T : class => this.GetPluginReference().Construct<T>();
         public T Construct<T>(params object[] args) where T : class => this.GetPluginReference().Construct<T>(args);
+
+        public static PluginSettingStore FromPath(string path)
+        {
+            var pathType = AppInfo.PluginManager.GetPluginReference(path).GetTypeReference();
+            return pathType != null ? new PluginSettingStore(pathType) : null;
+        }
 
         public void ApplySettings(object target)
         {

@@ -61,7 +61,7 @@ namespace OpenTabletDriver.Daemon
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
             if (Settings == null && settingsFile.Exists)
             {
-                var settings = Serialization.Deserialize<Settings>(settingsFile);
+                var settings = Settings.Deserialize(settingsFile);
                 await SetSettings(settings);
             }
             else
@@ -113,10 +113,11 @@ namespace OpenTabletDriver.Daemon
         {
             Settings = SettingsMigrator.Migrate(settings);
             
-            Driver.OutputMode = AppInfo.PluginManager.GetPluginReference(Settings.OutputMode).Construct<IOutputMode>();
+            var pluginRef = Settings.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
+            Driver.OutputMode = pluginRef.Construct<IOutputMode>();
 
             if (Driver.OutputMode != null)
-                Log.Write("Settings", $"Output mode: {Driver.OutputMode.GetType().FullName}");
+                Log.Write("Settings", $"Output mode: {pluginRef.Name ?? pluginRef.Path}");
 
             if (Driver.OutputMode is IOutputMode outputMode)
                 SetOutputModeSettings(outputMode);
@@ -147,7 +148,7 @@ namespace OpenTabletDriver.Daemon
 
             var defaults = new Settings
             {
-                OutputMode = typeof(AbsoluteMode).FullName,
+                OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
                 DisplayWidth = virtualScreen.Width,
                 DisplayHeight = virtualScreen.Height,
                 DisplayX = virtualScreen.Width / 2,
