@@ -1,0 +1,26 @@
+{
+  "Name": "Genius WizardPen 5x4",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 139.7,
+      "Height": 99.06,
+      "MaxX": 22352.0,
+      "MaxY": 15850.0,
+      "MaxPressure": 1024,
+      "ActiveReportID": null,
+      "VendorID": 21827,
+      "ProductID": 4,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": null,
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
