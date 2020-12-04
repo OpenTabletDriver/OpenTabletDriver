@@ -14,6 +14,11 @@ namespace OpenTabletDriver.Reflection
             Name = GetName(path);
         }
 
+        public PluginReference(PluginManager pluginManager, Type type)
+            : this(pluginManager, type.FullName)
+        {
+        }
+        
         public PluginManager PluginManager { get; }
         public string Name { get; }
         public string Path { get; }
@@ -32,22 +37,24 @@ namespace OpenTabletDriver.Reflection
 
         public override string ToString() => string.IsNullOrWhiteSpace(Name) ? Path : Name;
 
-        public T Construct<T>() where T : class
+        public virtual T Construct<T>() where T : class
         {
             return PluginManager.ConstructObject<T>(Path);
         }
 
-        public T Construct<T>(params object[] args) where T : class
+        public virtual T Construct<T>(params object[] args) where T : class
         {
             return PluginManager.ConstructObject<T>(Path, args);
         }
 
         public TypeInfo GetTypeReference<T>()
         {
-            var types = from type in PluginManager.GetChildTypes<T>()
-                where type.FullName == Path
-                select type;
-            return types.FirstOrDefault();
+            return PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == this.Path);
+        }
+
+        public TypeInfo GetTypeReference()
+        {
+            return PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == this.Path);
         }
 
         public bool Equals(PluginReference other) => this.Path == other.Path;

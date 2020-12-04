@@ -1,7 +1,6 @@
 using System;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows;
 
@@ -24,7 +23,7 @@ namespace OpenTabletDriver.UX.Controls
         public void UpdateBindings()
         {
             content.Items.Clear();
-            
+
             var tipButton = new BindingDisplay(App.Settings?.TipButton);
             tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
 
@@ -36,7 +35,7 @@ namespace OpenTabletDriver.UX.Controls
 
             var tipSettingsStack = new StackView
             {
-                Items = 
+                Items =
                 {
                     tipButton,
                     tipPressure
@@ -80,17 +79,17 @@ namespace OpenTabletDriver.UX.Controls
                 var auxBindingGroup = new GroupBoxBase($"Auxiliary Button {i + 1}", auxBinding);
                 auxBindingsStack.AddControl(auxBindingGroup);
             }
-            
+
             var auxBindingSettings = new GroupBoxBase("Auxiliary Button Bindings", auxBindingsStack);
             content.AddControl(auxBindingSettings, true);
         }
 
         private class BindingDisplay : Button
         {
-            public BindingDisplay(BindingReference binding)
+            public BindingDisplay(PluginSettingStore store)
             {
-                this.Binding = binding;
-                
+                this.Binding = store;
+
                 var bindingCommand = new Command();
                 bindingCommand.Executed += async (sender, e) =>
                 {
@@ -99,7 +98,7 @@ namespace OpenTabletDriver.UX.Controls
                 };
                 this.Command = bindingCommand;
 
-                this.MouseDown += async (s, e) => 
+                this.MouseDown += async (s, e) =>
                 {
                     if (e.Buttons.HasFlag(MouseButtons.Alternate))
                     {
@@ -109,18 +108,29 @@ namespace OpenTabletDriver.UX.Controls
                 };
             }
 
-            public event EventHandler<BindingReference> BindingUpdated;
+            public event EventHandler<PluginSettingStore> BindingUpdated;
 
-            private BindingReference binding;
-            public BindingReference Binding
+            private PluginSettingStore binding;
+            public PluginSettingStore Binding
             {
                 set
                 {
                     this.binding = value;
-                    Text = Binding?.ToDisplayString();
+                    Text = GetFriendlyDisplayString(Binding);
                     BindingUpdated?.Invoke(this, Binding);
                 }
                 get => this.binding;
+            }
+
+            private string GetFriendlyDisplayString(PluginSettingStore store)
+            {
+                if (store == null || store["Property"] == null)
+                    return null;
+
+                var property = store["Property"].GetValue<string>();
+                var name = store.GetPluginReference().Name;
+
+                return $"{name}: {property}";
             }
         }
 
@@ -133,7 +143,7 @@ namespace OpenTabletDriver.UX.Controls
             )
             {
                 base.Text = header;
-                
+
                 this.setValue = setValue;
                 this.getValue = getValue;
 

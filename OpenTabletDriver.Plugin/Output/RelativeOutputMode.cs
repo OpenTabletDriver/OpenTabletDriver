@@ -11,33 +11,18 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : IOutputMode
     {
-        private List<IFilter> filters, preFilters = new List<IFilter>(), postFilters = new List<IFilter>();
+        private IList<IFilter> filters, preFilters, postFilters;
         private Vector2? lastPos;
         private DateTime lastReceived;
         private Matrix3x2 transformationMatrix;
 
-        public IEnumerable<IFilter> Filters
+        public IList<IFilter> Filters
         {
             set
             {
-                this.filters = value.ToList();
-                this.preFilters.Clear();
-                this.postFilters.Clear();
-
-                foreach (var filter in this.filters)
-                {
-                    switch (filter.FilterStage)
-                    {
-                        case FilterStage.PreTranspose:
-                            this.preFilters.Add(filter);
-                            break;
-                        case FilterStage.PostTranspose:
-                            this.postFilters.Add(filter);
-                            break;
-                        default:
-                            throw new NotSupportedException();
-                    }
-                }
+                this.filters = value;
+                this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList();
             }
             get => this.filters;
         }

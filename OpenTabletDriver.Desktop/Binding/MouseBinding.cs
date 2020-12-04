@@ -17,6 +17,7 @@ namespace OpenTabletDriver.Desktop.Binding
             _ => null
         };
         
+        [Property("Property")]
         public string Property { set; get; }
         
         public Action Press 
