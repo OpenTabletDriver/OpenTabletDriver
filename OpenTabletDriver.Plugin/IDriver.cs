@@ -1,5 +1,6 @@
 using System;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin
@@ -8,7 +9,6 @@ namespace OpenTabletDriver.Plugin
     {
         event EventHandler<bool> Reading;
         event EventHandler<IDeviceReport> ReportRecieved;
-        event EventHandler<IDeviceReport> ReportHandled;
         event EventHandler<TabletState> TabletChanged;
 
         bool EnableInput { set; get; }

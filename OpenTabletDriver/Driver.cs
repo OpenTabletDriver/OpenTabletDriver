@@ -7,6 +7,7 @@ using HidSharp;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Reflection;
@@ -30,7 +31,6 @@ namespace OpenTabletDriver
         
         public event EventHandler<bool> Reading;
         public event EventHandler<IDeviceReport> ReportRecieved;
-        public event EventHandler<IDeviceReport> ReportHandled;
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
         public event EventHandler<TabletState> TabletChanged;
 
@@ -270,14 +270,11 @@ namespace OpenTabletDriver
             HandleReport(report);
         }
 
-        public void HandleReport(IDeviceReport report)
+        public virtual void HandleReport(IDeviceReport report)
         {
             if (EnableInput && OutputMode?.Tablet != null)
                 if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
-                {
                     OutputMode.Read(report);
-                    ReportHandled?.Invoke(this, report);
-                }
         }
     }
 }
