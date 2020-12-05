@@ -10,7 +10,7 @@
       "ActiveReportID": null,
       "VendorID": 21827,
       "ProductID": 4,
-      "InputReportLength": 8,
+      "InputReportLength": 6,
       "OutputReportLength": null,
       "ReportParser": null,
       "FeatureInitReport": null,
