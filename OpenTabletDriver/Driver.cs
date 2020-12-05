@@ -161,7 +161,7 @@ namespace OpenTabletDriver
             }
 
             TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
-            TabletReader.Report += HandleDeviceReaderReport;
+            TabletReader.Report += OnReportRecieved;
             TabletReader.ReadingChanged += (_, state) =>
             {
                 Reading?.Invoke(this, state);
@@ -197,7 +197,7 @@ namespace OpenTabletDriver
             }
             
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
-            AuxReader.Report += HandleDeviceReaderReport;
+            AuxReader.Report += OnReportRecieved;
 
             if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
@@ -256,25 +256,25 @@ namespace OpenTabletDriver
         public void Dispose()
         {
             TabletReader.Dispose();
-            TabletReader.Report -= HandleDeviceReaderReport;
+            TabletReader.Report -= OnReportRecieved;
             TabletReader = null;
             
             AuxReader.Dispose();
-            AuxReader.Report -= HandleDeviceReaderReport;
+            AuxReader.Report -= OnReportRecieved;
             AuxReader = null;
         }
 
-        private void HandleDeviceReaderReport(object _, IDeviceReport report)
+        public virtual void OnReportRecieved(object _, IDeviceReport report)
         {
             this.ReportRecieved?.Invoke(this, report);
-            HandleReport(report);
+            if (EnableInput && OutputMode?.Tablet != null)
+                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
+                    HandleReport(report);
         }
 
         public virtual void HandleReport(IDeviceReport report)
         {
-            if (EnableInput && OutputMode?.Tablet != null)
-                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
-                    OutputMode.Read(report);
+            OutputMode.Read(report);
         }
     }
 }
