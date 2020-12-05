@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Desktop.Interop
             switch (CurrentPlatform)
             {
                 case PluginPlatform.Windows:
-                    var startInfo = new ProcessStartInfo("cmd", $"/c start \"{path.Replace("&", "^&")}\"")
+                    var startInfo = new ProcessStartInfo("cmd", $"/c start {path.Replace("&", "^&")}")
                     {
                         CreateNoWindow = true
                     };
@@ -50,6 +50,19 @@ namespace OpenTabletDriver.Desktop.Interop
                 case PluginPlatform.MacOS:
                 case PluginPlatform.FreeBSD:
                     Process.Start("open", $"\"{path}\"");
+                    break;
+            }
+        }
+
+        public static void OpenFolder(string path)
+        {
+            switch (CurrentPlatform)
+            {
+                case PluginPlatform.Windows:
+                    Process.Start("explorer", $"\"{path.Replace("&", "^&")}\"");
+                    break;
+                default:
+                    Open(path);
                     break;
             }
         }
