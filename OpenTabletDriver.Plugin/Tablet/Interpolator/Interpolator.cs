@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 
         protected double reportMsAvg = 5.0f;
         protected bool enabled;
-        protected List<IFilter> filters = new List<IFilter>();
+        protected IList<IFilter> filters;
         protected ITimer scheduler;
         protected DateTime lastTime = DateTime.UtcNow;
         protected readonly object stateLock = new object();
@@ -62,7 +62,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 
         public virtual IEnumerable<IFilter> Filters
         {
-            set => this.filters = value.ToList();
+            set => this.filters = value.ToArray();
             get => this.filters;
         }
 
