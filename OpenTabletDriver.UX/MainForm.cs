@@ -747,6 +747,8 @@ namespace OpenTabletDriver.UX
                     {
                         Settings.TabletWidth = tablet.Digitizer.Width;
                         Settings.TabletHeight = tablet.Digitizer.Height;
+                        Settings.TabletX = tablet.Digitizer.Width / 2;
+                        Settings.TabletY = tablet.Digitizer.Height / 2;
                     }
                 }
                 else
