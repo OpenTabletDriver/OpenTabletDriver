@@ -70,8 +70,8 @@ namespace OpenTabletDriver.Plugin.Output
                 (float)(-Rotation * System.Math.PI / 180));
 
             this.transformationMatrix *= Matrix3x2.CreateScale(
-                sensitivity.X * ((Tablet?.Digitizer.Width / Tablet?.Digitizer.MaxX) ?? 0.01f),
-                sensitivity.Y * ((Tablet?.Digitizer.Height / Tablet?.Digitizer.MaxY) ?? 0.01f));
+                sensitivity.X * ((Tablet?.Digitizer?.Width / Tablet?.Digitizer?.MaxX) ?? 0.01f),
+                sensitivity.Y * ((Tablet?.Digitizer?.Height / Tablet?.Digitizer?.MaxY) ?? 0.01f));
         }
 
         public TimeSpan ResetTime { set; get; }
