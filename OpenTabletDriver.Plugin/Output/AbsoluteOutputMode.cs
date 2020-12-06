@@ -65,9 +65,9 @@ namespace OpenTabletDriver.Plugin.Output
         public bool AreaClipping { set; get; }
         public bool AreaLimiting { set; get; }
 
-        internal void UpdateTransformMatrix()
+        protected void UpdateTransformMatrix()
         {
-            if (!(Input is null | Output is null | Tablet is null))
+            if (Input != null && Output != null && Tablet?.Digitizer != null)
                 this.transformationMatrix = CalculateTransformation(Input, Output, Tablet.Digitizer);
 
             var halfDisplayWidth = Output?.Width / 2 ?? 0;
@@ -82,7 +82,7 @@ namespace OpenTabletDriver.Plugin.Output
             this.max = new Vector2(maxX, maxY);
         }
 
-        internal static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
+        protected static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
         {
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(
