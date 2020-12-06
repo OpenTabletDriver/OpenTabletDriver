@@ -739,7 +739,7 @@ namespace OpenTabletDriver.UX
         {
             Application.Instance.AsyncInvoke(() =>
             {
-                if (tablet != null)
+                if (tablet != null && tablet.Digitizer != null)
                 {
                     tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height));
 
