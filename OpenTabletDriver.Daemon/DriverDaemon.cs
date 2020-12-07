@@ -4,10 +4,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Threading.Tasks;
 using HidSharp;
-using Newtonsoft.Json;
 using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
@@ -17,12 +15,10 @@ using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
-using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -299,6 +295,14 @@ namespace OpenTabletDriver.Daemon
                     continue;
 
                 var interpolator = store.Construct<Interpolator>(SystemInterop.Timer);
+
+                var filters = from filterPath in Settings?.Filters
+                        let filter = AppInfo.PluginManager.GetPluginReference(filterPath).Construct<IFilter>()
+                        where filter != null
+                        where filter.FilterStage == FilterStage.PreInterpolate
+                        select filter;
+
+                interpolator.Filters = filters.ToList();
                 Driver.Interpolators.Add(interpolator);
 
                 Log.Write("Settings", $"Interpolator: {interpolator}");
