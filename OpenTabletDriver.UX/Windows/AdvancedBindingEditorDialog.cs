@@ -2,23 +2,22 @@ using System;
 using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Reflection;
 using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class AdvancedBindingEditorDialog : Dialog<BindingReference>
+    public class AdvancedBindingEditorDialog : Dialog<PluginSettingStore>
     {
-        public AdvancedBindingEditorDialog(BindingReference currentBinding = null)
+        public AdvancedBindingEditorDialog(PluginSettingStore currentBinding = null)
         {
             Title = "Advanced Binding Editor";
             Result = currentBinding;
             Padding = 5;
 
             BindingPath = currentBinding?.Path;
-            BindingProperty = currentBinding?.BindingProperty;
+            BindingProperty = currentBinding?["Property"]?.GetValue<string>();
 
             var bindingTypes = AppInfo.PluginManager.GetChildTypes<OpenTabletDriver.Plugin.IBinding>();
 
@@ -124,7 +123,9 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ApplyBinding(object sender, EventArgs e)
         {
-            Close(new BindingReference(BindingPath, BindingProperty));
+            var binding = AppInfo.PluginManager.ConstructObject<IBinding>(BindingPath);
+            binding.Property = BindingProperty;
+            Close(new PluginSettingStore(binding));
         }
 
         private GroupBox GetBindingSelector(Func<string> getValue, Action<string> setValue)

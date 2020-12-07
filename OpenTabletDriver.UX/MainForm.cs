@@ -7,6 +7,8 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Output;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -78,44 +80,27 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            filterEditor = ConstructPluginSettingsEditor<IFilter>(
-                "Filter",
-                () => App.Settings.Filters.Contains(filterEditor.SelectedPlugin.Path),
-                (enabled) =>
-                {
-                    var path = filterEditor.SelectedPlugin.Path;
-                    if (enabled && !App.Settings.Filters.Contains(path))
-                        App.Settings.Filters.Add(path);
-                    else if (!enabled && App.Settings.Filters.Contains(path))
-                        App.Settings.Filters.Remove(path);
-                }
+            filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
+                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Filters, true),
+                "Filter"
             );
 
-            toolEditor = ConstructPluginSettingsEditor<ITool>(
-                "Tool",
-                () => App.Settings.Tools.Contains(toolEditor.SelectedPlugin.Path),
-                (enabled) =>
-                {
-                    var path = toolEditor.SelectedPlugin.Path;
-                    if (enabled && !App.Settings.Tools.Contains(path))
-                        App.Settings.Tools.Add(path);
-                    else if (!enabled && App.Settings.Tools.Contains(path))
-                        App.Settings.Tools.Remove(path);
-                }
+            toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
+                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Tools, true),
+                "Tool"
             );
 
-            interpolatorEditor = ConstructPluginSettingsEditor<Interpolator>(
-                "Interpolator",
-                () => App.Settings.Interpolators.Contains(interpolatorEditor.SelectedPlugin.Path),
-                (enabled) =>
-                {
-                    var path = interpolatorEditor.SelectedPlugin.Path;
-                    if (enabled && !App.Settings.Interpolators.Contains(path))
-                        App.Settings.Interpolators.Add(path);
-                    else if (!enabled && App.Settings.Interpolators.Contains(path))
-                        App.Settings.Interpolators.Remove(path);
-                }
+            interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
+                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Interpolators),
+                "Interpolator"
             );
+
+            App.SettingsChanged += (settings) => 
+            {
+                filterEditor.UpdateStore(App.Settings?.Filters);                
+                toolEditor.UpdateStore(App.Settings?.Tools);
+                interpolatorEditor.UpdateStore(App.Settings?.Interpolators);
+            };
 
             // Main Content
             var tabControl = new TabControl
@@ -339,23 +324,16 @@ namespace OpenTabletDriver.UX
             };
             control.SelectedModeChanged += (sender, mode) =>
             {
-                App.Settings.OutputMode = mode.Path;
+                App.Settings.OutputMode = PluginSettingStore.FromPath(mode.Path);
                 UpdateOutputMode(mode);
             };
             App.SettingsChanged += (settings) =>
             {
-                var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode);
-                control.SelectedIndex = control.OutputModes.IndexOf(mode);
+                var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode?.Path) ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
+                if (mode != null)
+                    control.SelectedIndex = control.OutputModes.IndexOf(mode);
             };
             return control;
-        }
-
-        private PluginSettingsEditor<T> ConstructPluginSettingsEditor<T>(string friendlyName, Func<bool> getMethod, Action<bool> setMethod)
-        {
-            var editor = new PluginSettingsEditor<T>(friendlyName);
-            editor.GetPluginEnabled = getMethod;
-            editor.SetPluginEnabled += setMethod;
-            return editor;
         }
 
         private MenuBar ConstructMenu()
@@ -394,7 +372,7 @@ namespace OpenTabletDriver.UX
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => SystemInterop.Open(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             var pluginsRepository = new Command { MenuText = "Open plugins repository..." };
             pluginsRepository.Executed += (sender, e) => SystemInterop.Open(App.PluginRepositoryUrl);
@@ -579,7 +557,7 @@ namespace OpenTabletDriver.UX
             {
                 try
                 {
-                    Settings = Serialization.Deserialize<Settings>(settingsFile);
+                    Settings = Settings.Deserialize(settingsFile);
                     await App.Driver.Instance.SetSettings(Settings);
                 }
                 catch
@@ -601,9 +579,9 @@ namespace OpenTabletDriver.UX
         private Control absoluteConfig, relativeConfig, nullConfig;
         private StackLayout outputConfig;
         private AreaEditor displayAreaEditor, tabletAreaEditor;
-        private PluginSettingsEditor<IFilter> filterEditor;
-        private PluginSettingsEditor<ITool> toolEditor;
-        private PluginSettingsEditor<Interpolator> interpolatorEditor;
+        private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
+        private PluginSettingStoreCollectionEditor<ITool> toolEditor;
+        private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
 
         public Settings Settings
         {
@@ -637,7 +615,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        Settings = Serialization.Deserialize<Settings>(file);
+                        Settings = Settings.Deserialize(file);
                         await App.Driver.Instance.SetSettings(Settings);
                     }
                     break;
@@ -661,7 +639,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (Settings is Settings settings)
                     {
-                        Serialization.Serialize(file, settings);
+                        settings.Serialize(file);
                         await ApplySettings();
                     }
                     break;
@@ -690,7 +668,7 @@ namespace OpenTabletDriver.UX
                 }
 
                 var appInfo = await App.Driver.Instance.GetApplicationInfo();
-                Serialization.Serialize(new FileInfo(appInfo.SettingsFile), settings);
+                settings.Serialize(new FileInfo(appInfo.SettingsFile));
                 await ApplySettings();
             }
         }

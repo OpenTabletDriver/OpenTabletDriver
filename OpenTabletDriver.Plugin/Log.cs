@@ -47,6 +47,9 @@ namespace OpenTabletDriver.Plugin
 
         public static void Exception(Exception ex)
         {
+            if (ex == null)
+                return;
+
             var message = new ExceptionLogMessage(ex.GetType().Name, ex.Message, ex.StackTrace);
             OnOutput(message);
         }

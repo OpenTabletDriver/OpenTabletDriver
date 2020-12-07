@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Plugin
 {

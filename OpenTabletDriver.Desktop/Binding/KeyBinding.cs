@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         private IVirtualKeyboard keyboard => SystemInterop.VirtualKeyboard;
 
+        [Property("Property")]
         public string Property { set; get; }
 
         public Action Press

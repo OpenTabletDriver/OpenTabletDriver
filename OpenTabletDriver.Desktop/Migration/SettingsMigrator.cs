@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
+using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.Desktop.Migration
 {
@@ -8,20 +10,21 @@ namespace OpenTabletDriver.Desktop.Migration
         public static Settings Migrate(Settings settings)
         {
             // Output mode
-            settings.OutputMode = MigrateNamespace(settings.OutputMode);
+            MigrateNamespace(settings.OutputMode);
             
             // Bindings
-            settings.TipButton = MigrateNamespace(settings.TipButton);
+            if (settings.TipButton is PluginSettingStore tipStore)
+                MigrateNamespace(tipStore);
 
             while(settings.PenButtons.Count < Settings.PenButtonCount)
                 settings.PenButtons.Add(null);
-            for (int i = 0; i < settings.PenButtons.Count; i++)
-                settings.PenButtons[i] = MigrateNamespace(settings.PenButtons[i]);
+            foreach (PluginSettingStore store in settings.PenButtons)
+                MigrateNamespace(store);
 
             while (settings.AuxButtons.Count < Settings.AuxButtonCount)
                 settings.AuxButtons.Add(null);
-            for (int i = 0; i < settings.AuxButtons.Count; i++)
-                settings.AuxButtons[i] = MigrateNamespace(settings.AuxButtons[i]);
+            foreach (PluginSettingStore store in settings.AuxButtons)
+                MigrateNamespace(store);
 
             return settings;
         }
@@ -33,7 +36,15 @@ namespace OpenTabletDriver.Desktop.Migration
             { new Regex(@"OpenTabletDriver\.Output\.(.+?)$"), $"OpenTabletDriver.Desktop.Output.{{0}}" }
         };
 
-        private static string MigrateNamespace(string input)
+        public static void MigrateNamespace(PluginSettingStore store)
+        {
+            if (store != null)
+            {
+                store.Path = MigrateNamespace(store.Path);
+            }
+        }
+
+        public static string MigrateNamespace(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return input;

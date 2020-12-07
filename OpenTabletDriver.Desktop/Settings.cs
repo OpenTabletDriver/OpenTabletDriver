@@ -1,10 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Migration;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
@@ -21,27 +23,25 @@ namespace OpenTabletDriver.Desktop
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;
-        private string _outputMode, _tipButton;
+        private PluginSettingStore _outputMode, _tipButton;
 
-        private ObservableCollection<string> _filters = new ObservableCollection<string>(),
-            _penButtons = new ObservableCollection<string>(),
-            _auxButtons = new ObservableCollection<string>(),
-            _tools = new ObservableCollection<string>(),
-            _interpolators = new ObservableCollection<string>();
-
-        private Dictionary<string, string> _pluginSettings = new Dictionary<string, string>();
+        private PluginSettingStoreCollection _filters = new PluginSettingStoreCollection(),
+            _penButtons = new PluginSettingStoreCollection(),
+            _auxButtons = new PluginSettingStoreCollection(),
+            _tools = new PluginSettingStoreCollection(),
+            _interpolators = new PluginSettingStoreCollection();
 
         #region General Settings
 
         [JsonProperty("OutputMode")]
-        public string OutputMode
+        public PluginSettingStore OutputMode
         {
-            set => RaiseAndSetIfChanged(ref _outputMode, value != "{Disable}" ? value : null);
+            set => RaiseAndSetIfChanged(ref _outputMode, value);
             get => _outputMode;
         }
 
         [JsonProperty("Filters")]
-        public ObservableCollection<string> Filters
+        public PluginSettingStoreCollection Filters
         {
             set => RaiseAndSetIfChanged(ref _filters, value);
             get => _filters;
@@ -233,42 +233,35 @@ namespace OpenTabletDriver.Desktop
         }
 
         [JsonProperty("TipButton")]
-        public string TipButton
+        public PluginSettingStore TipButton
         {
             set => RaiseAndSetIfChanged(ref _tipButton, value);
             get => _tipButton;
         }
 
         [JsonProperty("PenButtons")]
-        public ObservableCollection<string> PenButtons
+        public PluginSettingStoreCollection PenButtons
         {
             set => RaiseAndSetIfChanged(ref _penButtons, value);
             get => _penButtons;
         }
 
         [JsonProperty("AuxButtons")]
-        public ObservableCollection<string> AuxButtons
+        public PluginSettingStoreCollection AuxButtons
         {
             set => RaiseAndSetIfChanged(ref _auxButtons, value);
             get => _auxButtons;
         }
 
-        [JsonProperty("PluginSettings")]
-        public Dictionary<string, string> PluginSettings
-        {
-            set => RaiseAndSetIfChanged(ref _pluginSettings, value);
-            get => _pluginSettings;
-        }
-
         [JsonProperty("Tools")]
-        public ObservableCollection<string> Tools
+        public PluginSettingStoreCollection Tools
         {
             set => RaiseAndSetIfChanged(ref _tools, value);
             get => _tools;
         }
 
         [JsonProperty("Interpolators")]
-        public ObservableCollection<string> Interpolators
+        public PluginSettingStoreCollection Interpolators
         {
             set => RaiseAndSetIfChanged(ref _interpolators, value);
             get => _interpolators;
@@ -306,24 +299,66 @@ namespace OpenTabletDriver.Desktop
 
         #endregion
 
-        #region Defaults
+        #region Custom Serialization
 
-        public static readonly Settings Defaults = new Settings
+        static Settings()
         {
-            OutputMode = typeof(Output.AbsoluteMode).FullName,
-            AutoHook = true,
-            EnableClipping = true,
-            TipButton = new BindingReference(typeof(MouseBinding), "Left"),
-            TipActivationPressure = 1,
-            PenButtons = new ObservableCollection<string>(new string[PenButtonCount]),
-            AuxButtons = new ObservableCollection<string>(new string[AuxButtonCount]),
-            PluginSettings = new Dictionary<string, string>(),
-            XSensitivity = 10,
-            YSensitivity = 10,
-            RelativeRotation = 0,
-            ResetTime = TimeSpan.FromMilliseconds(100)
+            serializer.Error += SerializationErrorHandler;
+        }
+
+        private static readonly JsonSerializer serializer = new JsonSerializer
+        {
+            Formatting = Formatting.Indented
         };
 
+        private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+        {
+            args.ErrorContext.Handled = true;
+            if (args.ErrorContext.Path is string path)
+            {
+                var property = args.CurrentObject.GetType().GetProperty(path);
+                if (property != null && property.PropertyType == typeof(PluginSettingStore))
+                {
+                    var match = propertyValueRegex.Match(args.ErrorContext.Error.Message);
+                    if (match.Success)
+                    {
+                        var objPath = SettingsMigrator.MigrateNamespace(match.Groups[1].Value);
+                        var newValue = PluginSettingStore.FromPath(objPath);
+                        if (newValue != null)
+                        {
+                            property.SetValue(args.CurrentObject, newValue);
+                            Log.Write("Settings", $"Migrated {path} to {nameof(PluginSettingStore)}");
+                            return;
+                        }
+                    }
+                }
+                Log.Write("Settings", $"Unable to migrate {path}", LogLevel.Error);
+                return;
+            }
+            Log.Exception(args.ErrorContext.Error);
+        }
+
+        private static Regex propertyValueRegex = new Regex(PROPERTY_VALUE_REGEX, RegexOptions.Compiled);
+        private const string PROPERTY_VALUE_REGEX = "\\\"(.+?)\\\"";
+
+        public static Settings Deserialize(FileInfo file)
+        {
+            using (var stream = file.OpenRead())
+            using (var sr = new StreamReader(stream))
+            using (var jr = new JsonTextReader(sr))
+                return serializer.Deserialize<Settings>(jr);
+        }
+
+        public void Serialize(FileInfo file)
+        {
+            if (file.Exists)
+                file.Delete();
+
+            using (var sw = file.CreateText())
+            using (var jw = new JsonTextWriter(sw))
+                serializer.Serialize(jw, this);
+        }
+        
         #endregion
     }
 }
