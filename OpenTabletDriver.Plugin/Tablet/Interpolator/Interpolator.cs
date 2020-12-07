@@ -20,7 +20,6 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 
         protected double reportMsAvg = 5.0f;
         protected bool enabled;
-        protected IList<IFilter> filters;
         protected ITimer scheduler;
         protected DateTime lastTime = DateTime.UtcNow;
         protected readonly object stateLock = new object();
@@ -60,11 +59,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             get => this.enabled;
         }
 
-        public virtual IEnumerable<IFilter> Filters
-        {
-            set => this.filters = value.ToArray();
-            get => this.filters;
-        }
+        public virtual IList<IFilter> Filters { get; set; }
 
         protected virtual void HandleReport(object _, IDeviceReport report)
         {
@@ -82,7 +77,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                         if (Enabled)
                         {
                             var synthesizedReport = new SyntheticTabletReport(tabletReport);
-                            foreach (var filter in this.filters)
+                            foreach (var filter in this.Filters)
                                 synthesizedReport.Position = filter.Filter(synthesizedReport.Position);
                             UpdateState(synthesizedReport);
                         }

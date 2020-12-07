@@ -316,12 +316,13 @@ namespace OpenTabletDriver.Daemon
                         }
                     }
 
-                    interpolator.Filters = from filterPath in Settings?.Filters
+                    var filters = from filterPath in Settings?.Filters
                         let filter = AppInfo.PluginManager.GetPluginReference(filterPath).Construct<IFilter>()
                         where filter != null
                         where filter.FilterStage == FilterStage.PreInterpolate
                         select filter;
 
+                    interpolator.Filters = filters.ToList();
                     Driver.Interpolators.Add(interpolator);
 
                     Log.Write("Settings", $"Interpolator: {interpolator}");
