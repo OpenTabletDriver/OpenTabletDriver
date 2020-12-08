@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -207,7 +208,8 @@ namespace OpenTabletDriver.UX.Controls
             get => (AreaViewModel)this.DataContext;
         }
 
-        public void SetBackground(params RectangleF[] bgs) => ViewModel.Background = bgs;
+        public void SetBackground(params RectangleF[] bgs) => SetBackground(bgs as IEnumerable<RectangleF>);
+        public void SetBackground(IEnumerable<RectangleF> bgs) => ViewModel.Background = bgs;
 
         protected void ChangeLockingState(bool lockToMax)
         {
