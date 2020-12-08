@@ -22,8 +22,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
-        protected PluginContext FallbackPluginContext { get; }
-        protected ConcurrentBag<PluginContext> PluginContexts { get; } = new ConcurrentBag<PluginContext>();
+        protected DesktopPluginContext FallbackPluginContext { get; }
+        protected ConcurrentBag<DesktopPluginContext> PluginContexts { get; } = new ConcurrentBag<DesktopPluginContext>();
 
         public void LoadPlugins(DirectoryInfo directory)
         {
