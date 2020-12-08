@@ -169,6 +169,29 @@ namespace OpenTabletDriver.UX.Controls
                 }
             );
 
+            this.ContextMenu.Items.GetSubmenu("Flip").Items.AddRange(
+                new MenuItem[]
+                {
+                    CreateMenuItem("Horizontal", () => ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X),
+                    CreateMenuItem("Vertical", () => ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y),
+                }
+            );
+
+            if (enableRotation)
+            {
+                this.ContextMenu.Items.GetSubmenu("Flip").Items.Add(
+                    CreateMenuItem("Handedness", 
+                        () => 
+                        {
+                            ViewModel.Rotation += 180;
+                            ViewModel.Rotation %= 360;
+                            ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X;
+                            ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y;
+                        }
+                    )
+                );
+            }
+
             AppendMenuItemSeparator();
             
             this.MouseDown += (sender, e) =>
@@ -186,6 +209,14 @@ namespace OpenTabletDriver.UX.Controls
 
         public void SetBackground(params RectangleF[] bgs) => ViewModel.Background = bgs;
 
+        protected void ChangeLockingState(bool lockToMax)
+        {
+            if (lockToMax)
+                this.ViewModel.PropertyChanged += this.LimitArea;
+            else
+                this.ViewModel.PropertyChanged -= this.LimitArea;
+        }
+
         public Command AppendMenuItem(string menuText, Action handler)
         {
             var item = CreateMenuItem(menuText, handler);   
@@ -195,11 +226,7 @@ namespace OpenTabletDriver.UX.Controls
 
         public CheckCommand AppendCheckBoxMenuItem(string menuText, Action<bool> handler, bool defaultValue = false)
         {
-            var command = new CheckCommand { MenuText = menuText };
-            command.Executed += (sender, e) => handler(command.Checked);
-            command.Checked = defaultValue;
-            if (defaultValue)
-                command.Execute();
+            var command = CreateCheckBoxMenuItem(menuText, handler, defaultValue);
             this.ContextMenu.Items.Add(command);
             return command;
         }
@@ -238,6 +265,16 @@ namespace OpenTabletDriver.UX.Controls
         {
             var command = new Command { MenuText = menuText };
             command.Executed += (sender, e) => handler();
+            return command;
+        }
+
+        private CheckCommand CreateCheckBoxMenuItem(string menuText, Action<bool> handler, bool defaultValue = false)
+        {
+            var command = new CheckCommand { MenuText = menuText };
+            command.Executed += (sender, e) => handler(command.Checked);
+            command.Checked = defaultValue;
+            if (defaultValue)
+                command.Execute();
             return command;
         }
 

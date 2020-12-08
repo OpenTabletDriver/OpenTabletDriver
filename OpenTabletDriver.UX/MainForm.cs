@@ -1,31 +1,28 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
-using OpenTabletDriver.Reflection;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX
 {
+    using static App;
+
     public partial class MainForm : Form
     {
         public MainForm()
         {
             Title = "OpenTabletDriver";
-            Icon = App.Logo.WithSize(App.Logo.Size);
+            Icon = Logo.WithSize(Logo.Size);
 
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
@@ -44,7 +41,7 @@ namespace OpenTabletDriver.UX
                     new StackLayoutItem(null, true),
                     new StackLayoutItem
                     {
-                        Control = new Bitmap(App.Logo.WithSize(256, 256)),
+                        Control = new Bitmap(Logo.WithSize(256, 256)),
                         HorizontalAlignment = HorizontalAlignment.Center
                     },
                     new StackLayoutItem
@@ -59,49 +56,6 @@ namespace OpenTabletDriver.UX
 
         private Control ConstructMainControls()
         {
-            var displayAreaGroup = ConstructDisplayArea();
-            var tabletAreaGroup = ConstructTabletArea();
-
-            var outputModeSelector = ConstructOutputModeSelector();
-            absoluteConfig = ConstructAreaConfig(displayAreaGroup, tabletAreaGroup);
-            relativeConfig = new SensitivityEditor();
-            nullConfig = new Panel();
-
-            outputConfig = new StackLayout
-            {
-                Padding = 5,
-                Spacing = 5,
-                Items =
-                {
-                    new StackLayoutItem(absoluteConfig, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(relativeConfig, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(nullConfig, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(outputModeSelector, HorizontalAlignment.Left, false)
-                }
-            };
-
-            filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
-                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Filters, true),
-                "Filter"
-            );
-
-            toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
-                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Tools, true),
-                "Tool"
-            );
-
-            interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
-                new WeakReference<PluginSettingStoreCollection>(App.Settings?.Interpolators),
-                "Interpolator"
-            );
-
-            App.SettingsChanged += (settings) => 
-            {
-                filterEditor.UpdateStore(App.Settings?.Filters);                
-                toolEditor.UpdateStore(App.Settings?.Tools);
-                interpolatorEditor.UpdateStore(App.Settings?.Interpolators);
-            };
-
             // Main Content
             var tabControl = new TabControl
             {
@@ -110,30 +64,39 @@ namespace OpenTabletDriver.UX
                     new TabPage
                     {
                         Text = "Output",
-                        Content = outputConfig
+                        Content = outputModeEditor = new OutputModeEditor()
                     },
                     new TabPage
                     {
                         Text = "Bindings",
-                        Content = new BindingEditor()
+                        Content = bindingEditor = new BindingEditor()
                     },
                     new TabPage
                     {
                         Text = "Filters",
                         Padding = 5,
-                        Content = filterEditor
+                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
+                            new WeakReference<PluginSettingStoreCollection>(Settings?.Filters, true),
+                            "Filter"
+                        )
                     },
                     new TabPage
                     {
                         Text = "Tools",
                         Padding = 5,
-                        Content = toolEditor
+                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
+                            new WeakReference<PluginSettingStoreCollection>(Settings?.Tools, true),
+                            "Tool"
+                        )
                     },
                     new TabPage
                     {
                         Text = "Interpolators",
                         Padding = 5,
-                        Content = interpolatorEditor
+                        Content = interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
+                            new WeakReference<PluginSettingStoreCollection>(Settings?.Interpolators),
+                            "Interpolator"
+                        )
                     },
                     new TabPage
                     {
@@ -142,6 +105,13 @@ namespace OpenTabletDriver.UX
                         Content = new LogView()
                     }
                 }
+            };
+
+            SettingsChanged += (settings) =>
+            {
+                filterEditor.UpdateStore(Settings?.Filters);
+                toolEditor.UpdateStore(Settings?.Tools);
+                interpolatorEditor.UpdateStore(Settings?.Interpolators);
             };
 
             var commandsPanel = new StackLayout
@@ -187,162 +157,13 @@ namespace OpenTabletDriver.UX
             };
         }
 
-        private Control ConstructTabletArea()
-        {
-            tabletAreaEditor = new AreaEditor("mm", enableRotation: true);
-            tabletAreaEditor.AreaDisplay.InvalidSizeError = "No tablet detected.";
-            tabletAreaEditor.AreaDisplay.ToolTip =
-                "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
-
-            void lockToMaxArea(AreaEditor editor, bool lockToMax)
-            {
-                if (lockToMax)
-                    editor.ViewModel.PropertyChanged += editor.LimitArea;
-                else
-                    editor.ViewModel.PropertyChanged -= editor.LimitArea;
-            }
-
-            var lockUsableTabletArea = tabletAreaEditor.AppendCheckBoxMenuItem(
-                "Lock to usable area",
-                value =>
-                {
-                    lockToMaxArea(tabletAreaEditor, value);
-                    Settings.LockUsableAreaTablet = value;
-                }
-            );
-            
-            App.SettingsChanged += (settings) =>
-            {
-                tabletAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
-                tabletAreaEditor.Bind(c => c.ViewModel.Height, settings, m => m.TabletHeight);
-                tabletAreaEditor.Bind(c => c.ViewModel.X, settings, m => m.TabletX);
-                tabletAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.TabletY);
-                tabletAreaEditor.Bind(c => c.ViewModel.Rotation, settings, m => m.TabletRotation);
-                lockUsableTabletArea.Checked = settings.LockUsableAreaTablet;
-                lockToMaxArea(tabletAreaEditor, settings.LockUsableAreaTablet);
-            };
-
-            var lockAr = tabletAreaEditor.AppendCheckBoxMenuItem("Lock aspect ratio", (value) => Settings.LockAspectRatio = value);
-            App.SettingsChanged += (settings) =>
-            {
-                lockAr.Checked = settings.LockAspectRatio;
-            };
-
-            var areaClipping = tabletAreaEditor.AppendCheckBoxMenuItem("Area clipping", (value) => Settings.EnableClipping = value);
-            App.SettingsChanged += (settings) =>
-            {
-                areaClipping.Checked = settings.EnableClipping;
-            };
-
-            var ignoreOutsideArea = tabletAreaEditor.AppendCheckBoxMenuItem("Ignore reports outside area", (value) => Settings.EnableAreaLimiting = value);
-            App.SettingsChanged += (settings) =>
-            {
-                ignoreOutsideArea.Checked = settings.EnableAreaLimiting;
-            };
-
-            var tabletAreaGroup = new GroupBox
-            {
-                Text = "Tablet Area",
-                Padding = App.GroupBoxPadding,
-                Content = tabletAreaEditor
-            };
-            return tabletAreaGroup;
-        }
-
-        private Control ConstructDisplayArea()
-        {
-            displayAreaEditor = new AreaEditor("px");
-            displayAreaEditor.AreaDisplay.ToolTip =
-                "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
-
-            void lockToMaxArea(AreaEditor editor, bool lockToMax)
-            {
-                if (lockToMax)
-                    editor.ViewModel.PropertyChanged += editor.LimitArea;
-                else
-                    editor.ViewModel.PropertyChanged -= editor.LimitArea;
-            }
-
-            var lockUsableDisplayArea = displayAreaEditor.AppendCheckBoxMenuItem(
-                "Lock to usable area",
-                value =>
-                {
-                    lockToMaxArea(displayAreaEditor, value);
-                    Settings.LockUsableAreaDisplay = value;
-                }
-            );
-            
-            App.SettingsChanged += (settings) =>
-            {
-                displayAreaEditor.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
-                displayAreaEditor.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
-                displayAreaEditor.Bind(c => c.ViewModel.X, settings, m => m.DisplayX);
-                displayAreaEditor.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
-                lockUsableDisplayArea.Checked = settings.LockUsableAreaDisplay;
-                lockToMaxArea(displayAreaEditor, settings.LockUsableAreaDisplay);
-            };
-
-            displayAreaEditor.AppendMenuItemSeparator();
-
-            foreach (var display in SystemInterop.VirtualScreen.Displays)
-            {
-                displayAreaEditor.AppendMenuItem(
-                    $"Set to {display}",
-                    () =>
-                    {
-                        displayAreaEditor.ViewModel.Width = display.Width;
-                        displayAreaEditor.ViewModel.Height = display.Height;
-                        if (display is IVirtualScreen virtualScreen)
-                        {
-                            displayAreaEditor.ViewModel.X = virtualScreen.Width / 2;
-                            displayAreaEditor.ViewModel.Y = virtualScreen.Height / 2;
-                        }
-                        else
-                        {
-                            virtualScreen = SystemInterop.VirtualScreen;
-                            displayAreaEditor.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
-                            displayAreaEditor.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
-                        }
-                    }
-                );
-            }
-
-            var displayAreaGroup = new GroupBox
-            {
-                Text = "Display Area",
-                Padding = App.GroupBoxPadding,
-                Content = displayAreaEditor
-            };
-            return displayAreaGroup;
-        }
-
-        private Control ConstructOutputModeSelector()
-        {
-            var control = new OutputModeSelector
-            {
-                Width = 300
-            };
-            control.SelectedModeChanged += (sender, mode) =>
-            {
-                App.Settings.OutputMode = PluginSettingStore.FromPath(mode.Path);
-                UpdateOutputMode(mode);
-            };
-            App.SettingsChanged += (settings) =>
-            {
-                var mode = control.OutputModes.FirstOrDefault(t => t.Path == App.Settings.OutputMode?.Path) ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
-                if (mode != null)
-                    control.SelectedIndex = control.OutputModes.IndexOf(mode);
-            };
-            return control;
-        }
-
         private MenuBar ConstructMenu()
         {
             var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
             quitCommand.Executed += (sender, e) => Application.Instance.Quit();
 
             var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
-            aboutCommand.Executed += (sender, e) => App.AboutDialog.ShowDialog(this);
+            aboutCommand.Executed += (sender, e) => AboutDialog.ShowDialog(this);
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
             resetSettings.Executed += async (sender, e) => await ResetSettings(false);
@@ -375,10 +196,10 @@ namespace OpenTabletDriver.UX
             pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             var pluginsRepository = new Command { MenuText = "Open plugins repository..." };
-            pluginsRepository.Executed += (sender, e) => SystemInterop.Open(App.PluginRepositoryUrl);
+            pluginsRepository.Executed += (sender, e) => SystemInterop.Open(PluginRepositoryUrl);
 
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => SystemInterop.Open(App.FaqUrl);
+            faqUrl.Executed += (sender, e) => SystemInterop.Open(FaqUrl);
 
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
@@ -446,7 +267,7 @@ namespace OpenTabletDriver.UX
             this.Padding = SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.MacOS => new Padding(10),
-                _                     => new Padding(0)
+                _                    => new Padding(0)
             };
 
             this.ClientSize = SystemInterop.CurrentPlatform switch
@@ -459,14 +280,14 @@ namespace OpenTabletDriver.UX
             {
                 PluginPlatform.Windows => true,
                 PluginPlatform.MacOS   => true,
-                _                       => false
+                _                      => false
             };
 
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => true,
                 PluginPlatform.MacOS   => true,
-                _                       => false,
+                _                      => false,
             };
 
             if (enableTrayIcon)
@@ -527,7 +348,7 @@ namespace OpenTabletDriver.UX
         {
             try
             {
-                await App.Driver.Connect();
+                await Driver.Connect();
             }
             catch (TimeoutException)
             {
@@ -535,21 +356,20 @@ namespace OpenTabletDriver.UX
                 Application.Instance.Quit();
             }
 
-            AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
+            AppInfo.Current = await Driver.Instance.GetApplicationInfo();
 
             AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
-            Log.Output += async (sender, message) => await App.Driver.Instance.WriteMessage(message);
+            Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 
             Content = ConstructMainControls();
 
-            if (await App.Driver.Instance.GetTablet() is TabletState tablet)
-            {
-                SetTabletAreaDimensions(tablet);
-            }
-            App.Driver.Instance.TabletChanged += (sender, tablet) => SetTabletAreaDimensions(tablet);
+            if (await Driver.Instance.GetTablet() is TabletState tablet)
+                outputModeEditor.SetTabletSize(tablet);
+
+            Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
 
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
-            if (await App.Driver.Instance.GetSettings() is Settings settings)
+            if (await Driver.Instance.GetSettings() is Settings settings)
             {
                 Settings = settings;
             }
@@ -558,7 +378,7 @@ namespace OpenTabletDriver.UX
                 try
                 {
                     Settings = Settings.Deserialize(settingsFile);
-                    await App.Driver.Instance.SetSettings(Settings);
+                    await Driver.Instance.SetSettings(Settings);
                 }
                 catch
                 {
@@ -571,31 +391,22 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            displayAreaEditor.ViewModel.Background = from disp in SystemInterop.VirtualScreen.Displays
-                where !(disp is IVirtualScreen)
-                select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
+            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
         }
 
-        private Control absoluteConfig, relativeConfig, nullConfig;
-        private StackLayout outputConfig;
-        private AreaEditor displayAreaEditor, tabletAreaEditor;
+        private OutputModeEditor outputModeEditor;
+        private BindingEditor bindingEditor;
         private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
         private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
-
-        public Settings Settings
-        {
-            set => App.Settings = value;
-            get => App.Settings;
-        }
 
         private async Task ResetSettings(bool force = true)
         {
             if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
                 return;
 
-            await App.Driver.Instance.ResetSettings();
-            Settings = await App.Driver.Instance.GetSettings();
+            await Driver.Instance.ResetSettings();
+            Settings = await Driver.Instance.GetSettings();
         }
 
         private async Task LoadSettingsDialog()
@@ -616,7 +427,7 @@ namespace OpenTabletDriver.UX
                     if (file.Exists)
                     {
                         Settings = Settings.Deserialize(file);
-                        await App.Driver.Instance.SetSettings(Settings);
+                        await Driver.Instance.SetSettings(Settings);
                     }
                     break;
             }
@@ -667,7 +478,7 @@ namespace OpenTabletDriver.UX
                     }
                 }
 
-                var appInfo = await App.Driver.Instance.GetApplicationInfo();
+                var appInfo = await Driver.Instance.GetApplicationInfo();
                 settings.Serialize(new FileInfo(appInfo.SettingsFile));
                 await ApplySettings();
             }
@@ -678,7 +489,7 @@ namespace OpenTabletDriver.UX
             try
             {
                 if (Settings is Settings settings)
-                    await App.Driver.Instance.SetSettings(settings);
+                    await Driver.Instance.SetSettings(settings);
             }
             catch (StreamJsonRpc.RemoteInvocationException riex)
             {
@@ -688,12 +499,10 @@ namespace OpenTabletDriver.UX
 
         private async Task DetectAllTablets()
         {
-            if (await App.Driver.Instance.DetectTablets() is TabletState tablet)
+            if (await Driver.Instance.DetectTablets() is TabletState tablet)
             {
-                var settings = await App.Driver.Instance.GetSettings();
-                if (settings != null)
-                    await App.Driver.Instance.EnableInput(settings.AutoHook);
-                SetTabletAreaDimensions(tablet);
+                var settings = await Driver.Instance.GetSettings();
+                await Driver.Instance.EnableInput(settings?.AutoHook ?? false);
             }
         }
 
@@ -711,7 +520,7 @@ namespace OpenTabletDriver.UX
 
         private async Task ExportDiagnostics()
         {
-            var log = await App.Driver.Instance.GetCurrentLog();
+            var log = await Driver.Instance.GetCurrentLog();
             var diagnosticDump = new DiagnosticInfo(log);
             var fileDialog = new SaveFileDialog
             {
@@ -731,70 +540,6 @@ namespace OpenTabletDriver.UX
                     using (var fs = file.OpenWrite())
                     using (var sw = new StreamWriter(fs))
                         await sw.WriteLineAsync(diagnosticDump.ToString());
-                    break;
-            }
-        }
-
-        private void SetTabletAreaDimensions(TabletState tablet)
-        {
-            Application.Instance.AsyncInvoke(() =>
-            {
-                if (tablet != null && tablet.Digitizer != null)
-                {
-                    tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height));
-
-                    if (Settings != null && Settings.TabletWidth == 0 && Settings.TabletHeight == 0)
-                    {
-                        Settings.TabletWidth = tablet.Digitizer.Width;
-                        Settings.TabletHeight = tablet.Digitizer.Height;
-                        Settings.TabletX = tablet.Digitizer.Width / 2;
-                        Settings.TabletY = tablet.Digitizer.Height / 2;
-                    }
-                }
-                else
-                {
-                    tabletAreaEditor.SetBackground(null);
-                }
-            });
-        }
-
-        private void UpdateOutputMode(PluginReference pluginRef)
-        {
-            var outputMode = pluginRef.GetTypeReference<IOutputMode>();
-            bool showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
-            bool showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
-            bool showNull = !(showAbsolute | showRelative);
-            switch (SystemInterop.CurrentPlatform)
-            {
-                case PluginPlatform.Linux:
-                    absoluteConfig.Visible = showAbsolute;
-                    relativeConfig.Visible = showRelative;
-                    nullConfig.Visible = showNull;
-                    break;
-                default:
-                    absoluteConfig.Visible = true;
-                    relativeConfig.Visible = true;
-                    nullConfig.Visible = true;
-
-                    void setVisibilityWorkaround(Control control, bool visibility, int index)
-                    {
-                        var isContained = outputConfig.Items.Any(d => d.Control == control);
-                        if (!isContained & visibility)
-                        {
-                            if (outputConfig.Items.Count - index - 1 < 0)
-                                index = 0;
-                            outputConfig.Items.Insert(index, new StackLayoutItem(control, HorizontalAlignment.Stretch, true));
-                        }
-                        else if (isContained & !visibility)
-                        {
-                            var item = outputConfig.Items.FirstOrDefault(d => d.Control == control);
-                            outputConfig.Items.Remove(item);
-                        }
-                    }
-
-                    setVisibilityWorkaround(absoluteConfig, showAbsolute, 0);
-                    setVisibilityWorkaround(relativeConfig, showRelative, 1);
-                    setVisibilityWorkaround(nullConfig, showNull, 2);
                     break;
             }
         }
