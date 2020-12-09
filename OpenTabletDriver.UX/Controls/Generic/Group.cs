@@ -1,6 +1,8 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
@@ -22,7 +24,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         private const int TITLE_FONT_SIZE = 9;
         private const Orientation DEFAULT_ORIENTATION = Orientation.Vertical;
 
-        protected virtual Padding ContentPadding => new Padding(5);
+        protected virtual Padding ContentPadding => SystemInterop.CurrentPlatform == PluginPlatform.Windows ? new Padding(5, 10, 5, 5) : new Padding(5);
 
         protected virtual Color HorizontalBackgroundColor => SystemColors.ControlBackground;
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
@@ -51,7 +53,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             {
                 case Orientation.Horizontal:
                 {
-                    base.Content = new GroupBox
+                    var groupBox = new GroupBox
                     {
                         BackgroundColor = HorizontalBackgroundColor,
                         Content = new StackLayout
@@ -63,11 +65,15 @@ namespace OpenTabletDriver.UX.Controls.Generic
                             Items =
                             {
                                 new StackLayoutItem(titleLabel, TitleVerticalAlignment),
-                                ExpandContent ? new StackLayoutItem(null, true) : null,
                                 new StackLayoutItem(this.Content, ExpandContent)
                             }
                         }
                     };
+                    if (!ExpandContent)
+                    {
+                        (groupBox.Content as StackLayout).Items.Insert(1, new StackLayoutItem(null, true));
+                    }
+                    base.Content = groupBox;
                     break;
                 }
                 case Orientation.Vertical:
@@ -75,6 +81,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                     base.Content = new StackLayout
                     {
                         HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                        VerticalContentAlignment = VerticalAlignment.Center,
                         Spacing = 5,
                         Padding = ContentPadding,
                         Items =
@@ -85,7 +92,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                                 Expand = true,
                                 Control = new GroupBox
                                 {
-                                    Padding = App.GroupBoxPadding,
+                                    Padding = ContentPadding,
                                     BackgroundColor = VerticalBackgroundColor,
                                     Content = this.Content
                                 }

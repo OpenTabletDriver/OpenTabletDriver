@@ -64,7 +64,7 @@ namespace OpenTabletDriver.UX
             return SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => new Padding(0),
-                _                       => new Padding(5)
+                _                      => new Padding(5)
             };
         });
     }

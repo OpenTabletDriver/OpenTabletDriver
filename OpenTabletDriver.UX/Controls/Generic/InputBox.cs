@@ -10,7 +10,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             Func<string> getValue,
             Action<string> setValue,
             string placeholder = null,
-            int textboxWidth = 400
+            int textboxWidth = 300
         )
         {
             this.Orientation = Orientation.Horizontal;

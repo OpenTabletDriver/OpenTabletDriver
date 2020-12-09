@@ -97,17 +97,7 @@ namespace OpenTabletDriver.UX.Controls
                 auxBindingsStack.AddControl(auxBindingGroup);
             }
 
-            var paddedAuxBindings = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                Items =
-                {
-                    new StackLayoutItem(null, true),
-                    new StackLayoutItem(auxBindingsStack, true),
-                    new StackLayoutItem(null, true)
-                }
-            };
-            var auxBindingSettings = new Group("Auxiliary Button Bindings", paddedAuxBindings)
+            var auxBindingSettings = new Group("Auxiliary Button Bindings", auxBindingsStack)
             {
                 TitleHorizontalAlignment = HorizontalAlignment.Center
             };

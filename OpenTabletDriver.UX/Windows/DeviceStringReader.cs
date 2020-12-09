@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -19,15 +20,15 @@ namespace OpenTabletDriver.UX.Windows
             };
             sendRequestButton.Click += SendRequestWithTimeout;
 
-            this.vendorIdText = new TextBox
+            this.vendorIdText = new NumericMaskedTextBox<int>
             {
                 PlaceholderText = "Decimal Representation"
             };
-            this.productIdText = new TextBox
+            this.productIdText = new NumericMaskedTextBox<int>
             {
                 PlaceholderText = "Decimal Representation"
             };
-            this.stringIndexText = new TextBox
+            this.stringIndexText = new NumericMaskedTextBox<int>
             {
                 PlaceholderText = "[1..255]"
             };
@@ -37,54 +38,18 @@ namespace OpenTabletDriver.UX.Windows
                 ReadOnly = true
             };
 
-            static void restrictToNumbers(object sender, TextChangingEventArgs args)
+            this.vendorIdCtrl = new Group("VendorID", vendorIdText);
+            this.productIdCtrl = new Group("ProductID", productIdText);
+            this.stringIndexCtrl = new Group("String Index", stringIndexText);
+
+            var deviceInfoInput = new StackLayout
             {
-                if (!int.TryParse(args.NewText, out int result))
+                Orientation = Orientation.Horizontal,
+                Spacing = 5,
+                Items =
                 {
-                    args.Cancel = true;
-                }
-            }
-
-            this.vendorIdCtrl = new GroupBox
-            {
-                Text = "VendorID",
-                Padding = App.GroupBoxPadding,
-                Content = vendorIdText
-            };
-
-            vendorIdText.TextChanging += restrictToNumbers;
-
-            this.productIdCtrl = new GroupBox
-            {
-                Text = "ProductID",
-                Padding = App.GroupBoxPadding,
-                Content = productIdText
-            };
-
-            productIdText.TextChanging += restrictToNumbers;
-
-            this.stringIndexCtrl = new GroupBox
-            {
-                Text = "String Index",
-                Padding = App.GroupBoxPadding,
-                Content = stringIndexText
-            };
-
-            stringIndexText.TextChanging += restrictToNumbers;
-
-            var deviceInfoInput = new TableLayout
-            {
-                Spacing = new Size(5, 5),
-                Rows =
-                {
-                    new TableRow
-                    {
-                        Cells =
-                        {
-                            new TableCell(vendorIdCtrl, true),
-                            new TableCell(productIdCtrl, true)
-                        }
-                    }
+                    new StackLayoutItem(vendorIdCtrl, true),
+                    new StackLayoutItem(productIdCtrl, true)
                 }
             };
 
@@ -92,13 +57,14 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Padding = 5,
                 Spacing = 5,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
-                    new StackLayoutItem(deviceInfoInput, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(stringIndexCtrl, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(sendRequestButton, HorizontalAlignment.Stretch, false),
+                    new StackLayoutItem(deviceInfoInput),
+                    new StackLayoutItem(stringIndexCtrl),
+                    new StackLayoutItem(sendRequestButton),
                     new StackLayoutItem(),
-                    new StackLayoutItem(deviceStringText, HorizontalAlignment.Stretch, true)
+                    new StackLayoutItem(deviceStringText, true)
                 }
             };
         }
@@ -147,7 +113,8 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private readonly Button sendRequestButton;
-        private readonly TextBox vendorIdText, productIdText, stringIndexText, deviceStringText;
-        private readonly GroupBox vendorIdCtrl, productIdCtrl, stringIndexCtrl;
+        private readonly NumericMaskedTextBox<int> vendorIdText, productIdText, stringIndexText;
+        private readonly TextBox deviceStringText;
+        private readonly Group vendorIdCtrl, productIdCtrl, stringIndexCtrl;
     }
 }
