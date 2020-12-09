@@ -21,7 +21,6 @@ namespace OpenTabletDriver.UX.Controls.Generic
             this.ExpandContent = expand;
         }
 
-        private const int TITLE_FONT_SIZE = 9;
         private const Orientation DEFAULT_ORIENTATION = Orientation.Vertical;
 
         protected virtual Padding ContentPadding => SystemInterop.CurrentPlatform == PluginPlatform.Windows ? new Padding(5, 10, 5, 5) : new Padding(5);
@@ -31,7 +30,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         
         private Label titleLabel = new Label
         {
-            Font = Fonts.Sans(TITLE_FONT_SIZE, FontStyle.Bold)
+            Font = Fonts.Sans(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 12 : 9, FontStyle.Bold)
         };
 
         public string Text
@@ -55,7 +54,6 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 {
                     var groupBox = new GroupBox
                     {
-                        BackgroundColor = HorizontalBackgroundColor,
                         Content = new StackLayout
                         {
                             VerticalContentAlignment = VerticalAlignment.Stretch,
@@ -69,6 +67,10 @@ namespace OpenTabletDriver.UX.Controls.Generic
                             }
                         }
                     };
+                    if (SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
+                    {
+                        groupBox.BackgroundColor = HorizontalBackgroundColor;
+                    }
                     if (!ExpandContent)
                     {
                         (groupBox.Content as StackLayout).Items.Insert(1, new StackLayoutItem(null, true));
@@ -78,6 +80,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 }
                 case Orientation.Vertical:
                 {
+                    GroupBox groupBox;
                     base.Content = new StackLayout
                     {
                         HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -90,15 +93,18 @@ namespace OpenTabletDriver.UX.Controls.Generic
                             new StackLayoutItem
                             {
                                 Expand = true,
-                                Control = new GroupBox
+                                Control = groupBox = new GroupBox
                                 {
                                     Padding = ContentPadding,
-                                    BackgroundColor = VerticalBackgroundColor,
                                     Content = this.Content
                                 }
                             }
                         }
                     };
+                    if (SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
+                    {
+                        groupBox.BackgroundColor = VerticalBackgroundColor;
+                    }
                     break;
                 }
             }
