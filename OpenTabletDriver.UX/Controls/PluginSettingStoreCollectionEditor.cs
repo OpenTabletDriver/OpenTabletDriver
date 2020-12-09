@@ -80,8 +80,9 @@ namespace OpenTabletDriver.UX.Controls
                 string pluginTypeName = string.IsNullOrWhiteSpace(friendlyName) ? typeof(TSource).Name : $"{friendlyName.ToLower()}s";
                 base.Items.Add(new StackLayoutItem(null, true));
                 base.Items.Add(
-                    new StackLayoutItem(new Bitmap(App.Logo.WithSize(256, 256)))
+                    new StackLayoutItem
                     {
+                        Control = new Bitmap(App.Logo.WithSize(256, 256)),
                         HorizontalAlignment = HorizontalAlignment.Center
                     }
                 );
