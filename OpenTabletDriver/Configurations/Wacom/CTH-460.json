@@ -36,7 +36,7 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 212,
+      "ProductID": 214,
       "InputReportLength": 11,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
@@ -49,7 +49,7 @@
   "AuxilaryDeviceIdentifiers": [
     {
       "VendorID": 1386,
-      "ProductID": 212,
+      "ProductID": 214,
       "InputReportLength": 64,
       "OutputReportLength": null,
       "ReportParser": null,
