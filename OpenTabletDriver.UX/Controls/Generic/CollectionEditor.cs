@@ -4,7 +4,7 @@ using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
-    public abstract class CollectionEditor<T> : GroupBoxBase where T : IEnumerable
+    public abstract class CollectionEditor<T> : Group where T : IEnumerable
     {
         protected CollectionEditor(string name, Func<T> getValue, Action<T> setValue) : base()
         {
