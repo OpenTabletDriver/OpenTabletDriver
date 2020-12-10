@@ -156,7 +156,7 @@ namespace OpenTabletDriver.UX.Windows
             var generic = new TextBox();
             generic.TextBinding.Bind(getValue, setValue);
 
-            var groupBox = new Group("Binding Property", generic);
+            var group = new Group("Binding Property", generic);
 
             void updateControl()
             {
@@ -179,16 +179,16 @@ namespace OpenTabletDriver.UX.Windows
                         setValue
                     );
                     
-                    groupBox.Content = selector;
+                    group.Content = selector;
                 }
                 else
                 {
-                    groupBox.Content = generic;
+                    group.Content = generic;
                 }
             }
             bindingSelector.SelectedKeyChanged += (sender, e) => updateControl();
             updateControl();
-            return groupBox;
+            return group;
         }
     }
 }
