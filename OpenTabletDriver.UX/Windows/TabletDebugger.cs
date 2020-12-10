@@ -13,51 +13,6 @@ namespace OpenTabletDriver.UX.Windows
         {
             Title = "Tablet Debugger";
 
-            rawTabCtrl = new Group
-            {
-                Text = "Raw Tablet Data",
-                Content = rawTabText = new Label
-                {
-                    Font = new Font(FontFamilies.Monospace, textSize)
-                }
-            };
-            
-            tabReportCtrl = new Group
-            {
-                Text = "Tablet Report",
-                Content = tabReportText = new Label
-                {
-                    Font = new Font(FontFamilies.Monospace, textSize)
-                }
-            };
-
-            rawAuxCtrl = new Group
-            {
-                Text = "Raw Aux Data",
-                Content = rawAuxText = new Label
-                {
-                    Font = new Font(FontFamilies.Monospace, textSize)
-                }
-            };
-            
-            auxReportCtrl = new Group
-            {
-                Text = "Aux Report",
-                Content = auxReportText = new Label
-                {
-                    Font = new Font(FontFamilies.Monospace, textSize)
-                }
-            };
-
-            reportRateCtrl = new Group
-            {
-                Text = "Report Rate",
-                Content = reportRateText = new Label
-                {
-                    Font = new Font(FontFamilies.Monospace, textSize)
-                }
-            };
-
             var mainLayout = new TableLayout
             {
                 Width = 640,
@@ -69,8 +24,8 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Cells =
                         {
-                            new TableCell(rawTabCtrl, true),
-                            new TableCell(tabReportCtrl, true)
+                            new TableCell(rawTabletBox = new TextGroup("Raw Tablet Data"), true),
+                            new TableCell(tabletBox = new TextGroup("Tablet Report"), true)
                         },
                         ScaleHeight = true
                     },
@@ -78,8 +33,8 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Cells =
                         {
-                            new TableCell(rawAuxCtrl, true),
-                            new TableCell(auxReportCtrl, true)
+                            new TableCell(rawAuxBox = new TextGroup("Raw Aux Data"), true),
+                            new TableCell(auxBox = new TextGroup("Aux Report"), true)
                         },
                         ScaleHeight = true
                     }
@@ -90,10 +45,10 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Padding = 5,
                 Spacing = 5,
-                Items = 
+                Items =
                 {
                     new StackLayoutItem(mainLayout, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(reportRateCtrl, HorizontalAlignment.Stretch)
+                    new StackLayoutItem(reportRateBox = new TextGroup("Report Rate"), HorizontalAlignment.Stretch)
                 }
             };
 
@@ -113,9 +68,7 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private Group rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl, reportRateCtrl;
-        private Label rawTabText, tabReportText, rawAuxText, auxReportText, reportRateText;
-        private float textSize = 10;
+        private TextGroup rawTabletBox, tabletBox, rawAuxBox, auxBox, reportRateBox;
         private float reportRate;
         private DateTime lastTime = DateTime.UtcNow;
 
@@ -123,24 +76,40 @@ namespace OpenTabletDriver.UX.Windows
         {
             if (report is ITabletReport tabletReport)
             {
-                Application.Instance.AsyncInvoke(() => 
-                {
-                    var now = DateTime.UtcNow;
-                    reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
-                    lastTime = now;
-                    rawTabText.Text = tabletReport?.StringFormat(true);
-                    tabReportText.Text = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
-                    reportRateText.Text = $"{(uint)(1000 / reportRate)}hz";
-                });
+                var now = DateTime.UtcNow;
+                reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
+                lastTime = now;
+
+                rawTabletBox.Update(tabletReport?.StringFormat(true));
+                tabletBox.Update(tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine));
+                reportRateBox.Update($"{(uint)(1000 / reportRate)}hz");
             }
             if (report is IAuxReport auxReport)
             {
-                Application.Instance.AsyncInvoke(() => 
-                {
-                    rawAuxText.Text = auxReport?.StringFormat(true);
-                    auxReportText.Text = auxReport?.StringFormat(false).Replace(", ", Environment.NewLine);
-                });
+                rawAuxBox.Update(auxReport?.StringFormat(true));
+                auxBox.Update(auxReport?.StringFormat(false).Replace(", ", Environment.NewLine));
             }
+        }
+
+        private class TextGroup : Group
+        {
+            public TextGroup(string title)
+            {
+                base.Text = title;
+                base.Content = label;
+            }
+
+            private Label label = new Label
+            {
+                Font = Fonts.Monospace(10)
+            };
+
+            public void Update(string text)
+            {
+                Application.Instance.AsyncInvoke(() => label.Text = text);
+            }
+
+            protected override Color VerticalBackgroundColor => base.HorizontalBackgroundColor;
         }
     }
 }
