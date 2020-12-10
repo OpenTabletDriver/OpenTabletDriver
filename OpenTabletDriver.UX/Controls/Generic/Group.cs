@@ -48,13 +48,25 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected void UpdateControlLayout()
         {
-            switch (Orientation)
+            switch (Orientation, SystemInterop.CurrentPlatform)
             {
-                case Orientation.Horizontal:
+                case (_, PluginPlatform.MacOS):
                 {
-                    var groupBox = new GroupBox
+                    base.Content = new GroupBox
                     {
-                        Content = new StackLayout
+                        Text = titleLabel.Text,
+                        Padding = new Padding(0, 2, 0, 0),
+                        Content = this.Content
+                    };
+                    break;
+                }
+                case (Orientation.Horizontal, _):
+                {
+                    StackLayout contentLayout;
+                    base.Content = new GroupBox
+                    {
+                        BackgroundColor = HorizontalBackgroundColor,
+                        Content = contentLayout = new StackLayout
                         {
                             VerticalContentAlignment = VerticalAlignment.Stretch,
                             Orientation = Orientation.Horizontal,
@@ -67,20 +79,12 @@ namespace OpenTabletDriver.UX.Controls.Generic
                             }
                         }
                     };
-                    if (SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
-                    {
-                        groupBox.BackgroundColor = HorizontalBackgroundColor;
-                    }
                     if (!ExpandContent)
-                    {
-                        (groupBox.Content as StackLayout).Items.Insert(1, new StackLayoutItem(null, true));
-                    }
-                    base.Content = groupBox;
+                        contentLayout.Items.Insert(1, new StackLayoutItem(null, true));
                     break;
                 }
-                case Orientation.Vertical:
+                case (Orientation.Vertical, _):
                 {
-                    GroupBox groupBox;
                     base.Content = new StackLayout
                     {
                         HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -93,18 +97,15 @@ namespace OpenTabletDriver.UX.Controls.Generic
                             new StackLayoutItem
                             {
                                 Expand = true,
-                                Control = groupBox = new GroupBox
+                                Control = new GroupBox
                                 {
+                                    BackgroundColor = VerticalBackgroundColor,
                                     Padding = ContentPadding,
                                     Content = this.Content
                                 }
                             }
                         }
                     };
-                    if (SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
-                    {
-                        groupBox.BackgroundColor = VerticalBackgroundColor;
-                    }
                     break;
                 }
             }
