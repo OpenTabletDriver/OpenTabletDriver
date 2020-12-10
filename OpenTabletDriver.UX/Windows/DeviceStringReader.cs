@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.Size = new Size(600, -1);
+            this.Size = new Size(300, -1);
 
             this.sendRequestButton = new Button
             {
@@ -20,17 +20,20 @@ namespace OpenTabletDriver.UX.Windows
             };
             sendRequestButton.Click += SendRequestWithTimeout;
 
-            this.vendorIdText = new NumericMaskedTextBox<int>
+            this.vendorIdText = new NumericMaskedTextBox<ushort>
             {
-                PlaceholderText = "Decimal Representation"
+                PlaceholderText = DecimalStyle,
+                Width = NUMERICBOX_WIDTH
             };
-            this.productIdText = new NumericMaskedTextBox<int>
+            this.productIdText = new NumericMaskedTextBox<ushort>
             {
-                PlaceholderText = "Decimal Representation"
+                PlaceholderText = DecimalStyle,
+                Width = NUMERICBOX_WIDTH
             };
-            this.stringIndexText = new NumericMaskedTextBox<int>
+            this.stringIndexText = new NumericMaskedTextBox<ushort>
             {
-                PlaceholderText = "[1..255]"
+                PlaceholderText = "[1..255]",
+                Width = NUMERICBOX_WIDTH
             };
             this.deviceStringText = new TextBox
             {
@@ -38,20 +41,9 @@ namespace OpenTabletDriver.UX.Windows
                 ReadOnly = true
             };
 
-            this.vendorIdCtrl = new Group("VendorID", vendorIdText);
-            this.productIdCtrl = new Group("ProductID", productIdText);
-            this.stringIndexCtrl = new Group("String Index", stringIndexText);
-
-            var deviceInfoInput = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                Spacing = 5,
-                Items =
-                {
-                    new StackLayoutItem(vendorIdCtrl, true),
-                    new StackLayoutItem(productIdCtrl, true)
-                }
-            };
+            this.vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
+            this.productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
+            this.stringIndexCtrl = new Group("String Index", stringIndexText, Orientation.Horizontal, false);
 
             this.Content = new StackLayout
             {
@@ -60,14 +52,18 @@ namespace OpenTabletDriver.UX.Windows
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
-                    new StackLayoutItem(deviceInfoInput),
+                    new StackLayoutItem(vendorIdCtrl),
+                    new StackLayoutItem(productIdCtrl),
                     new StackLayoutItem(stringIndexCtrl),
-                    new StackLayoutItem(sendRequestButton),
+                    new StackLayoutItem(sendRequestButton, HorizontalAlignment.Center),
                     new StackLayoutItem(),
                     new StackLayoutItem(deviceStringText, true)
                 }
             };
         }
+
+        private const int NUMERICBOX_WIDTH = 150;
+        private const string DecimalStyle = "Decimal Value";
 
         private async void SendRequestWithTimeout(object sender, EventArgs args)
         {
@@ -113,7 +109,7 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private readonly Button sendRequestButton;
-        private readonly NumericMaskedTextBox<int> vendorIdText, productIdText, stringIndexText;
+        private readonly NumericMaskedTextBox<ushort> vendorIdText, productIdText, stringIndexText;
         private readonly TextBox deviceStringText;
         private readonly Group vendorIdCtrl, productIdCtrl, stringIndexCtrl;
     }
