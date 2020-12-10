@@ -48,7 +48,8 @@ namespace OpenTabletDriver.UX.Controls
         private Splitter baseControl = new Splitter
         {
             Panel1MinimumSize = 200,
-            Orientation = Orientation.Horizontal
+            Orientation = Orientation.Horizontal,
+            BackgroundColor = SystemColors.WindowBackground
         };
 
         public PluginReference SelectedPlugin => sourceSelector.SelectedSource;
@@ -231,10 +232,8 @@ namespace OpenTabletDriver.UX.Controls
                     foreach (ModifierAttribute modifierAttr in property.GetCustomAttributes<ModifierAttribute>())
                         control = ApplyModifierAttribute(control, modifierAttr);
 
-                    return new GroupBoxBase(
-                        attr.DisplayName ?? property.Name,
-                        control
-                    );
+                    control.Width = 400;
+                    return new Group(attr.DisplayName ?? property.Name, control, Orientation.Horizontal, false);
                 }
                 else
                 {

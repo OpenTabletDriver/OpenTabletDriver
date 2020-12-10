@@ -3,6 +3,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -12,59 +13,49 @@ namespace OpenTabletDriver.UX.Windows
         {
             Title = "Tablet Debugger";
 
-            rawTabCtrl = new GroupBox
+            rawTabCtrl = new Group
             {
                 Text = "Raw Tablet Data",
-                Padding = App.GroupBoxPadding
+                Content = rawTabText = new Label
+                {
+                    Font = new Font(FontFamilies.Monospace, textSize)
+                }
             };
             
-            tabReportCtrl = new GroupBox
+            tabReportCtrl = new Group
             {
                 Text = "Tablet Report",
-                Padding = App.GroupBoxPadding
+                Content = tabReportText = new Label
+                {
+                    Font = new Font(FontFamilies.Monospace, textSize)
+                }
             };
 
-            rawAuxCtrl = new GroupBox
+            rawAuxCtrl = new Group
             {
                 Text = "Raw Aux Data",
-                Padding = App.GroupBoxPadding
+                Content = rawAuxText = new Label
+                {
+                    Font = new Font(FontFamilies.Monospace, textSize)
+                }
             };
             
-            auxReportCtrl = new GroupBox
+            auxReportCtrl = new Group
             {
                 Text = "Aux Report",
-                Padding = App.GroupBoxPadding
+                Content = auxReportText = new Label
+                {
+                    Font = new Font(FontFamilies.Monospace, textSize)
+                }
             };
 
-            reportRateCtrl = new GroupBox
+            reportRateCtrl = new Group
             {
                 Text = "Report Rate",
-                Padding = App.GroupBoxPadding
-            };
-
-            rawTabCtrl.Content = rawTabText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            tabReportCtrl.Content = tabReportText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            rawAuxCtrl.Content = rawAuxText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            auxReportCtrl.Content = auxReportText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            reportRateCtrl.Content = reportRateText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
+                Content = reportRateText = new Label
+                {
+                    Font = new Font(FontFamilies.Monospace, textSize)
+                }
             };
 
             var mainLayout = new TableLayout
@@ -122,7 +113,7 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl, reportRateCtrl;
+        private Group rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl, reportRateCtrl;
         private Label rawTabText, tabReportText, rawAuxText, auxReportText, reportRateText;
         private float textSize = 10;
         private float reportRate;

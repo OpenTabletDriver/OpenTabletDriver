@@ -115,6 +115,8 @@ namespace OpenTabletDriver.UX.Controls
             int index
         )
         {
+            if (control == null || outputPanel == null)
+                return;
             var isContained = outputPanel.Items.Any(d => d.Control == control);
             if (!isContained & visibility)
             {
@@ -192,8 +194,8 @@ namespace OpenTabletDriver.UX.Controls
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     Items =
                     {
-                        new StackLayoutItem(new GroupBoxBase("Display", displayAreaEditor), true),
-                        new StackLayoutItem(new GroupBoxBase("Tablet", tabletAreaEditor), true)
+                        new StackLayoutItem(new Group("Display", displayAreaEditor), true),
+                        new StackLayoutItem(new Group("Tablet", tabletAreaEditor), true)
                     }
                 };
             }
@@ -358,7 +360,7 @@ namespace OpenTabletDriver.UX.Controls
                     AddControl(resetTimeBox, true);
                 }
 
-                private class SensitivityEditorBox : GroupBoxBase
+                private class SensitivityEditorBox : Group
                 {
                     public SensitivityEditorBox(
                         string header,

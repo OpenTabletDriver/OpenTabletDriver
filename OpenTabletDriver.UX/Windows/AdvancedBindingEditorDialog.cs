@@ -4,6 +4,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.UX.Controls.Generic;
 using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows
@@ -128,7 +129,7 @@ namespace OpenTabletDriver.UX.Windows
             Close(new PluginSettingStore(binding));
         }
 
-        private GroupBox GetBindingSelector(Func<string> getValue, Action<string> setValue)
+        private Group GetBindingSelector(Func<string> getValue, Action<string> setValue)
         {
             var selector = new ComboBox();
             var items = from type in AppInfo.PluginManager.GetChildTypes<IBinding>()
@@ -146,12 +147,7 @@ namespace OpenTabletDriver.UX.Windows
                 setValue
             );
 
-            return new GroupBox
-            {
-                Text = "Binding Type",
-                Padding = App.GroupBoxPadding,
-                Content = selector
-            };
+            return new Group("Binding Type", selector, Orientation.Horizontal);
         }
 
         private Control GetPropertySelector(ComboBox bindingSelector, Func<string> getValue, Action<string> setValue)
@@ -160,12 +156,7 @@ namespace OpenTabletDriver.UX.Windows
             var generic = new TextBox();
             generic.TextBinding.Bind(getValue, setValue);
 
-            var groupBox = new GroupBox
-            {
-                Text = "Binding Property",
-                Padding = App.GroupBoxPadding,
-                Content = generic
-            };
+            var group = new Group("Binding Property", generic);
 
             void updateControl()
             {
@@ -188,16 +179,16 @@ namespace OpenTabletDriver.UX.Windows
                         setValue
                     );
                     
-                    groupBox.Content = selector;
+                    group.Content = selector;
                 }
                 else
                 {
-                    groupBox.Content = generic;
+                    group.Content = generic;
                 }
             }
             bindingSelector.SelectedKeyChanged += (sender, e) => updateControl();
             updateControl();
-            return groupBox;
+            return group;
         }
     }
 }
