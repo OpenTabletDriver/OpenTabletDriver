@@ -7,7 +7,6 @@ using HidSharp;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Reflection;
@@ -39,6 +38,7 @@ namespace OpenTabletDriver
         protected virtual PluginManager PluginManager { get; } = new PluginManager();
         
         public bool EnableInput { set; get; }
+        public bool InterpolatorActive => Interpolators.Any();
 
         private TabletState tablet;
         public TabletState Tablet
