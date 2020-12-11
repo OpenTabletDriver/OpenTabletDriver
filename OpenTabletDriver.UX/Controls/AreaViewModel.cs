@@ -8,6 +8,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         private float w, h, x, y, r;
         private string unit;
+        private bool lockArea;
         private IEnumerable<RectangleF> bg;
         private RectangleF fullbg;
 
@@ -40,6 +41,13 @@ namespace OpenTabletDriver.UX.Controls
             set => this.RaiseAndSetIfChanged(ref this.r, value);
             get => this.r;
         }
+
+        public bool LockToUsableArea
+        {
+            set => this.RaiseAndSetIfChanged(ref this.lockArea, value);
+            get => this.lockArea;
+        }
+
         public IEnumerable<RectangleF> Background
         {
             set

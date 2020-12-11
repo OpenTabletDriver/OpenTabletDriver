@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
@@ -10,14 +11,14 @@ using OpenTabletDriver.UX.Tools;
 namespace OpenTabletDriver.UX.Controls
 {
     using static ParseTools;
-    
+
     public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
     {
         public AreaEditor(string unit, bool enableRotation = false)
         {
             this.DataContext = new AreaViewModel();
             this.ContextMenu = new ContextMenu();
-            
+
             AreaDisplay = new AreaDisplay(unit)
             {
                 Padding = new Padding(5)
@@ -31,31 +32,51 @@ namespace OpenTabletDriver.UX.Controls
             AreaDisplay.MouseDown += (sender, e) => BeginAreaDrag(e.Buttons);
             AreaDisplay.MouseUp += (sender, e) => EndAreaDrag(e.Buttons);
 
-            widthBox = new TextBox();
+            widthBox = new TextBox
+            {
+                Width = 75,
+                TextAlignment = TextAlignment.Right
+            };
             widthBox.TextBinding.Convert(
                 s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Width));
-            
-            heightBox = new TextBox();
+
+            heightBox = new TextBox
+            {
+                Width = 75,
+                TextAlignment = TextAlignment.Right
+            };
             heightBox.TextBinding.Convert(
                 s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Height));
-            
-            xOffsetBox = new TextBox();
+
+            xOffsetBox = new TextBox
+            {
+                Width = 75,
+                TextAlignment = TextAlignment.Right
+            };
             xOffsetBox.TextBinding.Convert(
                 s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.X));
-            
-            yOffsetBox = new TextBox();
+
+            yOffsetBox = new TextBox
+            {
+                Width = 75,
+                TextAlignment = TextAlignment.Right
+            };
             yOffsetBox.TextBinding.Convert(
                 s => ToFloat(s),
                 v => $"{v}"
             ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Y));
 
-            rotationBox = new TextBox();
+            rotationBox = new TextBox
+            {
+                Width = 75,
+                TextAlignment = TextAlignment.Right
+            };
             rotationBox.TextBinding.Convert(
                 s => ToFloat(s),
                 v => $"{v}"
@@ -65,31 +86,35 @@ namespace OpenTabletDriver.UX.Controls
             {
                 Orientation = Orientation.Horizontal,
                 Spacing = 5,
-                Items = 
+                Items =
                 {
-                    new GroupBox
+                    new Group
                     {
                         Text = "Width",
                         Content = AppendUnit(widthBox, unit),
-                        ToolTip = $"Width of the area"
+                        ToolTip = $"Width of the area",
+                        Orientation = Orientation.Horizontal
                     },
-                    new GroupBox
+                    new Group
                     {
                         Text = "Height",
                         Content = AppendUnit(heightBox, unit),
-                        ToolTip = $"Height of the area"
+                        ToolTip = $"Height of the area",
+                        Orientation = Orientation.Horizontal
                     },
-                    new GroupBox
+                    new Group
                     {
                         Text = "X Offset",
                         Content = AppendUnit(xOffsetBox, unit),
-                        ToolTip = $"Center X coordinate of the area"
+                        ToolTip = $"Center X coordinate of the area",
+                        Orientation = Orientation.Horizontal
                     },
-                    new GroupBox
+                    new Group
                     {
                         Text = "Y Offset",
                         Content = AppendUnit(yOffsetBox, unit),
-                        ToolTip = $"Center Y coordinate of the area"
+                        ToolTip = $"Center Y coordinate of the area",
+                        Orientation = Orientation.Horizontal
                     }
                 }
             };
@@ -97,19 +122,14 @@ namespace OpenTabletDriver.UX.Controls
             if (enableRotation)
             {
                 stackLayout.Items.Add(
-                    new GroupBox
+                    new Group
                     {
-                        Text = "Rotation", 
+                        Text = "Rotation",
                         Content = AppendUnit(rotationBox, "°"),
-                        ToolTip = $"Rotation of the area about the center"
+                        ToolTip = $"Rotation of the area about the center",
+                        Orientation = Orientation.Horizontal
                     }
                 );
-            }
-
-            foreach (var item in stackLayout.Items)
-            {
-                if (item.Control is GroupBox groupBox)
-                    groupBox.Padding = App.GroupBoxPadding;
             }
 
             var scrollview = new Scrollable
@@ -135,8 +155,8 @@ namespace OpenTabletDriver.UX.Controls
                     CreateMenuItem("Right", () => ViewModel.X = ViewModel.FullBackground.Width - GetCenterOffset().X),
                     CreateMenuItem("Top", () => ViewModel.Y = GetCenterOffset().Y),
                     CreateMenuItem("Bottom", ()  => ViewModel.Y = ViewModel.FullBackground.Height - GetCenterOffset().Y),
-                    CreateMenuItem("Center", 
-                        () => 
+                    CreateMenuItem("Center",
+                        () =>
                         {
                             ViewModel.X = ViewModel.FullBackground.Center.X;
                             ViewModel.Y = ViewModel.FullBackground.Center.Y;
@@ -150,7 +170,7 @@ namespace OpenTabletDriver.UX.Controls
                 {
                     CreateMenuItem(
                         "Full area",
-                        () => 
+                        () =>
                         {
                             ViewModel.Height = ViewModel.FullBackground.Height;
                             ViewModel.Width = ViewModel.FullBackground.Width;
@@ -160,7 +180,7 @@ namespace OpenTabletDriver.UX.Controls
                     ),
                     CreateMenuItem(
                         "Quarter area",
-                        () => 
+                        () =>
                         {
                             ViewModel.Height = ViewModel.FullBackground.Height / 2;
                             ViewModel.Width = ViewModel.FullBackground.Width / 2;
@@ -169,8 +189,31 @@ namespace OpenTabletDriver.UX.Controls
                 }
             );
 
+            this.ContextMenu.Items.GetSubmenu("Flip").Items.AddRange(
+                new MenuItem[]
+                {
+                    CreateMenuItem("Horizontal", () => ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X),
+                    CreateMenuItem("Vertical", () => ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y),
+                }
+            );
+
+            if (enableRotation)
+            {
+                this.ContextMenu.Items.GetSubmenu("Flip").Items.Add(
+                    CreateMenuItem("Handedness",
+                        () =>
+                        {
+                            ViewModel.Rotation += 180;
+                            ViewModel.Rotation %= 360;
+                            ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X;
+                            ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y;
+                        }
+                    )
+                );
+            }
+
             AppendMenuItemSeparator();
-            
+
             this.MouseDown += (sender, e) =>
             {
                 if (e.Buttons.HasFlag(MouseButtons.Alternate))
@@ -184,22 +227,27 @@ namespace OpenTabletDriver.UX.Controls
             get => (AreaViewModel)this.DataContext;
         }
 
-        public void SetBackground(params RectangleF[] bgs) => ViewModel.Background = bgs;
+        public void SetBackground(params RectangleF[] bgs) => SetBackground(bgs as IEnumerable<RectangleF>);
+        public void SetBackground(IEnumerable<RectangleF> bgs) => ViewModel.Background = bgs;
+
+        protected void ChangeLockingState(bool lockToMax)
+        {
+            if (lockToMax)
+                this.ViewModel.PropertyChanged += this.LimitArea;
+            else
+                this.ViewModel.PropertyChanged -= this.LimitArea;
+        }
 
         public Command AppendMenuItem(string menuText, Action handler)
         {
-            var item = CreateMenuItem(menuText, handler);   
+            var item = CreateMenuItem(menuText, handler);
             this.ContextMenu.Items.Add(item);
             return item;
         }
 
         public CheckCommand AppendCheckBoxMenuItem(string menuText, Action<bool> handler, bool defaultValue = false)
         {
-            var command = new CheckCommand { MenuText = menuText };
-            command.Executed += (sender, e) => handler(command.Checked);
-            command.Checked = defaultValue;
-            if (defaultValue)
-                command.Execute();
+            var command = CreateCheckBoxMenuItem(menuText, handler, defaultValue);
             this.ContextMenu.Items.Add(command);
             return command;
         }
@@ -238,6 +286,16 @@ namespace OpenTabletDriver.UX.Controls
         {
             var command = new Command { MenuText = menuText };
             command.Executed += (sender, e) => handler();
+            return command;
+        }
+
+        private CheckCommand CreateCheckBoxMenuItem(string menuText, Action<bool> handler, bool defaultValue = false)
+        {
+            var command = new CheckCommand { MenuText = menuText };
+            command.Executed += (sender, e) => handler(command.Checked);
+            command.Checked = defaultValue;
+            if (defaultValue)
+                command.Execute();
             return command;
         }
 
@@ -313,7 +371,7 @@ namespace OpenTabletDriver.UX.Controls
                 this.lastMouseLocation = null;
             }
         }
-        
+
         protected void MoveArea(object sender, MouseEventArgs e)
         {
             if (lastMouseLocation is PointF lastPos)
