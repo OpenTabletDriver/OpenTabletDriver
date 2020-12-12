@@ -30,7 +30,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         
         private Label titleLabel = new Label
         {
-            Font = Fonts.Sans(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 12 : 9, FontStyle.Bold)
+            Font = Fonts.Cached("Sans", 9, FontStyle.Bold)
         };
 
         public string Text
@@ -39,7 +39,15 @@ namespace OpenTabletDriver.UX.Controls.Generic
             get => titleLabel.Text;
         }
 
-        public new Control Content { set; get; }
+        private Control content;
+        public new Control Content {
+            set
+            {
+                this.content = value;
+                UpdateControlLayout();
+            }
+            get => content;
+        }
 
         public Orientation Orientation { set; get; } = DEFAULT_ORIENTATION;
         public bool ExpandContent { set; get; } = true;
