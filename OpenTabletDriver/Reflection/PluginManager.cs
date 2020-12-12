@@ -51,6 +51,8 @@ namespace OpenTabletDriver.Reflection
                         select ctor;
 
                     var constructor = matchingConstructors.FirstOrDefault();
+                    if (constructor == null)
+                        Log.Write("Plugin", $"No matching constructor, nor a non-parametric constructor was found for '{name}'", LogLevel.Error);
                     return (T)constructor?.Invoke(args) ?? null;
                 }
                 catch
