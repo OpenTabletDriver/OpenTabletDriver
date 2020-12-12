@@ -30,7 +30,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         
         private Label titleLabel = new Label
         {
-            Font = Fonts.Cached("Sans", SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 12 : 9, FontStyle.Bold)
+            Font = Fonts.Cached("Sans", 9, FontStyle.Bold)
         };
 
         public string Text
