@@ -15,6 +15,11 @@ namespace OpenTabletDriver.Desktop.Interop
 {
     public class SystemInterop : OpenTabletDriver.Interop.SystemInterop
     {
+        protected SystemInterop()
+            : base()
+        {
+        }
+
         public static void Open(string path)
         {
             switch (CurrentPlatform)
@@ -99,7 +104,7 @@ namespace OpenTabletDriver.Desktop.Interop
                 return new WaylandDisplay();
             else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
                 return new XScreen();
-            
+
             Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
             return new XScreen();
         }
