@@ -206,7 +206,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
-            await MainForm.FormInstance.Refresh();
+            await (Application.Instance.MainForm as MainForm).Refresh();
             this.pluginListBox.DataStore = pluginList = AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
         }
 

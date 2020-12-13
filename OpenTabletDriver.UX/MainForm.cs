@@ -19,8 +19,6 @@ namespace OpenTabletDriver.UX
 
     public partial class MainForm : Form
     {
-        public static MainForm FormInstance { get; private set; }
-
         public MainForm()
         {
             Title = "OpenTabletDriver";
@@ -32,7 +30,6 @@ namespace OpenTabletDriver.UX
             ApplyPlatformQuirks();
 
             InitializeAsync();
-            FormInstance = this;
         }
 
         private Control ConstructPlaceholderControl()
