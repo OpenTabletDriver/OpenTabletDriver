@@ -7,17 +7,15 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    using static ParseTools;
-
     public class ConfigurationEditor : Form
     {
         public ConfigurationEditor()
@@ -144,7 +142,7 @@ namespace OpenTabletDriver.UX.Windows
         private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
             var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                          select TabletConfiguration.Read(file);
+                select Serialization.Deserialize<TabletConfiguration>(file);
             return new List<TabletConfiguration>(configs);
         }
 
@@ -160,7 +158,7 @@ namespace OpenTabletDriver.UX.Windows
                 var file = new FileInfo(path);
                 if (!file.Directory.Exists)
                     file.Directory.Create();
-                config.Write(file);
+                Serialization.Serialize(file, config);
             }
         }
 
@@ -254,7 +252,8 @@ namespace OpenTabletDriver.UX.Windows
         {
             yield return new InputBox("Name",
                 () => SelectedConfiguration.Name,
-                (o) => SelectedConfiguration.Name = o
+                (o) => SelectedConfiguration.Name = o,
+                textboxWidth: 500
             );
 
             yield return new DigitizerIdentifierEditor(

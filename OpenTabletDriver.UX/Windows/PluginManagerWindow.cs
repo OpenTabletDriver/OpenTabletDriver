@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Native;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Windows

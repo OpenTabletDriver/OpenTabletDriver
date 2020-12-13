@@ -10,47 +10,32 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Plugin.Output
 {
     [PluginIgnore]
-    public abstract class AbsoluteOutputMode : BindingHandler, IOutputMode
+    public abstract class AbsoluteOutputMode : IOutputMode
     {
-        private List<IFilter> filters, preFilters = new List<IFilter>(), postFilters = new List<IFilter>();
+        private IList<IFilter> filters, preFilters, postFilters;
         private Vector2 min, max;
         private Matrix3x2 transformationMatrix;
 
-        public IEnumerable<IFilter> Filters
+        public IList<IFilter> Filters
         {
             set
             {
-                this.filters = value.ToList();
-                this.preFilters.Clear();
-                this.postFilters.Clear();
-
-                foreach (var filter in this.filters)
-                {
-                    switch (filter.FilterStage)
-                    {
-                        case FilterStage.PreTranspose:
-                            this.preFilters.Add(filter);
-                            break;
-                        case FilterStage.PostTranspose:
-                            this.postFilters.Add(filter);
-                            break;
-                        default:
-                            throw new NotSupportedException();
-                    }
-                }
+                this.filters = value;
+                this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList();
             }
             get => this.filters;
         }
 
-        private DigitizerIdentifier digitizer;
-        public override DigitizerIdentifier Digitizer
+        private TabletState tablet;
+        public TabletState Tablet
         {
             set
             {
-                this.digitizer = value;
+                this.tablet = value;
                 UpdateTransformMatrix();
             }
-            get => this.digitizer;
+            get => this.tablet;
         }
 
         private Area outputArea, inputArea;
@@ -75,16 +60,15 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.outputArea;
         }
 
-        public IVirtualScreen VirtualScreen { set; get; }
-        public abstract IVirtualTablet VirtualTablet { get; }
-        public IVirtualPointer Pointer => VirtualTablet;
+        public abstract IAbsolutePointer Pointer { get; }
+
         public bool AreaClipping { set; get; }
         public bool AreaLimiting { set; get; }
 
-        internal void UpdateTransformMatrix()
+        protected void UpdateTransformMatrix()
         {
-            if (!(Input is null | Output is null | Digitizer is null))
-                this.transformationMatrix = CalculateTransformation(Input, Output, Digitizer);
+            if (Input != null && Output != null && Tablet?.Digitizer != null)
+                this.transformationMatrix = CalculateTransformation(Input, Output, Tablet.Digitizer);
 
             var halfDisplayWidth = Output?.Width / 2 ?? 0;
             var halfDisplayHeight = Output?.Height / 2 ?? 0;
@@ -98,7 +82,7 @@ namespace OpenTabletDriver.Plugin.Output
             this.max = new Vector2(maxX, maxY);
         }
 
-        internal static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
+        protected static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
         {
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(
@@ -128,18 +112,18 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (report is ITabletReport tabletReport)
             {
-                if (Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    if (VirtualTablet is IPressureHandler pressureHandler)
-                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Digitizer.MaxPressure);
-
+                    if (Pointer is IVirtualTablet pressureHandler)
+                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Tablet.Digitizer.MaxPressure);
+                        
                     if (Transpose(tabletReport) is Vector2 pos)
-                        VirtualTablet.SetPosition(pos);
+                        Pointer.SetPosition(pos);
                 }
             }
         }
 
-        internal Vector2? Transpose(ITabletReport report)
+        public Vector2? Transpose(ITabletReport report)
         {
             var pos = new Vector2(report.Position.X, report.Position.Y);
 

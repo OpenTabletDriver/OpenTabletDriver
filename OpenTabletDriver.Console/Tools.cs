@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.CommandLine;
+using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Console
 {
@@ -12,10 +14,21 @@ namespace OpenTabletDriver.Console
                 command.Add(sym);
         }
 
-        public static IEnumerable<string> GetFormattedBindings(Collection<string> bindings)
+        public static string GetFormattedBinding(PluginSettingStore store)
+        {
+            var pluginRef = store.GetPluginReference();
+            var binding = pluginRef.Construct<IBinding>();
+
+            return $"{pluginRef.Name}: {binding.Property}";
+        }
+
+        public static IEnumerable<string> GetFormattedBindings(PluginSettingStoreCollection bindings)
         {
             for (int i = 0; i < bindings.Count; i++)
-                yield return $"[{i}, {bindings[i]}]";
+            {
+                var str = GetFormattedBinding(bindings[i]);
+                yield return $"[{i}, {str}]";
+            }
         }
     }
 }

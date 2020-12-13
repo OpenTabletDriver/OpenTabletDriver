@@ -6,12 +6,13 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OpenTabletDriver.Binding;
-using OpenTabletDriver.Diagnostics;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Diagnostics;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Reflection;
 using static System.Console;
 
 namespace OpenTabletDriver.Console
@@ -78,19 +79,34 @@ namespace OpenTabletDriver.Console
         {
             await ModifySettings(s => 
             {
-                s.TipButton = BindingTools.GetBindingString(name, property);
+                var tipBinding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
+                tipBinding.Property = property;
+
+                s.TipButton = new PluginSettingStore(tipBinding);
                 s.TipActivationPressure = threshold;
             });
         }
 
         static async Task SetPenBinding(string name, string property, int index)
         {
-            await ModifySettings(s => s.PenButtons[index] = BindingTools.GetBindingString(name, property));
+            await ModifySettings(s =>
+            {
+                var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
+                binding.Property = property;
+
+                s.PenButtons[index] = new PluginSettingStore(binding);
+            });
         }
 
         static async Task SetAuxBinding(string name, string property, int index)
         {
-            await ModifySettings(s => s.AuxButtons[index] = BindingTools.GetBindingString(name, property));
+            await ModifySettings(s => 
+            {
+                var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
+                binding.Property = property;
+
+                s.AuxButtons[index] = new PluginSettingStore(binding);
+            });
         }
 
         static async Task SetAutoHook(bool isEnabled)
@@ -115,17 +131,31 @@ namespace OpenTabletDriver.Console
 
         static async Task SetOutputMode(string mode)
         {
-            await ModifySettings(s => s.OutputMode = mode);
+            await ModifySettings(s => s.OutputMode = new PluginSettingStore(mode));
         }
 
         static async Task SetFilters(IEnumerable<string> filters)
         {
-            await ModifySettings(s => s.Filters = new ObservableCollection<string>(filters));
+            await ModifySettings(s => 
+            {
+                var collection = new PluginSettingStoreCollection();
+                foreach (var path in filters)
+                    collection.Add(new PluginSettingStore(path));
+
+                s.Filters = collection;
+            });
         }
 
         static async Task SetTools(IEnumerable<string> tools)
         {
-            await ModifySettings(s => s.Tools = new ObservableCollection<string>(tools));
+            await ModifySettings(s =>
+            {
+                var collection = new PluginSettingStoreCollection();
+                foreach (var path in tools)
+                    collection.Add(new PluginSettingStore(path));
+
+                s.Tools = collection;
+            });
         }
 
         static async Task SetInputHook(bool isHooked)
@@ -196,7 +226,7 @@ namespace OpenTabletDriver.Console
         static async Task GetBindings()
         {
             var settings = await GetSettings();
-            await Out.WriteLineAsync($"Tip Binding: '{settings.TipButton ?? "None"}'@{settings.TipActivationPressure}%");            
+            await Out.WriteLineAsync($"Tip Binding: '{Tools.GetFormattedBinding(settings.TipButton) ?? "None"}'@{settings.TipActivationPressure}%");            
             await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", Tools.GetFormattedBindings(settings.PenButtons))}");
             await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", Tools.GetFormattedBindings(settings.AuxButtons))}");
         }
@@ -220,7 +250,7 @@ namespace OpenTabletDriver.Console
         {
             var settings = await GetSettings();
             var filters = from path in settings.Filters
-                select new PluginReference(path);
+                select AppInfo.PluginManager.GetPluginReference(path);
             await Out.WriteLineAsync("Filters: " + string.Join(", ", filters));
         }
 
@@ -228,7 +258,7 @@ namespace OpenTabletDriver.Console
         {
             var settings = await GetSettings();
             var tools = from path in settings.Tools
-                select new PluginReference(path);
+                select AppInfo.PluginManager.GetPluginReference(path);
             await Out.WriteLineAsync("Tools: " + string.Join(", ", tools));
         }
 

@@ -7,24 +7,23 @@ namespace OpenTabletDriver.Reflection
 {
     public class PluginReference : IEquatable<PluginReference>
     {
-        public PluginReference(string path)
+        public PluginReference(PluginManager pluginManager, string path)
         {
+            PluginManager = pluginManager;
             Path = path;
             Name = GetName(path);
         }
 
-        public PluginReference(object obj) : this(obj.GetType().FullName)
+        public PluginReference(PluginManager pluginManager, Type type)
+            : this(pluginManager, type.FullName)
         {
         }
+        
+        public PluginManager PluginManager { get; }
+        public string Name { get; }
+        public string Path { get; }
 
-        public PluginReference(Type t) : this(t.FullName)
-        {
-        }
-
-        public string Name { private set; get; }
-        public string Path { private set; get; }
-
-        internal static string GetName(string path)
+        protected string GetName(string path)
         {
             if (PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
             {
@@ -38,28 +37,26 @@ namespace OpenTabletDriver.Reflection
 
         public override string ToString() => string.IsNullOrWhiteSpace(Name) ? Path : Name;
 
-        public T Construct<T>() where T : class
+        public virtual T Construct<T>() where T : class
         {
             return PluginManager.ConstructObject<T>(Path);
         }
 
-        public T Construct<T>(params object[] args) where T : class
+        public virtual T Construct<T>(params object[] args) where T : class
         {
             return PluginManager.ConstructObject<T>(Path, args);
         }
 
         public TypeInfo GetTypeReference<T>()
         {
-            var types = from type in PluginManager.GetChildTypes<T>()
-                where type.FullName == Path
-                select type;
-            
-            return types.FirstOrDefault();
+            return PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == this.Path);
         }
 
-        public bool Equals(PluginReference other)
+        public TypeInfo GetTypeReference()
         {
-            return Name == other.Name && Path == other.Path;
+            return PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == this.Path);
         }
+
+        public bool Equals(PluginReference other) => this.Path == other.Path;
     }
 }

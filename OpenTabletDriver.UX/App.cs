@@ -2,9 +2,12 @@
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Contracts;
-using OpenTabletDriver.Native;
-using OpenTabletDriver.RPC;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Migration;
+using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
@@ -15,8 +18,18 @@ namespace OpenTabletDriver.UX
 
         public static RpcClient<IDriverDaemon> Driver => _daemon.Value;
         public static Bitmap Logo => _logo.Value;
-        public static Padding GroupBoxPadding => _groupBoxPadding.Value;
-        public static Settings Settings { set; get; }
+        
+        public static event Action<Settings> SettingsChanged;
+        private static Settings settings;
+        public static Settings Settings
+        {
+            set
+            {
+                settings = SettingsMigrator.Migrate(value);
+                SettingsChanged?.Invoke(Settings);
+            }
+            get => settings;
+        }
 
         public static AboutDialog AboutDialog => new AboutDialog
         {
@@ -43,15 +56,6 @@ namespace OpenTabletDriver.UX
         {
             var dataStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png");
             return new Bitmap(dataStream);
-        });
-
-        private static readonly Lazy<Padding> _groupBoxPadding = new Lazy<Padding>(() => 
-        {
-            return SystemInfo.CurrentPlatform switch
-            {
-                RuntimePlatform.Windows => new Padding(0),
-                _                       => new Padding(5)
-            };
         });
     }
 }

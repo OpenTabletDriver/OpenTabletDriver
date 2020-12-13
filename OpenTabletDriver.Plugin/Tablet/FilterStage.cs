@@ -3,6 +3,7 @@
     public enum FilterStage
     {
         PostTranspose,
-        PreTranspose
+        PreTranspose,
+        PreInterpolate
     }
 }
