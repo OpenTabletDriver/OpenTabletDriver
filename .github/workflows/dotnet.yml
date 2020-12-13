@@ -19,10 +19,11 @@ jobs:
         env:
           runtime: linux-x64
           framework: net5
+          options: --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded --self-contained false
         run: |
-          dotnet publish OpenTabletDriver.Daemon --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.Console --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.UX.Gtk --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $runtime --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.Gtk $options --runtime $runtime --framework $framework -o build/$runtime
       - name: Copy Configurations
         run: |
           cp -vr ./OpenTabletDriver/Configurations/ build/linux-x64
@@ -45,10 +46,11 @@ jobs:
         env:
           runtime: osx-x64
           framework: net5
+          options: --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded --self-contained false
         run: |
-          dotnet publish OpenTabletDriver.Daemon --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.Console --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.UX.MacOS --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $runtime --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.MacOS $options --runtime $runtime --framework $framework -o build/$runtime
       - name: Copy Configurations
         run: |
           cp -vr ./OpenTabletDriver/Configurations/ build/osx-x64
@@ -72,9 +74,10 @@ jobs:
           runtime: win-x64
           framework: net5
         run: |
-          dotnet publish OpenTabletDriver.Daemon --configuration Release --runtime $ENV:runtime --self-contained false --framework $ENV:framework -o build/$ENV:runtime
-          dotnet publish OpenTabletDriver.Console --configuration Release --runtime $ENV:runtime --self-contained false --framework $ENV:framework -o build/$ENV:runtime
-          dotnet publish OpenTabletDriver.UX.Wpf --configuration Release --runtime $ENV:runtime --self-contained false --framework $ENV:framework-windows -o build/$ENV:runtime
+          $options= @('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '--self-contained', 'false')
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime --framework $ENV:framework-windows -o build/$ENV:runtime
       - name: Copy Configurations
         run: Copy-Item -Path "./OpenTabletDriver/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
       - name: Upload Windows artifacts
