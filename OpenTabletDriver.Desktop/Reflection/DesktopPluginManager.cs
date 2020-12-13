@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -16,6 +17,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         public DesktopPluginManager(DirectoryInfo directory) : base()
         {
             FallbackPluginContext = new DesktopPluginContext(directory);
+            PluginStateManager = new PluginStateManager(this);
+            PluginStateManager.ProcessPendingStates();
         }
 
         public DesktopPluginManager(string directoryPath)
@@ -23,6 +26,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
+        protected PluginStateManager PluginStateManager { get; }
         protected List<FileInfo> IndependentPlugins { get; } = new List<FileInfo>();
         protected DesktopPluginContext FallbackPluginContext { get; }
         protected ConcurrentBag<DesktopPluginContext> PluginContexts { get; } = new ConcurrentBag<DesktopPluginContext>();
@@ -117,6 +121,50 @@ namespace OpenTabletDriver.Desktop.Reflection
                     Log.Write("Plugin", $"Plugin '{type.FullName}' incompatible", LogLevel.Warning);
                 }
             });
+        }
+
+        public PluginProcessingResult InstallPlugin(string filePath)
+        {
+            var fileInfo = new FileInfo(filePath);
+            switch (fileInfo.Extension)
+            {
+                case ".zip":
+                {
+                    var path = Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name.Replace(".zip", string.Empty));
+                    Log.Write("Plugin", $"Installing plugin zip: '{fileInfo.Name}'");
+                    if (Directory.Exists(path))
+                    {
+                        return PluginStateManager.QueueUpdate(filePath);
+                    }
+                    else
+                    {
+                        ZipFile.ExtractToDirectory(filePath, path, true);
+                        return PluginProcessingResult.Installed;
+                    }
+                }
+                case ".dll":
+                {
+                    Log.Write("Plugin", $"Installing plugin dll: '{fileInfo.Name}'");
+                    if (File.Exists(Path.Join(AppInfo.Current.PluginDirectory, filePath)))
+                    {
+                        return PluginStateManager.QueueUpdate(filePath);
+                    }
+                    else
+                    {
+                        var name = Path.GetFileName(filePath);
+                        var dest = Path.Join(AppInfo.Current.PluginDirectory, name);
+                        File.Copy(filePath, dest, true);
+                        return PluginProcessingResult.Installed;
+                    }
+                }
+                default:
+                    return PluginProcessingResult.Invalid;
+            }
+        }
+
+        public PluginProcessingResult UninstallPlugin(string pluginName)
+        {
+            return PluginStateManager.QueueUninstall(pluginName);
         }
     }
 }

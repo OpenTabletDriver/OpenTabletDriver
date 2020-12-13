@@ -1,14 +1,12 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -43,12 +41,15 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var contextCommand = new Command();
-            contextCommand.Executed += (_, _) => ShowPluginFolder();
+            var showPluginFolderCmd = new Command();
+            showPluginFolderCmd.Executed += (_, _) => ShowPluginFolder();
+
+            var uninstallPluginCmd = new Command();
+            uninstallPluginCmd.Executed += (_, _) => UninstallPlugin();
 
             var contextMenu = new ContextMenu();
-            var showPluginFolder = contextMenu.Items.Add(contextCommand);
-            showPluginFolder.Text = "Show in folder...";
+            var showPluginFolderMenu = contextMenu.Items.Add(showPluginFolderCmd);
+            showPluginFolderMenu.Text = "Show in folder...";
 
             this.pluginListBox = new ListBox
             {
@@ -134,14 +135,19 @@ namespace OpenTabletDriver.UX.Windows
                 if (args.Data.ContainsUris && args.Data.Uris != null && args.Data.Uris.Length > 0)
                 {
                     var uriList = args.Data.Uris;
+                    bool updateQueued = false;
                     foreach (var uri in uriList)
                     {
                         if (uri.IsFile && File.Exists(uri.LocalPath))
                         {
-                            InstallFile(uri.LocalPath);
+                            var result = AppInfo.PluginManager.InstallPlugin(uri.LocalPath);
+                            if (result == PluginProcessingResult.UpdateQueued)
+                                updateQueued = true;
                         }
                     }
                     LoadNewPlugins().ConfigureAwait(false);
+                    if (updateQueued)
+                        MessageBox.Show(this, "Plugin updates will be applied after restart.");
                 }
             }
             catch {}
@@ -161,47 +167,37 @@ namespace OpenTabletDriver.UX.Windows
 
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
+                bool updateQueued = false;
                 foreach(var file in dialog.Filenames)
                 {
-                    InstallFile(file);
+                    var result = AppInfo.PluginManager.InstallPlugin(file);
+                    if (result == PluginProcessingResult.UpdateQueued)
+                        updateQueued = true;
                 }
+
+                if (updateQueued)
+                {
+                    MessageBox.Show("Plugin updates will be applied on restart of OTD");
+                }
+
                 LoadNewPlugins().ConfigureAwait(false);
             }
         }
 
-        private static void InstallFile(string filePath)
+        private void UninstallPlugin()
         {
-            var fileInfo = new FileInfo(filePath);
-            switch (fileInfo.Extension)
+            var pluginName = pluginList[pluginListBox.SelectedIndex];
+            var result = MessageBox.Show(this, $"Uninstall '{pluginName}'?", MessageBoxButtons.YesNo);
+            if (result == DialogResult.Ok || result == DialogResult.Yes)
             {
-                case ".zip":
+                switch (AppInfo.PluginManager.UninstallPlugin(pluginName))
                 {
-                        var path = Path.Join(AppInfo.Current.PluginDirectory, fileInfo.Name.Replace(".zip", string.Empty));
-                        Log.Write("Plugin", $"Installing plugin zip: '{fileInfo.Name}'");
-                        if (Directory.Exists(path))
-                        {
-                            Log.Write("Plugin", updateNotSupported, LogLevel.Error);
-                            MessageBox.Show(updateNotSupported, MessageBoxType.Error);
-                        }
-                        else
-                            ZipFile.ExtractToDirectory(filePath, path, true);
-                    break;
-                }
-                case ".dll":
-                {
-                    Log.Write("Plugin", $"Installing plugin dll: '{fileInfo.Name}'");
-                    if (File.Exists(Path.Join(AppInfo.Current.PluginDirectory, filePath)))
-                    {
-                        Log.Write("Plugin", updateNotSupported, LogLevel.Error);
-                        MessageBox.Show(updateNotSupported, MessageBoxType.Error);
-                    }
-                    else
-                    {
-                        var name = Path.GetFileName(filePath);
-                        var dest = Path.Join(AppInfo.Current.PluginDirectory, name);
-                        File.Copy(filePath, dest, true);
-                    }
-                    break;
+                    case PluginProcessingResult.UninstallQueued:
+                        MessageBox.Show("Plugins will be uninstalled on restart of OTD");
+                        break;
+                    case PluginProcessingResult.None:
+                        MessageBox.Show("Plugin is already queued for uninstall");
+                        break;
                 }
             }
         }
@@ -262,9 +258,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             pluginList.Clear();
             foreach (var name in AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(x => x))
-            {
                 pluginList.Add(name);
-            }
         }
 
         private readonly ObservableCollection<string> pluginList = new ObservableCollection<string>();
@@ -281,6 +275,5 @@ namespace OpenTabletDriver.UX.Windows
 
         private const string dragDropSupported = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
         private const string dragDropNotSupported = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
-        private const string updateNotSupported = "Updating plugins during runtime are not supported";
     }
 }
