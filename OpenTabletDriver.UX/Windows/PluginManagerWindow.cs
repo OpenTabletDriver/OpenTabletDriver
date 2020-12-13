@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace OpenTabletDriver.UX.Windows
             this.AllowDrop = true;
             this.Menu = ConstructMenu();
 
-            this.pluginList = AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
+            UpdateList();
 
             this.panel = new Panel
             {
@@ -48,19 +49,18 @@ namespace OpenTabletDriver.UX.Windows
             var contextMenu = new ContextMenu();
             var showPluginFolder = contextMenu.Items.Add(contextCommand);
             showPluginFolder.Text = "Show in folder...";
-            contextMenu.Opening += (_, _) =>
-            {
-                var index = pluginListBox.SelectedIndex;
-                if (index >= 0 && index < pluginList.Count)
-                    showPluginFolder.Visible = true;
-                else
-                    showPluginFolder.Visible = false;
-            };
 
             this.pluginListBox = new ListBox
             {
-                DataStore = pluginList,
-                ContextMenu = contextMenu
+                DataStore = pluginList
+            };
+            this.pluginListBox.SelectedIndexChanged += (_, _) =>
+            {
+                var index = this.pluginListBox.SelectedIndex;
+                if (index >= 0 && index < pluginList.Count)
+                    this.pluginListBox.ContextMenu = contextMenu;
+                else
+                    this.pluginListBox.ContextMenu = null;
             };
 
             this.split = new StackLayout
@@ -196,7 +196,11 @@ namespace OpenTabletDriver.UX.Windows
                         MessageBox.Show(updateNotSupported, MessageBoxType.Error);
                     }
                     else
-                        File.Copy(filePath, AppInfo.Current.PluginDirectory, true);
+                    {
+                        var name = Path.GetFileName(filePath);
+                        var dest = Path.Join(AppInfo.Current.PluginDirectory, name);
+                        File.Copy(filePath, dest, true);
+                    }
                     break;
                 }
             }
@@ -207,7 +211,7 @@ namespace OpenTabletDriver.UX.Windows
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
             await (Application.Instance.MainForm as MainForm).Refresh();
-            this.pluginListBox.DataStore = pluginList = AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
+            UpdateList();
         }
 
         private MenuBar ConstructMenu()
@@ -229,6 +233,7 @@ namespace OpenTabletDriver.UX.Windows
                 ApplicationItems =
                 {
                     installPlugin,
+                    loadPlugins,
                     pluginsRepository
                 },
                 QuitItem = quitCommand
@@ -253,7 +258,16 @@ namespace OpenTabletDriver.UX.Windows
                 SystemInterop.Open(AppInfo.Current.PluginDirectory);
         }
 
-        private List<string> pluginList;
+        private void UpdateList()
+        {
+            pluginList.Clear();
+            foreach (var name in AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(x => x))
+            {
+                pluginList.Add(name);
+            }
+        }
+
+        private readonly ObservableCollection<string> pluginList = new ObservableCollection<string>();
         private readonly Panel panel; // Windows can't receive drag n drop events from Form, so use Panel as proxy
         private readonly ListBox pluginListBox;
         private readonly StackLayout split;

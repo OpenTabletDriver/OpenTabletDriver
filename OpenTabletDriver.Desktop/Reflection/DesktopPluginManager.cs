@@ -23,6 +23,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
+        protected List<FileInfo> IndependentPlugins { get; } = new List<FileInfo>();
         protected DesktopPluginContext FallbackPluginContext { get; }
         protected ConcurrentBag<DesktopPluginContext> PluginContexts { get; } = new ConcurrentBag<DesktopPluginContext>();
 
@@ -42,22 +43,28 @@ namespace OpenTabletDriver.Desktop.Reflection
             //  These dlls are loaded into a PluginContext per directory
             Parallel.ForEach(directory.GetDirectories(), (dir, state, index) =>
             {
-                Log.Write("Plugin", $"Loading plugin '{dir.Name}'");
-                var context = new DesktopPluginContext(dir);
-                foreach (var plugin in Directory.EnumerateFiles(dir.FullName, "*.dll"))
-                    LoadPlugin(context, plugin);
+                if (PluginContexts.All(p => p.PluginDirectory.Name != dir.Name))
+                {
+                    Log.Write("Plugin", $"Loading plugin '{dir.Name}'");
+                    var context = new DesktopPluginContext(dir);
+                    foreach (var plugin in Directory.EnumerateFiles(dir.FullName, "*.dll"))
+                        LoadPlugin(context, plugin);
 
-                PluginContexts.Add(context);
+                    PluginContexts.Add(context);
+                }
             });
 
             // If there are plugins found outside subdirectories then load into FallbackPluginContext
             // This fallback does not support loading unmanaged dll if the default loader fails
-            // We don't worry with duplicate entries here since CLR won't load duplicate assemblies of the same file
             foreach (var plugin in directory.EnumerateFiles("*.dll"))
             {
-                var name = Regex.Match(plugin.Name, $"^(.+?){plugin.Extension}").Groups[1].Value;
-                Log.Write("Plugin", $"Loading independent plugin '{name}'");
-                LoadPlugin(FallbackPluginContext, plugin.FullName);
+                if (IndependentPlugins.All(f => f.Name != plugin.Name))
+                {
+                    var name = Regex.Match(plugin.Name, $"^(.+?){plugin.Extension}").Groups[1].Value;
+                    Log.Write("Plugin", $"Loading independent plugin '{name}'");
+                    LoadPlugin(FallbackPluginContext, plugin.FullName);
+                    IndependentPlugins.Add(plugin);
+                }
             }
 
             // Populate PluginTypes so UX and Daemon can access them
