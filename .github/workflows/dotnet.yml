@@ -6,40 +6,52 @@ on:
       - master
   pull_request:
 jobs:
-  unixpublish:
+  linuxpublish:
     runs-on: ubuntu-latest
-
+    name: Linux Publish
     steps:
       - uses: actions/checkout@v1
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.100-rc.2.20479.15
-      - name: Linux Build
+      - name: Linux Publish
         env:
           runtime: linux-x64
           framework: net5
         run: |
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
-          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
-          dotnet build OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
-      - name: MacOS Build
-        env:
-          runtime: osx-x64
-          framework: net5
-        run: |
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
-          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
-          dotnet build OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj --configuration Release --runtime $runtime --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Daemon --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Console --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.Gtk --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
       - name: Copy Configurations
         run: |
           cp -vr ./OpenTabletDriver/Configurations/ build/linux-x64
-          cp -vr ./OpenTabletDriver/Configurations/ build/osx-x64
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@master
         with:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
+
+  macospublish:
+    runs-on: ubuntu-latest
+    name: MacOS Publish
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.100-rc.2.20479.15
+      - name: MacOS Publish
+        env:
+          runtime: osx-x64
+          framework: net5
+        run: |
+          dotnet publish OpenTabletDriver.Daemon --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Console --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.MacOS --configuration Release --runtime $runtime --self-contained false --framework $framework -o build/$runtime
+      - name: Copy Configurations
+        run: |
+          cp -vr ./OpenTabletDriver/Configurations/ build/osx-x64
       - name: Upload MacOS artifacts
         uses: actions/upload-artifact@master
         with:
@@ -48,7 +60,7 @@ jobs:
 
   windowspublish:
     runs-on: windows-latest
-
+    name: Windows Publish
     steps:
       - uses: actions/checkout@v1
       - name: Setup .NET Core
@@ -60,9 +72,9 @@ jobs:
           runtime: win-x64
           framework: net5
         run: |
-          dotnet build OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj --configuration Release --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
-          dotnet build OpenTabletDriver.Console/OpenTabletDriver.Console.csproj --configuration Release --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
-          dotnet build OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj --configuration Release --runtime $ENV:runtime --framework $ENV:framework-windows -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.Daemon --configuration Release --runtime $ENV:runtime --self-contained false --framework $ENV:framework -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.Console --configuration Release --runtime $ENV:runtime --self-contained false --framework $ENV:framework -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.UX.Wpf --configuration Release --runtime $ENV:runtime --self-contained false --framework $ENV:framework-windows -o build/$ENV:runtime
       - name: Copy Configurations
         run: Copy-Item -Path "./OpenTabletDriver/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
       - name: Upload Windows artifacts
