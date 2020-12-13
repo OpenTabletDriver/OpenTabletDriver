@@ -19,7 +19,7 @@ jobs:
         env:
           runtime: linux-x64
           framework: net5
-          options: --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded --self-contained false
+          options: --configuration Release -p:DebugType=embedded --self-contained false
         run: |
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime --framework $framework -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime --framework $framework -o build/$runtime
@@ -46,7 +46,7 @@ jobs:
         env:
           runtime: osx-x64
           framework: net5
-          options: --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded --self-contained false
+          options: --configuration Release -p:DebugType=embedded --self-contained false
         run: |
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime --framework $framework -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime --framework $framework -o build/$runtime
