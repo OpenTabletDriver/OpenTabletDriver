@@ -14,7 +14,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.100-rc.2.20479.15
+          dotnet-version: 5.0.x
       - name: Linux Publish
         env:
           runtime: linux-x64
@@ -40,7 +40,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.100-rc.2.20479.15
+          dotnet-version: 5.0.x
       - name: MacOS Publish
         env:
           runtime: osx-x64
@@ -66,7 +66,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.100-rc.2.20479.15
+          dotnet-version: 5.0.x
       - name: Windows Publish
         env:
           runtime: win-x64
