@@ -5,7 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Windows
@@ -20,7 +21,7 @@ namespace OpenTabletDriver.UX.Windows
             this.AllowDrop = true;
             this.Menu = ConstructMenu();
 
-            this.pluginList = PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
+            this.pluginList = AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(p => p).ToList();
 
             this.panel = new Panel
             {
@@ -204,9 +205,9 @@ namespace OpenTabletDriver.UX.Windows
         private async Task LoadNewPlugins()
         {
             await App.Driver.Instance.LoadPlugins();
-            await PluginManager.LoadPluginsAsync();
+            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
             await MainForm.FormInstance.Refresh();
-            this.pluginListBox.DataStore = pluginList = PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
+            this.pluginListBox.DataStore = pluginList = AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(x => x).ToList();
         }
 
         private MenuBar ConstructMenu()
@@ -215,7 +216,7 @@ namespace OpenTabletDriver.UX.Windows
             installPlugin.Executed += (_, _) => FileDialogPluginInstall();
 
             var pluginsRepository = new Command { MenuText = "Get more plugins..." };
-            pluginsRepository.Executed += (_, _) => SystemInfo.Open(App.PluginRepositoryUrl);
+            pluginsRepository.Executed += (_, _) => SystemInterop.Open(App.PluginRepositoryUrl);
 
             var loadPlugins = new Command { MenuText = "Manually load plugins..." };
             loadPlugins.Executed += (_, _) => ManualLoad();
@@ -247,9 +248,9 @@ namespace OpenTabletDriver.UX.Windows
             var plugin = pluginList[pluginListBox.SelectedIndex];
             var path = Path.Join(AppInfo.Current.PluginDirectory, plugin);
             if (Directory.Exists(path))
-                SystemInfo.Open(path);
+                SystemInterop.Open(path);
             else
-                SystemInfo.Open(AppInfo.Current.PluginDirectory);
+                SystemInterop.Open(AppInfo.Current.PluginDirectory);
         }
 
         private List<string> pluginList;
