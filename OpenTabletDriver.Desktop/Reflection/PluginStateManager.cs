@@ -15,6 +15,10 @@ namespace OpenTabletDriver.Desktop.Reflection
         public PluginStateManager(DesktopPluginManager manager)
         {
             Manager = manager;
+            if (!Directory.Exists(AppInfo.Current.PendingPluginDirectory))
+            {
+                Directory.CreateDirectory(AppInfo.Current.PendingPluginDirectory);
+            }
         }
 
         public void ProcessPendingStates()
