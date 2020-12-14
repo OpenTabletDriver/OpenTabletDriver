@@ -56,7 +56,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T GetValue<T>()
         {
-            return Value != null ? Value.ToObject<T>() : default(T);
+            return Value?.Type != JTokenType.Null ? Value.ToObject<T>() : default(T);
         }
 
         public object GetValue(Type asType)
