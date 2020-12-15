@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
-using Eto.Forms;
 
 namespace OpenTabletDriver.UX.MacOS
 {
-    class MainClass
+    class Program
     {
         [STAThread]
         public static void Main(string[] args)
         {
-            new Application(Eto.Platforms.Mac64).Run(new MainForm(args));
+            App.Run(Eto.Platforms.Mac64, args);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace OpenTabletDriver.UX
 {
     public partial class MainForm : Form
     {
-        public MainForm(string[] args = null)
+        public MainForm()
         {
             Title = "OpenTabletDriver";
             Icon = App.Logo.WithSize(App.Logo.Size);
@@ -30,28 +30,10 @@ namespace OpenTabletDriver.UX
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
 
-            ProcessArguments(args);
             ApplyPlatformQuirks();
 
             InitializeAsync();
-
-            if (AppInfo.Current.StartMinimized)
-            {
-                this.Show();
-                this.Visible = true;
-                this.WindowState = WindowState.Minimized;
-                this.ShowInTaskbar = false;
-                this.Visible = false;
-            }
         }
-
-        private void ProcessArguments(string[] args)
-		{
-            if (args == null) return;
-
-            if (args.Contains("--minimized"))
-                AppInfo.Current.StartMinimized = true;
-		}
 
         private Control ConstructPlaceholderControl()
         {
