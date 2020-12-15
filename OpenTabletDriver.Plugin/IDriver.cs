@@ -12,6 +12,7 @@ namespace OpenTabletDriver.Plugin
         event EventHandler<TabletState> TabletChanged;
 
         bool EnableInput { set; get; }
+        bool InterpolatorActive { get; }
         TabletState Tablet { get; }
         IOutputMode OutputMode { set; get; }
 

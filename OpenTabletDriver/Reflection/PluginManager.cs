@@ -51,6 +51,8 @@ namespace OpenTabletDriver.Reflection
                         select ctor;
 
                     var constructor = matchingConstructors.FirstOrDefault();
+                    if (constructor == null)
+                        Log.Write("Plugin", $"No matching constructor found for '{name}'", LogLevel.Debug);
                     return (T)constructor?.Invoke(args) ?? null;
                 }
                 catch

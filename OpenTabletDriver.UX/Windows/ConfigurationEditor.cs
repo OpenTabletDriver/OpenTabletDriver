@@ -7,19 +7,15 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
-using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    using static ParseTools;
-
     public class ConfigurationEditor : Form
     {
         public ConfigurationEditor()
@@ -256,7 +252,8 @@ namespace OpenTabletDriver.UX.Windows
         {
             yield return new InputBox("Name",
                 () => SelectedConfiguration.Name,
-                (o) => SelectedConfiguration.Name = o
+                (o) => SelectedConfiguration.Name = o,
+                textboxWidth: 500
             );
 
             yield return new DigitizerIdentifierEditor(

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using HidSharp;
 using OpenTabletDriver.Devices;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Reflection;
@@ -39,6 +40,7 @@ namespace OpenTabletDriver
         protected virtual PluginManager PluginManager { get; } = new PluginManager();
         
         public bool EnableInput { set; get; }
+        public bool InterpolatorActive => Interpolators.Any();
 
         private TabletState tablet;
         public TabletState Tablet
@@ -91,7 +93,7 @@ namespace OpenTabletDriver
             digitizerIdentifier = default;
             foreach (var identifier in config.DigitizerIdentifiers)
             {
-                var matches = FindMatches(identifier);
+                var matches = FindMatchingDigitizer(identifier, config.Attributes);
 
                 if (matches.Count() > 1)
                     Log.Write("Detect", "More than 1 matching digitizer has been found.", LogLevel.Warning);
@@ -121,7 +123,7 @@ namespace OpenTabletDriver
             auxIdentifier = default;
             foreach (var identifier in config.AuxilaryDeviceIdentifiers)
             {
-                var matches = FindMatches(identifier);
+                var matches = FindMatchingAuxiliary(identifier, config.Attributes);
 
                 if (matches.Count() > 1)
                     Log.Write("Detect", "More than 1 matching auxiliary device has been found.", LogLevel.Warning);
@@ -161,7 +163,7 @@ namespace OpenTabletDriver
             }
 
             TabletReader = new DeviceReader<IDeviceReport>(tabletDevice, reportParser);
-            TabletReader.Report += HandleDeviceReaderReport;
+            TabletReader.Report += OnReportRecieved;
             TabletReader.ReadingChanged += (_, state) =>
             {
                 Reading?.Invoke(this, state);
@@ -197,7 +199,7 @@ namespace OpenTabletDriver
             }
             
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
-            AuxReader.Report += HandleDeviceReaderReport;
+            AuxReader.Report += OnReportRecieved;
 
             if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
@@ -212,18 +214,51 @@ namespace OpenTabletDriver
             }
         }
 
-        protected IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
+        private IEnumerable<HidDevice> FindMatchingDigitizer(DeviceIdentifier identifier, Dictionary<string, string> attributes)
+        {
+            return from device in FindMatches(identifier)
+                   where DigitizerMatchesAttribute(device, attributes)
+                   select device;
+        }
+
+        private IEnumerable<HidDevice> FindMatchingAuxiliary(DeviceIdentifier identifier, Dictionary<string, string> attributes)
+        {
+            return from device in FindMatches(identifier)
+                   where AuxMatchesAttribute(device, attributes)
+                   select device;
+        }
+
+        private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
         {
             return from device in DeviceList.Local.GetHidDevices()
                 where identifier.VendorID == device.VendorID
                 where identifier.ProductID == device.ProductID
-                where identifier.InputReportLength == null ? true : identifier.InputReportLength == device.GetMaxInputReportLength()
-                where identifier.OutputReportLength == null ? true : identifier.OutputReportLength == device.GetMaxOutputReportLength()
+                where identifier.InputReportLength == null || identifier.InputReportLength == device.GetMaxInputReportLength()
+                where identifier.OutputReportLength == null || identifier.OutputReportLength == device.GetMaxOutputReportLength()
                 where DeviceMatchesAllStrings(device, identifier)
                 select device;
         }
 
-        protected bool DeviceMatchesAllStrings(HidDevice device, DeviceIdentifier identifier)
+        private bool DigitizerMatchesAttribute(HidDevice device, Dictionary<string, string> attributes)
+        {
+            var devName = device.GetFileSystemName();
+
+            bool interfaceMatches = attributes.ContainsKey("WinInterface") ? Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}") : true;
+            bool keyMatches = attributes.ContainsKey("WinUsage") ? Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}") : true;
+
+            return SystemInterop.CurrentPlatform switch
+            {
+                PluginPlatform.Windows => interfaceMatches && keyMatches,
+                _ => true
+            };
+        }
+
+        private bool AuxMatchesAttribute(HidDevice device, Dictionary<string, string> attributes)
+        {
+            return true; // Future proofing
+        }
+
+        private bool DeviceMatchesAllStrings(HidDevice device, DeviceIdentifier identifier)
         {
             if (identifier.DeviceStrings == null || identifier.DeviceStrings.Count == 0)
                 return true;
@@ -256,25 +291,25 @@ namespace OpenTabletDriver
         public void Dispose()
         {
             TabletReader.Dispose();
-            TabletReader.Report -= HandleDeviceReaderReport;
+            TabletReader.Report -= OnReportRecieved;
             TabletReader = null;
             
             AuxReader.Dispose();
-            AuxReader.Report -= HandleDeviceReaderReport;
+            AuxReader.Report -= OnReportRecieved;
             AuxReader = null;
         }
 
-        private void HandleDeviceReaderReport(object _, IDeviceReport report)
+        public virtual void OnReportRecieved(object _, IDeviceReport report)
         {
             this.ReportRecieved?.Invoke(this, report);
-            HandleReport(report);
+            if (EnableInput && OutputMode?.Tablet != null)
+                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
+                    HandleReport(report);
         }
 
         public virtual void HandleReport(IDeviceReport report)
         {
-            if (EnableInput && OutputMode?.Tablet != null)
-                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
-                    OutputMode.Read(report);
+            OutputMode.Read(report);
         }
     }
 }

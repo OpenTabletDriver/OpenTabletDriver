@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
@@ -47,7 +48,8 @@ namespace OpenTabletDriver.UX.Controls
         private Splitter baseControl = new Splitter
         {
             Panel1MinimumSize = 200,
-            Orientation = Orientation.Horizontal
+            Orientation = Orientation.Horizontal,
+            BackgroundColor = SystemColors.WindowBackground
         };
 
         public PluginReference SelectedPlugin => sourceSelector.SelectedSource;
@@ -76,10 +78,19 @@ namespace OpenTabletDriver.UX.Controls
         {
             public PluginSettingStoreEmptyPlaceholder(string friendlyName)
             {
+                string pluginTypeName = string.IsNullOrWhiteSpace(friendlyName) ? typeof(TSource).Name : $"{friendlyName.ToLower()}s";
                 base.Items.Add(new StackLayoutItem(null, true));
                 base.Items.Add(
-                    new StackLayoutItem($"No plugins containing {(string.IsNullOrWhiteSpace(friendlyName) ? typeof(TSource).Name : $"{friendlyName.ToLower()}s")} are installed.")
+                    new StackLayoutItem
                     {
+                        Control = new Bitmap(App.Logo.WithSize(256, 256)),
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    }
+                );
+                base.Items.Add(
+                    new StackLayoutItem
+                    {
+                        Control = $"No plugins containing {pluginTypeName} are installed.",
                         HorizontalAlignment = HorizontalAlignment.Center
                     }
                 );
@@ -221,10 +232,8 @@ namespace OpenTabletDriver.UX.Controls
                     foreach (ModifierAttribute modifierAttr in property.GetCustomAttributes<ModifierAttribute>())
                         control = ApplyModifierAttribute(control, modifierAttr);
 
-                    return new GroupBoxBase(
-                        attr.DisplayName ?? property.Name,
-                        control
-                    );
+                    control.Width = 400;
+                    return new Group(attr.DisplayName ?? property.Name, control, Orientation.Horizontal, false);
                 }
                 else
                 {
