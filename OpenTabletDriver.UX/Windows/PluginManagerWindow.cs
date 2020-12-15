@@ -49,7 +49,9 @@ namespace OpenTabletDriver.UX.Windows
 
             var contextMenu = new ContextMenu();
             var showPluginFolderMenu = contextMenu.Items.Add(showPluginFolderCmd);
+            var uninstallPluginMenu = contextMenu.Items.Add(uninstallPluginCmd);
             showPluginFolderMenu.Text = "Show in folder...";
+            uninstallPluginMenu.Text = "Uninstall";
 
             this.pluginListBox = new ListBox
             {
