@@ -231,6 +231,7 @@ namespace OpenTabletDriver
         private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
         {
             return from device in DeviceList.Local.GetHidDevices()
+                where device.CanOpen
                 where identifier.VendorID == device.VendorID
                 where identifier.ProductID == device.ProductID
                 where identifier.InputReportLength == null || identifier.InputReportLength == device.GetMaxInputReportLength()

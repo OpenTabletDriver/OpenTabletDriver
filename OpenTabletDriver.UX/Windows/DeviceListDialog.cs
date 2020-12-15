@@ -17,7 +17,12 @@ namespace OpenTabletDriver.UX.Windows
             MinimumSize = new Size(960 - 100, 730 - 100);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
-            Devices = DeviceList.Local.GetHidDevices().ToList();
+            var devices = from device in DeviceList.Local.GetHidDevices()
+                where device.CanOpen
+                select device;
+
+            Devices = devices.ToList();
+
             _deviceList.SelectedIndexChanged += (sender, e) => 
             {
                 if (_deviceList.SelectedIndex >= 0)
