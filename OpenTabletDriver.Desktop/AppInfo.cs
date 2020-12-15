@@ -31,6 +31,8 @@ namespace OpenTabletDriver.Desktop
 
         private static string ProgramDirectory => AppContext.BaseDirectory;
 
+        public bool StartMinimized { set; get; } = false;
+
         private static string DefaultConfigurationDirectory
         {
             get
