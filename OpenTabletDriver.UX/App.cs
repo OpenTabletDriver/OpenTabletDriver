@@ -38,7 +38,18 @@ namespace OpenTabletDriver.UX
             var app = new Application(platform);
             var mainForm = new MainForm();
             if (startMinimized)
+            {
                 mainForm.WindowState = WindowState.Minimized;
+                if (EnableTrayIcon)
+                {
+                    mainForm.Show();
+                    mainForm.Visible = true;
+                    mainForm.WindowState = WindowState.Minimized;
+                    mainForm.ShowInTaskbar = false;
+                    mainForm.Visible = false;
+                }
+            }
+
             app.Run(mainForm);
         }
 
@@ -75,6 +86,13 @@ namespace OpenTabletDriver.UX
             License = string.Empty,
             Copyright = string.Empty,
             Logo = Logo.WithSize(256, 256)
+        };
+
+        public readonly static bool EnableTrayIcon = SystemInterop.CurrentPlatform switch
+        {
+            PluginPlatform.Windows => true,
+            PluginPlatform.MacOS   => true,
+            _                       => false
         };
 
         private static readonly Lazy<RpcClient<IDriverDaemon>> _daemon = new Lazy<RpcClient<IDriverDaemon>>(() =>
