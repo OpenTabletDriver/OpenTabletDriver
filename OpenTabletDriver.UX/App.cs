@@ -35,11 +35,11 @@ namespace OpenTabletDriver.UX
             if (code != 0)
                 Environment.Exit(code);
 
+            var app = new Application(platform);
             var mainForm = new MainForm();
             if (startMinimized)
                 mainForm.WindowState = WindowState.Minimized;
-
-            new Application(platform).Run(mainForm);
+            app.Run(mainForm);
         }
 
         public const string PluginRepositoryUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Plugin-Repository";
