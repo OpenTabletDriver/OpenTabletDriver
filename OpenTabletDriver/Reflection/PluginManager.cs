@@ -43,23 +43,24 @@ namespace OpenTabletDriver.Reflection
             {
                 try
                 {
-                    var type = PluginTypes.FirstOrDefault(t => t.FullName == name);
-                    var matchingConstructors = from ctor in type?.GetConstructors()
+                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
+                    {
+                        var matchingConstructors = from ctor in type.GetConstructors()
                         let parameters = ctor.GetParameters()
                         where parameters.Length == args.Length
                         where IsValidParameterFor(args, parameters)
                         select ctor;
 
-                    var constructor = matchingConstructors.FirstOrDefault();
-                    if (constructor == null)
-                        Log.Write("Plugin", $"No matching constructor found for '{name}'", LogLevel.Debug);
-                    return (T)constructor?.Invoke(args) ?? null;
+                        if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
+                            return (T)constructor.Invoke(args) ?? null;
+                    }
                 }
                 catch
                 {
                     Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
                 }
             }
+            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Debug);
             return null;
         }
 

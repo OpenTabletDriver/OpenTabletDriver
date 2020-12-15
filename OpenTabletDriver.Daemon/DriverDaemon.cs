@@ -177,7 +177,9 @@ namespace OpenTabletDriver.Daemon
         {
             var filters = from store in Settings.Filters
                 where store.Enable == true
-                select store.Construct<IFilter>();
+                let filter = store.Construct<IFilter>()
+                where filter != null
+                select filter;
             outputMode.Filters = filters.ToList();
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
@@ -276,7 +278,7 @@ namespace OpenTabletDriver.Daemon
 
                 var tool = store.Construct<ITool>();
 
-                if (tool.Initialize())
+                if (tool?.Initialize() ?? false)
                     Tools.Add(tool);
                 else
                     Log.Write("Tool", $"Failed to initialize {store.GetPluginReference().Name} tool.", LogLevel.Error);
@@ -294,18 +296,18 @@ namespace OpenTabletDriver.Daemon
                 if (store.Enable == false)
                     continue;
 
-                var interpolator = store.Construct<Interpolator>(SystemInterop.Timer);
-
-                var filters = from filterPath in Settings?.Filters
-                        let filter = AppInfo.PluginManager.GetPluginReference(filterPath).Construct<IFilter>()
+                if (store.Construct<Interpolator>(SystemInterop.Timer) is Interpolator interpolator)
+                {
+                    var filters = from filterStore in Settings?.Filters
+                        let filter = filterStore.Construct<IFilter>()
                         where filter != null
                         where filter.FilterStage == FilterStage.PreInterpolate
                         select filter;
 
-                interpolator.Filters = filters.ToList();
-                Driver.Interpolators.Add(interpolator);
-
-                Log.Write("Settings", $"Interpolator: {interpolator}");
+                    interpolator.Filters = filters.ToList();
+                    Driver.Interpolators.Add(interpolator);
+                    Log.Write("Settings", $"Interpolator: {interpolator}");
+                }
             }
         }
 
