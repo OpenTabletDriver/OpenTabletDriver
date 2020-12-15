@@ -8,10 +8,6 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20253.1" />
-  </ItemGroup>
-
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
   </ItemGroup>

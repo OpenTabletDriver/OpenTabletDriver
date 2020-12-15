@@ -276,13 +276,6 @@ namespace OpenTabletDriver.UX
                 _ => new Size(960, 760)
             };
 
-            bool enableTrayIcon = SystemInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => true,
-                PluginPlatform.MacOS   => true,
-                _                      => false
-            };
-
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => true,
@@ -290,7 +283,7 @@ namespace OpenTabletDriver.UX
                 _                      => false,
             };
 
-            if (enableTrayIcon)
+            if (App.EnableTrayIcon)
             {
                 var trayIcon = new TrayIcon(this);
                 this.WindowStateChanged += (sender, e) =>
