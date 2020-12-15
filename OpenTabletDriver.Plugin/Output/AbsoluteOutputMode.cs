@@ -21,7 +21,10 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 this.filters = value;
-                this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                if (Info.Driver.InterpolatorActive)
+                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                else
+                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose || t.FilterStage == FilterStage.PreInterpolate).ToList();
                 this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList();
             }
             get => this.filters;
