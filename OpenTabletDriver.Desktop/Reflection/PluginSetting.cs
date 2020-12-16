@@ -37,31 +37,17 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public void SetValue(object value)
         {
-            Value = value switch
-            {
-                string val => val,
-                bool val => val,
-                int val => val,
-                uint val => val,
-                float val => val,
-                double val => val,
-                DateTime val => val,
-                TimeSpan val => val,
-                Guid val => val,
-                Uri val => val,
-                Enum val => JObject.FromObject(val),
-                _ => value != null ? JObject.FromObject(value) : null
-            };
+            Value = value == null ? null : JToken.FromObject(value);
         }
 
         public T GetValue<T>()
         {
-            return Value != null ? Value.ToObject<T>() : default(T);
+            return Value == null ? default(T) : Value.Type != JTokenType.Null ? Value.ToObject<T>() : default(T);
         }
 
         public object GetValue(Type asType)
         {
-            return Value?.ToObject(asType);
+            return Value == null ? default : Value.Type != JTokenType.Null ? Value.ToObject(asType) : default;
         }
     }
 }

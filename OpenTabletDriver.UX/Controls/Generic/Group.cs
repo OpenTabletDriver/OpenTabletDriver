@@ -28,16 +28,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         protected virtual Color HorizontalBackgroundColor => SystemColors.ControlBackground;
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
         
-        private Label titleLabel = new Label
-        {
-            Font = Fonts.Cached("Sans", 9, FontStyle.Bold)
-        };
-
-        public string Text
-        {
-            set => titleLabel.Text = value;
-            get => titleLabel.Text;
-        }
+        public string Text { set; get; }
 
         private Control content;
         public new Control Content {
@@ -62,7 +53,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 {
                     base.Content = new GroupBox
                     {
-                        Text = titleLabel.Text,
+                        Text = this.Text,
                         Padding = new Padding(0, 2, 0, 0),
                         Content = this.Content
                     };
@@ -82,7 +73,15 @@ namespace OpenTabletDriver.UX.Controls.Generic
                             Padding = ContentPadding,
                             Items =
                             {
-                                new StackLayoutItem(titleLabel, TitleVerticalAlignment),
+                                new StackLayoutItem
+                                {
+                                    VerticalAlignment = TitleVerticalAlignment,
+                                    Control = new Label
+                                    {
+                                        Text = this.Text,
+                                        Font = Fonts.Cached("Sans", 9, FontStyle.Bold)
+                                    }
+                                },
                                 new StackLayoutItem(this.Content, ExpandContent)
                             }
                         }
@@ -101,7 +100,15 @@ namespace OpenTabletDriver.UX.Controls.Generic
                         Padding = ContentPadding,
                         Items =
                         {
-                            new StackLayoutItem(titleLabel, TitleHorizontalAlignment),
+                            new StackLayoutItem
+                            {
+                                HorizontalAlignment = TitleHorizontalAlignment,
+                                Control = new Label
+                                {
+                                    Text = this.Text,
+                                    Font = Fonts.Cached("Sans", 9, FontStyle.Bold)
+                                }
+                            },
                             new StackLayoutItem
                             {
                                 Expand = true,
