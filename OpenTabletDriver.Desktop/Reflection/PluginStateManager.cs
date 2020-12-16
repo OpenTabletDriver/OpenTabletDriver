@@ -1,6 +1,4 @@
-using System;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using OpenTabletDriver.Plugin;
 
@@ -8,17 +6,14 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginStateManager
     {
-        public FileInfo UninstallCommands = new FileInfo(Path.Join(AppInfo.Current.PendingPluginDirectory, "uninstallCommands.txt"));
+        public DirectoryInfo PluginUninstallDir = new DirectoryInfo(AppInfo.Current.PluginUninstallDir);
+        public DirectoryInfo PluginUpdateDir = new DirectoryInfo(AppInfo.Current.PluginUpdateDir);
 
-        private DesktopPluginManager Manager;
+        private readonly DesktopPluginManager Manager;
 
         public PluginStateManager(DesktopPluginManager manager)
         {
             Manager = manager;
-            if (!Directory.Exists(AppInfo.Current.PendingPluginDirectory))
-            {
-                Directory.CreateDirectory(AppInfo.Current.PendingPluginDirectory);
-            }
         }
 
         public void ProcessPendingStates()
@@ -32,89 +27,76 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private void ProcessUpdate()
         {
-            var update = new DirectoryInfo(AppInfo.Current.PendingPluginDirectory);
-            if (update.Exists)
+            if (PluginUpdateDir.Exists)
             {
-                foreach (var pendingPlugin in update.EnumerateFileSystemInfos())
+                foreach (var pendingPlugin in PluginUpdateDir.EnumerateFileSystemInfos())
                 {
                     Delete(Path.Join(AppInfo.Current.PluginDirectory, pendingPlugin.Name));
                     Manager.InstallPlugin(pendingPlugin.FullName);
                     Delete(pendingPlugin.FullName);
                 }
+                PluginUpdateDir.Delete();
             }
-            update.Delete();
         }
 
         private void ProcessUninstall()
         {
-            string[] pluginToUninstall = GetUninstallCommands();
-            foreach (var plugin in pluginToUninstall)
+            if (PluginUninstallDir.Exists)
             {
-                var pluginDir = Path.Join(AppInfo.Current.PluginDirectory, plugin);
-                var pluginDll = Path.Join(AppInfo.Current.PluginDirectory, plugin + ".dll");
-                try
+                foreach (var pendingUninstall in PluginUninstallDir.GetFileSystemInfos())
                 {
-                    if (Directory.Exists(pluginDir))
-                        Directory.Delete(pluginDir, true);
-                    else if (File.Exists(pluginDll))
+                    try
                     {
-                        File.Delete(pluginDll);
+                        pendingUninstall.Delete();
+                    }
+                    catch
+                    {
+                        Log.Write("Plugin", $"Failed to delete '{Path.GetFileNameWithoutExtension(pendingUninstall.Name)}'");
                     }
                 }
-                catch
-                {
-                    Log.Write("Plugin", $"Failed to uninstall '{plugin}'", LogLevel.Error);
-                }
+                PluginUninstallDir.Delete();
             }
-            UninstallCommands.Delete();
         }
 
-        public PluginProcessingResult QueueUpdate(string filePath)
+        public PluginStateResult QueueUpdate(string filePath)
         {
             var name = Path.GetFileName(filePath);
-            if (!Directory.Exists(AppInfo.Current.PendingPluginDirectory))
-                Directory.CreateDirectory(AppInfo.Current.PendingPluginDirectory);
-            File.Copy(filePath, Path.Join(AppInfo.Current.PendingPluginDirectory, name), true);
-            return PluginProcessingResult.UpdateQueued;
+            if (!PluginUpdateDir.Exists)
+                PluginUpdateDir.Create();
+            File.Copy(filePath, Path.Join(PluginUpdateDir.FullName, name), true);
+            return PluginStateResult.UpdateQueued;
         }
 
-        public PluginProcessingResult QueueUninstall(string pluginName)
+        public PluginStateResult QueueUninstall(PluginInfo plugin)
         {
-            string[] commands = GetUninstallCommands();
+            if (plugin.State == PluginState.PendingUninstall)
+                return PluginStateResult.AlreadyQueued;
 
-            if (!commands.Contains(pluginName))
-            {
-                using var outFile = new StreamWriter(UninstallCommands.Open(FileMode.Append));
-                outFile.WriteLine(pluginName);
-                return PluginProcessingResult.UninstallQueued;
-            }
-            else
-            {
-                return PluginProcessingResult.None;
-            }
-        }
+            var target = Path.Join(PluginUninstallDir.FullName, plugin.Form == PluginForm.File ? Path.GetFileName(plugin.Path) : Path.GetDirectoryName(plugin.Path));
 
-        private string[] GetUninstallCommands()
-        {
-            string[] commands = Array.Empty<string>();
-            if (UninstallCommands.Exists)
+            try
             {
-                using var readFile = new StreamReader(UninstallCommands.FullName);
-                commands = readFile.ReadToEnd().Split(Environment.NewLine);
+                if (plugin.Form == PluginForm.File)
+                    File.Move(plugin.Path, target);
+                else
+                    Directory.Move(plugin.Path, target);
+                plugin.State = PluginState.PendingUninstall;
+                return PluginStateResult.UninstallQueued;
             }
-            else
+            catch
             {
-                UninstallCommands.Create().Dispose();
+                Log.Write("Plugin", $"Failed to enqueue '{plugin.Name}'");
+                return PluginStateResult.Error;
             }
-            return commands;
         }
 
         private static void Delete(string path)
         {
-            if (File.Exists(path))
+            var attrib = File.GetAttributes(path);
+            if (attrib.HasFlag(FileAttributes.Directory))
+                Directory.Delete(path, true);
+            else
                 File.Delete(path);
-            else if (Directory.Exists(path))
-                Directory.Delete(path);
         }
     }
 }

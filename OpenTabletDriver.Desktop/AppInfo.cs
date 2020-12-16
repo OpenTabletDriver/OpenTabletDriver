@@ -28,7 +28,8 @@ namespace OpenTabletDriver.Desktop
 
         public string SettingsFile => Path.Join(AppDataDirectory, "settings.json");
         public string PluginDirectory => Path.Join(AppDataDirectory, "Plugins");
-        public string PendingPluginDirectory => Path.Join(AppDataDirectory, "PendingPlugins");
+        public string PluginUpdateDir => Path.Join(AppDataDirectory, "PluginUpdate");
+        public string PluginUninstallDir => Path.Join(AppDataDirectory, "PluginUninstall");
 
         private static string ProgramDirectory => AppContext.BaseDirectory;
 

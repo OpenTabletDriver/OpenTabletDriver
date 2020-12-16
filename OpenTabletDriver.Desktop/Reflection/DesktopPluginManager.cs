@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
@@ -30,15 +29,11 @@ namespace OpenTabletDriver.Desktop.Reflection
         protected List<FileInfo> IndependentPlugins { get; } = new List<FileInfo>();
         protected DesktopPluginContext FallbackPluginContext { get; }
         protected ConcurrentBag<DesktopPluginContext> PluginContexts { get; } = new ConcurrentBag<DesktopPluginContext>();
+        protected ConcurrentBag<PluginInfo> PluginInfos { get; } = new ConcurrentBag<PluginInfo>();
 
-        public IEnumerable<string> GetLoadedPluginNames()
+        public IEnumerable<PluginInfo> GetLoadedPluginInfos()
         {
-            // Will be changed to use PluginMetadata
-            foreach (var plugin in PluginContexts)
-                yield return plugin.PluginDirectory.Name;
-
-            foreach (var asm in FallbackPluginContext.Assemblies)
-                yield return Path.GetFileNameWithoutExtension(asm.Location);
+            return PluginInfos;
         }
 
         public void LoadPlugins(DirectoryInfo directory)
@@ -54,6 +49,14 @@ namespace OpenTabletDriver.Desktop.Reflection
                     foreach (var plugin in Directory.EnumerateFiles(dir.FullName, "*.dll"))
                         LoadPlugin(context, plugin);
 
+                    var pluginInfo = new PluginInfo
+                    {
+                        Name = dir.Name,
+                        Path = dir.FullName,
+                        Form = PluginForm.Directory
+                    };
+
+                    PluginInfos.Add(pluginInfo);
                     PluginContexts.Add(context);
                 }
             });
@@ -64,9 +67,18 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (IndependentPlugins.All(f => f.Name != plugin.Name))
                 {
-                    var name = Regex.Match(plugin.Name, $"^(.+?){plugin.Extension}").Groups[1].Value;
+                    var name = Path.GetFileNameWithoutExtension(plugin.Name);
                     Log.Write("Plugin", $"Loading independent plugin '{name}'");
                     LoadPlugin(FallbackPluginContext, plugin.FullName);
+
+                    var pluginInfo = new PluginInfo
+                    {
+                        Name = name,
+                        Path = plugin.FullName,
+                        Form = PluginForm.File
+                    };
+
+                    PluginInfos.Add(pluginInfo);
                     IndependentPlugins.Add(plugin);
                 }
             }
@@ -123,7 +135,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             });
         }
 
-        public PluginProcessingResult InstallPlugin(string filePath)
+        public PluginStateResult InstallPlugin(string filePath)
         {
             var fileInfo = new FileInfo(filePath);
             switch (fileInfo.Extension)
@@ -139,7 +151,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     else
                     {
                         ZipFile.ExtractToDirectory(filePath, path, true);
-                        return PluginProcessingResult.Installed;
+                        return PluginStateResult.Installed;
                     }
                 }
                 case ".dll":
@@ -154,17 +166,17 @@ namespace OpenTabletDriver.Desktop.Reflection
                         var name = Path.GetFileName(filePath);
                         var dest = Path.Join(AppInfo.Current.PluginDirectory, name);
                         File.Copy(filePath, dest, true);
-                        return PluginProcessingResult.Installed;
+                        return PluginStateResult.Installed;
                     }
                 }
                 default:
-                    return PluginProcessingResult.Invalid;
+                    return PluginStateResult.Error;
             }
         }
 
-        public PluginProcessingResult UninstallPlugin(string pluginName)
+        public PluginStateResult UninstallPlugin(PluginInfo plugin)
         {
-            return PluginStateManager.QueueUninstall(pluginName);
+            return PluginStateManager.QueueUninstall(plugin);
         }
     }
 }

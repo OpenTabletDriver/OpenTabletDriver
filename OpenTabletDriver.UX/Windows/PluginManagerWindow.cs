@@ -12,6 +12,21 @@ namespace OpenTabletDriver.UX.Windows
 {
     public class PluginManagerWindow : Form
     {
+        private readonly ObservableCollection<PluginInfo> pluginList = new ObservableCollection<PluginInfo>();
+        private readonly Panel panel; // Windows can't receive drag n drop events from Form, so use Panel as proxy
+        private readonly ListBox pluginListBox;
+        private readonly StackLayout split;
+        private readonly StackLayout dropArea;
+        private readonly Label dragInstruction = new Label
+        {
+            Text = "Drag and drop plugin zips/dlls to install!   o(≧▽≦)o",
+            VerticalAlignment = VerticalAlignment.Center,
+            Size = new Size(-1, 30)
+        };
+
+        private const string dragDropSupported = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
+        private const string dragDropNotSupported = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
+
         public PluginManagerWindow()
         {
             this.Title = "Plugin Manager";
@@ -50,13 +65,16 @@ namespace OpenTabletDriver.UX.Windows
             var contextMenu = new ContextMenu();
             var showPluginFolderMenu = contextMenu.Items.Add(showPluginFolderCmd);
             var uninstallPluginMenu = contextMenu.Items.Add(uninstallPluginCmd);
+
             showPluginFolderMenu.Text = "Show in folder...";
             uninstallPluginMenu.Text = "Uninstall";
 
             this.pluginListBox = new ListBox
             {
-                DataStore = pluginList
+                DataStore = pluginList,
+                ItemTextBinding = Binding.Property<PluginInfo, string>(p => p.Name)
             };
+
             this.pluginListBox.SelectedIndexChanged += (_, _) =>
             {
                 var index = this.pluginListBox.SelectedIndex;
@@ -143,13 +161,13 @@ namespace OpenTabletDriver.UX.Windows
                         if (uri.IsFile && File.Exists(uri.LocalPath))
                         {
                             var result = AppInfo.PluginManager.InstallPlugin(uri.LocalPath);
-                            if (result == PluginProcessingResult.UpdateQueued)
+                            if (result == PluginStateResult.UpdateQueued)
                                 updateQueued = true;
                         }
                     }
                     LoadNewPlugins().ConfigureAwait(false);
                     if (updateQueued)
-                        MessageBox.Show(this, "Plugin updates will be applied after restart.");
+                        MessageBox.Show(this, "Plugin updates will be applied after restarting OTD.");
                 }
             }
             catch {}
@@ -173,13 +191,13 @@ namespace OpenTabletDriver.UX.Windows
                 foreach(var file in dialog.Filenames)
                 {
                     var result = AppInfo.PluginManager.InstallPlugin(file);
-                    if (result == PluginProcessingResult.UpdateQueued)
+                    if (result == PluginStateResult.UpdateQueued)
                         updateQueued = true;
                 }
 
                 if (updateQueued)
                 {
-                    MessageBox.Show("Plugin updates will be applied on restart of OTD");
+                    MessageBox.Show("Plugin updates will be applied after restarting OTD.");
                 }
 
                 LoadNewPlugins().ConfigureAwait(false);
@@ -188,17 +206,20 @@ namespace OpenTabletDriver.UX.Windows
 
         private void UninstallPlugin()
         {
-            var pluginName = pluginList[pluginListBox.SelectedIndex];
-            var result = MessageBox.Show(this, $"Uninstall '{pluginName}'?", MessageBoxButtons.YesNo);
+            var plugin = pluginList[pluginListBox.SelectedIndex];
+            var result = MessageBox.Show(this, $"Uninstall '{plugin.Name}'?", MessageBoxButtons.YesNo);
             if (result == DialogResult.Ok || result == DialogResult.Yes)
             {
-                switch (AppInfo.PluginManager.UninstallPlugin(pluginName))
+                switch (AppInfo.PluginManager.UninstallPlugin(plugin))
                 {
-                    case PluginProcessingResult.UninstallQueued:
-                        MessageBox.Show("Plugins will be uninstalled on restart of OTD");
+                    case PluginStateResult.UninstallQueued:
+                        MessageBox.Show($"{plugin.Name} will be completely uninstalled after restarting OTD.");
                         break;
-                    case PluginProcessingResult.None:
-                        MessageBox.Show("Plugin is already queued for uninstall");
+                    case PluginStateResult.None:
+                        MessageBox.Show($"{plugin.Name} is already queued for uninstall.");
+                        break;
+                    case PluginStateResult.Error:
+                        MessageBox.Show($"{plugin.Name} failed to uninstall");
                         break;
                 }
             }
@@ -249,9 +270,8 @@ namespace OpenTabletDriver.UX.Windows
         private void ShowPluginFolder()
         {
             var plugin = pluginList[pluginListBox.SelectedIndex];
-            var path = Path.Join(AppInfo.Current.PluginDirectory, plugin);
-            if (Directory.Exists(path))
-                SystemInterop.Open(path);
+            if (Directory.Exists(plugin.Path))
+                SystemInterop.Open(plugin.Path);
             else
                 SystemInterop.Open(AppInfo.Current.PluginDirectory);
         }
@@ -259,23 +279,8 @@ namespace OpenTabletDriver.UX.Windows
         private void UpdateList()
         {
             pluginList.Clear();
-            foreach (var name in AppInfo.PluginManager.GetLoadedPluginNames().OrderBy(x => x))
+            foreach (var name in AppInfo.PluginManager.GetLoadedPluginInfos().OrderBy(x => x))
                 pluginList.Add(name);
         }
-
-        private readonly ObservableCollection<string> pluginList = new ObservableCollection<string>();
-        private readonly Panel panel; // Windows can't receive drag n drop events from Form, so use Panel as proxy
-        private readonly ListBox pluginListBox;
-        private readonly StackLayout split;
-        private readonly StackLayout dropArea;
-        private readonly Label dragInstruction = new Label
-        {
-            Text = "Drag and drop plugin zips/dlls to install!   o(≧▽≦)o",
-            VerticalAlignment = VerticalAlignment.Center,
-            Size = new Size(-1, 30)
-        };
-
-        private const string dragDropSupported = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
-        private const string dragDropNotSupported = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
     }
 }

@@ -1,11 +1,12 @@
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public enum PluginProcessingResult
+    public enum PluginStateResult
     {
-        Invalid = -1,
+        Error = -1,
         None,
         Installed,
         UninstallQueued,
         UpdateQueued,
+        AlreadyQueued
     }
 }
