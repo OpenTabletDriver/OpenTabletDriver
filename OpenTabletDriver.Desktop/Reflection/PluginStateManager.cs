@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using OpenTabletDriver.Plugin;
 
@@ -29,11 +31,13 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             if (PluginUpdateDir.Exists)
             {
-                foreach (var pendingPlugin in PluginUpdateDir.EnumerateFileSystemInfos())
+                foreach (var pendingPlugin in PluginUpdateDir.EnumerateFileSystemInfos().OrderBy(p => p.Name))
                 {
                     Delete(Path.Join(AppInfo.Current.PluginDirectory, pendingPlugin.Name));
                     Manager.InstallPlugin(pendingPlugin.FullName);
                     Delete(pendingPlugin.FullName);
+                    var name = Path.GetFileNameWithoutExtension(pendingPlugin.Name);
+                    Log.Write("Plugin", $"Plugin '{name}' updated");
                 }
                 PluginUpdateDir.Delete();
             }
@@ -43,15 +47,17 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             if (PluginUninstallDir.Exists)
             {
-                foreach (var pendingUninstall in PluginUninstallDir.GetFileSystemInfos())
+                foreach (var pendingUninstall in PluginUninstallDir.GetFileSystemInfos().OrderBy(p => p.Name))
                 {
+                    var name = Path.GetFileNameWithoutExtension(pendingUninstall.Name);
                     try
                     {
-                        pendingUninstall.Delete();
+                        Delete(pendingUninstall.FullName);
+                        Log.Write("Plugin", $"Plugin '{name}' uninstalled");
                     }
                     catch
                     {
-                        Log.Write("Plugin", $"Failed to delete '{Path.GetFileNameWithoutExtension(pendingUninstall.Name)}'");
+                        Log.Write("Plugin", $"Failed to delete '{name}'", LogLevel.Error);
                     }
                 }
                 PluginUninstallDir.Delete();
@@ -64,6 +70,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (!PluginUpdateDir.Exists)
                 PluginUpdateDir.Create();
             File.Copy(filePath, Path.Join(PluginUpdateDir.FullName, name), true);
+            Log.Write("Plugin", $"Plugin '{Path.GetFileNameWithoutExtension(filePath)}");
             return PluginStateResult.UpdateQueued;
         }
 
@@ -72,7 +79,10 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (plugin.State == PluginState.PendingUninstall)
                 return PluginStateResult.AlreadyQueued;
 
-            var target = Path.Join(PluginUninstallDir.FullName, plugin.Form == PluginForm.File ? Path.GetFileName(plugin.Path) : Path.GetDirectoryName(plugin.Path));
+            if (!PluginUninstallDir.Exists)
+                PluginUninstallDir.Create();
+
+            var target = Path.Join(PluginUninstallDir.FullName, Path.GetFileName(plugin.Path));
 
             try
             {
@@ -81,11 +91,12 @@ namespace OpenTabletDriver.Desktop.Reflection
                 else
                     Directory.Move(plugin.Path, target);
                 plugin.State = PluginState.PendingUninstall;
+                Log.Write("Plugin", $"Plugin '{Path.GetFileNameWithoutExtension(plugin.Name)}' enqueued for uninstall");
                 return PluginStateResult.UninstallQueued;
             }
-            catch
+            catch (Exception e)
             {
-                Log.Write("Plugin", $"Failed to enqueue '{plugin.Name}'");
+                Log.Write("Plugin", $"Failed to enqueue uninstall for '{plugin.Name}' with error: {e.StackTrace}", LogLevel.Error);
                 return PluginStateResult.Error;
             }
         }

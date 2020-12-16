@@ -138,6 +138,12 @@ namespace OpenTabletDriver.Desktop.Reflection
         public PluginStateResult InstallPlugin(string filePath)
         {
             var fileInfo = new FileInfo(filePath);
+            if (PluginInfos.Where(p => p.State == PluginState.PendingUninstall || p.State == PluginState.PendingUpdate)
+                .Any(p => p.Name == Path.GetFileNameWithoutExtension(filePath)))
+            {
+                return PluginStateResult.AlreadyQueued;
+            }
+
             switch (fileInfo.Extension)
             {
                 case ".zip":

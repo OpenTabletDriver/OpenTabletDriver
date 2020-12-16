@@ -31,7 +31,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Plugin Manager";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.MinimumSize = new Size(700, 350);
+            this.Size = new Size(700, 350);
             this.AllowDrop = true;
             this.Menu = ConstructMenu();
 
@@ -167,7 +167,7 @@ namespace OpenTabletDriver.UX.Windows
                     }
                     LoadNewPlugins().ConfigureAwait(false);
                     if (updateQueued)
-                        MessageBox.Show(this, "Plugin updates will be applied after restarting OTD.");
+                        MessageBox.Show(this, "Plugin updates will be applied after restarting OTD.", "Plugin Manager");
                 }
             }
             catch {}
@@ -191,13 +191,23 @@ namespace OpenTabletDriver.UX.Windows
                 foreach(var file in dialog.Filenames)
                 {
                     var result = AppInfo.PluginManager.InstallPlugin(file);
+                    switch (result)
+                    {
+                        case PluginStateResult.UpdateQueued:
+                            updateQueued = true;
+                            break;
+                        case PluginStateResult.AlreadyQueued:
+                            MessageBox.Show(this, $"{Path.GetFileNameWithoutExtension(file)} already have an enqueued process. Please restart OTD first.",
+                                            "Plugin Manager", MessageBoxType.Warning);
+                            break;
+                    }
                     if (result == PluginStateResult.UpdateQueued)
                         updateQueued = true;
                 }
 
                 if (updateQueued)
                 {
-                    MessageBox.Show("Plugin updates will be applied after restarting OTD.");
+                    MessageBox.Show(this, "Plugin updates will be applied after restarting OTD.", "Plugin Manager");
                 }
 
                 LoadNewPlugins().ConfigureAwait(false);
@@ -207,19 +217,19 @@ namespace OpenTabletDriver.UX.Windows
         private void UninstallPlugin()
         {
             var plugin = pluginList[pluginListBox.SelectedIndex];
-            var result = MessageBox.Show(this, $"Uninstall '{plugin.Name}'?", MessageBoxButtons.YesNo);
+            var result = MessageBox.Show(this, $"Uninstall '{plugin.Name}'?", "Plugin Manager", MessageBoxButtons.YesNo, MessageBoxType.Question);
             if (result == DialogResult.Ok || result == DialogResult.Yes)
             {
                 switch (AppInfo.PluginManager.UninstallPlugin(plugin))
                 {
                     case PluginStateResult.UninstallQueued:
-                        MessageBox.Show($"{plugin.Name} will be completely uninstalled after restarting OTD.");
+                        MessageBox.Show(this, $"{plugin.Name} will be completely uninstalled after restarting OTD.", "Plugin Manager", MessageBoxType.Information);
                         break;
-                    case PluginStateResult.None:
-                        MessageBox.Show($"{plugin.Name} is already queued for uninstall.");
+                    case PluginStateResult.AlreadyQueued:
+                        MessageBox.Show(this, $"{plugin.Name} is already queued for uninstall.", "Plugin Manager", MessageBoxType.Warning);
                         break;
                     case PluginStateResult.Error:
-                        MessageBox.Show($"{plugin.Name} failed to uninstall");
+                        MessageBox.Show(this, $"{plugin.Name} failed to uninstall", "Plugin Manager", MessageBoxType.Error);
                         break;
                 }
             }
@@ -261,7 +271,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ManualLoad()
         {
-            var result = MessageBox.Show("Manually loading plugins are not recommended. Are you sure you want to continue?",
+            var result = MessageBox.Show(this, "Manually loading plugins are not recommended. Are you sure you want to continue?", "Plugin Manager",
                                           MessageBoxButtons.YesNo, MessageBoxType.Warning);
             if (result == DialogResult.Yes || result == DialogResult.Ok)
                 LoadNewPlugins().ConfigureAwait(false);
