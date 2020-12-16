@@ -37,7 +37,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public void SetValue(object value)
         {
-            Value = JToken.FromObject(value);
+            Value = value == null ? null : JToken.FromObject(value);
         }
 
         public T GetValue<T>()
