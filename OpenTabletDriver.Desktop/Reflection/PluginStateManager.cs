@@ -46,22 +46,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         private void ProcessUninstall()
         {
             if (PluginUninstallDir.Exists)
-            {
-                foreach (var pendingUninstall in PluginUninstallDir.GetFileSystemInfos().OrderBy(p => p.Name))
-                {
-                    var name = Path.GetFileNameWithoutExtension(pendingUninstall.Name);
-                    try
-                    {
-                        Delete(pendingUninstall.FullName);
-                        Log.Write("Plugin", $"Plugin '{name}' uninstalled");
-                    }
-                    catch
-                    {
-                        Log.Write("Plugin", $"Failed to delete '{name}'", LogLevel.Error);
-                    }
-                }
-                PluginUninstallDir.Delete();
-            }
+                PluginUninstallDir.Delete(true);
         }
 
         public PluginStateResult QueueUpdate(string filePath)
