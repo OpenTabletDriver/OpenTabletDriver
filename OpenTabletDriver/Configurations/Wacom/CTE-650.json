@@ -22,28 +22,6 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
-    },
-    {
-      "Width": 216.48,
-      "Height": 135.3,
-      "MaxX": 21648.0,
-      "MaxY": 13530.0,
-      "MaxPressure": 511,
-      "ActiveReportID": {
-        "Start": 0,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
-      "VendorID": 1386,
-      "ProductID": 19,
-      "InputReportLength": 9,
-      "OutputReportLength": null,
-      "ReportParser": null,
-      "FeatureInitReport": "AgI=",
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
