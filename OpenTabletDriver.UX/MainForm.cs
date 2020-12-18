@@ -202,7 +202,7 @@ namespace OpenTabletDriver.UX
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
-            var pluginManager = new Command { MenuText = "Plugin Manager" };
+            var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
             pluginManager.Executed += (sender, e) => ShowPluginManager();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
