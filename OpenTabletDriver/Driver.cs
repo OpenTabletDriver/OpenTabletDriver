@@ -242,16 +242,15 @@ namespace OpenTabletDriver
 
         private bool DigitizerMatchesAttribute(HidDevice device, Dictionary<string, string> attributes)
         {
+            if (SystemInterop.CurrentPlatform != PluginPlatform.Windows)
+                return true;
+
             var devName = device.GetFileSystemName();
 
             bool interfaceMatches = attributes.ContainsKey("WinInterface") ? Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}") : true;
             bool keyMatches = attributes.ContainsKey("WinUsage") ? Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}") : true;
 
-            return SystemInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => interfaceMatches && keyMatches,
-                _ => true
-            };
+            return interfaceMatches && keyMatches;
         }
 
         private bool AuxMatchesAttribute(HidDevice device, Dictionary<string, string> attributes)
