@@ -42,7 +42,8 @@ namespace OpenTabletDriver.UX.Windows
                 Orientation = Orientation.Vertical
             };
 
-            dropPanel.PluginInstalled += async () => await Refresh(true);
+            dropPanel.RequestPluginInstall += async (path) => await InstallPlugin(path);
+            pluginList.RequestPluginUninstall += async (ctx) => await UninstallPlugin(ctx);
 
             _ = Refresh();
         }
@@ -55,15 +56,39 @@ namespace OpenTabletDriver.UX.Windows
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        public async Task Refresh(bool refreshMainWindow = false)
+        public async Task Refresh()
         {
             await App.Driver.Instance.LoadPlugins();
-            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
+            AppInfo.PluginManager.Load();
 
-            if (refreshMainWindow)
-                await (Application.Instance.MainForm as MainForm).Refresh();
-
+            (Application.Instance.MainForm as MainForm).Refresh();
             pluginList.Refresh();
+        }
+
+        protected async Task InstallPlugin(string path)
+        {
+            if (await App.Driver.Instance.InstallPlugin(path))
+            {
+                AppInfo.PluginManager.Load();
+                await Refresh();
+            }
+            else
+            {
+                MessageBox.Show(this, $"Failed to install plugin from '{path}'", "Plugin Manager", MessageBoxType.Error);
+            }
+        }
+
+        protected async Task UninstallPlugin(DesktopPluginContext context)
+        {
+            if (await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
+            {
+                AppInfo.PluginManager.UnloadPlugin(context);
+                await Refresh();
+            }
+            else
+            {
+                MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
+            }
         }
 
         private MenuBar ConstructMenu()
@@ -75,7 +100,7 @@ namespace OpenTabletDriver.UX.Windows
             install.Executed += PromptInstallPlugin;
 
             var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
-            refresh.Executed += async (_, _) => await Refresh(true);
+            refresh.Executed += async (_, _) => await Refresh();
 
             var openRepository = new Command { MenuText = "Get more plugins..." };
             openRepository.Executed += (_, _) => SystemInterop.Open(App.PluginRepositoryUrl);
@@ -106,32 +131,12 @@ namespace OpenTabletDriver.UX.Windows
 
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
-                bool updateQueued = false;
                 foreach(var file in dialog.Filenames)
                 {
-                    var result = AppInfo.PluginManager.InstallPlugin(file);
-                    switch (result)
-                    {
-                        case PluginStateResult.UpdateQueued:
-                            updateQueued = true;
-                            break;
-                        case PluginStateResult.AlreadyQueued:
-                            MessageBox.Show(
-                                this,
-                                $"{Path.GetFileNameWithoutExtension(file)} already have an enqueued process. Please restart OpenTabletDriver first.",
-                                "Plugin Manager",
-                                MessageBoxType.Warning
-                            );
-                            break;
-                    }
+                    await InstallPlugin(file);
                 }
 
-                if (updateQueued)
-                {
-                    MessageBox.Show(this, "Plugin updates will be applied after restarting OpenTabletDriver.", "Plugin Manager");
-                }
-
-                await Refresh(true);
+                await Refresh();
             }
         }
 
@@ -140,7 +145,7 @@ namespace OpenTabletDriver.UX.Windows
             public PluginListBox()
             {
                 this.DataStore = DisplayedPlugins;
-                this.ItemTextBinding = Binding.Property<PluginInfo, string>(p => p.Name);
+                this.ItemTextBinding = Binding.Property<DesktopPluginContext, string>(p => p.FriendlyName);
 
                 this.ItemContextMenu = new ContextMenu
                 {
@@ -158,50 +163,44 @@ namespace OpenTabletDriver.UX.Windows
                 };
             }
 
-            private readonly ObservableCollection<PluginInfo> DisplayedPlugins = new ObservableCollection<PluginInfo>();
+            public event Action<DesktopPluginContext> RequestPluginUninstall;
+
+            private readonly ObservableCollection<DesktopPluginContext> DisplayedPlugins = new ObservableCollection<DesktopPluginContext>();
 
             private ContextMenu ItemContextMenu { get; }
 
-            public PluginInfo SelectedPlugin { protected set; get; }
+            public DesktopPluginContext SelectedPlugin { protected set; get; }
 
             public void Refresh()
             {
-                var plugins = from plugin in AppInfo.PluginManager.GetLoadedPluginInfos()
-                    where plugin.State != PluginState.PendingUninstall
+                var plugins = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
                     orderby plugin.Name
                     select plugin;
 
                 this.DisplayedPlugins.Clear();
-                foreach (var name in plugins)
-                    this.DisplayedPlugins.Add(name);
+                foreach (var ctx in plugins)
+                    this.DisplayedPlugins.Add(ctx);
 
                 OnSelectedIndexChanged(new EventArgs());
             }
 
             private void ShowPluginFolder(object sender, EventArgs e)
             {
-                var path = Directory.Exists(SelectedPlugin.Path) ? SelectedPlugin.Path : AppInfo.Current.PluginDirectory;
-                SystemInterop.Open(path);
+                SystemInterop.Open(SelectedPlugin.Directory.FullName);
             }
 
             private void UninstallPlugin(object sender, EventArgs e)
             {
-                var result = MessageBox.Show(this, $"Uninstall '{SelectedPlugin.Name}'?", "Plugin Manager", MessageBoxButtons.YesNo, MessageBoxType.Question);
+                var result = MessageBox.Show(this, $"Uninstall '{SelectedPlugin.FriendlyName}'?", "Plugin Manager", MessageBoxButtons.YesNo, MessageBoxType.Question);
                 switch (result)
                 {
                     case DialogResult.Yes:
                     case DialogResult.Ok:
                     {
-                        switch (AppInfo.PluginManager.UninstallPlugin(SelectedPlugin))
-                        {
-                            case PluginStateResult.Error:
-                                MessageBox.Show(this, $"{SelectedPlugin.Name} failed to uninstall", "Plugin Manager", MessageBoxType.Error);
-                                break;
-                        }
+                        RequestPluginUninstall?.Invoke(SelectedPlugin);
                         break;
                     }
                 }
-                Refresh();
             }
 
             protected override void OnSelectedIndexChanged(EventArgs e)
@@ -252,7 +251,7 @@ namespace OpenTabletDriver.UX.Windows
             private const string DRAG_DROP_SUPPORTED = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
             private const string DRAG_DROP_UNSUPPORTED = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
 
-            public event Action PluginInstalled;
+            public event Action<string> RequestPluginInstall;
 
             private Control content;
             public new Control Content
@@ -338,19 +337,13 @@ namespace OpenTabletDriver.UX.Windows
                     if (args.Data.ContainsUris && args.Data.Uris != null && args.Data.Uris.Length > 0)
                     {
                         var uriList = args.Data.Uris;
-                        bool updateQueued = false;
                         foreach (var uri in uriList)
                         {
                             if (uri.IsFile && File.Exists(uri.LocalPath))
                             {
-                                var result = AppInfo.PluginManager.InstallPlugin(uri.LocalPath);
-                                if (result == PluginStateResult.UpdateQueued)
-                                    updateQueued = true;
+                                RequestPluginInstall?.Invoke(uri.LocalPath);
                             }
                         }
-                        PluginInstalled?.Invoke();
-                        if (updateQueued)
-                            MessageBox.Show(this, "Plugin updates will be applied after restarting OTD.", "Plugin Manager");
                     }
                 }
                 catch (Exception ex)

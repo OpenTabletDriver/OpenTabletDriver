@@ -54,14 +54,12 @@ namespace OpenTabletDriver.UX
             };
         }
 
-        public async Task Refresh()
+        public void Refresh()
         {
-            Content = ConstructMainControls();
-
-            if (await Driver.Instance.GetTablet() is TabletState tablet)
-                outputModeEditor.SetTabletSize(tablet);
-
-            await LoadSettings();
+            bindingEditor = new BindingEditor();
+            filterEditor.UpdateStore(Settings?.Filters);
+            toolEditor.UpdateStore(Settings?.Tools);
+            interpolatorEditor.UpdateStore(Settings?.Interpolators);
         }
 
         private Control ConstructMainControls()
@@ -86,7 +84,7 @@ namespace OpenTabletDriver.UX
                         Text = "Filters",
                         Padding = 5,
                         Content = filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
-                            new WeakReference<PluginSettingStoreCollection>(Settings?.Filters, true),
+                            Settings?.Filters,
                             "Filter"
                         )
                     },
@@ -95,7 +93,7 @@ namespace OpenTabletDriver.UX
                         Text = "Tools",
                         Padding = 5,
                         Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
-                            new WeakReference<PluginSettingStoreCollection>(Settings?.Tools, true),
+                            Settings?.Tools,
                             "Tool"
                         )
                     },
@@ -104,7 +102,7 @@ namespace OpenTabletDriver.UX
                         Text = "Interpolators",
                         Padding = 5,
                         Content = interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
-                            new WeakReference<PluginSettingStoreCollection>(Settings?.Interpolators),
+                            Settings?.Interpolators,
                             "Interpolator"
                         )
                     },
@@ -364,8 +362,8 @@ namespace OpenTabletDriver.UX
             }
 
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
+            AppInfo.PluginManager.Load();
 
-            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 
             Content = ConstructMainControls();

@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Reflection
         }
 
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
-        protected readonly ConcurrentBag<TypeInfo> pluginTypes;
+        protected ConcurrentBag<TypeInfo> pluginTypes;
 
         protected readonly static IEnumerable<Type> libTypes =
             from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
@@ -96,6 +96,11 @@ namespace OpenTabletDriver.Reflection
         {
             var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
             return attr?.IsCurrentPlatform ?? true;
+        }
+
+        protected virtual bool IsPluginIgnored(Type type)
+        {
+            return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));
         }
 
         protected virtual bool IsLoadable(Assembly asm)

@@ -44,6 +44,7 @@ namespace OpenTabletDriver.Daemon
 
         private async void LoadUserSettings()
         {
+            AppInfo.PluginManager.Clean();
             await LoadPlugins();
             await DetectTablets();
 
@@ -80,6 +81,33 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
+        public Task LoadPlugins()
+        {
+            var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
+            if (pluginDir.Exists)
+            {
+                AppInfo.PluginManager.Load();
+            }
+            else
+            {
+                pluginDir.Create();
+                Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> InstallPlugin(string filePath)
+        {
+            return Task.FromResult(AppInfo.PluginManager.InstallPlugin(filePath));
+        }
+
+        public Task<bool> UninstallPlugin(string friendlyName)
+        {
+            var plugins = AppInfo.PluginManager.GetLoadedPlugins();
+            var plugin = plugins.FirstOrDefault(ctx => ctx.FriendlyName == friendlyName);
+            return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(plugin));
+        }
+
         public Task<TabletState> GetTablet()
         {
             return Task.FromResult(Driver.Tablet);
@@ -98,7 +126,7 @@ namespace OpenTabletDriver.Daemon
                 }
             }
             else
-            { 
+            {
                 Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", LogLevel.Error);
             }
             Log.Write("Detect", "No tablet found.");
@@ -108,7 +136,7 @@ namespace OpenTabletDriver.Daemon
         public Task SetSettings(Settings settings)
         {
             Settings = SettingsMigrator.Migrate(settings);
-            
+
             var pluginRef = Settings.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
             Driver.OutputMode = pluginRef.Construct<IOutputMode>();
 
@@ -117,7 +145,7 @@ namespace OpenTabletDriver.Daemon
 
             if (Driver.OutputMode is IOutputMode outputMode)
                 SetOutputModeSettings(outputMode);
-            
+
             if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
                 SetAbsoluteModeSettings(absoluteMode);
 
@@ -184,7 +212,7 @@ namespace OpenTabletDriver.Daemon
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
-            
+
             outputMode.Tablet = Driver.Tablet;
         }
 
@@ -215,7 +243,7 @@ namespace OpenTabletDriver.Daemon
             };
             Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
 
-            absoluteMode.AreaClipping = Settings.EnableClipping;   
+            absoluteMode.AreaClipping = Settings.EnableClipping;
             Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
 
             absoluteMode.AreaLimiting = Settings.EnableAreaLimiting;
@@ -239,7 +267,7 @@ namespace OpenTabletDriver.Daemon
             BindingHandler.TipBinding = Settings.TipButton?.Construct<IBinding>();
             BindingHandler.TipActivationPressure = Settings.TipActivationPressure;
             Log.Write("Settings", $"Tip Binding: [{BindingHandler.TipBinding}]@{BindingHandler.TipActivationPressure}%");
-    
+
             if (Settings.PenButtons != null)
             {
                 for (int index = 0; index < Settings.PenButtons.Count; index++)
@@ -270,7 +298,7 @@ namespace OpenTabletDriver.Daemon
             foreach (var runningTool in Tools)
                 runningTool.Dispose();
             Tools.Clear();
-            
+
             foreach (PluginSettingStore store in Settings.Tools)
             {
                 if (store.Enable == false)
@@ -290,7 +318,7 @@ namespace OpenTabletDriver.Daemon
             foreach (var interpolator in Driver.Interpolators)
                 interpolator.Dispose();
             Driver.Interpolators.Clear();
-            
+
             foreach (PluginSettingStore store in Settings.Interpolators)
             {
                 if (store.Enable == false)
@@ -319,21 +347,6 @@ namespace OpenTabletDriver.Daemon
         public Task<AppInfo> GetApplicationInfo()
         {
             return Task.FromResult(AppInfo.Current);
-        }
-
-        public Task LoadPlugins()
-        {
-            var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
-            if (pluginDir.Exists)
-            {
-                AppInfo.PluginManager.LoadPlugins(pluginDir);
-            }
-            else
-            {
-                pluginDir.Create();
-                Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
-            }
-            return Task.CompletedTask;
         }
 
         public Task EnableInput(bool isHooked)
