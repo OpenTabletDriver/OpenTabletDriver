@@ -136,20 +136,18 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 case ".zip":
                 {
-                    Log.Write("Plugin", $"Installing plugin zip: '{file.Name}'");
                     ZipFile.ExtractToDirectory(file.FullName, tempDir.FullName, true);
                     break;
                 }
                 case ".dll":
                 {
-                    Log.Write("Plugin", $"Installing plugin dll: '{file.Name}'");
                     file.CopyTo(Path.Join(tempDir.FullName, file.Name));
                     break;
                 }
                 default:
                     throw new InvalidOperationException($"Unsupported archive type: {file.Extension}");
             }
-            var context = Plugins.FirstOrDefault(ctx => ctx.Directory == pluginDir);
+            var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == pluginDir.FullName);
             var result = pluginDir.Exists ? UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
@@ -159,6 +157,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public bool InstallPlugin(DirectoryInfo target, DirectoryInfo source)
         {
+            Log.Write("Plugin", $"Installing plugin '{target.Name}'");
             source.MoveTo(target.FullName);
             return true;
         }
@@ -169,7 +168,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (!Directory.Exists(TrashDirectory.FullName))
                 TrashDirectory.Create();
 
-            Log.Write("Plugin", $"Uninstalling plugin: {plugin.FriendlyName}");
+            Log.Write("Plugin", $"Uninstalling plugin '{plugin.FriendlyName}'");
 
             var trashPath = Path.Join(TrashDirectory.FullName, $"{plugin.FriendlyName}_{random.Next()}");
             plugin.Directory.MoveTo(trashPath);
@@ -179,13 +178,15 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public bool UpdatePlugin(DesktopPluginContext plugin, DirectoryInfo source)
         {
+            var targetDir = new DirectoryInfo(plugin.Directory.FullName);
             if (UninstallPlugin(plugin))
-                return InstallPlugin(plugin.Directory, source);
+                return InstallPlugin(targetDir, source);
             return false;
         }
 
         public bool UnloadPlugin(DesktopPluginContext context)
         {
+            Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);
             Plugins.Remove(context);
             return context.Assemblies.All(p => RemoveAllTypesForAssembly(p));
         }

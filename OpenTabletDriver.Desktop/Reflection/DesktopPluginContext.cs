@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         public DesktopPluginContext(DirectoryInfo directory)
         {
             Directory = directory;
+            FriendlyName = Directory.Name;
 
             foreach (var plugin in Directory.EnumerateFiles("*.dll"))
                 LoadAssemblyFromFile(plugin);
@@ -20,7 +21,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public DirectoryInfo Directory { get; }
 
-        public string FriendlyName => Directory.Name;
+        public string FriendlyName { get; }
 
         protected Assembly LoadAssemblyFromFile(FileInfo file)
         {

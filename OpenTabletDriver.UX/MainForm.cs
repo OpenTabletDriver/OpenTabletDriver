@@ -60,6 +60,7 @@ namespace OpenTabletDriver.UX
             filterEditor.UpdateStore(Settings?.Filters);
             toolEditor.UpdateStore(Settings?.Tools);
             interpolatorEditor.UpdateStore(Settings?.Interpolators);
+            outputModeEditor.Refresh();
         }
 
         private Control ConstructMainControls()
