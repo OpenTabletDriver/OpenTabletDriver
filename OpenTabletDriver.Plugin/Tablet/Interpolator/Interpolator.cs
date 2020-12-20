@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             this.scheduler = scheduler;
             this.scheduler.Elapsed += InterpolateHook;
             Info.Driver.ReportRecieved += HandleReport;
+            reportStopwatch.Start();
         }
 
         public abstract SyntheticTabletReport Interpolate();
@@ -22,6 +23,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         protected bool enabled;
         protected ITimer scheduler;
         protected Stopwatch reportStopwatch = new Stopwatch();
+        protected TimeSpan lastElapsed = default;
         protected readonly object stateLock = new object();
 
         protected bool inRange;
@@ -69,8 +71,9 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                 {
                     lock (this.stateLock)
                     {
-                        this.reportMsAvg += (reportStopwatch.Elapsed.TotalMilliseconds - reportMsAvg) / 10.0f;
-                        reportStopwatch.Restart();
+                        var currElapsed = reportStopwatch.Elapsed;
+                        this.reportMsAvg += ((currElapsed - lastElapsed).TotalMilliseconds - reportMsAvg) / 10.0f;
+                        lastElapsed = currElapsed;
                         this.InRange = true;
 
                         if (Enabled)
@@ -94,7 +97,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             lock (this.stateLock)
             {
                 var limit = Limiter.Transform(this.reportMsAvg);
-                if ((reportStopwatch.Elapsed.TotalMilliseconds < limit) && this.InRange)
+                if (((reportStopwatch.Elapsed - lastElapsed).TotalMilliseconds < limit) && this.InRange)
                 {
                     var report = Interpolate();
                     Info.Driver.HandleReport(report);

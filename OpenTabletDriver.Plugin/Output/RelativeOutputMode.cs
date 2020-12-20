@@ -12,9 +12,16 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : IOutputMode
     {
+        public RelativeOutputMode()
+        {
+            stopwatch.Start();
+        }
+        
         private IList<IFilter> filters, preFilters, postFilters;
         private Vector2? lastPos;
         private Stopwatch stopwatch = new Stopwatch();
+        private TimeSpan lastElapsed = default;
+        private bool skipReport = false;
         private Matrix3x2 transformationMatrix;
 
         public IList<IFilter> Filters
@@ -68,7 +75,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         private void UpdateTransformMatrix()
         {
-            this.stopwatch.Reset();     // Prevents cursor from jumping on sensitivity change
+            this.skipReport = true;     // Prevents cursor from jumping on sensitivity change
 
             this.transformationMatrix = Matrix3x2.CreateRotation(
                 (float)(-Rotation * System.Math.PI / 180));
@@ -94,8 +101,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         public Vector2? Transpose(ITabletReport report)
         {
-            var elapsed = stopwatch.Elapsed;
-            stopwatch.Restart();
+            var currElapsed = stopwatch.Elapsed;
+            var deltaTime = currElapsed - lastElapsed;
+            lastElapsed = currElapsed;
 
             var pos = report.Position;
 
@@ -112,7 +120,12 @@ namespace OpenTabletDriver.Plugin.Output
             var delta = pos - this.lastPos;
             this.lastPos = pos;
 
-            return (elapsed > ResetTime || elapsed.Ticks != 0) ? null : delta;
+            if (skipReport)
+            {
+                skipReport = false;
+                return null;
+            }
+            return (deltaTime > ResetTime) ? null : delta;
         }
     }
 }

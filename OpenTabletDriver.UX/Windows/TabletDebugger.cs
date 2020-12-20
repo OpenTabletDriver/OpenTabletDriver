@@ -53,6 +53,7 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
+            stopwatch.Start();
             InitializeAsync();
         }
 
@@ -72,14 +73,15 @@ namespace OpenTabletDriver.UX.Windows
         private TextGroup rawTabletBox, tabletBox, rawAuxBox, auxBox, reportRateBox;
         private double reportPeriod;
         private Stopwatch stopwatch = new Stopwatch();
+        protected TimeSpan lastElapsed = default;
 
         private void HandleReport(object sender, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
             {
-                var now = DateTime.UtcNow;
-                reportPeriod += (stopwatch.Elapsed.TotalMilliseconds - reportPeriod) / 10.0f;
-                stopwatch.Restart();
+                var currElapsed = stopwatch.Elapsed;
+                reportPeriod += ((currElapsed - lastElapsed).TotalMilliseconds - reportPeriod) / 10.0f;
+                lastElapsed = currElapsed;
 
                 rawTabletBox.Update(tabletReport?.StringFormat(true));
                 tabletBox.Update(tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine));
