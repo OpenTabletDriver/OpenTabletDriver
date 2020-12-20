@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
@@ -13,7 +14,7 @@ namespace OpenTabletDriver.Plugin.Output
     {
         private IList<IFilter> filters, preFilters, postFilters;
         private Vector2? lastPos;
-        private DateTime lastReceived;
+        private Stopwatch stopwatch = new Stopwatch();
         private Matrix3x2 transformationMatrix;
 
         public IList<IFilter> Filters
@@ -67,7 +68,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         private void UpdateTransformMatrix()
         {
-            this.lastReceived = default;  // Prevents cursor from jumping on sensitivity change
+            this.stopwatch.Reset();     // Prevents cursor from jumping on sensitivity change
 
             this.transformationMatrix = Matrix3x2.CreateRotation(
                 (float)(-Rotation * System.Math.PI / 180));
@@ -93,8 +94,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         public Vector2? Transpose(ITabletReport report)
         {
-            var difference = DateTime.Now - this.lastReceived;
-            this.lastReceived = DateTime.Now;
+            var elapsed = stopwatch.Elapsed;
+            stopwatch.Restart();
 
             var pos = report.Position;
 
@@ -111,7 +112,7 @@ namespace OpenTabletDriver.Plugin.Output
             var delta = pos - this.lastPos;
             this.lastPos = pos;
 
-            return (difference > ResetTime) ? null : delta;
+            return (elapsed > ResetTime || elapsed.Ticks != 0) ? null : delta;
         }
     }
 }

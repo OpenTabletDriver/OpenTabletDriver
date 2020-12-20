@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
@@ -69,20 +70,20 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private TextGroup rawTabletBox, tabletBox, rawAuxBox, auxBox, reportRateBox;
-        private float reportRate;
-        private DateTime lastTime = DateTime.UtcNow;
+        private double reportPeriod;
+        private Stopwatch stopwatch = new Stopwatch();
 
         private void HandleReport(object sender, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
             {
                 var now = DateTime.UtcNow;
-                reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
-                lastTime = now;
+                reportPeriod += (stopwatch.Elapsed.TotalMilliseconds - reportPeriod) / 10.0f;
+                stopwatch.Restart();
 
                 rawTabletBox.Update(tabletReport?.StringFormat(true));
                 tabletBox.Update(tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine));
-                reportRateBox.Update($"{(uint)(1000 / reportRate)}hz");
+                reportRateBox.Update($"{(uint)(1000 / reportPeriod)}hz");
             }
             if (report is IAuxReport auxReport)
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Timers;
 
@@ -20,7 +21,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         protected double reportMsAvg = 5.0f;
         protected bool enabled;
         protected ITimer scheduler;
-        protected DateTime lastTime = DateTime.UtcNow;
+        protected Stopwatch reportStopwatch = new Stopwatch();
         protected readonly object stateLock = new object();
 
         protected bool inRange;
@@ -68,9 +69,8 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                 {
                     lock (this.stateLock)
                     {
-                        var timeNow = DateTime.UtcNow;
-                        this.reportMsAvg += ((timeNow - this.lastTime).TotalMilliseconds - this.reportMsAvg) / 50.0f;
-                        this.lastTime = timeNow;
+                        this.reportMsAvg += (reportStopwatch.Elapsed.TotalMilliseconds - reportMsAvg) / 10.0f;
+                        reportStopwatch.Restart();
                         this.InRange = true;
 
                         if (Enabled)
@@ -94,7 +94,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             lock (this.stateLock)
             {
                 var limit = Limiter.Transform(this.reportMsAvg);
-                if (((DateTime.UtcNow - this.lastTime).TotalMilliseconds < limit) && this.InRange)
+                if ((reportStopwatch.Elapsed.TotalMilliseconds < limit) && this.InRange)
                 {
                     var report = Interpolate();
                     Info.Driver.HandleReport(report);
