@@ -54,6 +54,15 @@ namespace OpenTabletDriver.UX
             };
         }
 
+        public void Refresh()
+        {
+            bindingEditor = new BindingEditor();
+            filterEditor.UpdateStore(Settings?.Filters);
+            toolEditor.UpdateStore(Settings?.Tools);
+            interpolatorEditor.UpdateStore(Settings?.Interpolators);
+            outputModeEditor.Refresh();
+        }
+
         private Control ConstructMainControls()
         {
             // Main Content
@@ -76,7 +85,7 @@ namespace OpenTabletDriver.UX
                         Text = "Filters",
                         Padding = 5,
                         Content = filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
-                            new WeakReference<PluginSettingStoreCollection>(Settings?.Filters, true),
+                            Settings?.Filters,
                             "Filter"
                         )
                     },
@@ -85,7 +94,7 @@ namespace OpenTabletDriver.UX
                         Text = "Tools",
                         Padding = 5,
                         Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
-                            new WeakReference<PluginSettingStoreCollection>(Settings?.Tools, true),
+                            Settings?.Tools,
                             "Tool"
                         )
                     },
@@ -94,7 +103,7 @@ namespace OpenTabletDriver.UX
                         Text = "Interpolators",
                         Padding = 5,
                         Content = interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
-                            new WeakReference<PluginSettingStoreCollection>(Settings?.Interpolators),
+                            Settings?.Interpolators,
                             "Interpolator"
                         )
                     },
@@ -192,6 +201,9 @@ namespace OpenTabletDriver.UX
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
+            var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
+            pluginManager.Executed += (sender, e) => ShowPluginManager();
+
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
             pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
@@ -239,6 +251,7 @@ namespace OpenTabletDriver.UX
                         Text = "Plugins",
                         Items =
                         {
+                            pluginManager,
                             pluginsDirectory,
                             pluginsRepository
                         }
@@ -350,8 +363,8 @@ namespace OpenTabletDriver.UX
             }
 
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
+            AppInfo.PluginManager.Load();
 
-            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 
             Content = ConstructMainControls();
@@ -361,7 +374,13 @@ namespace OpenTabletDriver.UX
 
             Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
 
-            var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
+            await LoadSettings(AppInfo.Current);
+        }
+
+        private async Task LoadSettings(AppInfo appInfo = null)
+        {
+            appInfo ??= await Driver.Instance.GetApplicationInfo();
+            var settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await Driver.Instance.GetSettings() is Settings settings)
             {
                 Settings = settings;
@@ -503,6 +522,12 @@ namespace OpenTabletDriver.UX
         {
             var configEditor = new ConfigurationEditor();
             configEditor.Show();
+        }
+
+        private void ShowPluginManager()
+        {
+            var pluginManager = new PluginManagerWindow();
+            pluginManager.Show();
         }
 
         private void ShowDeviceStringReader()

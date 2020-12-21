@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
@@ -11,40 +12,46 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         public DesktopPluginContext(DirectoryInfo directory)
         {
-            PluginDirectory = directory;
+            Directory = directory;
+            FriendlyName = Directory.Name;
+
+            foreach (var plugin in Directory.EnumerateFiles("*.dll"))
+                LoadAssemblyFromFile(plugin);
         }
 
-        public DesktopPluginContext(string directoryPath)
-            : this(new DirectoryInfo(directoryPath))
+        public DirectoryInfo Directory { get; }
+
+        public string FriendlyName { get; }
+
+        protected Assembly LoadAssemblyFromFile(FileInfo file)
         {
+            try
+            {
+                return LoadFromAssemblyPath(file.FullName);
+            }
+            catch
+            {
+                Log.Write("Plugin", $"Failed loading assembly '{file.Name}'", LogLevel.Error);
+                return null;
+            }
         }
-        
-        protected DirectoryInfo PluginDirectory { get; }
 
         protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
         {
-            if (PluginDirectory == null)
+            if (Directory == null)
             {
                 Log.Write("Plugin", $"Independent plugin does not support loading native library '{unmanagedDllName}'", LogLevel.Warning);
                 throw new NotSupportedException();
             }
 
-            var runtimeFolder = new DirectoryInfo(Path.Join(PluginDirectory.FullName, "runtimes"));
-            
-            string libraryFile = null;
+            var runtimeFolder = new DirectoryInfo(Path.Join(Directory.FullName, "runtimes"));
             if (runtimeFolder.Exists)
             {
-                libraryFile = Directory.EnumerateFiles(
-                    runtimeFolder.FullName,
-                    ToDllName(unmanagedDllName),
-                    SearchOption.AllDirectories
-                ).FirstOrDefault();
-                
+                var libraryFile = runtimeFolder.EnumerateFiles(ToDllName(unmanagedDllName), SearchOption.AllDirectories).FirstOrDefault();
+                if (libraryFile != null)
+                    return LoadUnmanagedDllFromPath(libraryFile.FullName);
             }
-            if (!string.IsNullOrEmpty(libraryFile))
-                return LoadUnmanagedDllFromPath(libraryFile);
-            else
-                return IntPtr.Zero;
+            return IntPtr.Zero;
         }
 
         private static string ToDllName(string dllName)
