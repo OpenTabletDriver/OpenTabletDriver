@@ -1,8 +1,10 @@
 using System;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace OpenTabletDriver.Desktop.Reflection
+namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
-    public struct PluginMetadata
+    public class PluginMetadata
     {
         /// <summary>
         /// The name of the plugin.
@@ -10,9 +12,9 @@ namespace OpenTabletDriver.Desktop.Reflection
         public string Name { set; get; }
 
         /// <summary>
-        /// The author of the plugin.
+        /// The owner of the plugin's source code repository.
         /// </summary>
-        public string Author { set; get; }
+        public string Owner { set; get; }
 
         /// <summary>
         /// The plugin's long description.
@@ -33,21 +35,29 @@ namespace OpenTabletDriver.Desktop.Reflection
         /// <summary>
         /// The plugin's source code repository URL.
         /// </summary>
-        public Uri RepositoryUrl { set; get; }
+        public string RepositoryUrl { set; get; }
 
         /// <summary>
         /// The plugin's binary download URL.
         /// </summary>
-        public Uri DownloadUrl { set; get; }
+        public string DownloadUrl { set; get; }
 
         /// <summary>
         /// The plugin's wiki URL.
         /// </summary>
-        public Uri WikiUrl { set; get; }
+        public string WikiUrl { set; get; }
 
         /// <summary>
-        /// The plugin license name.
+        /// The SPDX license identifier expression.
         /// </summary>
-        public string LicenseName { set; get; }
+        public string LicenseIdentifier { set; get; }
+
+        public async Task<Stream> GetDownloadStream()
+        {
+            using (var client = PluginMetadataCollection.GetClient())
+            {
+                return string.IsNullOrWhiteSpace(DownloadUrl) ? null : await client.GetStreamAsync(DownloadUrl);
+            }
+        }
     }
 }

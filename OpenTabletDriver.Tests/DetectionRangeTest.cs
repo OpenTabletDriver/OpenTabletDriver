@@ -5,7 +5,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Tests
 {
     [TestClass]
-    public class PluginTests
+    public class DetectionRangeTest : TestBase
     {
         [DataTestMethod]
         [DataRow("[0..16)", 16, false)]
