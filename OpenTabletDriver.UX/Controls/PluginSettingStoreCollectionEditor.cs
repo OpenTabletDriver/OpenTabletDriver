@@ -16,33 +16,39 @@ namespace OpenTabletDriver.UX.Controls
     public class PluginSettingStoreCollectionEditor<TSource> : Panel
     {
         public PluginSettingStoreCollectionEditor(
-            WeakReference<PluginSettingStoreCollection> reference,
+            PluginSettingStoreCollection store,
             string friendlyName = null
         )
         {
-            CollectionReference = reference;
-
             this.baseControl.Panel1 = new Scrollable { Content = sourceSelector };
             this.baseControl.Panel2 = new Scrollable { Content = settingStoreEditor };
 
             sourceSelector.SelectedSourceChanged += (sender, reference) => UpdateSelectedStore(reference);
+            this.FriendlyTypeName = friendlyName;
 
+            UpdateStore(store);
+        }
+
+        private readonly string FriendlyTypeName;
+
+        public WeakReference<PluginSettingStoreCollection> CollectionReference { protected set; get; }
+
+        public void UpdateStore(PluginSettingStoreCollection storeCollection)
+        {
+            if (CollectionReference == null)
+                CollectionReference = new WeakReference<PluginSettingStoreCollection>(storeCollection);
+            else
+                CollectionReference.SetTarget(storeCollection);
+            sourceSelector.Refresh();
+            
             if (sourceSelector.Plugins.Count == 0)
             {
-                this.Content = new PluginSettingStoreEmptyPlaceholder(friendlyName);
+                this.Content = new PluginSettingStoreEmptyPlaceholder(FriendlyTypeName);
             }
             else
             {
                 this.Content = baseControl;
             }
-        }
-
-        public WeakReference<PluginSettingStoreCollection> CollectionReference { get; }
-
-        public void UpdateStore(PluginSettingStoreCollection storeCollection)
-        {
-            CollectionReference.SetTarget(storeCollection);
-            sourceSelector.Refresh();
         }
 
         private Splitter baseControl = new Splitter
@@ -115,16 +121,10 @@ namespace OpenTabletDriver.UX.Controls
         {
             public PluginSourceSelector()
             {
-                var items = from type in AppInfo.PluginManager.GetChildTypes<TSource>()
-                    select new PluginReference(AppInfo.PluginManager, type);
-
-                Plugins = items.ToList();
-
-                foreach (var plugin in Plugins)
-                    this.Items.Add(plugin.Name ?? plugin.Path, plugin.Path);
+                Refresh();
             }
 
-            public IList<PluginReference> Plugins { get; }
+            public IList<PluginReference> Plugins { protected set; get; }
 
             public PluginReference SelectedSource { protected set; get; }
 
@@ -132,6 +132,14 @@ namespace OpenTabletDriver.UX.Controls
 
             public void Refresh()
             {
+                var items = from type in AppInfo.PluginManager.GetChildTypes<TSource>()
+                    select new PluginReference(AppInfo.PluginManager, type);
+
+                Plugins = items.ToList();
+
+                this.DataStore = Plugins;
+                this.ItemTextBinding = Binding.Property<PluginReference, string>(p => p.Name ?? p.Path);
+
                 var lastIndex = this.SelectedIndex;
                 this.SelectedIndex = -1;
                 this.SelectedIndex = lastIndex;
@@ -162,7 +170,7 @@ namespace OpenTabletDriver.UX.Controls
                 base.VerticalContentAlignment = VerticalAlignment.Top;
             }
 
-            private static readonly IReadOnlyDictionary<Type, Func<PropertyInfo, PluginSetting, Control>> genericControls 
+            private static readonly IReadOnlyDictionary<Type, Func<PropertyInfo, PluginSetting, Control>> genericControls
                 = new Dictionary<Type, Func<PropertyInfo, PluginSetting, Control>>
             {
                 { typeof(sbyte), (a,b) => GetNumericMaskedTextBox<sbyte>(a,b) },

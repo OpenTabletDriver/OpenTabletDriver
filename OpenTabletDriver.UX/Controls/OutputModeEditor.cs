@@ -44,6 +44,11 @@ namespace OpenTabletDriver.UX.Controls
             };
         }
 
+        public void Refresh()
+        {
+            outputModeSelector.Refresh();
+        }
+
         private StackLayout outputPanel;
 
         private Control noModeEditor = new Panel();
@@ -135,18 +140,13 @@ namespace OpenTabletDriver.UX.Controls
         {
             public OutputModeSelector()
             {
-                var outputModes = from type in AppInfo.PluginManager.GetChildTypes<IOutputMode>()
-                    where !type.IsAbstract
-                    where !type.IsInterface
-                    orderby type.Name
-                    select AppInfo.PluginManager.GetPluginReference(type);
-
-                OutputModes = new List<PluginReference>(outputModes);
+                Refresh();
                 this.SelectedIndexChanged += (sender, e) =>
                 {
                     if (this.SelectedIndex >= 0)
                         SelectedMode = OutputModes[this.SelectedIndex];
                 };
+                this.ItemTextBinding = Binding.Property<PluginReference, string>(p => p.ToString());
 
                 App.SettingsChanged += (settings) => UpdateSelectedMode(settings?.OutputMode);
             }
@@ -159,9 +159,7 @@ namespace OpenTabletDriver.UX.Controls
                 set
                 {
                     this.modes = value;
-                    Items.Clear();
-                    foreach (var plugin in OutputModes)
-                        Items.Add(plugin.ToString());
+                    this.DataStore = this.OutputModes;
                 }
                 get => this.modes;
             }
@@ -175,6 +173,17 @@ namespace OpenTabletDriver.UX.Controls
                     SelectedModeChanged?.Invoke(this, SelectedMode);
                 }
                 get => selectedMode;
+            }
+
+            public void Refresh()
+            {
+                var outputModes = from type in AppInfo.PluginManager.GetChildTypes<IOutputMode>()
+                    where !type.IsAbstract
+                    where !type.IsInterface
+                    orderby type.Name
+                    select AppInfo.PluginManager.GetPluginReference(type);
+
+                OutputModes = new List<PluginReference>(outputModes);
             }
 
             public void UpdateSelectedMode(PluginSettingStore store)

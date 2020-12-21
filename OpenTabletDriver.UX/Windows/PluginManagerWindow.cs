@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -12,285 +13,354 @@ namespace OpenTabletDriver.UX.Windows
 {
     public class PluginManagerWindow : Form
     {
-        private readonly ObservableCollection<PluginInfo> pluginList = new ObservableCollection<PluginInfo>();
-        private readonly Panel panel; // Windows can't receive drag n drop events from Form, so use Panel as proxy
-        private readonly ListBox pluginListBox;
-        private readonly StackLayout split;
-        private readonly StackLayout dropArea;
-        private readonly Label dragInstruction = new Label
-        {
-            Text = "Drag and drop plugin zips/dlls to install!   o(≧▽≦)o",
-            VerticalAlignment = VerticalAlignment.Center,
-            Size = new Size(-1, 30)
-        };
-
-        private const string dragDropSupported = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
-        private const string dragDropNotSupported = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
-
         public PluginManagerWindow()
         {
             this.Title = "Plugin Manager";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
             this.Size = new Size(700, 350);
             this.AllowDrop = true;
+
             this.Menu = ConstructMenu();
+            this.Content = dropPanel;
 
-            UpdateList();
-
-            this.panel = new Panel
+            dropPanel.Content = new StackLayout
             {
-                AllowDrop = true
-            };
-
-            this.dropArea = new StackLayout
-            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
-                    new StackLayoutItem(null, true),
+                    new StackLayoutItem(pluginList, true),
                     new StackLayoutItem
                     {
-                        Control = dragDropSupported,
+                        Control = new Panel
+                        {
+                            Content = dragInstruction,
+                            Padding = 5
+                        },
                         HorizontalAlignment = HorizontalAlignment.Center
-                    },
-                    new StackLayoutItem(null, true)
-                }
-            };
-
-            var showPluginFolderCmd = new Command();
-            showPluginFolderCmd.Executed += (_, _) => ShowPluginFolder();
-
-            var uninstallPluginCmd = new Command();
-            uninstallPluginCmd.Executed += (_, _) => UninstallPlugin();
-
-            var contextMenu = new ContextMenu();
-            var showPluginFolderMenu = contextMenu.Items.Add(showPluginFolderCmd);
-            var uninstallPluginMenu = contextMenu.Items.Add(uninstallPluginCmd);
-
-            showPluginFolderMenu.Text = "Show in folder...";
-            uninstallPluginMenu.Text = "Uninstall";
-
-            this.pluginListBox = new ListBox
-            {
-                DataStore = pluginList,
-                ItemTextBinding = Binding.Property<PluginInfo, string>(p => p.Name)
-            };
-
-            this.pluginListBox.SelectedIndexChanged += (_, _) =>
-            {
-                var index = this.pluginListBox.SelectedIndex;
-                if (index >= 0 && index < pluginList.Count)
-                    this.pluginListBox.ContextMenu = contextMenu;
-                else
-                    this.pluginListBox.ContextMenu = null;
-            };
-
-            this.split = new StackLayout
-            {
-                Items =
-                {
-                    new StackLayoutItem(pluginListBox, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(dragInstruction, HorizontalAlignment.Center, false)
+                    }
                 },
                 Orientation = Orientation.Vertical
             };
 
-            this.panel.Content = this.split;
-            this.Content = this.panel;
+            dropPanel.RequestPluginInstall += async (path) => await InstallPlugin(path);
+            pluginList.RequestPluginUninstall += async (ctx) => await UninstallPlugin(ctx);
 
-            this.panel.DragEnter += ShowDrop;
-            this.panel.DragLeave += LeaveDrop;
-            this.panel.DragDrop += DragDropPluginInstall;
+            _ = Refresh();
         }
 
-        private void ShowDrop(object _, DragEventArgs args)
+        private readonly PluginDropPanel dropPanel = new PluginDropPanel();
+        private readonly PluginListBox pluginList = new PluginListBox();
+        private readonly Label dragInstruction = new Label
         {
-            try
-            {
-                if (args.Data.ContainsUris)
-                {
-                    // Skip if running on bugged platform
-                    // https://github.com/picoe/Eto/issues/1812
-                    if (args.Data.Uris != null && args.Data.Uris.Length > 0)
-                    {
-                        var uriList = args.Data.Uris;
-                        var supportedType = uriList.All(uri =>
-                        {
-                            if (uri.IsFile && File.Exists(uri.LocalPath))
-                            {
-                                var fileInfo = new FileInfo(uri.LocalPath);
-                                if (fileInfo.Extension == ".zip" || fileInfo.Extension == ".dll")
-                                {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        });
-                        if (supportedType)
-                        {
-                            dropArea.Items[1].Control = dragDropSupported;
-                            this.panel.Content = dropArea;
-                            args.Effects = DragEffects.Copy;
-                        }
-                    }
-                    else
-                    {
-                        dropArea.Items[1].Control = dragDropNotSupported;
-                        this.panel.Content = dropArea;
-                        args.Effects = DragEffects.None;
-                    }
-                }
-            }
-            catch {}
-        }
+            Text = "Drag and drop plugins to install!   o(≧▽≦)o",
+            VerticalAlignment = VerticalAlignment.Center
+        };
 
-        private void LeaveDrop(object _, DragEventArgs args)
-        {
-            this.panel.Content = split;
-        }
-
-        private void DragDropPluginInstall(object _, DragEventArgs args)
-        {
-            try
-            {
-                if (args.Data.ContainsUris && args.Data.Uris != null && args.Data.Uris.Length > 0)
-                {
-                    var uriList = args.Data.Uris;
-                    bool updateQueued = false;
-                    foreach (var uri in uriList)
-                    {
-                        if (uri.IsFile && File.Exists(uri.LocalPath))
-                        {
-                            var result = AppInfo.PluginManager.InstallPlugin(uri.LocalPath);
-                            if (result == PluginStateResult.UpdateQueued)
-                                updateQueued = true;
-                        }
-                    }
-                    LoadNewPlugins().ConfigureAwait(false);
-                    if (updateQueued)
-                        MessageBox.Show(this, "Plugin updates will be applied after restarting OTD.", "Plugin Manager");
-                }
-            }
-            catch {}
-        }
-
-        private void FileDialogPluginInstall()
-        {
-            var dialog = new OpenFileDialog()
-            {
-                Title = "Choose plugin to install...",
-                Filters =
-                {
-                    new FileFilter("OTD Plugin (.zip .dll)", ".zip", ".dll")
-                },
-                MultiSelect = true
-            };
-
-            if (dialog.ShowDialog(this) == DialogResult.Ok)
-            {
-                bool updateQueued = false;
-                foreach(var file in dialog.Filenames)
-                {
-                    var result = AppInfo.PluginManager.InstallPlugin(file);
-                    switch (result)
-                    {
-                        case PluginStateResult.UpdateQueued:
-                            updateQueued = true;
-                            break;
-                        case PluginStateResult.AlreadyQueued:
-                            MessageBox.Show(this, $"{Path.GetFileNameWithoutExtension(file)} already have an enqueued process. Please restart OTD first.",
-                                            "Plugin Manager", MessageBoxType.Warning);
-                            break;
-                    }
-                    if (result == PluginStateResult.UpdateQueued)
-                        updateQueued = true;
-                }
-
-                if (updateQueued)
-                {
-                    MessageBox.Show(this, "Plugin updates will be applied after restarting OTD.", "Plugin Manager");
-                }
-
-                LoadNewPlugins().ConfigureAwait(false);
-            }
-        }
-
-        private void UninstallPlugin()
-        {
-            var plugin = pluginList[pluginListBox.SelectedIndex];
-            var result = MessageBox.Show(this, $"Uninstall '{plugin.Name}'?", "Plugin Manager", MessageBoxButtons.YesNo, MessageBoxType.Question);
-            if (result == DialogResult.Ok || result == DialogResult.Yes)
-            {
-                switch (AppInfo.PluginManager.UninstallPlugin(plugin))
-                {
-                    case PluginStateResult.UninstallQueued:
-                        MessageBox.Show(this, $"{plugin.Name} will be completely uninstalled after restarting OTD.", "Plugin Manager", MessageBoxType.Information);
-                        break;
-                    case PluginStateResult.AlreadyQueued:
-                        MessageBox.Show(this, $"{plugin.Name} is already queued for uninstall.", "Plugin Manager", MessageBoxType.Warning);
-                        break;
-                    case PluginStateResult.Error:
-                        MessageBox.Show(this, $"{plugin.Name} failed to uninstall", "Plugin Manager", MessageBoxType.Error);
-                        break;
-                }
-            }
-        }
-
-        private async Task LoadNewPlugins()
+        public async Task Refresh()
         {
             await App.Driver.Instance.LoadPlugins();
-            AppInfo.PluginManager.LoadPlugins(new DirectoryInfo(AppInfo.Current.PluginDirectory));
-            await (Application.Instance.MainForm as MainForm).Refresh();
-            UpdateList();
+            AppInfo.PluginManager.Load();
+
+            (Application.Instance.MainForm as MainForm).Refresh();
+            pluginList.Refresh();
+        }
+
+        protected async Task InstallPlugin(string path)
+        {
+            if (await App.Driver.Instance.InstallPlugin(path))
+            {
+                AppInfo.PluginManager.Load();
+                await Refresh();
+            }
+            else
+            {
+                MessageBox.Show(this, $"Failed to install plugin from '{path}'", "Plugin Manager", MessageBoxType.Error);
+            }
+        }
+
+        protected async Task UninstallPlugin(DesktopPluginContext context)
+        {
+            if (await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
+            {
+                AppInfo.PluginManager.UnloadPlugin(context);
+                await Refresh();
+            }
+            else
+            {
+                MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
+            }
         }
 
         private MenuBar ConstructMenu()
         {
-            var installPlugin = new Command { MenuText = "Install plugin..." };
-            installPlugin.Executed += (_, _) => FileDialogPluginInstall();
-
-            var pluginsRepository = new Command { MenuText = "Get more plugins..." };
-            pluginsRepository.Executed += (_, _) => SystemInterop.Open(App.PluginRepositoryUrl);
-
-            var loadPlugins = new Command { MenuText = "Manually load plugins..." };
-            loadPlugins.Executed += (_, _) => ManualLoad();
-
-            var quitCommand = new Command { MenuText = "Exit" };
+            var quitCommand = new Command { MenuText = "Exit", Shortcut = Keys.Escape  };
             quitCommand.Executed += (_, _) => this.Close();
+
+            var install = new Command { MenuText = "Install plugin...", Shortcut = Application.Instance.CommonModifier | Keys.O };
+            install.Executed += PromptInstallPlugin;
+
+            var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
+            refresh.Executed += async (_, _) => await Refresh();
+
+            var openRepository = new Command { MenuText = "Get more plugins..." };
+            openRepository.Executed += (_, _) => SystemInterop.Open(App.PluginRepositoryUrl);
 
             return new MenuBar()
             {
+                QuitItem = quitCommand,
                 ApplicationItems =
                 {
-                    installPlugin,
-                    loadPlugins,
-                    pluginsRepository
-                },
-                QuitItem = quitCommand
+                    install,
+                    refresh,
+                    openRepository
+                }
             };
         }
 
-        private void ManualLoad()
+        private async void PromptInstallPlugin(object sender, EventArgs e)
         {
-            var result = MessageBox.Show(this, "Manually loading plugins are not recommended. Are you sure you want to continue?", "Plugin Manager",
-                                          MessageBoxButtons.YesNo, MessageBoxType.Warning);
-            if (result == DialogResult.Yes || result == DialogResult.Ok)
-                LoadNewPlugins().ConfigureAwait(false);
+            var dialog = new OpenFileDialog()
+            {
+                Title = "Choose a plugin to install...",
+                MultiSelect = true,
+                Filters =
+                {
+                    new FileFilter("Plugin (.zip .dll)", ".zip", ".dll")
+                }
+            };
+
+            if (dialog.ShowDialog(this) == DialogResult.Ok)
+            {
+                foreach(var file in dialog.Filenames)
+                {
+                    await InstallPlugin(file);
+                }
+
+                await Refresh();
+            }
         }
 
-        private void ShowPluginFolder()
+        private class PluginListBox : ListBox
         {
-            var plugin = pluginList[pluginListBox.SelectedIndex];
-            if (Directory.Exists(plugin.Path))
-                SystemInterop.Open(plugin.Path);
-            else
-                SystemInterop.Open(AppInfo.Current.PluginDirectory);
+            public PluginListBox()
+            {
+                this.DataStore = DisplayedPlugins;
+                this.ItemTextBinding = Binding.Property<DesktopPluginContext, string>(p => p.FriendlyName);
+
+                this.ItemContextMenu = new ContextMenu
+                {
+                    Items =
+                    {
+                        new Command(ShowPluginFolder)
+                        {
+                            MenuText = "Show in folder..."
+                        },
+                        new Command(UninstallPlugin)
+                        {
+                            MenuText = "Uninstall"
+                        }
+                    }
+                };
+            }
+
+            public event Action<DesktopPluginContext> RequestPluginUninstall;
+
+            private readonly ObservableCollection<DesktopPluginContext> DisplayedPlugins = new ObservableCollection<DesktopPluginContext>();
+
+            private ContextMenu ItemContextMenu { get; }
+
+            public DesktopPluginContext SelectedPlugin { protected set; get; }
+
+            public void Refresh()
+            {
+                var plugins = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
+                    orderby plugin.Name
+                    select plugin;
+
+                this.DisplayedPlugins.Clear();
+                foreach (var ctx in plugins)
+                    this.DisplayedPlugins.Add(ctx);
+
+                OnSelectedIndexChanged(new EventArgs());
+            }
+
+            private void ShowPluginFolder(object sender, EventArgs e)
+            {
+                SystemInterop.Open(SelectedPlugin.Directory.FullName);
+            }
+
+            private void UninstallPlugin(object sender, EventArgs e)
+            {
+                var result = MessageBox.Show(this, $"Uninstall '{SelectedPlugin.FriendlyName}'?", "Plugin Manager", MessageBoxButtons.YesNo, MessageBoxType.Question);
+                switch (result)
+                {
+                    case DialogResult.Yes:
+                    case DialogResult.Ok:
+                    {
+                        RequestPluginUninstall?.Invoke(SelectedPlugin);
+                        break;
+                    }
+                }
+            }
+
+            protected override void OnSelectedIndexChanged(EventArgs e)
+            {
+                base.OnSelectedIndexChanged(e);
+
+                var index = base.SelectedIndex;
+                if (index >= 0 && index < DisplayedPlugins.Count)
+                {
+                    this.SelectedPlugin = DisplayedPlugins[index];
+                    base.ContextMenu = ItemContextMenu;
+                }
+                else
+                {
+                    this.SelectedPlugin = null;
+                    base.ContextMenu = null;
+                }
+            }
+
+            protected override void OnLoadComplete(EventArgs e)
+            {
+                base.OnLoadComplete(e);
+                Refresh();
+            }
         }
 
-        private void UpdateList()
+        private class PluginDropPanel : Panel
         {
-            pluginList.Clear();
-            foreach (var name in AppInfo.PluginManager.GetLoadedPluginInfos().OrderBy(x => x))
-                pluginList.Add(name);
+            public PluginDropPanel()
+            {
+                AllowDrop = true;
+
+                DropContent = new StackLayout
+                {
+                    Items =
+                    {
+                        new StackLayoutItem(null, true),
+                        new StackLayoutItem
+                        {
+                            Control = dropTextLabel,
+                            HorizontalAlignment = HorizontalAlignment.Center
+                        },
+                        new StackLayoutItem(null, true)
+                    }
+                };
+            }
+
+            private const string DRAG_DROP_SUPPORTED = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
+            private const string DRAG_DROP_UNSUPPORTED = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
+
+            public event Action<string> RequestPluginInstall;
+
+            private Control content;
+            public new Control Content
+            {
+                set
+                {
+                    this.content = value;
+                    base.Content = this.Content;
+                }
+                get => this.content;
+            }
+
+            private readonly Label dropTextLabel = new Label
+            {
+                Text = DRAG_DROP_SUPPORTED
+            };
+
+            protected StackLayout DropContent { get; }
+
+            protected override void OnLoadComplete(EventArgs e)
+            {
+                base.OnLoadComplete(e);
+                base.Content = this.Content;
+            }
+
+            protected override void OnDragEnter(DragEventArgs args)
+            {
+                base.OnDragEnter(args);
+                try
+                {
+                    if (args.Data.ContainsUris)
+                    {
+                        // Skip if running on bugged platform
+                        // https://github.com/picoe/Eto/issues/1812
+                        if (args.Data.Uris != null && args.Data.Uris?.Length > 0)
+                        {
+                            var uriList = args.Data.Uris;
+                            var supportedType = uriList.All(uri =>
+                            {
+                                if (uri.IsFile && File.Exists(uri.LocalPath))
+                                {
+                                    var fileInfo = new FileInfo(uri.LocalPath);
+                                    return fileInfo.Extension switch
+                                    {
+                                        ".zip" => true,
+                                        ".dll" => true,
+                                        _ => false
+                                    };
+                                }
+                                return false;
+                            });
+                            if (supportedType)
+                            {
+                                dropTextLabel.Text = DRAG_DROP_SUPPORTED;
+                                args.Effects = DragEffects.Copy;
+                            }
+                        }
+                        else
+                        {
+                            dropTextLabel.Text = DRAG_DROP_UNSUPPORTED;
+                            args.Effects = DragEffects.None;
+                        }
+                        base.Content = DropContent;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowException(ex);
+                }
+            }
+
+            protected override void OnDragLeave(DragEventArgs args)
+            {
+                base.OnDragLeave(args);
+                base.Content = this.Content;
+            }
+
+            protected override void OnDragDrop(DragEventArgs args)
+            {
+                base.OnDragDrop(args);
+                try
+                {
+                    if (args.Data.ContainsUris && args.Data.Uris != null && args.Data.Uris.Length > 0)
+                    {
+                        var uriList = args.Data.Uris;
+                        foreach (var uri in uriList)
+                        {
+                            if (uri.IsFile && File.Exists(uri.LocalPath))
+                            {
+                                RequestPluginInstall?.Invoke(uri.LocalPath);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ShowException(ex);
+                }
+            }
+
+            protected static void ShowException(Exception exception)
+            {
+                MessageBox.Show(
+                    exception.ToString(),
+                    $"Error: {exception.GetType().Name}",
+                    MessageBoxButtons.OK,
+                    MessageBoxType.Error
+                );
+            }
         }
     }
 }
