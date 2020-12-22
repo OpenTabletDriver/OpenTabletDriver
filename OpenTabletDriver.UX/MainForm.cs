@@ -201,6 +201,9 @@ namespace OpenTabletDriver.UX
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
             configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
 
+            var showAreaConverter = new Command { MenuText = "Area Converter..." };
+            showAreaConverter.Executed += (sender, e) => ShowAreaConverter();
+
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
             pluginManager.Executed += (sender, e) => ShowPluginManager();
 
@@ -242,7 +245,8 @@ namespace OpenTabletDriver.UX
                             detectTablet,
                             showTabletDebugger,
                             deviceStringReader,
-                            configurationEditor
+                            configurationEditor,
+                            showAreaConverter
                         }
                     },
                     // Plugins submenu
@@ -566,6 +570,12 @@ namespace OpenTabletDriver.UX
         {
             var debugger = new TabletDebugger();
             debugger.Show();
+        }
+
+        private void ShowAreaConverter()
+        {
+            var converter = new AreaConverter();
+            converter.Show();
         }
     }
 }
