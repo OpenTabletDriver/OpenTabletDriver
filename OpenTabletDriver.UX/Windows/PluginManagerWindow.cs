@@ -191,6 +191,9 @@ namespace OpenTabletDriver.UX.Windows
             {
                 if (MetadataReference.TryGetTarget(out var metadata))
                 {
+                    var contexts = AppInfo.PluginManager.GetLoadedPlugins();
+                    bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
+
                     var actions = new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
@@ -202,7 +205,8 @@ namespace OpenTabletDriver.UX.Windows
                                 Expand = true,
                                 Control = new Button((sender, e) => RequestPluginUninstall?.Invoke(metadata))
                                 {
-                                    Text = "Uninstall"
+                                    Text = "Uninstall",
+                                    Enabled = isInstalled
                                 }
                             },
                             new StackLayoutItem
@@ -210,7 +214,8 @@ namespace OpenTabletDriver.UX.Windows
                                 Expand = true,
                                 Control = new Button((sender, e) => RequestPluginInstall?.Invoke(metadata))
                                 {
-                                    Text = "Install"
+                                    Text = "Install",
+                                    Enabled = !isInstalled
                                 },
                             }
                         }
@@ -315,13 +320,15 @@ namespace OpenTabletDriver.UX.Windows
 
             public DesktopPluginContext SelectedPlugin { protected set; get; }
 
-            private static Version AppVersion = Assembly.GetEntryAssembly().GetName().Version;
+            private static readonly Version AppVersion = Assembly.GetEntryAssembly().GetName().Version;
 
             private readonly ObservableCollection<PluginMetadata> DisplayedPlugins = new ObservableCollection<PluginMetadata>();
             private List<DesktopPluginContext> InstalledPlugins = new List<DesktopPluginContext>();
 
             public async void Refresh()
             {
+                var index = SelectedIndex;
+
                 var installed = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
                     orderby plugin.FriendlyName
                     select plugin;
@@ -346,7 +353,7 @@ namespace OpenTabletDriver.UX.Windows
                 foreach (var meta in metaQuery)
                     this.DisplayedPlugins.Add(meta);
 
-                OnSelectedIndexChanged(new EventArgs());
+                SelectedIndex = index;
             }
 
             private void ShowPluginFolder(object sender, EventArgs e)
