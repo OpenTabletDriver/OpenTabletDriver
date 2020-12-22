@@ -119,21 +119,21 @@ namespace OpenTabletDriver.UX.Windows
             case "wacom":
                 x = (right - left) / lpmm;
                 y = (bottom - top) / lpmm;
-                offsetX = x / 2 + left / lpmm;
-                offsetY = y / 2 + top / lpmm;
+                offsetX = (x / 2) + (left / lpmm);
+                offsetY = (y / 2) + (top / lpmm);
                 break;
             case "huion":
                 x = (right - left) * digitizer.Width;
                 y = (bottom - top) * digitizer.Height;
-                offsetX = x / 2 + left * digitizer.Width;
-                offsetY = y / 2 + top * digitizer.Height;
+                offsetX = (x / 2) + (left * digitizer.Width);
+                offsetY = (y / 2) + (top * digitizer.Height);
                 break;
             case "xppen":
                 var xppenUnit = 3.937f;
                 x = (right - left) / xppenUnit;
                 y = (bottom - top) / xppenUnit;
-                offsetX = x / 2 + left / xppenUnit;
-                offsetY = y / 2 + top / xppenUnit;
+                offsetX = (x / 2) + (left / xppenUnit);
+                offsetY = (y / 2) + (top / xppenUnit);
                 break;
             default:
                 MessageBox.Show("No area type selected!", MessageBoxType.Warning);
