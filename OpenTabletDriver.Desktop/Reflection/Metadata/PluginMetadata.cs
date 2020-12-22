@@ -1,6 +1,9 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop.Compression;
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
@@ -43,6 +46,16 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         public string DownloadUrl { set; get; }
 
         /// <summary>
+        /// The compression format used in the binary download from <see cref="DownloadUrl"/>.
+        /// </summary>
+        public string CompressionFormat { set; get; }
+        
+        /// <summary>
+        /// The SHA256 hash of the file at <see cref="DownloadUrl"/>, used for verifying file integrity.
+        /// </summary>
+        public string SHA256 { set; get; }
+
+        /// <summary>
         /// The plugin's wiki URL.
         /// </summary>
         public string WikiUrl { set; get; }
@@ -52,12 +65,58 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         /// </summary>
         public string LicenseIdentifier { set; get; }
 
+        public static string GetSHA256(Stream stream)
+        {
+            using (var sha256 = SHA256Managed.Create())
+            {
+                var hashData = sha256.ComputeHash(stream);
+                var sb = new StringBuilder();
+                foreach (var val in hashData)
+                {
+                    var hex = val.ToString("x2");
+                    sb.Append(hex);
+                }
+                return sb.ToString();
+            }
+        }
+
+        public bool VerifySHA256(Stream stream)
+        {
+            return GetSHA256(stream) == SHA256;
+        }
+
         public async Task<Stream> GetDownloadStream()
         {
             using (var client = PluginMetadataCollection.GetClient())
             {
                 return string.IsNullOrWhiteSpace(DownloadUrl) ? null : await client.GetStreamAsync(DownloadUrl);
             }
+        }
+
+        public async Task DownloadAsync(string outputDirectory)
+        {
+            using (var stream = await GetDownloadStream())
+            {
+                // Verify SHA256 hash
+                if (SHA256 == null || VerifySHA256(stream))
+                {
+                    stream.Decompress(outputDirectory, this.CompressionFormat);
+                }
+                else
+                {
+                    throw new Exception("The SHA256 cryptographic hashes do not match.");
+                }
+            }
+        }
+
+        public static bool Match(PluginMetadata primary, PluginMetadata secondary)
+        {
+            if (primary == null || secondary == null)
+                return false;
+
+            return primary.Name == secondary.Name &&
+                primary.Owner == secondary.Owner &&
+                primary.RepositoryUrl == secondary.RepositoryUrl;
         }
     }
 }

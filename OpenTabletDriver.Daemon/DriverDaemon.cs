@@ -6,14 +6,19 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using HidSharp;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Zip;
 using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Compression;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
@@ -106,6 +111,13 @@ namespace OpenTabletDriver.Daemon
             var plugins = AppInfo.PluginManager.GetLoadedPlugins();
             var plugin = plugins.FirstOrDefault(ctx => ctx.FriendlyName == friendlyName);
             return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(plugin));
+        }
+
+        public async Task<bool> DownloadPlugin(PluginMetadata metadata)
+        {
+            string path = Path.Join(AppInfo.Current.TemporaryDirectory, metadata.Name);
+            await metadata.DownloadAsync(path);
+            return await InstallPlugin(path);
         }
 
         public Task<TabletState> GetTablet()
