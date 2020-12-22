@@ -108,10 +108,10 @@ namespace OpenTabletDriver.UX.Windows
         private RadioButtonList typeSelector;
         private float top, bottom, left, right;
         private InputBox topBox, bottomBox, leftBox, rightBox;
-        private void SetArea(object sender, EventArgs e)
+        private async void SetArea(object sender, EventArgs e)
         {
             float x, y, offsetX, offsetY;
-            var digitizer = App.Driver.Instance.GetTablet().Result.Digitizer;
+            var digitizer = (await App.Driver.Instance.GetTablet()).Digitizer;
             float lpmm = digitizer.MaxX / digitizer.Width;
 
             switch (typeSelector.SelectedKey)
