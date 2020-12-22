@@ -103,6 +103,8 @@ namespace OpenTabletDriver.UX.Windows
                     }
                 }
             };
+
+            SetDefaultType();
         }
 
         private RadioButtonList typeSelector;
@@ -111,7 +113,13 @@ namespace OpenTabletDriver.UX.Windows
         private async void SetArea(object sender, EventArgs e)
         {
             float x, y, offsetX, offsetY;
-            var digitizer = (await App.Driver.Instance.GetTablet()).Digitizer;
+            var digitizer = (await App.Driver.Instance.GetTablet())?.Digitizer;
+            if (digitizer is null)
+            {
+                MessageBox.Show("No tablet detected!", MessageBoxType.Warning);
+                this.Close();
+                return;
+            }
             float lpmm = digitizer.MaxX / digitizer.Width;
 
             switch (typeSelector.SelectedKey)
@@ -145,6 +153,25 @@ namespace OpenTabletDriver.UX.Windows
             App.Settings.TabletHeight = y;
             App.Settings.TabletX = offsetX;
             App.Settings.TabletY = offsetY;
+        }
+
+        private async void SetDefaultType()
+        {
+            var vid = (await App.Driver.Instance.GetTablet())?.Digitizer?.VendorID;
+            if (vid is null)
+            {
+                MessageBox.Show("No tablet detected!", MessageBoxType.Warning);
+                this.Close();
+                return;
+            }
+            typeSelector.SelectedKey = vid switch
+            {
+                1386 => "wacom",    // Wacom
+                12267 => "wacom",   // Veikk
+                9580 => "huion",    // Huion and Gaomon
+                10429 => "xppen",    // XP-Pen
+                _=> "",
+            };
         }
     }
 }
