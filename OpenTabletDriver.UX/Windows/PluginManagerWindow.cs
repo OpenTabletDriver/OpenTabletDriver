@@ -57,7 +57,7 @@ namespace OpenTabletDriver.UX.Windows
 
             dropPanel.RequestPluginInstall += async (path) => await Install(path);
             pluginList.RequestPluginUninstall += async (ctx) => await Uninstall(ctx);
-            pluginList.SelectedPluginChanged += (ctx) => metadataViewer.Update(ctx?.GetMetadata());
+            pluginList.SelectedMetadataChanged += (meta) => metadataViewer.Update(meta);
             metadataViewer.RequestPluginUninstall += async (meta) => await Uninstall(pluginList.SelectedPlugin);
             metadataViewer.RequestPluginInstall += async (meta) => await DownloadAndInstall(meta);
 
@@ -83,7 +83,7 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         protected async Task DownloadAndInstall(PluginMetadata metadata)
-        {
+         {
             if (await App.Driver.Instance.DownloadPlugin(metadata))
             {
                 await Refresh();
@@ -230,9 +230,8 @@ namespace OpenTabletDriver.UX.Windows
                                 new AlignedGroup("Description", metadata.Description),
                                 new AlignedGroup("Driver Version", metadata.SupportedDriverVersion.ToString()),
                                 new AlignedGroup("Plugin Version", metadata.PluginVersion.ToString()),
-                                new LinkButtonGroup("Repository URL", metadata.RepositoryUrl),
-                                new LinkButtonGroup("Download URL", metadata.DownloadUrl),
-                                new LinkButtonGroup("Wiki URL", metadata.WikiUrl),
+                                new LinkButtonGroup("Source Code Repository", metadata.RepositoryUrl, "Show source code"),
+                                new LinkButtonGroup("Wiki", metadata.WikiUrl, "Show plugin wiki"),
                                 new AlignedGroup("License", metadata.LicenseIdentifier),
                                 new StackLayoutItem(null, true),
                                 actions
@@ -262,12 +261,16 @@ namespace OpenTabletDriver.UX.Windows
 
             private class LinkButtonGroup : Group
             {
-                public LinkButtonGroup(string text, string link)
+                public LinkButtonGroup(string header, string link, string text = null)
                 {
-                    var linkButton = new LinkButton { Text = link };
+                    var linkButton = new Button
+                    {
+                        Text = text ?? header,
+                        Width = 175
+                    };
                     linkButton.Click += (sender, e) => SystemInterop.Open(link);
 
-                    this.Text = text;
+                    this.Text = header;
                     this.Content = new StackLayout
                     {
                         HorizontalContentAlignment = HorizontalAlignment.Right,
@@ -304,25 +307,11 @@ namespace OpenTabletDriver.UX.Windows
             {
                 this.DataStore = DisplayedPlugins;
                 this.ItemTextBinding = Binding.Property<PluginMetadata, string>(p => p.Name);
-
-                this.ItemContextMenu = new ContextMenu
-                {
-                    Items =
-                    {
-                        new Command(ShowPluginFolder)
-                        {
-                            MenuText = "Show in folder..."
-                        },
-                        new Command(UninstallPlugin)
-                        {
-                            MenuText = "Uninstall"
-                        }
-                    }
-                };
             }
 
             public event Action<DesktopPluginContext> RequestPluginUninstall;
             public event Action<DesktopPluginContext> SelectedPluginChanged;
+            public event Action<PluginMetadata> SelectedMetadataChanged;
 
             public DesktopPluginContext SelectedPlugin { protected set; get; }
 
@@ -330,8 +319,6 @@ namespace OpenTabletDriver.UX.Windows
 
             private readonly ObservableCollection<PluginMetadata> DisplayedPlugins = new ObservableCollection<PluginMetadata>();
             private List<DesktopPluginContext> InstalledPlugins = new List<DesktopPluginContext>();
-
-            private ContextMenu ItemContextMenu { get; }
 
             public async void Refresh()
             {
@@ -346,6 +333,7 @@ namespace OpenTabletDriver.UX.Windows
 
                 var fetched = from meta in await PluginMetadataCollection.DownloadAsync()
                     where meta.SupportedDriverVersion >= AppVersion
+                    where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
                     select meta;
 
                 var metaQuery = from meta in installedMeta.Concat(fetched)
@@ -384,9 +372,10 @@ namespace OpenTabletDriver.UX.Windows
             {
                 base.OnSelectedValueChanged(e);
 
-                this.SelectedPlugin = SelectedValue is PluginMetadata selected ? InstalledPlugins.FirstOrDefault(p => PluginMetadata.Match(selected, p.GetMetadata())) : null;
-                base.ContextMenu = SelectedPlugin == null ? null : ItemContextMenu;
+                var metadata = SelectedValue as PluginMetadata;
+                SelectedMetadataChanged?.Invoke(metadata);
 
+                this.SelectedPlugin = SelectedValue is PluginMetadata selected ? InstalledPlugins.FirstOrDefault(p => PluginMetadata.Match(selected, p.GetMetadata())) : null;
                 SelectedPluginChanged?.Invoke(this.SelectedPlugin);
             }
 

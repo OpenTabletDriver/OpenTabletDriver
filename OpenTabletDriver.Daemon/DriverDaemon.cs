@@ -113,11 +113,9 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(plugin));
         }
 
-        public async Task<bool> DownloadPlugin(PluginMetadata metadata)
+        public Task<bool> DownloadPlugin(PluginMetadata metadata)
         {
-            string path = Path.Join(AppInfo.Current.TemporaryDirectory, metadata.Name);
-            await metadata.DownloadAsync(path);
-            return await InstallPlugin(path);
+            return AppInfo.PluginManager.DownloadPlugin(metadata);
         }
 
         public Task<TabletState> GetTablet()

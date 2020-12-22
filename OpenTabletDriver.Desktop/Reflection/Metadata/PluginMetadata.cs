@@ -49,7 +49,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         /// The compression format used in the binary download from <see cref="DownloadUrl"/>.
         /// </summary>
         public string CompressionFormat { set; get; }
-        
+
         /// <summary>
         /// The SHA256 hash of the file at <see cref="DownloadUrl"/>, used for verifying file integrity.
         /// </summary>
@@ -70,6 +70,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             using (var sha256 = SHA256Managed.Create())
             {
                 var hashData = sha256.ComputeHash(stream);
+                stream.Position = 0;
                 var sb = new StringBuilder();
                 foreach (var val in hashData)
                 {
@@ -95,8 +96,13 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public async Task DownloadAsync(string outputDirectory)
         {
-            using (var stream = await GetDownloadStream())
+            using (var httpStream = await GetDownloadStream())
+            using (var stream = new MemoryStream())
             {
+                // Download into memory
+                await httpStream.CopyToAsync(stream);
+                stream.Position = 0;
+
                 // Verify SHA256 hash
                 if (SHA256 == null || VerifySHA256(stream))
                 {
