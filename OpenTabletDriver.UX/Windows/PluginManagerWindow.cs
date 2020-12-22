@@ -187,12 +187,20 @@ namespace OpenTabletDriver.UX.Windows
                 }
             }
 
-            public void Refresh()
+            public async void Refresh()
             {
                 if (MetadataReference.TryGetTarget(out var metadata))
                 {
                     var contexts = AppInfo.PluginManager.GetLoadedPlugins();
+                    var repository = await PluginMetadataCollection.DownloadAsync();
+                    
                     bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
+                    bool canUpdate = repository.Any(t => t.PluginVersion > metadata.PluginVersion);
+
+                    var updatableFromRepository = from meta in repository
+                        where meta.PluginVersion > metadata.PluginVersion
+                        orderby meta.PluginVersion
+                        select meta;
 
                     var actions = new StackLayout
                     {
@@ -212,10 +220,10 @@ namespace OpenTabletDriver.UX.Windows
                             new StackLayoutItem
                             {
                                 Expand = true,
-                                Control = new Button((sender, e) => RequestPluginInstall?.Invoke(metadata))
+                                Control = new Button((sender, e) => RequestPluginInstall?.Invoke(canUpdate ? updatableFromRepository.First() : metadata))
                                 {
-                                    Text = "Install",
-                                    Enabled = !isInstalled
+                                    Text = canUpdate ? "Update" : "Install",
+                                    Enabled = canUpdate || !isInstalled
                                 },
                             }
                         }
