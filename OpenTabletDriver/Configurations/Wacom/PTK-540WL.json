@@ -1,0 +1,51 @@
+{
+  "Name": "Wacom PTK-540WL",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 203.2,
+      "Height": 127.0,
+      "MaxX": 40640.0,
+      "MaxY": 25400.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": 62,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 188,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 203.2,
+      "Height": 127.0,
+      "MaxX": 40640.0,
+      "MaxY": 25400.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": 62,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 188,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
