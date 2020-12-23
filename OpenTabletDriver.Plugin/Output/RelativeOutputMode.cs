@@ -1,26 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Utils;
 
 namespace OpenTabletDriver.Plugin.Output
 {
     [PluginIgnore]
     public abstract class RelativeOutputMode : IOutputMode
     {
-        public RelativeOutputMode()
-        {
-            stopwatch.Start();
-        }
-        
         private IList<IFilter> filters, preFilters, postFilters;
         private Vector2? lastPos;
-        private Stopwatch stopwatch = new Stopwatch();
-        private TimeSpan lastElapsed = default;
+        private DeltaStopwatch stopwatch = new DeltaStopwatch(true);
         private bool skipReport = false;
         private Matrix3x2 transformationMatrix;
 
@@ -101,9 +95,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         public Vector2? Transpose(ITabletReport report)
         {
-            var currElapsed = stopwatch.Elapsed;
-            var deltaTime = currElapsed - lastElapsed;
-            lastElapsed = currElapsed;
+            var deltaTime = stopwatch.Restart();
 
             var pos = report.Position;
 

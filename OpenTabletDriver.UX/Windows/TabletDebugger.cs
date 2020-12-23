@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Utils;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -53,7 +53,6 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            stopwatch.Start();
             InitializeAsync();
         }
 
@@ -72,16 +71,13 @@ namespace OpenTabletDriver.UX.Windows
 
         private TextGroup rawTabletBox, tabletBox, rawAuxBox, auxBox, reportRateBox;
         private double reportPeriod;
-        private Stopwatch stopwatch = new Stopwatch();
-        protected TimeSpan lastElapsed = default;
+        private DeltaStopwatch stopwatch = new DeltaStopwatch(true);
 
         private void HandleReport(object sender, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
             {
-                var currElapsed = stopwatch.Elapsed;
-                reportPeriod += ((currElapsed - lastElapsed).TotalMilliseconds - reportPeriod) / 10.0f;
-                lastElapsed = currElapsed;
+                reportPeriod += (stopwatch.RestartMs() - reportPeriod) / 10.0f;
 
                 rawTabletBox.Update(tabletReport?.StringFormat(true));
                 tabletBox.Update(tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine));
