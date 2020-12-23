@@ -124,28 +124,28 @@ namespace OpenTabletDriver.UX.Windows
 
             switch (typeSelector.SelectedKey)
             {
-            case "wacom":
-                x = (right - left) / lpmm;
-                y = (bottom - top) / lpmm;
-                offsetX = (x / 2) + (left / lpmm);
-                offsetY = (y / 2) + (top / lpmm);
-                break;
-            case "huion":
-                x = (right - left) * digitizer.Width;
-                y = (bottom - top) * digitizer.Height;
-                offsetX = (x / 2) + (left * digitizer.Width);
-                offsetY = (y / 2) + (top * digitizer.Height);
-                break;
-            case "xppen":
-                var xppenUnit = 3.937f;
-                x = (right - left) / xppenUnit;
-                y = (bottom - top) / xppenUnit;
-                offsetX = (x / 2) + (left / xppenUnit);
-                offsetY = (y / 2) + (top / xppenUnit);
-                break;
-            default:
-                MessageBox.Show("No area type selected!", MessageBoxType.Warning);
-                return;
+                case "wacom":
+                    x = (right - left) / lpmm;
+                    y = (bottom - top) / lpmm;
+                    offsetX = (x / 2) + (left / lpmm);
+                    offsetY = (y / 2) + (top / lpmm);
+                    break;
+                case "huion":
+                    x = (right - left) * digitizer.Width;
+                    y = (bottom - top) * digitizer.Height;
+                    offsetX = (x / 2) + (left * digitizer.Width);
+                    offsetY = (y / 2) + (top * digitizer.Height);
+                    break;
+                case "xppen":
+                    var xppenUnit = 3.937f;
+                    x = (right - left) / xppenUnit;
+                    y = (bottom - top) / xppenUnit;
+                    offsetX = (x / 2) + (left / xppenUnit);
+                    offsetY = (y / 2) + (top / xppenUnit);
+                    break;
+                default:
+                    MessageBox.Show("No area type selected!", MessageBoxType.Warning);
+                    return;
             }
 
             App.Settings.LockAspectRatio = false;
@@ -169,8 +169,8 @@ namespace OpenTabletDriver.UX.Windows
                 1386 => "wacom",    // Wacom
                 12267 => "wacom",   // Veikk
                 9580 => "huion",    // Huion and Gaomon
-                10429 => "xppen",    // XP-Pen
-                _=> "",
+                10429 => "xppen",   // XP-Pen
+                _ => "",
             };
         }
     }
