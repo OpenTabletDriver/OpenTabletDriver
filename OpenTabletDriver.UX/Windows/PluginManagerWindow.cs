@@ -130,6 +130,9 @@ namespace OpenTabletDriver.UX.Windows
             var openRepository = new Command { MenuText = "Get more plugins..." };
             openRepository.Executed += (_, _) => SystemInterop.Open(App.PluginRepositoryUrl);
 
+            var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
+            pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
+
             return new MenuBar()
             {
                 QuitItem = quitCommand,
@@ -137,7 +140,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     install,
                     refresh,
-                    openRepository
+                    pluginsDirectory
                 }
             };
         }
