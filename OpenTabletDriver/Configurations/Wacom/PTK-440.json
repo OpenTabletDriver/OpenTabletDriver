@@ -1,20 +1,20 @@
 {
-  "Name": "Wacom PTH-850",
+  "Name": "Wacom PTK-440",
   "DigitizerIdentifiers": [
     {
-      "Width": 325.12,
-      "Height": 203.2,
-      "MaxX": 65024.0,
-      "MaxY": 40640.0,
+      "Width": 157.480,
+      "Height": 98.425,
+      "MaxX": 31496.0,
+      "MaxY": 19685.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
-        "Start": 1,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 0,
+        "StartInclusive": true,
+        "End": 62,
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 40,
+      "ProductID": 184,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
@@ -24,19 +24,19 @@
       "InitializationStrings": []
     },
     {
-      "Width": 325.12,
-      "Height": 203.2,
-      "MaxX": 65024.0,
-      "MaxY": 40640.0,
+      "Width": 157.480,
+      "Height": 98.425,
+      "MaxX": 31496.0,
+      "MaxY": 19685.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
-        "Start": 1,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 0,
+        "StartInclusive": true,
+        "End": 62,
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 40,
+      "ProductID": 184,
       "InputReportLength": 11,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
@@ -46,18 +46,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 40,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomTouchReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }

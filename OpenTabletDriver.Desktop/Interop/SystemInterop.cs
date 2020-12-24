@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using OpenTabletDriver.Desktop.Interop.Display;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
@@ -14,23 +13,11 @@ using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop
 {
-    public static class SystemInterop
+    public class SystemInterop : OpenTabletDriver.Interop.SystemInterop
     {
-        public static PluginPlatform CurrentPlatform
+        protected SystemInterop()
+            : base()
         {
-            get
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    return PluginPlatform.Windows;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    return PluginPlatform.Linux;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    return PluginPlatform.MacOS;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-                    return PluginPlatform.FreeBSD;
-                else
-                    return 0;
-            }
         }
 
         public static void Open(string path)
@@ -38,7 +25,7 @@ namespace OpenTabletDriver.Desktop.Interop
             switch (CurrentPlatform)
             {
                 case PluginPlatform.Windows:
-                    var startInfo = new ProcessStartInfo("cmd", $"/c start \"{path.Replace("&", "^&")}\"")
+                    var startInfo = new ProcessStartInfo("cmd", $"/c start {path.Replace("&", "^&")}")
                     {
                         CreateNoWindow = true
                     };
@@ -50,6 +37,19 @@ namespace OpenTabletDriver.Desktop.Interop
                 case PluginPlatform.MacOS:
                 case PluginPlatform.FreeBSD:
                     Process.Start("open", $"\"{path}\"");
+                    break;
+            }
+        }
+
+        public static void OpenFolder(string path)
+        {
+            switch (CurrentPlatform)
+            {
+                case PluginPlatform.Windows:
+                    Process.Start("explorer", $"\"{path.Replace("&", "^&")}\"");
+                    break;
+                default:
+                    Open(path);
                     break;
             }
         }
@@ -104,7 +104,7 @@ namespace OpenTabletDriver.Desktop.Interop
                 return new WaylandDisplay();
             else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
                 return new XScreen();
-            
+
             Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
             return new XScreen();
         }

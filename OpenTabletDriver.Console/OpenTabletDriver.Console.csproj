@@ -14,10 +14,6 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
   </PropertyGroup>
 
-  <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.20303.1" />
-  </ItemGroup>
-
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
   </ItemGroup>

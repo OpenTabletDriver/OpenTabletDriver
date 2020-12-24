@@ -41,7 +41,7 @@ namespace OpenTabletDriver.UX.Controls
             if (foreground.Width > 0 & foreground.Height > 0 & ViewModel.FullBackground.Width > 0 & ViewModel.FullBackground.Height > 0)
             {
                 PixelScale = GetRelativeScale(ViewModel.FullBackground.Width, ViewModel.FullBackground.Height);
-                DrawBackground(graphics, ViewModel.Background, (ViewModel.FullBackground * PixelScale), SystemColors.WindowBackground, SystemColors.Highlight);
+                DrawBackground(graphics, ViewModel.Background, (ViewModel.FullBackground * PixelScale), SystemColors.ControlBackground, SystemColors.Highlight);
                 DrawForeground(graphics, foreground, (ViewModel.FullBackground * PixelScale), SystemColors.Highlight);
             }
             else

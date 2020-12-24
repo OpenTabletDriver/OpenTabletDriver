@@ -1,14 +1,26 @@
 using System.IO;
 using Newtonsoft.Json;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {
     public static class Serialization
     {
+        static Serialization()
+        {
+            serializer.Error += SerializationErrorHandler;
+        }
+
         private static readonly JsonSerializer serializer = new JsonSerializer
         {
             Formatting = Formatting.Indented
         };
+
+        private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+        {
+            Log.Exception(args.ErrorContext.Error);
+            args.ErrorContext.Handled = true;
+        }
 
         public static T Deserialize<T>(JsonTextReader textReader)
         {

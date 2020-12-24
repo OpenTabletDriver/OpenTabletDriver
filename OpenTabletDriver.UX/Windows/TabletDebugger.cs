@@ -4,6 +4,7 @@ using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -12,83 +13,6 @@ namespace OpenTabletDriver.UX.Windows
         public TabletDebugger()
         {
             Title = "Tablet Debugger";
-
-            rawTabCtrl = new GroupBox
-            {
-                Text = "Raw Tablet Data",
-                Padding = App.GroupBoxPadding
-            };
-            
-            tabReportCtrl = new GroupBox
-            {
-                Text = "Tablet Report",
-                Padding = App.GroupBoxPadding
-            };
-
-            rawAuxCtrl = new GroupBox
-            {
-                Text = "Raw Aux Data",
-                Padding = App.GroupBoxPadding
-            };
-            
-            auxReportCtrl = new GroupBox
-            {
-                Text = "Aux Report",
-                Padding = App.GroupBoxPadding
-            };
-
-            rawTouchCtrl = new GroupBox
-            {
-                Text = "Raw Touch Data",
-                Padding = App.GroupBoxPadding
-            };
-
-            touchReportCtrl = new GroupBox
-            {
-                Text = "Touch Report",
-                Padding = App.GroupBoxPadding
-            };
-
-            reportRateCtrl = new GroupBox
-            {
-                Text = "Report Rate",
-                Padding = App.GroupBoxPadding
-            };
-
-            rawTabCtrl.Content = rawTabText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            tabReportCtrl.Content = tabReportText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            rawAuxCtrl.Content = rawAuxText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            auxReportCtrl.Content = auxReportText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            rawTouchCtrl.Content = rawTouchText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            touchReportCtrl.Content = touchReportText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
-
-            reportRateCtrl.Content = reportRateText = new Label
-            {
-                Font = new Font(FontFamilies.Monospace, textSize)
-            };
 
             var mainLayout = new TableLayout
             {
@@ -101,8 +25,8 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Cells =
                         {
-                            new TableCell(rawTabCtrl, true),
-                            new TableCell(tabReportCtrl, true)
+                            new TableCell(rawTabletBox = new TextGroup("Raw Tablet Data"), true),
+                            new TableCell(tabletBox = new TextGroup("Tablet Report"), true)
                         },
                         ScaleHeight = true
                     },
@@ -110,8 +34,8 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Cells =
                         {
-                            new TableCell(rawAuxCtrl, true),
-                            new TableCell(auxReportCtrl, true)
+                            new TableCell(rawAuxBox = new TextGroup("Raw Aux Data"), true),
+                            new TableCell(auxBox = new TextGroup("Aux Report"), true)
                         },
                         ScaleHeight = true
                     },
@@ -119,8 +43,8 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Cells =
                         {
-                            new TableCell(rawTouchCtrl, true),
-                            new TableCell(touchReportCtrl, true)
+                            new TableCell(rawTouchBox = new TextGroup("Raw Touch Data"), true),
+                            new TableCell(touchBox = new TextGroup("Touch Report"), true)
                         },
                         ScaleHeight = true
                     }
@@ -131,10 +55,10 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Padding = 5,
                 Spacing = 5,
-                Items = 
+                Items =
                 {
                     new StackLayoutItem(mainLayout, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(reportRateCtrl, HorizontalAlignment.Stretch)
+                    new StackLayoutItem(reportRateBox = new TextGroup("Report Rate"), HorizontalAlignment.Stretch)
                 }
             };
 
@@ -156,9 +80,7 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private GroupBox rawTabCtrl, tabReportCtrl, rawAuxCtrl, auxReportCtrl, rawTouchCtrl, touchReportCtrl, reportRateCtrl;
-        private Label rawTabText, tabReportText, rawAuxText, auxReportText, rawTouchText, touchReportText, reportRateText;
-        private float textSize = 10;
+        private TextGroup rawTabletBox, tabletBox, rawAuxBox, auxBox, rawTouchBox, touchBox, reportRateBox;
         private float reportRate;
         private DateTime lastTime = DateTime.UtcNow;
 
@@ -166,32 +88,45 @@ namespace OpenTabletDriver.UX.Windows
         {
             if (report is ITabletReport tabletReport)
             {
-                Application.Instance.AsyncInvoke(() => 
-                {
-                    var now = DateTime.UtcNow;
-                    reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
-                    lastTime = now;
-                    rawTabText.Text = tabletReport?.StringFormat(true);
-                    tabReportText.Text = tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine);
-                    reportRateText.Text = $"{(uint)(1000 / reportRate)}hz";
-                });
+                var now = DateTime.UtcNow;
+                reportRate += (float)(((now - lastTime).TotalMilliseconds - reportRate) / 50);
+                lastTime = now;
+
+                rawTabletBox.Update(tabletReport?.StringFormat(true));
+                tabletBox.Update(tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine));
+                reportRateBox.Update($"{(uint)(1000 / reportRate)}hz");
             }
             if (report is IAuxReport auxReport)
             {
-                Application.Instance.AsyncInvoke(() => 
-                {
-                    rawAuxText.Text = auxReport?.StringFormat(true);
-                    auxReportText.Text = auxReport?.StringFormat(false).Replace(", ", Environment.NewLine);
-                });
+                rawAuxBox.Update(auxReport?.StringFormat(true));
+                auxBox.Update(auxReport?.StringFormat(false).Replace(", ", Environment.NewLine));
             }
             if (report is ITouchReport touchReport)
             {
-                Application.Instance.AsyncInvoke(() =>
-                {
-                    rawTouchText.Text = touchReport?.StringFormat(true);
-                    touchReportText.Text = touchReport?.StringFormat(false).Replace(", ", Environment.NewLine);
-                });
+                rawTouchBox.Update(touchReport?.StringFormat(true));
+                touchBox.Update(touchReport?.StringFormat(false).Replace(", ", Environment.NewLine));
             }
+        }
+
+        private class TextGroup : Group
+        {
+            public TextGroup(string title)
+            {
+                base.Text = title;
+                base.Content = label;
+            }
+
+            private Label label = new Label
+            {
+                Font = Fonts.Monospace(10)
+            };
+
+            public void Update(string text)
+            {
+                Application.Instance.AsyncInvoke(() => label.Text = text);
+            }
+
+            protected override Color VerticalBackgroundColor => base.HorizontalBackgroundColor;
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -11,7 +12,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.Size = new Size(600, -1);
+            this.Size = new Size(300, -1);
 
             this.sendRequestButton = new Button
             {
@@ -19,17 +20,20 @@ namespace OpenTabletDriver.UX.Windows
             };
             sendRequestButton.Click += SendRequestWithTimeout;
 
-            this.vendorIdText = new TextBox
+            this.vendorIdText = new NumericMaskedTextBox<ushort>
             {
-                PlaceholderText = "Decimal Representation"
+                PlaceholderText = DecimalStyle,
+                Width = NUMERICBOX_WIDTH
             };
-            this.productIdText = new TextBox
+            this.productIdText = new NumericMaskedTextBox<ushort>
             {
-                PlaceholderText = "Decimal Representation"
+                PlaceholderText = DecimalStyle,
+                Width = NUMERICBOX_WIDTH
             };
-            this.stringIndexText = new TextBox
+            this.stringIndexText = new NumericMaskedTextBox<ushort>
             {
-                PlaceholderText = "[1..255]"
+                PlaceholderText = "[1..255]",
+                Width = NUMERICBOX_WIDTH
             };
             this.deviceStringText = new TextBox
             {
@@ -37,71 +41,29 @@ namespace OpenTabletDriver.UX.Windows
                 ReadOnly = true
             };
 
-            static void restrictToNumbers(object sender, TextChangingEventArgs args)
-            {
-                if (!int.TryParse(args.NewText, out int result))
-                {
-                    args.Cancel = true;
-                }
-            }
-
-            this.vendorIdCtrl = new GroupBox
-            {
-                Text = "VendorID",
-                Padding = App.GroupBoxPadding,
-                Content = vendorIdText
-            };
-
-            vendorIdText.TextChanging += restrictToNumbers;
-
-            this.productIdCtrl = new GroupBox
-            {
-                Text = "ProductID",
-                Padding = App.GroupBoxPadding,
-                Content = productIdText
-            };
-
-            productIdText.TextChanging += restrictToNumbers;
-
-            this.stringIndexCtrl = new GroupBox
-            {
-                Text = "String Index",
-                Padding = App.GroupBoxPadding,
-                Content = stringIndexText
-            };
-
-            stringIndexText.TextChanging += restrictToNumbers;
-
-            var deviceInfoInput = new TableLayout
-            {
-                Spacing = new Size(5, 5),
-                Rows =
-                {
-                    new TableRow
-                    {
-                        Cells =
-                        {
-                            new TableCell(vendorIdCtrl, true),
-                            new TableCell(productIdCtrl, true)
-                        }
-                    }
-                }
-            };
+            this.vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
+            this.productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
+            this.stringIndexCtrl = new Group("String Index", stringIndexText, Orientation.Horizontal, false);
 
             this.Content = new StackLayout
             {
                 Padding = 5,
                 Spacing = 5,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
-                    new StackLayoutItem(deviceInfoInput, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(stringIndexCtrl, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(sendRequestButton, HorizontalAlignment.Stretch, false),
+                    new StackLayoutItem(vendorIdCtrl),
+                    new StackLayoutItem(productIdCtrl),
+                    new StackLayoutItem(stringIndexCtrl),
+                    new StackLayoutItem(sendRequestButton, HorizontalAlignment.Center),
                     new StackLayoutItem(),
-                    new StackLayoutItem(deviceStringText, HorizontalAlignment.Stretch, true)
+                    new StackLayoutItem(deviceStringText, true)
                 }
             };
         }
+
+        private const int NUMERICBOX_WIDTH = 150;
+        private const string DecimalStyle = "Decimal Value";
 
         private async void SendRequestWithTimeout(object sender, EventArgs args)
         {
@@ -147,7 +109,8 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private readonly Button sendRequestButton;
-        private readonly TextBox vendorIdText, productIdText, stringIndexText, deviceStringText;
-        private readonly GroupBox vendorIdCtrl, productIdCtrl, stringIndexCtrl;
+        private readonly NumericMaskedTextBox<ushort> vendorIdText, productIdText, stringIndexText;
+        private readonly TextBox deviceStringText;
+        private readonly Group vendorIdCtrl, productIdCtrl, stringIndexCtrl;
     }
 }

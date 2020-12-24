@@ -2,23 +2,23 @@ using System;
 using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Reflection;
+using OpenTabletDriver.UX.Controls.Generic;
 using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class AdvancedBindingEditorDialog : Dialog<BindingReference>
+    public class AdvancedBindingEditorDialog : Dialog<PluginSettingStore>
     {
-        public AdvancedBindingEditorDialog(BindingReference currentBinding = null)
+        public AdvancedBindingEditorDialog(PluginSettingStore currentBinding = null)
         {
             Title = "Advanced Binding Editor";
             Result = currentBinding;
             Padding = 5;
 
             BindingPath = currentBinding?.Path;
-            BindingProperty = currentBinding?.BindingProperty;
+            BindingProperty = currentBinding?["Property"]?.GetValue<string>();
 
             var bindingTypes = AppInfo.PluginManager.GetChildTypes<OpenTabletDriver.Plugin.IBinding>();
 
@@ -124,10 +124,12 @@ namespace OpenTabletDriver.UX.Windows
 
         private void ApplyBinding(object sender, EventArgs e)
         {
-            Close(new BindingReference(BindingPath, BindingProperty));
+            var binding = AppInfo.PluginManager.ConstructObject<IBinding>(BindingPath);
+            binding.Property = BindingProperty;
+            Close(new PluginSettingStore(binding));
         }
 
-        private GroupBox GetBindingSelector(Func<string> getValue, Action<string> setValue)
+        private Group GetBindingSelector(Func<string> getValue, Action<string> setValue)
         {
             var selector = new ComboBox();
             var items = from type in AppInfo.PluginManager.GetChildTypes<IBinding>()
@@ -145,12 +147,7 @@ namespace OpenTabletDriver.UX.Windows
                 setValue
             );
 
-            return new GroupBox
-            {
-                Text = "Binding Type",
-                Padding = App.GroupBoxPadding,
-                Content = selector
-            };
+            return new Group("Binding Type", selector, Orientation.Horizontal);
         }
 
         private Control GetPropertySelector(ComboBox bindingSelector, Func<string> getValue, Action<string> setValue)
@@ -159,12 +156,7 @@ namespace OpenTabletDriver.UX.Windows
             var generic = new TextBox();
             generic.TextBinding.Bind(getValue, setValue);
 
-            var groupBox = new GroupBox
-            {
-                Text = "Binding Property",
-                Padding = App.GroupBoxPadding,
-                Content = generic
-            };
+            var group = new Group("Binding Property", generic);
 
             void updateControl()
             {
@@ -187,16 +179,16 @@ namespace OpenTabletDriver.UX.Windows
                         setValue
                     );
                     
-                    groupBox.Content = selector;
+                    group.Content = selector;
                 }
                 else
                 {
-                    groupBox.Content = generic;
+                    group.Content = generic;
                 }
             }
             bindingSelector.SelectedKeyChanged += (sender, e) => updateControl();
             updateControl();
-            return groupBox;
+            return group;
         }
     }
 }

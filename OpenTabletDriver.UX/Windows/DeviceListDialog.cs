@@ -4,6 +4,7 @@ using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using HidSharp;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -16,7 +17,12 @@ namespace OpenTabletDriver.UX.Windows
             MinimumSize = new Size(960 - 100, 730 - 100);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
-            Devices = DeviceList.Local.GetHidDevices().ToList();
+            var devices = from device in DeviceList.Local.GetHidDevices()
+                where device.CanOpen
+                select device;
+
+            Devices = devices.ToList();
+
             _deviceList.SelectedIndexChanged += (sender, e) => 
             {
                 if (_deviceList.SelectedIndex >= 0)
@@ -189,9 +195,12 @@ namespace OpenTabletDriver.UX.Windows
             )
         };
 
-        private GroupBox GetControl(string groupName, Func<string> getValue)
+        private Control GetControl(string groupName, Func<string> getValue)
         {
-            var textBox = new TextBox();
+            var textBox = new TextBox
+            {
+                Width = 400
+            };
             try
             {
                 textBox.TextBinding.Bind(getValue);
@@ -201,12 +210,7 @@ namespace OpenTabletDriver.UX.Windows
                 textBox.Text = $"Failed to obtain '{groupName.ToLower()}'.";
                 textBox.TextColor = Colors.Red;
             }
-            return new GroupBox
-            {
-                Text = groupName,
-                Padding = App.GroupBoxPadding,
-                Content = textBox
-            };
+            return new Group(groupName, textBox, Orientation.Horizontal, false);
         }
 
         private void Return()

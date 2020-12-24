@@ -9,8 +9,8 @@ namespace OpenTabletDriver.Desktop
     public class AppInfo
     {
         public static AppInfo Current { set; get; } = new AppInfo();
-        
-        public static DesktopPluginManager PluginManager { set; get; } = new DesktopPluginManager(Current.PluginDirectory);
+
+        public static DesktopPluginManager PluginManager { get; } = new DesktopPluginManager();
 
         private string configDirectory, appDataDirectory;
 
@@ -28,6 +28,8 @@ namespace OpenTabletDriver.Desktop
 
         public string SettingsFile => Path.Join(AppDataDirectory, "settings.json");
         public string PluginDirectory => Path.Join(AppDataDirectory, "Plugins");
+        public string TemporaryDirectory => Path.Join(AppDataDirectory, "Temp");
+        public string TrashDirectory => Path.Join(AppDataDirectory, "Trash");
 
         private static string ProgramDirectory => AppContext.BaseDirectory;
 

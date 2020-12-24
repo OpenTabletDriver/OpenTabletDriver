@@ -12,32 +12,20 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class AbsoluteOutputMode : IOutputMode
     {
-        private List<IFilter> filters, preFilters = new List<IFilter>(), postFilters = new List<IFilter>();
+        private IList<IFilter> filters, preFilters, postFilters;
         private Vector2 min, max;
         private Matrix3x2 transformationMatrix;
 
-        public IEnumerable<IFilter> Filters
+        public IList<IFilter> Filters
         {
             set
             {
-                this.filters = value.ToList();
-                this.preFilters.Clear();
-                this.postFilters.Clear();
-
-                foreach (var filter in this.filters)
-                {
-                    switch (filter.FilterStage)
-                    {
-                        case FilterStage.PreTranspose:
-                            this.preFilters.Add(filter);
-                            break;
-                        case FilterStage.PostTranspose:
-                            this.postFilters.Add(filter);
-                            break;
-                        default:
-                            throw new NotSupportedException();
-                    }
-                }
+                this.filters = value;
+                if (Info.Driver.InterpolatorActive)
+                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                else
+                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose || t.FilterStage == FilterStage.PreInterpolate).ToList();
+                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList();
             }
             get => this.filters;
         }
@@ -80,9 +68,9 @@ namespace OpenTabletDriver.Plugin.Output
         public bool AreaClipping { set; get; }
         public bool AreaLimiting { set; get; }
 
-        internal void UpdateTransformMatrix()
+        protected void UpdateTransformMatrix()
         {
-            if (!(Input is null | Output is null | Tablet is null))
+            if (Input != null && Output != null && Tablet?.Digitizer != null)
                 this.transformationMatrix = CalculateTransformation(Input, Output, Tablet.Digitizer);
 
             var halfDisplayWidth = Output?.Width / 2 ?? 0;
@@ -97,7 +85,7 @@ namespace OpenTabletDriver.Plugin.Output
             this.max = new Vector2(maxX, maxY);
         }
 
-        internal static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
+        protected static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
         {
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(

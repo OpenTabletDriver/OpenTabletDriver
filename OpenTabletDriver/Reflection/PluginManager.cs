@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Reflection
         }
 
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
-        protected readonly ConcurrentBag<TypeInfo> pluginTypes;
+        protected ConcurrentBag<TypeInfo> pluginTypes;
 
         protected readonly static IEnumerable<Type> libTypes =
             from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
@@ -43,21 +43,24 @@ namespace OpenTabletDriver.Reflection
             {
                 try
                 {
-                    var type = PluginTypes.FirstOrDefault(t => t.FullName == name);
-                    var matchingConstructors = from ctor in type?.GetConstructors()
+                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
+                    {
+                        var matchingConstructors = from ctor in type.GetConstructors()
                         let parameters = ctor.GetParameters()
                         where parameters.Length == args.Length
                         where IsValidParameterFor(args, parameters)
                         select ctor;
 
-                    var constructor = matchingConstructors.FirstOrDefault();
-                    return (T)constructor?.Invoke(args) ?? null;
+                        if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
+                            return (T)constructor.Invoke(args) ?? null;
+                    }
                 }
                 catch
                 {
                     Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
                 }
             }
+            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Debug);
             return null;
         }
 
@@ -93,6 +96,11 @@ namespace OpenTabletDriver.Reflection
         {
             var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
             return attr?.IsCurrentPlatform ?? true;
+        }
+
+        protected virtual bool IsPluginIgnored(Type type)
+        {
+            return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));
         }
 
         protected virtual bool IsLoadable(Assembly asm)

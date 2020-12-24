@@ -1,17 +1,18 @@
 using System;
+using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class BindingEditor : GroupBoxBase
+    public class BindingEditor : Panel
     {
         public BindingEditor()
         {
-            content.Orientation = Orientation.Horizontal;
+            this.Padding = 5;
+            content.Orientation = Orientation.Vertical;
             content.HorizontalContentAlignment = HorizontalAlignment.Stretch;
 
             UpdateBindings();
@@ -24,8 +25,11 @@ namespace OpenTabletDriver.UX.Controls
         public void UpdateBindings()
         {
             content.Items.Clear();
-            
-            var tipButton = new BindingDisplay(App.Settings?.TipButton);
+
+            var tipButton = new BindingDisplay(App.Settings?.TipButton)
+            {
+                Width = 250
+            };
             tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
 
             var tipPressure = new PressureSlider(
@@ -36,21 +40,21 @@ namespace OpenTabletDriver.UX.Controls
 
             var tipSettingsStack = new StackView
             {
-                Items = 
+                Items =
                 {
-                    tipButton,
+                    new Group("Tip Button", tipButton, Orientation.Horizontal, false),
                     tipPressure
                 }
             };
 
-            var tipSettings = new GroupBoxBase("Tip Bindings", tipSettingsStack);
-            content.AddControl(tipSettings, true);
+            var tipSettings = new Group("Tip Bindings", tipSettingsStack);
 
             var penBindingsStack = new StackView();
             for (int i = 0; i < App.Settings?.PenButtons.Count; i++)
             {
                 var penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
                 {
+                    Width = 250,
                     Tag = i
                 };
                 penBinding.BindingUpdated += (sender, binding) =>
@@ -58,18 +62,30 @@ namespace OpenTabletDriver.UX.Controls
                     var index = (int)(sender as BindingDisplay).Tag;
                     App.Settings.PenButtons[index] = binding;
                 };
-                var penBindingGroup = new GroupBoxBase($"Pen Button {i + 1}", penBinding);
+                var penBindingGroup = new Group($"Pen Button {i + 1}", penBinding, Orientation.Horizontal, false);
                 penBindingsStack.AddControl(penBindingGroup);
             }
 
-            var penBindingSettings = new GroupBoxBase("Pen Button Bindings", penBindingsStack);
-            content.AddControl(penBindingSettings, true);
+            var penBindingSettings = new Group("Pen Button Bindings", penBindingsStack);
+
+            var penSettings = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Items =
+                {
+                    new StackLayoutItem(tipSettings, true),
+                    new StackLayoutItem(penBindingSettings, true)
+                }
+            };
+            content.AddControl(penSettings);
 
             var auxBindingsStack = new StackView();
             for (int i = 0; i < App.Settings?.AuxButtons.Count; i++)
             {
                 var auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
                 {
+                    Width = 250,
                     Tag = i
                 };
                 auxBinding.BindingUpdated += (sender, Binding) =>
@@ -77,20 +93,23 @@ namespace OpenTabletDriver.UX.Controls
                     var index = (int)(sender as BindingDisplay).Tag;
                     App.Settings.AuxButtons[index] = Binding;
                 };
-                var auxBindingGroup = new GroupBoxBase($"Auxiliary Button {i + 1}", auxBinding);
+                var auxBindingGroup = new Group($"Auxiliary Button {i + 1}", auxBinding, Orientation.Horizontal, false);
                 auxBindingsStack.AddControl(auxBindingGroup);
             }
-            
-            var auxBindingSettings = new GroupBoxBase("Auxiliary Button Bindings", auxBindingsStack);
-            content.AddControl(auxBindingSettings, true);
+
+            var auxBindingSettings = new Group("Auxiliary Button Bindings", auxBindingsStack)
+            {
+                TitleHorizontalAlignment = HorizontalAlignment.Center
+            };
+            content.AddControl(auxBindingSettings);
         }
 
         private class BindingDisplay : Button
         {
-            public BindingDisplay(BindingReference binding)
+            public BindingDisplay(PluginSettingStore store)
             {
-                this.Binding = binding;
-                
+                this.Binding = store;
+
                 var bindingCommand = new Command();
                 bindingCommand.Executed += async (sender, e) =>
                 {
@@ -99,7 +118,7 @@ namespace OpenTabletDriver.UX.Controls
                 };
                 this.Command = bindingCommand;
 
-                this.MouseDown += async (s, e) => 
+                this.MouseDown += async (s, e) =>
                 {
                     if (e.Buttons.HasFlag(MouseButtons.Alternate))
                     {
@@ -109,22 +128,33 @@ namespace OpenTabletDriver.UX.Controls
                 };
             }
 
-            public event EventHandler<BindingReference> BindingUpdated;
+            public event EventHandler<PluginSettingStore> BindingUpdated;
 
-            private BindingReference binding;
-            public BindingReference Binding
+            private PluginSettingStore binding;
+            public PluginSettingStore Binding
             {
                 set
                 {
                     this.binding = value;
-                    Text = Binding?.ToDisplayString();
+                    Text = GetFriendlyDisplayString(Binding);
                     BindingUpdated?.Invoke(this, Binding);
                 }
                 get => this.binding;
             }
+
+            private string GetFriendlyDisplayString(PluginSettingStore store)
+            {
+                if (store == null || store["Property"] == null)
+                    return null;
+
+                var property = store["Property"].GetValue<string>();
+                var name = store.GetPluginReference().Name;
+
+                return $"{name}: {property}";
+            }
         }
 
-        private class PressureSlider : GroupBoxBase
+        private class PressureSlider : Group
         {
             public PressureSlider(
                 string header,
@@ -132,8 +162,9 @@ namespace OpenTabletDriver.UX.Controls
                 Action<float> setValue
             )
             {
-                base.Text = header;
-                
+                this.Text = header;
+                this.Orientation = Orientation.Horizontal;
+
                 this.setValue = setValue;
                 this.getValue = getValue;
 

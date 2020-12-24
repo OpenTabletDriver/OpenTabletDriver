@@ -28,15 +28,15 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private static void HandlePenBinding(DigitizerIdentifier identifier, ITabletReport report)
         {
-            if (TipBinding != null && TipActivationPressure != 0)
+            if (TipBinding != null)
             {
                 float pressurePercent = (float)report.Pressure / identifier.MaxPressure * 100f;
 
-                if (pressurePercent >= TipActivationPressure && !TipState)
+                if (pressurePercent > TipActivationPressure && !TipState)
                     TipBinding.Press();
-                else if (pressurePercent < TipActivationPressure && TipState)
+                else if (pressurePercent <= TipActivationPressure && TipState)
                     TipBinding.Release();
-                TipState = pressurePercent >= TipActivationPressure;
+                TipState = pressurePercent > TipActivationPressure;
             }
 
             for (var penButton = 0; penButton < report.PenButtons.Length; penButton++)

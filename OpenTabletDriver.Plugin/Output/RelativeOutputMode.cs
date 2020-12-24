@@ -11,33 +11,21 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : IOutputMode
     {
-        private List<IFilter> filters, preFilters = new List<IFilter>(), postFilters = new List<IFilter>();
+        private IList<IFilter> filters, preFilters, postFilters;
         private Vector2? lastPos;
         private DateTime lastReceived;
         private Matrix3x2 transformationMatrix;
 
-        public IEnumerable<IFilter> Filters
+        public IList<IFilter> Filters
         {
             set
             {
-                this.filters = value.ToList();
-                this.preFilters.Clear();
-                this.postFilters.Clear();
-
-                foreach (var filter in this.filters)
-                {
-                    switch (filter.FilterStage)
-                    {
-                        case FilterStage.PreTranspose:
-                            this.preFilters.Add(filter);
-                            break;
-                        case FilterStage.PostTranspose:
-                            this.postFilters.Add(filter);
-                            break;
-                        default:
-                            throw new NotSupportedException();
-                    }
-                }
+                this.filters = value;
+                if (Info.Driver.InterpolatorActive)
+                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                else
+                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose || t.FilterStage == FilterStage.PreInterpolate).ToList();
+                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList();
             }
             get => this.filters;
         }
@@ -85,8 +73,8 @@ namespace OpenTabletDriver.Plugin.Output
                 (float)(-Rotation * System.Math.PI / 180));
 
             this.transformationMatrix *= Matrix3x2.CreateScale(
-                sensitivity.X * ((Tablet?.Digitizer.Width / Tablet?.Digitizer.MaxX) ?? 0.01f),
-                sensitivity.Y * ((Tablet?.Digitizer.Height / Tablet?.Digitizer.MaxY) ?? 0.01f));
+                sensitivity.X * ((Tablet?.Digitizer?.Width / Tablet?.Digitizer?.MaxX) ?? 0.01f),
+                sensitivity.Y * ((Tablet?.Digitizer?.Height / Tablet?.Digitizer?.MaxY) ?? 0.01f));
         }
 
         public TimeSpan ResetTime { set; get; }
