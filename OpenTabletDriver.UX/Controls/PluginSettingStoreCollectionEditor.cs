@@ -10,6 +10,7 @@ using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -103,11 +104,15 @@ namespace OpenTabletDriver.UX.Controls
                 base.Items.Add(
                     new StackLayoutItem
                     {
-                        Control = new LinkButton
+                        Control = new Button
                         {
-                            Text = "Plugin Repository",
+                            Text = "Open Plugin Manager",
                             Command = new Command(
-                                (s, e) => SystemInterop.Open(App.PluginRepositoryUrl)
+                                (s, e) =>
+                                {
+                                    var pluginManager = new PluginManagerWindow();
+                                    pluginManager.Show();
+                                }
                             )
                         },
                         HorizontalAlignment = HorizontalAlignment.Center

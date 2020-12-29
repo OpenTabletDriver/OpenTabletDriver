@@ -1,13 +1,21 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Dialogs;
+using StreamJsonRpc;
+using StreamJsonRpc.Protocol;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -17,7 +25,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Plugin Manager";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.Size = new Size(700, 350);
+            this.Size = new Size(700, 550);
             this.AllowDrop = true;
 
             this.Menu = ConstructMenu();
@@ -26,38 +34,54 @@ namespace OpenTabletDriver.UX.Windows
             dropPanel.Content = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Orientation = Orientation.Vertical,
                 Items =
                 {
-                    new StackLayoutItem(pluginList, true),
                     new StackLayoutItem
                     {
+                        Expand = true,
+                        Control = new Splitter
+                        {
+                            Panel1MinimumSize = 150,
+                            Panel1 = pluginList,
+                            Panel2 = metadataViewer
+                        }
+                    },
+                    new StackLayoutItem
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Center,
                         Control = new Panel
                         {
                             Content = dragInstruction,
                             Padding = 5
-                        },
-                        HorizontalAlignment = HorizontalAlignment.Center
+                        }
                     }
-                },
-                Orientation = Orientation.Vertical
+                }
             };
 
-            dropPanel.RequestPluginInstall += async (path) => await InstallPlugin(path);
-            pluginList.RequestPluginUninstall += async (ctx) => await UninstallPlugin(ctx);
+            dropPanel.RequestPluginInstall += async (path) => await Install(path);
+            pluginList.RequestPluginUninstall += async (ctx) => await Uninstall(ctx);
+            pluginList.SelectedMetadataChanged += (meta) => metadataViewer.Update(meta);
+            metadataViewer.RequestPluginUninstall += async (meta) => await Uninstall(pluginList.SelectedPlugin);
+            metadataViewer.RequestPluginInstall += async (meta) => await DownloadAndInstall(meta);
 
             _ = Refresh();
         }
 
+        private static PluginMetadataCollection Repository;
         private readonly PluginDropPanel dropPanel = new PluginDropPanel();
         private readonly PluginListBox pluginList = new PluginListBox();
+        private readonly MetadataViewer metadataViewer = new MetadataViewer();
         private readonly Label dragInstruction = new Label
         {
-            Text = "Drag and drop plugins to install!   o(≧▽≦)o",
+            Text = "Drag and drop plugins to install.",
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        public async Task Refresh()
+        public async Task Refresh(PluginMetadataCollection newRepository = null)
         {
+            Repository = newRepository ?? await PluginMetadataCollection.DownloadAsync();
+
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.Load();
 
@@ -65,7 +89,47 @@ namespace OpenTabletDriver.UX.Windows
             pluginList.Refresh();
         }
 
-        protected async Task InstallPlugin(string path)
+        protected async Task SwitchRepositorySource()
+        {
+            var dialog = new RepositoryDialog("Switch Repository Source");
+            if (await dialog.ShowModalAsync() is PluginMetadataCollection repository)
+                await Refresh(repository);
+        }
+
+        protected async Task DownloadAndInstall(PluginMetadata metadata)
+        {
+            try
+            {
+                if (await App.Driver.Instance.DownloadPlugin(metadata))
+                {
+                    await Refresh();
+                }
+            }
+            catch (RemoteInvocationException ex)
+            {
+                var data = ex.DeserializedErrorData as CommonErrorData;
+                if (data.TypeName == typeof(CryptographicException).FullName)
+                {
+                    MessageBox.Show(
+                        data.Message + Environment.NewLine + "Report this incident to the developers!",
+                        "Cryptographic Verification Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxType.Error
+                    );
+                }
+                else
+                {
+                    MessageBox.Show(
+                        data.Message,
+                        data.TypeName,
+                        MessageBoxButtons.OK,
+                        MessageBoxType.Error
+                    );
+                }
+            }
+        }
+
+        protected async Task Install(string path)
         {
             if (await App.Driver.Instance.InstallPlugin(path))
             {
@@ -78,7 +142,7 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        protected async Task UninstallPlugin(DesktopPluginContext context)
+        protected async Task Uninstall(DesktopPluginContext context)
         {
             if (await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
             {
@@ -102,8 +166,11 @@ namespace OpenTabletDriver.UX.Windows
             var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
             refresh.Executed += async (_, _) => await Refresh();
 
-            var openRepository = new Command { MenuText = "Get more plugins..." };
-            openRepository.Executed += (_, _) => SystemInterop.Open(App.PluginRepositoryUrl);
+            var alternateSource = new Command { MenuText = "Use alternate source..." };
+            alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
+
+            var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
+            pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             return new MenuBar()
             {
@@ -112,7 +179,8 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     install,
                     refresh,
-                    openRepository
+                    alternateSource,
+                    pluginsDirectory
                 }
             };
         }
@@ -133,10 +201,161 @@ namespace OpenTabletDriver.UX.Windows
             {
                 foreach(var file in dialog.Filenames)
                 {
-                    await InstallPlugin(file);
+                    await Install(file);
                 }
 
                 await Refresh();
+            }
+        }
+
+        private class MetadataViewer : Panel
+        {
+            public event Action<PluginMetadata> RequestPluginUninstall;
+            public event Action<PluginMetadata> RequestPluginInstall;
+
+            protected WeakReference<PluginMetadata> MetadataReference { set; get; } = new WeakReference<PluginMetadata>(null);
+
+            private EmptyMetadataControl emptyMetadataControl = new EmptyMetadataControl();
+
+            public void Update(PluginMetadata metadata)
+            {
+                if (metadata != null)
+                {
+                    MetadataReference.SetTarget(metadata);
+                    Refresh();
+                }
+                else
+                {
+                    base.Content = emptyMetadataControl;
+                }
+            }
+
+            public async void Refresh()
+            {
+                if (MetadataReference.TryGetTarget(out var metadata))
+                {
+                    var contexts = AppInfo.PluginManager.GetLoadedPlugins();
+
+                    Repository ??= await PluginMetadataCollection.DownloadAsync();
+
+                    bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
+                    bool canUpdate = Repository.Any(t => t.Name == metadata.Name && t.PluginVersion > metadata.PluginVersion);
+
+                    var updatableFromRepository = from meta in Repository
+                        where meta.PluginVersion > metadata.PluginVersion
+                        orderby meta.PluginVersion
+                        select meta;
+
+                    var actions = new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Spacing = 5,
+                        Items =
+                        {
+                            new StackLayoutItem
+                            {
+                                Expand = true,
+                                Control = new Button((sender, e) => RequestPluginUninstall?.Invoke(metadata))
+                                {
+                                    Text = "Uninstall",
+                                    Enabled = isInstalled
+                                }
+                            },
+                            new StackLayoutItem
+                            {
+                                Expand = true,
+                                Control = new Button((sender, e) => RequestPluginInstall?.Invoke(canUpdate ? updatableFromRepository.First() : metadata))
+                                {
+                                    Text = canUpdate ? "Update" : "Install",
+                                    Enabled = canUpdate || !isInstalled
+                                },
+                            }
+                        }
+                    };
+
+                    base.Content = new Scrollable
+                    {
+                        Content = new StackLayout
+                        {
+                            Padding = 5,
+                            Spacing = 5,
+                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                            Items =
+                            {
+                                new AlignedGroup("Name", metadata.Name),
+                                new AlignedGroup("Owner", metadata.Owner),
+                                new AlignedGroup("Description", metadata.Description),
+                                new AlignedGroup("Driver Version", metadata.SupportedDriverVersion.ToString()),
+                                new AlignedGroup("Plugin Version", metadata.PluginVersion.ToString()),
+                                new LinkButtonGroup("Source Code Repository", metadata.RepositoryUrl, "Show source code"),
+                                new LinkButtonGroup("Wiki", metadata.WikiUrl, "Show plugin wiki"),
+                                new AlignedGroup("License", metadata.LicenseIdentifier),
+                                new StackLayoutItem(null, true),
+                                actions
+                            }
+                        }
+                    };
+                }
+            }
+
+            private class AlignedGroup : Group
+            {
+                public AlignedGroup(string text, Control content)
+                {
+                    this.Text = text;
+                    this.Content = new StackLayout
+                    {
+                        HorizontalContentAlignment = HorizontalAlignment.Right,
+                        Padding = 5,
+                        Items =
+                        {
+                            content
+                        }
+                    };
+                    this.Orientation = Orientation.Horizontal;
+                }
+            }
+
+            private class LinkButtonGroup : Group
+            {
+                public LinkButtonGroup(string header, string link, string text = null)
+                {
+                    var linkButton = new Button
+                    {
+                        Text = text ?? header,
+                        Width = 175,
+                        Enabled = !string.IsNullOrEmpty(link)
+                    };
+                    linkButton.Click += (sender, e) => SystemInterop.Open(link);
+
+                    this.Text = header;
+                    this.Content = new StackLayout
+                    {
+                        HorizontalContentAlignment = HorizontalAlignment.Right,
+                        Items =
+                        {
+                            linkButton
+                        }
+                    };
+                    this.Orientation = Orientation.Horizontal;
+                }
+            }
+
+            private class EmptyMetadataControl : Panel
+            {
+                public EmptyMetadataControl()
+                {
+                    base.Content = new StackLayout
+                    {
+                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        Items =
+                        {
+                            new StackLayoutItem(null, true),
+                            new StackLayoutItem("No plugin selected."),
+                            new StackLayoutItem(null, true)
+                        }
+                    };
+                }
             }
         }
 
@@ -145,43 +364,50 @@ namespace OpenTabletDriver.UX.Windows
             public PluginListBox()
             {
                 this.DataStore = DisplayedPlugins;
-                this.ItemTextBinding = Binding.Property<DesktopPluginContext, string>(p => p.FriendlyName);
-
-                this.ItemContextMenu = new ContextMenu
-                {
-                    Items =
-                    {
-                        new Command(ShowPluginFolder)
-                        {
-                            MenuText = "Show in folder..."
-                        },
-                        new Command(UninstallPlugin)
-                        {
-                            MenuText = "Uninstall"
-                        }
-                    }
-                };
+                this.ItemTextBinding = Binding.Property<PluginMetadata, string>(p => p.Name);
             }
 
             public event Action<DesktopPluginContext> RequestPluginUninstall;
-
-            private readonly ObservableCollection<DesktopPluginContext> DisplayedPlugins = new ObservableCollection<DesktopPluginContext>();
-
-            private ContextMenu ItemContextMenu { get; }
+            public event Action<DesktopPluginContext> SelectedPluginChanged;
+            public event Action<PluginMetadata> SelectedMetadataChanged;
 
             public DesktopPluginContext SelectedPlugin { protected set; get; }
 
-            public void Refresh()
+            private static readonly Version AppVersion = Assembly.GetEntryAssembly().GetName().Version;
+
+            private readonly ObservableCollection<PluginMetadata> DisplayedPlugins = new ObservableCollection<PluginMetadata>();
+            private List<DesktopPluginContext> InstalledPlugins = new List<DesktopPluginContext>();
+
+            public async void Refresh()
             {
-                var plugins = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
-                    orderby plugin.Name
+                var index = SelectedIndex;
+                Repository ??= await PluginMetadataCollection.DownloadAsync();
+
+                var installed = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
+                    orderby plugin.FriendlyName
                     select plugin;
 
-                this.DisplayedPlugins.Clear();
-                foreach (var ctx in plugins)
-                    this.DisplayedPlugins.Add(ctx);
+                var installedMeta = from ctx in installed
+                    let meta = ctx.GetMetadata()
+                    where meta != null
+                    select meta;
 
-                OnSelectedIndexChanged(new EventArgs());
+                var fetched = from meta in Repository
+                    where meta.SupportedDriverVersion >= AppVersion
+                    where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
+                    select meta;
+
+                var metaQuery = from meta in installedMeta.Concat(fetched)
+                    orderby meta.Name
+                    select meta;
+
+                this.InstalledPlugins = installed.ToList();
+
+                this.DisplayedPlugins.Clear();
+                foreach (var meta in metaQuery)
+                    this.DisplayedPlugins.Add(meta);
+
+                SelectedIndex = index;
             }
 
             private void ShowPluginFolder(object sender, EventArgs e)
@@ -203,21 +429,15 @@ namespace OpenTabletDriver.UX.Windows
                 }
             }
 
-            protected override void OnSelectedIndexChanged(EventArgs e)
+            protected override void OnSelectedValueChanged(EventArgs e)
             {
-                base.OnSelectedIndexChanged(e);
+                base.OnSelectedValueChanged(e);
 
-                var index = base.SelectedIndex;
-                if (index >= 0 && index < DisplayedPlugins.Count)
-                {
-                    this.SelectedPlugin = DisplayedPlugins[index];
-                    base.ContextMenu = ItemContextMenu;
-                }
-                else
-                {
-                    this.SelectedPlugin = null;
-                    base.ContextMenu = null;
-                }
+                var metadata = SelectedValue as PluginMetadata;
+                SelectedMetadataChanged?.Invoke(metadata);
+
+                this.SelectedPlugin = SelectedValue is PluginMetadata selected ? InstalledPlugins.FirstOrDefault(p => PluginMetadata.Match(selected, p.GetMetadata())) : null;
+                SelectedPluginChanged?.Invoke(this.SelectedPlugin);
             }
 
             protected override void OnLoadComplete(EventArgs e)
@@ -248,8 +468,8 @@ namespace OpenTabletDriver.UX.Windows
                 };
             }
 
-            private const string DRAG_DROP_SUPPORTED = "Drop plugin zip/dll here... (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧";
-            private const string DRAG_DROP_UNSUPPORTED = "Oh no! Drag and drop not supported! ＼(º □ º l|l)/";
+            private const string DRAG_DROP_SUPPORTED = "Drop plugin here...";
+            private const string DRAG_DROP_UNSUPPORTED = "Drag and drop is not supported on this platform.";
 
             public event Action<string> RequestPluginInstall;
 

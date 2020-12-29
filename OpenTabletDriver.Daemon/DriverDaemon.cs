@@ -14,6 +14,7 @@ using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
@@ -106,6 +107,11 @@ namespace OpenTabletDriver.Daemon
             var plugins = AppInfo.PluginManager.GetLoadedPlugins();
             var plugin = plugins.FirstOrDefault(ctx => ctx.FriendlyName == friendlyName);
             return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(plugin));
+        }
+
+        public Task<bool> DownloadPlugin(PluginMetadata metadata)
+        {
+            return AppInfo.PluginManager.DownloadPlugin(metadata);
         }
 
         public Task<TabletState> GetTablet()

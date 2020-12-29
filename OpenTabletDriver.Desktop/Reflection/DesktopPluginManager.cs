@@ -5,7 +5,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
 
@@ -149,6 +151,28 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == pluginDir.FullName);
             var result = pluginDir.Exists ? UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
+
+            if (!TemporaryDirectory.GetFileSystemInfos().Any())
+                Directory.Delete(TemporaryDirectory.FullName, true);
+            return result;
+        }
+
+        public async Task<bool> DownloadPlugin(PluginMetadata metadata)
+        {
+            string sourcePath = Path.Join(TemporaryDirectory.FullName, metadata.Name);
+            string targetPath = Path.Join(PluginDirectory.FullName, metadata.Name);
+            string metadataPath = Path.Join(targetPath, "metadata.json");
+
+            var sourceDir = new DirectoryInfo(sourcePath);
+            var targetDir = new DirectoryInfo(targetPath);
+
+            await metadata.DownloadAsync(sourcePath);
+
+            var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == targetDir.FullName);
+            var result = targetDir.Exists ? UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
+
+            using (var fs = File.Create(metadataPath))
+                Serialization.Serialize(fs, metadata);
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
                 Directory.Delete(TemporaryDirectory.FullName, true);

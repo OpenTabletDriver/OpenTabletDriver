@@ -1,10 +1,8 @@
 using System;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;

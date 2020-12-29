@@ -31,7 +31,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
         public string Text { set; get; }
 
         private Control content;
-        public new Control Content {
+        public new Control Content
+        {
             set
             {
                 this.content = value;
@@ -78,8 +79,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                                     VerticalAlignment = TitleVerticalAlignment,
                                     Control = new Label
                                     {
-                                        Text = this.Text,
-                                        Font = Fonts.Cached("Sans", 9, FontStyle.Bold)
+                                        Text = this.Text
                                     }
                                 },
                                 new StackLayoutItem(this.Content, ExpandContent)

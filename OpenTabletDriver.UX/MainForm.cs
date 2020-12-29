@@ -204,12 +204,6 @@ namespace OpenTabletDriver.UX
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
             pluginManager.Executed += (sender, e) => ShowPluginManager();
 
-            var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
-
-            var pluginsRepository = new Command { MenuText = "Open plugins repository..." };
-            pluginsRepository.Executed += (sender, e) => SystemInterop.Open(PluginRepositoryUrl);
-
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
             faqUrl.Executed += (sender, e) => SystemInterop.Open(FaqUrl);
 
@@ -251,9 +245,7 @@ namespace OpenTabletDriver.UX
                         Text = "Plugins",
                         Items =
                         {
-                            pluginManager,
-                            pluginsDirectory,
-                            pluginsRepository
+                            pluginManager
                         }
                     },
                     new ButtonMenuItem

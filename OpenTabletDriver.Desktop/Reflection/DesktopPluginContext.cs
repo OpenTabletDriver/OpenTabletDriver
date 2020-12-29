@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Reflection;
 
@@ -22,6 +23,18 @@ namespace OpenTabletDriver.Desktop.Reflection
         public DirectoryInfo Directory { get; }
 
         public string FriendlyName { get; }
+
+        public PluginMetadata GetMetadata()
+        {
+            if (Directory.EnumerateFiles().FirstOrDefault(f => f.Name == "metadata.json") is FileInfo file)
+            {
+                return Serialization.Deserialize<PluginMetadata>(file);
+            }
+            else
+            {
+                return null;
+            }
+        }
 
         protected Assembly LoadAssemblyFromFile(FileInfo file)
         {
