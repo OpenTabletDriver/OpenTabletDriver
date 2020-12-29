@@ -13,6 +13,7 @@ using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
 using StreamJsonRpc.Protocol;
 
@@ -77,14 +78,22 @@ namespace OpenTabletDriver.UX.Windows
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        public async Task Refresh()
+        public async Task Refresh(PluginMetadataCollection newRepository = null)
         {
-            Repository = await PluginMetadataCollection.DownloadAsync();
+            Repository = newRepository ?? await PluginMetadataCollection.DownloadAsync();
+
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.Load();
 
             (Application.Instance.MainForm as MainForm).Refresh();
             pluginList.Refresh();
+        }
+
+        protected async Task SwitchRepositorySource()
+        {
+            var dialog = new RepositoryDialog("Switch Repository Source");
+            if (await dialog.ShowModalAsync() is PluginMetadataCollection repository)
+                await Refresh(repository);
         }
 
         protected async Task DownloadAndInstall(PluginMetadata metadata)
@@ -117,7 +126,7 @@ namespace OpenTabletDriver.UX.Windows
                         MessageBoxType.Error
                     );
                 }
-            } 
+            }
         }
 
         protected async Task Install(string path)
@@ -157,6 +166,9 @@ namespace OpenTabletDriver.UX.Windows
             var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
             refresh.Executed += async (_, _) => await Refresh();
 
+            var alternateSource = new Command { MenuText = "Use alternate source..." };
+            alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
+
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
             pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
@@ -167,6 +179,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     install,
                     refresh,
+                    alternateSource,
                     pluginsDirectory
                 }
             };

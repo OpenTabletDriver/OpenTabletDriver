@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -43,21 +44,32 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name)
         {
             string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/";
-            using (var client = GetClient())
-            using (var httpStream = await client.GetStreamAsync(archiveUrl))
-                return FromStream(httpStream, name);
+            return await DownloadAsync(archiveUrl);
         }
 
-        public static PluginMetadataCollection FromStream(Stream stream, string dirName)
+        public static async Task<PluginMetadataCollection> DownloadAsync(string archiveUrl)
+        {
+            using (var client = GetClient())
+            using (var httpStream = await client.GetStreamAsync(archiveUrl))
+                return FromStream(httpStream);
+        }
+
+        public static PluginMetadataCollection FromStream(Stream stream)
         {
             using (var gzipStream = new GZipInputStream(stream))
             using (var archive = TarArchive.CreateInputTarArchive(gzipStream, null))
             {
                 // TODO: Properly cache instead of storing in the temporary directory
-                string cacheDir = Path.Join(AppInfo.Current.TemporaryDirectory, dirName);
+                string cacheDir = Path.Join(AppInfo.Current.TemporaryDirectory, Guid.NewGuid().ToString());
+                
                 archive.ExtractContents(cacheDir);
                 var collection = EnumeratePluginMetadata(cacheDir);
-                return new PluginMetadataCollection(collection);
+                var metadataCollection = new PluginMetadataCollection(collection);
+
+                if (Directory.Exists(cacheDir))
+                    Directory.Delete(cacheDir, true);
+
+                return metadataCollection;
             }
         }
 

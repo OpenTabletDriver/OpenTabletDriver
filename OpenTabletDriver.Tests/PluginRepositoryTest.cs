@@ -66,7 +66,7 @@ namespace OpenTabletDriver.Tests
             if (File.Exists(CollectionTarball))
             {
                 using (var stream = File.OpenRead(CollectionTarball))
-                    return PluginMetadataCollection.FromStream(stream, TarballName);
+                    return PluginMetadataCollection.FromStream(stream);
             }
             else
             {

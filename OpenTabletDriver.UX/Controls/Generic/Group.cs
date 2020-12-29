@@ -31,7 +31,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
         public string Text { set; get; }
 
         private Control content;
-        public new Control Content {
+        public new Control Content
+        {
             set
             {
                 this.content = value;
