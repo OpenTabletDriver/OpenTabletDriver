@@ -64,6 +64,7 @@ namespace OpenTabletDriver.UX.Windows
             _ = Refresh();
         }
 
+        private static PluginMetadataCollection Repository;
         private readonly PluginDropPanel dropPanel = new PluginDropPanel();
         private readonly PluginListBox pluginList = new PluginListBox();
         private readonly MetadataViewer metadataViewer = new MetadataViewer();
@@ -75,6 +76,7 @@ namespace OpenTabletDriver.UX.Windows
 
         public async Task Refresh()
         {
+            Repository = await PluginMetadataCollection.DownloadAsync();
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.Load();
 
@@ -126,9 +128,6 @@ namespace OpenTabletDriver.UX.Windows
 
             var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
             refresh.Executed += async (_, _) => await Refresh();
-
-            var openRepository = new Command { MenuText = "Get more plugins..." };
-            openRepository.Executed += (_, _) => SystemInterop.Open(App.PluginRepositoryUrl);
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
             pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
@@ -195,12 +194,13 @@ namespace OpenTabletDriver.UX.Windows
                 if (MetadataReference.TryGetTarget(out var metadata))
                 {
                     var contexts = AppInfo.PluginManager.GetLoadedPlugins();
-                    var repository = await PluginMetadataCollection.DownloadAsync();
-                    
-                    bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
-                    bool canUpdate = repository.Any(t => t.PluginVersion > metadata.PluginVersion);
 
-                    var updatableFromRepository = from meta in repository
+                    Repository ??= await PluginMetadataCollection.DownloadAsync();
+
+                    bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
+                    bool canUpdate = Repository.Any(t => t.Name == metadata.Name && t.PluginVersion > metadata.PluginVersion);
+
+                    var updatableFromRepository = from meta in Repository
                         where meta.PluginVersion > metadata.PluginVersion
                         orderby meta.PluginVersion
                         select meta;
@@ -282,7 +282,8 @@ namespace OpenTabletDriver.UX.Windows
                     var linkButton = new Button
                     {
                         Text = text ?? header,
-                        Width = 175
+                        Width = 175,
+                        Enabled = !string.IsNullOrEmpty(link)
                     };
                     linkButton.Click += (sender, e) => SystemInterop.Open(link);
 
@@ -339,6 +340,7 @@ namespace OpenTabletDriver.UX.Windows
             public async void Refresh()
             {
                 var index = SelectedIndex;
+                Repository ??= await PluginMetadataCollection.DownloadAsync();
 
                 var installed = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
                     orderby plugin.FriendlyName
@@ -349,7 +351,7 @@ namespace OpenTabletDriver.UX.Windows
                     where meta != null
                     select meta;
 
-                var fetched = from meta in await PluginMetadataCollection.DownloadAsync()
+                var fetched = from meta in Repository
                     where meta.SupportedDriverVersion >= AppVersion
                     where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
                     select meta;
