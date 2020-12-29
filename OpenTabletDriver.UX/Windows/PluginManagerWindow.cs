@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -12,6 +13,8 @@ using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.UX.Controls.Generic;
+using StreamJsonRpc;
+using StreamJsonRpc.Protocol;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -85,11 +88,36 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         protected async Task DownloadAndInstall(PluginMetadata metadata)
-         {
-            if (await App.Driver.Instance.DownloadPlugin(metadata))
+        {
+            try
             {
-                await Refresh();
+                if (await App.Driver.Instance.DownloadPlugin(metadata))
+                {
+                    await Refresh();
+                }
             }
+            catch (RemoteInvocationException ex)
+            {
+                var data = ex.DeserializedErrorData as CommonErrorData;
+                if (data.TypeName == typeof(CryptographicException).FullName)
+                {
+                    MessageBox.Show(
+                        data.Message + Environment.NewLine + "Report this incident to the developers!",
+                        "Cryptographic Verification Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxType.Error
+                    );
+                }
+                else
+                {
+                    MessageBox.Show(
+                        data.Message,
+                        data.TypeName,
+                        MessageBoxButtons.OK,
+                        MessageBoxType.Error
+                    );
+                }
+            } 
         }
 
         protected async Task Install(string path)

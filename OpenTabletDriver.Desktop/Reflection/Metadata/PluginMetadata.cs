@@ -110,7 +110,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
                 }
                 else
                 {
-                    throw new Exception("The SHA256 cryptographic hashes do not match.");
+                    throw new CryptographicException("The SHA256 cryptographic hashes of the downloaded content and the metadata do not match.");
                 }
             }
         }

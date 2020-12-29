@@ -166,14 +166,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             var sourceDir = new DirectoryInfo(sourcePath);
             var targetDir = new DirectoryInfo(targetPath);
 
-            try
-            {
-                await metadata.DownloadAsync(sourcePath);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            await metadata.DownloadAsync(sourcePath);
 
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == targetDir.FullName);
             var result = targetDir.Exists ? UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
