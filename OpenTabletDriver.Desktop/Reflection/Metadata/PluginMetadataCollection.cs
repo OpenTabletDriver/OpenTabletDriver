@@ -37,18 +37,24 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public static async Task<PluginMetadataCollection> DownloadAsync()
         {
-            string archiveUrl = $"https://api.github.com/repos/{REPOSITORY_OWNER}/{REPOSITORY_NAME}/tarball/";
-            using (var client = GetClient())
-            using (var httpStream = await client.GetStreamAsync(archiveUrl))
-                return FromStream(httpStream);
+            return await DownloadAsync(REPOSITORY_OWNER, REPOSITORY_NAME);
         }
 
-        public static PluginMetadataCollection FromStream(Stream stream)
+        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name)
+        {
+            string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/";
+            using (var client = GetClient())
+            using (var httpStream = await client.GetStreamAsync(archiveUrl))
+                return FromStream(httpStream, name);
+        }
+
+        public static PluginMetadataCollection FromStream(Stream stream, string dirName)
         {
             using (var gzipStream = new GZipInputStream(stream))
             using (var archive = TarArchive.CreateInputTarArchive(gzipStream, null))
             {
-                string cacheDir = Path.Join(AppInfo.Current.CacheDirectory, REPOSITORY_NAME);
+                // TODO: Properly cache instead of storing in the temporary directory
+                string cacheDir = Path.Join(AppInfo.Current.TemporaryDirectory, dirName);
                 archive.ExtractContents(cacheDir);
                 var collection = EnumeratePluginMetadata(cacheDir);
                 return new PluginMetadataCollection(collection);
