@@ -97,7 +97,7 @@ namespace OpenTabletDriver.UX.Dialogs
 
             public string DefaultInputText { set; get; }
 
-            protected const int TEXTBOX_WIDTH = 200 ;
+            protected const int TEXTBOX_WIDTH = 200;
 
             protected override void OnLoadComplete(EventArgs e)
             {
