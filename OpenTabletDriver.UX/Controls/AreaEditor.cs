@@ -16,7 +16,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         public AreaEditor(string unit, bool enableRotation = false)
         {
-            this.DataContext = new AreaViewModel();
+            this.DataContext ??= new AreaViewModel();
             this.ContextMenu = new ContextMenu();
 
             AreaDisplay = new AreaDisplay(unit)

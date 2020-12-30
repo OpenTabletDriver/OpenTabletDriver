@@ -104,7 +104,7 @@ namespace OpenTabletDriver.UX.Controls
             content.AddControl(auxBindingSettings);
         }
 
-        private class BindingDisplay : Button
+        internal class BindingDisplay : Button
         {
             public BindingDisplay(PluginSettingStore store)
             {

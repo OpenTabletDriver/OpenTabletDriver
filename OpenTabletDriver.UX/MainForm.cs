@@ -11,6 +11,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
+using OpenTabletDriver.UX.Windows.Greeter;
 
 namespace OpenTabletDriver.UX
 {
@@ -392,6 +393,7 @@ namespace OpenTabletDriver.UX
             else
             {
                 await ResetSettings();
+                await ShowFirstStartupGreeter();
             }
 
             outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
@@ -507,6 +509,16 @@ namespace OpenTabletDriver.UX
                 var settings = await Driver.Instance.GetSettings();
                 await Driver.Instance.EnableInput(settings?.AutoHook ?? false);
             }
+        }
+
+        private async Task ShowFirstStartupGreeter()
+        {
+            this.Visible = false;
+            
+            var greeter = new StartupGreeterWindow();
+            await greeter.ShowModalAsync();
+            
+            this.Visible = true;
         }
 
         private void ShowConfigurationEditor()
