@@ -271,11 +271,25 @@ namespace OpenTabletDriver.Desktop
 
         public void SetDisplayArea(Area area)
         {
+            _sizeChanging = true;
             DisplayWidth = area.Width;
+
+            _sizeChanging = true;
             DisplayHeight = area.Height;
+
             DisplayX = area.Position.X;
             DisplayY = area.Position.Y;
+
+            _sizeChanging = false;
+
+            // Refresh aspect ratio lock
+            if (LockAspectRatio)
+            {
+                LockAspectRatio = false;
+                LockAspectRatio = true;
+            }
         }
+
         public Area GetDisplayArea()
         {
             return new Area(DisplayWidth, DisplayHeight, new Vector2(DisplayX, DisplayY), 0);
@@ -283,11 +297,24 @@ namespace OpenTabletDriver.Desktop
 
         public void SetTabletArea(Area area)
         {
+            _sizeChanging = true;
             TabletWidth = area.Width;
+
+            _sizeChanging = true;
             TabletHeight = area.Height;
+
             TabletX = area.Position.X;
             TabletY = area.Position.Y;
             TabletRotation = area.Rotation;
+
+            _sizeChanging = false;
+
+            // Refresh aspect ratio lock
+            if (LockAspectRatio)
+            {
+                LockAspectRatio = false;
+                LockAspectRatio = true;
+            }
         }
 
         public Area GetTabletArea()
@@ -356,7 +383,7 @@ namespace OpenTabletDriver.Desktop
             using (var jw = new JsonTextWriter(sw))
                 serializer.Serialize(jw, this);
         }
-        
+
         #endregion
     }
 }

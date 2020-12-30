@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -13,6 +14,7 @@ using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -292,6 +294,10 @@ namespace OpenTabletDriver.UX.Controls
                     areaClipping = AppendCheckBoxMenuItem("Area clipping", (value) => App.Settings.EnableClipping = value);
                     ignoreOutsideArea = AppendCheckBoxMenuItem("Ignore reports outside area", (value) => App.Settings.EnableAreaLimiting = value);
 
+                    AppendMenuItemSeparator();
+
+                    AppendMenuItem("Convert area...", async () => await ConvertAreaDialog());
+
                     App.SettingsChanged += Rebind;
                 }
 
@@ -311,6 +317,12 @@ namespace OpenTabletDriver.UX.Controls
                     lockAr.Checked = settings.LockAspectRatio;
                     areaClipping.Checked = settings.EnableClipping;
                     ignoreOutsideArea.Checked = settings.EnableAreaLimiting;
+                }
+
+                private async Task ConvertAreaDialog()
+                {
+                    var converter = new AreaConverterDialog();
+                    await converter.ShowModalAsync();
                 }
             }
         }
