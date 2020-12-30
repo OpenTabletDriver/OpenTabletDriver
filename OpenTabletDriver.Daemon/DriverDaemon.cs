@@ -189,6 +189,8 @@ namespace OpenTabletDriver.Daemon
                 TabletY = tablet?.Height / 2 ?? 0,
                 AutoHook = true,
                 EnableClipping = true,
+                LockUsableAreaDisplay = true,
+                LockUsableAreaTablet = true,
                 TipButton = new PluginSettingStore(
                     new MouseBinding
                     {
