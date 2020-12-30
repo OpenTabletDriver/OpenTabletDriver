@@ -187,7 +187,7 @@ namespace OpenTabletDriver
         protected void InitializeAuxDevice(HidDevice auxDevice, DeviceIdentifier identifier, IReportParser<IDeviceReport> reportParser)
         {
             AuxReader?.Dispose();
-            
+
             Log.Debug("Detect", $"Using auxiliary device '{auxDevice.GetFriendlyName()}'.");
             Log.Debug("Detect", $"Using auxiliary report parser type '{reportParser.GetType().Name}'.");
             Log.Debug("Detect", $"Device path: {auxDevice.DevicePath}");
@@ -197,20 +197,28 @@ namespace OpenTabletDriver
                 Log.Debug("Device", $"Initializing index {index}");
                 auxDevice.GetDeviceString(index);
             }
-            
+
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
             AuxReader.Report += OnReportRecieved;
 
             if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Device", "Setting aux feature: " + BitConverter.ToString(featureInitReport));
-                AuxReader.ReportStream.SetFeature(featureInitReport);
+                try
+                {
+                    AuxReader.ReportStream.SetFeature(featureInitReport);
+                    Log.Debug("Device", $"HID Feature '{BitConverter.ToString(featureInitReport)}' succesfully set");
+                }
+                catch {}
             }
 
             if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Device", "Setting aux output: " + BitConverter.ToString(outputInitReport));
-                AuxReader.ReportStream.Write(outputInitReport);
+                try
+                {
+                    AuxReader.ReportStream.Write(outputInitReport);
+                    Log.Debug("Device", $"HID Output '{BitConverter.ToString(outputInitReport)}' successfully set");
+                }
+                catch {}
             }
         }
 
