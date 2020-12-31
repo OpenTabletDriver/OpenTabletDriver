@@ -17,7 +17,7 @@
       "ProductID": 148,
       "InputReportLength": 8,
       "OutputReportLength": 8,
-      "ReportParser": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": "ArAC",
       "DeviceStrings": {},
