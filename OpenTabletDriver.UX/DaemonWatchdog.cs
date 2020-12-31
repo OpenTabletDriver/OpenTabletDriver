@@ -41,11 +41,11 @@ namespace OpenTabletDriver.UX
 
         public void Start()
         {
-            this.daemonProcess = new()
+            this.daemonProcess = new Process()
             {
                 StartInfo = startInfo
             };
-            this.watchdogTimer = new(1000);
+            this.watchdogTimer = new Timer(1000);
 
             this.daemonProcess.Start();
             this.watchdogTimer.Start();
