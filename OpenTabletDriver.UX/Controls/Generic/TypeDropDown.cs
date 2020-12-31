@@ -53,8 +53,6 @@ namespace OpenTabletDriver.UX.Controls.Generic
             }
         }
 
-
-
         protected string GetFriendlyName(TypeInfo t)
         {
             return t.GetCustomAttribute<PluginNameAttribute>()?.Name ?? t.FullName;
