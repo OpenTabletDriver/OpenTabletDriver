@@ -14,7 +14,7 @@ namespace OpenTabletDriver.UX.Wpf
             if (principal.IsInRole(WindowsBuiltInRole.Administrator))
             {
                 _ = new Application(Eto.Platforms.Wpf);
-                MessageBox.Show("Do not run OpenTabletDriver as administrator.", MessageBoxType.Error);
+                MessageBox.Show("OpenTabletDriver should not be run with administrator privileges.", MessageBoxType.Error);
                 Environment.Exit(1);
             }
 
