@@ -19,12 +19,6 @@ namespace OpenTabletDriver.UX
                 window.WindowStyle = WindowStyle.Default;
             };
 
-            var restart = new ButtonMenuItem
-            {
-                Text = "Restart"
-            };
-            restart.Click += (sender, e) => Application.Instance.Restart();
-
             var close = new ButtonMenuItem
             {
                 Text = "Close"
@@ -40,7 +34,6 @@ namespace OpenTabletDriver.UX
                     Items =
                     {
                         showWindow,
-                        restart,
                         close
                     }
                 }
