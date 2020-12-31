@@ -11,6 +11,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
+using OpenTabletDriver.UX.Windows.Greeter;
 
 namespace OpenTabletDriver.UX
 {
@@ -206,6 +207,9 @@ namespace OpenTabletDriver.UX
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
             faqUrl.Executed += (sender, e) => SystemInterop.Open(FaqUrl);
 
+            var showGuide = new Command { MenuText = "Show guide..." };
+            showGuide.Executed += async (sender, e) => await ShowFirstStartupGreeter();
+
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
 
@@ -253,7 +257,8 @@ namespace OpenTabletDriver.UX
                         Items =
                         {
                             faqUrl,
-                            exportDiagnostics
+                            exportDiagnostics,
+                            showGuide
                         }
                     }
                 },
@@ -394,6 +399,9 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
+            if (!settingsFile.Exists)
+                await ShowFirstStartupGreeter();
+
             outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
         }
 
@@ -507,6 +515,16 @@ namespace OpenTabletDriver.UX
                 var settings = await Driver.Instance.GetSettings();
                 await Driver.Instance.EnableInput(settings?.AutoHook ?? false);
             }
+        }
+
+        private async Task ShowFirstStartupGreeter()
+        {
+            this.Visible = false;
+
+            var greeter = new StartupGreeterWindow();
+            await greeter.ShowModalAsync();
+
+            this.Visible = true;
         }
 
         private void ShowConfigurationEditor()

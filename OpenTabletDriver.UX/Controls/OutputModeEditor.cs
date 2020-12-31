@@ -6,13 +6,11 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows;
 
@@ -25,9 +23,9 @@ namespace OpenTabletDriver.UX.Controls
             UpdateOutputMode(App.Settings?.OutputMode);
             App.SettingsChanged += (settings) => UpdateOutputMode(settings?.OutputMode);
 
-            outputModeSelector.SelectedModeChanged += (sender, pluginRef) =>
+            outputModeSelector.SelectedValueChanged += (sender, args) =>
             {
-                App.Settings.OutputMode = PluginSettingStore.FromPath(pluginRef.Path);
+                App.Settings.OutputMode = new PluginSettingStore(outputModeSelector.SelectedType);
                 UpdateOutputMode(App.Settings.OutputMode);
             };
 
@@ -138,61 +136,17 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private class OutputModeSelector : ComboBox
+        private class OutputModeSelector : TypeDropDown<IOutputMode>
         {
             public OutputModeSelector()
             {
-                Refresh();
-                this.SelectedIndexChanged += (sender, e) =>
-                {
-                    if (this.SelectedIndex >= 0)
-                        SelectedMode = OutputModes[this.SelectedIndex];
-                };
-                this.ItemTextBinding = Binding.Property<PluginReference, string>(p => p.ToString());
-
                 App.SettingsChanged += (settings) => UpdateSelectedMode(settings?.OutputMode);
-            }
-
-            public event EventHandler<PluginReference> SelectedModeChanged;
-
-            private List<PluginReference> modes;
-            public List<PluginReference> OutputModes
-            {
-                set
-                {
-                    this.modes = value;
-                    this.DataStore = this.OutputModes;
-                }
-                get => this.modes;
-            }
-
-            private PluginReference selectedMode;
-            public PluginReference SelectedMode
-            {
-                private set
-                {
-                    selectedMode = value;
-                    SelectedModeChanged?.Invoke(this, SelectedMode);
-                }
-                get => selectedMode;
-            }
-
-            public void Refresh()
-            {
-                var outputModes = from type in AppInfo.PluginManager.GetChildTypes<IOutputMode>()
-                    where !type.IsAbstract
-                    where !type.IsInterface
-                    orderby type.Name
-                    select AppInfo.PluginManager.GetPluginReference(type);
-
-                OutputModes = new List<PluginReference>(outputModes);
             }
 
             public void UpdateSelectedMode(PluginSettingStore store)
             {
-                var mode = OutputModes.FirstOrDefault(t => t.Path == store?.Path) ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
-                if (mode != null)
-                    base.SelectedIndex = OutputModes.IndexOf(mode);
+                var typeReference = store.GetPluginReference().GetTypeReference();
+                this.SelectedValue = typeReference;
             }
         }
 

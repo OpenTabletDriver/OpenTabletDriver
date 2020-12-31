@@ -71,7 +71,37 @@ namespace OpenTabletDriver.Desktop.Reflection
             return new ObservableCollection<PluginSetting>(settings);
         }
 
-        public PluginSetting this[string propertyName] => Settings.FirstOrDefault(s => s.Property == propertyName);
-        public PluginSetting this[PropertyInfo property] => this[property.Name];
+        public PluginSetting this[string propertyName]
+        {
+            set
+            {
+                if (Settings.FirstOrDefault(t => t.Property == propertyName) is PluginSetting setting)
+                {
+                    Settings.Remove(setting);
+                    Settings.Add(value);
+                }
+                else
+                {
+                    Settings.Add(value);
+                }
+            }
+            get
+            {
+                var result = Settings.FirstOrDefault(s => s.Property == propertyName);
+                if (result == null)
+                {
+                    var newSetting = new PluginSetting(propertyName, null);
+                    Settings.Add(newSetting);
+                    return newSetting;
+                }
+                return result;
+            } 
+        }
+
+        public PluginSetting this[PropertyInfo property]
+        {
+            set => this[property.Name] = value;
+            get => this[property.Name];
+        }
     }
 }

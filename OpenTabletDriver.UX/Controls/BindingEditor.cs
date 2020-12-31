@@ -3,7 +3,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
-using OpenTabletDriver.UX.Windows;
+using OpenTabletDriver.UX.Windows.Bindings;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -104,7 +104,7 @@ namespace OpenTabletDriver.UX.Controls
             content.AddControl(auxBindingSettings);
         }
 
-        private class BindingDisplay : Button
+        internal class BindingDisplay : Button
         {
             public BindingDisplay(PluginSettingStore store)
             {
