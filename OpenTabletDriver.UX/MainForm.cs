@@ -397,8 +397,10 @@ namespace OpenTabletDriver.UX
             else
             {
                 await ResetSettings();
-                await ShowFirstStartupGreeter();
             }
+
+            if (!settingsFile.Exists)
+                await ShowFirstStartupGreeter();
 
             outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
         }
@@ -518,10 +520,10 @@ namespace OpenTabletDriver.UX
         private async Task ShowFirstStartupGreeter()
         {
             this.Visible = false;
-            
+
             var greeter = new StartupGreeterWindow();
             await greeter.ShowModalAsync();
-            
+
             this.Visible = true;
         }
 

@@ -78,7 +78,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             };
 
             bindingTypeDropDown.SelectedValueChanged += (sender, e) => bindingPropertyGroup.Content = GetPropertyControl();
-            bindingTypeDropDown.SelectedType = currentBinding.GetPluginReference().GetTypeReference();
+            bindingTypeDropDown.SelectedType = currentBinding?.GetPluginReference().GetTypeReference();
 
             string bindingProperty = currentBinding?["Property"]?.GetValue<string>();
             switch (bindingPropertyGroup.Content)
@@ -95,18 +95,25 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 }
                 default:
                 {
-                    throw new Exception("Invalid binding property group control");
+                    bindingPropertyGroup.Content = GetPropertyControl();
+                    break;
                 }
             };
         }
 
         public Control GetPropertyControl()
         {
-            var pluginRef = AppInfo.PluginManager.GetPluginReference(bindingTypeDropDown.SelectedType);
-            var type = pluginRef.GetTypeReference<IBinding>();
-            bool isValidateBinding = typeof(IValidateBinding).IsAssignableFrom(type);
-
-            return isValidateBinding ? new BindingPropertyDropDown(pluginRef.Construct<IValidateBinding>()) : new TextBox();
+            var selectedType = bindingTypeDropDown.SelectedType;
+            if (selectedType != null)
+            {
+                var pluginRef = AppInfo.PluginManager.GetPluginReference(bindingTypeDropDown.SelectedType);
+                bool isValidateBinding = typeof(IValidateBinding).IsAssignableFrom(selectedType);
+                return isValidateBinding ? new BindingPropertyDropDown(pluginRef.Construct<IValidateBinding>()) : new TextBox();
+            }
+            else
+            {
+                return new TextBox();
+            }
         }
 
         private TypeDropDown<IBinding> bindingTypeDropDown;
@@ -119,25 +126,28 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
         private void ApplyBinding(object sender, EventArgs e)
         {
+            if (bindingTypeDropDown.SelectedType == null)
+            {
+                Close(null);
+                return;
+            }
+            
             var pluginRef = AppInfo.PluginManager.GetPluginReference(bindingTypeDropDown.SelectedType);
+            var type = pluginRef.GetTypeReference();
 
-            var binding = pluginRef.Construct<IBinding>();
-            binding.Property = bindingPropertyGroup.Content switch
+            var newStore = new PluginSettingStore(type);
+            newStore[nameof(IBinding.Property)].Value = bindingPropertyGroup.Content switch
             {
                 BindingPropertyDropDown propertyDropDown => propertyDropDown.SelectedKey,
                 TextControl textControl => textControl.Text,
-                _ => null
+                _ => throw new Exception("Invalid control type")
             };
 
-            Close(new PluginSettingStore(binding));
+            Close(newStore);
         }
 
         private class BindingPropertyDropDown : DropDown
         {
-            public BindingPropertyDropDown()
-            {
-            }
-
             public BindingPropertyDropDown(IValidateBinding validateBinding)
             {
                 this.DataStore = validateBinding.ValidProperties;
