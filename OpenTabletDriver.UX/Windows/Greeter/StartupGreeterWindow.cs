@@ -87,11 +87,6 @@ namespace OpenTabletDriver.UX.Windows.Greeter
                 else if (SelectedIndex == Pages.Count - 1)
                     base.ParentWindow.Close();
             }
-
-            protected override void OnSelectedIndexChanged(EventArgs e)
-            {
-                base.OnSelectedIndexChanged(e);
-            }
         }
     }
 }
