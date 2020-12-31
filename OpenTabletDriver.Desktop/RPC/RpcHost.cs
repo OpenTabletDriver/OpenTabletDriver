@@ -7,84 +7,59 @@ using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
-    public class RpcHost<T> : IDisposable where T : new()
+    public class RpcHost<T> where T : new()
     {
+        private JsonRpc rpc;
+        private readonly string pipeName;
+
+        public event EventHandler<bool> ConnectionStateChanged;
+        public T Instance { protected set; get; } = new T();
+
         public RpcHost(string pipeName)
         {
             this.pipeName = pipeName;
-            Reset();
-            _ = Main();
         }
 
         public async Task Main()
         {
             while (true)
             {
-                try
+                var stream = CreateStream();
+                await stream.WaitForConnectionAsync();
+                _ = Task.Run(async () =>
                 {
-                    await this.stream.WaitForConnectionAsync();
-                    IsConnected = true;
-                    this.rpc = JsonRpc.Attach(this.stream, Instance);
-                    this.rpc.Disconnected += (sender, e) => this.stream.Dispose();
-                    await this.rpc.Completion;
-                }
-                catch (ObjectDisposedException)
-                {
-                    Reset();
-                }
-                catch (IOException)
-                {
-                    Reset();
-                }
-                catch (Exception ex)
-                {
-                    Log.Exception(ex);
-                    Reset();
-                }
+                    try
+                    {
+                        ConnectionStateChanged?.Invoke(this, true);
+                        this.rpc = JsonRpc.Attach(stream, Instance);
+                        await this.rpc.Completion;
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                    }
+                    catch (IOException)
+                    {
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Exception(ex);
+                    }
+                    ConnectionStateChanged?.Invoke(this, false);
+                    this.rpc.Dispose();
+                    await stream.DisposeAsync();
+                });
             }
         }
 
-        private void Reset()
-        {
-            IsConnected = false;
-            this.stream?.Dispose();
-            this.stream = CreateStream(this.pipeName);
-        }
-        
-        private static NamedPipeServerStream CreateStream(string name)
+        private NamedPipeServerStream CreateStream()
         {
             return new NamedPipeServerStream(
-                name,
+                this.pipeName,
                 PipeDirection.InOut,
-                1,
+                NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Byte,
-                PipeOptions.Asynchronous | PipeOptions.WriteThrough
+                PipeOptions.Asynchronous | PipeOptions.WriteThrough | PipeOptions.CurrentUserOnly
             );
-        }
-
-        private readonly string pipeName;
-        private JsonRpc rpc;
-        private NamedPipeServerStream stream;
-        private bool connected;
-
-        public event EventHandler<bool> ConnectionStateChanged;
-
-        public T Instance { protected set; get; } = new T();
-        
-        public bool IsConnected
-        {
-            protected set
-            {
-                this.connected = value;
-                ConnectionStateChanged?.Invoke(this, value);
-            }
-            get => this.connected;
-        }
-
-        public void Dispose()
-        {
-            rpc.Dispose();
-            stream?.Dispose();
         }
     }
 }

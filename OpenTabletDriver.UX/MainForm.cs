@@ -26,6 +26,18 @@ namespace OpenTabletDriver.UX
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
 
+            Driver.Disconnected += (_, _) =>
+            {
+                Application.Instance.AsyncInvoke(async () =>
+                {
+                    var content = this.Content;
+                    Content = ConstructPlaceholderControl();
+                    await Driver.Connect();
+                    await LoadSettings(AppInfo.Current);
+                    Content = content;
+                });
+            };
+
             ApplyPlatformQuirks();
 
             InitializeAsync();
@@ -147,20 +159,6 @@ namespace OpenTabletDriver.UX
                 {
                     new StackLayoutItem(tabControl, HorizontalAlignment.Stretch, true),
                     new StackLayoutItem(commandsPanel, HorizontalAlignment.Right)
-                }
-            };
-        }
-
-        private Control ConstructAreaConfig(Control displayControl, Control tabletControl)
-        {
-            return new StackLayout
-            {
-                Visible = false,
-                Spacing = SystemInterop.CurrentPlatform == PluginPlatform.Windows ? 0 : 5,
-                Items =
-                {
-                    new StackLayoutItem(displayControl, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(tabletControl, HorizontalAlignment.Stretch, true)
                 }
             };
         }
@@ -316,22 +314,27 @@ namespace OpenTabletDriver.UX
                     watchdog.Start();
                     watchdog.DaemonExited += (sender, e) =>
                     {
-                        var dialogResult = MessageBox.Show(
-                            this,
-                            "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart OpenTabletDriver?",
-                            "OpenTabletDriver Fatal Error",
-                            MessageBoxButtons.YesNo
-                        );
-                        switch (dialogResult)
+                        Application.Instance.AsyncInvoke(() =>
                         {
-                            case DialogResult.Yes:
-                                Application.Instance.Restart();
-                                break;
-                            case DialogResult.No:
-                            default:
-                                Application.Instance.Quit();
-                                break;
-                        }
+                            var dialogResult = MessageBox.Show(
+                                this,
+                                "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart it and reload OpenTabletDriver?",
+                                "OpenTabletDriver Fatal Error",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxType.Error
+                            );
+                            switch (dialogResult)
+                            {
+                                case DialogResult.Yes:
+                                    watchdog.Dispose();
+                                    watchdog.Start();
+                                    break;
+                                case DialogResult.No:
+                                default:
+                                    Environment.Exit(0);
+                                    break;
+                            }
+                        });
                     };
                     this.Closing += (sender, e) =>
                     {
@@ -527,6 +530,12 @@ namespace OpenTabletDriver.UX
             stringReader.Show();
         }
 
+        private void ShowTabletDebugger()
+        {
+            var debugger = new TabletDebugger();
+            debugger.Show();
+        }
+
         private async Task ExportDiagnostics()
         {
             var log = await Driver.Instance.GetCurrentLog();
@@ -551,12 +560,6 @@ namespace OpenTabletDriver.UX
                         await sw.WriteLineAsync(diagnosticDump.ToString());
                     break;
             }
-        }
-
-        private void ShowTabletDebugger()
-        {
-            var debugger = new TabletDebugger();
-            debugger.Show();
         }
     }
 }

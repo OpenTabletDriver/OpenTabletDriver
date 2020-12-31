@@ -11,14 +11,10 @@ namespace OpenTabletDriver.UX
     {
         public event EventHandler DaemonExited;
 
-        private Process daemonProcess = new Process
-        {
-            StartInfo = startInfo
-        };
+        private Process daemonProcess;
+        private Timer watchdogTimer;
 
-        private Timer watchdogTimer = new Timer(1000);
-
-        private static ProcessStartInfo startInfo => SystemInterop.CurrentPlatform switch
+        private readonly static ProcessStartInfo startInfo = SystemInterop.CurrentPlatform switch
         {
             PluginPlatform.Windows => new ProcessStartInfo
             {
@@ -45,16 +41,25 @@ namespace OpenTabletDriver.UX
 
         public void Start()
         {
+            this.daemonProcess = new()
+            {
+                StartInfo = startInfo
+            };
+            this.watchdogTimer = new(1000);
+
             this.daemonProcess.Start();
             this.watchdogTimer.Start();
             this.watchdogTimer.Elapsed += (sender, e) =>
             {
                 this.daemonProcess.Refresh();
                 if (this.daemonProcess.HasExited)
+                {
                     DaemonExited?.Invoke(this, new EventArgs());
+                    watchdogTimer.Stop();
+                }
             };
         }
-        
+
         public void Stop()
         {
             this.watchdogTimer?.Stop();

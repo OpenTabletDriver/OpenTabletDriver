@@ -5,47 +5,45 @@ using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
-    public class RpcClient<T> : IDisposable where T : class
+    public class RpcClient<T> where T : class
     {
+        private readonly string pipeName;
+        private NamedPipeClientStream stream;
+        private JsonRpc rpc;
+
+        public T Instance { private set; get; }
+        public event EventHandler Disconnected;
+
         public RpcClient(string pipeName)
         {
             this.pipeName = pipeName;
-            Reset();
         }
 
         public async Task Connect()
         {
-            await stream.ConnectAsync();
-            IsConnected = true;
-            Instance = JsonRpc.Attach<T>(stream);
+            this.stream = GetStream();
+            await this.stream.ConnectAsync();
+
+            rpc = new JsonRpc(this.stream);
+            this.Instance = this.rpc.Attach<T>();
+            rpc.StartListening();
+
+            rpc.Disconnected += (_, _) =>
+            {
+                this.stream.Dispose();
+                Disconnected?.Invoke(this, null);
+                rpc.Dispose();
+            };
         }
 
-        private string pipeName;
-        private NamedPipeClientStream stream;
-        public T Instance { private set; get; }
-        public bool IsConnected { private set; get; }
-
-        private void Reset()
-        {
-            this.stream?.Dispose();
-            this.stream = GetStream(this.pipeName);
-        }
-
-        private static NamedPipeClientStream GetStream(string name)
+        private NamedPipeClientStream GetStream()
         {
             return new NamedPipeClientStream(
                 ".",
-                name,
+                this.pipeName,
                 PipeDirection.InOut,
-                PipeOptions.Asynchronous | PipeOptions.WriteThrough
+                PipeOptions.Asynchronous | PipeOptions.WriteThrough | PipeOptions.CurrentUserOnly
             );
-        }
-
-        public void Dispose()
-        {
-            IsConnected = false;
-            stream.Close();
-            Instance = null;
         }
     }
 }
