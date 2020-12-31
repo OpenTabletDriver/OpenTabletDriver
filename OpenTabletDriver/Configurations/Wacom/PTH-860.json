@@ -52,7 +52,7 @@
       "ProductID": 856,
       "InputReportLength": 44,
       "OutputReportLength": null,
-      "ReportParser": null,
+      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},

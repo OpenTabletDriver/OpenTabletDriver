@@ -17,7 +17,7 @@
       "ProductID": 2324,
       "InputReportLength": 12,
       "OutputReportLength": 12,
-      "ReportParser": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": "ArAE",
       "DeviceStrings": {},

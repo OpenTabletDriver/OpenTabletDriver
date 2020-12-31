@@ -17,7 +17,7 @@
       "ProductID": 19,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
