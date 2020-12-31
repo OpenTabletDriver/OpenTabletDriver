@@ -13,11 +13,8 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
             {
                 new PaddingSpacerItem(),
                 new Bitmap(App.Logo.WithSize(256, 256)),
-                new TextContent
-                {
-                    "Welcome to OpenTabletDriver!",
-                    "OpenTabletDriver is an open source, cross platform, user mode tablet driver."
-                },
+                "Welcome to OpenTabletDriver!",
+                "OpenTabletDriver is an open source, cross platform, user mode tablet driver.",
                 new PaddingSpacerItem(),
             };
         }

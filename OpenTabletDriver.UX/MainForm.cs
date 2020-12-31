@@ -207,6 +207,9 @@ namespace OpenTabletDriver.UX
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
             faqUrl.Executed += (sender, e) => SystemInterop.Open(FaqUrl);
 
+            var showGuide = new Command { MenuText = "Show guide..." };
+            showGuide.Executed += async (sender, e) => await ShowFirstStartupGreeter();
+
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
 
@@ -254,7 +257,8 @@ namespace OpenTabletDriver.UX
                         Items =
                         {
                             faqUrl,
-                            exportDiagnostics
+                            exportDiagnostics,
+                            showGuide
                         }
                     }
                 },

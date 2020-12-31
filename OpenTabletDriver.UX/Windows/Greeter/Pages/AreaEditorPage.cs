@@ -24,12 +24,9 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                         Content = new DemoAreaEditor("mm", true)
                     }
                 },
-                new TextContent
-                {
-                    "You can right click the absolute output mode area editor for more options",
-                    "Aligning, resizing, and flipping your area can be done within this context menu.",
-                    "Other options such as locking aspect ratio, locking input inside of the usable area are also found here."
-                },
+                "You can right click the absolute output mode area editor for more options.",
+                "Aligning, resizing, and flipping your area can be done within this context menu.",
+                "Other options such as locking aspect ratio, locking input inside of the usable area are also found here.",
                 new PaddingSpacerItem()
             };
         }

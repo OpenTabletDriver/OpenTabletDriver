@@ -22,21 +22,37 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                         Text = "Preview",
                         Content = new StackedContent
                         {
-                            HorizontalContentAlignment = HorizontalAlignment.Center,
-                            Items = 
+                            new PaddingSpacerItem(),
+                            new StackLayoutItem
                             {
-                                new PaddingSpacerItem(),
-                                new DemoBindingDisplay(),
-                                new PaddingSpacerItem(),
-                            }
+                                HorizontalAlignment = HorizontalAlignment.Stretch,
+                                Control = new Group
+                                {
+                                    Text = "Demo Binding",
+                                    Orientation = Orientation.Horizontal,
+                                    Content = new StackLayout
+                                    {
+                                        Orientation = Orientation.Horizontal,
+                                        Items = 
+                                        {
+                                            new Panel
+                                            {
+                                                Width = 50
+                                            },
+                                            new DemoBindingDisplay
+                                            {
+                                                Width = 250
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            new PaddingSpacerItem()
                         }
                     }
                 },
-                new TextContent
-                {
-                    "Click a button to set a key or mouse binding",
-                    "Right clicking opens the advanced binding editor, which allows you to use plugin bindings."
-                },
+                "Click a button to set a key or mouse binding",
+                "Right clicking opens the advanced binding editor, which allows you to use plugin bindings.",
                 new PaddingSpacerItem(),
             };
         }
