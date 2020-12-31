@@ -25,7 +25,9 @@ namespace OpenTabletDriver.UX.Windows.Greeter
                 {
                     new WelcomePage(),
                     new AreaEditorPage(),
-                    new BindingPage()
+                    new BindingPage(),
+                    new PluginPage(),
+                    new FAQPage()
                 }
             };
 
