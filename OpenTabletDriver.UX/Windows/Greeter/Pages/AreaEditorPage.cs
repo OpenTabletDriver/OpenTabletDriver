@@ -14,7 +14,6 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
         {
             this.Content = new StackedContent
             {
-                new PaddingSpacerItem(),
                 new StackLayoutItem
                 {
                     Expand = true,
@@ -27,7 +26,6 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                 "You can right click the absolute output mode area editor for more options.",
                 "Aligning, resizing, and flipping your area can be done within this context menu.",
                 "Other options such as locking aspect ratio, locking input inside of the usable area are also found here.",
-                new PaddingSpacerItem()
             };
         }
 
@@ -36,8 +34,6 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
             public DemoAreaEditor(string unit, bool enableRotation = false)
                 : base(unit, enableRotation)
             {
-                base.Height = 256;
-
                 base.AppendCheckBoxMenuItem(
                     "Lock to usable area",
                     value => base.ChangeLockingState(value),
