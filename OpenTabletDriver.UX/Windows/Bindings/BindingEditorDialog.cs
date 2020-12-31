@@ -5,7 +5,7 @@ using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace OpenTabletDriver.UX.Windows
+namespace OpenTabletDriver.UX.Windows.Bindings
 {
     public class BindingEditorDialog : Dialog<PluginSettingStore>
     {

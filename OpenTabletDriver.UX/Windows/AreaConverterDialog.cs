@@ -11,19 +11,14 @@ namespace OpenTabletDriver.UX.Windows
         public AreaConverterDialog()
         {
             base.Title = "Area Converter";
-            base.Size = new Size(450, 150);
-            base.MinimumSize = base.Size;
 
             App.Driver.Instance.TabletChanged += (sender, newState) => SelectConverterForTablet(newState);
 
             _ = Refresh();
         }
 
-        private TypeComboBox<IAreaConverter> converterList = new TypeComboBox<IAreaConverter>();
-        private NumericMaskedTextBox<float> top = new NumericMaskedTextBox<float>(),
-            bottom = new NumericMaskedTextBox<float>(),
-            left = new NumericMaskedTextBox<float>(),
-            right = new NumericMaskedTextBox<float>();
+        private TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
+        private NumericMaskedTextBox<float> top, bottom, left, right;
 
         private TabletState tabletState;
 
@@ -61,8 +56,24 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            new Group("Top", top, Orientation.Horizontal),
-                                            new Group("Left", left, Orientation.Horizontal)
+                                            new Group
+                                            {
+                                                Text = "Top",
+                                                Orientation = Orientation.Horizontal,
+                                                Content = top = new NumericMaskedTextBox<float>
+                                                {
+                                                    PlaceholderText = "0"
+                                                }
+                                            },
+                                            new Group
+                                            {
+                                                Text = "Left",
+                                                Orientation = Orientation.Horizontal,
+                                                Content = left = new NumericMaskedTextBox<float>
+                                                {
+                                                    PlaceholderText = "0"
+                                                }
+                                            }
                                         }
                                     }
                                 },
@@ -75,8 +86,24 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            new Group("Bottom", bottom, Orientation.Horizontal),
-                                            new Group("Right", right, Orientation.Horizontal)
+                                            new Group
+                                            {
+                                                Text = "Bottom",
+                                                Orientation = Orientation.Horizontal,
+                                                Content = bottom = new NumericMaskedTextBox<float>
+                                                {
+                                                    PlaceholderText = "0"
+                                                }
+                                            },
+                                            new Group
+                                            {
+                                                Text = "Right",
+                                                Orientation = Orientation.Horizontal,
+                                                Content = right = new NumericMaskedTextBox<float>
+                                                {
+                                                    PlaceholderText = "0"
+                                                }
+                                            }
                                         }
                                     }
                                 }

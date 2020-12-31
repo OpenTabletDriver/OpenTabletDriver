@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -7,22 +8,36 @@ using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
-    public class TypeComboBox<T> : ComboBox where T : class
+    public class TypeDropDown<T> : DropDown where T : class
     {
-        public TypeComboBox()
+        public TypeDropDown()
         {
-            this.DataStore = Types = AppInfo.PluginManager.GetChildTypes<T>();
             this.ItemTextBinding = Binding.Property<TypeInfo, string>(t => GetFriendlyName(t));
             this.ItemKeyBinding = Binding.Property<TypeInfo, string>(t => t.FullName);
+
+            Refresh();
         }
 
-        public IReadOnlyCollection<TypeInfo> Types { get; }
+        public IEnumerable<TypeInfo> Types { protected set; get; }
+
+        public void Refresh()
+        {
+            this.DataStore = Types = from type in AppInfo.PluginManager.GetChildTypes<T>()
+                orderby GetFriendlyName(type)
+                select type;
+        }
+
+        public TypeInfo SelectedType
+        {
+            set => this.SelectedValue = value;
+            get => (TypeInfo)this.SelectedValue;
+        }
 
         public T ConstructSelectedType(params object[] args)
         {
             args ??= Array.Empty<object>();
-            var type = this.SelectedValue as TypeInfo;
-            return AppInfo.PluginManager.ConstructObject<T>(type.FullName, args);
+            var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedType);
+            return pluginRef.Construct<T>();
         }
 
         public void Select(Func<T, bool> predicate)
@@ -37,6 +52,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 }
             }
         }
+
+
 
         protected string GetFriendlyName(TypeInfo t)
         {
