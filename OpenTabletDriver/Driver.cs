@@ -206,9 +206,12 @@ namespace OpenTabletDriver
                 try
                 {
                     AuxReader.ReportStream.SetFeature(featureInitReport);
-                    Log.Debug("Device", $"HID Feature '{BitConverter.ToString(featureInitReport)}' succesfully set");
+                    Log.Debug("Device", "Set aux feature: " + BitConverter.ToString(featureInitReport));
                 }
-                catch {}
+                catch
+                {
+                    Log.Write("Device", "Failed to set feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
+                }
             }
 
             if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
@@ -216,9 +219,12 @@ namespace OpenTabletDriver
                 try
                 {
                     AuxReader.ReportStream.Write(outputInitReport);
-                    Log.Debug("Device", $"HID Output '{BitConverter.ToString(outputInitReport)}' successfully set");
+                    Log.Debug("Device", "Set output: " + BitConverter.ToString(outputInitReport));
                 }
-                catch {}
+                catch
+                {
+                    Log.Write("Device", "Failed to set output: " + BitConverter.ToString(outputInitReport), LogLevel.Warning);
+                }
             }
         }
 
