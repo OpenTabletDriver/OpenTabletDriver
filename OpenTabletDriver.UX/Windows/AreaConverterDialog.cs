@@ -27,20 +27,9 @@ namespace OpenTabletDriver.UX.Windows
 
         protected void RefreshLabel()
         {
-            IAreaConverter converter = null;
-            try
-            {
-                converter = converterList.ConstructSelectedType();
-            }
-            catch { }
-
-            if (converter != null)
-            {
-                foreach (var (group, text) in groups.Zip(converter.Label, (group, text) => (group, text)))
-                {
-                    group.Text = text;
-                }
-            }
+            var converter = converterList.ConstructSelectedType();
+            foreach (var (group, text) in groups.Zip(converter.Label, (group, text) => (group, text)))
+                group.Text = text;
         }
 
         protected async Task Refresh()
