@@ -5,10 +5,10 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Conversion
 {
-    [PluginName("Huion")]
+    [PluginName("Huion, Gaomon")]
     public class PercentageAreaConverter : IAreaConverter
     {
-        public virtual DeviceVendor Vendor => DeviceVendor.Huion;
+        public virtual DeviceVendor Vendor => DeviceVendor.Huion & DeviceVendor.Gaomon;
 
         public Area Convert(TabletState tablet, double left, double top, double right, double bottom)
         {
