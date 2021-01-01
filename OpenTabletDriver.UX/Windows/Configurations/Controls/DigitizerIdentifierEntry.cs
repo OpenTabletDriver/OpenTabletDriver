@@ -5,7 +5,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 {
     using static ParseTools;
     

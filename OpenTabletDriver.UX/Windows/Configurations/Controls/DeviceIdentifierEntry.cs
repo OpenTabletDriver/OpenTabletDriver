@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 {
     using static ParseTools;
 
@@ -44,7 +43,7 @@ namespace OpenTabletDriver.UX.Controls
 
             base.contentAlignment = Eto.Forms.VerticalAlignment.Top;
             base.deleteButtonAlignment = Eto.Forms.VerticalAlignment.Top;
-            
+
             base.Build();
         }
 
@@ -98,11 +97,28 @@ namespace OpenTabletDriver.UX.Controls
                 () => GetCurrent().OutputReportLength.ToString(),
                 (o) => ModifyCurrent(id => id.OutputReportLength = ToNullableUInt(o))
             );
-            yield return new InputBox("Report Parser",
+
+            var reportParser = new TypeDropDown<IReportParser<IDeviceReport>>();
+            reportParser.SelectedKeyBinding.Bind(
                 () => GetCurrent().ReportParser,
-                (o) => ModifyCurrent(id => id.ReportParser = o),
-                this.reportParser.FullName
+                (o) => ModifyCurrent(id => id.ReportParser = o)
             );
+            yield return new Group
+            {
+                Orientation = Orientation.Horizontal,
+                Text = "Report Parser",
+                Content = new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalContentAlignment = Eto.Forms.HorizontalAlignment.Right,
+                    Items =
+                    {
+                        new PaddingSpacerItem(),
+                        reportParser
+                    }
+                }
+            };
+
             yield return new InputBox("Feature Initialization Report",
                 () => ToHexString(GetCurrent().FeatureInitReport),
                 (o) => ModifyCurrent(id => id.FeatureInitReport = ToByteArray(o))

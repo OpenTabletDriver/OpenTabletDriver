@@ -11,6 +11,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
+using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
 
 namespace OpenTabletDriver.UX
