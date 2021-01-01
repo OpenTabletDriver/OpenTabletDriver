@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
@@ -15,15 +16,51 @@ namespace OpenTabletDriver.UX.Windows
             App.Driver.Instance.TabletChanged += (sender, newState) => SelectConverterForTablet(newState);
 
             _ = Refresh();
+            converterList.SelectedIndexChanged += (_, _) => RefreshLabel();
         }
 
-        private TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
-        private NumericMaskedTextBox<float> top, bottom, left, right;
+        private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
+        private readonly Group[] groups = new Group[4];
+        private readonly NumericMaskedTextBox<float>[] numberBoxes = new NumericMaskedTextBox<float>[4];
 
         private TabletState tabletState;
 
+        protected void RefreshLabel()
+        {
+            IAreaConverter converter = null;
+            try
+            {
+                converter = converterList.ConstructSelectedType();
+            }
+            catch { }
+
+            if (converter != null)
+            {
+                foreach (var (group, text) in groups.Zip(converter.Label, (group, text) => (group, text)))
+                {
+                    group.Text = text;
+                }
+            }
+        }
+
         protected async Task Refresh()
         {
+            for (int i = 0; i < groups.Length; i++)
+            {
+                var numberBox = new NumericMaskedTextBox<float>
+                {
+                    PlaceholderText = "0"
+                };
+                var group = new Group
+                {
+                    Orientation = Orientation.Horizontal,
+                    Content = numberBox
+                };
+
+                groups[i] = group;
+                numberBoxes[i] = numberBox;
+            }
+
             this.Content = new StackLayout
             {
                 Orientation = Orientation.Vertical,
@@ -56,24 +93,8 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            new Group
-                                            {
-                                                Text = "Top",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = top = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            },
-                                            new Group
-                                            {
-                                                Text = "Left",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = left = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            }
+                                            groups[0],
+                                            groups[1]
                                         }
                                     }
                                 },
@@ -86,24 +107,8 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            new Group
-                                            {
-                                                Text = "Bottom",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = bottom = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            },
-                                            new Group
-                                            {
-                                                Text = "Right",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = right = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            }
+                                            groups[2],
+                                            groups[3]
                                         }
                                     }
                                 }
@@ -135,10 +140,8 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
-            float conversionFactor = digitizer.MaxX / digitizer.Width;
-
             var converter = this.converterList.ConstructSelectedType();
-            var convertedArea = converter.Convert(tabletState, left.Value, top.Value, right.Value, bottom.Value);
+            var convertedArea = converter.Convert(tabletState, numberBoxes[0].Value, numberBoxes[1].Value, numberBoxes[2].Value, numberBoxes[3].Value);
 
             App.Settings.SetTabletArea(convertedArea);
 
