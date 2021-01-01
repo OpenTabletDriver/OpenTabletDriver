@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.Controls
             this.Orientation = Orientation.Vertical;
 
             var filterSelector = new FilterDropDown();
-            filterSelector.FilterChanged += (sender, filter) => this.messageStore.Filter = filter;
+            filterSelector.SelectedValueChanged += (sender, filter) => this.messageStore.Filter = filterSelector.SelectedValue;
 
             var toolbar = new StackLayout
             {
@@ -46,6 +46,18 @@ namespace OpenTabletDriver.UX.Controls
                 Items = 
                 {
                     copyCommand
+                }
+            };
+
+            messageList.KeyDown += (sender, e) =>
+            {
+                switch (e.Modifiers, e.Key)
+                {
+                    case (Keys.Control, Keys.C):
+                    {
+                        copyCommand.Execute();
+                        break;
+                    }
                 }
             };
 
@@ -131,35 +143,24 @@ namespace OpenTabletDriver.UX.Controls
 
         private static void Copy(IEnumerable<LogMessage> messages)
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (var message in messages)
+            if (messages.Any())
             {
-                var line = Log.GetStringFormat(message);
-                sb.AppendLine(line);
+                StringBuilder sb = new StringBuilder();
+                foreach (var message in messages)
+                {
+                    var line = Log.GetStringFormat(message);
+                    sb.AppendLine(line);
+                }
+                Clipboard.Instance.Clear();
+                Clipboard.Instance.Text = sb.ToString();
             }
-            Clipboard.Instance.Clear();
-            Clipboard.Instance.Text = sb.ToString();
         }
 
-        private class FilterDropDown  : DropDown
+        private class FilterDropDown  : EnumDropDown<LogLevel>
         {
             public FilterDropDown(LogLevel activeFilter = LogLevel.Info)
             {
-                foreach (var item in logLevels)
-                    base.Items.Add(item.GetName());
-
-                base.SelectedKey = activeFilter.GetName();
-                base.SelectedIndexChanged += (sender, e) => OnFilterChanged(base.SelectedIndex);
-            }
-
-            private static readonly LogLevel[] logLevels = EnumTools.GetValues<LogLevel>();
-
-            public event EventHandler<LogLevel> FilterChanged;
-
-            protected virtual void OnFilterChanged(int index)
-            {
-                var filter = logLevels[index];
-                FilterChanged?.Invoke(this, filter);
+                base.SelectedValue = activeFilter;
             }
         }
     }
