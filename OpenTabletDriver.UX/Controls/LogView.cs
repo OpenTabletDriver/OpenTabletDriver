@@ -17,7 +17,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             this.Orientation = Orientation.Vertical;
 
-            var filterSelector = new FilterComboBox();
+            var filterSelector = new FilterDropDown();
             filterSelector.FilterChanged += (sender, filter) => this.messageStore.Filter = filter;
 
             var toolbar = new StackLayout
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.UX.Controls
             messageList.DataStore = this.messageStore;
             this.messageStore.CollectionChanged += (sender, e) =>
             {
-                Application.Instance.AsyncInvoke(() => 
+                Application.Instance.AsyncInvoke(() =>
                 {
                     if (this.messageStore.Count > 0)
                     {
@@ -141,9 +141,9 @@ namespace OpenTabletDriver.UX.Controls
             Clipboard.Instance.Text = sb.ToString();
         }
 
-        private class FilterComboBox  : ComboBox
+        private class FilterDropDown  : DropDown
         {
-            public FilterComboBox(LogLevel activeFilter = LogLevel.Info)
+            public FilterDropDown(LogLevel activeFilter = LogLevel.Info)
             {
                 foreach (var item in logLevels)
                     base.Items.Add(item.GetName());
@@ -151,7 +151,7 @@ namespace OpenTabletDriver.UX.Controls
                 base.SelectedKey = activeFilter.GetName();
                 base.SelectedIndexChanged += (sender, e) => OnFilterChanged(base.SelectedIndex);
             }
-            
+
             private static readonly LogLevel[] logLevels = EnumTools.GetValues<LogLevel>();
 
             public event EventHandler<LogLevel> FilterChanged;
