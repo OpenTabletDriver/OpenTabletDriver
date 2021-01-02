@@ -29,8 +29,8 @@ namespace OpenTabletDriver.UX.Windows
         {
             var converter = converterList.ConstructSelectedType();
             groups[0].Text = converter.Top;
-            groups[1].Text = converter.Bottom;
-            groups[2].Text = converter.Left;
+            groups[1].Text = converter.Left;
+            groups[2].Text = converter.Bottom;
             groups[3].Text = converter.Right;
         }
 

@@ -11,8 +11,8 @@ namespace OpenTabletDriver.Desktop.Conversion
         public virtual DeviceVendor Vendor => DeviceVendor.Wacom & DeviceVendor.VEIKK;
 
         public string Top => "Top";
-        public string Bottom => "Bottom";
         public string Left => "Left";
+        public string Bottom => "Bottom";
         public string Right => "Right";
 
         protected double GetConversionFactor(TabletState tablet)
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Desktop.Conversion
             return digitizer.MaxX / digitizer.Width;
         }
 
-        public Area Convert(TabletState tablet, double top, double bottom, double left, double right)
+        public Area Convert(TabletState tablet, double top, double left, double bottom, double right)
         {
             double conversionFactor = GetConversionFactor(tablet);
             var width = (right - left) / conversionFactor;
