@@ -11,9 +11,9 @@ namespace OpenTabletDriver.UX.Controls
         {
             this.DataContext = new AreaViewModel();
             this.Paint += (sender, e) => Draw(e.Graphics);
-            
+
             ViewModel.Unit = unit;
-            ViewModel.PropertyChanged += (sender, e) => this.Invalidate();
+            ViewModel.PropertyChanged += (sender, e) => Application.Instance.AsyncInvoke(() => this.Invalidate());
         }
 
         public AreaViewModel ViewModel
