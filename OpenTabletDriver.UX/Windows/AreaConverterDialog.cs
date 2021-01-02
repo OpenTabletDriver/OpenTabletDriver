@@ -28,8 +28,10 @@ namespace OpenTabletDriver.UX.Windows
         protected void RefreshLabel()
         {
             var converter = converterList.ConstructSelectedType();
-            foreach (var (group, text) in groups.Zip(converter.Label, (group, text) => (group, text)))
-                group.Text = text;
+            groups[0].Text = converter.Top;
+            groups[1].Text = converter.Bottom;
+            groups[2].Text = converter.Left;
+            groups[3].Text = converter.Right;
         }
 
         protected async Task Refresh()

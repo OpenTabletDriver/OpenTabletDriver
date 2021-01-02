@@ -10,7 +10,10 @@ namespace OpenTabletDriver.Desktop.Conversion
     {
         public virtual DeviceVendor Vendor => DeviceVendor.Huion & DeviceVendor.Gaomon;
 
-        public string[] Label => new string[] { "Up", "Left", "Down", "Right" };
+        public string Top => "Up";
+        public string Left => "Left";
+        public string Bottom => "Down";
+        public string Right => "Right";
 
         public Area Convert(TabletState tablet, double up, double left, double down, double right)
         {

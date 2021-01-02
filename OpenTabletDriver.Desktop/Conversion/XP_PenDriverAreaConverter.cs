@@ -10,11 +10,14 @@ namespace OpenTabletDriver.Desktop.Conversion
     {
         public virtual DeviceVendor Vendor => DeviceVendor.XP_Pen;
 
-        public string[] Label => new string[] { "W", "X", "H", "Y" };
+        public string Top => "W";
+        public string Left => "H";
+        public string Bottom => "X";
+        public string Right => "Y";
 
         private const float XP_PEN_AREA_CONSTANT = 3.937f;
 
-        public Area Convert(TabletState tablet, double w, double x, double h, double y)
+        public Area Convert(TabletState tablet, double w, double h, double x, double y)
         {
             double conversionFactor = XP_PEN_AREA_CONSTANT;
             var width = w / conversionFactor;
