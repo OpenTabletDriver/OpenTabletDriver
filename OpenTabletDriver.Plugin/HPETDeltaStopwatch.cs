@@ -1,21 +1,19 @@
 using System;
 using System.Diagnostics;
 
-namespace OpenTabletDriver.Plugin.Utils
+namespace OpenTabletDriver.Plugin.Timing
 {
-    public class DeltaStopwatch
+    public class HPETDeltaStopwatch
     {
-        public DeltaStopwatch(bool startRunning = true)
+        public HPETDeltaStopwatch(bool startRunning = true)
         {
             isRunning = startRunning;
             start = isRunning ? internalWatch.Elapsed : default;
         }
 
         public static TimeSpan RunitmeElapsed => internalWatch.Elapsed;
-        public static double RuntimeElapsedMs => RunitmeElapsed.TotalMilliseconds;
 
         public TimeSpan Elapsed => isRunning ? internalWatch.Elapsed - start : end - start;
-        public double ElapsedMs => Elapsed.TotalMilliseconds;
 
         public void Start()
         {
@@ -42,7 +40,6 @@ namespace OpenTabletDriver.Plugin.Utils
                 return delta;
             }
         }
-        public double RestartMs() => Restart().TotalMilliseconds;
 
         public TimeSpan Stop()
         {
@@ -53,7 +50,6 @@ namespace OpenTabletDriver.Plugin.Utils
             }
             return end - start;
         }
-        public double StopMs() => Stop().TotalMilliseconds;
 
         public TimeSpan Reset()
         {
@@ -61,7 +57,6 @@ namespace OpenTabletDriver.Plugin.Utils
             start = end = default;
             return delta;
         }
-        public double ResetMs() => Reset().TotalMilliseconds;
 
         private static Stopwatch internalWatch = Stopwatch.StartNew();
         protected TimeSpan start;

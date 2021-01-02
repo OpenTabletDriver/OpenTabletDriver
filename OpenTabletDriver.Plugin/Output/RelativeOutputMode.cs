@@ -5,7 +5,7 @@ using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Utils;
+using OpenTabletDriver.Plugin.Timing;
 
 namespace OpenTabletDriver.Plugin.Output
 {
@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Plugin.Output
     {
         private IList<IFilter> filters, preFilters, postFilters;
         private Vector2? lastPos;
-        private DeltaStopwatch stopwatch = new DeltaStopwatch(true);
+        private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
         private bool skipReport = false;
         private Matrix3x2 transformationMatrix;
 
