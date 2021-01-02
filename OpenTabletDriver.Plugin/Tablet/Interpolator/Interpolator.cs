@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Timers;
+using OpenTabletDriver.Plugin.Timing;
 
 namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 {
@@ -12,6 +13,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             this.scheduler = scheduler;
             this.scheduler.Elapsed += InterpolateHook;
             Info.Driver.ReportRecieved += HandleReport;
+            reportStopwatch.Start();
         }
 
         public abstract SyntheticTabletReport Interpolate();
@@ -20,7 +22,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         protected double reportMsAvg = 5.0f;
         protected bool enabled;
         protected ITimer scheduler;
-        protected DateTime lastTime = DateTime.UtcNow;
+        protected HPETDeltaStopwatch reportStopwatch = new HPETDeltaStopwatch(true);
         protected readonly object stateLock = new object();
 
         protected bool inRange;
@@ -68,9 +70,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                 {
                     lock (this.stateLock)
                     {
-                        var timeNow = DateTime.UtcNow;
-                        this.reportMsAvg += ((timeNow - this.lastTime).TotalMilliseconds - this.reportMsAvg) / 50.0f;
-                        this.lastTime = timeNow;
+                        this.reportMsAvg += (reportStopwatch.Restart().TotalMilliseconds - reportMsAvg) / 10.0f;
                         this.InRange = true;
 
                         if (Enabled)
@@ -94,7 +94,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             lock (this.stateLock)
             {
                 var limit = Limiter.Transform(this.reportMsAvg);
-                if (((DateTime.UtcNow - this.lastTime).TotalMilliseconds < limit) && this.InRange)
+                if ((reportStopwatch.Elapsed.TotalMilliseconds < limit) && this.InRange)
                 {
                     var report = Interpolate();
                     Info.Driver.HandleReport(report);
