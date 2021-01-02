@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 {
     public class DigitizerIdentifierEditor : DeviceIdentifierEditor<DigitizerIdentifier>
     {

@@ -4,7 +4,7 @@ using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 {
     public abstract class DeviceIdentifierEditor<T> : CollectionEditor<List<T>> where T : DeviceIdentifier, new()
     {
@@ -40,7 +40,7 @@ namespace OpenTabletDriver.UX.Controls
         protected override void Refresh()
         {
             entries.Items.Clear();
-            for (int i = 0; i < base.getValue().Count; i++)
+            for (int i = 0; i < base.getValue()?.Count; i++)
                 AddItem(i);
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 {
     public class AuxiliaryIdentifierEditor : DeviceIdentifierEditor<DeviceIdentifier>
     {

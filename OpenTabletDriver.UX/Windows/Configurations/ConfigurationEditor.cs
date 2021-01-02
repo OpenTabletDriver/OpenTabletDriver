@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,27 +11,18 @@ using HidSharp;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
-using OpenTabletDriver.UX.Tools;
+using OpenTabletDriver.UX.Windows.Configurations.Controls;
 
-namespace OpenTabletDriver.UX.Windows
+namespace OpenTabletDriver.UX.Windows.Configurations
 {
     public class ConfigurationEditor : Form
     {
         public ConfigurationEditor()
         {
             base.Title = "Configuration Editor";
-            base.ClientSize = new Size(960 - 50, 730 - 50);
-            base.MinimumSize = new Size(960 - 50, 730 - 50);
+            base.ClientSize = new Size(910, 680);
             base.Icon = App.Logo.WithSize(App.Logo.Size);
-
-            // Main Controls
-            this.configList.SelectedIndexChanged += (sender, e) =>
-            {
-                if (this.configList.SelectedIndex >= 0)
-                    SelectedConfiguration = Configurations[this.configList.SelectedIndex];
-            };
 
             base.Content = new Splitter
             {
@@ -39,7 +31,7 @@ namespace OpenTabletDriver.UX.Windows
                 Panel1 = this.configList,
                 Panel2 = new Scrollable
                 {
-                    Content = this.configControls,
+                    Content = this.configurationSettings,
                     Padding = new Padding(5)
                 },
             };
@@ -58,13 +50,13 @@ namespace OpenTabletDriver.UX.Windows
             saveToDirectory.Executed += (sender, e) => SaveConfigurationsDialog();
 
             var newConfiguration = new Command { ToolBarText = "New configuration", Shortcut = Application.Instance.CommonModifier | Keys.N };
-            newConfiguration.Executed += (sender, e) => CreateNewConfiguration();
+            newConfiguration.Executed += (sender, e) => configList.CreateConfiguration();
 
             var deleteConfiguration = new Command { ToolBarText = "Delete configuration" };
-            deleteConfiguration.Executed += (sender, e) => DeleteConfiguration(SelectedConfiguration);
+            deleteConfiguration.Executed += (sender, e) => configList.DeleteConfiguration();
 
             var generateConfiguration = new Command { ToolBarText = "Generate configuration..." };
-            generateConfiguration.Executed += async (sender, e) => await GenerateConfiguration();
+            generateConfiguration.Executed += async (sender, e) => await configList.GenerateConfiguration();
 
             // Menu
             base.Menu = new MenuBar
@@ -96,54 +88,38 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            _ = InitializeAsync();
+            this.configList.SelectedValueChanged += (sender, e) =>
+            {
+                this.configurationSettings.Content?.Dispose();
+                this.configurationSettings.Content = new ConfigurationSettings(SelectedConfiguration);
+            };
+            Refresh();
         }
 
-        private async Task InitializeAsync()
+        public void Refresh()
         {
-            var appinfo = await App.Driver.Instance.GetApplicationInfo();
-            var configDir = new DirectoryInfo(appinfo.ConfigurationDirectory);
+            var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
             var sortedConfigs = from config in ReadConfigurations(configDir)
-                                orderby config.Name
-                                select config;
-            Configurations = new List<TabletConfiguration>(sortedConfigs);
+                orderby config.Name
+                select config;
+            this.configList.Source = new ObservableCollection<TabletConfiguration>(sortedConfigs);
             this.configList.SelectedIndex = 0;
         }
 
-        private List<TabletConfiguration> configs;
-        private List<TabletConfiguration> Configurations
-        {
-            set
-            {
-                this.configs = value;
-                this.configList.Items.Clear();
-                foreach (var config in Configurations)
-                    this.configList.Items.Add(config.Name);
-            }
-            get => this.configs;
-        }
+        protected ObservableCollection<TabletConfiguration> Configurations { set; get; }
 
-        private TabletConfiguration selected;
-        private TabletConfiguration SelectedConfiguration
-        {
-            set
-            {
-                this.selected = value;
-                Refresh();
-            }
-            get => this.selected;
-        }
+        protected TabletConfiguration SelectedConfiguration => configList.SelectedItem;
 
-        private ListBox configList = new ListBox();
-        private StackView configControls = new StackView();
+        private ConfigurationList configList = new ConfigurationList();
+        private Panel configurationSettings = new Panel();
 
         private static readonly Regex NameRegex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
 
-        private List<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
+        private ObservableCollection<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
             var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
                 select Serialization.Deserialize<TabletConfiguration>(file);
-            return new List<TabletConfiguration>(configs);
+            return new ObservableCollection<TabletConfiguration>(configs);
         }
 
         private void WriteConfigurations(IEnumerable<TabletConfiguration> configs, DirectoryInfo dir)
@@ -194,84 +170,100 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        private void CreateNewConfiguration()
+        private class ConfigurationList : ListBox<TabletConfiguration>
         {
-            var newTablet = new TabletConfiguration
+            public ConfigurationList()
             {
-                Name = "New Tablet"
-            };
-            Configurations = Configurations.Append(newTablet).ToList();
-            this.configList.SelectedIndex = Configurations.IndexOf(newTablet);
-        }
+                this.ItemTextBinding = Binding.Property<TabletConfiguration, string>(t => t.Name);
+                this.SelectedIndex = 0;
+            }
 
-        private void DeleteConfiguration(TabletConfiguration config)
-        {
-            Configurations = Configurations.Where(c => c != config).ToList();
-            if (SelectedConfiguration == config)
-                this.configList.SelectedIndex = Configurations.Count - 1;
-        }
-
-        private async Task GenerateConfiguration()
-        {
-            var dialog = new DeviceListDialog();
-            if (await dialog.ShowModalAsync() is HidDevice device)
+            public void CreateConfiguration()
             {
-                try
+                var config = new TabletConfiguration
                 {
-                    var generatedConfig = new TabletConfiguration
+                    Name = "New Tablet"
+                };
+                AddConfiguration(config);
+            }
+
+            public void AddConfiguration(TabletConfiguration config)
+            {
+                base.Source.Add(config);
+                base.SelectedIndex = base.Source.IndexOf(config);
+            }
+
+            public void DeleteConfiguration() => DeleteConfiguration(this.SelectedItem);
+
+            public void DeleteConfiguration(TabletConfiguration config)
+            {
+                base.SelectedIndex--;
+                base.Source.Remove(config);
+            }
+
+            public async Task GenerateConfiguration()
+            {
+                var dialog = new DeviceListDialog();
+                if (await dialog.ShowModalAsync() is HidDevice device)
+                {
+                    try
                     {
-                        Name = device.GetManufacturer() + " " + device.GetProductName(),
-                        DigitizerIdentifiers =
+                        var generatedConfig = new TabletConfiguration
                         {
-                            new DigitizerIdentifier
+                            Name = device.GetManufacturer() + " " + device.GetProductName(),
+                            DigitizerIdentifiers =
                             {
-                                VendorID = device.VendorID,
-                                ProductID = device.ProductID,
-                                InputReportLength = (uint)device.GetMaxInputReportLength(),
-                                OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                                new DigitizerIdentifier
+                                {
+                                    VendorID = device.VendorID,
+                                    ProductID = device.ProductID,
+                                    InputReportLength = (uint)device.GetMaxInputReportLength(),
+                                    OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                                }
                             }
-                        }
-                    };
-                    Configurations = Configurations.Append(generatedConfig).ToList();
-                    this.configList.SelectedIndex = Configurations.IndexOf(generatedConfig);
-                }
-                catch (Exception ex)
-                {
-                    Log.Exception(ex);
+                        };
+                        AddConfiguration(generatedConfig);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Exception(ex);
+                    }
                 }
             }
         }
 
-        private void Refresh()
+        private class ConfigurationSettings : Panel
         {
-            this.configControls.Items.Clear();
-            this.configControls.AddControls(GetPropertyControls());
-        }
-
-        private IEnumerable<Control> GetPropertyControls()
-        {
-            yield return new InputBox("Name",
-                () => SelectedConfiguration.Name,
-                (o) => SelectedConfiguration.Name = o,
-                textboxWidth: 500
-            );
-
-            yield return new DigitizerIdentifierEditor(
-                "Digitizer Identifiers",
-                () => SelectedConfiguration.DigitizerIdentifiers,
-                (o) => SelectedConfiguration.DigitizerIdentifiers = o
-            );
-
-            yield return new AuxiliaryIdentifierEditor(
-                "Auxiliary Device Identifiers",
-                () => SelectedConfiguration.AuxilaryDeviceIdentifiers,
-                (o) => SelectedConfiguration.AuxilaryDeviceIdentifiers = o
-            );
-
-            yield return new DictionaryEditor("Attributes",
-                () => SelectedConfiguration.Attributes,
-                (o) => SelectedConfiguration.Attributes = o
-            );
+            public ConfigurationSettings(TabletConfiguration config)
+            {
+                base.Content = new StackLayout
+                {
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Items =
+                    {
+                        new InputBox(
+                            "Name",
+                            () => config.Name,
+                            (s) => config.Name = s
+                        ),
+                        new DigitizerIdentifierEditor(
+                            "Digitizer Identifiers",
+                            () => config.DigitizerIdentifiers,
+                            (o) => config.DigitizerIdentifiers = o
+                        ),
+                        new AuxiliaryIdentifierEditor(
+                            "Auxiliary Device Identifiers",
+                            () => config.AuxilaryDeviceIdentifiers,
+                            (o) => config.AuxilaryDeviceIdentifiers = o
+                        ),
+                        new DictionaryEditor(
+                            "Attributes",
+                            () => config.Attributes,
+                            (o) => config.Attributes = o
+                        )
+                    }
+                };
+            }
         }
     }
 }
