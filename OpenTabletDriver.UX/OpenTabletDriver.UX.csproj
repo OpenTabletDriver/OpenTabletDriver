@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Forms" Version="2.5.8" />
+    <PackageReference Include="Eto.Forms" Version="2.5.9" />
   </ItemGroup>
   
   <ItemGroup Label="Project References">
