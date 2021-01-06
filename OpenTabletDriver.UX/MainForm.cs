@@ -523,12 +523,8 @@ namespace OpenTabletDriver.UX
 
         private async Task ShowFirstStartupGreeter()
         {
-            this.Visible = false;
-
             var greeter = new StartupGreeterWindow();
             await greeter.ShowModalAsync();
-
-            this.Visible = true;
         }
 
         private void ShowConfigurationEditor()
