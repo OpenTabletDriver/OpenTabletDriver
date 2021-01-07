@@ -35,9 +35,13 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public T ConstructSelectedType(params object[] args)
         {
-            args ??= Array.Empty<object>();
-            var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedType);
-            return pluginRef.Construct<T>();
+            if (SelectedType != null)
+            {
+                args ??= Array.Empty<object>();
+                var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedType);
+                return pluginRef.Construct<T>();
+            }
+            return null;
         }
 
         public void Select(Func<T, bool> predicate)
