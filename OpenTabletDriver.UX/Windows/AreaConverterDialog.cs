@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Eto.Drawing;
+﻿using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -14,43 +12,56 @@ namespace OpenTabletDriver.UX.Windows
             base.Title = "Area Converter";
 
             App.Driver.Instance.TabletChanged += (sender, newState) => SelectConverterForTablet(newState);
-
-            _ = Refresh();
-            converterList.SelectedIndexChanged += (_, _) => RefreshLabel();
+            converterList.SelectedIndexChanged += (sender, e) => Refresh();
+            _ = InitializeAsync();
         }
 
         private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
-        private readonly Group[] groups = new Group[4];
-        private readonly NumericMaskedTextBox<float>[] numberBoxes = new NumericMaskedTextBox<float>[4];
-
+        private Group topGroup, leftGroup, bottomGroup, rightGroup;
+        private NumericMaskedTextBox<float> top, left, bottom, right;
+        private Button applyButton;
         private TabletState tabletState;
 
-        protected void RefreshLabel()
+        protected void Refresh()
         {
             var converter = converterList.ConstructSelectedType();
-            groups[0].Text = converter.Top;
-            groups[1].Text = converter.Left;
-            groups[2].Text = converter.Bottom;
-            groups[3].Text = converter.Right;
+            topGroup.Text = converter.Top;
+            leftGroup.Text = converter.Left;
+            bottomGroup.Text = converter.Bottom;
+            rightGroup.Text = converter.Right;
+            applyButton.Enabled = true;
         }
 
-        protected async Task Refresh()
+        protected async Task InitializeAsync()
         {
-            for (int i = 0; i < groups.Length; i++)
+            topGroup = new Group
             {
-                var numberBox = new NumericMaskedTextBox<float>
+                Content = top = new NumericMaskedTextBox<float>
                 {
                     PlaceholderText = "0"
-                };
-                var group = new Group
+                }
+            };
+            leftGroup = new Group
+            {
+                Content = left = new NumericMaskedTextBox<float>
                 {
-                    Orientation = Orientation.Horizontal,
-                    Content = numberBox
-                };
-
-                groups[i] = group;
-                numberBoxes[i] = numberBox;
-            }
+                    PlaceholderText = "0"
+                }
+            };
+            bottomGroup = new Group
+            {
+                Content = bottom = new NumericMaskedTextBox<float>
+                {
+                    PlaceholderText = "0"
+                }
+            };
+            rightGroup = new Group
+            {
+                Content = right = new NumericMaskedTextBox<float>
+                {
+                    PlaceholderText = "0"
+                }
+            };
 
             this.Content = new StackLayout
             {
@@ -84,8 +95,8 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            groups[0],
-                                            groups[1]
+                                            topGroup,
+                                            leftGroup
                                         }
                                     }
                                 },
@@ -98,21 +109,21 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            groups[2],
-                                            groups[3]
+                                            bottomGroup,
+                                            rightGroup
                                         }
                                     }
                                 }
                             }
                         }
                     },
-                    new StackLayoutItem(null, true),
                     new StackLayoutItem
                     {
                         HorizontalAlignment = HorizontalAlignment.Right,
-                        Control = new Button((sender, e) => ConvertArea())
+                        Control = applyButton = new Button((sender, e) => ConvertArea())
                         {
-                            Text = "Apply"
+                            Text = "Apply",
+                            Enabled = false
                         }
                     }
                 }
@@ -132,7 +143,7 @@ namespace OpenTabletDriver.UX.Windows
             }
 
             var converter = this.converterList.ConstructSelectedType();
-            var convertedArea = converter.Convert(tabletState, numberBoxes[0].Value, numberBoxes[1].Value, numberBoxes[2].Value, numberBoxes[3].Value);
+            var convertedArea = converter.Convert(tabletState, top.Value, left.Value, bottom.Value, right.Value);
 
             App.Settings.SetTabletArea(convertedArea);
 
@@ -149,6 +160,7 @@ namespace OpenTabletDriver.UX.Windows
             {
                 var vendor = (DeviceVendor)vendorId;
                 converterList.Select(t => t.Vendor.HasFlag(vendor));
+                applyButton.Enabled = true;
             }
             else
             {
