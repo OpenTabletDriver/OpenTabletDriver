@@ -15,8 +15,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
         public Group(string text, Control content, Orientation orientation = DEFAULT_ORIENTATION, bool expand = true)
             : this()
         {
-            this.text = text;
-            this.content = content;
+            this.Text = text;
+            this.Content = content;
             this.Orientation = orientation;
             this.ExpandContent = expand;
         }
@@ -57,6 +57,9 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected void UpdateControlLayout()
         {
+            if (!this.Loaded)
+                return;
+
             switch (Orientation, SystemInterop.CurrentPlatform)
             {
                 case (_, PluginPlatform.MacOS):
