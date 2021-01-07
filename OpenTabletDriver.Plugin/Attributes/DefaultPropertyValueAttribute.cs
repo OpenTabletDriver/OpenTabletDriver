@@ -4,9 +4,9 @@ namespace OpenTabletDriver.Plugin.Attributes
 {
     public class DefaultPropertyValueAttribute : Attribute
     {
-        public DefaultPropertyValueAttribute(object Value)
+        public DefaultPropertyValueAttribute(object value)
         {
-            this.Value = Value;
+            this.Value = value;
         }
 
         public object Value { get; }
