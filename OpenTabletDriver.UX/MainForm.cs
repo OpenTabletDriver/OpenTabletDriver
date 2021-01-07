@@ -45,13 +45,12 @@ namespace OpenTabletDriver.UX
             InitializeAsync();
         }
 
-        private bool AlreadyShown;
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
 
             // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows && !this.AlreadyShown)
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows && !this.alreadyShown)
             {
                 var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
                 var offset = new Point((int)bounds.X, (int)bounds.Y);
@@ -60,7 +59,7 @@ namespace OpenTabletDriver.UX
                 var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
                 var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
                 this.Location = new Point(x, y) + offset;
-                this.AlreadyShown = true;
+                this.alreadyShown = true;
             }
         }
 
@@ -431,6 +430,7 @@ namespace OpenTabletDriver.UX
         private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
         private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
+        private bool alreadyShown;
 
         private async Task ResetSettings(bool force = true)
         {
