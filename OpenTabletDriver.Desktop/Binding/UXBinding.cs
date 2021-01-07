@@ -33,9 +33,6 @@ namespace OpenTabletDriver.Desktop.Binding
             }
         };
 
-        public Action Release => () =>
-        {
-
-        };
+        public Action Release => () => { };
     }
 }
