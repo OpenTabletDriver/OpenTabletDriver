@@ -33,6 +33,11 @@ namespace OpenTabletDriver.UX.Dialogs
                 DefaultInputText = PluginMetadataCollection.REPOSITORY_NAME
             };
 
+            var gitRef = new TextBoxGroup("Ref")
+            {
+                DefaultInputText = "master"
+            };
+
             var actions = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
@@ -51,7 +56,7 @@ namespace OpenTabletDriver.UX.Dialogs
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new Button((sender, e) => Return(owner, repo))
+                        Control = new Button((sender, e) => Return(owner, repo, gitRef))
                         {
                             Text = "Apply"
                         }
@@ -68,15 +73,16 @@ namespace OpenTabletDriver.UX.Dialogs
                 {
                     new StackLayoutItem(owner),
                     new StackLayoutItem(repo),
+                    new StackLayoutItem(gitRef),
                     new StackLayoutItem(null, true),
                     new StackLayoutItem(actions)
                 }
             };
         }
 
-        protected async void Return(TextBoxGroup owner, TextBoxGroup repo)
+        protected async void Return(TextBoxGroup owner, TextBoxGroup repo, TextBoxGroup gitRef)
         {
-            var collection = await PluginMetadataCollection.DownloadAsync(owner.InputText, repo.InputText);
+            var collection = await PluginMetadataCollection.DownloadAsync(owner.InputText, repo.InputText, gitRef.InputText);
             Close(collection);
         }
 

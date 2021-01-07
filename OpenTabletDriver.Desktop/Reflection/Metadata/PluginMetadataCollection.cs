@@ -41,9 +41,9 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return await DownloadAsync(REPOSITORY_OWNER, REPOSITORY_NAME);
         }
 
-        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name)
+        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name, string gitRef = null)
         {
-            string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/";
+            string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/{gitRef}";
             return await DownloadAsync(archiveUrl);
         }
 
@@ -61,7 +61,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             {
                 // TODO: Properly cache instead of storing in the temporary directory
                 string cacheDir = Path.Join(AppInfo.Current.TemporaryDirectory, Guid.NewGuid().ToString());
-                
+
                 archive.ExtractContents(cacheDir);
                 var collection = EnumeratePluginMetadata(cacheDir);
                 var metadataCollection = new PluginMetadataCollection(collection);
