@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.RPC
 
         public T Instance { private set; get; }
         public event EventHandler Disconnected;
+        public bool IsConnected { private set; get; }
 
         public RpcClient(string pipeName)
         {
@@ -28,8 +29,11 @@ namespace OpenTabletDriver.Desktop.RPC
             this.Instance = this.rpc.Attach<T>();
             rpc.StartListening();
 
+            this.IsConnected = true;
+
             rpc.Disconnected += (_, _) =>
             {
+                this.IsConnected = false;
                 this.stream.Dispose();
                 Disconnected?.Invoke(this, null);
                 rpc.Dispose();

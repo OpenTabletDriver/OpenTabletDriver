@@ -50,11 +50,13 @@ namespace OpenTabletDriver.Daemon
             await LoadPlugins();
             await DetectTablets();
 
+            uxRpc = new RpcClient<IUXDriver>("OpenTabletDriver.UX");
+
             Info.GetUXInstance = async () =>
             {
-                var rpc = new RpcClient<IUXDriver>("OpenTabletDriver.UX");
-                await rpc.Connect();
-                return rpc.Instance;
+                if (!uxRpc.IsConnected)
+                    await uxRpc.Connect();
+                return uxRpc.Instance;
             };
 
             var appdataDir = new DirectoryInfo(AppInfo.Current.AppDataDirectory);
@@ -73,6 +75,8 @@ namespace OpenTabletDriver.Daemon
             else
                 await ResetSettings();
         }
+
+        protected RpcClient<IUXDriver> uxRpc;
 
         public event EventHandler<LogMessage> Message;
         public event EventHandler<DebugTabletReport> TabletReport;
