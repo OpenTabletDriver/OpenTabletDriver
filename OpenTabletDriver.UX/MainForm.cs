@@ -278,11 +278,20 @@ namespace OpenTabletDriver.UX
                 _                    => new Padding(0)
             };
 
-            this.ClientSize = SystemInterop.CurrentPlatform switch
+            var minWidth = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 970 : 960, Screen.DisplayBounds.Width * 0.9);
+            var minHeight = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 770 : 760, Screen.DisplayBounds.Height * 0.9);
+            this.ClientSize = new Size((int)minWidth, (int)minHeight);
+
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
             {
-                PluginPlatform.MacOS => new Size(970, 770),
-                _ => new Size(960, 760)
-            };
+                var bounds = Screen.FromPoint(this.Location + new Point(this.ClientSize.Width / 2, this.ClientSize.Height / 2)).Bounds;
+                var offset = new Point((int)bounds.X, (int)bounds.Y);
+                var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.ClientSize;
+
+                var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
+                var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
+                this.Location = new Point(x, y) + offset;
+            }
 
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
@@ -524,7 +533,7 @@ namespace OpenTabletDriver.UX
         private async Task ShowFirstStartupGreeter()
         {
             var greeter = new StartupGreeterWindow();
-            await greeter.ShowModalAsync();
+            await greeter.ShowModalAsync(Application.Instance.MainForm);
         }
 
         private void ShowConfigurationEditor()
