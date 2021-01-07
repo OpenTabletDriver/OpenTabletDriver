@@ -284,13 +284,18 @@ namespace OpenTabletDriver.UX
 
             if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
             {
-                var bounds = Screen.FromPoint(this.Location + new Point(this.ClientSize.Width / 2, this.ClientSize.Height / 2)).Bounds;
-                var offset = new Point((int)bounds.X, (int)bounds.Y);
-                var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.ClientSize;
+                void VisibilityCheck(object sender, EventArgs args)
+                {
+                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
+                    var offset = new Point((int)bounds.X, (int)bounds.Y);
+                    var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
 
-                var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
-                var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
-                this.Location = new Point(x, y) + offset;
+                    var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
+                    var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
+                    this.Location = new Point(x, y) + offset;
+                    this.Shown -= VisibilityCheck;
+                }
+                this.Shown += VisibilityCheck; // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
             }
 
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
@@ -532,8 +537,8 @@ namespace OpenTabletDriver.UX
 
         private async Task ShowFirstStartupGreeter()
         {
-            var greeter = new StartupGreeterWindow();
-            await greeter.ShowModalAsync(Application.Instance.MainForm);
+            var greeter = new StartupGreeterWindow(Application.Instance.MainForm);
+            await greeter.ShowModalAsync();
         }
 
         private void ShowConfigurationEditor()

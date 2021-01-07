@@ -15,16 +15,14 @@ namespace OpenTabletDriver.UX.Windows.Greeter
             base.Icon = App.Logo.WithSize(256, 256);
         }
 
+        public StartupGreeterWindow(Window parent) : this()
+        {
+            base.Owner = parent;
+        }
+
         protected override void OnLoadComplete(EventArgs e)
         {
             base.OnLoadComplete(e);
-
-            var bounds = Screen.FromPoint(this.Location + new Point(this.ClientSize.Width / 2, this.ClientSize.Height / 2)).Bounds;
-            var offset = new Point((int)bounds.X, (int)bounds.Y);
-
-            var x = (bounds.Width / 2) - (this.ClientSize.Width / 2);
-            var y = (Screen.DisplayBounds.Size.Height / 2) - (this.ClientSize.Height / 2);
-            this.Location = new Point((int)x, (int)y) + offset;
 
             var pageViewer = new StartupGreeterPageViewer
             {
