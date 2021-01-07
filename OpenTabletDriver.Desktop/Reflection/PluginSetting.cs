@@ -35,7 +35,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         [JsonProperty]
         public JToken Value { set; get; }
 
-        public bool IsValid => Value != null && Value.Type != JTokenType.Null;
+        public bool HasValue => Value != null && Value.Type != JTokenType.Null;
 
         public void SetValue(object value)
         {

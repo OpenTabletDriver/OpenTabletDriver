@@ -289,7 +289,7 @@ namespace OpenTabletDriver.UX.Controls
                         // TODO: replace with slider when possible (https://github.com/picoe/Eto/issues/1772)
                         tb.ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}";
                         tb.PlaceholderText = $"{sliderAttr.DefaultValue}";
-                        if (!setting.IsValid)
+                        if (!setting.HasValue)
                             setting.SetValue(sliderAttr.DefaultValue);
                     }
                     return tb;
@@ -353,7 +353,7 @@ namespace OpenTabletDriver.UX.Controls
 
             private static T GetSetting<T>(PropertyInfo property, PluginSetting setting)
             {
-                if (setting.IsValid)
+                if (setting.HasValue)
                 {
                     return setting.GetValue<T>();
                 }
