@@ -4,6 +4,11 @@ namespace OpenTabletDriver.Plugin.Tablet
     {
         DeviceVendor Vendor { get; }
 
-        Area Convert(TabletState tablet, double left, double top, double right, double bottom);
+        string Top { get; }
+        string Left { get; }
+        string Bottom { get; }
+        string Right { get; }
+
+        Area Convert(TabletState tablet, double top, double left, double bottom, double right);
     }
 }

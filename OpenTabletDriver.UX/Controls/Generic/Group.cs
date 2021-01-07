@@ -27,8 +27,17 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected virtual Color HorizontalBackgroundColor => SystemColors.ControlBackground;
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
-        
-        public string Text { set; get; }
+
+        private string text;
+        public string Text
+        {
+            set
+            {
+                this.text = value;
+                UpdateControlLayout();
+            }
+            get => text;
+        }
 
         private Control content;
         public new Control Content
@@ -48,6 +57,9 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected void UpdateControlLayout()
         {
+            if (!this.Loaded)
+                return;
+
             switch (Orientation, SystemInterop.CurrentPlatform)
             {
                 case (_, PluginPlatform.MacOS):

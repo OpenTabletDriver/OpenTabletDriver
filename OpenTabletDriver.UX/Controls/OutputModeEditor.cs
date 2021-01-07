@@ -276,7 +276,7 @@ namespace OpenTabletDriver.UX.Controls
                 private async Task ConvertAreaDialog()
                 {
                     var converter = new AreaConverterDialog();
-                    await converter.ShowModalAsync();
+                    await converter.ShowModalAsync(Application.Instance.MainForm);
                 }
             }
         }

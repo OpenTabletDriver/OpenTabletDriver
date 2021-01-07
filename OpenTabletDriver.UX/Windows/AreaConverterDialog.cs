@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -13,17 +12,57 @@ namespace OpenTabletDriver.UX.Windows
             base.Title = "Area Converter";
 
             App.Driver.Instance.TabletChanged += (sender, newState) => SelectConverterForTablet(newState);
-
-            _ = Refresh();
+            converterList.SelectedIndexChanged += (sender, e) => Refresh();
+            _ = InitializeAsync();
         }
 
-        private TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
-        private NumericMaskedTextBox<float> top, bottom, left, right;
-
+        private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
+        private Group topGroup, leftGroup, bottomGroup, rightGroup;
+        private NumericMaskedTextBox<float> top, left, bottom, right;
+        private Button applyButton;
         private TabletState tabletState;
 
-        protected async Task Refresh()
+        protected void Refresh()
         {
+            var converter = converterList.ConstructSelectedType();
+            topGroup.Text = converter.Top;
+            leftGroup.Text = converter.Left;
+            bottomGroup.Text = converter.Bottom;
+            rightGroup.Text = converter.Right;
+            applyButton.Enabled = true;
+        }
+
+        protected async Task InitializeAsync()
+        {
+            topGroup = new Group
+            {
+                Content = top = new NumericMaskedTextBox<float>
+                {
+                    PlaceholderText = "0"
+                }
+            };
+            leftGroup = new Group
+            {
+                Content = left = new NumericMaskedTextBox<float>
+                {
+                    PlaceholderText = "0"
+                }
+            };
+            bottomGroup = new Group
+            {
+                Content = bottom = new NumericMaskedTextBox<float>
+                {
+                    PlaceholderText = "0"
+                }
+            };
+            rightGroup = new Group
+            {
+                Content = right = new NumericMaskedTextBox<float>
+                {
+                    PlaceholderText = "0"
+                }
+            };
+
             this.Content = new StackLayout
             {
                 Orientation = Orientation.Vertical,
@@ -56,24 +95,8 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            new Group
-                                            {
-                                                Text = "Top",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = top = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            },
-                                            new Group
-                                            {
-                                                Text = "Left",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = left = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            }
+                                            topGroup,
+                                            leftGroup
                                         }
                                     }
                                 },
@@ -86,37 +109,21 @@ namespace OpenTabletDriver.UX.Windows
                                         Spacing = 5,
                                         Items =
                                         {
-                                            new Group
-                                            {
-                                                Text = "Bottom",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = bottom = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            },
-                                            new Group
-                                            {
-                                                Text = "Right",
-                                                Orientation = Orientation.Horizontal,
-                                                Content = right = new NumericMaskedTextBox<float>
-                                                {
-                                                    PlaceholderText = "0"
-                                                }
-                                            }
+                                            bottomGroup,
+                                            rightGroup
                                         }
                                     }
                                 }
                             }
                         }
                     },
-                    new StackLayoutItem(null, true),
                     new StackLayoutItem
                     {
                         HorizontalAlignment = HorizontalAlignment.Right,
-                        Control = new Button((sender, e) => ConvertArea())
+                        Control = applyButton = new Button((sender, e) => ConvertArea())
                         {
-                            Text = "Apply"
+                            Text = "Apply",
+                            Enabled = false
                         }
                     }
                 }
@@ -135,10 +142,8 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
-            float conversionFactor = digitizer.MaxX / digitizer.Width;
-
             var converter = this.converterList.ConstructSelectedType();
-            var convertedArea = converter.Convert(tabletState, left.Value, top.Value, right.Value, bottom.Value);
+            var convertedArea = converter.Convert(tabletState, top.Value, left.Value, bottom.Value, right.Value);
 
             App.Settings.SetTabletArea(convertedArea);
 
@@ -155,6 +160,7 @@ namespace OpenTabletDriver.UX.Windows
             {
                 var vendor = (DeviceVendor)vendorId;
                 converterList.Select(t => t.Vendor.HasFlag(vendor));
+                applyButton.Enabled = true;
             }
             else
             {
