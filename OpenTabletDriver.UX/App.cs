@@ -17,6 +17,13 @@ namespace OpenTabletDriver.UX
     {
         public static void Run(string platform, string[] args)
         {
+            _ = UXInstance.Invoke(async ux =>
+            {
+                await ux.ShowClient();
+                UXInstance.Dispose();
+                Environment.Exit(0);
+            });
+
             var root = new RootCommand("OpenTabletDriver UX")
             {
                 new Option<bool>(new string[] { "-m", "--minimized" }, "Start the application minimized")
@@ -53,9 +60,9 @@ namespace OpenTabletDriver.UX
             app.Run(mainForm);
         }
 
-        public const string PluginRepositoryUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki/Plugin-Repository";
         public const string FaqUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki#frequently-asked-questions";
 
+        private static UXInstance UXInstance = new UXInstance();
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo => _logo.Value;
 

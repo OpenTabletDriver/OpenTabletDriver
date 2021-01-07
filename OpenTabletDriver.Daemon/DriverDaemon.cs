@@ -15,6 +15,7 @@ using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
@@ -48,6 +49,13 @@ namespace OpenTabletDriver.Daemon
             AppInfo.PluginManager.Clean();
             await LoadPlugins();
             await DetectTablets();
+
+            Info.GetUXInstance = async () =>
+            {
+                var rpc = new RpcClient<IUXDriver>("OpenTabletDriver.UX");
+                await rpc.Connect();
+                return rpc.Instance;
+            };
 
             var appdataDir = new DirectoryInfo(AppInfo.Current.AppDataDirectory);
             if (!appdataDir.Exists)
