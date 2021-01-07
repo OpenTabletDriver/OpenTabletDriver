@@ -51,19 +51,16 @@ namespace OpenTabletDriver.UX
             base.OnShown(e);
 
             // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows && !this.AlreadyShown)
             {
-                if (!this.AlreadyShown)
-                {
-                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
-                    var offset = new Point((int)bounds.X, (int)bounds.Y);
-                    var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
+                var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
+                var offset = new Point((int)bounds.X, (int)bounds.Y);
+                var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
 
-                    var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
-                    var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
-                    this.Location = new Point(x, y) + offset;
-                    this.AlreadyShown = true;
-                }
+                var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
+                var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
+                this.Location = new Point(x, y) + offset;
+                this.AlreadyShown = true;
             }
         }
 
