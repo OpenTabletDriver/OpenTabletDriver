@@ -4,6 +4,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows.Bindings
 {
@@ -14,13 +15,10 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             Title = "Binding Editor";
             Result = currentBinding;
 
-            var inputHandler = new TextArea
+            var inputHandler = new Label
             {
                 Text = "Press a key or press a mouse button",
-                Width = 300,
-                Height = 150,
-                TextAlignment = TextAlignment.Center,
-                ReadOnly = true
+                TextAlignment = TextAlignment.Center
             };
             inputHandler.KeyDown += CreateKeyBinding;
             inputHandler.MouseDown += CreateMouseBinding;
@@ -34,15 +32,18 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             };
             clearButton.KeyDown += CreateKeyBinding;
 
-            this.Content = new TableLayout
+            this.Content = new StackLayout
             {
-                Rows = 
+                Width = 300,
+                Height = 200,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Padding = 5,
+                Spacing = 5,
+                Items =
                 {
-                    inputHandler,
+                    new StackLayoutItem(inputHandler, true),
                     clearButton
-                },
-                Padding = new Padding(5),
-                Spacing = new Size(5, 5)
+                }
             };
         }
 
