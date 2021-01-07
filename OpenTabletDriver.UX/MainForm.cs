@@ -45,6 +45,28 @@ namespace OpenTabletDriver.UX
             InitializeAsync();
         }
 
+        private bool AlreadyShown;
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+            {
+                if (!this.AlreadyShown)
+                {
+                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
+                    var offset = new Point((int)bounds.X, (int)bounds.Y);
+                    var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
+
+                    var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
+                    var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
+                    this.Location = new Point(x, y) + offset;
+                    this.AlreadyShown = true;
+                }
+            }
+        }
+
         private Control ConstructPlaceholderControl()
         {
             return new StackLayout
@@ -281,22 +303,6 @@ namespace OpenTabletDriver.UX
             var minWidth = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 970 : 960, Screen.DisplayBounds.Width * 0.9);
             var minHeight = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 770 : 760, Screen.DisplayBounds.Height * 0.9);
             this.ClientSize = new Size((int)minWidth, (int)minHeight);
-
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
-            {
-                void VisibilityCheck(object sender, EventArgs args)
-                {
-                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
-                    var offset = new Point((int)bounds.X, (int)bounds.Y);
-                    var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
-
-                    var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
-                    var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
-                    this.Location = new Point(x, y) + offset;
-                    this.Shown -= VisibilityCheck;
-                }
-                this.Shown += VisibilityCheck; // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
-            }
 
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
@@ -537,7 +543,7 @@ namespace OpenTabletDriver.UX
 
         private async Task ShowFirstStartupGreeter()
         {
-            var greeter = new StartupGreeterWindow(Application.Instance.MainForm);
+            var greeter = new StartupGreeterWindow(this);
             await greeter.ShowModalAsync();
         }
 
