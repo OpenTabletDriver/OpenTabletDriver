@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -11,9 +11,8 @@ namespace OpenTabletDriver.UX.Windows
         {
             base.Title = "Area Converter";
 
-            App.Driver.Instance.TabletChanged += (sender, newState) => SelectConverterForTablet(newState);
-            converterList.SelectedIndexChanged += (sender, e) => Refresh();
-            _ = InitializeAsync();
+            App.Driver.Instance.TabletChanged += (sender, newState) => Application.Instance.AsyncInvoke(() => SelectConverterForTablet(newState));
+            converterList.SelectedIndexChanged += (sender, e) => OnSelectionChanged();
         }
 
         private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
@@ -22,18 +21,31 @@ namespace OpenTabletDriver.UX.Windows
         private Button applyButton;
         private TabletState tabletState;
 
-        protected void Refresh()
+        protected void OnSelectionChanged()
         {
             var converter = converterList.ConstructSelectedType();
-            topGroup.Text = converter.Top;
-            leftGroup.Text = converter.Left;
-            bottomGroup.Text = converter.Bottom;
-            rightGroup.Text = converter.Right;
-            applyButton.Enabled = true;
+            if (converter != null)
+            {
+                topGroup.Text = converter.Top;
+                leftGroup.Text = converter.Left;
+                bottomGroup.Text = converter.Bottom;
+                rightGroup.Text = converter.Right;
+                applyButton.Enabled = true;
+            }
+            else
+            {
+                topGroup.Text = string.Empty;
+                leftGroup.Text = string.Empty;
+                bottomGroup.Text = string.Empty;
+                rightGroup.Text = string.Empty;
+                applyButton.Enabled = false;
+            }
         }
 
-        protected async Task InitializeAsync()
+        protected override async void OnLoadComplete(EventArgs e)
         {
+            base.OnLoadComplete(e);
+
             topGroup = new Group
             {
                 Content = top = new NumericMaskedTextBox<float>
