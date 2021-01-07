@@ -7,6 +7,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -260,7 +261,7 @@ namespace OpenTabletDriver.UX.Controls
                 {
                     var textbox = new TextBox
                     {
-                        Text = setting.GetValue<string>()
+                        Text = GetSetting<string>(property, setting)
                     };
                     textbox.TextChanged += (sender, e) => setting.SetValue(textbox.Text);
                     return textbox;
@@ -274,7 +275,7 @@ namespace OpenTabletDriver.UX.Controls
                     var checkbox = new CheckBox
                     {
                         Text = description,
-                        Checked = setting.GetValue<bool>()
+                        Checked = GetSetting<bool>(property, setting)
                     };
                     checkbox.CheckedChanged += (sender, e) => setting.SetValue((bool)checkbox.Checked);
                     return checkbox;
@@ -288,7 +289,7 @@ namespace OpenTabletDriver.UX.Controls
                         // TODO: replace with slider when possible (https://github.com/picoe/Eto/issues/1772)
                         tb.ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}";
                         tb.PlaceholderText = $"{sliderAttr.DefaultValue}";
-                        if (setting.Value == null)
+                        if (!setting.IsValid)
                             setting.SetValue(sliderAttr.DefaultValue);
                     }
                     return tb;
@@ -334,7 +335,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 var tb = new NumericMaskedTextBox<T>
                 {
-                    Value = setting.GetValue<T>()
+                    Value = GetSetting<T>(property, setting)
                 };
                 tb.ValueChanged += (sender, e) => setting.SetValue(tb.Value);
                 return tb;
@@ -344,10 +345,33 @@ namespace OpenTabletDriver.UX.Controls
             {
                 var tb = new MaskedTextBox<T>
                 {
-                    Value = setting.GetValue<T>()
+                    Value = GetSetting<T>(property, setting)
                 };
                 tb.ValueChanged += (sender, e) => setting.SetValue(tb.Value);
                 return tb;
+            }
+
+            private static T GetSetting<T>(PropertyInfo property, PluginSetting setting)
+            {
+                if (setting.IsValid)
+                {
+                    return setting.GetValue<T>();
+                }
+                else
+                {
+                    if (property.GetCustomAttribute<DefaultPropertyValueAttribute>() is DefaultPropertyValueAttribute defaults)
+                    {
+                        try
+                        {
+                            return (T)defaults.Value;
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Write("UX", $"Failed to get custom default of {property.Name}: {e.Message}");
+                        }
+                    }
+                    return default;
+                }
             }
         }
     }
