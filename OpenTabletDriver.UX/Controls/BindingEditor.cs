@@ -104,39 +104,52 @@ namespace OpenTabletDriver.UX.Controls
             content.AddControl(auxBindingSettings);
         }
 
-        internal class BindingDisplay : Button
+        internal class BindingDisplay : StackLayout
         {
             public BindingDisplay(PluginSettingStore store)
             {
-                this.Binding = store;
-
                 var bindingCommand = new Command();
                 bindingCommand.Executed += async (sender, e) =>
                 {
                     var dialog = new BindingEditorDialog(Binding);
                     this.Binding = await dialog.ShowModalAsync(this);
                 };
-                this.Command = bindingCommand;
-
-                this.MouseDown += async (s, e) =>
+                var advancedBindingCommand = new Command();
+                advancedBindingCommand.Executed += async (sender, e) =>
                 {
-                    if (e.Buttons.HasFlag(MouseButtons.Alternate))
-                    {
-                        var dialog = new AdvancedBindingEditorDialog(Binding);
-                        this.Binding = await dialog.ShowModalAsync(this);
-                    }
+                    var dialog = new AdvancedBindingEditorDialog(Binding);
+                    this.Binding = await dialog.ShowModalAsync(this);
                 };
+
+                mainButton = new Button
+                {
+                    Command = bindingCommand
+                };
+                advancedButton = new Button
+                {
+                    Command = advancedBindingCommand,
+                    Text = "...",
+                    Width = 25
+                };
+
+                Spacing = 5;
+                Orientation = Orientation.Horizontal;
+                Items.Add(new StackLayoutItem(mainButton, true));
+                Items.Add(advancedButton);
+
+                this.Binding = store;
             }
 
             public event EventHandler<PluginSettingStore> BindingUpdated;
 
+            private Button mainButton, advancedButton;
             private PluginSettingStore binding;
             public PluginSettingStore Binding
             {
                 set
                 {
                     this.binding = value;
-                    Text = GetFriendlyDisplayString(Binding);
+                    mainButton.Text = GetFriendlyDisplayString(Binding);
                     BindingUpdated?.Invoke(this, Binding);
                 }
                 get => this.binding;
