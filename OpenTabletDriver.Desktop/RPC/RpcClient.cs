@@ -12,6 +12,7 @@ namespace OpenTabletDriver.Desktop.RPC
         private JsonRpc rpc;
 
         public T Instance { private set; get; }
+        public bool IsConnected { private set; get; }
         public event EventHandler Disconnected;
 
         public RpcClient(string pipeName)
@@ -28,8 +29,11 @@ namespace OpenTabletDriver.Desktop.RPC
             this.Instance = this.rpc.Attach<T>();
             rpc.StartListening();
 
+            this.IsConnected = true;
+
             rpc.Disconnected += (_, _) =>
             {
+                this.IsConnected = false;
                 this.stream.Dispose();
                 Disconnected?.Invoke(this, null);
                 rpc.Dispose();
