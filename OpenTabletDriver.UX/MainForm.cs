@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX
 {
     using static App;
 
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IUserInterface
     {
         public MainForm()
         {
@@ -74,6 +74,18 @@ namespace OpenTabletDriver.UX
             toolEditor.UpdateStore(Settings?.Tools);
             interpolatorEditor.UpdateStore(Settings?.Interpolators);
             outputModeEditor.Refresh();
+        }
+
+        public async Task ShowClient()
+        {
+            await Application.Instance.InvokeAsync(() =>
+            {
+                if (Application.Instance?.MainForm is Form form)
+                {
+                    form.Show();
+                    form.BringToFront();
+                }
+            });
         }
 
         private Control ConstructMainControls()

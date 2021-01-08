@@ -1,21 +1,51 @@
+using System;
+using System.Threading;
 using System.Threading.Tasks;
-using Eto.Forms;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.RPC
 {
-    public class UserInterfaceProxy : IUserInterface
+    public class UserInterfaceProxy : IDisposable
     {
-        public async Task ShowClient()
+        private readonly Instance instance = new Instance("OpenTabletDriver.UX.Instance");
+        private RpcHost<MainForm> host;
+        private RpcClient<IUserInterface> client;
+
+        public UserInterfaceProxy()
         {
-            await Application.Instance.InvokeAsync(() =>
+            if (instance.AlreadyExists)
+                client = new RpcClient<IUserInterface>("OpenTabletDriver.UX");
+        }
+
+        public async Task Invoke(Func<IUserInterface, Task> action)
+        {
+            if (client != null)
             {
-                if (Application.Instance?.MainForm is Form form)
+                await client.Connect();
+                await action(client.Instance);
+            }
+        }
+
+        public void Attach(MainForm form)
+        {
+            if (client == null)
+            {
+                host = new RpcHost<MainForm>(form, "OpenTabletDriver.UX");
+                var thread = new Thread(async () => await host.Main())
                 {
-                    form.Show();
-                    form.BringToFront();
-                }
-            });
+                    IsBackground = true
+                };
+                thread.Start();
+            }
+        }
+
+        public void Dispose()
+        {
+            instance?.Dispose();
+            host = null;
+            client = null;
+            GC.SuppressFinalize(this);
         }
     }
 }
