@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.RPC
                 client = new RpcClient<IUserInterface>("OpenTabletDriver.UX");
         }
 
-        public async Task Invoke(Func<IUserInterface, Task> action)
+        public async void Invoke(Func<IUserInterface, Task> action)
         {
             if (client != null)
             {

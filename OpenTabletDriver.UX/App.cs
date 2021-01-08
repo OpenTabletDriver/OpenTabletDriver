@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX
     {
         public static void Run(string platform, string[] args)
         {
-            _ = UserInterfaceProxy.Invoke(async ux =>
+            UserInterfaceProxy.Invoke(async ux =>
             {
                 await ux.ShowClient();
                 UserInterfaceProxy.Dispose();
