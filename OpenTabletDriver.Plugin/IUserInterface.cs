@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace OpenTabletDriver.Plugin
 {
-    public interface IUXDriver
+    public interface IUserInterface
     {
         Task ShowClient();
     }

@@ -4,7 +4,7 @@ using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.RPC
 {
-    public class UXDriver : IUXDriver
+    public class UserInterfaceProxy : IUserInterface
     {
         public async Task ShowClient()
         {
@@ -13,9 +13,7 @@ namespace OpenTabletDriver.UX.RPC
                 if (Application.Instance?.MainForm is Form form)
                 {
                     form.Show();
-                    form.WindowState = WindowState.Normal;
                     form.BringToFront();
-                    form.WindowStyle = WindowStyle.Default;
                 }
             });
         }

@@ -62,7 +62,7 @@ namespace OpenTabletDriver.UX
 
         public const string FaqUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki#frequently-asked-questions";
 
-        public static UXInstance UXInstance = new UXInstance();
+        public static UserInterfaceInstance UXInstance = new UserInterfaceInstance();
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo => _logo.Value;
 
