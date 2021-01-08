@@ -31,7 +31,7 @@ namespace OpenTabletDriver.UX.RPC
         {
             if (client == null)
             {
-                host = new RpcHost<MainForm>(form, "OpenTabletDriver.UX");
+                host = new RpcHost<MainForm>("OpenTabletDriver.UX", form);
                 var thread = new Thread(async () => await host.Main())
                 {
                     IsBackground = true

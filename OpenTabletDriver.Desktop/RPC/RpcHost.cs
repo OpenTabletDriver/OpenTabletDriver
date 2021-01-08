@@ -15,13 +15,14 @@ namespace OpenTabletDriver.Desktop.RPC
         public event EventHandler<bool> ConnectionStateChanged;
         public T Instance { protected set; get; }
 
-        public RpcHost(T host, string pipeName)
+        public RpcHost(string pipeName, T host)
         {
             this.pipeName = pipeName;
             this.Instance = host;
         }
 
-        public RpcHost(string pipeName) : this(new T(), pipeName)
+        public RpcHost(string pipeName)
+            : this(pipeName, new T())
         {
         }
 
