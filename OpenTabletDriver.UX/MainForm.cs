@@ -50,15 +50,25 @@ namespace OpenTabletDriver.UX
             base.OnShown(e);
 
             // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows && !this.alreadyShown)
+            if (!this.alreadyShown)
             {
                 var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
-                var offset = new Point((int)bounds.X, (int)bounds.Y);
-                var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
 
-                var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
-                var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
-                this.Location = new Point(x, y) + offset;
+                if (this.WindowState == WindowState.Normal)
+                {
+                    var minWidth = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 970 : 960, bounds.Width * 0.9);
+                    var minHeight = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 770 : 760, bounds.Height * 0.9);
+                    this.ClientSize = new Size((int)minWidth, (int)minHeight);
+                    if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+                    {
+                        var offset = new Point((int)bounds.X, (int)bounds.Y);
+                        var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
+
+                        var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
+                        var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
+                        this.Location = new Point(x, y) + offset;
+                    }
+                }
                 this.alreadyShown = true;
             }
         }
@@ -295,10 +305,6 @@ namespace OpenTabletDriver.UX
                 PluginPlatform.MacOS => new Padding(10),
                 _                    => new Padding(0)
             };
-
-            var minWidth = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 970 : 960, Screen.DisplayBounds.Width * 0.9);
-            var minHeight = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 770 : 760, Screen.DisplayBounds.Height * 0.9);
-            this.ClientSize = new Size((int)minWidth, (int)minHeight);
 
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
