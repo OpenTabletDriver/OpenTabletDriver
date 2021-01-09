@@ -60,7 +60,7 @@ namespace OpenTabletDriver.Daemon
                 var host = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
                 host.ConnectionStateChanged += (sender, state) => 
                     Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
-                await host.Main();
+                await host.Run(new DriverDaemon());
             }
         }
     }

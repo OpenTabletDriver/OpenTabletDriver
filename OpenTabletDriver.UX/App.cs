@@ -2,6 +2,7 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Reflection;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -10,7 +11,6 @@ using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.UX.RPC;
 
 namespace OpenTabletDriver.UX
 {
@@ -18,9 +18,9 @@ namespace OpenTabletDriver.UX
     {
         public static void Run(string platform, string[] args)
         {
-            UserInterfaceProxy.Invoke(async ux =>
+            UserInterfaceProxy.Invoke(async userInterface =>
             {
-                await ux.ShowClient();
+                await userInterface.ShowClient();
                 UserInterfaceProxy.Dispose();
                 Environment.Exit(0);
             });
@@ -65,7 +65,7 @@ namespace OpenTabletDriver.UX
 
         public const string FaqUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki#frequently-asked-questions";
 
-        public static UserInterfaceProxy UserInterfaceProxy = new UserInterfaceProxy();
+        public static RpcProxy<IUserInterface> UserInterfaceProxy = new RpcProxy<IUserInterface>("OpenTabletDriver.UX");
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo => _logo.Value;
 
