@@ -2,8 +2,8 @@
   "Name": "XP-Pen G640s",
   "DigitizerIdentifiers": [
     {
-      "Width": 165.0,
-      "Height": 103.0,
+      "Width": 165.1,
+      "Height": 101.6,
       "MaxX": 32999.0,
       "MaxY": 20599.0,
       "MaxPressure": 8191,
