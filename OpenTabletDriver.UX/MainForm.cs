@@ -59,12 +59,15 @@ namespace OpenTabletDriver.UX
                     var minWidth = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 970 : 960, bounds.Width * 0.9);
                     var minHeight = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 770 : 760, bounds.Height * 0.9);
                     this.ClientSize = new Size((int)minWidth, (int)minHeight);
-                    var offset = new Point((int)bounds.X, (int)bounds.Y);
-                    var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
+                    if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+                    {
+                        var offset = new Point((int)bounds.X, (int)bounds.Y);
+                        var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
 
-                    var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
-                    var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
-                    this.Location = new Point(x, y) + offset;
+                        var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
+                        var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
+                        this.Location = new Point(x, y) + offset;
+                    }
                 }
                 this.alreadyShown = true;
             }
