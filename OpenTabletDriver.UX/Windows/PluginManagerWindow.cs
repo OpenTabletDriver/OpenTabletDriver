@@ -216,6 +216,7 @@ namespace OpenTabletDriver.UX.Windows
             protected WeakReference<PluginMetadata> MetadataReference { set; get; } = new WeakReference<PluginMetadata>(null);
 
             private EmptyMetadataControl emptyMetadataControl = new EmptyMetadataControl();
+            private Version driverVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
             public void Update(PluginMetadata metadata)
             {
@@ -239,12 +240,14 @@ namespace OpenTabletDriver.UX.Windows
                     Repository ??= await PluginMetadataCollection.DownloadAsync();
 
                     bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
-                    bool canUpdate = Repository.Any(t => t.Name == metadata.Name && t.PluginVersion > metadata.PluginVersion);
 
                     var updatableFromRepository = from meta in Repository
-                        where meta.PluginVersion > metadata.PluginVersion
-                        orderby meta.PluginVersion
+                        where meta.Name == metadata.Name && meta.PluginVersion > metadata.PluginVersion
+                        where driverVersion >= meta.SupportedDriverVersion
+                        orderby meta.PluginVersion descending
                         select meta;
+
+                    var canUpdate = updatableFromRepository.Any();
 
                     var actions = new StackLayout
                     {
