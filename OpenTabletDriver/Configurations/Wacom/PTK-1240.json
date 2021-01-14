@@ -1,0 +1,51 @@
+{
+  "Name": "Wacom PTK-1240",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 487.68,
+      "Height": 304.8,
+      "MaxX": 97536.0,
+      "MaxY": 60960.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 1,
+        "StartInclusive": false,
+        "End": 62,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 187,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 487.68,
+      "Height": 304.8,
+      "MaxX": 97536.0,
+      "MaxY": 60960.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 1,
+        "StartInclusive": false,
+        "End": 62,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 187,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
