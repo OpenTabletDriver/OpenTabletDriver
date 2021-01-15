@@ -18,7 +18,7 @@
       "InputReportLength": 5,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "ButtonCount": 0,
+      "ButtonCount": 4,
       "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -41,26 +41,13 @@
       "InputReportLength": 9,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "ButtonCount": 0,
+      "ButtonCount": 4,
       "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 101,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
-      "ButtonCount": 4,
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }
