@@ -44,7 +44,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             loadDirectory.Executed += (sender, e) => LoadConfigurationsDialog();
 
             var saveDirectory = new Command { MenuText = "Save configurations", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveDirectory.Executed += (sender, e) => WriteConfigurations(Configurations, new DirectoryInfo(AppInfo.Current.ConfigurationDirectory));
+            saveDirectory.Executed += (sender, e) => WriteConfigurations(this.configList.Source, new DirectoryInfo(AppInfo.Current.ConfigurationDirectory));
 
             var saveToDirectory = new Command { MenuText = "Save configurations to...", Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.S };
             saveToDirectory.Executed += (sender, e) => SaveConfigurationsDialog();
@@ -106,8 +106,6 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             this.configList.SelectedIndex = 0;
         }
 
-        protected ObservableCollection<TabletConfiguration> Configurations { set; get; }
-
         protected TabletConfiguration SelectedConfiguration => configList.SelectedItem;
 
         private ConfigurationList configList = new ConfigurationList();
@@ -149,7 +147,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var dir = new DirectoryInfo(folderDialog.Directory);
-                    Configurations = ReadConfigurations(dir);
+                    this.configList.Source = ReadConfigurations(dir);
                     break;
             }
         }
@@ -165,7 +163,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var dir = new DirectoryInfo(folderDialog.Directory);
-                    WriteConfigurations(Configurations, dir);
+                    WriteConfigurations(this.configList.Source, dir);
                     break;
             }
         }
