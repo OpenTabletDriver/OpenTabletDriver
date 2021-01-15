@@ -15,7 +15,8 @@ namespace OpenTabletDriver.UX.Windows.Greeter
             base.Icon = App.Logo.WithSize(256, 256);
         }
 
-        public StartupGreeterWindow(Window parent) : this()
+        public StartupGreeterWindow(Window parent)
+            : this()
         {
             base.Owner = parent;
         }
