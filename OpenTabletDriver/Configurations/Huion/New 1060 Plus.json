@@ -8,7 +8,7 @@
       "MaxY": 31750.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 128,
+        "Start": 64,
         "StartInclusive": true,
         "End": null,
         "EndInclusive": false
@@ -17,7 +17,8 @@
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Gaomon.GaomonReportParser",
+      "ButtonCount": 12,
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -43,7 +44,8 @@
       "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Gaomon.GaomonReportParser",
+      "ButtonCount": 12,
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {

@@ -18,6 +18,7 @@
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Gaomon.GaomonReportParser",
+      "ButtonCount": 12,
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
