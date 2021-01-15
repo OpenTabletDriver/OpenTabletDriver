@@ -22,9 +22,11 @@ namespace OpenTabletDriver.UX.Controls
 
         private StackView content = new StackView();
 
-        public void UpdateBindings()
+        public async void UpdateBindings()
         {
             content.Items.Clear();
+
+            var tablet = await App.Driver.Instance.GetTablet();
 
             var tipButton = new BindingDisplay(App.Settings?.TipButton)
             {
@@ -50,7 +52,7 @@ namespace OpenTabletDriver.UX.Controls
             var tipSettings = new Group("Tip Bindings", tipSettingsStack);
 
             var penBindingsStack = new StackView();
-            for (int i = 0; i < App.Settings?.PenButtons.Count; i++)
+            for (int i = 0; i < (tablet?.Digitizer.ButtonCount ?? 0); i++)
             {
                 var penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
                 {
@@ -81,7 +83,7 @@ namespace OpenTabletDriver.UX.Controls
             content.AddControl(penSettings);
 
             var auxBindingsStack = new StackView();
-            for (int i = 0; i < App.Settings?.AuxButtons.Count; i++)
+            for (int i = 0; i < (tablet?.Auxiliary.ButtonCount ?? 0); i++)
             {
                 var auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
                 {
