@@ -18,6 +18,7 @@
       "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ButtonCount": 0,
       "FeatureInitReport": null,
       "OutputInitReport": "ArAC",
       "DeviceStrings": {},

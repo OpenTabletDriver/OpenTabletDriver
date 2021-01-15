@@ -8,8 +8,8 @@
       "MaxY": 24000.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
-        "Start": 127,
-        "StartInclusive": false,
+        "Start": 64,
+        "StartInclusive": true,
         "End": null,
         "EndInclusive": false
       },
@@ -17,7 +17,8 @@
       "ProductID": 109,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Gaomon.GaomonReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ButtonCount": 0,
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {

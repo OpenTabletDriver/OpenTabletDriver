@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen G960 v2",
+  "Name": "XP-Pen G960",
   "DigitizerIdentifiers": [
     {
       "Width": 212.0,
@@ -8,16 +8,17 @@
       "MaxY": 13970.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 0,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
         "EndInclusive": false
       },
       "VendorID": 10429,
       "ProductID": 2336,
       "InputReportLength": 10,
       "OutputReportLength": 10,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "ButtonCount": 4,
       "FeatureInitReport": null,
       "OutputInitReport": "ArAE",
       "DeviceStrings": {},

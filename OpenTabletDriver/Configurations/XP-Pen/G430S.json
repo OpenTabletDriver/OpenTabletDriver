@@ -18,6 +18,7 @@
       "InputReportLength": 12,
       "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ButtonCount": 0,
       "FeatureInitReport": null,
       "OutputInitReport": "ArAE",
       "DeviceStrings": {},

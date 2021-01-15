@@ -8,9 +8,9 @@
       "MaxY": 20599.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 79,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
         "EndInclusive": false
       },
       "VendorID": 10429,
@@ -18,6 +18,7 @@
       "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "ButtonCount": 6,
       "FeatureInitReport": null,
       "OutputInitReport": "ArAE",
       "DeviceStrings": {},
@@ -30,9 +31,9 @@
       "MaxY": 20599.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 79,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
         "EndInclusive": false
       },
       "VendorID": 10429,
@@ -40,6 +41,7 @@
       "InputReportLength": 12,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "ButtonCount": 6,
       "FeatureInitReport": null,
       "OutputInitReport": "ArAE",
       "DeviceStrings": {},
