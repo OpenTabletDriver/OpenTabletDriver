@@ -28,7 +28,7 @@ namespace OpenTabletDriver.UX.Controls
 
             var tipButton = new BindingDisplay(App.Settings?.TipButton)
             {
-                Width = 250
+                MinimumSize = new Size(300, 0)
             };
             tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
 
@@ -54,7 +54,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 var penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
                 {
-                    Width = 250,
+                    MinimumSize = new Size(300, 0),
                     Tag = i
                 };
                 penBinding.BindingUpdated += (sender, binding) =>
@@ -85,7 +85,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 var auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
                 {
-                    Width = 250,
+                    MinimumSize = new Size(300, 0),
                     Tag = i
                 };
                 auxBinding.BindingUpdated += (sender, Binding) =>
