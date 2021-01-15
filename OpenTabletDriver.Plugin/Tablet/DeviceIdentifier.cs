@@ -30,6 +30,11 @@ namespace OpenTabletDriver.Plugin.Tablet
         public string ReportParser { set; get; }
 
         /// <summary>
+        /// The total or maximum amount of buttons on this identifier.
+        /// </summary>
+        public uint ButtonCount { set; get; }
+
+        /// <summary>
         /// The feature report sent to initialize tablet functions.
         /// </summary>
         public byte[] FeatureInitReport { set; get; }

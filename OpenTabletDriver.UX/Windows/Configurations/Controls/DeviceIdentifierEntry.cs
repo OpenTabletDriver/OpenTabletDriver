@@ -119,6 +119,10 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                 }
             };
 
+            yield return new InputBox("Button Count",
+                () => GetCurrent().ButtonCount.ToString(),
+                (o) => ModifyCurrent(id => id.ButtonCount = ToUInt(o))
+            );
             yield return new InputBox("Feature Initialization Report",
                 () => ToHexString(GetCurrent().FeatureInitReport),
                 (o) => ModifyCurrent(id => id.FeatureInitReport = ToByteArray(o))
