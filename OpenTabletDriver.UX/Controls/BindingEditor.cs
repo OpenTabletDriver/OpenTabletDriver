@@ -1,7 +1,7 @@
 using System;
-using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows.Bindings;
 
@@ -22,11 +22,11 @@ namespace OpenTabletDriver.UX.Controls
 
         private StackView content = new StackView();
 
-        public async void UpdateBindings()
+        public async void UpdateBindings(TabletState tablet = null)
         {
             content.Items.Clear();
 
-            var tablet = await App.Driver.Instance.GetTablet();
+            tablet ??= await App.Driver.Instance.GetTablet();
 
             var tipButton = new BindingDisplay(App.Settings?.TipButton)
             {
@@ -52,8 +52,10 @@ namespace OpenTabletDriver.UX.Controls
             var tipSettings = new Group("Tip Bindings", tipSettingsStack);
 
             var penBindingsStack = new StackView();
-            for (int i = 0; i < (tablet?.Digitizer.ButtonCount ?? 0); i++)
+            for (int i = 0; i < (tablet?.Digitizer?.MaxPenButtonCount ?? 0); i++)
             {
+                if (App.Settings?.PenButtons?.Count <= i)
+                    App.Settings?.PenButtons?.Add(null);
                 var penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
                 {
                     Width = 250,
@@ -83,8 +85,11 @@ namespace OpenTabletDriver.UX.Controls
             content.AddControl(penSettings);
 
             var auxBindingsStack = new StackView();
-            for (int i = 0; i < (tablet?.Auxiliary.ButtonCount ?? 0); i++)
+            var auxCount = tablet?.Auxiliary?.ButtonCount ?? tablet?.Digitizer?.ButtonCount ?? 0;
+            for (int i = 0; i < auxCount; i++)
             {
+                if (App.Settings?.AuxButtons?.Count <= i)
+                    App.Settings?.AuxButtons?.Add(null);
                 var auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
                 {
                     Width = 250,

@@ -43,6 +43,10 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                 () => GetCurrent().MaxPressure.ToString(),
                 (o) => ModifyCurrent(id => id.MaxPressure = ToUInt(o))
             );
+            yield return new InputBox("Max Pen Button Count",
+                () => GetCurrent().MaxPenButtonCount.ToString(),
+                (o) => ModifyCurrent(id => id.MaxPenButtonCount = ToUInt(o))
+            );
             yield return new InputBox("Active Report ID",
                 () => GetCurrent().ActiveReportID?.ToString() ?? new DetectionRange().ToString(),
                 (o) => ModifyCurrent(id => id.ActiveReportID = DetectionRange.Parse(o))

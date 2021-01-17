@@ -11,18 +11,14 @@ namespace OpenTabletDriver.Desktop.Migration
         {
             // Output mode
             MigrateNamespace(settings.OutputMode);
-            
+
             // Bindings
             if (settings.TipButton is PluginSettingStore tipStore)
                 MigrateNamespace(tipStore);
 
-            while(settings.PenButtons.Count < Settings.PenButtonCount)
-                settings.PenButtons.Add(null);
             foreach (PluginSettingStore store in settings.PenButtons)
                 MigrateNamespace(store);
 
-            while (settings.AuxButtons.Count < Settings.AuxButtonCount)
-                settings.AuxButtons.Add(null);
             foreach (PluginSettingStore store in settings.AuxButtons)
                 MigrateNamespace(store);
 

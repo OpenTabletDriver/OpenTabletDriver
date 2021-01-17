@@ -15,9 +15,6 @@ namespace OpenTabletDriver.Desktop
         {
         }
 
-        internal const int PenButtonCount = 2;
-        internal const int AuxButtonCount = 6;
-
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;

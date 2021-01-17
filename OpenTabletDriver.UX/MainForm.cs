@@ -129,6 +129,8 @@ namespace OpenTabletDriver.UX
                 }
             };
 
+            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
+
             SettingsChanged += (settings) =>
             {
                 filterEditor.UpdateStore(Settings?.Filters);
@@ -367,14 +369,21 @@ namespace OpenTabletDriver.UX
 
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 
+            await LoadSettings(AppInfo.Current);
+
             Content = ConstructMainControls();
 
             if (await Driver.Instance.GetTablet() is TabletState tablet)
                 outputModeEditor.SetTabletSize(tablet);
 
-            Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
-
-            await LoadSettings(AppInfo.Current);
+            Driver.Instance.TabletChanged += (sender, tablet) =>
+            {
+                Application.Instance.AsyncInvoke(() =>
+                {
+                    outputModeEditor.SetTabletSize(tablet);
+                    bindingEditor.UpdateBindings(tablet);
+                });
+            };
         }
 
         private async Task LoadSettings(AppInfo appInfo = null)
@@ -383,7 +392,7 @@ namespace OpenTabletDriver.UX
             var settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await Driver.Instance.GetSettings() is Settings settings)
             {
-                Settings = settings;
+                await Application.Instance.InvokeAsync(() => Settings = settings);
             }
             else if (settingsFile.Exists)
             {
@@ -405,8 +414,6 @@ namespace OpenTabletDriver.UX
 
             if (!settingsFile.Exists)
                 await ShowFirstStartupGreeter();
-
-            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
         }
 
         private OutputModeEditor outputModeEditor;

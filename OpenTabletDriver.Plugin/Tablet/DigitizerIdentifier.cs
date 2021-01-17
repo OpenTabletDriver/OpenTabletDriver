@@ -28,6 +28,11 @@
         public uint MaxPressure { set; get; }
 
         /// <summary>
+        /// The tablet's maximum supported pen button count, excluding eraser.
+        /// </summary>
+        public uint MaxPenButtonCount { set; get; }
+
+        /// <summary>
         /// The tablet's active detection report ID.
         /// </summary>
         public DetectionRange ActiveReportID { set; get; }

@@ -276,28 +276,37 @@ namespace OpenTabletDriver.Daemon
             BindingHandler.TipActivationPressure = Settings.TipActivationPressure;
             Log.Write("Settings", $"Tip Binding: [{BindingHandler.TipBinding}]@{BindingHandler.TipActivationPressure}%");
 
-            if (Settings.PenButtons != null)
+            if (Driver.Tablet is TabletState tablet)
             {
-                for (int index = 0; index < Settings.PenButtons.Count; index++)
+                if (Settings.PenButtons != null)
                 {
-                    var bind = Settings.PenButtons[index]?.Construct<IBinding>();
-                    if (!BindingHandler.PenButtonBindings.TryAdd(index, bind))
-                        BindingHandler.PenButtonBindings[index] = bind;
+                    var penCount = tablet.Digitizer?.MaxPenButtonCount ?? 0;
+                    for (int index = 0; index < penCount; index++)
+                    {
+                        if (Settings.PenButtons.Count <= index)
+                            Settings.PenButtons.Add(null);
+                        var bind = Settings.PenButtons[index]?.Construct<IBinding>();
+                        if (!BindingHandler.PenButtonBindings.TryAdd(index, bind))
+                            BindingHandler.PenButtonBindings[index] = bind;
+                    }
+
+                    Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", BindingHandler.PenButtonBindings));
                 }
 
-                Log.Write("Settings", $"Pen Bindings: " + string.Join(", ", BindingHandler.PenButtonBindings));
-            }
-
-            if (Settings.AuxButtons != null)
-            {
-                for (int index = 0; index < Settings.AuxButtons.Count; index++)
+                if (Settings.AuxButtons != null)
                 {
-                    var bind = Settings.AuxButtons[index]?.Construct<IBinding>();
-                    if (!BindingHandler.AuxButtonBindings.TryAdd(index, bind))
-                        BindingHandler.AuxButtonBindings[index] = bind;
-                }
+                    var auxCount = tablet.Auxiliary?.ButtonCount ?? tablet.Digitizer?.ButtonCount ?? 0;
+                    for (int index = 0; index < auxCount; index++)
+                    {
+                        if (Settings.AuxButtons.Count <= index)
+                            Settings.AuxButtons.Add(null);
+                        var bind = Settings.AuxButtons[index]?.Construct<IBinding>();
+                        if (!BindingHandler.AuxButtonBindings.TryAdd(index, bind))
+                            BindingHandler.AuxButtonBindings[index] = bind;
+                    }
 
-                Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", BindingHandler.AuxButtonBindings));
+                    Log.Write("Settings", $"Express Key Bindings: " + string.Join(", ", BindingHandler.AuxButtonBindings));
+                }
             }
         }
 
