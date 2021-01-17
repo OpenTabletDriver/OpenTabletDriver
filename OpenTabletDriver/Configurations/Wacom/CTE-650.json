@@ -7,6 +7,7 @@
       "MaxX": 21648.0,
       "MaxY": 13530.0,
       "MaxPressure": 511,
+      "MaxPenButtonCount": 2,
       "ActiveReportID": {
         "Start": 0,
         "StartInclusive": false,

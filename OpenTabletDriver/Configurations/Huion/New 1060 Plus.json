@@ -7,6 +7,7 @@
       "MaxX": 50800.0,
       "MaxY": 31750.0,
       "MaxPressure": 8191,
+      "MaxPenButtonCount": 2,
       "ActiveReportID": {
         "Start": 128,
         "StartInclusive": true,
@@ -28,12 +29,13 @@
         200
       ]
     },
-	  {
+    {
       "Width": 254.0,
       "Height": 158.75,
       "MaxX": 50800.0,
       "MaxY": 31750.0,
       "MaxPressure": 8191,
+      "MaxPenButtonCount": 2,
       "ActiveReportID": {
         "Start": 64,
         "StartInclusive": true,

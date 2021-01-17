@@ -7,6 +7,7 @@
       "MaxX": 58752.0,
       "MaxY": 33048.0,
       "MaxPressure": 8191,
+      "MaxPenButtonCount": 2,
       "ActiveReportID": {
         "Start": 64,
         "StartInclusive": true,
@@ -25,7 +26,7 @@
         "201": "HUION_M182_\\d{6}$"
       },
       "InitializationStrings": [
-        "200"
+        200
       ]
     }
   ],
