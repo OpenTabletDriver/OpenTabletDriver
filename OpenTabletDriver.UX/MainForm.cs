@@ -24,6 +24,7 @@ namespace OpenTabletDriver.UX
         {
             Title = "OpenTabletDriver";
             Icon = Logo.WithSize(Logo.Size);
+            ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
 
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
@@ -45,28 +46,20 @@ namespace OpenTabletDriver.UX
             InitializeAsync();
         }
 
+        protected const int DEFAULT_CLIENT_WIDTH = 960;
+        protected const int DEFAULT_CLIENT_HEIGHT = 760;
+
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
 
-            // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
             if (!this.alreadyShown)
             {
-                if (this.WindowState == WindowState.Normal && SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
+                if (this.ClientSize.Width < Screen.WorkingArea.Width || this.ClientSize.Height < Screen.WorkingArea.Height)
                 {
-                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
-                    var minWidth = Math.Min(960, bounds.Width * 0.9);
-                    var minHeight = Math.Min(760, bounds.Height * 0.9);
-                    this.ClientSize = new Size((int)minWidth, (int)minHeight);
-                    if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
-                    {
-                        var offset = new Point((int)bounds.X, (int)bounds.Y);
-                        var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
-
-                        var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
-                        var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
-                        this.Location = new Point(x, y) + offset;
-                    }
+                    int width = (int)Math.Min(Screen.WorkingArea.Width * 0.9, DEFAULT_CLIENT_WIDTH);
+                    int height = (int)Math.Min(Screen.WorkingArea.Height * 0.9, DEFAULT_CLIENT_HEIGHT);
+                    this.ClientSize = new Size(width, height);
                 }
                 this.alreadyShown = true;
             }
