@@ -52,12 +52,11 @@ namespace OpenTabletDriver.UX
             // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
             if (!this.alreadyShown)
             {
-                var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
-
-                if (this.WindowState == WindowState.Normal)
+                if (this.WindowState == WindowState.Normal && SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
                 {
-                    var minWidth = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 970 : 960, bounds.Width * 0.9);
-                    var minHeight = Math.Min(SystemInterop.CurrentPlatform == PluginPlatform.MacOS ? 770 : 760, bounds.Height * 0.9);
+                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
+                    var minWidth = Math.Min(960, bounds.Width * 0.9);
+                    var minHeight = Math.Min(760, bounds.Height * 0.9);
                     this.ClientSize = new Size((int)minWidth, (int)minHeight);
                     if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
                     {
@@ -312,6 +311,14 @@ namespace OpenTabletDriver.UX
                 PluginPlatform.MacOS   => true,
                 _                      => false,
             };
+
+            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
+            {
+                var bounds = Screen.PrimaryScreen.Bounds;
+                var minWidth = Math.Min(970, bounds.Width * 0.9);
+                var minHeight = Math.Min(770, bounds.Height * 0.9);
+                this.ClientSize = new Size((int)minWidth, (int)minHeight);
+            }
 
             if (App.EnableTrayIcon)
             {
