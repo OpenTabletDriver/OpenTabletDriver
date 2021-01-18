@@ -303,6 +303,7 @@ namespace OpenTabletDriver.UX
             {
                 case PluginPlatform.MacOS:
                     this.Padding = 10;
+                    break;
             }
 
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
