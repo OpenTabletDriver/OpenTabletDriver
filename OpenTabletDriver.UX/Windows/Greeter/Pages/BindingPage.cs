@@ -1,3 +1,4 @@
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Attributes;
@@ -19,7 +20,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                     Expand = true,
                     Control = new Group
                     {
-                        Text = "Preview",
+                        Text = "Demo",
                         Content = new StackedContent
                         {
                             new PaddingSpacerItem(),
@@ -51,8 +52,10 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                         }
                     }
                 },
-                "Click a button to set a key or mouse binding",
-                "Right clicking opens the advanced binding editor, which allows you to use plugin bindings.",
+                new StylizedText("This is the binding editor.", Fonts.Cached("Sans", 9, FontStyle.Bold), new Padding(0, 0, 0, 4)),
+                "It allows you to set specific actions that OTD will perform when, for example, a tablet button is pressed.",
+                "Click on the left button to capture a mouse or keyboard binding.",
+                "Click on the right button to open the advanced binding editor, which allows you to use plugin bindings.",
                 new PaddingSpacerItem(),
             };
         }
