@@ -8,16 +8,16 @@ namespace OpenTabletDriver.Native.Linux.Timers
 
     public static class Timers
     {
-        [DllImport("librt", EntryPoint = "timer_create", SetLastError = true)]
+        [DllImport("libc", EntryPoint = "timer_create", SetLastError = true)]
         public static extern ERRNO TimerCreate(ClockID clockID, ref SigEvent eventPtr, out IntPtr timerID);
 
-        [DllImport("librt", EntryPoint = "timer_settime", SetLastError = true)]
+        [DllImport("libc", EntryPoint = "timer_settime", SetLastError = true)]
         public static extern ERRNO TimerSetTime(IntPtr timerID, TimerFlag flags, ref TimerSpec newValue, ref TimerSpec oldValue);
 
-        [DllImport("librt", EntryPoint = "timer_settime", SetLastError = true)]
+        [DllImport("libc", EntryPoint = "timer_settime", SetLastError = true)]
         public static extern ERRNO TimerSetTime(IntPtr timerID, TimerFlag flags, ref TimerSpec newValue, IntPtr oldValue);
 
-        [DllImport("librt", EntryPoint = "timer_delete", SetLastError = true)]
+        [DllImport("libc", EntryPoint = "timer_delete", SetLastError = true)]
         public static extern ERRNO TimerDelete(IntPtr timerID);
     }
 }
