@@ -55,8 +55,8 @@ namespace OpenTabletDriver.UX
                 case PluginPlatform.Windows:
                 case PluginPlatform.MacOS:
                 {
-                    var x = Screen.WorkingArea.Center.X - this.Width / 2;
-                    var y = Screen.WorkingArea.Center.Y - this.Height / 2;
+                    var x = Screen.WorkingArea.Center.X - (this.Width / 2);
+                    var y = Screen.WorkingArea.Center.Y - (this.Height / 2);
                     this.Location = new Point((int)x, (int)y);
                     break;
                 }
