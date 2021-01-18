@@ -19,13 +19,13 @@ using StreamJsonRpc.Protocol;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class PluginManagerWindow : Form
+    public class PluginManagerWindow : DesktopForm
     {
         public PluginManagerWindow()
+            : base()
         {
             this.Title = "Plugin Manager";
-            this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.Size = new Size(700, 550);
+            this.ClientSize = new Size(700, 550);
             this.AllowDrop = true;
 
             this.Menu = ConstructMenu();

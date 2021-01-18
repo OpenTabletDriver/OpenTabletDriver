@@ -16,13 +16,13 @@ using OpenTabletDriver.UX.Windows.Configurations.Controls;
 
 namespace OpenTabletDriver.UX.Windows.Configurations
 {
-    public class ConfigurationEditor : Form
+    public class ConfigurationEditor : DesktopForm
     {
         public ConfigurationEditor()
+            : base()
         {
             base.Title = "Configuration Editor";
             base.ClientSize = new Size(910, 680);
-            base.Icon = App.Logo.WithSize(App.Logo.Size);
 
             base.Content = new Splitter
             {

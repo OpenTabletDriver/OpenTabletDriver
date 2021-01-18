@@ -6,13 +6,14 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class DeviceStringReader : Form
+    public class DeviceStringReader : DesktopForm
     {
         public DeviceStringReader()
+            : base()
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.Size = new Size(300, -1);
+            this.ClientSize = new Size(300, 250);
 
             this.sendRequestButton = new Button
             {
