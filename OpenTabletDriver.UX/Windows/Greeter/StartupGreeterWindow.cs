@@ -11,7 +11,10 @@ namespace OpenTabletDriver.UX.Windows.Greeter
         public StartupGreeterWindow()
         {
             base.Title = "OpenTabletDriver Guide";
-            base.ClientSize = new Size(895, 680);
+            var bounds = Application.Instance.MainForm.Screen.Bounds;
+            var minWidth = Math.Min(895, bounds.Width * 0.85);
+            var minHeight = Math.Min(680, bounds.Height * 0.85);
+            base.ClientSize = new Size((int)minWidth, (int)minHeight);
             base.Icon = App.Logo.WithSize(256, 256);
         }
 
