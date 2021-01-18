@@ -299,11 +299,12 @@ namespace OpenTabletDriver.UX
 
         private void ApplyPlatformQuirks()
         {
-            this.Padding = SystemInterop.CurrentPlatform switch
+            switch (SystemInterop.CurrentPlatform)
             {
-                PluginPlatform.MacOS => new Padding(10),
-                _                    => new Padding(0)
-            };
+                case PluginPlatform.MacOS:
+                    this.Padding = 10;
+                    break;
+            }
 
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
