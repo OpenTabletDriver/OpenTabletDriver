@@ -18,13 +18,13 @@ namespace OpenTabletDriver.UX
 {
     using static App;
 
-    public partial class MainForm : Form
+    public partial class MainForm : DesktopForm
     {
         public MainForm()
+            : base()
         {
             Title = "OpenTabletDriver";
-            Icon = Logo.WithSize(Logo.Size);
-
+            ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
 
@@ -40,35 +40,107 @@ namespace OpenTabletDriver.UX
                 });
             };
 
-            ApplyPlatformQuirks();
-
             InitializeAsync();
         }
 
-        protected override void OnShown(EventArgs e)
+        private OutputModeEditor outputModeEditor;
+        private BindingEditor bindingEditor;
+        private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
+        private PluginSettingStoreCollectionEditor<ITool> toolEditor;
+        private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
+        private bool alreadyShown;
+
+        public void Refresh()
         {
-            base.OnShown(e);
+            bindingEditor = new BindingEditor();
+            filterEditor.UpdateStore(Settings?.Filters);
+            toolEditor.UpdateStore(Settings?.Tools);
+            interpolatorEditor.UpdateStore(Settings?.Interpolators);
+            outputModeEditor.Refresh();
+        }
 
-            // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
-            if (!this.alreadyShown)
+        protected override void OnInitializePlatform(EventArgs e)
+        {
+            base.OnInitializePlatform(e);
+
+            switch (SystemInterop.CurrentPlatform)
             {
-                if (this.WindowState == WindowState.Normal && SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
-                {
-                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
-                    var minWidth = Math.Min(960, bounds.Width * 0.9);
-                    var minHeight = Math.Min(760, bounds.Height * 0.9);
-                    this.ClientSize = new Size((int)minWidth, (int)minHeight);
-                    if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
-                    {
-                        var offset = new Point((int)bounds.X, (int)bounds.Y);
-                        var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
+                case PluginPlatform.MacOS:
+                    this.Padding = 10;
+                    break;
+            }
 
-                        var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
-                        var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
-                        this.Location = new Point(x, y) + offset;
+            bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
+            {
+                PluginPlatform.Windows => true,
+                PluginPlatform.MacOS   => true,
+                _                      => false,
+            };
+
+            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
+            {
+                var bounds = Screen.PrimaryScreen.Bounds;
+                var minWidth = Math.Min(970, bounds.Width * 0.9);
+                var minHeight = Math.Min(770, bounds.Height * 0.9);
+                this.ClientSize = new Size((int)minWidth, (int)minHeight);
+            }
+
+            if (App.EnableTrayIcon)
+            {
+                var trayIcon = new TrayIcon(this);
+                this.WindowStateChanged += (sender, e) =>
+                {
+                    switch (this.WindowState)
+                    {
+                        case WindowState.Normal:
+                        case WindowState.Maximized:
+                            this.ShowInTaskbar = true;
+                            break;
+                        case WindowState.Minimized:
+                            this.ShowInTaskbar = false;
+                            this.Visible = false;
+                            break;
                     }
+                };
+                Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
+            }
+
+            if (enableDaemonWatchdog)
+            {
+                // Check if daemon is already active, if not then start it as a subprocess if it exists in the local path.
+                if (!Instance.Exists("OpenTabletDriver.Daemon") && DaemonWatchdog.CanExecute)
+                {
+                    var watchdog = new DaemonWatchdog();
+                    watchdog.Start();
+                    watchdog.DaemonExited += (sender, e) =>
+                    {
+                        Application.Instance.AsyncInvoke(() =>
+                        {
+                            var dialogResult = MessageBox.Show(
+                                this,
+                                "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart it and reload OpenTabletDriver?",
+                                "OpenTabletDriver Fatal Error",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxType.Error
+                            );
+                            switch (dialogResult)
+                            {
+                                case DialogResult.Yes:
+                                    watchdog.Dispose();
+                                    watchdog.Start();
+                                    break;
+                                case DialogResult.No:
+                                default:
+                                    Environment.Exit(0);
+                                    break;
+                            }
+                        });
+                    };
+                    this.Closing += (sender, e) =>
+                    {
+                        watchdog.Dispose();
+                    };
                 }
-                this.alreadyShown = true;
             }
         }
 
@@ -92,15 +164,6 @@ namespace OpenTabletDriver.UX
                     new StackLayoutItem(null, true)
                 }
             };
-        }
-
-        public void Refresh()
-        {
-            bindingEditor = new BindingEditor();
-            filterEditor.UpdateStore(Settings?.Filters);
-            toolEditor.UpdateStore(Settings?.Tools);
-            interpolatorEditor.UpdateStore(Settings?.Interpolators);
-            outputModeEditor.Refresh();
         }
 
         private Control ConstructMainControls()
@@ -297,89 +360,6 @@ namespace OpenTabletDriver.UX
             };
         }
 
-        private void ApplyPlatformQuirks()
-        {
-            switch (SystemInterop.CurrentPlatform)
-            {
-                case PluginPlatform.MacOS:
-                    this.Padding = 10;
-                    break;
-            }
-
-            bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => true,
-                PluginPlatform.MacOS   => true,
-                _                      => false,
-            };
-
-            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
-            {
-                var bounds = Screen.PrimaryScreen.Bounds;
-                var minWidth = Math.Min(970, bounds.Width * 0.9);
-                var minHeight = Math.Min(770, bounds.Height * 0.9);
-                this.ClientSize = new Size((int)minWidth, (int)minHeight);
-            }
-
-            if (App.EnableTrayIcon)
-            {
-                var trayIcon = new TrayIcon(this);
-                this.WindowStateChanged += (sender, e) =>
-                {
-                    switch (this.WindowState)
-                    {
-                        case WindowState.Normal:
-                        case WindowState.Maximized:
-                            this.ShowInTaskbar = true;
-                            break;
-                        case WindowState.Minimized:
-                            this.ShowInTaskbar = false;
-                            this.Visible = false;
-                            break;
-                    }
-                };
-                Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
-            }
-
-            if (enableDaemonWatchdog)
-            {
-                // Check if daemon is already active, if not then start it as a subprocess if it exists in the local path.
-                if (!Instance.Exists("OpenTabletDriver.Daemon") && DaemonWatchdog.CanExecute)
-                {
-                    var watchdog = new DaemonWatchdog();
-                    watchdog.Start();
-                    watchdog.DaemonExited += (sender, e) =>
-                    {
-                        Application.Instance.AsyncInvoke(() =>
-                        {
-                            var dialogResult = MessageBox.Show(
-                                this,
-                                "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart it and reload OpenTabletDriver?",
-                                "OpenTabletDriver Fatal Error",
-                                MessageBoxButtons.YesNo,
-                                MessageBoxType.Error
-                            );
-                            switch (dialogResult)
-                            {
-                                case DialogResult.Yes:
-                                    watchdog.Dispose();
-                                    watchdog.Start();
-                                    break;
-                                case DialogResult.No:
-                                default:
-                                    Environment.Exit(0);
-                                    break;
-                            }
-                        });
-                    };
-                    this.Closing += (sender, e) =>
-                    {
-                        watchdog.Dispose();
-                    };
-                }
-            }
-        }
-
         private async void InitializeAsync()
         {
             try
@@ -438,13 +418,6 @@ namespace OpenTabletDriver.UX
 
             outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
         }
-
-        private OutputModeEditor outputModeEditor;
-        private BindingEditor bindingEditor;
-        private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
-        private PluginSettingStoreCollectionEditor<ITool> toolEditor;
-        private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
-        private bool alreadyShown;
 
         private async Task ResetSettings(bool force = true)
         {

@@ -8,7 +8,7 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class TabletDebugger : Form
+    public class TabletDebugger : DesktopForm
     {
         public TabletDebugger()
         {
