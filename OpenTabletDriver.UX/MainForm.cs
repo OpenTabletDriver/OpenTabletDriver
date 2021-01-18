@@ -45,6 +45,33 @@ namespace OpenTabletDriver.UX
             InitializeAsync();
         }
 
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            // Size and Location becomes available only during and after Shown event, LoadComplete don't have it yet
+            if (!this.alreadyShown)
+            {
+                if (this.WindowState == WindowState.Normal && SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
+                {
+                    var bounds = Screen.FromPoint(this.Location + new Point(this.Size.Width / 2, this.Size.Height / 2)).Bounds;
+                    var minWidth = Math.Min(960, bounds.Width * 0.9);
+                    var minHeight = Math.Min(760, bounds.Height * 0.9);
+                    this.ClientSize = new Size((int)minWidth, (int)minHeight);
+                    if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+                    {
+                        var offset = new Point((int)bounds.X, (int)bounds.Y);
+                        var intersectRect = new Size((int)bounds.Width, (int)bounds.Height) - this.Size;
+
+                        var x = Math.Min(Math.Max(0, this.Location.X), intersectRect.Width);
+                        var y = Math.Min(Math.Max(0, this.Location.Y), intersectRect.Height);
+                        this.Location = new Point(x, y) + offset;
+                    }
+                }
+                this.alreadyShown = true;
+            }
+        }
+
         private Control ConstructPlaceholderControl()
         {
             return new StackLayout
@@ -278,18 +305,20 @@ namespace OpenTabletDriver.UX
                 _                    => new Padding(0)
             };
 
-            this.ClientSize = SystemInterop.CurrentPlatform switch
-            {
-                PluginPlatform.MacOS => new Size(970, 770),
-                _ => new Size(960, 760)
-            };
-
             bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => true,
                 PluginPlatform.MacOS   => true,
                 _                      => false,
             };
+
+            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
+            {
+                var bounds = Screen.PrimaryScreen.Bounds;
+                var minWidth = Math.Min(970, bounds.Width * 0.9);
+                var minHeight = Math.Min(770, bounds.Height * 0.9);
+                this.ClientSize = new Size((int)minWidth, (int)minHeight);
+            }
 
             if (App.EnableTrayIcon)
             {
@@ -414,6 +443,7 @@ namespace OpenTabletDriver.UX
         private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
         private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
+        private bool alreadyShown;
 
         private async Task ResetSettings(bool force = true)
         {
@@ -523,7 +553,7 @@ namespace OpenTabletDriver.UX
 
         private async Task ShowFirstStartupGreeter()
         {
-            var greeter = new StartupGreeterWindow();
+            var greeter = new StartupGreeterWindow(this);
             await greeter.ShowModalAsync();
         }
 
