@@ -400,7 +400,10 @@ namespace OpenTabletDriver.UX.Windows
                     where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
                     select meta;
 
-                var metaQuery = from meta in installedMeta.Concat(fetched)
+                var metadataGroup = from ungroupedMeta in installedMeta.Concat(fetched)
+                    group ungroupedMeta by (ungroupedMeta.Name, ungroupedMeta.Owner, ungroupedMeta.RepositoryUrl);
+
+                var metaQuery = from meta in metadataGroup.Select(m => m.OrderByDescending(p => p.PluginVersion).FirstOrDefault())
                     orderby meta.Name
                     select meta;
 
