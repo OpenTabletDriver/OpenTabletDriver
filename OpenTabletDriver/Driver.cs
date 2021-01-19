@@ -173,14 +173,28 @@ namespace OpenTabletDriver
 
             if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Device", "Setting feature: " + BitConverter.ToString(featureInitReport));
-                TabletReader.ReportStream.SetFeature(featureInitReport);
+                try
+                {
+                    TabletReader.ReportStream.SetFeature(featureInitReport);
+                    Log.Debug("Device", "Set tablet feature: " + BitConverter.ToString(featureInitReport));
+                }
+                catch
+                {
+                    Log.Write("Device", "Failed to set tablet feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
+                }
             }
 
             if (tablet.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Device", "Setting output: " + BitConverter.ToString(outputInitReport));
-                TabletReader.ReportStream.Write(outputInitReport);
+                try
+                {
+                    TabletReader.ReportStream.Write(outputInitReport);
+                    Log.Debug("Device", "Set tablet output: " + BitConverter.ToString(outputInitReport));
+                }
+                catch
+                {
+                    Log.Write("Device", "Failed to set tablet output: " + BitConverter.ToString(outputInitReport), LogLevel.Warning);
+                }
             }
         }
 
@@ -210,7 +224,7 @@ namespace OpenTabletDriver
                 }
                 catch
                 {
-                    Log.Write("Device", "Failed to set feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
+                    Log.Write("Device", "Failed to set aux feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
                 }
             }
 
@@ -219,7 +233,7 @@ namespace OpenTabletDriver
                 try
                 {
                     AuxReader.ReportStream.Write(outputInitReport);
-                    Log.Debug("Device", "Set output: " + BitConverter.ToString(outputInitReport));
+                    Log.Debug("Device", "Set aux output: " + BitConverter.ToString(outputInitReport));
                 }
                 catch
                 {
