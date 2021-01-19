@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             get => inRange;
         }
 
-        [Property("Hertz"), Unit("hz")]
+        [Property("Hertz"), Unit("Hz"), DefaultPropertyValue(1000.0f)]
         public float Hertz { get; set; } = 1000.0f;
 
         public virtual bool Enabled

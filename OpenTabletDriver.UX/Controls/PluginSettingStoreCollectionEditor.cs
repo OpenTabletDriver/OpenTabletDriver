@@ -363,6 +363,7 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         try
                         {
+                            setting.SetValue(defaults.Value);
                             return (T)defaults.Value;
                         }
                         catch (Exception e)
