@@ -59,8 +59,15 @@ namespace OpenTabletDriver.Desktop.Reflection
                 select property;
 
             foreach (var setting in Settings)
+            {
                 if (properties.FirstOrDefault(d => d.Name == setting.Property) is PropertyInfo property)
-                    property.SetValue(target, setting.GetValue(property.PropertyType));
+                {
+                    if (setting.HasValue)
+                        property.SetValue(target, setting.GetValue(property.PropertyType));
+                    else if (property.GetCustomAttribute<DefaultPropertyValueAttribute>() is DefaultPropertyValueAttribute defaults)
+                        property.SetValue(target, defaults.Value);
+                }
+            }
         }
 
         private static ObservableCollection<PluginSetting> GetSettingsForType(Type targetType, object source = null)
