@@ -48,7 +48,6 @@ namespace OpenTabletDriver.UX
         private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
         private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
-        private bool alreadyShown;
 
         public void Refresh()
         {

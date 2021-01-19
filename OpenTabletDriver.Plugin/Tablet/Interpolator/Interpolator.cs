@@ -39,8 +39,8 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             get => inRange;
         }
 
-        [Property("Hertz"), Unit("Hz"), DefaultPropertyValue(1000.0f)]
-        public float Hertz { get; set; } = 1000.0f;
+        [Property("Frequency"), Unit("Hz"), DefaultPropertyValue(1000.0f)]
+        public float Frequency { get; set; }
 
         public virtual bool Enabled
         {
@@ -49,7 +49,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
                 this.enabled = value;
                 if (value)
                 {
-                    this.scheduler.Interval = 1000.0f / Hertz;
+                    this.scheduler.Interval = 1000.0f / Frequency;
                     this.scheduler.Start();
                 }
                 else
