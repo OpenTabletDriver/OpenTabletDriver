@@ -87,6 +87,9 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 if (Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
+                    if (Pointer is IVirtualTablet pressureHandler)
+                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Tablet.Digitizer.MaxPressure);
+
                     if (Transpose(tabletReport) is Vector2 position)
                         Pointer.Translate(position);
                 }
