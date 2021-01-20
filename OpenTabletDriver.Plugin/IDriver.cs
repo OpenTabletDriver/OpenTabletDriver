@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Plugin
     public interface IDriver
     {
         event EventHandler<bool> Reading;
-        event EventHandler<IDeviceReport> ReportRecieved;
+        event EventHandler<IDeviceReport> ReportReceived;
         event EventHandler<TabletState> TabletChanged;
 
         bool EnableInput { set; get; }
