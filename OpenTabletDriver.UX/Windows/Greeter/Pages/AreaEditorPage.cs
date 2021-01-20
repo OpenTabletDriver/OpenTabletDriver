@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                         Content = new DemoAreaEditor("mm", true)
                     }
                 },
-                new StylizedText("This is the area editor.", Fonts.Cached("Sans", 9, FontStyle.Bold), new Padding(0, 0, 0, 4)),
+                new StylizedText("This is the area editor.", Fonts.Sans(9, FontStyle.Bold), new Padding(0, 0, 0, 4)),
                 "You can right click the absolute output mode area editor for more options.",
                 "Aligning, resizing, and flipping your area can be done within this context menu.",
                 "Other options such as locking aspect ratio, locking input inside of the usable area are also found here.",
