@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX
         public MainForm()
             : base()
         {
-            Title = $"OpenTabletDriver v{App.Version}";
+            UpdateTitle(null);
             ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
@@ -385,7 +385,7 @@ namespace OpenTabletDriver.UX
             }
 
             Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
-            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => {UpdateTitle(tablet);});
+            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => UpdateTitle(tablet));
 
             await LoadSettings(AppInfo.Current);
         }
