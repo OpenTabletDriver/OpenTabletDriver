@@ -31,7 +31,7 @@ namespace OpenTabletDriver
         }
         
         public event EventHandler<bool> Reading;
-        public event EventHandler<IDeviceReport> ReportRecieved;
+        public event EventHandler<IDeviceReport> ReportReceived;
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
         public event EventHandler<TabletState> TabletChanged;
 
@@ -332,7 +332,7 @@ namespace OpenTabletDriver
 
         public virtual void OnReportRecieved(object _, IDeviceReport report)
         {
-            this.ReportRecieved?.Invoke(this, report);
+            this.ReportReceived?.Invoke(this, report);
             if (EnableInput && OutputMode?.Tablet != null)
                 if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
                     HandleReport(report);
