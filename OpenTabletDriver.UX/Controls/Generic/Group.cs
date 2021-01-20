@@ -118,7 +118,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                                 Control = new Label
                                 {
                                     Text = this.Text,
-                                    Font = Fonts.Sans(9, FontStyle.Bold)
+                                    Font = SystemFonts.Bold(9)
                                 }
                             },
                             new StackLayoutItem

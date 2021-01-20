@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
             {
                 new PaddingSpacerItem(),
                 new Bitmap(App.Logo.WithSize(150, 150)),
-                new StylizedText("FAQ", Fonts.Sans(12, FontStyle.Bold), new Padding(0, 0, 0, 8)),
+                new StylizedText("FAQ", SystemFonts.Bold(12), new Padding(0, 0, 0, 8)),
                 "If you have any issues, check out the FAQ.",
                 "This can be found under the Help menu in the main window.",
                 new PaddingSpacerItem(),
