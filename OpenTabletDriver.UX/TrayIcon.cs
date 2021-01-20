@@ -14,9 +14,7 @@ namespace OpenTabletDriver.UX
             showWindow.Click += (sender, e) =>
             {
                 window.Show();
-                window.WindowState = WindowState.Normal;
                 window.BringToFront();
-                window.WindowStyle = WindowStyle.Default;
             };
 
             var close = new ButtonMenuItem
@@ -41,9 +39,7 @@ namespace OpenTabletDriver.UX
 			indicator.Activated += (object sender, System.EventArgs e) =>
             {
                 window.Show();
-                window.WindowState = WindowState.Normal;
                 window.BringToFront();
-                window.WindowStyle = WindowStyle.Default;
             };
             indicator.Show();
         }

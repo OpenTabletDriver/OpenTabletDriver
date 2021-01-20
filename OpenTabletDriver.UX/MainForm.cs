@@ -87,6 +87,8 @@ namespace OpenTabletDriver.UX
             if (App.EnableTrayIcon)
             {
                 var trayIcon = new TrayIcon(this);
+                if (WindowState == WindowState.Minimized)
+                    this.ShowInTaskbar = false;
                 this.WindowStateChanged += (sender, e) =>
                 {
                     switch (this.WindowState)
@@ -97,7 +99,6 @@ namespace OpenTabletDriver.UX
                             break;
                         case WindowState.Minimized:
                             this.ShowInTaskbar = false;
-                            this.Visible = false;
                             break;
                     }
                 };
