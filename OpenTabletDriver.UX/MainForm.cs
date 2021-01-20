@@ -414,7 +414,7 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
             }
 
-            if (!settingsFile.Exists)
+            if (!settingsFile.Exists && this.WindowState != WindowState.Minimized)
                 await ShowFirstStartupGreeter();
         }
 
