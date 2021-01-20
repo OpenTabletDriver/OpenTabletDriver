@@ -47,11 +47,14 @@ namespace OpenTabletDriver
         {
             private set
             {
-                // Stored locally to avoid re-detecting to switch output modes
-                this.tablet = value;
-                if (OutputMode != null)
-                    OutputMode.Tablet = Tablet;
-                TabletChanged?.Invoke(this, Tablet);
+                if (value != this.tablet)
+                {
+                    // Stored locally to avoid re-detecting to switch output modes
+                    this.tablet = value;
+                    if (OutputMode != null)
+                        OutputMode.Tablet = Tablet;
+                    TabletChanged?.Invoke(this, value);
+                }
             }
             get => this.tablet;
         }
