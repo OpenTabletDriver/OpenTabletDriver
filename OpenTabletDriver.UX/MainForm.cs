@@ -244,6 +244,8 @@ namespace OpenTabletDriver.UX
                 }
             };
 
+            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
+
             return new StackLayout
             {
                 Items =
@@ -376,14 +378,14 @@ namespace OpenTabletDriver.UX
 
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 
+            await LoadSettings(AppInfo.Current);
+
             Content = ConstructMainControls();
 
             if (await Driver.Instance.GetTablet() is TabletState tablet)
                 outputModeEditor.SetTabletSize(tablet);
 
             Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
-
-            await LoadSettings(AppInfo.Current);
         }
 
         private async Task LoadSettings(AppInfo appInfo = null)
@@ -414,8 +416,6 @@ namespace OpenTabletDriver.UX
 
             if (!settingsFile.Exists)
                 await ShowFirstStartupGreeter();
-
-            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
         }
 
         private async Task ResetSettings(bool force = true)
