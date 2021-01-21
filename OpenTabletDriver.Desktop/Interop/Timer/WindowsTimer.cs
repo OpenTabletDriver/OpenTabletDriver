@@ -25,12 +25,15 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             lock (stateLock)
             {
-                var caps = new TimeCaps();
-                _ = timeGetDevCaps(ref caps, (uint)sizeof(TimeCaps));
-                var clampedInterval = Math.Clamp((uint)Interval, caps.wPeriodMin, caps.wPeriodMax);
-                _ = timeBeginPeriod(clampedInterval);
-                Enabled = true;
-                timerId = timeSetEvent(clampedInterval, 1, callbackDelegate, IntPtr.Zero, EventType.TIME_PERIODIC);
+                if (!Enabled)
+                {
+                    var caps = new TimeCaps();
+                    _ = timeGetDevCaps(ref caps, (uint)sizeof(TimeCaps));
+                    var clampedInterval = Math.Clamp((uint)Interval, caps.wPeriodMin, caps.wPeriodMax);
+                    _ = timeBeginPeriod(clampedInterval);
+                    Enabled = true;
+                    timerId = timeSetEvent(clampedInterval, 1, callbackDelegate, IntPtr.Zero, EventType.TIME_PERIODIC | EventType.TIME_KILL_SYNCHRONOUS);
+                }
             }
         }
 
@@ -38,15 +41,18 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             lock (stateLock)
             {
-                _ = timeKillEvent(timerId);
-                _ = timeEndPeriod((uint)Interval);
-                Enabled = false;
+                if (Enabled)
+                {
+                    Enabled = false;
+                    _ = timeKillEvent(timerId);
+                    _ = timeEndPeriod((uint)Interval);
+                }
             }
         }
 
         private void Callback(uint uTimerID, uint uMsg, UIntPtr dwUser, UIntPtr dw1, UIntPtr dw2)
         {
-            Elapsed();
+            Elapsed?.Invoke();
         }
 
         public void Dispose()

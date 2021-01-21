@@ -141,6 +141,11 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetSettings(Settings settings)
         {
+            // Dispose all interpolators to begin changing settings
+            foreach (var interpolator in Driver.Interpolators)
+                interpolator.Dispose();
+            Driver.Interpolators.Clear();
+
             Settings = SettingsMigrator.Migrate(settings);
 
             var pluginRef = Settings.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
@@ -323,10 +328,6 @@ namespace OpenTabletDriver.Daemon
 
         private void SetInterpolatorSettings()
         {
-            foreach (var interpolator in Driver.Interpolators)
-                interpolator.Dispose();
-            Driver.Interpolators.Clear();
-
             foreach (PluginSettingStore store in Settings.Interpolators)
             {
                 if (store.Enable == false)
@@ -341,6 +342,7 @@ namespace OpenTabletDriver.Daemon
                         select filter;
 
                     interpolator.Filters = filters.ToList();
+                    interpolator.Enabled = true;
                     Driver.Interpolators.Add(interpolator);
                     Log.Write("Settings", $"Interpolator: {interpolator}");
                 }
