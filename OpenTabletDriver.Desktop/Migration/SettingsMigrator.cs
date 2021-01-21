@@ -15,10 +15,10 @@ namespace OpenTabletDriver.Desktop.Migration
             // Bindings
             settings.TipButton = SafeMigrateNamespace(settings.TipButton, Settings.Default.TipButton);
 
-            SafeMigrateCollection(settings.Filters, trim: true);
-            SafeMigrateCollection(settings.Interpolators, trim: true);
-            SafeMigrateCollection(settings.PenButtons, Settings.PenButtonCount);
-            SafeMigrateCollection(settings.AuxButtons, Settings.AuxButtonCount);
+            settings.Filters = SafeMigrateCollection(settings.Filters, trim: true);
+            settings.Interpolators = SafeMigrateCollection(settings.Interpolators, trim: true);
+            settings.PenButtons = SafeMigrateCollection(settings.PenButtons, Settings.PenButtonCount);
+            settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons, Settings.AuxButtonCount);
 
             return settings;
         }
@@ -64,8 +64,11 @@ namespace OpenTabletDriver.Desktop.Migration
             return store;
         }
 
-        private static void SafeMigrateCollection(PluginSettingStoreCollection collection, int expectedCount = 0, bool trim = false)
+        private static PluginSettingStoreCollection SafeMigrateCollection(PluginSettingStoreCollection collection, int expectedCount = 0, bool trim = false)
         {
+            if (collection == null)
+                collection = new PluginSettingStoreCollection();
+
             for (int i = 0; i < collection.Count; i++)
                 collection[i] = SafeMigrateNamespace(collection[i]);
 
@@ -80,6 +83,8 @@ namespace OpenTabletDriver.Desktop.Migration
                         break;
                 }
             }
+
+            return collection;
         }
     }
 }
