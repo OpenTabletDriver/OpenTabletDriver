@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX
         public MainForm()
             : base()
         {
-            Title = "OpenTabletDriver";
+            UpdateTitle(null);
             ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
@@ -379,11 +379,20 @@ namespace OpenTabletDriver.UX
             Content = ConstructMainControls();
 
             if (await Driver.Instance.GetTablet() is TabletState tablet)
+            {
                 outputModeEditor.SetTabletSize(tablet);
+                UpdateTitle(tablet);
+            }
 
             Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
+            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => UpdateTitle(tablet));
 
             await LoadSettings(AppInfo.Current);
+        }
+
+        public void UpdateTitle(TabletState tablet)
+        {
+            this.Title = $"OpenTabletDriver v{App.Version} - {tablet?.TabletProperties?.Name ?? "No tablet detected"}";
         }
 
         private async Task LoadSettings(AppInfo appInfo = null)
@@ -392,13 +401,13 @@ namespace OpenTabletDriver.UX
             var settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await Driver.Instance.GetSettings() is Settings settings)
             {
-                Settings = settings;
+                Application.Instance.AsyncInvoke(() => Settings = settings);
             }
             else if (settingsFile.Exists)
             {
                 try
                 {
-                    Settings = Settings.Deserialize(settingsFile);
+                    Application.Instance.AsyncInvoke(() => Settings = Settings.Deserialize(settingsFile));
                     await Driver.Instance.SetSettings(Settings);
                 }
                 catch

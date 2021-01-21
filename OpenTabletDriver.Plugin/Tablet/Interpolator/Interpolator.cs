@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         {
             this.scheduler = scheduler;
             this.scheduler.Elapsed += InterpolateHook;
-            Info.Driver.ReportRecieved += HandleReport;
+            Info.Driver.ReportReceived += HandleReport;
             reportStopwatch.Start();
         }
 
@@ -102,7 +102,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         {
             if (!isDisposed)
             {
-                Info.Driver.ReportRecieved -= HandleReport;
+                Info.Driver.ReportReceived -= HandleReport;
                 lock (stateLock)
                 {
                     if (Enabled)
