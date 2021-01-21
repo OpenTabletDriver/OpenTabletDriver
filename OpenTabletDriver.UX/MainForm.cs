@@ -407,13 +407,13 @@ namespace OpenTabletDriver.UX
             settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await Driver.Instance.GetSettings() is Settings settings)
             {
-                Application.Instance.AsyncInvoke(() => Settings = settings);
+                await Application.Instance.InvokeAsync(() => Settings = settings);
             }
             else if (settingsFile.Exists)
             {
                 try
                 {
-                    Application.Instance.AsyncInvoke(() => Settings = Settings.Deserialize(settingsFile));
+                    await Application.Instance.InvokeAsync(() => Settings = Settings.Deserialize(settingsFile));
                     await Driver.Instance.SetSettings(Settings);
                 }
                 catch
