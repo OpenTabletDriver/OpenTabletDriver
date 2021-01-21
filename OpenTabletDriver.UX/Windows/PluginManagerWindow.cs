@@ -396,7 +396,7 @@ namespace OpenTabletDriver.UX.Windows
                     select meta;
 
                 var fetched = from meta in Repository
-                    where meta.SupportedDriverVersion >= AppVersion
+                    where meta.SupportedDriverVersion <= AppVersion
                     where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
                     select meta;
 
