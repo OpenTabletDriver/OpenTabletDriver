@@ -10,21 +10,15 @@ namespace OpenTabletDriver.Desktop.Migration
         public static Settings Migrate(Settings settings)
         {
             // Output mode
-            MigrateNamespace(settings.OutputMode);
-            
+            settings.OutputMode = SafeMigrateNamespace(settings.OutputMode, Settings.Default.OutputMode);
+
             // Bindings
-            if (settings.TipButton is PluginSettingStore tipStore)
-                MigrateNamespace(tipStore);
+            settings.TipButton = SafeMigrateNamespace(settings.TipButton, Settings.Default.TipButton);
 
-            while(settings.PenButtons.Count < Settings.PenButtonCount)
-                settings.PenButtons.Add(null);
-            foreach (PluginSettingStore store in settings.PenButtons)
-                MigrateNamespace(store);
-
-            while (settings.AuxButtons.Count < Settings.AuxButtonCount)
-                settings.AuxButtons.Add(null);
-            foreach (PluginSettingStore store in settings.AuxButtons)
-                MigrateNamespace(store);
+            SafeMigrateCollection(settings.Filters, trim: true);
+            SafeMigrateCollection(settings.Interpolators, trim: true);
+            SafeMigrateCollection(settings.PenButtons, Settings.PenButtonCount);
+            SafeMigrateCollection(settings.AuxButtons, Settings.AuxButtonCount);
 
             return settings;
         }
@@ -60,6 +54,32 @@ namespace OpenTabletDriver.Desktop.Migration
             }
 
             return input;
+        }
+
+        private static PluginSettingStore SafeMigrateNamespace(PluginSettingStore store, PluginSettingStore defaultStore = null)
+        {
+            MigrateNamespace(store);
+            if (store == null || PluginSettingStore.FromPath(store?.Path) == null)
+                store = defaultStore;
+            return store;
+        }
+
+        private static void SafeMigrateCollection(PluginSettingStoreCollection collection, int expectedCount = 0, bool trim = false)
+        {
+            for (int i = 0; i < collection.Count; i++)
+                collection[i] = SafeMigrateNamespace(collection[i]);
+
+            while (collection.Count < expectedCount)
+                collection.Add(null);
+
+            if (trim)
+            {
+                for (int i = 0; i < collection.Count; i++)
+                {
+                    if (!collection.Remove(null))
+                        break;
+                }
+            }
         }
     }
 }

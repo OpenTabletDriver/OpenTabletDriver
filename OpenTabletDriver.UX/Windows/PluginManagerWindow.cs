@@ -85,6 +85,9 @@ namespace OpenTabletDriver.UX.Windows
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.Load();
 
+            // Refresh settings
+            App.Settings = await App.Driver.Instance.GetSettings();
+
             (Application.Instance.MainForm as MainForm).Refresh();
             pluginList.Refresh();
         }

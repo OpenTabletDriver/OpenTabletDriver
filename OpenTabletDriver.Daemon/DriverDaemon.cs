@@ -57,11 +57,11 @@ namespace OpenTabletDriver.Daemon
             }
 
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
-            if (Settings == null && settingsFile.Exists)
-            {
-                var settings = Settings.Deserialize(settingsFile);
+            Settings settings = null;
+            if (settingsFile.Exists)
+                settings = Settings.Deserialize(settingsFile);
+            if (settings != null)
                 await SetSettings(settings);
-            }
             else
                 await ResetSettings();
         }
@@ -88,6 +88,9 @@ namespace OpenTabletDriver.Daemon
             if (pluginDir.Exists)
             {
                 AppInfo.PluginManager.Load();
+                // Migrate if settings is available to avoid invalid settings
+                if (Settings != null)
+                    Settings = SettingsMigrator.Migrate(Settings);
             }
             else
             {
@@ -139,8 +142,11 @@ namespace OpenTabletDriver.Daemon
             return null;
         }
 
-        public Task SetSettings(Settings settings)
+        public async Task SetSettings(Settings settings)
         {
+            if (settings == null)
+                await ResetSettings();
+
             Settings = SettingsMigrator.Migrate(settings);
 
             var pluginRef = Settings.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
@@ -168,10 +174,9 @@ namespace OpenTabletDriver.Daemon
 
             SetToolSettings();
             SetInterpolatorSettings();
-            return Task.CompletedTask;
         }
 
-        public Task ResetSettings()
+        public async Task ResetSettings()
         {
             var virtualScreen = SystemInterop.VirtualScreen;
             var tablet = Driver.Tablet?.Digitizer;
@@ -205,8 +210,7 @@ namespace OpenTabletDriver.Daemon
                 RelativeRotation = 0,
                 ResetTime = TimeSpan.FromMilliseconds(100)
             };
-            SetSettings(defaults);
-            return Task.CompletedTask;
+            await SetSettings(defaults);
         }
 
         private void SetOutputModeSettings(IOutputMode outputMode)
