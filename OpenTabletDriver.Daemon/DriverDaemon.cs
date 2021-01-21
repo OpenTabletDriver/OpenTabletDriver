@@ -63,7 +63,10 @@ namespace OpenTabletDriver.Daemon
             if (settings != null)
                 await SetSettings(settings);
             else
+            {
+                Log.Write("Settings", "Invalid settings detected. Settings will be reset to defaults", LogLevel.Warning);
                 await ResetSettings();
+            }
         }
 
         public event EventHandler<LogMessage> Message;
