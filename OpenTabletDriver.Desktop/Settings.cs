@@ -343,6 +343,11 @@ namespace OpenTabletDriver.Desktop
             args.ErrorContext.Handled = true;
             if (args.ErrorContext.Path is string path)
             {
+                if (args.CurrentObject == null)
+                {
+                    Log.Write("Settings", $"Unable to read property for {path}", LogLevel.Error);
+                    return;
+                }
                 var property = args.CurrentObject.GetType().GetProperty(path);
                 if (property != null && property.PropertyType == typeof(PluginSettingStore))
                 {
