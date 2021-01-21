@@ -141,6 +141,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetSettings(Settings settings)
         {
+            // Dispose all interpolators to begin changing settings
             foreach (var interpolator in Driver.Interpolators)
                 interpolator.Dispose();
             Driver.Interpolators.Clear();
