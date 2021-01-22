@@ -249,8 +249,7 @@ namespace OpenTabletDriver.UX.Windows
                     bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
 
                     var updatableFromRepository = from meta in Repository
-                        where meta.Name == metadata.Name
-                        where meta.Owner == metadata.Owner
+                        where PluginMetadata.Match(meta, metadata)
                         where meta.PluginVersion > metadata.PluginVersion
                         where driverVersion >= meta.SupportedDriverVersion
                         orderby meta.PluginVersion descending
