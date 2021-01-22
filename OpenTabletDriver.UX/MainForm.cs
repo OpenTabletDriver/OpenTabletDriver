@@ -406,10 +406,7 @@ namespace OpenTabletDriver.UX
         {
             appInfo ??= await Driver.Instance.GetApplicationInfo();
             settingsFile = new FileInfo(appInfo.SettingsFile);
-            Settings = await Application.Instance.Invoke(Driver.Instance.GetSettings);
-
-            if (!settingsFile.Exists)
-                await ShowFirstStartupGreeter();
+            Settings = await Driver.Instance.GetSettings();
         }
 
         private async Task ResetSettings(bool force = true)
