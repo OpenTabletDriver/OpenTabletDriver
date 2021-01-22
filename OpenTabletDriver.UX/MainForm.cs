@@ -405,7 +405,7 @@ namespace OpenTabletDriver.UX
         private async Task LoadSettings(AppInfo appInfo = null)
         {
             appInfo ??= await Driver.Instance.GetApplicationInfo();
-            var settingsFile = new FileInfo(appInfo.SettingsFile);
+            settingsFile = new FileInfo(appInfo.SettingsFile);
             await Application.Instance.InvokeAsync(async () => Settings = await Driver.Instance.GetSettings());
 
             if (!settingsFile.Exists)
