@@ -146,20 +146,14 @@ namespace OpenTabletDriver.UX.Windows
         protected async Task Uninstall(DesktopPluginContext context)
         {
             context.Directory.Refresh();
-            if (context.Directory.Exists && await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
-            {
-                AppInfo.PluginManager.UnloadPlugin(context);
-                await Refresh();
-            }
-            else if (!context.Directory.Exists)
-            {
-                AppInfo.PluginManager.UnloadPlugin(context);
-                await Refresh();
-            }
-            else
+            if (context.Directory.Exists && !await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
             {
                 MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
+                return;
             }
+
+            AppInfo.PluginManager.UnloadPlugin(context);
+            await Refresh();
         }
 
         private MenuBar ConstructMenu()
