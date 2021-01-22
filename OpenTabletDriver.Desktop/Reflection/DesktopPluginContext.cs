@@ -26,13 +26,17 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public PluginMetadata GetMetadata()
         {
-            if (Directory.EnumerateFiles().FirstOrDefault(f => f.Name == "metadata.json") is FileInfo file)
+            Directory.Refresh();
+            if (Directory.Exists && Directory.EnumerateFiles().FirstOrDefault(f => f.Name == "metadata.json") is FileInfo file)
             {
                 return Serialization.Deserialize<PluginMetadata>(file);
             }
             else
             {
-                return null;
+                return new PluginMetadata
+                {
+                    Name = FriendlyName,
+                };
             }
         }
 

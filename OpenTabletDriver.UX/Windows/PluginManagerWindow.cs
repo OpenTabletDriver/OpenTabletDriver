@@ -103,6 +103,7 @@ namespace OpenTabletDriver.UX.Windows
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
                     await Refresh();
+                    pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
                 }
             }
             catch (RemoteInvocationException ex)
@@ -144,7 +145,13 @@ namespace OpenTabletDriver.UX.Windows
 
         protected async Task Uninstall(DesktopPluginContext context)
         {
-            if (await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
+            context.Directory.Refresh();
+            if (context.Directory.Exists && await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
+            {
+                AppInfo.PluginManager.UnloadPlugin(context);
+                await Refresh();
+            }
+            else if (!context.Directory.Exists)
             {
                 AppInfo.PluginManager.UnloadPlugin(context);
                 await Refresh();
@@ -242,7 +249,9 @@ namespace OpenTabletDriver.UX.Windows
                     bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
 
                     var updatableFromRepository = from meta in Repository
-                        where meta.Name == metadata.Name && meta.PluginVersion > metadata.PluginVersion
+                        where meta.Name == metadata.Name
+                        where meta.Owner == metadata.Owner
+                        where meta.PluginVersion > metadata.PluginVersion
                         where driverVersion >= meta.SupportedDriverVersion
                         orderby meta.PluginVersion descending
                         select meta;
@@ -288,8 +297,8 @@ namespace OpenTabletDriver.UX.Windows
                                 new AlignedGroup("Name", metadata.Name),
                                 new AlignedGroup("Owner", metadata.Owner),
                                 new AlignedGroup("Description", metadata.Description),
-                                new AlignedGroup("Driver Version", metadata.SupportedDriverVersion.ToString()),
-                                new AlignedGroup("Plugin Version", metadata.PluginVersion.ToString()),
+                                new AlignedGroup("Driver Version", metadata.SupportedDriverVersion?.ToString()),
+                                new AlignedGroup("Plugin Version", metadata.PluginVersion?.ToString()),
                                 new LinkButtonGroup("Source Code Repository", metadata.RepositoryUrl, "Show source code"),
                                 new LinkButtonGroup("Wiki", metadata.WikiUrl, "Show plugin wiki"),
                                 new AlignedGroup("License", metadata.LicenseIdentifier),
@@ -400,20 +409,34 @@ namespace OpenTabletDriver.UX.Windows
                     where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
                     select meta;
 
-                var metadataGroup = from ungroupedMeta in installedMeta.Concat(fetched)
-                    group ungroupedMeta by (ungroupedMeta.Name, ungroupedMeta.Owner, ungroupedMeta.RepositoryUrl);
+                var versions = from meta in installedMeta.Concat(fetched)
+                    orderby meta.PluginVersion descending
+                    group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
 
-                var metaQuery = from meta in metadataGroup.Select(m => m.OrderByDescending(p => p.PluginVersion).FirstOrDefault())
+                var displayQuery = from grp in versions
+                    let meta = grp.FirstOrDefault()
                     orderby meta.Name
+                    orderby installedMeta.Any(m => PluginMetadata.Match(m, meta)) descending
                     select meta;
 
                 this.InstalledPlugins = installed.ToList();
 
                 this.DisplayedPlugins.Clear();
-                foreach (var meta in metaQuery)
+                foreach (var meta in displayQuery)
                     this.DisplayedPlugins.Add(meta);
 
                 SelectedIndex = index;
+            }
+
+            public void SelectFirstOrDefault(Func<PluginMetadata, bool> predicate)
+            {
+                var meta = SelectedPlugin?.GetMetadata();
+                var list = this.DataStore as IList<PluginMetadata>;
+
+                if (list?.FirstOrDefault(m => predicate(m)) is PluginMetadata existingMeta)
+                {
+                    this.SelectedIndex = list.IndexOf(existingMeta);
+                }
             }
 
             private void ShowPluginFolder(object sender, EventArgs e)
