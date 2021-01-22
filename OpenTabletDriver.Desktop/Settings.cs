@@ -11,10 +11,6 @@ namespace OpenTabletDriver.Desktop
 {
     public class Settings : Notifier
     {
-        public Settings()
-        {
-        }
-
         internal const int PenButtonCount = 2;
         internal const int AuxButtonCount = 6;
 
