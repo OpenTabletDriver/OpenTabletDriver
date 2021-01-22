@@ -43,6 +43,7 @@ namespace OpenTabletDriver.UX
             InitializeAsync();
         }
 
+        private FileInfo settingsFile;
         private OutputModeEditor outputModeEditor;
         private BindingEditor bindingEditor;
         private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
@@ -245,6 +246,8 @@ namespace OpenTabletDriver.UX
                 }
             };
 
+            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
+
             return new StackLayout
             {
                 Items =
@@ -377,6 +380,8 @@ namespace OpenTabletDriver.UX
 
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 
+            await LoadSettings(AppInfo.Current);
+
             Content = ConstructMainControls();
 
             if (await Driver.Instance.GetTablet() is TabletState tablet)
@@ -385,10 +390,11 @@ namespace OpenTabletDriver.UX
                 UpdateTitle(tablet);
             }
 
+            if (!settingsFile.Exists && this.WindowState != WindowState.Minimized)
+                await ShowFirstStartupGreeter();
+
             Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
             Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => UpdateTitle(tablet));
-
-            await LoadSettings(AppInfo.Current);
         }
 
         public void UpdateTitle(TabletState tablet)
@@ -399,16 +405,16 @@ namespace OpenTabletDriver.UX
         private async Task LoadSettings(AppInfo appInfo = null)
         {
             appInfo ??= await Driver.Instance.GetApplicationInfo();
-            var settingsFile = new FileInfo(appInfo.SettingsFile);
+            settingsFile = new FileInfo(appInfo.SettingsFile);
             if (await Driver.Instance.GetSettings() is Settings settings)
             {
-                Application.Instance.AsyncInvoke(() => Settings = settings);
+                await Application.Instance.InvokeAsync(() => Settings = settings);
             }
             else if (settingsFile.Exists)
             {
                 try
                 {
-                    Application.Instance.AsyncInvoke(() => Settings = Settings.Deserialize(settingsFile));
+                    await Application.Instance.InvokeAsync(() => Settings = Settings.Deserialize(settingsFile));
                     await Driver.Instance.SetSettings(Settings);
                 }
                 catch
@@ -421,11 +427,6 @@ namespace OpenTabletDriver.UX
             {
                 await ResetSettings();
             }
-
-            if (!settingsFile.Exists)
-                await ShowFirstStartupGreeter();
-
-            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
         }
 
         private async Task ResetSettings(bool force = true)
