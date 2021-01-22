@@ -3,9 +3,7 @@ using System.IO;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Migration;
-using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
@@ -392,18 +390,5 @@ namespace OpenTabletDriver.Desktop
         }
 
         #endregion
-
-        public static Settings Default = new Settings
-        {
-            OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
-            TipButton = new PluginSettingStore(
-                new MouseBinding
-                {
-                    Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
-                }
-            ),
-            PenButtons = new PluginSettingStoreCollection(),
-            AuxButtons = new PluginSettingStoreCollection(),
-        };
     }
 }
