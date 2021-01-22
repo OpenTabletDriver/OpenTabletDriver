@@ -82,7 +82,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     continue;
                 }
 
-                Elapsed();
+                Elapsed?.Invoke();
             }
 
             stopWatch.Stop();

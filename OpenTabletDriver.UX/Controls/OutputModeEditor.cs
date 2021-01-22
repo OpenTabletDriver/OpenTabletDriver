@@ -20,15 +20,6 @@ namespace OpenTabletDriver.UX.Controls
     {
         public OutputModeEditor()
         {
-            UpdateOutputMode(App.Settings?.OutputMode);
-            App.SettingsChanged += (settings) => UpdateOutputMode(settings?.OutputMode);
-
-            outputModeSelector.SelectedValueChanged += (sender, args) =>
-            {
-                App.Settings.OutputMode = new PluginSettingStore(outputModeSelector.SelectedType);
-                UpdateOutputMode(App.Settings.OutputMode);
-            };
-
             this.Content = outputPanel = new StackLayout
             {
                 Padding = 5,
@@ -41,6 +32,15 @@ namespace OpenTabletDriver.UX.Controls
                     new StackLayoutItem(noModeEditor, true),
                     new StackLayoutItem(outputModeSelector, HorizontalAlignment.Left, false)
                 }
+            };
+
+            UpdateOutputMode(App.Settings?.OutputMode);
+            App.SettingsChanged += (settings) => UpdateOutputMode(settings?.OutputMode);
+
+            outputModeSelector.SelectedValueChanged += (sender, args) =>
+            {
+                App.Settings.OutputMode = new PluginSettingStore(outputModeSelector.SelectedType);
+                UpdateOutputMode(App.Settings.OutputMode);
             };
         }
 
@@ -140,6 +140,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             public OutputModeSelector()
             {
+                UpdateSelectedMode(App.Settings?.OutputMode);
                 App.SettingsChanged += (settings) => UpdateSelectedMode(settings?.OutputMode);
             }
 
@@ -209,6 +210,7 @@ namespace OpenTabletDriver.UX.Controls
                         );
                     }
 
+                    Rebind(App.Settings);
                     App.SettingsChanged += Rebind;
                 }
 
@@ -252,6 +254,7 @@ namespace OpenTabletDriver.UX.Controls
 
                     AppendMenuItem("Convert area...", async () => await ConvertAreaDialog());
 
+                    Rebind(App.Settings);
                     App.SettingsChanged += Rebind;
                 }
 
