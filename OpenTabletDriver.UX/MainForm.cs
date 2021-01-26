@@ -89,16 +89,21 @@ namespace OpenTabletDriver.UX
             {
                 var trayIcon = new TrayIcon(this);
                 if (WindowState == WindowState.Minimized)
+                {
+                    this.Visible = false;
                     this.ShowInTaskbar = false;
+                }
                 this.WindowStateChanged += (sender, e) =>
                 {
                     switch (this.WindowState)
                     {
                         case WindowState.Normal:
                         case WindowState.Maximized:
+                            this.Visible = true;
                             this.ShowInTaskbar = true;
                             break;
                         case WindowState.Minimized:
+                            this.Visible = false;
                             this.ShowInTaskbar = false;
                             break;
                     }
