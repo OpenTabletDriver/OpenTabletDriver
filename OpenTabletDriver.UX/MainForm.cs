@@ -398,8 +398,11 @@ namespace OpenTabletDriver.UX
             if (!settingsFile.Exists && this.WindowState != WindowState.Minimized)
                 await ShowFirstStartupGreeter();
 
-            Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
-            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => UpdateTitle(tablet));
+            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() =>
+            {
+                outputModeEditor.SetTabletSize(tablet);
+                UpdateTitle(tablet);
+            });
         }
 
         public void UpdateTitle(TabletState tablet)
