@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -12,7 +11,8 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class AbsoluteOutputMode : IOutputMode
     {
-        private IList<IFilter> filters, preFilters, postFilters;
+        private IList<IFilter> filters;
+        private IEnumerator<IFilter> preFilters, postFilters;
         private Vector2 min, max;
         private Matrix3x2 transformationMatrix;
 
@@ -22,10 +22,10 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 this.filters = value ?? Array.Empty<IFilter>();
                 if (Info.Driver.InterpolatorActive)
-                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                    this.preFilters = filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList().GetEnumerator();
                 else
-                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose || t.FilterStage == FilterStage.PreInterpolate).ToList();
-                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList();
+                    this.preFilters = filters.Where(t => t.FilterStage is FilterStage.PreTranspose or FilterStage.PreInterpolate).ToList().GetEnumerator();
+                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList().GetEnumerator();
             }
             get => this.filters;
         }
@@ -131,8 +131,9 @@ namespace OpenTabletDriver.Plugin.Output
             var pos = new Vector2(report.Position.X, report.Position.Y);
 
             // Pre Filter
-            foreach (IFilter filter in this.preFilters ??= Array.Empty<IFilter>())
-                pos = filter.Filter(pos);
+            while (this.preFilters.MoveNext())
+                pos = this.preFilters.Current.Filter(pos);
+            this.preFilters.Reset();
 
             // Apply transformation
             pos = Vector2.Transform(pos, this.transformationMatrix);
@@ -146,8 +147,9 @@ namespace OpenTabletDriver.Plugin.Output
                 pos = clippedPoint;
 
             // Post Filter
-            foreach (IFilter filter in this.postFilters ??= Array.Empty<IFilter>())
-                pos = filter.Filter(pos);
+            while (this.postFilters.MoveNext())
+                pos = this.postFilters.Current.Filter(pos);
+            this.postFilters.Reset();
 
             return pos;
         }

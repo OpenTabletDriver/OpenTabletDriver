@@ -12,7 +12,8 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : IOutputMode
     {
-        private IList<IFilter> filters, preFilters, postFilters;
+        private IList<IFilter> filters;
+        private IEnumerator<IFilter> preFilters, postFilters;
         private Vector2? lastPos;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
         private bool skipReport = false;
@@ -24,10 +25,10 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 this.filters = value ?? Array.Empty<IFilter>();
                 if (Info.Driver.InterpolatorActive)
-                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
+                    this.preFilters = filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList().GetEnumerator();
                 else
-                    this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose || t.FilterStage == FilterStage.PreInterpolate).ToList();
-                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList();
+                    this.preFilters = filters.Where(t => t.FilterStage is FilterStage.PreTranspose or FilterStage.PreInterpolate).ToList().GetEnumerator();
+                this.postFilters = filters.Where(t => t.FilterStage == FilterStage.PostTranspose).ToList().GetEnumerator();
             }
             get => this.filters;
         }
@@ -103,14 +104,16 @@ namespace OpenTabletDriver.Plugin.Output
             var pos = report.Position;
 
             // Pre Filter
-            foreach (IFilter filter in this.preFilters ??= Array.Empty<IFilter>())
-                pos = filter.Filter(pos);
+            while (this.preFilters.MoveNext())
+                pos = this.preFilters.Current.Filter(pos);
+            this.preFilters.Reset();
 
             pos = Vector2.Transform(pos, this.transformationMatrix);
 
             // Post Filter
-            foreach (IFilter filter in this.postFilters ??= Array.Empty<IFilter>())
-                pos = filter.Filter(pos);
+            while (this.postFilters.MoveNext())
+                pos = this.postFilters.Current.Filter(pos);
+            this.postFilters.Reset();
 
             var delta = pos - this.lastPos;
             this.lastPos = pos;
