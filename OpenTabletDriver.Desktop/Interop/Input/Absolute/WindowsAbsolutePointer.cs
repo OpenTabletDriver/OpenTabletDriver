@@ -11,18 +11,19 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
     {
         static WindowsAbsolutePointer()
         {
-            timer = new System.Timers.Timer(250);
+            timer = new System.Timers.Timer(1000);
             timer.Elapsed += (_, elapsedArgs) =>
             {
+                var temp = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
                 lock (stateLock)
                 {
-                    ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
+                    ScreenToVirtualDesktop = temp;
                 }
             };
             timer.Start();
         }
 
-        private static object stateLock;
+        private static object stateLock = new object();
         private static System.Timers.Timer timer;
         private static Vector2 ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
 
