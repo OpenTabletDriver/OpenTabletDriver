@@ -38,8 +38,10 @@ namespace OpenTabletDriver.Daemon
                 TabletChanged?.Invoke(sender, tablet);
                 if (debugging)
                 {
-                    Driver.TabletReader.Report += DebugReportHandler;
-                    Driver.AuxReader.Report += DebugReportHandler;
+                    if (Driver.TabletReader != null)
+                        Driver.TabletReader.Report += DebugReportHandler;
+                    if (Driver.AuxReader != null)
+                        Driver.AuxReader.Report += DebugReportHandler;
                 }
             };
             Driver.DevicesChanged += async (sender, args) =>
@@ -379,14 +381,18 @@ namespace OpenTabletDriver.Daemon
         {
             if (enabled && !debugging)
             {
-                Driver.TabletReader.Report += DebugReportHandler;
-                Driver.AuxReader.Report += DebugReportHandler;
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report += DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report += DebugReportHandler;
                 debugging = true;
             }
             else if (!enabled && debugging)
             {
-                Driver.TabletReader.Report -= DebugReportHandler;
-                Driver.AuxReader.Report -= DebugReportHandler;
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report -= DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report -= DebugReportHandler;
                 debugging = false;
             }
             return Task.CompletedTask;
