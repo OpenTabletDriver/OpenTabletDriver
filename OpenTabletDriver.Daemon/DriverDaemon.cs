@@ -76,6 +76,8 @@ namespace OpenTabletDriver.Daemon
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
 
+        private bool debugging;
+
         public Task WriteMessage(LogMessage message)
         {
             Log.OnOutput(message);
@@ -374,15 +376,17 @@ namespace OpenTabletDriver.Daemon
                 if (report is IAuxReport auxReport)
                     AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
             }
-            if (enabled)
+            if (enabled && !debugging)
             {
                 Driver.TabletReader.Report += onDeviceReport;
                 Driver.AuxReader.Report += onDeviceReport;
+                debugging = true;
             }
-            else
+            else if (!enabled && debugging)
             {
                 Driver.TabletReader.Report -= onDeviceReport;
                 Driver.AuxReader.Report -= onDeviceReport;
+                debugging = false;
             }
             return Task.CompletedTask;
         }
