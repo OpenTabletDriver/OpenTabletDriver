@@ -14,26 +14,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             timer = new System.Timers.Timer(1000);
             timer.Elapsed += (_, elapsedArgs) =>
             {
-                var temp = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
-                lock (stateLock)
-                {
-                    ScreenToVirtualDesktop = temp;
-                }
+                ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
             };
             timer.Start();
         }
 
-        private static object stateLock = new object();
         private static System.Timers.Timer timer;
         private static Vector2 ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
 
         public void SetPosition(Vector2 pos)
         {
-            Vector2 virtualDesktopCoords;
-            lock (stateLock)
-            {
-                virtualDesktopCoords = pos / ScreenToVirtualDesktop;
-            }
+            var virtualDesktopCoords = pos / ScreenToVirtualDesktop;
 
             inputs[0].U.mi.dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK;
             inputs[0].U.mi.dx = (int)virtualDesktopCoords.X;
