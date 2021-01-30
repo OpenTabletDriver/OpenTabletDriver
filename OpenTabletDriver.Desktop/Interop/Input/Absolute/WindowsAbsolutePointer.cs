@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
@@ -11,15 +12,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
     {
         static WindowsAbsolutePointer()
         {
-            timer = new System.Timers.Timer(1000);
-            timer.Elapsed += (_, elapsedArgs) =>
+            timer = new System.Threading.Timer(state =>
             {
                 ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
-            };
-            timer.Start();
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
         }
 
-        private static System.Timers.Timer timer;
+        private static System.Threading.Timer timer;
         private static Vector2 ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
 
         public void SetPosition(Vector2 pos)
