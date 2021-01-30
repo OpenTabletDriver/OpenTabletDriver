@@ -33,7 +33,17 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.TabletChanged += (sender, tablet) => TabletChanged?.Invoke(sender, tablet);
+            Driver.TabletChanged += (sender, tablet) =>
+            {
+                TabletChanged?.Invoke(sender, tablet);
+                if (debugging)
+                {
+                    if (Driver.TabletReader != null)
+                        Driver.TabletReader.Report += DebugReportHandler;
+                    if (Driver.AuxReader != null)
+                        Driver.AuxReader.Report += DebugReportHandler;
+                }
+            };
             Driver.DevicesChanged += async (sender, args) =>
             {
                 if (await GetTablet() == null && args.Additions.Count() > 0)
@@ -369,23 +379,20 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
-            void onDeviceReport(object _, IDeviceReport report)
-            {
-                if (report is ITabletReport tabletReport)
-                    TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
-                if (report is IAuxReport auxReport)
-                    AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
-            }
             if (enabled && !debugging)
             {
-                Driver.TabletReader.Report += onDeviceReport;
-                Driver.AuxReader.Report += onDeviceReport;
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report += DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report += DebugReportHandler;
                 debugging = true;
             }
             else if (!enabled && debugging)
             {
-                Driver.TabletReader.Report -= onDeviceReport;
-                Driver.AuxReader.Report -= onDeviceReport;
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report -= DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report -= DebugReportHandler;
                 debugging = false;
             }
             return Task.CompletedTask;
@@ -416,6 +423,14 @@ namespace OpenTabletDriver.Daemon
         {
             IEnumerable<LogMessage> messages = LogMessages;
             return Task.FromResult(messages);
+        }
+
+        private void DebugReportHandler(object _, IDeviceReport report)
+        {
+            if (report is ITabletReport tabletReport)
+                TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
+            if (report is IAuxReport auxReport)
+                AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
         }
     }
 }
