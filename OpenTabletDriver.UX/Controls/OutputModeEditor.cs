@@ -30,7 +30,10 @@ namespace OpenTabletDriver.UX.Controls
                     new StackLayoutItem(absoluteModeEditor, true),
                     new StackLayoutItem(relativeModeEditor, true),
                     new StackLayoutItem(noModeEditor, true),
-                    new StackLayoutItem(outputModeSelector, HorizontalAlignment.Left, false)
+                    new StackLayout(outputModeSelector)
+                    {
+                        Size = new Size(300, -1)
+                    }
                 }
             };
 
