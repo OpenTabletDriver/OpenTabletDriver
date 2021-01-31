@@ -239,7 +239,7 @@ namespace OpenTabletDriver.Daemon
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
 
             outputMode.Tablet = Driver.Tablet;
-            outputMode.InterpolatorActive = Settings.Interpolators.Any();
+            outputMode.InterpolatorActive = Settings.Interpolators.Any(interp => interp.Enable);
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
