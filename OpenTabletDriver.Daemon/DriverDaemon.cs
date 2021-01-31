@@ -156,6 +156,7 @@ namespace OpenTabletDriver.Daemon
             // Dispose all interpolators to begin changing settings
             foreach (var interpolator in Driver.Interpolators)
                 interpolator.Dispose();
+            Driver.Interpolators.Clear();
             
             // Dispose filters that implement IDisposable interface
             if (Driver.OutputMode?.Filters != null)
@@ -173,8 +174,6 @@ namespace OpenTabletDriver.Daemon
                     }
                 }
             }
-
-            Driver.Interpolators.Clear();
 
             Settings = SettingsMigrator.Migrate(settings);
 
