@@ -1,233 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic;
-using OpenTabletDriver.UX.Tools;
+using OpenTabletDriver.UX.Controls.Utilities;
 
 namespace OpenTabletDriver.UX.Controls.Area
 {
-    using static ParseTools;
-
     public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
     {
-        public AreaEditor(string unit, bool enableRotation = false)
+        public AreaEditor()
         {
-            this.DataContext ??= new AreaViewModel();
             this.ContextMenu = new ContextMenu();
-
-            AreaDisplay = new AreaDisplay
-            {
-                Unit = unit
-            };
-            AreaDisplay.Bind(c => c.ViewModel.Width, ViewModel, m => m.Width);
-            AreaDisplay.Bind(c => c.ViewModel.Height, ViewModel, m => m.Height);
-            AreaDisplay.Bind(c => c.ViewModel.X, ViewModel, m => m.X);
-            AreaDisplay.Bind(c => c.ViewModel.Y, ViewModel, m => m.Y);
-            AreaDisplay.Bind(c => c.ViewModel.Rotation, ViewModel, m => m.Rotation);
-            AreaDisplay.Bind(c => c.ViewModel.Background, ViewModel, m => m.Background);
-            AreaDisplay.MouseDown += (sender, e) => BeginAreaDrag(e.Buttons);
-            AreaDisplay.MouseUp += (sender, e) => EndAreaDrag(e.Buttons);
-
-            widthBox = new TextBox
-            {
-                Width = 75,
-                TextAlignment = TextAlignment.Right
-            };
-            widthBox.TextBinding.Convert(
-                s => ToFloat(s),
-                v => $"{v}"
-            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Width));
-
-            heightBox = new TextBox
-            {
-                Width = 75,
-                TextAlignment = TextAlignment.Right
-            };
-            heightBox.TextBinding.Convert(
-                s => ToFloat(s),
-                v => $"{v}"
-            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Height));
-
-            xOffsetBox = new TextBox
-            {
-                Width = 75,
-                TextAlignment = TextAlignment.Right
-            };
-            xOffsetBox.TextBinding.Convert(
-                s => ToFloat(s),
-                v => $"{v}"
-            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.X));
-
-            yOffsetBox = new TextBox
-            {
-                Width = 75,
-                TextAlignment = TextAlignment.Right
-            };
-            yOffsetBox.TextBinding.Convert(
-                s => ToFloat(s),
-                v => $"{v}"
-            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Y));
-
-            rotationBox = new TextBox
-            {
-                Width = 75,
-                TextAlignment = TextAlignment.Right
-            };
-            rotationBox.TextBinding.Convert(
-                s => ToFloat(s),
-                v => $"{v}"
-            ).BindDataContext(Eto.Forms.Binding.Property((AreaViewModel d) =>  d.Rotation));
-
-            var stackLayout = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                Spacing = 5,
-                Items =
-                {
-                    new Group
-                    {
-                        Text = "Width",
-                        Content = AppendUnit(widthBox, unit),
-                        ToolTip = $"Width of the area",
-                        Orientation = Orientation.Horizontal
-                    },
-                    new Group
-                    {
-                        Text = "Height",
-                        Content = AppendUnit(heightBox, unit),
-                        ToolTip = $"Height of the area",
-                        Orientation = Orientation.Horizontal
-                    },
-                    new Group
-                    {
-                        Text = "X Offset",
-                        Content = AppendUnit(xOffsetBox, unit),
-                        ToolTip = $"Center X coordinate of the area",
-                        Orientation = Orientation.Horizontal
-                    },
-                    new Group
-                    {
-                        Text = "Y Offset",
-                        Content = AppendUnit(yOffsetBox, unit),
-                        ToolTip = $"Center Y coordinate of the area",
-                        Orientation = Orientation.Horizontal
-                    }
-                }
-            };
-
-            if (enableRotation)
-            {
-                stackLayout.Items.Add(
-                    new Group
-                    {
-                        Text = "Rotation",
-                        Content = AppendUnit(rotationBox, "°"),
-                        ToolTip = $"Rotation of the area about the center",
-                        Orientation = Orientation.Horizontal
-                    }
-                );
-            }
-
-            var scrollview = new Scrollable
-            {
-                Content = stackLayout,
-                Border = BorderType.None
-            };
-
-            Content = new StackLayout
-            {
-                Orientation = Orientation.Vertical,
-                Items =
-                {
-                    new StackLayoutItem
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Stretch, 
-                        Expand = true,
-                        Control = new Panel
-                        {
-                            Padding = new Padding(5),
-                            Content = AreaDisplay
-                        }
-                    },
-                    new StackLayoutItem(scrollview, HorizontalAlignment.Center)
-                }
-            };
-
-            this.ContextMenu.Items.GetSubmenu("Align").Items.AddRange(
-                new MenuItem[]
-                {
-                    CreateMenuItem("Left", () => ViewModel.X = GetCenterOffset().X),
-                    CreateMenuItem("Right", () => ViewModel.X = ViewModel.FullBackground.Width - GetCenterOffset().X),
-                    CreateMenuItem("Top", () => ViewModel.Y = GetCenterOffset().Y),
-                    CreateMenuItem("Bottom", ()  => ViewModel.Y = ViewModel.FullBackground.Height - GetCenterOffset().Y),
-                    CreateMenuItem("Center",
-                        () =>
-                        {
-                            ViewModel.X = ViewModel.FullBackground.Center.X;
-                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
-                        }
-                    )
-                }
-            );
-
-            this.ContextMenu.Items.GetSubmenu("Resize").Items.AddRange(
-                new MenuItem[]
-                {
-                    CreateMenuItem(
-                        "Full area",
-                        () =>
-                        {
-                            ViewModel.Height = ViewModel.FullBackground.Height;
-                            ViewModel.Width = ViewModel.FullBackground.Width;
-                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
-                            ViewModel.X = ViewModel.FullBackground.Center.X;
-                        }
-                    ),
-                    CreateMenuItem(
-                        "Quarter area",
-                        () =>
-                        {
-                            ViewModel.Height = ViewModel.FullBackground.Height / 2;
-                            ViewModel.Width = ViewModel.FullBackground.Width / 2;
-                        }
-                    )
-                }
-            );
-
-            this.ContextMenu.Items.GetSubmenu("Flip").Items.AddRange(
-                new MenuItem[]
-                {
-                    CreateMenuItem("Horizontal", () => ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X),
-                    CreateMenuItem("Vertical", () => ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y),
-                }
-            );
-
-            if (enableRotation)
-            {
-                this.ContextMenu.Items.GetSubmenu("Flip").Items.Add(
-                    CreateMenuItem("Handedness",
-                        () =>
-                        {
-                            ViewModel.Rotation += 180;
-                            ViewModel.Rotation %= 360;
-                            ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X;
-                            ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y;
-                        }
-                    )
-                );
-            }
-
-            AppendMenuItemSeparator();
-
-            this.MouseDown += (sender, e) =>
-            {
-                if (e.Buttons.HasFlag(MouseButtons.Alternate))
-                    this.ContextMenu.Show(this);
-            };
         }
 
         public AreaViewModel ViewModel
@@ -236,167 +21,274 @@ namespace OpenTabletDriver.UX.Controls.Area
             get => (AreaViewModel)this.DataContext;
         }
 
-        public void SetBackground(params RectangleF[] bgs) => SetBackground(bgs as IEnumerable<RectangleF>);
-        public void SetBackground(IEnumerable<RectangleF> bgs) => ViewModel.Background = bgs;
+        private MaskedTextBox<float> width, height, x, y, rotation;
+        private BooleanCommand lockToUsableArea;
 
-        protected void ChangeLockingState(bool lockToMax)
-        {
-            if (lockToMax)
-                this.ViewModel.PropertyChanged += this.LimitArea;
-            else
-                this.ViewModel.PropertyChanged -= this.LimitArea;
-        }
+        protected AreaDisplay Display { set; get; }
 
-        public Command AppendMenuItem(string menuText, Action handler)
+        protected override void OnLoadComplete(EventArgs e)
         {
-            var item = CreateMenuItem(menuText, handler);
-            this.ContextMenu.Items.Add(item);
-            return item;
-        }
+            base.OnLoadComplete(e);
 
-        public CheckCommand AppendCheckBoxMenuItem(string menuText, Action<bool> handler, bool defaultValue = false)
-        {
-            var command = CreateCheckBoxMenuItem(menuText, handler, defaultValue);
-            this.ContextMenu.Items.Add(command);
-            return command;
-        }
+            StackLayout settingsPanel;
 
-        public void AppendMenuItemSeparator()
-        {
-            this.ContextMenu.Items.AddSeparator();
-        }
-
-        private Control AppendUnit(Control control, string unit)
-        {
-            return new StackView
+            this.Content = new StackLayout
             {
-                Orientation = Orientation.Horizontal,
-                VerticalContentAlignment = VerticalAlignment.Center,
+                Spacing = 5,
                 Items =
                 {
                     new StackLayoutItem
                     {
-                        Control = control,
-                        Expand = true
+                        Expand = true,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        Control = new Panel
+                        {
+                            Padding = new Padding(5),
+                            Content = this.Display ??= new AreaDisplay
+                            {
+                                ViewModel = this.ViewModel
+                            }
+                        }
                     },
                     new StackLayoutItem
                     {
-                        Control = new Label
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Control = settingsPanel = new StackLayout
                         {
-                            Text = unit,
-                            VerticalAlignment = VerticalAlignment.Center,
+                            Orientation = Orientation.Horizontal,
+                            Spacing = 5,
+                            Items =
+                            {
+                                new StackLayoutItem
+                                {
+                                    Control = new UnitGroup
+                                    {
+                                        Text = "Width",
+                                        Unit = ViewModel.Unit,
+                                        ToolTip = $"Area width in {ViewModel.Unit}",
+                                        Orientation = Orientation.Horizontal,
+                                        Content = width = new NumericMaskedTextBox<float>()
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Control = new UnitGroup
+                                    {
+                                        Text = "Height",
+                                        Unit = ViewModel.Unit,
+                                        ToolTip = $"Area height in {ViewModel.Unit}",
+                                        Orientation = Orientation.Horizontal,
+                                        Content = height = new NumericMaskedTextBox<float>()
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Control = new UnitGroup
+                                    {
+                                        Text = "X",
+                                        Unit = ViewModel.Unit,
+                                        ToolTip = $"Area center X offset in {ViewModel.Unit}",
+                                        Orientation = Orientation.Horizontal,
+                                        Content = x = new NumericMaskedTextBox<float>()
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Control = new UnitGroup
+                                    {
+                                        Text = "Y",
+                                        Unit = ViewModel.Unit,
+                                        ToolTip = $"Area center Y offset in {ViewModel.Unit}",
+                                        Orientation = Orientation.Horizontal,
+                                        Content = y = new NumericMaskedTextBox<float>()
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             };
-        }
 
-        private Command CreateMenuItem(string menuText, Action handler)
-        {
-            var command = new Command { MenuText = menuText };
-            command.Executed += (sender, e) => handler();
-            return command;
-        }
-
-        private CheckCommand CreateCheckBoxMenuItem(string menuText, Action<bool> handler, bool defaultValue = false)
-        {
-            var command = new CheckCommand { MenuText = menuText };
-            command.Executed += (sender, e) => handler(command.Checked);
-            command.Checked = defaultValue;
-            if (defaultValue)
-                command.Execute();
-            return command;
-        }
-
-        public void LimitArea(object sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
+            if (ViewModel.EnableRotation)
             {
-                case nameof(ViewModel.X):
-                case nameof(ViewModel.Y):
-                case nameof(ViewModel.Width):
-                case nameof(ViewModel.Height):
-                case nameof(ViewModel.Rotation):
-                    if (ViewModel.FullBackground.Width == 0 || ViewModel.FullBackground.Height == 0)
-                        break;
-
-                    var center = GetCenterOffset(out var min, out var max);
-
-                    if (min.X < 0)
-                        AreaDisplay.ViewModel.X = center.X;
-                    else if (max.X > ViewModel.FullBackground.Width)
-                        AreaDisplay.ViewModel.X = ViewModel.FullBackground.Width - center.X;
-                    if (min.Y < 0)
-                        AreaDisplay.ViewModel.Y = center.Y;
-                    else if (max.Y > ViewModel.FullBackground.Height)
-                        AreaDisplay.ViewModel.Y = ViewModel.FullBackground.Height - center.Y;
-
-                    break;
+                settingsPanel.Items.Add(
+                    new StackLayoutItem
+                    {
+                        Control = new UnitGroup
+                        {
+                            Text = "Rotation",
+                            Unit = "°",
+                            ToolTip = "Angle of rotation about the center of the area.",
+                            Orientation = Orientation.Horizontal,
+                            Content = rotation = new NumericMaskedTextBox<float>()
+                        }
+                    }
+                );
             }
-        }
 
-        private Vector2 GetCenterOffset(out Vector2 min, out Vector2 max)
-        {
-            var origin = new Vector2(ViewModel.X, ViewModel.Y);
-            var matrix = Matrix3x2.CreateTranslation(-origin);
-            matrix *= Matrix3x2.CreateRotation((float)(ViewModel.Rotation * Math.PI / 180));
-            matrix *= Matrix3x2.CreateTranslation(origin);
+            this.ContextMenu.Items.GetSubmenu("Align").Items.AddRange(
+                new MenuItem[]
+                {
+                    new ActionCommand
+                    {
+                        MenuText = "Left",
+                        Action = () => ViewModel.X = Display.GetAreaCenterOffset().X
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Right",
+                        Action = () => ViewModel.X = ViewModel.FullBackground.Width - Display.GetAreaCenterOffset().X
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Top",
+                        Action = () => ViewModel.Y = Display.GetAreaCenterOffset().Y
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Bottom",
+                        Action = () => ViewModel.Y = ViewModel.FullBackground.Height - Display.GetAreaCenterOffset().Y
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Center",
+                        Action = () =>
+                        {
+                            ViewModel.X = ViewModel.FullBackground.Center.X;
+                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
+                        }
+                    }
+                }
+            );
 
-            float halfWidth = ViewModel.Width / 2;
-            float halfHeight = ViewModel.Height / 2;
+            this.ContextMenu.Items.GetSubmenu("Resize").Items.AddRange(
+                new MenuItem[]
+                {
+                    new ActionCommand
+                    {
+                        MenuText = "Full area",
+                        Action = () =>
+                        {
+                            ViewModel.Height = ViewModel.FullBackground.Height;
+                            ViewModel.Width = ViewModel.FullBackground.Width;
+                            ViewModel.Y = ViewModel.FullBackground.Center.Y;
+                            ViewModel.X = ViewModel.FullBackground.Center.X;
+                        }
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Quarter area",
+                        Action = () =>
+                        {
+                            ViewModel.Height = ViewModel.FullBackground.Height / 2;
+                            ViewModel.Width = ViewModel.FullBackground.Width / 2;
+                        }
+                    }
+                }
+            );
 
-            var corners = new Vector2[]
+            this.ContextMenu.Items.GetSubmenu("Flip").Items.AddRange(
+                new MenuItem[]
+                {
+                    new ActionCommand
+                    {
+                        MenuText = "Horizontal",
+                        Action = () => ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X
+                    },
+                    new ActionCommand
+                    {
+                        MenuText = "Vertical",
+                        Action = () => ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y
+                    }
+                }
+            );
+
+            if (ViewModel.EnableRotation)
             {
-                Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y - halfHeight), matrix),
-                Vector2.Transform(new Vector2(ViewModel.X - halfWidth, ViewModel.Y + halfHeight), matrix),
-                Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y + halfHeight), matrix),
-                Vector2.Transform(new Vector2(ViewModel.X + halfWidth, ViewModel.Y - halfHeight), matrix),
+                this.ContextMenu.Items.GetSubmenu("Flip").Items.Add(
+                    new ActionCommand
+                    {
+                        MenuText = "Handedness",
+                        Action = () =>
+                        {
+                            ViewModel.Rotation += 180;
+                            ViewModel.Rotation %= 360;
+                            ViewModel.X = ViewModel.FullBackground.Width - ViewModel.X;
+                            ViewModel.Y = ViewModel.FullBackground.Height - ViewModel.Y;
+                        }
+                    }
+                );
+            }
+
+            this.ContextMenu.Items.AddSeparator();
+
+            lockToUsableArea = new BooleanCommand
+            {
+                MenuText = "Lock to usable area",
+                DataContext = this.DataContext
             };
+            this.ContextMenu.Items.Add(lockToUsableArea);
 
-            min = new Vector2(
-                corners.Min(v => v.X),
-                corners.Min(v => v.Y)
-            );
-            max = new Vector2(
-                corners.Max(v => v.X),
-                corners.Max(v => v.Y)
-            );
-            return (max - min) / 2;
+            BindAllToDataContext();
         }
 
-        private Vector2 GetCenterOffset() => GetCenterOffset(out _, out _);
-
-        protected void BeginAreaDrag(MouseButtons buttons)
+        public void BindAllToDataContext()
         {
-            if (buttons.HasFlag(MouseButtons.Primary) && AreaValid)
-                this.MouseMove += MoveArea;
+            width?.ValueBinding.BindDataContext<AreaViewModel>(m => m.Width);
+            height?.ValueBinding.BindDataContext<AreaViewModel>(m => m.Height);
+            x?.ValueBinding.BindDataContext<AreaViewModel>(m => m.X);
+            y?.ValueBinding.BindDataContext<AreaViewModel>(m => m.Y);
+            rotation?.ValueBinding.BindDataContext<AreaViewModel>(m => m.Rotation);
+            lockToUsableArea?.CheckedBinding.BindDataContext<AreaViewModel>(m => m.LockToUsableArea);
         }
 
-        protected void EndAreaDrag(MouseButtons buttons)
+        protected override void OnMouseDown(MouseEventArgs e)
         {
-            if (buttons.HasFlag(MouseButtons.Primary))
+            base.OnMouseDown(e);
+
+            switch (e.Buttons)
             {
-                this.MouseMove -= MoveArea;
-                this.lastMouseLocation = null;
+                case MouseButtons.Alternate:
+                {
+                    this.ContextMenu.Show(this);
+                    break;
+                }
             }
         }
 
-        protected void MoveArea(object sender, MouseEventArgs e)
+        private class UnitGroup : Group
         {
-            if (lastMouseLocation is PointF lastPos)
+            public string Unit
             {
-                var delta = lastPos - e.Location;
-                var scale = AreaDisplay.PixelScale;
-                ViewModel.X -= delta.X / scale;
-                ViewModel.Y -= delta.Y / scale;
+                set => unitLabel.Text = value;
+                get => unitLabel.Text;
             }
-            this.lastMouseLocation = e.Location;
+
+            private Label unitLabel = new Label();
+
+            private Control content;
+            public new Control Content
+            {
+                set
+                {
+                    this.content = value;
+                    base.Content = new StackLayout
+                    {
+                        Spacing = 5,
+                        Orientation = Orientation.Horizontal,
+                        Items =
+                        {
+                            new StackLayoutItem(this.Content, true),
+                            new StackLayoutItem
+                            {
+                                VerticalAlignment = VerticalAlignment.Center,
+                                Control = this.unitLabel
+                            }
+                        }
+                    };
+                }
+                get => this.content;
+            }
         }
-
-        public AreaDisplay AreaDisplay { protected set; get; }
-        public bool AreaValid => ViewModel.Width != 0 && ViewModel.Height != 0 && ViewModel.FullBackground != RectangleF.Empty;
-
-        private PointF? lastMouseLocation;
-        private TextBox widthBox, heightBox, xOffsetBox, yOffsetBox, rotationBox;
     }
 }
