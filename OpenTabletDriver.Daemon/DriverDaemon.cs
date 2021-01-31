@@ -162,10 +162,10 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var filter in Driver.OutputMode.Filters)
                 {
-                    if (filter is not IDisposable disposableFilter) continue;
                     try
                     {
-                        disposableFilter.Dispose();
+                        if (filter is IDisposable disposableFilter)
+                            disposableFilter.Dispose();
                     }
                     catch(Exception)
                     {
