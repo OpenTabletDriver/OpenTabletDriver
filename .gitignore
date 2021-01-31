@@ -1,6 +1,7 @@
 # IDE
-/.vs
-/.vscode
+.vs/
+.vscode/
+.idea/
 
 # Build Artifacts
 **/obj

@@ -2,7 +2,7 @@
 using System.Linq;
 using Eto.Drawing;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Controls.Area
 {
     public class AreaViewModel : ViewModelBase
     {

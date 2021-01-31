@@ -2,7 +2,7 @@ using System;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.UX.Attributes;
-using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Controls.Area;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows.Greeter.Pages

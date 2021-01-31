@@ -8,7 +8,7 @@ using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Controls.Area
 {
     using static ParseTools;
 
@@ -19,9 +19,9 @@ namespace OpenTabletDriver.UX.Controls
             this.DataContext ??= new AreaViewModel();
             this.ContextMenu = new ContextMenu();
 
-            AreaDisplay = new AreaDisplay(unit)
+            AreaDisplay = new AreaDisplay
             {
-                Padding = new Padding(5)
+                Unit = unit
             };
             AreaDisplay.Bind(c => c.ViewModel.Width, ViewModel, m => m.Width);
             AreaDisplay.Bind(c => c.ViewModel.Height, ViewModel, m => m.Height);
@@ -143,7 +143,16 @@ namespace OpenTabletDriver.UX.Controls
                 Orientation = Orientation.Vertical,
                 Items =
                 {
-                    new StackLayoutItem(AreaDisplay, HorizontalAlignment.Stretch, true),
+                    new StackLayoutItem
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Stretch, 
+                        Expand = true,
+                        Control = new Panel
+                        {
+                            Padding = new Padding(5),
+                            Content = AreaDisplay
+                        }
+                    },
                     new StackLayoutItem(scrollview, HorizontalAlignment.Center)
                 }
             };
@@ -377,8 +386,9 @@ namespace OpenTabletDriver.UX.Controls
             if (lastMouseLocation is PointF lastPos)
             {
                 var delta = lastPos - e.Location;
-                ViewModel.X -= delta.X / AreaDisplay.PixelScale;
-                ViewModel.Y -= delta.Y / AreaDisplay.PixelScale;
+                var scale = AreaDisplay.PixelScale;
+                ViewModel.X -= delta.X / scale;
+                ViewModel.Y -= delta.Y / scale;
             }
             this.lastMouseLocation = e.Location;
         }

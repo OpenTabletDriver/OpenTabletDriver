@@ -11,6 +11,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.UX.Controls.Area;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows;
 
