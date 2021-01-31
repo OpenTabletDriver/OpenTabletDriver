@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using HidSharp;
 using OpenTabletDriver.Devices;
@@ -40,7 +39,6 @@ namespace OpenTabletDriver
         protected virtual PluginManager PluginManager { get; } = new PluginManager();
         
         public bool EnableInput { set; get; }
-        public bool InterpolatorActive => Interpolators.Any();
 
         private TabletState tablet;
         public TabletState Tablet

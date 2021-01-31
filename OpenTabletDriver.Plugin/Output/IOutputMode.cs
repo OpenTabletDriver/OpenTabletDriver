@@ -9,5 +9,6 @@ namespace OpenTabletDriver.Plugin.Output
         void Read(IDeviceReport report);
         IList<IFilter> Filters { set; get; }
         TabletState Tablet { set; get; }
+        bool InterpolatorActive { set; get; }
     }
 }

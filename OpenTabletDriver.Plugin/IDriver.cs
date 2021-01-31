@@ -1,6 +1,5 @@
 using System;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin
@@ -12,7 +11,6 @@ namespace OpenTabletDriver.Plugin
         event EventHandler<TabletState> TabletChanged;
 
         bool EnableInput { set; get; }
-        bool InterpolatorActive { get; }
         TabletState Tablet { get; }
         IOutputMode OutputMode { set; get; }
 

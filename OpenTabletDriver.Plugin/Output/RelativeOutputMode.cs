@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 this.filters = value ?? Array.Empty<IFilter>();
-                if (Info.Driver.InterpolatorActive)
+                if (InterpolatorActive)
                     this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
                 else
                     this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose || t.FilterStage == FilterStage.PreInterpolate).ToList();
@@ -80,6 +80,7 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         public TimeSpan ResetTime { set; get; }
+        public bool InterpolatorActive { set; get; }
 
         public virtual void Read(IDeviceReport report)
         {

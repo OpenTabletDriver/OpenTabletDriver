@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -21,7 +20,7 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 this.filters = value ?? Array.Empty<IFilter>();
-                if (Info.Driver.InterpolatorActive)
+                if (InterpolatorActive)
                     this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
                 else
                     this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose || t.FilterStage == FilterStage.PreInterpolate).ToList();
@@ -67,6 +66,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         public bool AreaClipping { set; get; }
         public bool AreaLimiting { set; get; }
+        public bool InterpolatorActive { set; get; }
 
         protected void UpdateTransformMatrix()
         {
