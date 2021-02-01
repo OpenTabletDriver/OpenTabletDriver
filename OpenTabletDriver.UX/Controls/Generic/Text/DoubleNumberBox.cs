@@ -1,4 +1,3 @@
-using System;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic.Text.Providers;
 
