@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Threading;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
@@ -53,9 +52,12 @@ namespace OpenTabletDriver.UX.Windows
         {
             base.OnClosing(e);
 
-            await App.Driver.Instance.SetTabletDebug(false);
-            App.Driver.Instance.TabletChanged -= SetTablet;
-            App.Driver.Instance.TabletReport -= SetReport;
+            if (!e.Cancel)
+            {
+                await App.Driver.Instance.SetTabletDebug(false);
+                App.Driver.Instance.TabletChanged -= SetTablet;
+                App.Driver.Instance.TabletReport -= SetReport;
+            }
         }
 
         private void SetTablet(object sender, TabletState tablet)
@@ -79,41 +81,18 @@ namespace OpenTabletDriver.UX.Windows
         private TabletVisualizerDisplay display;
         private Label tabletNameLabel;
 
-        private class TabletVisualizerDisplay : Drawable
+        private class TabletVisualizerDisplay : TimedDrawable
         {
-            private const int FRAMES_PER_MS = 1000 / 60;
-
             private static readonly Color AccentColor = SystemColors.Highlight;
 
             private IDeviceReport report;
             private TabletState tablet;
-            private Timer refreshTimer;
 
             public void SetReport(IDeviceReport report) => this.report = report;
             public void SetTablet(TabletState tablet) => this.tablet = tablet;
 
-            protected override void OnLoadComplete(EventArgs e)
+            protected override void OnNextFrame(PaintEventArgs e)
             {
-                base.OnLoadComplete(e);
-
-                refreshTimer = new Timer(
-                    (s) => Application.Instance.AsyncInvoke(this.Invalidate),
-                    null,
-                    0,
-                    FRAMES_PER_MS
-                );
-
-                base.ParentWindow.Closing += (sender, e) =>
-                {
-                    refreshTimer?.Dispose();
-                    refreshTimer = null;
-                };
-            }
-
-            protected override void OnPaint(PaintEventArgs e)
-            {
-                base.OnPaint(e);
-
                 if (tablet != null)
                 {
                     var graphics = e.Graphics;
@@ -121,10 +100,10 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         var pxToMM = (float)graphics.DPI / 25.4f;
 
-                        var center = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;
-                        var tabletTopLeft = new PointF(tablet.Digitizer.Width, tablet.Digitizer.Height) / 2 * pxToMM;
+                        var clientCenter = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;
+                        var tabletCenter = new PointF(tablet.Digitizer.Width, tablet.Digitizer.Height) / 2 * pxToMM;
 
-                        graphics.TranslateTransform(center - tabletTopLeft);
+                        graphics.TranslateTransform(clientCenter - tabletCenter);
 
                         DrawBackground(graphics, pxToMM);
                         DrawPosition(graphics, pxToMM);

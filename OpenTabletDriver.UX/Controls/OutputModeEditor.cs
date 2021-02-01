@@ -11,7 +11,9 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.UX.Controls.Area;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Utilities;
 using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls
@@ -64,7 +66,10 @@ namespace OpenTabletDriver.UX.Controls
             var tabletAreaEditor = absoluteModeEditor.tabletAreaEditor;
             if (tablet != null && tablet.Digitizer != null)
             {
-                tabletAreaEditor.SetBackground(new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height));
+                tabletAreaEditor.ViewModel.Background = new RectangleF[]
+                {
+                    new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height)
+                };
 
                 var settings = App.Settings;
                 if (settings != null && settings.TabletWidth == 0 && settings.TabletHeight == 0)
@@ -77,7 +82,7 @@ namespace OpenTabletDriver.UX.Controls
             }
             else
             {
-                tabletAreaEditor.SetBackground(null);
+                tabletAreaEditor.ViewModel.Background = null;
             }
         }
 
@@ -86,7 +91,7 @@ namespace OpenTabletDriver.UX.Controls
             var bgs = from disp in displays
                 where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
-            absoluteModeEditor.displayAreaEditor.SetBackground(bgs);
+            absoluteModeEditor.displayAreaEditor.ViewModel.Background = bgs;
         }
 
         private void UpdateOutputMode(PluginSettingStore store)
@@ -167,57 +172,41 @@ namespace OpenTabletDriver.UX.Controls
                         new StackLayoutItem(new Group("Tablet", tabletAreaEditor), true)
                     }
                 };
+
+                var settings = App.Settings;
+                displayAreaEditor.Rebind(settings);
+                tabletAreaEditor.Rebind(settings);
             }
 
-            public DisplayAreaEditor displayAreaEditor = new DisplayAreaEditor();
-            public TabletAreaEditor tabletAreaEditor = new TabletAreaEditor();
+            public DisplayAreaEditor displayAreaEditor = new DisplayAreaEditor
+            {
+                ViewModel = new AreaViewModel
+                {
+                    Unit = "px",
+                    EnableRotation = false
+                }
+            };
+
+            public TabletAreaEditor tabletAreaEditor = new TabletAreaEditor
+            {
+                ViewModel = new AreaViewModel
+                {
+                    InvalidSizeError = "No tablet detected.",
+                    Unit = "mm",
+                    EnableRotation = true
+                }
+            };
 
             public class DisplayAreaEditor : AreaEditor
             {
                 public DisplayAreaEditor()
-                    : base("px", false)
+                    : base()
                 {
-                    base.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
-
-                    lockToUsableArea = AppendCheckBoxMenuItem(
-                        "Lock to usable area",
-                        value =>
-                        {
-                            base.ChangeLockingState(value);
-                            App.Settings.LockUsableAreaDisplay = value;
-                        }
-                    );
-
-                    AppendMenuItemSeparator();
-
-                    foreach (var display in SystemInterop.VirtualScreen.Displays)
-                    {
-                        AppendMenuItem(
-                            $"Set to {display}",
-                            () =>
-                            {
-                                this.ViewModel.Width = display.Width;
-                                this.ViewModel.Height = display.Height;
-                                if (display is IVirtualScreen virtualScreen)
-                                {
-                                    this.ViewModel.X = virtualScreen.Width / 2;
-                                    this.ViewModel.Y = virtualScreen.Height / 2;
-                                }
-                                else
-                                {
-                                    virtualScreen = SystemInterop.VirtualScreen;
-                                    this.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
-                                    this.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
-                                }
-                            }
-                        );
-                    }
+                    this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
 
                     Rebind(App.Settings);
                     App.SettingsChanged += Rebind;
                 }
-
-                private CheckCommand lockToUsableArea;
 
                 public void Rebind(Settings settings)
                 {
@@ -225,43 +214,50 @@ namespace OpenTabletDriver.UX.Controls
                     this.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
                     this.Bind(c => c.ViewModel.X, settings, m => m.DisplayX);
                     this.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
-                    lockToUsableArea.Checked = settings.LockUsableAreaDisplay;
-                    base.ChangeLockingState(settings.LockUsableAreaDisplay);
+                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaDisplay);
+                }
+
+                protected override void OnLoadComplete(EventArgs e)
+                {
+                    base.OnLoadComplete(e);
+
+                    var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
+                    foreach (var display in SystemInterop.VirtualScreen.Displays)
+                    {
+                        subMenu.Items.Add(
+                            new ActionCommand
+                            {
+                                MenuText = display.ToString(),
+                                Action = () =>
+                                {
+                                    this.ViewModel.Width = display.Width;
+                                    this.ViewModel.Height = display.Height;
+                                    if (display is IVirtualScreen virtualScreen)
+                                    {
+                                        this.ViewModel.X = virtualScreen.Width / 2;
+                                        this.ViewModel.Y = virtualScreen.Height / 2;
+                                    }
+                                    else
+                                    {
+                                        virtualScreen = SystemInterop.VirtualScreen;
+                                        this.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
+                                        this.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
+                                    }
+                                }
+                            }
+                        );
+                    }
                 }
             }
 
             public class TabletAreaEditor : AreaEditor
             {
                 public TabletAreaEditor()
-                    : base("mm", true)
+                    : base()
                 {
-                    this.AreaDisplay.InvalidSizeError = "No tablet detected.";
-                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
+                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";                }
 
-                    lockToUsableArea = AppendCheckBoxMenuItem(
-                        "Lock to usable area",
-                        value =>
-                        {
-                            base.ChangeLockingState(value);
-                            App.Settings.LockUsableAreaTablet = value;
-                        }
-                    );
-
-                    AppendMenuItemSeparator();
-
-                    lockAr = AppendCheckBoxMenuItem("Lock aspect ratio", (value) => App.Settings.LockAspectRatio = value);
-                    areaClipping = AppendCheckBoxMenuItem("Area clipping", (value) => App.Settings.EnableClipping = value);
-                    ignoreOutsideArea = AppendCheckBoxMenuItem("Ignore reports outside area", (value) => App.Settings.EnableAreaLimiting = value);
-
-                    AppendMenuItemSeparator();
-
-                    AppendMenuItem("Convert area...", async () => await ConvertAreaDialog());
-
-                    Rebind(App.Settings);
-                    App.SettingsChanged += Rebind;
-                }
-
-                private CheckCommand lockToUsableArea, lockAr, areaClipping, ignoreOutsideArea;
+                private BooleanCommand lockAr, areaClipping, ignoreOutsideArea;
 
                 public void Rebind(Settings settings)
                 {
@@ -270,13 +266,57 @@ namespace OpenTabletDriver.UX.Controls
                     this.Bind(c => c.ViewModel.X, settings, m => m.TabletX);
                     this.Bind(c => c.ViewModel.Y, settings, m => m.TabletY);
                     this.Bind(c => c.ViewModel.Rotation, settings, m => m.TabletRotation);
+                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaTablet);
+                    lockAr?.CheckedBinding.BindDataContext<Settings>(m => m.LockAspectRatio);
+                    areaClipping?.CheckedBinding.BindDataContext<Settings>(m => m.EnableClipping);
+                    ignoreOutsideArea?.CheckedBinding.BindDataContext<Settings>(m => m.EnableAreaLimiting);
+                }
 
-                    lockToUsableArea.Checked = settings.LockUsableAreaTablet;
-                    base.ChangeLockingState(settings.LockUsableAreaTablet);
+                protected override void OnLoadComplete(EventArgs e)
+                {
+                    base.OnLoadComplete(e);
 
-                    lockAr.Checked = settings.LockAspectRatio;
-                    areaClipping.Checked = settings.EnableClipping;
-                    ignoreOutsideArea.Checked = settings.EnableAreaLimiting;
+                    base.ContextMenu.Items.AddSeparator();
+
+                    lockAr = new BooleanCommand
+                    {
+                        MenuText = "Lock aspect ratio",
+                        DataContext = App.Settings
+                    };
+
+                    areaClipping = new BooleanCommand
+                    {
+                        MenuText = "Area clipping",
+                        DataContext = App.Settings
+                    };
+
+                    ignoreOutsideArea = new BooleanCommand
+                    {
+                        MenuText = "Ignore input outside area",
+                        DataContext = App.Settings
+                    };
+
+                    base.ContextMenu.Items.AddRange(
+                        new Command[]
+                        {
+                            lockAr,
+                            areaClipping,
+                            ignoreOutsideArea
+                        }
+                    );
+
+                    base.ContextMenu.Items.AddSeparator();
+
+                    base.ContextMenu.Items.Add(
+                        new ActionCommand
+                        {
+                            MenuText = "Convert area...",
+                            Action = async () => await ConvertAreaDialog()
+                        }
+                    );
+
+                    Rebind(App.Settings);
+                    App.SettingsChanged += Rebind;
                 }
 
                 private async Task ConvertAreaDialog()
