@@ -12,10 +12,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
     {
         static WindowsAbsolutePointer()
         {
-            timer = new System.Threading.Timer(state =>
-            {
-                ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
-            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+            timer = new System.Threading.Timer(
+                state => ScreenToVirtualDesktop = new Vector2(
+                    SystemInterop.VirtualScreen.Width,
+                    SystemInterop.VirtualScreen.Height
+                ) / 65535,
+                null,
+                TimeSpan.Zero,
+                TimeSpan.FromSeconds(1)
+            );
         }
 
         private static System.Threading.Timer timer;
