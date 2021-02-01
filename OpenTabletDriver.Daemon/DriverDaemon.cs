@@ -157,6 +157,23 @@ namespace OpenTabletDriver.Daemon
             foreach (var interpolator in Driver.Interpolators)
                 interpolator.Dispose();
             Driver.Interpolators.Clear();
+            
+            // Dispose filters that implement IDisposable interface
+            if (Driver.OutputMode?.Filters != null)
+            {
+                foreach (var filter in Driver.OutputMode.Filters)
+                {
+                    try
+                    {
+                        if (filter is IDisposable disposableFilter)
+                            disposableFilter.Dispose();
+                    }
+                    catch(Exception)
+                    {
+                        Log.Write("Plugin", $"Unable to dispose object '{filter.GetType().Name}'", LogLevel.Error);
+                    }
+                }
+            }
 
             Settings = SettingsMigrator.Migrate(settings);
 
