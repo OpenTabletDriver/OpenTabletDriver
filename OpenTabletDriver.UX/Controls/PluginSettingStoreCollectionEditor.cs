@@ -189,7 +189,6 @@ namespace OpenTabletDriver.UX.Controls
                 { typeof(long), (a,b) => GetNumericMaskedTextBox<long>(a,b) },
                 { typeof(ulong), (a,b) => GetNumericMaskedTextBox<ulong>(a,b) },
                 { typeof(double), (a,b) => BindNumberBox(new DoubleNumberBox(), a, b) },
-                { typeof(float), (a,b) => BindNumberBox(new FloatNumberBox(), a, b) },
                 { typeof(DateTime), (a,b) => GetMaskedTextBox<DateTime>(a,b) },
                 { typeof(TimeSpan), (a,b) => GetMaskedTextBox<TimeSpan>(a,b) }
             };
@@ -284,7 +283,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
                 else if (property.PropertyType == typeof(float))
                 {
-                    var tb = GetNumericMaskedTextBox<float>(property, setting);
+                    var tb = BindNumberBox(new FloatNumberBox(), property, setting);
 
                     if (property.GetCustomAttribute<SliderPropertyAttribute>() is SliderPropertyAttribute sliderAttr)
                     {
