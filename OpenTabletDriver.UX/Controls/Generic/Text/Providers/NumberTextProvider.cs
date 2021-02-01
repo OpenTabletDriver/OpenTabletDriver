@@ -9,7 +9,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
     {
         private const char DECIMAL_CHAR = '.';
         private readonly StringBuilder builder = new StringBuilder();
-        
+
         public abstract T Value { get; set; }
 
         public virtual string DisplayText => builder.ToString();
@@ -121,8 +121,8 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
 					position = idx;
 					allow = true;
 				}
-
 			}
+
 			if (!allow && character == '-')
 			{
 				var val = Text;
