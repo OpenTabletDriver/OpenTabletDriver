@@ -2,6 +2,7 @@
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -17,7 +18,7 @@ namespace OpenTabletDriver.UX.Windows
 
         private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
         private Group topGroup, leftGroup, bottomGroup, rightGroup;
-        private NumericMaskedTextBox<float> top, left, bottom, right;
+        private FloatNumberBox top, left, bottom, right;
         private Button applyButton;
         private TabletState tabletState;
 
@@ -48,28 +49,28 @@ namespace OpenTabletDriver.UX.Windows
 
             topGroup = new Group
             {
-                Content = top = new NumericMaskedTextBox<float>
+                Content = top = new FloatNumberBox()
                 {
                     PlaceholderText = "0"
                 }
             };
             leftGroup = new Group
             {
-                Content = left = new NumericMaskedTextBox<float>
+                Content = left = new FloatNumberBox()
                 {
                     PlaceholderText = "0"
                 }
             };
             bottomGroup = new Group
             {
-                Content = bottom = new NumericMaskedTextBox<float>
+                Content = bottom = new FloatNumberBox()
                 {
                     PlaceholderText = "0"
                 }
             };
             rightGroup = new Group
             {
-                Content = right = new NumericMaskedTextBox<float>
+                Content = right = new FloatNumberBox()
                 {
                     PlaceholderText = "0"
                 }

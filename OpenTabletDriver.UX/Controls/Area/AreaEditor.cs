@@ -1,9 +1,8 @@
 using System;
-using System.Linq;
-using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Text;
 using OpenTabletDriver.UX.Controls.Utilities;
 
 namespace OpenTabletDriver.UX.Controls.Area
@@ -67,7 +66,7 @@ namespace OpenTabletDriver.UX.Controls.Area
                                         Unit = ViewModel.Unit,
                                         ToolTip = $"Area width in {ViewModel.Unit}",
                                         Orientation = Orientation.Horizontal,
-                                        Content = width = new NumericMaskedTextBox<float>()
+                                        Content = width = new FloatNumberBox()
                                     }
                                 },
                                 new StackLayoutItem
@@ -78,7 +77,7 @@ namespace OpenTabletDriver.UX.Controls.Area
                                         Unit = ViewModel.Unit,
                                         ToolTip = $"Area height in {ViewModel.Unit}",
                                         Orientation = Orientation.Horizontal,
-                                        Content = height = new NumericMaskedTextBox<float>()
+                                        Content = height = new FloatNumberBox()
                                     }
                                 },
                                 new StackLayoutItem
@@ -89,7 +88,7 @@ namespace OpenTabletDriver.UX.Controls.Area
                                         Unit = ViewModel.Unit,
                                         ToolTip = $"Area center X offset in {ViewModel.Unit}",
                                         Orientation = Orientation.Horizontal,
-                                        Content = x = new NumericMaskedTextBox<float>()
+                                        Content = x = new FloatNumberBox()
                                     }
                                 },
                                 new StackLayoutItem
@@ -100,7 +99,7 @@ namespace OpenTabletDriver.UX.Controls.Area
                                         Unit = ViewModel.Unit,
                                         ToolTip = $"Area center Y offset in {ViewModel.Unit}",
                                         Orientation = Orientation.Horizontal,
-                                        Content = y = new NumericMaskedTextBox<float>()
+                                        Content = y = new FloatNumberBox()
                                     }
                                 }
                             }
@@ -120,7 +119,7 @@ namespace OpenTabletDriver.UX.Controls.Area
                             Unit = "°",
                             ToolTip = "Angle of rotation about the center of the area.",
                             Orientation = Orientation.Horizontal,
-                            Content = rotation = new NumericMaskedTextBox<float>()
+                            Content = rotation = new FloatNumberBox()
                         }
                     }
                 );
