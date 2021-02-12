@@ -117,18 +117,21 @@ namespace OpenTabletDriver.UX.Controls.Area
                     {
                         var bounds = ViewModel.FullBackground;
                         var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(ViewModel.Width, ViewModel.Height));
+
                         var corners = new PointF[]
                         {
                             PointF.Rotate(rect.TopLeft, ViewModel.Rotation),
-                            PointF.Rotate(rect.BottomRight, ViewModel.Rotation)
+                            PointF.Rotate(rect.TopRight, ViewModel.Rotation),
+                            PointF.Rotate(rect.BottomRight, ViewModel.Rotation),
+                            PointF.Rotate(rect.BottomLeft, ViewModel.Rotation)
                         };
                         var pseudoArea = new RectangleF(
-                            PointF.Min(corners[0], corners[1]),
-                            PointF.Max(corners[0], corners[1])
+                            PointF.Min(corners[0], PointF.Min(corners[1], PointF.Min(corners[2], corners[3]))),
+                            PointF.Max(corners[0], PointF.Max(corners[1], PointF.Max(corners[2], corners[3])))
                         );
                         pseudoArea.Center += new PointF(newX, newY);
 
-                        if (!bounds.Contains(pseudoArea))
+                        if (!IsInBounds(bounds, pseudoArea))
                         {
                             if (pseudoArea.Left < bounds.Left)
                                 newX = bounds.Left + (pseudoArea.Width - 1) / 2;
@@ -275,6 +278,14 @@ namespace OpenTabletDriver.UX.Controls.Area
         private static bool IsValid(RectangleF rect)
         {
             return rect.Width > 0 && rect.Height > 0;
+        }
+
+        private static bool IsInBounds(RectangleF bounds, RectangleF rect)
+        {
+            return bounds.Left >= rect.Left &&
+                bounds.Top >= rect.Top &&
+                bounds.Bottom <= rect.Bottom &&
+                bounds.Right <= rect.Right;
         }
     }
 }
