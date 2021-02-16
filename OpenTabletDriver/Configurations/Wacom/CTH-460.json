@@ -14,6 +14,50 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
+      "ProductID": 214,
+      "InputReportLength": 9,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 147.2,
+      "Height": 92.0,
+      "MaxX": 14720.0,
+      "MaxY": 9200.0,
+      "MaxPressure": 1023,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 214,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 147.2,
+      "Height": 92.0,
+      "MaxX": 14720.0,
+      "MaxY": 9200.0,
+      "MaxPressure": 1023,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
       "ProductID": 209,
       "InputReportLength": 20,
       "OutputReportLength": null,
@@ -25,6 +69,17 @@
     }
   ],
   "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 214,
+      "InputReportLength": 64,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
     {
       "VendorID": 1386,
       "ProductID": 209,
