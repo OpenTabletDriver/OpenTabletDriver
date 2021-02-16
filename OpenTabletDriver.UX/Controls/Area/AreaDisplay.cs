@@ -276,8 +276,8 @@ namespace OpenTabletDriver.UX.Controls.Area
         {
             return new Vector2
             {
-                X = Math.Max(rect.Right - bounds.Right, 0) + Math.Min(rect.Left - bounds.Left, 0),
-                Y = Math.Max(rect.Bottom - bounds.Bottom, 0) + Math.Min(rect.Top - bounds.Top, 0)
+                X = Math.Max(rect.Right - bounds.Right - 1, 0) + Math.Min(rect.Left - bounds.Left, 0),
+                Y = Math.Max(rect.Bottom - bounds.Bottom - 1, 0) + Math.Min(rect.Top - bounds.Top, 0)
             };
         }
     }
