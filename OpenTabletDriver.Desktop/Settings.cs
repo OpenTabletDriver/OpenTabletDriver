@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Desktop
 
         private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
         private TimeSpan _rT;
-        private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;
+        private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet, _updateTAreatoDArea;
         private PluginSettingStore _outputMode, _tipButton;
 
         private PluginSettingStoreCollection _filters = new PluginSettingStoreCollection(),
@@ -75,9 +75,10 @@ namespace OpenTabletDriver.Desktop
         {
             set
             {
+                var prevValue = DisplayWidth;
                 RaiseAndSetIfChanged(ref _dW, value);
-                if (LockAspectRatio)
-                    TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
+                if (UpdateTabletAreaToDisplayChanges)
+                    TabletWidth *= DisplayWidth / prevValue;
             }
             get => _dW;
         }
@@ -87,9 +88,10 @@ namespace OpenTabletDriver.Desktop
         {
             set
             {
+                var prevValue = DisplayHeight;
                 RaiseAndSetIfChanged(ref _dH, value);
-                if (LockAspectRatio)
-                    TabletWidth = DisplayWidth / DisplayHeight * TabletHeight;
+                if (UpdateTabletAreaToDisplayChanges)
+                    TabletHeight *= DisplayHeight / prevValue;
             }
             get => _dH;
         }
@@ -185,6 +187,13 @@ namespace OpenTabletDriver.Desktop
                     TabletHeight = DisplayHeight / DisplayWidth * TabletWidth;
             }
             get => _lockar;
+        }
+
+        [JsonProperty("UpdateTabletAreaToDisplayChanges")]
+        public bool UpdateTabletAreaToDisplayChanges
+        {
+            set => RaiseAndSetIfChanged(ref _updateTAreatoDArea, value);
+            get => _updateTAreatoDArea;
         }
 
         #endregion

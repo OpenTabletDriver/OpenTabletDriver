@@ -255,9 +255,10 @@ namespace OpenTabletDriver.UX.Controls
                 public TabletAreaEditor()
                     : base()
                 {
-                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";                }
+                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
+                }
 
-                private BooleanCommand lockAr, areaClipping, ignoreOutsideArea;
+                private BooleanCommand lockAr, areaClipping, ignoreOutsideArea, updateOnDisplayChange;
 
                 public void Rebind(Settings settings)
                 {
@@ -270,6 +271,7 @@ namespace OpenTabletDriver.UX.Controls
                     lockAr?.CheckedBinding.BindDataContext<Settings>(m => m.LockAspectRatio);
                     areaClipping?.CheckedBinding.BindDataContext<Settings>(m => m.EnableClipping);
                     ignoreOutsideArea?.CheckedBinding.BindDataContext<Settings>(m => m.EnableAreaLimiting);
+                    updateOnDisplayChange?.CheckedBinding.BindDataContext<Settings>(m => m.UpdateTabletAreaToDisplayChanges);
                 }
 
                 protected override void OnLoadComplete(EventArgs e)
@@ -296,12 +298,19 @@ namespace OpenTabletDriver.UX.Controls
                         DataContext = App.Settings
                     };
 
+                    updateOnDisplayChange = new BooleanCommand
+                    {
+                        MenuText = "Update proportionally to display area change",
+                        DataContext = App.Settings
+                    };
+
                     base.ContextMenu.Items.AddRange(
                         new Command[]
                         {
                             lockAr,
                             areaClipping,
-                            ignoreOutsideArea
+                            ignoreOutsideArea,
+                            updateOnDisplayChange
                         }
                     );
 
