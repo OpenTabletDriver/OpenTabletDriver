@@ -1,5 +1,6 @@
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic.Text.Providers;
+using System.Globalization;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Text
 {
@@ -9,8 +10,8 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
         {
             public override double Value
             {
-                set => Text = value.ToString();
-                get => double.TryParse(Text, out var val) ? val : default(double);
+                set => Text = value.ToString(CultureInfo.InvariantCulture);
+                get => double.TryParse(Text, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : default(double);
             }
         }
     }
