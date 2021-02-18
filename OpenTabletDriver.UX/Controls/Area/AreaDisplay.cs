@@ -131,17 +131,9 @@ namespace OpenTabletDriver.UX.Controls.Area
                         );
                         pseudoArea.Center += new PointF(newX, newY);
 
-                        if (!IsInBounds(bounds, pseudoArea))
-                        {
-                            if (pseudoArea.Left < bounds.Left)
-                                newX = bounds.Left + (pseudoArea.Width - 1) / 2;
-                            else if (pseudoArea.Right > bounds.Right)
-                                newX = bounds.Right - (pseudoArea.Width - 1) / 2;
-                            if (pseudoArea.Top < bounds.Top)
-                                newY = bounds.Top + (pseudoArea.Height - 1) / 2;
-                            else if (pseudoArea.Bottom > bounds.Bottom)
-                                newY = bounds.Bottom - (pseudoArea.Height - 1) / 2;
-                        }
+                        var correction = OutOfBoundsAmount(bounds, pseudoArea);
+                        newX -= correction.X;
+                        newY -= correction.Y;
                     }
 
                     ViewModel.X = newX;
@@ -280,12 +272,13 @@ namespace OpenTabletDriver.UX.Controls.Area
             return rect.Width > 0 && rect.Height > 0;
         }
 
-        private static bool IsInBounds(RectangleF bounds, RectangleF rect)
+        private static Vector2 OutOfBoundsAmount(RectangleF bounds, RectangleF rect)
         {
-            return bounds.Left >= rect.Left &&
-                bounds.Top >= rect.Top &&
-                bounds.Bottom <= rect.Bottom &&
-                bounds.Right <= rect.Right;
+            return new Vector2
+            {
+                X = Math.Max(rect.Right - bounds.Right - 1, 0) + Math.Min(rect.Left - bounds.Left, 0),
+                Y = Math.Max(rect.Bottom - bounds.Bottom - 1, 0) + Math.Min(rect.Top - bounds.Top, 0)
+            };
         }
     }
 }
