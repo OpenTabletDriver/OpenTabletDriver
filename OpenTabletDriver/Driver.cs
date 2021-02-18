@@ -155,7 +155,14 @@ namespace OpenTabletDriver
         {
             TabletReader?.Dispose();
 
-            Log.Debug("Detect", $"Using device '{tabletDevice.GetFriendlyName()}'.");
+            string friendlyName = "Unnamed Device";
+            try
+            {
+                friendlyName = tabletDevice.GetFriendlyName();
+            }
+            catch { }
+
+            Log.Debug("Detect", $"Using device '{friendlyName}'.");
             Log.Debug("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
             Log.Debug("Detect", $"Device path: {tabletDevice.DevicePath}");
 
@@ -205,7 +212,14 @@ namespace OpenTabletDriver
         {
             AuxReader?.Dispose();
 
-            Log.Debug("Detect", $"Using auxiliary device '{auxDevice.GetFriendlyName()}'.");
+            string friendlyName = "Unnamed Device";
+            try
+            {
+                friendlyName = auxDevice.GetFriendlyName();
+            }
+            catch { }
+
+            Log.Debug("Detect", $"Using device '{friendlyName}'.");
             Log.Debug("Detect", $"Using auxiliary report parser type '{reportParser.GetType().Name}'.");
             Log.Debug("Detect", $"Device path: {auxDevice.DevicePath}");
 
