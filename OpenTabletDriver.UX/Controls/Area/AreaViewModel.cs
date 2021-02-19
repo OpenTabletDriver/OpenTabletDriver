@@ -7,7 +7,7 @@ namespace OpenTabletDriver.UX.Controls.Area
     public class AreaViewModel : ViewModelBase
     {
         private float w, h, x, y, r;
-        private string unit, invalidSizeError;
+        private string unit, invalidForegroundError, invalidBackgroundError;
         private bool lockArea, enableRotation;
         private IEnumerable<RectangleF> bg;
         private RectangleF fullbg;
@@ -17,7 +17,7 @@ namespace OpenTabletDriver.UX.Controls.Area
             set => this.RaiseAndSetIfChanged(ref this.w, value);
             get => this.w;
         }
-        
+
         public float Height
         {
             set => this.RaiseAndSetIfChanged(ref this.h, value);
@@ -89,10 +89,16 @@ namespace OpenTabletDriver.UX.Controls.Area
             get => this.unit;
         }
 
-        public string InvalidSizeError
+        public string InvalidForegroundError
         {
-            set => this.RaiseAndSetIfChanged(ref this.invalidSizeError, value);
-            get => this.invalidSizeError ??= "Invalid area size";
+            set => this.RaiseAndSetIfChanged(ref this.invalidForegroundError, value);
+            get => this.invalidForegroundError ??= "Invalid area size.";
+        }
+
+        public string InvalidBackgroundError
+        {
+            set => this.RaiseAndSetIfChanged(ref this.invalidBackgroundError, value);
+            get => this.invalidBackgroundError ??= "Invalid background size.";
         }
     }
 }

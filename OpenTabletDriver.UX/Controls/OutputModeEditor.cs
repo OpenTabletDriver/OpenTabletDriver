@@ -191,7 +191,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 ViewModel = new AreaViewModel
                 {
-                    InvalidSizeError = "No tablet detected.",
+                    InvalidBackgroundError = "No tablet detected.",
                     Unit = "mm",
                     EnableRotation = true
                 }
