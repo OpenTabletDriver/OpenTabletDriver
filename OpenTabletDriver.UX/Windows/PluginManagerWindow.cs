@@ -13,6 +13,7 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
@@ -100,6 +101,7 @@ namespace OpenTabletDriver.UX.Windows
             catch (Exception e)
             {
                 MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error);
+                Log.Write("PluginManager", e.Message);
             }
             finally
             {
