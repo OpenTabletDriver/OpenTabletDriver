@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         protected static GitHubClient GitHub { get; } = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
 
-        public static readonly PluginMetadataCollection Empty = new PluginMetadataCollection();
+        public static PluginMetadataCollection Empty => new PluginMetadataCollection();
 
         internal static HttpClient GetClient()
         {
