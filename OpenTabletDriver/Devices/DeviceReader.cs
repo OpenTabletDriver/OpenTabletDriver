@@ -72,6 +72,10 @@ namespace OpenTabletDriver.Devices
             {
                 Log.Write("Device", "Device disconnected.");
             }
+            catch (ArgumentOutOfRangeException)
+            {
+                Log.Write("Device", "Not enough report data returned by the device. Was it disconnected?");
+            }
             catch (Exception ex)
             {
                 Log.Exception(ex);
