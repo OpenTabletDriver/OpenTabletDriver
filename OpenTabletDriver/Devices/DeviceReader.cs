@@ -61,7 +61,8 @@ namespace OpenTabletDriver.Devices
                 {
                     var data = ReportStream.Read();
                     var report = Parser.Parse(data);
-                    Report?.Invoke(this, report);
+                    if (report is not null)
+                        Report?.Invoke(this, report);
                 }
             }
             catch (ObjectDisposedException dex)

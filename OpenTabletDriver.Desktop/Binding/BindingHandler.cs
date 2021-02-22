@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private static bool TipState = false;
         private static IList<bool> PenButtonStates = new bool[2];
-        private static IList<bool> AuxButtonStates = new bool[6];
+        private static IList<bool> AuxButtonStates = new bool[8];
 
         public static void HandleBinding(TabletState tablet, IDeviceReport report)
         {
