@@ -9,11 +9,6 @@ namespace OpenTabletDriver.UX.Controls.Area
 {
     public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
     {
-        public AreaEditor()
-        {
-            this.ContextMenu = new ContextMenu();
-        }
-
         public AreaViewModel ViewModel
         {
             set => this.DataContext = value;
@@ -124,6 +119,8 @@ namespace OpenTabletDriver.UX.Controls.Area
                     }
                 );
             }
+
+            this.ContextMenu = new ContextMenu();
 
             this.ContextMenu.Items.GetSubmenu("Align").Items.AddRange(
                 new MenuItem[]
