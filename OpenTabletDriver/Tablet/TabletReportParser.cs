@@ -6,7 +6,10 @@ namespace OpenTabletDriver.Tablet
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            return new TabletReport(data);
+            if (data.Length < 12)
+                return new TabletReport(data);
+            else
+                return new TiltTabletReport(data);
         }
     }
 }
