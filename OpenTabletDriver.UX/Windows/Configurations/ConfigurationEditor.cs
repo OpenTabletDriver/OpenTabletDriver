@@ -117,9 +117,17 @@ namespace OpenTabletDriver.UX.Windows.Configurations
 
         private ObservableCollection<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
-            var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                select Serialization.Deserialize<TabletConfiguration>(file);
-            return new ObservableCollection<TabletConfiguration>(configs);
+            if (dir.Exists)
+            {
+                var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
+                              select Serialization.Deserialize<TabletConfiguration>(file);
+                return new ObservableCollection<TabletConfiguration>(configs);
+            }
+            else
+            {
+                dir.Create();
+                return new ObservableCollection<TabletConfiguration>();
+            }
         }
 
         private void WriteConfigurations(IEnumerable<TabletConfiguration> configs, DirectoryInfo dir)
