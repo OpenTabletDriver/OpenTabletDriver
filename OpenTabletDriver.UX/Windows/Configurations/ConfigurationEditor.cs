@@ -117,6 +117,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
 
         private ObservableCollection<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
+            dir.Refresh();
             if (dir.Exists)
             {
                 var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
