@@ -160,13 +160,13 @@ namespace OpenTabletDriver.UX.Windows.Configurations
         /// <param name="dir">The directory to save to, can be null.</param>
         private void SaveConfigurationsDialog(DirectoryInfo dir = null)
         {
-            if (Configurations is null)
+            if (Configurations == null)
             {
                 MessageBox.Show(this, "There are no configurations to save.", MessageBoxType.Information);
                 return;
             }
 
-            if (dir is null)
+            if (dir == null)
             {
                 var folderDialog = new SelectFolderDialog
                 {
