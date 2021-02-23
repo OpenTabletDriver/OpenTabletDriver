@@ -162,7 +162,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
         {
             if (Configurations is null)
             {
-                MessageBox.Show(this, "No configurations to save", MessageBoxType.Information);
+                MessageBox.Show(this, "There are no configurations to save.", MessageBoxType.Information);
                 return;
             }
 
