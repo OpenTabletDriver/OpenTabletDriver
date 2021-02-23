@@ -120,7 +120,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             if (dir.Exists)
             {
                 var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                              select Serialization.Deserialize<TabletConfiguration>(file);
+                    select Serialization.Deserialize<TabletConfiguration>(file);
                 return new ObservableCollection<TabletConfiguration>(configs);
             }
             else
