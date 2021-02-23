@@ -166,7 +166,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 return;
             }
 
-            if (dir is null)
+            if (dir == null)
             {
                 var folderDialog = new SelectFolderDialog
                 {
