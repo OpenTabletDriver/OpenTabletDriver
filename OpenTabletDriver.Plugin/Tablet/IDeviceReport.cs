@@ -6,6 +6,6 @@ namespace OpenTabletDriver.Plugin.Tablet
     {
         byte[] Raw { get; }
         string GetStringRaw() => BitConverter.ToString(Raw).Replace('-', ' ');
-        string GetStringFormat() => "";
+        string GetStringFormat() => GetStringRaw();
     }
 }

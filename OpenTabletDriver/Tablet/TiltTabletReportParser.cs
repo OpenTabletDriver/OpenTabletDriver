@@ -2,11 +2,11 @@
 
 namespace OpenTabletDriver.Tablet
 {
-    public class TabletReportParser : IReportParser<IDeviceReport>
+    public class TiltTabletReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            return new TabletReport(data);
+            return new TiltTabletReport(data);
         }
     }
 }
