@@ -418,7 +418,7 @@ namespace OpenTabletDriver.Daemon
         public Task<string> RequestDeviceString(int index)
         {
             if (Driver.TabletReader?.Device != null)
-                return Task.FromResult(Driver.TabletReader?.Device?.GetDeviceString(index));
+                return Task.FromResult(Driver.TabletReader.Device.GetDeviceString(index));
             else
                 throw new IOException("Device not found");
         }
