@@ -125,7 +125,6 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             }
             else
             {
-                dir.Create();
                 return new ObservableCollection<TabletConfiguration>();
             }
         }
