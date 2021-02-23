@@ -44,7 +44,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             loadDirectory.Executed += (sender, e) => LoadConfigurationsDialog();
 
             var saveDirectory = new Command { MenuText = "Save configurations", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveDirectory.Executed += (sender, e) => WriteConfigurations(Configurations, new DirectoryInfo(AppInfo.Current.ConfigurationDirectory));
+            saveDirectory.Executed += (sender, e) => SaveConfigurationsDialog(new DirectoryInfo(AppInfo.Current.ConfigurationDirectory));
 
             var saveToDirectory = new Command { MenuText = "Save configurations to...", Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.S };
             saveToDirectory.Executed += (sender, e) => SaveConfigurationsDialog();
@@ -154,20 +154,34 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             }
         }
 
-        private void SaveConfigurationsDialog()
+        /// <summary>
+        /// Save configurations to `dir` if present, else show a folder selection dialog.
+        /// </summary>
+        /// <param name="dir">The directory to save to, can be null.</param>
+        private void SaveConfigurationsDialog(DirectoryInfo dir = null)
         {
-            var folderDialog = new SelectFolderDialog
+            if (Configurations is null)
             {
-                Title = "Save configurations to..."
-            };
-            switch (folderDialog.ShowDialog(this))
-            {
-                case DialogResult.Ok:
-                case DialogResult.Yes:
-                    var dir = new DirectoryInfo(folderDialog.Directory);
-                    WriteConfigurations(Configurations, dir);
-                    break;
+                MessageBox.Show(this, "No configurations to save", MessageBoxType.Information);
+                return;
             }
+
+            if (dir is null)
+            {
+                var folderDialog = new SelectFolderDialog
+                {
+                    Title = "Save configurations to..."
+                };
+                switch (folderDialog.ShowDialog(this))
+                {
+                    case DialogResult.Ok:
+                    case DialogResult.Yes:
+                        dir = new DirectoryInfo(folderDialog.Directory);
+                        break;
+                }
+            }
+
+            WriteConfigurations(Configurations, dir);
         }
 
         private class ConfigurationList : ListBox<TabletConfiguration>
