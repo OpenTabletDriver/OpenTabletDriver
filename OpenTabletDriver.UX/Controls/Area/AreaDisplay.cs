@@ -170,14 +170,14 @@ namespace OpenTabletDriver.UX.Controls.Area
                     }
                     break;
                 }
-                case (true, false):
+                case (_, false):
                 {
-                    DrawError(graphics, "Invalid area size.");
+                    DrawText(graphics, ViewModel.InvalidBackgroundError);
                     break;
                 }
-                case (_, true):
+                case (false, _):
                 {
-                    DrawError(graphics, ViewModel.InvalidSizeError);
+                    DrawText(graphics, ViewModel.InvalidForegroundError);
                     break;
                 }
             }
@@ -252,12 +252,14 @@ namespace OpenTabletDriver.UX.Controls.Area
             }
         }
 
-        private void DrawError(Graphics graphics, string errorText)
+        private void DrawText(Graphics graphics, string errorText)
         {
             var errSize = graphics.MeasureString(Font, errorText);
-            var x = (this.ClientSize.Width / 2f) - (errSize.Width / 2);
-            var y = (this.ClientSize.Width / 2f) - (errSize.Height / 2);
-            graphics.DrawText(Font, TextBrush, x, y, errorText);
+            var errorOffset = new PointF(errSize.Width, errSize.Height) / 2;
+            var clientOffset = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;
+            var offset = clientOffset - errorOffset;
+
+            graphics.DrawText(Font, TextBrush, offset, errorText);
         }
 
         private float CalculateScale(RectangleF rect)
