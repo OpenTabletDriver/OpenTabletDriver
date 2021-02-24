@@ -183,14 +183,14 @@ namespace OpenTabletDriver.Daemon
             if (Driver.OutputMode != null)
                 Log.Write("Settings", $"Output mode: {pluginRef.Name ?? pluginRef.Path}");
 
-            if (Driver.OutputMode is IOutputMode outputMode)
-                SetOutputModeSettings(outputMode);
-
             if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
                 SetAbsoluteModeSettings(absoluteMode);
 
             if (Driver.OutputMode is RelativeOutputMode relativeMode)
                 SetRelativeModeSettings(relativeMode);
+
+            if (Driver.OutputMode is IOutputMode outputMode)
+                SetOutputModeSettings(outputMode);
 
             SetBindingHandlerSettings();
 
@@ -245,6 +245,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
+            outputMode.Tablet = Driver.Tablet;
+
             var filters = from store in Settings.Filters
                 where store.Enable == true
                 let filter = store.Construct<IFilter>()
@@ -254,8 +256,6 @@ namespace OpenTabletDriver.Daemon
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
-
-            outputMode.Tablet = Driver.Tablet;
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
