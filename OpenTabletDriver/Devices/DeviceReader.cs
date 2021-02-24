@@ -61,7 +61,7 @@ namespace OpenTabletDriver.Devices
                 {
                     var data = ReportStream.Read();
                     var report = Parser.Parse(data);
-                    if (report is not null)
+                    if (report != null)
                         Report?.Invoke(this, report);
                 }
             }
