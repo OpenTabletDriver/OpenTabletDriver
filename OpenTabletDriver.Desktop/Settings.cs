@@ -1,6 +1,9 @@
 using System;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Migration;
@@ -338,10 +341,8 @@ namespace OpenTabletDriver.Desktop
             if (args.ErrorContext.Path is string path)
             {
                 if (args.CurrentObject == null)
-                {
-                    Log.Write("Settings", $"Unable to read property for {path}", LogLevel.Error);
                     return;
-                }
+
                 var property = args.CurrentObject.GetType().GetProperty(path);
                 if (property != null && property.PropertyType == typeof(PluginSettingStore))
                 {
@@ -373,6 +374,32 @@ namespace OpenTabletDriver.Desktop
             using (var sr = new StreamReader(stream))
             using (var jr = new JsonTextReader(sr))
                 return serializer.Deserialize<Settings>(jr);
+        }
+
+        public static void Recover(FileInfo file, Settings settings)
+        {
+            using var stream = file.OpenRead();
+            using var sr = new StreamReader(stream);
+            using var jr = new JsonTextReader(sr);
+
+            void propertyWatch(object _, PropertyChangedEventArgs p)
+            {
+                var prop = settings.GetType().GetProperty(p.PropertyName).GetValue(settings);
+                Log.Write("Settings", $"    Recovered '{p.PropertyName}'", LogLevel.Debug);
+            }
+
+            settings.PropertyChanged += propertyWatch;
+
+            try
+            {
+                serializer.Populate(jr, settings);
+            }
+            catch (JsonReaderException e)
+            {
+                Log.Write("Settings", $"    Recovery ended. Reason: {e.Message}", LogLevel.Debug);
+            }
+
+            settings.PropertyChanged -= propertyWatch;
         }
 
         public void Serialize(FileInfo file)

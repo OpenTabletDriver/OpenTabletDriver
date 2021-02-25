@@ -67,14 +67,25 @@ namespace OpenTabletDriver.Daemon
             }
 
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
-            Settings settings = null;
+
             if (settingsFile.Exists)
-                settings = Settings.Deserialize(settingsFile);
-            if (settings != null)
-                await SetSettings(settings);
+            {
+                var settings = Settings.Deserialize(settingsFile);
+                if (settings != null)
+                {
+                    await SetSettings(settings);
+                }
+                else
+                {
+                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
+                    settings = DefaultSettings;
+                    Settings.Recover(settingsFile, settings);
+                    Log.Write("Settings", "Recovery complete");
+                    await SetSettings(settings);
+                }
+            }
             else
             {
-                Log.Write("Settings", "Invalid settings detected. Settings will be reset to defaults", LogLevel.Warning);
                 await ResetSettings();
             }
         }
@@ -88,6 +99,44 @@ namespace OpenTabletDriver.Daemon
         private Settings Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+        private Settings DefaultSettings
+        {
+            get
+            {
+                var virtualScreen = SystemInterop.VirtualScreen;
+                var tablet = Driver.Tablet?.Digitizer;
+
+                return new Settings
+                {
+                    OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
+                    DisplayWidth = virtualScreen.Width,
+                    DisplayHeight = virtualScreen.Height,
+                    DisplayX = virtualScreen.Width / 2,
+                    DisplayY = virtualScreen.Height / 2,
+                    TabletWidth = tablet?.Width ?? 0,
+                    TabletHeight = tablet?.Height ?? 0,
+                    TabletX = tablet?.Width / 2 ?? 0,
+                    TabletY = tablet?.Height / 2 ?? 0,
+                    AutoHook = true,
+                    EnableClipping = true,
+                    LockUsableAreaDisplay = true,
+                    LockUsableAreaTablet = true,
+                    TipButton = new PluginSettingStore(
+                        new MouseBinding
+                        {
+                            Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
+                        }
+                    ),
+                    TipActivationPressure = 1,
+                    PenButtons = new PluginSettingStoreCollection(),
+                    AuxButtons = new PluginSettingStoreCollection(),
+                    XSensitivity = 10,
+                    YSensitivity = 10,
+                    RelativeRotation = 0,
+                    ResetTime = TimeSpan.FromMilliseconds(100)
+                };
+            }
+        }
 
         private bool debugging;
 
@@ -174,7 +223,7 @@ namespace OpenTabletDriver.Daemon
                         if (filter is IDisposable disposableFilter)
                             disposableFilter.Dispose();
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         Log.Write("Plugin", $"Unable to dispose object '{filter.GetType().Name}'", LogLevel.Error);
                     }
@@ -215,39 +264,7 @@ namespace OpenTabletDriver.Daemon
 
         public async Task ResetSettings()
         {
-            var virtualScreen = SystemInterop.VirtualScreen;
-            var tablet = Driver.Tablet?.Digitizer;
-
-            var defaults = new Settings
-            {
-                OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
-                DisplayWidth = virtualScreen.Width,
-                DisplayHeight = virtualScreen.Height,
-                DisplayX = virtualScreen.Width / 2,
-                DisplayY = virtualScreen.Height / 2,
-                TabletWidth = tablet?.Width ?? 0,
-                TabletHeight = tablet?.Height ?? 0,
-                TabletX = tablet?.Width / 2 ?? 0,
-                TabletY = tablet?.Height / 2 ?? 0,
-                AutoHook = true,
-                EnableClipping = true,
-                LockUsableAreaDisplay = true,
-                LockUsableAreaTablet = true,
-                TipButton = new PluginSettingStore(
-                    new MouseBinding
-                    {
-                        Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
-                    }
-                ),
-                TipActivationPressure = 1,
-                PenButtons = new PluginSettingStoreCollection(),
-                AuxButtons = new PluginSettingStoreCollection(),
-                XSensitivity = 10,
-                YSensitivity = 10,
-                RelativeRotation = 0,
-                ResetTime = TimeSpan.FromMilliseconds(100)
-            };
-            await SetSettings(defaults);
+            await SetSettings(DefaultSettings);
         }
 
         private void SetOutputModeSettings(IOutputMode outputMode)
