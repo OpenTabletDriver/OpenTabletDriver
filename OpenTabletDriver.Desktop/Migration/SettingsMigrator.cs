@@ -21,10 +21,10 @@ namespace OpenTabletDriver.Desktop.Migration
                 }
             ));
 
-            settings.Filters = SafeMigrateCollection(settings.Filters, trim: true);
-            settings.Interpolators = SafeMigrateCollection(settings.Interpolators, trim: true);
-            settings.PenButtons = SafeMigrateCollection(settings.PenButtons, Settings.PenButtonCount);
-            settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons, Settings.AuxButtonCount);
+            settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
+            settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
+            settings.PenButtons = SafeMigrateCollection(settings.PenButtons).SetExpectedCount(Settings.PenButtonCount);
+            settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons).SetExpectedCount(Settings.AuxButtonCount);
 
             return settings;
         }
@@ -70,25 +70,13 @@ namespace OpenTabletDriver.Desktop.Migration
             return store;
         }
 
-        private static PluginSettingStoreCollection SafeMigrateCollection(PluginSettingStoreCollection collection, int expectedCount = 0, bool trim = false)
+        private static PluginSettingStoreCollection SafeMigrateCollection(PluginSettingStoreCollection collection)
         {
             if (collection == null)
                 collection = new PluginSettingStoreCollection();
 
             for (int i = 0; i < collection.Count; i++)
                 collection[i] = SafeMigrateNamespace(collection[i]);
-
-            while (collection.Count < expectedCount)
-                collection.Add(null);
-
-            if (trim)
-            {
-                for (int i = 0; i < collection.Count; i++)
-                {
-                    if (!collection.Remove(null))
-                        break;
-                }
-            }
 
             return collection;
         }
