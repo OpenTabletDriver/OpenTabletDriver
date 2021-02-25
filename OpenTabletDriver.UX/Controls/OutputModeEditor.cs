@@ -7,7 +7,6 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
@@ -29,9 +28,7 @@ namespace OpenTabletDriver.UX.Controls
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
-                    new StackLayoutItem(absoluteModeEditor, true),
-                    new StackLayoutItem(relativeModeEditor, true),
-                    new StackLayoutItem(noModeEditor, true),
+                    new StackLayoutItem(new Panel(), true),
                     new StackLayout(outputModeSelector)
                     {
                         Size = new Size(300, -1)
@@ -107,41 +104,17 @@ namespace OpenTabletDriver.UX.Controls
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
                 showNull = !(showAbsolute | showRelative);
             }
-            switch (SystemInterop.CurrentPlatform)
-            {
-                case PluginPlatform.Linux:
-                    noModeEditor.Visible = showNull;
-                    absoluteModeEditor.Visible = showAbsolute;
-                    relativeModeEditor.Visible = showRelative;
-                    break;
-                default:
-                    SetVisibilityWorkaround(absoluteModeEditor, showAbsolute, 0);
-                    SetVisibilityWorkaround(relativeModeEditor, showRelative, 1);
-                    SetVisibilityWorkaround(noModeEditor, showNull, 2);
-                    break;
-            }
-        }
 
-        private void SetVisibilityWorkaround(
-            Control control,
-            bool visibility,
-            int index
-        )
-        {
-            if (control == null || outputPanel == null)
-                return;
-            var isContained = outputPanel.Items.Any(d => d.Control == control);
-            if (!isContained & visibility)
-            {
-                if (outputPanel.Items.Count - index - 1 < 0)
-                    index = 0;
-                outputPanel.Items.Insert(index, new StackLayoutItem(control, HorizontalAlignment.Stretch, true));
-            }
-            else if (isContained & !visibility)
-            {
-                var item = outputPanel.Items.FirstOrDefault(d => d.Control == control);
-                outputPanel.Items.Remove(item);
-            }
+            var panel = outputPanel.Items[0].Control as Panel;
+
+            if (showNull)
+                panel.Content = noModeEditor;
+            else if (showAbsolute)
+                panel.Content = absoluteModeEditor;
+            else if (showRelative)
+                panel.Content = relativeModeEditor;
+
+            outputPanel.Invalidate();
         }
 
         private class OutputModeSelector : TypeDropDown<IOutputMode>
@@ -178,48 +151,28 @@ namespace OpenTabletDriver.UX.Controls
                 tabletAreaEditor.Rebind(settings);
             }
 
-            public DisplayAreaEditor displayAreaEditor = new DisplayAreaEditor
+            public DisplayAreaEditor displayAreaEditor = new DisplayAreaEditor(new AreaViewModel
             {
-                ViewModel = new AreaViewModel
-                {
-                    Unit = "px",
-                    EnableRotation = false
-                }
-            };
+                Unit = "px",
+                EnableRotation = false
+            });
 
-            public TabletAreaEditor tabletAreaEditor = new TabletAreaEditor
+            public TabletAreaEditor tabletAreaEditor = new TabletAreaEditor(new AreaViewModel
             {
-                ViewModel = new AreaViewModel
-                {
-                    InvalidBackgroundError = "No tablet detected.",
-                    Unit = "mm",
-                    EnableRotation = true
-                }
-            };
+                InvalidBackgroundError = "No tablet detected.",
+                Unit = "mm",
+                EnableRotation = true
+            });
 
             public class DisplayAreaEditor : AreaEditor
             {
-                public DisplayAreaEditor()
-                    : base()
+                public DisplayAreaEditor(AreaViewModel viewModel)
+                    : base(viewModel)
                 {
                     this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
 
                     Rebind(App.Settings);
                     App.SettingsChanged += Rebind;
-                }
-
-                public void Rebind(Settings settings)
-                {
-                    this.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
-                    this.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
-                    this.Bind(c => c.ViewModel.X, settings, m => m.DisplayX);
-                    this.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
-                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaDisplay);
-                }
-
-                protected override void OnLoadComplete(EventArgs e)
-                {
-                    base.OnLoadComplete(e);
 
                     var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
                     foreach (var display in SystemInterop.VirtualScreen.Displays)
@@ -248,33 +201,23 @@ namespace OpenTabletDriver.UX.Controls
                         );
                     }
                 }
+
+                public void Rebind(Settings settings)
+                {
+                    this.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
+                    this.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
+                    this.Bind(c => c.ViewModel.X, settings, m => m.DisplayX);
+                    this.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
+                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaDisplay);
+                }
             }
 
             public class TabletAreaEditor : AreaEditor
             {
-                public TabletAreaEditor()
-                    : base()
+                public TabletAreaEditor(AreaViewModel viewModel)
+                    : base(viewModel)
                 {
-                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";                }
-
-                private BooleanCommand lockAr, areaClipping, ignoreOutsideArea;
-
-                public void Rebind(Settings settings)
-                {
-                    this.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
-                    this.Bind(c => c.ViewModel.Height, settings, m => m.TabletHeight);
-                    this.Bind(c => c.ViewModel.X, settings, m => m.TabletX);
-                    this.Bind(c => c.ViewModel.Y, settings, m => m.TabletY);
-                    this.Bind(c => c.ViewModel.Rotation, settings, m => m.TabletRotation);
-                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaTablet);
-                    lockAr?.CheckedBinding.BindDataContext<Settings>(m => m.LockAspectRatio);
-                    areaClipping?.CheckedBinding.BindDataContext<Settings>(m => m.EnableClipping);
-                    ignoreOutsideArea?.CheckedBinding.BindDataContext<Settings>(m => m.EnableAreaLimiting);
-                }
-
-                protected override void OnLoadComplete(EventArgs e)
-                {
-                    base.OnLoadComplete(e);
+                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
 
                     base.ContextMenu.Items.AddSeparator();
 
@@ -317,6 +260,21 @@ namespace OpenTabletDriver.UX.Controls
 
                     Rebind(App.Settings);
                     App.SettingsChanged += Rebind;
+                }
+
+                private BooleanCommand lockAr, areaClipping, ignoreOutsideArea;
+
+                public void Rebind(Settings settings)
+                {
+                    this.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
+                    this.Bind(c => c.ViewModel.Height, settings, m => m.TabletHeight);
+                    this.Bind(c => c.ViewModel.X, settings, m => m.TabletX);
+                    this.Bind(c => c.ViewModel.Y, settings, m => m.TabletY);
+                    this.Bind(c => c.ViewModel.Rotation, settings, m => m.TabletRotation);
+                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaTablet);
+                    lockAr?.CheckedBinding.BindDataContext<Settings>(m => m.LockAspectRatio);
+                    areaClipping?.CheckedBinding.BindDataContext<Settings>(m => m.EnableClipping);
+                    ignoreOutsideArea?.CheckedBinding.BindDataContext<Settings>(m => m.EnableAreaLimiting);
                 }
 
                 private async Task ConvertAreaDialog()

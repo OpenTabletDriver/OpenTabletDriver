@@ -9,9 +9,14 @@ namespace OpenTabletDriver.UX.Controls.Area
 {
     public class AreaDisplay : TimedDrawable, IViewModelRoot<AreaViewModel>
     {
+        public AreaDisplay(AreaViewModel viewModel)
+        {
+            this.ViewModel = viewModel;
+        }
+
         public AreaViewModel ViewModel
         {
-            set => this.DataContext = value;
+            private set => this.DataContext = value;
             get => (AreaViewModel)this.DataContext;
         }
 
