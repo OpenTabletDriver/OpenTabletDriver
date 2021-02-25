@@ -79,14 +79,14 @@ namespace OpenTabletDriver.UX.Windows
             {
                 reportPeriod += (stopwatch.Restart().TotalMilliseconds - reportPeriod) / 10.0f;
 
-                rawTabletBox.Update(tabletReport?.StringFormat(true));
-                tabletBox.Update(tabletReport?.StringFormat(false).Replace(", ", Environment.NewLine));
+                rawTabletBox.Update(tabletReport?.GetStringRaw());
+                tabletBox.Update(tabletReport?.GetStringFormat().Replace(", ", Environment.NewLine));
                 reportRateBox.Update($"{(uint)(1000 / reportPeriod)}hz");
             }
             if (report is IAuxReport auxReport)
             {
-                rawAuxBox.Update(auxReport?.StringFormat(true));
-                auxBox.Update(auxReport?.StringFormat(false).Replace(", ", Environment.NewLine));
+                rawAuxBox.Update(auxReport?.GetStringRaw());
+                auxBox.Update(auxReport?.GetStringFormat().Replace(", ", Environment.NewLine));
             }
         }
 

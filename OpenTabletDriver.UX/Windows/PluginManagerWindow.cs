@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
@@ -78,9 +80,40 @@ namespace OpenTabletDriver.UX.Windows
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        public async Task Refresh(PluginMetadataCollection newRepository = null)
+        public async Task Refresh()
         {
-            Repository = newRepository ?? await PluginMetadataCollection.DownloadAsync();
+            var repoFetch = PluginMetadataCollection.DownloadAsync();
+            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(5));
+            PluginMetadataCollection collection = null;
+
+            try
+            {
+                var completedTask = await Task.WhenAny(repoFetch, timeoutTask);
+                if (completedTask == timeoutTask)
+                    MessageBox.Show("Fetching plugin metadata timed-out. Only local plugins will be shown.", MessageBoxType.Warning);
+                else
+                    collection = await repoFetch;
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("OTD cannot connect to Internet. Only local plugins will be shown.", MessageBoxType.Warning);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error);
+                Log.Write("PluginManager", e.Message);
+            }
+            finally
+            {
+                collection ??= PluginMetadataCollection.Empty;
+            }
+
+            await Refresh(collection);
+        }
+
+        public async Task Refresh(PluginMetadataCollection newRepository)
+        {
+            Repository = newRepository;
 
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.Load();
@@ -232,13 +265,11 @@ namespace OpenTabletDriver.UX.Windows
                 }
             }
 
-            public async void Refresh()
+            public void Refresh()
             {
                 if (MetadataReference.TryGetTarget(out var metadata))
                 {
                     var contexts = AppInfo.PluginManager.GetLoadedPlugins();
-
-                    Repository ??= await PluginMetadataCollection.DownloadAsync();
 
                     bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
 
@@ -383,10 +414,9 @@ namespace OpenTabletDriver.UX.Windows
             private readonly ObservableCollection<PluginMetadata> DisplayedPlugins = new ObservableCollection<PluginMetadata>();
             private List<DesktopPluginContext> InstalledPlugins = new List<DesktopPluginContext>();
 
-            public async void Refresh()
+            public void Refresh()
             {
                 var index = SelectedIndex;
-                Repository ??= await PluginMetadataCollection.DownloadAsync();
 
                 var installed = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
                     orderby plugin.FriendlyName
@@ -460,12 +490,6 @@ namespace OpenTabletDriver.UX.Windows
 
                 this.SelectedPlugin = SelectedValue is PluginMetadata selected ? InstalledPlugins.FirstOrDefault(p => PluginMetadata.Match(selected, p.GetMetadata())) : null;
                 SelectedPluginChanged?.Invoke(this.SelectedPlugin);
-            }
-
-            protected override void OnLoadComplete(EventArgs e)
-            {
-                base.OnLoadComplete(e);
-                Refresh();
             }
         }
 

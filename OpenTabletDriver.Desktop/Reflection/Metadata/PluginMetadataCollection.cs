@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
     {
         [JsonConstructor]
         protected PluginMetadataCollection()
+            : base()
         {
         }
 
@@ -28,6 +29,8 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         public const string REPOSITORY_NAME = "Plugin-Repository";
 
         protected static GitHubClient GitHub { get; } = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
+
+        public static PluginMetadataCollection Empty => new PluginMetadataCollection();
 
         internal static HttpClient GetClient()
         {

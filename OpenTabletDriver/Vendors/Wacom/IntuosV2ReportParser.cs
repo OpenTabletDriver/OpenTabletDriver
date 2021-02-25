@@ -6,7 +6,12 @@ namespace OpenTabletDriver.Vendors.Wacom
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            return new IntuosV2TabletReport(data);
+            return data[0] switch
+            {
+                0x2 => new IntuosV2TabletReport(data),
+                0x3 => new IntuosV2AuxReport(data),
+                _ => null
+            };
         }
     }
 }
