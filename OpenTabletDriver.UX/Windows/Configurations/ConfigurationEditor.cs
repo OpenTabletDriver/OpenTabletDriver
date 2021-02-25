@@ -88,11 +88,8 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 }
             };
 
-            this.configList.SelectedValueChanged += (sender, e) =>
-            {
-                this.configurationSettings.Content?.Dispose();
-                this.configurationSettings.Content = new ConfigurationSettings(SelectedConfiguration);
-            };
+            this.configList.SelectedValueChanged += (sender, e) => configurationSettings.Update(SelectedConfiguration);
+
             Refresh();
         }
 
@@ -102,16 +99,31 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             var sortedConfigs = from config in ReadConfigurations(configDir)
                 orderby config.Name
                 select config;
-            this.configList.Source = new ObservableCollection<TabletConfiguration>(sortedConfigs);
-            this.configList.SelectedIndex = 0;
+
+            Configurations = new ObservableCollection<TabletConfiguration>(sortedConfigs);
+            SelectedIndex = 0;
         }
 
-        protected ObservableCollection<TabletConfiguration> Configurations { set; get; }
+        protected ObservableCollection<TabletConfiguration> Configurations
+        {
+            set => this.configList.Source = value;
+            get => this.configList.Source as ObservableCollection<TabletConfiguration>;
+        }
 
-        protected TabletConfiguration SelectedConfiguration => configList.SelectedItem;
+        protected int SelectedIndex
+        {
+            set => this.configList.SelectedIndex = value;
+            get => this.configList.SelectedIndex;
+        }
+
+        protected TabletConfiguration SelectedConfiguration
+        {
+            set => this.configList.SelectedItem = value;
+            get => this.configList.SelectedItem;
+        }
 
         private ConfigurationList configList = new ConfigurationList();
-        private Panel configurationSettings = new Panel();
+        private ConfigurationSettings configurationSettings = new ConfigurationSettings();
 
         private static readonly Regex NameRegex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
 
@@ -248,7 +260,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
 
         private class ConfigurationSettings : Panel
         {
-            public ConfigurationSettings(TabletConfiguration config)
+            public void Update(TabletConfiguration config)
             {
                 base.Content = new StackLayout
                 {
