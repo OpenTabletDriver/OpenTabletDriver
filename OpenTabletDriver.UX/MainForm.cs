@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX
 {
     using static App;
 
-    public partial class MainForm : DesktopForm
+    public class MainForm : DesktopForm
     {
         public MainForm()
             : base()
@@ -89,16 +89,21 @@ namespace OpenTabletDriver.UX
             {
                 var trayIcon = new TrayIcon(this);
                 if (WindowState == WindowState.Minimized)
+                {
+                    this.Visible = false;
                     this.ShowInTaskbar = false;
+                }
                 this.WindowStateChanged += (sender, e) =>
                 {
                     switch (this.WindowState)
                     {
                         case WindowState.Normal:
                         case WindowState.Maximized:
+                            this.Visible = true;
                             this.ShowInTaskbar = true;
                             break;
                         case WindowState.Minimized:
+                            this.Visible = false;
                             this.ShowInTaskbar = false;
                             break;
                     }
@@ -287,6 +292,9 @@ namespace OpenTabletDriver.UX
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             showTabletDebugger.Executed += (sender, e) => ShowTabletDebugger();
 
+            var showTabletVisualizer = new Command { MenuText = "Tablet visualizer..." };
+            showTabletVisualizer.Executed += (sender, e) => ShowTabletVisualizer();
+
             var deviceStringReader = new Command { MenuText = "Device string reader..." };
             deviceStringReader.Executed += (sender, e) => ShowDeviceStringReader();
 
@@ -330,6 +338,7 @@ namespace OpenTabletDriver.UX
                         {
                             detectTablet,
                             showTabletDebugger,
+                            showTabletVisualizer,
                             deviceStringReader,
                             configurationEditor
                         }
@@ -393,8 +402,11 @@ namespace OpenTabletDriver.UX
             if (!settingsFile.Exists && this.WindowState != WindowState.Minimized)
                 await ShowFirstStartupGreeter();
 
-            Driver.Instance.TabletChanged += (sender, tablet) => outputModeEditor.SetTabletSize(tablet);
-            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => UpdateTitle(tablet));
+            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() =>
+            {
+                outputModeEditor.SetTabletSize(tablet);
+                UpdateTitle(tablet);
+            });
         }
 
         public void UpdateTitle(TabletState tablet)
@@ -543,6 +555,12 @@ namespace OpenTabletDriver.UX
         {
             var debugger = new TabletDebugger();
             debugger.Show();
+        }
+
+        private void ShowTabletVisualizer()
+        {
+            var visualizer = new TabletVisualizer();
+            visualizer.Show();
         }
 
         private async Task ExportDiagnostics()

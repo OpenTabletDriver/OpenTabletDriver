@@ -33,7 +33,17 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.TabletChanged += (sender, tablet) => TabletChanged?.Invoke(sender, tablet);
+            Driver.TabletChanged += (sender, tablet) =>
+            {
+                TabletChanged?.Invoke(sender, tablet);
+                if (debugging)
+                {
+                    if (Driver.TabletReader != null)
+                        Driver.TabletReader.Report += DebugReportHandler;
+                    if (Driver.AuxReader != null)
+                        Driver.AuxReader.Report += DebugReportHandler;
+                }
+            };
             Driver.DevicesChanged += async (sender, args) =>
             {
                 if (await GetTablet() == null && args.Additions.Count() > 0)
@@ -78,6 +88,8 @@ namespace OpenTabletDriver.Daemon
         private Settings Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+
+        private bool debugging;
 
         public Task WriteMessage(LogMessage message)
         {
@@ -151,6 +163,23 @@ namespace OpenTabletDriver.Daemon
             foreach (var interpolator in Driver.Interpolators)
                 interpolator.Dispose();
             Driver.Interpolators.Clear();
+            
+            // Dispose filters that implement IDisposable interface
+            if (Driver.OutputMode?.Filters != null)
+            {
+                foreach (var filter in Driver.OutputMode.Filters)
+                {
+                    try
+                    {
+                        if (filter is IDisposable disposableFilter)
+                            disposableFilter.Dispose();
+                    }
+                    catch(Exception)
+                    {
+                        Log.Write("Plugin", $"Unable to dispose object '{filter.GetType().Name}'", LogLevel.Error);
+                    }
+                }
+            }
 
             if (settings == null)
                 await ResetSettings();
@@ -163,14 +192,14 @@ namespace OpenTabletDriver.Daemon
             if (Driver.OutputMode != null)
                 Log.Write("Settings", $"Output mode: {pluginRef.Name ?? pluginRef.Path}");
 
-            if (Driver.OutputMode is IOutputMode outputMode)
-                SetOutputModeSettings(outputMode);
-
             if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
                 SetAbsoluteModeSettings(absoluteMode);
 
             if (Driver.OutputMode is RelativeOutputMode relativeMode)
                 SetRelativeModeSettings(relativeMode);
+
+            if (Driver.OutputMode is IOutputMode outputMode)
+                SetOutputModeSettings(outputMode);
 
             SetBindingHandlerSettings();
 
@@ -223,6 +252,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
+            outputMode.Tablet = Driver.Tablet;
+
             var filters = from store in Settings.Filters
                 where store.Enable == true
                 let filter = store.Construct<IFilter>()
@@ -232,8 +263,6 @@ namespace OpenTabletDriver.Daemon
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
-
-            outputMode.Tablet = Driver.Tablet;
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
@@ -374,22 +403,21 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
-            void onDeviceReport(object _, IDeviceReport report)
+            if (enabled && !debugging)
             {
-                if (report is ITabletReport tabletReport)
-                    TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
-                if (report is IAuxReport auxReport)
-                    AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report += DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report += DebugReportHandler;
+                debugging = true;
             }
-            if (enabled)
+            else if (!enabled && debugging)
             {
-                Driver.TabletReader.Report += onDeviceReport;
-                Driver.AuxReader.Report += onDeviceReport;
-            }
-            else
-            {
-                Driver.TabletReader.Report -= onDeviceReport;
-                Driver.AuxReader.Report -= onDeviceReport;
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report -= DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report -= DebugReportHandler;
+                debugging = false;
             }
             return Task.CompletedTask;
         }
@@ -419,6 +447,14 @@ namespace OpenTabletDriver.Daemon
         {
             IEnumerable<LogMessage> messages = LogMessages;
             return Task.FromResult(messages);
+        }
+
+        private void DebugReportHandler(object _, IDeviceReport report)
+        {
+            if (report is ITabletReport tabletReport)
+                TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
+            if (report is IAuxReport auxReport)
+                AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
         }
     }
 }

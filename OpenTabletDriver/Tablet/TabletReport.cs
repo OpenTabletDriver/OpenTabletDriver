@@ -11,11 +11,12 @@ namespace OpenTabletDriver.Tablet
             Raw = report;
 
             ReportID = (uint)report[1] >> 1;
-            var x = BitConverter.ToUInt16(report, 2);
-            var y = BitConverter.ToUInt16(report, 4);
-            Position = new Vector2(x, y);
+            Position = new Vector2
+            {
+                X = BitConverter.ToUInt16(report, 2),
+                Y = BitConverter.ToUInt16(report, 4)
+            };
             Pressure = BitConverter.ToUInt16(report, 6);
-
             PenButtons = new bool[]
             {
                 (report[1] & (1 << 1)) != 0,

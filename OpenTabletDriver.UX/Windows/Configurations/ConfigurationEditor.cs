@@ -44,7 +44,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             loadDirectory.Executed += (sender, e) => LoadConfigurationsDialog();
 
             var saveDirectory = new Command { MenuText = "Save configurations", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveDirectory.Executed += (sender, e) => WriteConfigurations(Configurations, new DirectoryInfo(AppInfo.Current.ConfigurationDirectory));
+            saveDirectory.Executed += (sender, e) => SaveConfigurationsDialog(new DirectoryInfo(AppInfo.Current.ConfigurationDirectory));
 
             var saveToDirectory = new Command { MenuText = "Save configurations to...", Shortcut = Application.Instance.CommonModifier | Application.Instance.AlternateModifier | Keys.S };
             saveToDirectory.Executed += (sender, e) => SaveConfigurationsDialog();
@@ -88,11 +88,8 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 }
             };
 
-            this.configList.SelectedValueChanged += (sender, e) =>
-            {
-                this.configurationSettings.Content?.Dispose();
-                this.configurationSettings.Content = new ConfigurationSettings(SelectedConfiguration);
-            };
+            this.configList.SelectedValueChanged += (sender, e) => configurationSettings.Update(SelectedConfiguration);
+
             Refresh();
         }
 
@@ -102,24 +99,47 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             var sortedConfigs = from config in ReadConfigurations(configDir)
                 orderby config.Name
                 select config;
-            this.configList.Source = new ObservableCollection<TabletConfiguration>(sortedConfigs);
-            this.configList.SelectedIndex = 0;
+
+            Configurations = new ObservableCollection<TabletConfiguration>(sortedConfigs);
+            SelectedIndex = 0;
         }
 
-        protected ObservableCollection<TabletConfiguration> Configurations { set; get; }
+        protected ObservableCollection<TabletConfiguration> Configurations
+        {
+            set => this.configList.Source = value;
+            get => this.configList.Source as ObservableCollection<TabletConfiguration>;
+        }
 
-        protected TabletConfiguration SelectedConfiguration => configList.SelectedItem;
+        protected int SelectedIndex
+        {
+            set => this.configList.SelectedIndex = value;
+            get => this.configList.SelectedIndex;
+        }
+
+        protected TabletConfiguration SelectedConfiguration
+        {
+            set => this.configList.SelectedItem = value;
+            get => this.configList.SelectedItem;
+        }
 
         private ConfigurationList configList = new ConfigurationList();
-        private Panel configurationSettings = new Panel();
+        private ConfigurationSettings configurationSettings = new ConfigurationSettings();
 
         private static readonly Regex NameRegex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
 
         private ObservableCollection<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
-            var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                select Serialization.Deserialize<TabletConfiguration>(file);
-            return new ObservableCollection<TabletConfiguration>(configs);
+            dir.Refresh();
+            if (dir.Exists)
+            {
+                var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
+                    select Serialization.Deserialize<TabletConfiguration>(file);
+                return new ObservableCollection<TabletConfiguration>(configs);
+            }
+            else
+            {
+                return new ObservableCollection<TabletConfiguration>();
+            }
         }
 
         private void WriteConfigurations(IEnumerable<TabletConfiguration> configs, DirectoryInfo dir)
@@ -154,20 +174,34 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             }
         }
 
-        private void SaveConfigurationsDialog()
+        /// <summary>
+        /// Save configurations to `dir` if present, else show a folder selection dialog.
+        /// </summary>
+        /// <param name="dir">The directory to save to, can be null.</param>
+        private void SaveConfigurationsDialog(DirectoryInfo dir = null)
         {
-            var folderDialog = new SelectFolderDialog
+            if (Configurations == null)
             {
-                Title = "Save configurations to..."
-            };
-            switch (folderDialog.ShowDialog(this))
-            {
-                case DialogResult.Ok:
-                case DialogResult.Yes:
-                    var dir = new DirectoryInfo(folderDialog.Directory);
-                    WriteConfigurations(Configurations, dir);
-                    break;
+                MessageBox.Show(this, "There are no configurations to save.", MessageBoxType.Information);
+                return;
             }
+
+            if (dir == null)
+            {
+                var folderDialog = new SelectFolderDialog
+                {
+                    Title = "Save configurations to..."
+                };
+                switch (folderDialog.ShowDialog(this))
+                {
+                    case DialogResult.Ok:
+                    case DialogResult.Yes:
+                        dir = new DirectoryInfo(folderDialog.Directory);
+                        break;
+                }
+            }
+
+            WriteConfigurations(Configurations, dir);
         }
 
         private class ConfigurationList : ListBox<TabletConfiguration>
@@ -234,7 +268,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
 
         private class ConfigurationSettings : Panel
         {
-            public ConfigurationSettings(TabletConfiguration config)
+            public void Update(TabletConfiguration config)
             {
                 base.Content = new StackLayout
                 {

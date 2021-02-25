@@ -14,7 +14,10 @@ namespace OpenTabletDriver.Vendors.Wacom
                 (report[1] & (1 << 1)) != 0,
                 (report[1] & (1 << 2)) != 0,
                 (report[1] & (1 << 3)) != 0,
-                (report[1] & (1 << 4)) != 0
+                (report[1] & (1 << 4)) != 0,
+                (report[1] & (1 << 5)) != 0,
+                (report[1] & (1 << 6)) != 0,
+                (report[1] & (1 << 7)) != 0
             };
         }
         
