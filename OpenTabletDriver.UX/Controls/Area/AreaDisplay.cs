@@ -3,6 +3,8 @@ using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Interop;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Area
@@ -21,7 +23,12 @@ namespace OpenTabletDriver.UX.Controls.Area
         private static readonly Brush TextBrush = new SolidBrush(SystemColors.ControlText);
 
         private readonly Color AccentColor = SystemColors.Highlight;
-        private readonly Color AreaBoundsBorderColor = SystemColors.Control;
+        private readonly Color AreaBoundsBorderColor = SystemInterop.CurrentPlatform switch
+        {
+            PluginPlatform.Windows => new Color(64, 64, 64),
+            _                      => SystemColors.Control
+        };
+
         private readonly Color AreaBoundsFillColor = SystemColors.ControlBackground;
 
         private bool mouseDragging;
@@ -188,6 +195,7 @@ namespace OpenTabletDriver.UX.Controls.Area
             foreach (var rect in ViewModel.Background)
             {
                 var scaledRect = rect * scale;
+                scaledRect.Height -= 1; // Workaround bottom border not showing up on Windows
                 graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
                 graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
             }
