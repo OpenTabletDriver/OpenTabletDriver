@@ -195,7 +195,6 @@ namespace OpenTabletDriver.UX.Controls.Area
             foreach (var rect in ViewModel.Background)
             {
                 var scaledRect = rect * scale;
-                scaledRect.Height -= 1; // Workaround bottom border not showing up on Windows
                 graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
                 graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
             }
@@ -272,8 +271,8 @@ namespace OpenTabletDriver.UX.Controls.Area
 
         private float CalculateScale(RectangleF rect)
         {
-            float scaleX = this.ClientSize.Width / rect.Width;
-            float scaleY = this.ClientSize.Height / rect.Height;
+            float scaleX = (this.ClientSize.Width - 2) / rect.Width;
+            float scaleY = (this.ClientSize.Height - 2) / rect.Height;
             return scaleX > scaleY ? scaleY : scaleX;
         }
 
