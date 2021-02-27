@@ -217,22 +217,28 @@ namespace OpenTabletDriver.UX.Controls.Area
 
         private void DrawRatioText(Graphics graphics, RectangleF area)
         {
+
             string ratio = Math.Round(ViewModel.Width / ViewModel.Height, 4).ToString();
             SizeF ratioMeasure = graphics.MeasureString(Font, ratio);
+            var offsetY = area.Center.Y + (ratioMeasure.Height / 2);
+            if (offsetY + ratioMeasure.Height > area.Y + area.Height)
+                offsetY = area.Y + area.Height;
+
             var ratioPos = new PointF(
                 area.Center.X - (ratioMeasure.Width / 2),
-                area.Center.Y + (ratioMeasure.Height / 2)
+                offsetY
             );
             graphics.DrawText(Font, TextBrush, ratioPos, ratio);
         }
 
         private void DrawWidthText(Graphics graphics, RectangleF area)
         {
+            var minDist = area.Center.Y - 40;
             string widthText = $"{ViewModel.Width}{ViewModel.Unit}";
             var widthTextSize = graphics.MeasureString(Font, widthText);
             var widthTextPos = new PointF(
                 area.MiddleTop.X - (widthTextSize.Width / 2),
-                area.MiddleTop.Y
+                Math.Min(area.MiddleTop.Y, minDist)
             );
             graphics.DrawText(Font, TextBrush, widthTextPos, widthText);
         }
@@ -241,11 +247,12 @@ namespace OpenTabletDriver.UX.Controls.Area
         {
             using (graphics.SaveTransformState())
             {
+                var minDist = area.Center.X - 40;
                 string heightText = $"{ViewModel.Height}{ViewModel.Unit}";
                 var heightSize = graphics.MeasureString(Font, heightText) / 2;
                 var heightPos = new PointF(
                     -area.MiddleLeft.Y - heightSize.Width,
-                    area.MiddleLeft.X
+                    Math.Min(area.MiddleLeft.X, minDist)
                 );
                 graphics.RotateTransform(-90);
                 graphics.DrawText(Font, TextBrush, heightPos, heightText);
