@@ -29,7 +29,6 @@ namespace OpenTabletDriver.Desktop.RPC
 
         public void SetData(object data)
         {
-            // Plugin.Log.Debug(nameof(RpcData), $"Calling SetData, storing type '{data.GetType().FullName}'");
             Path = data.GetType().FullName;
             Data = JToken.FromObject(data);
         }
@@ -42,7 +41,6 @@ namespace OpenTabletDriver.Desktop.RPC
         public object GetData(PluginManager pluginManager)
         {
             var type = pluginManager.PluginTypes.First(t => t.FullName == Path);
-            Plugin.Log.Debug(nameof(RpcData), $"Calling GetData(), target type '{Path}' loaded as '{type.FullName}'");
             return Data.ToObject(type);
         }
     }
