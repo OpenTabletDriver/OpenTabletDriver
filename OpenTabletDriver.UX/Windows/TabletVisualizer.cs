@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -40,8 +41,7 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            App.Driver.Instance.TabletChanged += SetTablet;
-            App.Driver.Instance.TabletReport += SetReport;
+            App.Driver.Instance.DeviceReport += SetReport;
             await App.Driver.Instance.SetTabletDebug(true);
 
             var tablet = await App.Driver.Instance.GetTablet();
@@ -56,7 +56,7 @@ namespace OpenTabletDriver.UX.Windows
             {
                 await App.Driver.Instance.SetTabletDebug(false);
                 App.Driver.Instance.TabletChanged -= SetTablet;
-                App.Driver.Instance.TabletReport -= SetReport;
+                App.Driver.Instance.DeviceReport -= SetReport;
             }
         }
 
@@ -70,11 +70,11 @@ namespace OpenTabletDriver.UX.Windows
             });
         }
 
-        private void SetReport(object sender, IDeviceReport report)
+        private void SetReport(object sender, RpcData data)
         {
             Application.Instance.AsyncInvoke(() => 
             {
-                display.SetReport(report);
+                display.SetData(data);
             });
         }
 
@@ -85,10 +85,10 @@ namespace OpenTabletDriver.UX.Windows
         {
             private static readonly Color AccentColor = SystemColors.Highlight;
 
-            private IDeviceReport report;
+            private RpcData data;
             private TabletState tablet;
 
-            public void SetReport(IDeviceReport report) => this.report = report;
+            public void SetData(RpcData data) => this.data = data;
             public void SetTablet(TabletState tablet) => this.tablet = tablet;
 
             protected override void OnNextFrame(PaintEventArgs e)
@@ -120,7 +120,7 @@ namespace OpenTabletDriver.UX.Windows
 
             protected void DrawPosition(Graphics graphics, float scale)
             {
-                if (report is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (data?.GetData<ITabletReport>() is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
                     var tabletMm = new SizeF(tablet.Digitizer.Width, tablet.Digitizer.Height);
                     var tabletPx = new SizeF(tablet.Digitizer.MaxX, tablet.Digitizer.MaxY);
