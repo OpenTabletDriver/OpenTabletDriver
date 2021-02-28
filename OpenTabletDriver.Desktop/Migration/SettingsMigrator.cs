@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using OpenTabletDriver.Desktop.Binding;
-using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
@@ -12,15 +10,10 @@ namespace OpenTabletDriver.Desktop.Migration
         public static Settings Migrate(Settings settings)
         {
             // Output mode
-            settings.OutputMode = SafeMigrateNamespace(settings.OutputMode, new PluginSettingStore(typeof(AbsoluteMode)));
+            settings.OutputMode = SafeMigrateNamespace(settings.OutputMode, Settings.Default.OutputMode);
 
             // Bindings
-            settings.TipButton = SafeMigrateNamespace(settings.TipButton, new PluginSettingStore(
-                new MouseBinding
-                {
-                    Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
-                }
-            ));
+            settings.TipButton = SafeMigrateNamespace(settings.TipButton, Settings.Default.TipButton);
 
             settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
             settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
