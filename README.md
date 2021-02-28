@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/InfinityGhost/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/InfinityGhost/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/badge/master)](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/InfinityGhost/OpenTabletDriver/total.svg)](https://github.com/InfinityGhost/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/badge/master)](https://www.codefactor.io/repository/github/infinityghost/opentabletdriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
@@ -14,11 +14,11 @@ OpenTabletDriver is an open source, cross platform, user mode tablet driver. The
 
 All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
 
-- [Supported Tablets](https://github.com/InfinityGhost/OpenTabletDriver/projects/4)
+- [Supported Tablets](https://github.com/OpenTabletDriver/OpenTabletDriver/projects/4)
 
 # Installation
 
-- [Installation guide](https://github.com/InfinityGhost/OpenTabletDriver/wiki/Installation-Guide)
+- [Installation guide](https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Installation-Guide)
 
 # Running OpenTabletDriver binaries
 
@@ -83,6 +83,6 @@ No other dependencies.
 
 # Contributing to OpenTabletDriver
 
-If you wish to contribute to OpenTabletDriver, check out the [issue tracker](https://github.com/InfinityGhost/OpenTabletDriver/issues).
+If you wish to contribute to OpenTabletDriver, check out the [issue tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
 
-If you have any issues or suggestions, [open an issue ticket](https://github.com/InfinityGhost/OpenTabletDriver/issues/new/choose).
+If you have any issues or suggestions, [open an issue ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose).
