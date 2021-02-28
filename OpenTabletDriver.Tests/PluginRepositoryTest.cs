@@ -53,7 +53,7 @@ namespace OpenTabletDriver.Tests
         [TestMethod]
         public async Task ExpandRepositoryTarballFork()
         {
-            var metadataCollection = await PluginMetadataCollection.DownloadAsync("InfinityGhost", PluginMetadataCollection.REPOSITORY_NAME);
+            var metadataCollection = await PluginMetadataCollection.DownloadAsync("OpenTabletDriver", PluginMetadataCollection.REPOSITORY_NAME);
             foreach (var metadata in metadataCollection)
             {
                 Console.WriteLine();

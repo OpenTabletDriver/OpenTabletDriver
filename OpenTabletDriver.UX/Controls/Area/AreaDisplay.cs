@@ -234,7 +234,7 @@ namespace OpenTabletDriver.UX.Controls.Area
         private void DrawWidthText(Graphics graphics, RectangleF area)
         {
             var minDist = area.Center.Y - 40;
-            string widthText = $"{ViewModel.Width}{ViewModel.Unit}";
+            string widthText = $"{MathF.Round(ViewModel.Width, 3)}{ViewModel.Unit}";
             var widthTextSize = graphics.MeasureString(Font, widthText);
             var widthTextPos = new PointF(
                 area.MiddleTop.X - (widthTextSize.Width / 2),
@@ -248,7 +248,7 @@ namespace OpenTabletDriver.UX.Controls.Area
             using (graphics.SaveTransformState())
             {
                 var minDist = area.Center.X - 40;
-                string heightText = $"{ViewModel.Height}{ViewModel.Unit}";
+                string heightText = $"{MathF.Round(ViewModel.Height, 3)}{ViewModel.Unit}";
                 var heightSize = graphics.MeasureString(Font, heightText) / 2;
                 var heightPos = new PointF(
                     -area.MiddleLeft.Y - heightSize.Width,
