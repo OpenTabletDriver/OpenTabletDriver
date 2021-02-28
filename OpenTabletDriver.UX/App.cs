@@ -53,7 +53,7 @@ namespace OpenTabletDriver.UX
             app.Run(mainForm);
         }
 
-        public const string PluginRepositoryUrl = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Plugin-Repository";
+        public const string PluginRepositoryUrl = "https://github.com/OpenTabletDriver/Plugin-Repository";
         public const string FaqUrl = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki#frequently-asked-questions";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
