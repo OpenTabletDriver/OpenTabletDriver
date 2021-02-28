@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows
             var mainLayout = new TableLayout
             {
                 Width = 640,
-                Height = 480,
+                Height = 320,
                 Spacing = new Size(5, 5),
                 Rows =
                 {
@@ -29,15 +29,6 @@ namespace OpenTabletDriver.UX.Windows
                         {
                             new TableCell(rawTabletBox = new TextGroup("Raw Tablet Data"), true),
                             new TableCell(tabletBox = new TextGroup("Tablet Report"), true)
-                        },
-                        ScaleHeight = true
-                    },
-                    new TableRow
-                    {
-                        Cells =
-                        {
-                            new TableCell(rawAuxBox = new TextGroup("Raw Aux Data"), true),
-                            new TableCell(auxBox = new TextGroup("Aux Report"), true)
                         },
                         ScaleHeight = true
                     }
@@ -69,7 +60,7 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private TextGroup rawTabletBox, tabletBox, rawAuxBox, auxBox, reportRateBox;
+        private TextGroup rawTabletBox, tabletBox, reportRateBox;
         private double reportPeriod;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
 
