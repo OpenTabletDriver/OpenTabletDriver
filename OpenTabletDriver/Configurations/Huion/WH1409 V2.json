@@ -1,0 +1,35 @@
+{
+  "Name": "Huion WH1409 V2",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 350.0,
+      "Height": 218.0,
+      "MaxX": 70000.0,
+      "MaxY": 43600.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Huion.GianoReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T188_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
