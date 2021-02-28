@@ -31,14 +31,14 @@ namespace OpenTabletDriver.Vendors.Wacom
             HoverDistance = (uint)report[9] >> 2;
         }
 
-        public byte[] Raw { private set; get; }
-        public uint ReportID { private set; get; }
-        public Vector2 Position { private set; get; }
-        public Vector2 Tilt { private set; get; }
-        public uint Pressure { private set; get; }
-        public bool[] PenButtons { private set; get; }
-        public bool NearProximity { private set; get; }
-        public uint HoverDistance { private set; get; }
+        public byte[] Raw { set; get; }
+        public uint ReportID { set; get; }
+        public Vector2 Position { set; get; }
+        public Vector2 Tilt { set; get; }
+        public uint Pressure { set; get; }
+        public bool[] PenButtons { set; get; }
+        public bool NearProximity { set; get; }
+        public uint HoverDistance { set; get; }
         public string GetStringFormat() =>
             $"ReportID:{ReportID}, " +
             $"Position:[{Position.X},{Position.Y}], " +
