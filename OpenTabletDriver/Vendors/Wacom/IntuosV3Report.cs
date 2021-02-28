@@ -55,14 +55,5 @@ namespace OpenTabletDriver.Vendors.Wacom
         public bool[] PenButtons { set; get; }
         public bool NearProximity { set; get; }
         public uint HoverDistance { set; get; }
-        public string GetStringFormat() =>
-            $"ReportID:{ReportID}, " +
-            $"Position:[{Position.X},{Position.Y}], " +
-            $"Tilt:[{Tilt.X},{Tilt.Y}], " +
-            $"Pressure:{Pressure}, " +
-            $"Eraser:{Eraser}, " +
-            $"PenButtons:[{String.Join(" ", PenButtons)}], " +
-            $"NearProximity:{NearProximity}, " +
-            $"HoverDistance:{HoverDistance}";
     }
 }

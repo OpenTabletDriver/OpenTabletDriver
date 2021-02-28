@@ -35,11 +35,5 @@ namespace OpenTabletDriver.Tablet
         public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
-        public string GetStringFormat() =>
-            $"ReportID:{ReportID}, " +
-            $"Position:[{Position.X},{Position.Y}], " +
-            $"Tilt:[{Tilt.X},{Tilt.Y}], " +
-            $"Pressure:{Pressure}, " +
-            $"PenButtons:[{String.Join(" ", PenButtons)}]";
     }
 }
