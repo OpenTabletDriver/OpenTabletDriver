@@ -31,9 +31,9 @@ namespace OpenTabletDriver.UX.Tools
 
         private static string GetStringFormat(ITabletReport tabletReport)
         {
-            return $"ReportID:{tabletReport.ReportID}, " +
-                $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}], " +
-                $"Pressure:{tabletReport.Pressure}, " +
+            return $"ReportID:{tabletReport.ReportID}\n" +
+                $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}]\n" +
+                $"Pressure:{tabletReport.Pressure}\n" +
                 $"PenButtons:[{string.Join(" ", tabletReport.PenButtons)}]";
         }
 
@@ -55,7 +55,7 @@ namespace OpenTabletDriver.UX.Tools
 
         private static string GetStringFormat(ITiltReport tiltReport)
         {
-            return $"Tilt:[{tiltReport.Tilt}]";
+            return $"Tilt:[{tiltReport.Tilt.X},{tiltReport.Tilt.Y}]";
         }
     }
 }
