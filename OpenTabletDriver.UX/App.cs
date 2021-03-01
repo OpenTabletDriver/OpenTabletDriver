@@ -66,7 +66,7 @@ namespace OpenTabletDriver.UX
         {
             set
             {
-                settings = SettingsMigrator.Migrate(value);
+                settings = value;
                 SettingsChanged?.Invoke(Settings);
             }
             get => settings;

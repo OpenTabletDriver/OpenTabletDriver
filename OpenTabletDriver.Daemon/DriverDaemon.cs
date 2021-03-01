@@ -67,13 +67,27 @@ namespace OpenTabletDriver.Daemon
             }
 
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
-            if (Settings == null && settingsFile.Exists)
+
+            if (settingsFile.Exists)
             {
                 var settings = Settings.Deserialize(settingsFile);
-                await SetSettings(settings);
+                if (settings != null)
+                {
+                    await SetSettings(settings);
+                }
+                else
+                {
+                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
+                    settings = Settings.Default;
+                    Settings.Recover(settingsFile, settings);
+                    Log.Write("Settings", "Recovery complete");
+                    await SetSettings(settings);
+                }
             }
             else
+            {
                 await ResetSettings();
+            }
         }
 
         public event EventHandler<LogMessage> Message;
@@ -99,6 +113,9 @@ namespace OpenTabletDriver.Daemon
             if (pluginDir.Exists)
             {
                 AppInfo.PluginManager.Load();
+                // Migrate if settings is available to avoid invalid settings
+                if (Settings != null)
+                    Settings = SettingsMigrator.Migrate(Settings);
             }
             else
             {
@@ -150,7 +167,7 @@ namespace OpenTabletDriver.Daemon
             return null;
         }
 
-        public Task SetSettings(Settings settings)
+        public async Task SetSettings(Settings settings)
         {
             // Dispose all interpolators to begin changing settings
             foreach (var interpolator in Driver.Interpolators)
@@ -167,12 +184,15 @@ namespace OpenTabletDriver.Daemon
                         if (filter is IDisposable disposableFilter)
                             disposableFilter.Dispose();
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         Log.Write("Plugin", $"Unable to dispose object '{filter.GetType().Name}'", LogLevel.Error);
                     }
                 }
             }
+
+            if (settings == null)
+                await ResetSettings();
 
             Settings = SettingsMigrator.Migrate(settings);
 
@@ -201,45 +221,11 @@ namespace OpenTabletDriver.Daemon
 
             SetToolSettings();
             SetInterpolatorSettings();
-            return Task.CompletedTask;
         }
 
-        public Task ResetSettings()
+        public async Task ResetSettings()
         {
-            var virtualScreen = SystemInterop.VirtualScreen;
-            var tablet = Driver.Tablet?.Digitizer;
-
-            var defaults = new Settings
-            {
-                OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
-                DisplayWidth = virtualScreen.Width,
-                DisplayHeight = virtualScreen.Height,
-                DisplayX = virtualScreen.Width / 2,
-                DisplayY = virtualScreen.Height / 2,
-                TabletWidth = tablet?.Width ?? 0,
-                TabletHeight = tablet?.Height ?? 0,
-                TabletX = tablet?.Width / 2 ?? 0,
-                TabletY = tablet?.Height / 2 ?? 0,
-                AutoHook = true,
-                EnableClipping = true,
-                LockUsableAreaDisplay = true,
-                LockUsableAreaTablet = true,
-                TipButton = new PluginSettingStore(
-                    new MouseBinding
-                    {
-                        Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
-                    }
-                ),
-                TipActivationPressure = 1,
-                PenButtons = new PluginSettingStoreCollection(),
-                AuxButtons = new PluginSettingStoreCollection(),
-                XSensitivity = 10,
-                YSensitivity = 10,
-                RelativeRotation = 0,
-                ResetTime = TimeSpan.FromMilliseconds(100)
-            };
-            SetSettings(defaults);
-            return Task.CompletedTask;
+            await SetSettings(Settings.Default);
         }
 
         private void SetOutputModeSettings(IOutputMode outputMode)

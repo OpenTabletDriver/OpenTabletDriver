@@ -1,9 +1,13 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Numerics;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
+using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
@@ -11,10 +15,6 @@ namespace OpenTabletDriver.Desktop
 {
     public class Settings : Notifier
     {
-        public Settings()
-        {
-        }
-
         internal const int PenButtonCount = 2;
         internal const int AuxButtonCount = 8;
 
@@ -324,6 +324,45 @@ namespace OpenTabletDriver.Desktop
 
         #endregion
 
+        public static Settings Default
+        {
+            get
+            {
+                var virtualScreen = SystemInterop.VirtualScreen;
+                var tablet = Info.Driver.Tablet?.Digitizer;
+
+                return new Settings
+                {
+                    OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
+                    DisplayWidth = virtualScreen.Width,
+                    DisplayHeight = virtualScreen.Height,
+                    DisplayX = virtualScreen.Width / 2,
+                    DisplayY = virtualScreen.Height / 2,
+                    TabletWidth = tablet?.Width ?? 0,
+                    TabletHeight = tablet?.Height ?? 0,
+                    TabletX = tablet?.Width / 2 ?? 0,
+                    TabletY = tablet?.Height / 2 ?? 0,
+                    AutoHook = true,
+                    EnableClipping = true,
+                    LockUsableAreaDisplay = true,
+                    LockUsableAreaTablet = true,
+                    TipButton = new PluginSettingStore(
+                        new MouseBinding
+                        {
+                            Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
+                        }
+                    ),
+                    TipActivationPressure = 1,
+                    PenButtons = new PluginSettingStoreCollection(),
+                    AuxButtons = new PluginSettingStoreCollection(),
+                    XSensitivity = 10,
+                    YSensitivity = 10,
+                    RelativeRotation = 0,
+                    ResetTime = TimeSpan.FromMilliseconds(100)
+                };
+            }
+        }
+
         #region Custom Serialization
 
         static Settings()
@@ -341,6 +380,9 @@ namespace OpenTabletDriver.Desktop
             args.ErrorContext.Handled = true;
             if (args.ErrorContext.Path is string path)
             {
+                if (args.CurrentObject == null)
+                    return;
+
                 var property = args.CurrentObject.GetType().GetProperty(path);
                 if (property != null && property.PropertyType == typeof(PluginSettingStore))
                 {
@@ -372,6 +414,33 @@ namespace OpenTabletDriver.Desktop
             using (var sr = new StreamReader(stream))
             using (var jr = new JsonTextReader(sr))
                 return serializer.Deserialize<Settings>(jr);
+        }
+
+        public static void Recover(FileInfo file, Settings settings)
+        {
+            using (var stream = file.OpenRead())
+            using (var sr = new StreamReader(stream))
+            using (var jr = new JsonTextReader(sr))
+            {
+                void propertyWatch(object _, PropertyChangedEventArgs p)
+                {
+                    var prop = settings.GetType().GetProperty(p.PropertyName).GetValue(settings);
+                    Log.Write("Settings", $"Recovered '{p.PropertyName}'", LogLevel.Debug);
+                }
+
+                settings.PropertyChanged += propertyWatch;
+
+                try
+                {
+                    serializer.Populate(jr, settings);
+                }
+                catch (JsonReaderException e)
+                {
+                    Log.Write("Settings", $"Recovery ended. Reason: {e.Message}", LogLevel.Debug);
+                }
+
+                settings.PropertyChanged -= propertyWatch;
+            }
         }
 
         public void Serialize(FileInfo file)

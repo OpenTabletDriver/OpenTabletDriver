@@ -418,27 +418,7 @@ namespace OpenTabletDriver.UX
         {
             appInfo ??= await Driver.Instance.GetApplicationInfo();
             settingsFile = new FileInfo(appInfo.SettingsFile);
-            if (await Driver.Instance.GetSettings() is Settings settings)
-            {
-                await Application.Instance.InvokeAsync(() => Settings = settings);
-            }
-            else if (settingsFile.Exists)
-            {
-                try
-                {
-                    await Application.Instance.InvokeAsync(() => Settings = Settings.Deserialize(settingsFile));
-                    await Driver.Instance.SetSettings(Settings);
-                }
-                catch
-                {
-                    MessageBox.Show("Failed to load your current settings. They are either out of date or corrupted.", MessageBoxType.Error);
-                    await ResetSettings();
-                }
-            }
-            else
-            {
-                await ResetSettings();
-            }
+            Settings = await Driver.Instance.GetSettings();
         }
 
         private async Task ResetSettings(bool force = true)
