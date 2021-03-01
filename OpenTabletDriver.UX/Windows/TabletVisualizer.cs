@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -120,7 +121,9 @@ namespace OpenTabletDriver.UX.Windows
 
             protected void DrawPosition(Graphics graphics, float scale)
             {
-                if (data?.GetData<ITabletReport>() is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+                var report = data?.GetData(AppInfo.PluginManager);
+                
+                if (report is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
                     var tabletMm = new SizeF(tablet.Digitizer.Width, tablet.Digitizer.Height);
                     var tabletPx = new SizeF(tablet.Digitizer.MaxX, tablet.Digitizer.MaxY);

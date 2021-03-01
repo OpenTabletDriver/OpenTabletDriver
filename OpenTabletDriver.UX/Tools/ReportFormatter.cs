@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -16,46 +17,52 @@ namespace OpenTabletDriver.UX.Tools
             StringBuilder sb = new StringBuilder();
 
             if (report is ITabletReport tabletReport)
-                sb.AppendLine(GetStringFormat(tabletReport));
+                sb.AppendLines(GetStringFormat(tabletReport));
             if (report is IAuxReport auxReport)
-                sb.AppendLine(GetStringFormat(auxReport));
+                sb.AppendLines(GetStringFormat(auxReport));
             if (report is IEraserReport eraserReport)
-                sb.AppendLine(GetStringFormat(eraserReport));
+                sb.AppendLines(GetStringFormat(eraserReport));
             if (report is IProximityReport proximityReport)
-                sb.AppendLine(GetStringFormat(proximityReport));
+                sb.AppendLines(GetStringFormat(proximityReport));
             if (report is ITiltReport tiltReport)
-                sb.AppendLine(GetStringFormat(tiltReport));
+                sb.AppendLines(GetStringFormat(tiltReport));
 
             return sb.ToString();
         }
 
-        private static string GetStringFormat(ITabletReport tabletReport)
+        private static IEnumerable<string> GetStringFormat(ITabletReport tabletReport)
         {
-            return $"ReportID:{tabletReport.ReportID}\n" +
-                $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}]\n" +
-                $"Pressure:{tabletReport.Pressure}\n" +
-                $"PenButtons:[{string.Join(" ", tabletReport.PenButtons)}]";
+            yield return $"ReportID:{tabletReport.ReportID}";
+            yield return $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}]";
+            yield return $"Pressure:{tabletReport.Pressure}";
+            yield return $"PenButtons:[{string.Join(" ", tabletReport.PenButtons)}]";
         }
 
-        private static string GetStringFormat(IAuxReport auxReport)
+        private static IEnumerable<string> GetStringFormat(IAuxReport auxReport)
         {
-            return $"AuxButtons:[{string.Join(" ", auxReport.AuxButtons)}]";
+            yield return $"AuxButtons:[{string.Join(" ", auxReport.AuxButtons)}]";
         }
 
-        private static string GetStringFormat(IEraserReport eraserReport)
+        private static IEnumerable<string> GetStringFormat(IEraserReport eraserReport)
         {
-            return $"Eraser:{eraserReport.Eraser}";
+            yield return $"Eraser:{eraserReport.Eraser}";
         }
 
-        private static string GetStringFormat(IProximityReport proximityReport)
+        private static IEnumerable<string> GetStringFormat(IProximityReport proximityReport)
         {
-            return $"NearProximity:{proximityReport.NearProximity}, " +
-                $"HoverDistance:{proximityReport.HoverDistance}";
+            yield return $"NearProximity:{proximityReport.NearProximity}";
+            yield return $"HoverDistance:{proximityReport.HoverDistance}";
         }
 
-        private static string GetStringFormat(ITiltReport tiltReport)
+        private static IEnumerable<string> GetStringFormat(ITiltReport tiltReport)
         {
-            return $"Tilt:[{tiltReport.Tilt.X},{tiltReport.Tilt.Y}]";
+            yield return $"Tilt:[{tiltReport.Tilt.X},{tiltReport.Tilt.Y}]";
+        }
+
+        private static void AppendLines(this StringBuilder sb, IEnumerable<string> lines)
+        {
+            foreach (var line in lines)
+                sb.AppendLine(line);
         }
     }
 }
