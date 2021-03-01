@@ -1,6 +1,6 @@
 namespace OpenTabletDriver.Plugin.Tablet
 {
-    public interface IEraserReport
+    public interface IEraserReport : IDeviceReport
     {
         bool Eraser { get; }
     }

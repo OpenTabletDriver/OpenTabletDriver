@@ -1,10 +1,12 @@
 ﻿using System;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Timing;
-using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -17,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows
             var mainLayout = new TableLayout
             {
                 Width = 640,
-                Height = 480,
+                Height = 320,
                 Spacing = new Size(5, 5),
                 Rows =
                 {
@@ -27,15 +29,6 @@ namespace OpenTabletDriver.UX.Windows
                         {
                             new TableCell(rawTabletBox = new TextGroup("Raw Tablet Data"), true),
                             new TableCell(tabletBox = new TextGroup("Tablet Report"), true)
-                        },
-                        ScaleHeight = true
-                    },
-                    new TableRow
-                    {
-                        Cells =
-                        {
-                            new TableCell(rawAuxBox = new TextGroup("Raw Aux Data"), true),
-                            new TableCell(auxBox = new TextGroup("Aux Report"), true)
                         },
                         ScaleHeight = true
                     }
@@ -58,35 +51,33 @@ namespace OpenTabletDriver.UX.Windows
 
         private void InitializeAsync()
         {
-            App.Driver.Instance.TabletReport += HandleReport;
-            App.Driver.Instance.AuxReport += HandleReport;
+            App.Driver.Instance.DeviceReport += HandleReport;
             App.Driver.Instance.SetTabletDebug(true);
             this.Closing += (sender, e) =>
             {
-                App.Driver.Instance.TabletReport -= HandleReport;
-                App.Driver.Instance.AuxReport -= HandleReport;
+                App.Driver.Instance.DeviceReport -= HandleReport;
                 App.Driver.Instance.SetTabletDebug(false);
             };
         }
 
-        private TextGroup rawTabletBox, tabletBox, rawAuxBox, auxBox, reportRateBox;
+        private TextGroup rawTabletBox, tabletBox, reportRateBox;
         private double reportPeriod;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
 
-        private void HandleReport(object sender, IDeviceReport report)
+        private void HandleReport(object sender, RpcData rpcData)
         {
-            if (report is ITabletReport tabletReport)
+            var report = rpcData.GetData(AppInfo.PluginManager);
+
+            if (report is IDeviceReport deviceReport)
             {
                 reportPeriod += (stopwatch.Restart().TotalMilliseconds - reportPeriod) / 10.0f;
-
-                rawTabletBox.Update(tabletReport?.GetStringRaw());
-                tabletBox.Update(tabletReport?.GetStringFormat().Replace(", ", Environment.NewLine));
                 reportRateBox.Update($"{(uint)(1000 / reportPeriod)}hz");
-            }
-            if (report is IAuxReport auxReport)
-            {
-                rawAuxBox.Update(auxReport?.GetStringRaw());
-                auxBox.Update(auxReport?.GetStringFormat().Replace(", ", Environment.NewLine));
+
+                string formatted = ReportFormatter.GetStringFormat(deviceReport);
+                tabletBox.Update(formatted);
+
+                string raw = ReportFormatter.GetStringRaw(deviceReport);
+                rawTabletBox.Update(raw);
             }
         }
 

@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Vendors.Wacom
             };
         }
         
-        public byte[] Raw { private set; get; }
-        public bool[] AuxButtons { private set; get; }
+        public byte[] Raw { set; get; }
+        public bool[] AuxButtons { set; get; }
     }
 }

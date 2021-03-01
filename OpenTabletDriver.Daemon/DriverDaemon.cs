@@ -6,7 +6,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using HidSharp;
-using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
@@ -15,6 +14,7 @@ using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
@@ -77,8 +77,7 @@ namespace OpenTabletDriver.Daemon
         }
 
         public event EventHandler<LogMessage> Message;
-        public event EventHandler<DebugTabletReport> TabletReport;
-        public event EventHandler<DebugAuxReport> AuxReport;
+        public event EventHandler<RpcData> DeviceReport;
         public event EventHandler<TabletState> TabletChanged;
 
         public DesktopDriver Driver { private set; get; } = new DesktopDriver();
@@ -444,10 +443,8 @@ namespace OpenTabletDriver.Daemon
 
         private void DebugReportHandler(object _, IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport)
-                TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
-            if (report is IAuxReport auxReport)
-                AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
+            if (report != null)
+                DeviceReport?.Invoke(this, new RpcData(report));
         }
     }
 }
