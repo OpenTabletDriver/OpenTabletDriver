@@ -17,11 +17,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             Title = "Tablet Debugger";
 
-            this.Content = new StackLayout
+            var debugger = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Width = 640,
-                Height = 640,
+                Height = 270,
                 Padding = 5,
                 Spacing = 5,
                 Items =
@@ -29,14 +28,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new DebuggerGroup
-                        {
-                            Text = "Visualizer",
-                            Content = tabletVisualizer = new TabletVisualizer()
-                        }
-                    },
-                    new StackLayoutItem
-                    {
                         Control = new TableLayout
                         {
                             Spacing = new Size(5, 5),
@@ -56,6 +47,20 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     },
                     new StackLayoutItem(reportRateBox = new TextGroup("Report Rate"))
                 }
+            };
+
+            this.Content = new Splitter
+            {
+                Orientation = Orientation.Vertical,
+                Width = 640,
+                Height = 640,
+                FixedPanel = SplitterFixedPanel.Panel2,
+                Panel1 = new DebuggerGroup
+                {
+                    Text = "Visualizer",
+                    Content = tabletVisualizer = new TabletVisualizer()
+                },
+                Panel2 = debugger
             };
         }
 
