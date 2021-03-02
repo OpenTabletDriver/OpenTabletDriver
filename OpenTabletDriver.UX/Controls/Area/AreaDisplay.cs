@@ -217,7 +217,6 @@ namespace OpenTabletDriver.UX.Controls.Area
 
         private void DrawRatioText(Graphics graphics, RectangleF area)
         {
-
             string ratio = Math.Round(ViewModel.Width / ViewModel.Height, 4).ToString();
             SizeF ratioMeasure = graphics.MeasureString(Font, ratio);
             var offsetY = area.Center.Y + (ratioMeasure.Height / 2);
