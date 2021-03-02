@@ -223,20 +223,17 @@ namespace OpenTabletDriver.UX.Controls
 
                     lockAr = new BooleanCommand
                     {
-                        MenuText = "Lock aspect ratio",
-                        DataContext = App.Settings
+                        MenuText = "Lock aspect ratio"
                     };
 
                     areaClipping = new BooleanCommand
                     {
-                        MenuText = "Area clipping",
-                        DataContext = App.Settings
+                        MenuText = "Area clipping"
                     };
 
                     ignoreOutsideArea = new BooleanCommand
                     {
-                        MenuText = "Ignore input outside area",
-                        DataContext = App.Settings
+                        MenuText = "Ignore input outside area"
                     };
 
                     base.ContextMenu.Items.AddRange(
@@ -266,6 +263,9 @@ namespace OpenTabletDriver.UX.Controls
 
                 public void Rebind(Settings settings)
                 {
+                    lockAr.DataContext = settings;
+                    areaClipping.DataContext = settings;
+                    ignoreOutsideArea.DataContext = settings;
                     this.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
                     this.Bind(c => c.ViewModel.Height, settings, m => m.TabletHeight);
                     this.Bind(c => c.ViewModel.X, settings, m => m.TabletX);
