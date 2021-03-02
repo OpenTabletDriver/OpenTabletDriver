@@ -20,23 +20,20 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                     Control = new Group
                     {
                         Text = "Demo Area Editor",
-                        Content = new AreaEditor
+                        Content = new AreaEditor(new AreaViewModel
                         {
-                            ViewModel = new AreaViewModel
+                            Width = 75,
+                            Height = 75,
+                            X = 75,
+                            Y = 75,
+                            Rotation = 15,
+                            Unit = "mm",
+                            EnableRotation = true,
+                            Background = new RectangleF[]
                             {
-                                Width = 75,
-                                Height = 75,
-                                X = 75,
-                                Y = 75,
-                                Rotation = 15,
-                                Unit = "mm",
-                                EnableRotation = true,
-                                Background = new RectangleF[]
-                                {
-                                    new RectangleF(0, 0, 150, 150)
-                                }
+                                new RectangleF(0, 0, 150, 150)
                             }
-                        }
+                        })
                     }
                 },
                 new StylizedText("This is the area editor.", SystemFonts.Bold(9), new Padding(0, 0, 0, 4)),
