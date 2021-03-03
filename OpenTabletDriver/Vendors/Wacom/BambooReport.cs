@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Vendors.Wacom
                 Y = BitConverter.ToUInt16(report, 4)
             };
             Pressure = (uint)(report[6] | ((report[7] & 0x01) << 8));
-            Eraser = ((report[1] >> 1) & (1 << 4)) != 0;
+            Eraser = (report[1] & (1 << 5)) != 0;
 
             PenButtons = new bool[]
             {
@@ -26,10 +26,10 @@ namespace OpenTabletDriver.Vendors.Wacom
             };
             AuxButtons = new bool[]
             {
-                ((report[7] >> 3) & (1 << 0)) != 0,
-                ((report[7] >> 3) & (1 << 1)) != 0,
-                ((report[7] >> 3) & (1 << 2)) != 0,
-                ((report[7] >> 3) & (1 << 3)) != 0
+                (report[7] & (1 << 3)) != 0,
+                (report[7] & (1 << 4)) != 0,
+                (report[7] & (1 << 5)) != 0,
+                (report[7] & (1 << 6)) != 0
             };
         }
 
