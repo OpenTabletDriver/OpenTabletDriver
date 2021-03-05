@@ -1,48 +1,25 @@
-using System;
+using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using OpenTabletDriver.Native.Windows;
-using OpenTabletDriver.Native.Windows.Input;
+using OpenTabletDriver.Desktop.Interop.Input.Absolute;
+using OpenTabletDriver.Desktop.Interop.Input.Relative;
 
 namespace OpenTabletDriver.Benchmarks.Output
 {
     public class WindowsInteropBenchmark
     {
-        private INPUT[] inputs;
-
-        [GlobalSetup]
-        public void Setup()
-        {
-            inputs = new INPUT[]
-            {
-                new INPUT
-                {
-                    type = INPUT_TYPE.MOUSE_INPUT,
-                    U = new InputUnion
-                    {
-                        mi = new MOUSEINPUT
-                        {
-                            time = 0,
-                            dx = 0,
-                            dy = 0,
-                            dwExtraInfo = UIntPtr.Zero
-                        }
-                    }
-                }
-            };
-        }
+        private WindowsAbsolutePointer absolutePointer = new WindowsAbsolutePointer();
+        private WindowsRelativePointer relativePointer = new WindowsRelativePointer();
 
         [Benchmark]
         public void SendInputAbsolute()
         {
-            inputs[0].U.mi.dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK;
-            _ = Windows.SendInput(1, inputs, INPUT.Size);
+            absolutePointer.SetPosition(Vector2.Zero);
         }
 
         [Benchmark]
         public void SendInputRelative()
         {
-            inputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
-            _ = Windows.SendInput(1, inputs, INPUT.Size);
+            relativePointer.Translate(Vector2.Zero);
         }
     }
 }
