@@ -3,7 +3,7 @@ using BenchmarkDotNet.Attributes;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Vendors;
 
-namespace OpenTabletDriver.Benchmarks
+namespace OpenTabletDriver.Benchmarks.Parser
 {
     public class ReportParserBenchmark
     {
