@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -11,34 +12,33 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginManager
     {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public PluginManager()
         {
-            var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
-                where IsLoadable(asm)
-                from type in asm.DefinedTypes
-                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
-                where IsPluginType(type)
-                where IsPlatformSupported(type)
-                select type;
+            var internalTypes = AssemblyLoadContext.Default.Assemblies
+                .Where(asm => asm != pluginAsm)
+                .SelectMany(asm => SafeGetTypes(asm))
+                .Where(type => type.IsPublic && !(type.IsInterface || type.IsAbstract))
+                .Where(type => IsPluginType(type) && IsPlatformSupported(type));
 
-            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
+            pluginTypes = new ConcurrentBag<Type>(internalTypes);
         }
 
-        public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
-        protected ConcurrentBag<TypeInfo> pluginTypes;
+        public IReadOnlyCollection<Type> PluginTypes => pluginTypes;
+        protected ConcurrentBag<Type> pluginTypes;
 
-        protected readonly static IEnumerable<Type> libTypes =
-            from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
-                where type.IsAbstract || type.IsInterface
-                select type;
+        protected readonly static Assembly pluginAsm = Assembly.GetAssembly(typeof(IDriver));
+        protected readonly static Type[] libTypes = pluginAsm.ExportedTypes
+            .Where(type => type.IsAbstract | type.IsInterface)
+            .ToArray();
 
-        public virtual PluginReference GetPluginReference(string path) => new PluginReference(this, path);
-        public virtual PluginReference GetPluginReference(Type type) => GetPluginReference(type.FullName);
-        public virtual PluginReference GetPluginReference(object obj) => GetPluginReference(obj.GetType());
+        public PluginReference GetPluginReference(string path) => new PluginReference(this, path);
+        public PluginReference GetPluginReference(Type type) => GetPluginReference(type.FullName);
+        public PluginReference GetPluginReference(object obj) => GetPluginReference(obj.GetType());
 
-        public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
+        public T ConstructObject<T>(string name, object[] args = null) where T : class
         {
-            args ??= new object[0];
+            args ??= Array.Empty<object>();
             if (!string.IsNullOrWhiteSpace(name))
             {
                 try
@@ -64,7 +64,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return null;
         }
 
-        public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
+        public IReadOnlyCollection<Type> GetChildTypes<T>()
         {
             var children = from type in PluginTypes
                 where typeof(T).IsAssignableFrom(type)
@@ -73,7 +73,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return children.ToArray();
         }
 
-        protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
+        protected bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -85,36 +85,35 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
-        protected virtual bool IsPluginType(Type type)
+        protected bool IsPluginType(Type type)
         {
-            return !type.IsAbstract && !type.IsInterface &&
+            return !type.IsAbstract & !type.IsInterface &&
                 libTypes.Any(t => t.IsAssignableFrom(type) ||
                     type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
         }
 
-        protected virtual bool IsPlatformSupported(Type type)
+        protected bool IsPlatformSupported(Type type)
         {
-            var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
+            var attr = type.GetCustomAttribute<SupportedPlatformAttribute>(false);
             return attr?.IsCurrentPlatform ?? true;
         }
 
-        protected virtual bool IsPluginIgnored(Type type)
+        protected bool IsPluginIgnored(Type type)
         {
-            return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));
+            return type.GetCustomAttribute<PluginIgnoreAttribute>(false) is PluginIgnoreAttribute;
         }
 
-        protected virtual bool IsLoadable(Assembly asm)
+        protected IEnumerable<Type> SafeGetTypes(Assembly asm)
         {
             try
             {
-                _ = asm.DefinedTypes;
-                return true;
+                return asm.ExportedTypes;
             }
             catch
             {
                 var asmName = asm.GetName();
                 Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
-                return false;
+                return Array.Empty<Type>();
             }
         }
     }
