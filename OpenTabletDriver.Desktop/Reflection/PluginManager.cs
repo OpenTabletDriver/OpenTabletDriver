@@ -32,11 +32,11 @@ namespace OpenTabletDriver.Desktop.Reflection
                 where type.IsAbstract || type.IsInterface
                 select type;
 
-        public virtual PluginReference GetPluginReference(string path) => new PluginReference(this, path);
-        public virtual PluginReference GetPluginReference(Type type) => GetPluginReference(type.FullName);
-        public virtual PluginReference GetPluginReference(object obj) => GetPluginReference(obj.GetType());
+        public PluginReference GetPluginReference(string path) => new PluginReference(this, path);
+        public PluginReference GetPluginReference(Type type) => GetPluginReference(type.FullName);
+        public PluginReference GetPluginReference(object obj) => GetPluginReference(obj.GetType());
 
-        public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
+        public T ConstructObject<T>(string name, object[] args = null) where T : class
         {
             args ??= new object[0];
             if (!string.IsNullOrWhiteSpace(name))
@@ -64,7 +64,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return null;
         }
 
-        public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
+        public IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
             var children = from type in PluginTypes
                 where typeof(T).IsAssignableFrom(type)
@@ -73,7 +73,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return children.ToArray();
         }
 
-        protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
+        protected bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
         {
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -85,25 +85,25 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
-        protected virtual bool IsPluginType(Type type)
+        protected bool IsPluginType(Type type)
         {
             return !type.IsAbstract && !type.IsInterface &&
                 libTypes.Any(t => t.IsAssignableFrom(type) ||
                     type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
         }
 
-        protected virtual bool IsPlatformSupported(Type type)
+        protected bool IsPlatformSupported(Type type)
         {
             var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
             return attr?.IsCurrentPlatform ?? true;
         }
 
-        protected virtual bool IsPluginIgnored(Type type)
+        protected bool IsPluginIgnored(Type type)
         {
             return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));
         }
 
-        protected virtual bool IsLoadable(Assembly asm)
+        protected bool IsLoadable(Assembly asm)
         {
             try
             {
