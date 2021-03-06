@@ -64,8 +64,10 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public void Load()
         {
-            foreach (var dir in PluginDirectory.GetDirectories())
+            PluginDirectory.GetDirectories().AsParallel().ForAll(dir =>
+            {
                 LoadPlugin(dir);
+            });
         }
 
         protected void LoadPlugin(DirectoryInfo directory)
@@ -92,30 +94,35 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         protected void ImportTypes(PluginContext context)
         {
-            var types = context.Assemblies
-                .SelectMany(asm => SafeGetTypes(asm))
-                .Where(type => IsPluginType(type));
+            IEnumerable<Type> types;
 
-            types.AsParallel().ForAll(type =>
+            try
+            {
+                types = context.Assemblies
+                    .SelectMany(asm => asm.Modules)
+                    .SelectMany(module => module.FindTypes((type, _) => IsPluginType(type), null))
+                    .ToArray();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                LogLoaderException(e);
+                types = e.Types.Where(t => t != null);
+            }
+
+            foreach(var type in types)
             {
                 if (!IsPlatformSupported(type))
                 {
                     Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
+
                 if (IsPluginIgnored(type))
                     return;
 
-                try
-                {
-                    if (!pluginTypes.Contains(type))
-                        pluginTypes.Add(type);
-                }
-                catch
-                {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' incompatible", LogLevel.Warning);
-                }
-            });
+                if (!pluginTypes.Contains(type))
+                    pluginTypes.Add(type);
+            };
         }
 
         public bool InstallPlugin(string filePath)
@@ -223,6 +230,23 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 Log.Exception(ex);
                 return false;
+            }
+        }
+
+        private static void LogLoaderException(ReflectionTypeLoadException e)
+        {
+            foreach (var loaderException in e.LoaderExceptions)
+            {
+                switch (loaderException)
+                {
+                    case TypeLoadException typeLoadException:
+                        Log.Write("Plugin", $"Plugin {typeLoadException.TypeName} has failed to load or is incompatible", LogLevel.Error);
+                        Log.Write("Plugin", $"Reason: {typeLoadException.Message}", LogLevel.Error);
+                        break;
+                    default:
+                        Log.Write("Plugin", loaderException.Message, LogLevel.Error);
+                        break;
+                }
             }
         }
     }
