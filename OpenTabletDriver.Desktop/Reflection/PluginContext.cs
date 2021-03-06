@@ -2,7 +2,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 
-namespace OpenTabletDriver.Reflection
+namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginContext : AssemblyLoadContext
     {

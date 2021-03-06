@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
