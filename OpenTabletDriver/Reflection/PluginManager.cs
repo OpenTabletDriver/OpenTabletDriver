@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Reflection
                 internalTypes = AssemblyLoadContext.Default.Assemblies
                     .Where(asm => asm != pluginAsm)
                     .SelectMany(asm => asm.Modules)
-                    .Where(module => module.Name.Contains("OpenTabletDriver"))
+                    .Where(module => module.ScopeName.Contains("OpenTabletDriver"))
                     .SelectMany(module => module.FindTypes(internalPluginFilter, null))
                     .ToArray();
             }
@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Reflection
 
         private readonly static Assembly pluginAsm = Assembly.GetAssembly(typeof(IDriver));
         private readonly static Type[] libTypes = pluginAsm.Modules
-            .Where(module => module.Name.Contains("OpenTabletDriver"))
+            .Where(module => module.ScopeName.Contains("OpenTabletDriver"))
             .SelectMany(module => module.FindTypes(libTypeFilter, null)).ToArray();
 
         public PluginReference GetPluginReference(string path) => new PluginReference(this, path);
