@@ -108,9 +108,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
                 try
                 {
-                    var pluginTypeInfo = type.GetTypeInfo();
-                    if (!pluginTypes.Contains(pluginTypeInfo))
-                        pluginTypes.Add(pluginTypeInfo);
+                    if (!pluginTypes.Contains(type))
+                        pluginTypes.Add(type);
                 }
                 catch
                 {
@@ -217,9 +216,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             try
             {
-                var types = from type in asm.GetTypes()
-                    select type.GetTypeInfo();
-                pluginTypes = new ConcurrentBag<Type>(pluginTypes.Except(types));
+                pluginTypes = new ConcurrentBag<Type>(pluginTypes.Except(asm.ExportedTypes));
                 return true;
             }
             catch (Exception ex)

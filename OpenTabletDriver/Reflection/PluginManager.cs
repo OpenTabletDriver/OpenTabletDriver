@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Reflection
             {
                 try
                 {
-                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
+                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is Type type)
                     {
                         var matchingConstructors = from ctor in type.GetConstructors()
                         let parameters = ctor.GetParameters()
