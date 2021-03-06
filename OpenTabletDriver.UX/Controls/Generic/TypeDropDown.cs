@@ -12,13 +12,13 @@ namespace OpenTabletDriver.UX.Controls.Generic
     {
         public TypeDropDown()
         {
-            this.ItemTextBinding = Binding.Property<TypeInfo, string>(t => GetFriendlyName(t));
-            this.ItemKeyBinding = Binding.Property<TypeInfo, string>(t => t.FullName);
+            this.ItemTextBinding = Binding.Property<Type, string>(t => GetFriendlyName(t));
+            this.ItemKeyBinding = Binding.Property<Type, string>(t => t.FullName);
 
             Refresh();
         }
 
-        public IEnumerable<TypeInfo> Types { protected set; get; }
+        public IEnumerable<Type> Types { protected set; get; }
 
         public void Refresh()
         {
@@ -27,10 +27,10 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 select type;
         }
 
-        public TypeInfo SelectedType
+        public Type SelectedType
         {
             set => this.SelectedValue = value;
-            get => (TypeInfo)this.SelectedValue;
+            get => (Type)this.SelectedValue;
         }
 
         public T ConstructSelectedType(params object[] args)
@@ -46,7 +46,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public void Select(Func<T, bool> predicate)
         {
-            foreach (TypeInfo type in Types)
+            foreach (Type type in Types)
             {
                 var obj = AppInfo.PluginManager.ConstructObject<T>(type.FullName);
                 if (predicate(obj))
@@ -57,7 +57,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             }
         }
 
-        protected string GetFriendlyName(TypeInfo t)
+        protected string GetFriendlyName(Type t)
         {
             return t.GetCustomAttribute<PluginNameAttribute>()?.Name ?? t.FullName;
         }

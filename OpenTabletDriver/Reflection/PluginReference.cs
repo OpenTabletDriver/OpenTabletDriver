@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection;
 using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Reflection
@@ -25,7 +24,7 @@ namespace OpenTabletDriver.Reflection
 
         protected string GetName(string path)
         {
-            if (PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
+            if (PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is Type plugin)
             {
                 var attrs = plugin.GetCustomAttributes(true);
                 var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
@@ -47,12 +46,12 @@ namespace OpenTabletDriver.Reflection
             return PluginManager.ConstructObject<T>(Path, args);
         }
 
-        public TypeInfo GetTypeReference<T>()
+        public Type GetTypeReference<T>()
         {
             return PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == this.Path);
         }
 
-        public TypeInfo GetTypeReference()
+        public Type GetTypeReference()
         {
             return PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == this.Path);
         }
