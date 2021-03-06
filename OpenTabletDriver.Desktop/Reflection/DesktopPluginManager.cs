@@ -122,7 +122,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
                 if (!pluginTypes.Contains(type))
                     pluginTypes.Add(type);
-            };
+            }
         }
 
         public bool InstallPlugin(string filePath)
