@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Console
         static async Task ListTypes<T>()
         {
             var types = from plugin in AppInfo.PluginManager.GetChildTypes<T>()
-                select AppInfo.PluginManager.GetPluginReference(plugin);
+                select AppInfo.PluginManager.GetPluginReference(plugin.FullName);
             foreach (var type in types)
             {
                 var output = string.IsNullOrWhiteSpace(type.Name) ? type.Path : $"{type.Path} [{type.Name}]";

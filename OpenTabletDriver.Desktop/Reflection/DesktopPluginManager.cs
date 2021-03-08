@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
 
@@ -39,6 +37,11 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public IReadOnlyCollection<DesktopPluginContext> GetLoadedPlugins() => Plugins;
 
+        protected override Assembly[] RetrieveAssemblies()
+        {
+            return new Assembly[] { typeof(Driver).Assembly, typeof(DesktopDriver).Assembly };
+        }
+
         public void Clean()
         {
             try
@@ -61,15 +64,15 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
-        public void Load()
+        public async Task Load()
         {
-            PluginDirectory.GetDirectories().AsParallel().ForAll(dir =>
+            foreach (var dir in PluginDirectory.GetDirectories())
             {
-                LoadPlugin(dir);
-            });
+                await LoadPlugin(dir);
+            }
         }
 
-        protected void LoadPlugin(DirectoryInfo directory)
+        protected async Task LoadPlugin(DirectoryInfo directory)
         {
             // "Plugins" are directories that contain managed and unmanaged dll
             // These dlls are loaded into a PluginContext per directory
@@ -81,7 +84,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     var context = new DesktopPluginContext(directory);
 
                     // Populate PluginTypes so desktop implementations can access them
-                    ImportTypes(context);
+                    await ImportTypes(context);
                     Plugins.Add(context);
                 }
                 else
@@ -91,40 +94,15 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
-        protected void ImportTypes(PluginContext context)
+        private async Task ImportTypes(PluginContext context)
         {
-            IEnumerable<Type> types;
-
-            try
+            foreach (var type in context.Assemblies.SelectMany(asm => asm.GetExportedTypes()))
             {
-                types = context.Assemblies
-                    .SelectMany(asm => asm.Modules)
-                    .SelectMany(module => module.FindTypes((type, _) => IsPluginType(type), null))
-                    .ToArray();
-            }
-            catch (ReflectionTypeLoadException e)
-            {
-                LogLoaderException(e);
-                types = e.Types.Where(t => t != null);
-            }
-
-            foreach(var type in types)
-            {
-                if (!IsPlatformSupported(type))
-                {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
-                    return;
-                }
-
-                if (IsPluginIgnored(type))
-                    return;
-
-                if (!pluginTypes.Contains(type))
-                    pluginTypes.Add(type);
+                await Add(type);
             }
         }
 
-        public bool InstallPlugin(string filePath)
+        public async Task<bool> InstallPlugin(string filePath)
         {
             var file = new FileInfo(filePath);
             if (!file.Exists)
@@ -153,7 +131,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     throw new InvalidOperationException($"Unsupported archive type: {file.Extension}");
             }
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == pluginDir.FullName);
-            var result = pluginDir.Exists ? UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
+            var result = pluginDir.Exists ? await UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
                 Directory.Delete(TemporaryDirectory.FullName, true);
@@ -172,7 +150,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             await metadata.DownloadAsync(sourcePath);
 
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == targetDir.FullName);
-            var result = targetDir.Exists ? UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
+            var result = targetDir.Exists ? await UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
 
             using (var fs = File.Create(metadataPath))
                 Serialization.Serialize(fs, metadata);
@@ -189,7 +167,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
-        public bool UninstallPlugin(DesktopPluginContext plugin)
+        public async Task<bool> UninstallPlugin(DesktopPluginContext plugin)
         {
             var random = new Random();
             if (!Directory.Exists(TrashDirectory.FullName))
@@ -200,53 +178,37 @@ namespace OpenTabletDriver.Desktop.Reflection
             var trashPath = Path.Join(TrashDirectory.FullName, $"{plugin.FriendlyName}_{random.Next()}");
             plugin.Directory.MoveTo(trashPath);
 
-            return UnloadPlugin(plugin);
+            return await UnloadPlugin(plugin);
         }
 
-        public bool UpdatePlugin(DesktopPluginContext plugin, DirectoryInfo source)
+        public async Task<bool> UpdatePlugin(DesktopPluginContext plugin, DirectoryInfo source)
         {
             var targetDir = new DirectoryInfo(plugin.Directory.FullName);
-            if (UninstallPlugin(plugin))
+            if (await UninstallPlugin(plugin))
                 return InstallPlugin(targetDir, source);
             return false;
         }
 
-        public bool UnloadPlugin(DesktopPluginContext context)
+        public async Task<bool> UnloadPlugin(DesktopPluginContext context)
         {
             Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);
             Plugins.Remove(context);
-            return context.Assemblies.All(p => RemoveAllTypesForAssembly(p));
+            bool ret = false;
+            foreach (var p in context.Assemblies)
+            {
+                ret = await RemoveAllTypesForAssembly(p);
+            }
+            return ret;
         }
 
-        public bool RemoveAllTypesForAssembly(Assembly asm)
+        public async Task<bool> RemoveAllTypesForAssembly(Assembly asm)
         {
-            try
+            bool ret = false;
+            foreach (var type in asm.GetExportedTypes())
             {
-                pluginTypes = new ConcurrentBag<Type>(pluginTypes.Except(asm.ExportedTypes));
-                return true;
+                ret = await Remove(type);
             }
-            catch (Exception ex)
-            {
-                Log.Exception(ex);
-                return false;
-            }
-        }
-
-        private static void LogLoaderException(ReflectionTypeLoadException e)
-        {
-            foreach (var loaderException in e.LoaderExceptions)
-            {
-                switch (loaderException)
-                {
-                    case TypeLoadException typeLoadException:
-                        Log.Write("Plugin", $"Plugin {typeLoadException.TypeName} has failed to load or is incompatible", LogLevel.Error);
-                        Log.Write("Plugin", $"Reason: {typeLoadException.Message}", LogLevel.Error);
-                        break;
-                    default:
-                        Log.Write("Plugin", loaderException.Message, LogLevel.Error);
-                        break;
-                }
-            }
+            return ret;
         }
     }
 }

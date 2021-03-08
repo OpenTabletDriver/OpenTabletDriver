@@ -10,13 +10,6 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private PluginSettingStore PluginSettings { get; }
 
-        public override T Construct<T>()
-        {
-            var value = base.Construct<T>();
-            PluginSettings.ApplySettings(value);
-            return value;
-        }
-
         public override T Construct<T>(params object[] args)
         {
             var value = base.Construct<T>(args);

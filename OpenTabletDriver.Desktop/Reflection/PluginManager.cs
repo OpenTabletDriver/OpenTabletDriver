@@ -1,125 +1,157 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Loader;
+using System.Threading.Tasks;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginManager
     {
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public PluginManager()
         {
-            Type[] internalTypes;
-            try
+            pluginLoadTask = Task.Run(() =>
             {
-                internalTypes = AssemblyLoadContext.Default.Assemblies
-                    .Where(asm => asm != pluginAsm)
-                    .SelectMany(asm => asm.Modules)
-                    .Where(module => module.ScopeName.Contains("OpenTabletDriver"))
-                    .SelectMany(module => module.FindTypes(internalPluginFilter, null))
-                    .ToArray();
-            }
-            catch (ReflectionTypeLoadException e)
-            {
-                internalTypes = e.Types.Where(t => t != null).ToArray();
-            }
-
-            pluginTypes = new ConcurrentBag<Type>(internalTypes);
+                internalImplementations = RetrieveAssemblies();
+                LoadImplementableTypes();
+                LoadInternalPluginTypes();
+            });
         }
 
-        public IReadOnlyCollection<Type> PluginTypes => pluginTypes;
-        protected ConcurrentBag<Type> pluginTypes;
+        private readonly Task pluginLoadTask;
+        private readonly Dictionary<Type, List<Type>> pluginTypes = new Dictionary<Type, List<Type>>();
+        private Assembly[] internalImplementations;
+        private Type[] implementableTypes;
 
-        private readonly static Assembly pluginAsm = Assembly.GetAssembly(typeof(IDriver));
-        private readonly static Type[] libTypes = pluginAsm.Modules
-            .Where(module => module.ScopeName.Contains("OpenTabletDriver"))
-            .SelectMany(module => module.FindTypes(libTypeFilter, null)).ToArray();
+        public IEnumerable<Type> PluginTypes => pluginTypes.Values.SelectMany(t => t);
 
-        public PluginReference GetPluginReference(string path) => new PluginReference(this, path);
-        public PluginReference GetPluginReference(Type type) => GetPluginReference(type.FullName);
-        public PluginReference GetPluginReference(object obj) => GetPluginReference(obj.GetType());
-
-        public T ConstructObject<T>(string name, object[] args = null) where T : class
+        protected virtual Assembly[] RetrieveAssemblies()
         {
-            args ??= Array.Empty<object>();
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                try
-                {
-                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is Type type)
-                    {
-                        var matchingConstructors = from ctor in type.GetConstructors()
-                        let parameters = ctor.GetParameters()
-                        where parameters.Length == args.Length
-                        where IsValidParameterFor(args, parameters)
-                        select ctor;
-
-                        if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
-                            return (T)constructor.Invoke(args) ?? null;
-                    }
-                }
-                catch
-                {
-                    Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
-                }
-            }
-            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Debug);
-            return null;
+            return new Assembly[] { typeof(Driver).Assembly };
         }
 
         public IReadOnlyCollection<Type> GetChildTypes<T>()
         {
-            var children = from type in PluginTypes
-                where typeof(T).IsAssignableFrom(type)
-                select type;
+            var type = typeof(T);
+            if (type.IsGenericType)
+                type = type.GetGenericTypeDefinition();
 
-            return children.ToArray();
+            return pluginTypes.TryGetValue(type, out var childTypes) ? childTypes : Array.Empty<Type>();
         }
 
-        protected static bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
+        public T ConstructObject<T>(string name, params object[] parameters) where T : class
         {
-            for (int i = 0; i < parameters.Length; i++)
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                var parameter = parameters[i];
-                var arg = args[i];
-                if (!parameter.ParameterType.IsAssignableFrom(arg.GetType()))
-                    return false;
+                var objectType = GetChildTypes<T>().FirstOrDefault(t => t.FullName == name);
+                try
+                {
+                    return (T)Activator.CreateInstance(objectType, parameters);
+                }
+                catch (MissingMethodException e)
+                {
+                    Log.Write("Plugin", $"No matching constructor found for '{name}'", LogLevel.Error);
+                    Log.Write("Plugin", $"Reason: {e.Message}", LogLevel.Error);
+                }
+                catch (TargetInvocationException e)
+                {
+                    Log.Write("Plugin", $"Failed to construct object '{name}': {e.InnerException.Message}");
+                }
             }
-            return true;
+            return null;
         }
 
-        protected static bool IsPluginType(Type type)
+        public PluginReference GetPluginReference(string path)
         {
-            return type.IsPublic & !type.IsAbstract & !type.IsInterface &&
-                libTypes.Any(t => t.IsAssignableFrom(type) ||
-                    type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
+            return new PluginReference(this, path);
         }
 
-        protected static bool IsPlatformSupported(Type type)
+        public PluginReference GetPluginReference(Type type)
         {
-            var attr = type.GetCustomAttribute<SupportedPlatformAttribute>(false);
-            return attr?.IsCurrentPlatform ?? true;
+            return new PluginReference(this, type.FullName);
         }
 
-        protected static bool IsPluginIgnored(Type type)
+        private static void Add(Type implementedType, Type subType, Dictionary<Type, List<Type>> store)
         {
-            return type.GetCustomAttribute<PluginIgnoreAttribute>(false) is PluginIgnoreAttribute;
+            if (!store.TryGetValue(implementedType, out var list))
+            {
+                list = new List<Type>();
+                store.Add(implementedType, list);
+            }
+
+            if (!list.Contains(subType))
+            {
+                list.Add(subType);
+            }
         }
 
-        private static bool libTypeFilter(Type type, object _)
+        public async Task Add(Type pluginType)
         {
-            return type.IsAbstract | type.IsInterface;
+            await pluginLoadTask;
+
+            foreach (var implementedType in GetImplementedPluginTypes(pluginType))
+            {
+                Add(implementedType, pluginType, pluginTypes);
+            }
         }
 
-        private bool internalPluginFilter(Type type, object _)
+        public async Task<bool> Remove(Type pluginType)
         {
-            return IsPluginType(type) && IsPlatformSupported(type);
+            await pluginLoadTask;
+
+            bool ret = false;
+            foreach (var implementedType in GetImplementedPluginTypes(pluginType))
+            {
+                if (pluginTypes.TryGetValue(implementedType, out var list))
+                {
+                    ret = list.Remove(pluginType);
+                }
+            }
+            return ret;
+        }
+
+        private void LoadImplementableTypes()
+        {
+            implementableTypes = typeof(IDriver).Assembly.ExportedTypes
+                .Where(type => type.IsAbstract | type.IsInterface)
+                .ToArray();
+        }
+
+        private void LoadInternalPluginTypes()
+        {
+            foreach (var subType in internalImplementations.SelectMany(asm => asm.ExportedTypes))
+            {
+                foreach (var implementedType in GetImplementedPluginTypes(subType))
+                {
+                    Add(implementedType, subType, pluginTypes);
+                }
+            }
+        }
+
+        private IEnumerable<Type> GetImplementedPluginTypes(Type subType)
+        {
+            foreach (var implementableType in implementableTypes)
+            {
+                if (subType.IsAssignableTo(implementableType))
+                {
+                    yield return implementableType;
+                }
+                else
+                {
+                    foreach (var _ in subType.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == implementableType))
+                    {
+                        yield return implementableType;
+                    }
+                }
+            }
+        }
+
+        public class CacheTypeException : Exception
+        {
+            public CacheTypeException(string msg) : base(msg)
+            {
+            }
         }
     }
 }

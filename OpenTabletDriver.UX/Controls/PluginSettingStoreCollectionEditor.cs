@@ -137,8 +137,8 @@ namespace OpenTabletDriver.UX.Controls
 
             public void Refresh()
             {
-                var items = from type in AppInfo.PluginManager.GetChildTypes<TSource>()
-                    select new PluginReference(AppInfo.PluginManager, type);
+                var items = AppInfo.PluginManager.GetChildTypes<TSource>()
+                    .Select(type => AppInfo.PluginManager.GetPluginReference(type.FullName));
 
                 Plugins = items.ToList();
 

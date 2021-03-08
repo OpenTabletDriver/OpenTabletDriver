@@ -37,9 +37,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
         {
             if (SelectedType != null)
             {
-                args ??= Array.Empty<object>();
                 var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedType);
-                return pluginRef.Construct<T>();
+                return pluginRef.Construct<T>(args);
             }
             return null;
         }

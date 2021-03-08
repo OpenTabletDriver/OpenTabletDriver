@@ -36,11 +36,6 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public override string ToString() => string.IsNullOrWhiteSpace(Name) ? Path : Name;
 
-        public virtual T Construct<T>() where T : class
-        {
-            return PluginManager.ConstructObject<T>(Path);
-        }
-
         public virtual T Construct<T>(params object[] args) where T : class
         {
             return PluginManager.ConstructObject<T>(Path, args);

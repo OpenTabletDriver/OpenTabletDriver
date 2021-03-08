@@ -116,7 +116,7 @@ namespace OpenTabletDriver.UX.Windows
             Repository = newRepository;
 
             await App.Driver.Instance.LoadPlugins();
-            AppInfo.PluginManager.Load();
+            await AppInfo.PluginManager.Load();
 
             // Refresh settings
             App.Settings = await App.Driver.Instance.GetSettings();
@@ -170,7 +170,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             if (await App.Driver.Instance.InstallPlugin(path))
             {
-                AppInfo.PluginManager.Load();
+                await AppInfo.PluginManager.Load();
                 await Refresh();
             }
             else
@@ -188,7 +188,7 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
-            AppInfo.PluginManager.UnloadPlugin(context);
+            await AppInfo.PluginManager.UnloadPlugin(context);
             await Refresh();
         }
 
