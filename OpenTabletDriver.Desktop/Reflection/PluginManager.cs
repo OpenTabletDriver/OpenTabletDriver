@@ -57,11 +57,12 @@ namespace OpenTabletDriver.Desktop.Reflection
                 catch (MissingMethodException e)
                 {
                     Log.Write("Plugin", $"No matching constructor found for '{name}'", LogLevel.Error);
-                    Log.Write("Plugin", $"Reason: {e.Message}", LogLevel.Error);
+                    Log.Write("Plugin", $"{e}", LogLevel.Debug);
                 }
-                catch (TargetInvocationException e)
+                catch (Exception e)
                 {
-                    Log.Write("Plugin", $"Failed to construct object '{name}': {e.InnerException.Message}");
+                    Log.Write("Plugin", $"Failed to construct object '{name}'", LogLevel.Error);
+                    Log.Write("Plugin", $"{e.InnerException ?? e}", LogLevel.Debug);
                 }
             }
             return null;
