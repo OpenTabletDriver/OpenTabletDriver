@@ -1,5 +1,5 @@
 using BenchmarkDotNet.Attributes;
-using OpenTabletDriver.Reflection;
+using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.Benchmarks.Plugin
 {
