@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
@@ -11,15 +12,19 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         public PluginManager()
         {
-            pluginLoadTask = Task.Run(() =>
+            pluginLoadTask = taskFactory.RunAsync(async () =>
             {
-                internalImplementations = RetrieveAssemblies();
-                LoadImplementableTypes();
-                LoadInternalPluginTypes();
+                await Task.Run(() =>
+                {
+                    internalImplementations = RetrieveAssemblies();
+                    LoadImplementableTypes();
+                    LoadInternalPluginTypes();
+                });
             });
         }
 
-        private readonly Task pluginLoadTask;
+        private readonly JoinableTask pluginLoadTask;
+        private readonly JoinableTaskFactory taskFactory = new JoinableTaskFactory(new JoinableTaskContext());
         private readonly Dictionary<Type, List<Type>> pluginTypes = new Dictionary<Type, List<Type>>();
         private Assembly[] internalImplementations;
         private Type[] implementableTypes;
