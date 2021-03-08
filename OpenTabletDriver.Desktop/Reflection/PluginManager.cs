@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 await Task.Run(() =>
                 {
+                    pluginTypes = new Dictionary<Type, List<Type>>();
                     internalImplementations = RetrieveAssemblies();
                     LoadImplementableTypes();
                     LoadInternalPluginTypes();
@@ -25,7 +26,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private readonly JoinableTask pluginLoadTask;
         private readonly JoinableTaskFactory taskFactory = new JoinableTaskFactory(new JoinableTaskContext());
-        private readonly Dictionary<Type, List<Type>> pluginTypes = new Dictionary<Type, List<Type>>();
+        private Dictionary<Type, List<Type>> pluginTypes;
         private Assembly[] internalImplementations;
         private Type[] implementableTypes;
 
