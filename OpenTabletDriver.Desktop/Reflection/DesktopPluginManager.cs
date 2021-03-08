@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {

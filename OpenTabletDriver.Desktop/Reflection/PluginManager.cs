@@ -7,7 +7,7 @@ using System.Runtime.Loader;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 
-namespace OpenTabletDriver.Reflection
+namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginManager
     {
