@@ -59,9 +59,9 @@ namespace OpenTabletDriver.Desktop.Migration
         private static PluginSettingStore SafeMigrateNamespace(PluginSettingStore store, PluginSettingStore defaultStore = null)
         {
             MigrateNamespace(store);
-            if ((store == null || PluginSettingStore.FromPath(store?.Path) == null) && defaultStore != null)
+            if (store != null && PluginSettingStore.FromPath(store.Path) == null && defaultStore != null)
             {
-                Log.Write("Settings", $"Invalid plugin path '{store?.Path ?? "null"}' has been changed to '{defaultStore.Path}'", LogLevel.Warning);
+                Log.Write("Settings", $"Invalid plugin path '{store.Path ?? "null"}' has been changed to '{defaultStore.Path}'", LogLevel.Warning);
                 store = defaultStore;
             }
             return store;
