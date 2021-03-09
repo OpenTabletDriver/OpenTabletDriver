@@ -189,7 +189,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     var tabletScale = tabletMm / tabletPx * scale;
                     var position = new PointF(tabletReport.Position.X, tabletReport.Position.Y) * tabletScale;
 
-                    var drawRect = RectangleF.FromCenter(position, new SizeF(5, 5));
+                    var circleSize = 5 + tabletReport.Pressure / tablet.Digitizer.MaxPressure;
+                    var drawRect = RectangleF.FromCenter(position, new SizeF(circleSize, circleSize));
                     graphics.FillEllipse(AccentColor, drawRect);
                 }
             }
