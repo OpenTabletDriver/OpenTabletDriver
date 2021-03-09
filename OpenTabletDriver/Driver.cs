@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -38,6 +38,7 @@ namespace OpenTabletDriver
             { typeof(TabletReportParser).FullName, () => new TabletReportParser() },
             { typeof(AuxReportParser).FullName, () => new AuxReportParser() },
             { typeof(TiltTabletReportParser).FullName, () => new TiltTabletReportParser() },
+            { typeof(Vendors.SkipByteTabletReportParser).FullName, () => new Vendors.SkipByteTabletReportParser() },
             { typeof(Vendors.Gaomon.GaomonReportParser).FullName, () => new Vendors.Gaomon.GaomonReportParser() },
             { typeof(Vendors.Huion.GianoReportParser).FullName, () => new Vendors.Huion.GianoReportParser() },
             { typeof(Vendors.Wacom.BambooReportParser).FullName, () => new Vendors.Wacom.BambooReportParser() },
