@@ -34,13 +34,7 @@ namespace OpenTabletDriver.UX.Controls.Area
         private bool mouseDragging;
         private PointF? lastMouseLocation;
 
-        private RectangleF BackgroundRect => new RectangleF(
-            new PointF(0, 0),
-            new SizeF(
-                ViewModel.FullBackground.Width,
-                ViewModel.FullBackground.Height
-            )
-        );
+        private RectangleF BackgroundRect => ViewModel.FullBackground;
 
         private RectangleF ForegroundRect => RectangleF.FromCenter(
             new PointF(ViewModel.X, ViewModel.Y),
@@ -192,11 +186,15 @@ namespace OpenTabletDriver.UX.Controls.Area
 
         private void DrawBackground(Graphics graphics, float scale)
         {
-            foreach (var rect in ViewModel.Background)
+            using (graphics.SaveTransformState())
             {
-                var scaledRect = rect * scale;
-                graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
-                graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
+                graphics.TranslateTransform(-BackgroundRect.TopLeft * scale);
+                foreach (var rect in ViewModel.Background)
+                {
+                    var scaledRect = rect * scale;
+                    graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
+                    graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
+                }
             }
         }
 
