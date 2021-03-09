@@ -154,7 +154,7 @@ namespace OpenTabletDriver.UX.Controls
 
             public void UpdateSelectedMode(PluginSettingStore store)
             {
-                var typeReference = store.GetPluginReference().GetTypeReference();
+                var typeReference = store?.GetPluginReference().GetTypeReference();
                 this.SelectedValue = typeReference;
             }
         }
