@@ -7,7 +7,7 @@
 
   <PropertyGroup Label="NuGet Package Information">
     <PackageId>OpenTabletDriver.Plugin</PackageId>
-    <Version>0.5.2</Version>
+    <Version>0.5.2.1</Version>
     <Authors>InfinityGhost</Authors>
     <Description>Library used to create OpenTabletDriver plugins.</Description>
     <PackageOutputPath>../nupkg</PackageOutputPath>
