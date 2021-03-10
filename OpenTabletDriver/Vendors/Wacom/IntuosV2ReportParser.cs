@@ -1,4 +1,5 @@
 ﻿using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
@@ -9,8 +10,9 @@ namespace OpenTabletDriver.Vendors.Wacom
             return data[0] switch
             {
                 0x2 => new IntuosV2TabletReport(data),
+                0x10 => new IntuosV2TabletReport(data),
                 0x3 => new IntuosV2AuxReport(data),
-                _ => null
+                _ => new DeviceReport(data)
             };
         }
     }
