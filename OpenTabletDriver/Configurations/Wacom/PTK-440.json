@@ -10,8 +10,8 @@
       "ActiveReportID": {
         "Start": 0,
         "StartInclusive": true,
-        "End": 62,
-        "EndInclusive": true
+        "End": null,
+        "EndInclusive": false
       },
       "VendorID": 1386,
       "ProductID": 184,
@@ -32,7 +32,7 @@
       "ActiveReportID": {
         "Start": 0,
         "StartInclusive": true,
-        "End": 62,
+        "End": null,
         "EndInclusive": false
       },
       "VendorID": 1386,
