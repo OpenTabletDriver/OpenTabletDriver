@@ -11,7 +11,7 @@
         "Start": 0,
         "StartInclusive": true,
         "End": 62,
-        "EndInclusive": false
+        "EndInclusive": true
       },
       "VendorID": 1386,
       "ProductID": 184,
