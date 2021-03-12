@@ -8,6 +8,6 @@ namespace OpenTabletDriver.Plugin
         public static IDriver Driver => GetDriverInstance();
 
         public static Func<IDriver> GetDriverInstance { set; get; }
-        public static Func<Task<IUXDriver>> GetUXInstance { set; get; }
+        public static Func<Task<IUserInterface>> GetUXInstance { set; get; }
     }
 }
