@@ -192,6 +192,11 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     var circleSize = 5 + tabletReport.Pressure / tablet.Digitizer.MaxPressure;
                     var drawRect = RectangleF.FromCenter(position, new SizeF(circleSize, circleSize));
                     graphics.FillEllipse(AccentColor, drawRect);
+
+                    float angle = (tabletReport.Pressure / tablet.Digitizer.MaxPressure) * 180;
+                    SolidBrush b = new SolidBrush(AccentColor);
+                    Pen p = new Pen(b, 5);
+                    graphics.DrawArc(p, graphics.ClipBounds, 0, angle);
                 }
             }
         }
