@@ -61,7 +61,8 @@ namespace OpenTabletDriver.Devices
                 {
                     var data = ReportStream.Read();
                     var report = Parser.Parse(data);
-                    Report?.Invoke(this, report);
+                    if (report != null)
+                        Report?.Invoke(this, report);
                 }
             }
             catch (ObjectDisposedException dex)
@@ -71,6 +72,10 @@ namespace OpenTabletDriver.Devices
             catch (IOException ioex) when (ioex.Message == "I/O disconnected." || ioex.Message == "Operation failed after some time.")
             {
                 Log.Write("Device", "Device disconnected.");
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                Log.Write("Device", "Not enough report data returned by the device. Was it disconnected?");
             }
             catch (Exception ex)
             {

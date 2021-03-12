@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OpenTabletDriver.Debugging;
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -12,8 +11,7 @@ namespace OpenTabletDriver.Desktop.Contracts
     public interface IDriverDaemon
     {
         event EventHandler<LogMessage> Message;
-        event EventHandler<DebugTabletReport> TabletReport;
-        event EventHandler<DebugAuxReport> AuxReport;
+        event EventHandler<RpcData> DeviceReport;
         event EventHandler<TabletState> TabletChanged;
 
         Task WriteMessage(LogMessage message);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
@@ -19,13 +21,13 @@ using StreamJsonRpc.Protocol;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class PluginManagerWindow : Form
+    public class PluginManagerWindow : DesktopForm
     {
         public PluginManagerWindow()
+            : base()
         {
             this.Title = "Plugin Manager";
-            this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.Size = new Size(700, 550);
+            this.ClientSize = new Size(700, 550);
             this.AllowDrop = true;
 
             this.Menu = ConstructMenu();
@@ -78,12 +80,46 @@ namespace OpenTabletDriver.UX.Windows
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        public async Task Refresh(PluginMetadataCollection newRepository = null)
+        public async Task Refresh()
         {
-            Repository = newRepository ?? await PluginMetadataCollection.DownloadAsync();
+            var repoFetch = PluginMetadataCollection.DownloadAsync();
+            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(5));
+            PluginMetadataCollection collection = null;
+
+            try
+            {
+                var completedTask = await Task.WhenAny(repoFetch, timeoutTask);
+                if (completedTask == timeoutTask)
+                    MessageBox.Show("Fetching plugin metadata timed-out. Only local plugins will be shown.", MessageBoxType.Warning);
+                else
+                    collection = await repoFetch;
+            }
+            catch (HttpRequestException)
+            {
+                MessageBox.Show("OTD cannot connect to Internet. Only local plugins will be shown.", MessageBoxType.Warning);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error);
+                Log.Write("PluginManager", e.Message);
+            }
+            finally
+            {
+                collection ??= PluginMetadataCollection.Empty;
+            }
+
+            await Refresh(collection);
+        }
+
+        public async Task Refresh(PluginMetadataCollection newRepository)
+        {
+            Repository = newRepository;
 
             await App.Driver.Instance.LoadPlugins();
             AppInfo.PluginManager.Load();
+
+            // Refresh settings
+            App.Settings = await App.Driver.Instance.GetSettings();
 
             (Application.Instance.MainForm as MainForm).Refresh();
             pluginList.Refresh();
@@ -103,6 +139,7 @@ namespace OpenTabletDriver.UX.Windows
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
                     await Refresh();
+                    pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
                 }
             }
             catch (RemoteInvocationException ex)
@@ -144,15 +181,15 @@ namespace OpenTabletDriver.UX.Windows
 
         protected async Task Uninstall(DesktopPluginContext context)
         {
-            if (await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
-            {
-                AppInfo.PluginManager.UnloadPlugin(context);
-                await Refresh();
-            }
-            else
+            context.Directory.Refresh();
+            if (context.Directory.Exists && !await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
             {
                 MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
+                return;
             }
+
+            AppInfo.PluginManager.UnloadPlugin(context);
+            await Refresh();
         }
 
         private MenuBar ConstructMenu()
@@ -216,6 +253,7 @@ namespace OpenTabletDriver.UX.Windows
             protected WeakReference<PluginMetadata> MetadataReference { set; get; } = new WeakReference<PluginMetadata>(null);
 
             private EmptyMetadataControl emptyMetadataControl = new EmptyMetadataControl();
+            private Version driverVersion = Assembly.GetExecutingAssembly().GetName().Version;
 
             public void Update(PluginMetadata metadata)
             {
@@ -230,21 +268,22 @@ namespace OpenTabletDriver.UX.Windows
                 }
             }
 
-            public async void Refresh()
+            public void Refresh()
             {
                 if (MetadataReference.TryGetTarget(out var metadata))
                 {
                     var contexts = AppInfo.PluginManager.GetLoadedPlugins();
 
-                    Repository ??= await PluginMetadataCollection.DownloadAsync();
-
                     bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
-                    bool canUpdate = Repository.Any(t => t.Name == metadata.Name && t.PluginVersion > metadata.PluginVersion);
 
                     var updatableFromRepository = from meta in Repository
+                        where PluginMetadata.Match(meta, metadata)
                         where meta.PluginVersion > metadata.PluginVersion
-                        orderby meta.PluginVersion
+                        where driverVersion >= meta.SupportedDriverVersion
+                        orderby meta.PluginVersion descending
                         select meta;
+
+                    var canUpdate = updatableFromRepository.Any();
 
                     var actions = new StackLayout
                     {
@@ -285,8 +324,8 @@ namespace OpenTabletDriver.UX.Windows
                                 new AlignedGroup("Name", metadata.Name),
                                 new AlignedGroup("Owner", metadata.Owner),
                                 new AlignedGroup("Description", metadata.Description),
-                                new AlignedGroup("Driver Version", metadata.SupportedDriverVersion.ToString()),
-                                new AlignedGroup("Plugin Version", metadata.PluginVersion.ToString()),
+                                new AlignedGroup("Driver Version", metadata.SupportedDriverVersion?.ToString()),
+                                new AlignedGroup("Plugin Version", metadata.PluginVersion?.ToString()),
                                 new LinkButtonGroup("Source Code Repository", metadata.RepositoryUrl, "Show source code"),
                                 new LinkButtonGroup("Wiki", metadata.WikiUrl, "Show plugin wiki"),
                                 new AlignedGroup("License", metadata.LicenseIdentifier),
@@ -378,10 +417,9 @@ namespace OpenTabletDriver.UX.Windows
             private readonly ObservableCollection<PluginMetadata> DisplayedPlugins = new ObservableCollection<PluginMetadata>();
             private List<DesktopPluginContext> InstalledPlugins = new List<DesktopPluginContext>();
 
-            public async void Refresh()
+            public void Refresh()
             {
                 var index = SelectedIndex;
-                Repository ??= await PluginMetadataCollection.DownloadAsync();
 
                 var installed = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
                     orderby plugin.FriendlyName
@@ -393,21 +431,38 @@ namespace OpenTabletDriver.UX.Windows
                     select meta;
 
                 var fetched = from meta in Repository
-                    where meta.SupportedDriverVersion >= AppVersion
+                    where meta.SupportedDriverVersion <= AppVersion
                     where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
                     select meta;
 
-                var metaQuery = from meta in installedMeta.Concat(fetched)
+                var versions = from meta in installedMeta.Concat(fetched)
+                    orderby meta.PluginVersion descending
+                    group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
+
+                var displayQuery = from grp in versions
+                    let meta = grp.FirstOrDefault()
                     orderby meta.Name
+                    orderby installedMeta.Any(m => PluginMetadata.Match(m, meta)) descending
                     select meta;
 
                 this.InstalledPlugins = installed.ToList();
 
                 this.DisplayedPlugins.Clear();
-                foreach (var meta in metaQuery)
+                foreach (var meta in displayQuery)
                     this.DisplayedPlugins.Add(meta);
 
                 SelectedIndex = index;
+            }
+
+            public void SelectFirstOrDefault(Func<PluginMetadata, bool> predicate)
+            {
+                var meta = SelectedPlugin?.GetMetadata();
+                var list = this.DataStore as IList<PluginMetadata>;
+
+                if (list?.FirstOrDefault(m => predicate(m)) is PluginMetadata existingMeta)
+                {
+                    this.SelectedIndex = list.IndexOf(existingMeta);
+                }
             }
 
             private void ShowPluginFolder(object sender, EventArgs e)
@@ -438,12 +493,6 @@ namespace OpenTabletDriver.UX.Windows
 
                 this.SelectedPlugin = SelectedValue is PluginMetadata selected ? InstalledPlugins.FirstOrDefault(p => PluginMetadata.Match(selected, p.GetMetadata())) : null;
                 SelectedPluginChanged?.Invoke(this.SelectedPlugin);
-            }
-
-            protected override void OnLoadComplete(EventArgs e)
-            {
-                base.OnLoadComplete(e);
-                Refresh();
             }
         }
 

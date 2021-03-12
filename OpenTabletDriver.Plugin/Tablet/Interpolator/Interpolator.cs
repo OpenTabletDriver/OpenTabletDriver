@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         {
             this.scheduler = scheduler;
             this.scheduler.Elapsed += InterpolateHook;
-            Info.Driver.ReportRecieved += HandleReport;
+            Info.Driver.ReportReceived += HandleReport;
             reportStopwatch.Start();
         }
 
@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         protected bool enabled;
         protected ITimer scheduler;
         protected HPETDeltaStopwatch reportStopwatch = new HPETDeltaStopwatch(true);
-        protected readonly object stateLock = new object();
+        protected static readonly object stateLock = new object();
 
         protected bool inRange;
         protected bool InRange
@@ -32,43 +32,35 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             {
                 if (this.inRange != value)
                 {
-                    this.Enabled = value;
+                    if (value)
+                    {
+                        this.scheduler.Interval = 1000.0f / Frequency;
+                        this.scheduler.Start();
+                    }
+                    else
+                    {
+                        this.scheduler.Stop();
+                    }
                     this.inRange = value;
                 }
             }
             get => inRange;
         }
 
-        [Property("Hertz"), Unit("hz")]
-        public float Hertz { get; set; } = 1000.0f;
+        [Property("Frequency"), Unit("Hz"), DefaultPropertyValue(1000.0f)]
+        public float Frequency { get; set; }
 
-        public virtual bool Enabled
-        {
-            set
-            {
-                this.enabled = value;
-                if (value)
-                {
-                    this.scheduler.Interval = 1000.0f / Hertz;
-                    this.scheduler.Start();
-                }
-                else
-                {
-                    this.scheduler.Stop();
-                }
-            }
-            get => this.enabled;
-        }
+        public bool Enabled { get; set; }
 
-        public virtual IList<IFilter> Filters { get; set; }
+        public IList<IFilter> Filters { get; set; }
 
-        protected virtual void HandleReport(object _, IDeviceReport report)
+        protected void HandleReport(object _, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport && !(report is ISyntheticReport))
             {
                 if (Info.Driver.Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    lock (this.stateLock)
+                    lock (stateLock)
                     {
                         this.reportMsAvg += (reportStopwatch.Restart().TotalMilliseconds - reportMsAvg) / 10.0f;
                         this.InRange = true;
@@ -89,9 +81,9 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
             }
         }
 
-        protected virtual void InterpolateHook()
+        protected void InterpolateHook()
         {
-            lock (this.stateLock)
+            lock (stateLock)
             {
                 var limit = Limiter.Transform(this.reportMsAvg);
                 if ((reportStopwatch.Elapsed.TotalMilliseconds < limit) && this.InRange)
@@ -110,13 +102,16 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
         {
             if (!isDisposed)
             {
-                if (Enabled)
-                    Enabled = false;
-                this.scheduler.Elapsed -= InterpolateHook;
-                Info.Driver.ReportRecieved -= HandleReport;
-                this.scheduler.Dispose();
-                GC.SuppressFinalize(this);
-                isDisposed = true;
+                Info.Driver.ReportReceived -= HandleReport;
+                lock (stateLock)
+                {
+                    if (Enabled)
+                        Enabled = false;
+                    this.scheduler.Elapsed -= InterpolateHook;
+                    this.scheduler.Dispose();
+                    GC.SuppressFinalize(this);
+                    isDisposed = true;
+                }
             }
         }
 

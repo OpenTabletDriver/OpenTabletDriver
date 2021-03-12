@@ -2,13 +2,13 @@
 using System.Linq;
 using Eto.Drawing;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Controls.Area
 {
     public class AreaViewModel : ViewModelBase
     {
         private float w, h, x, y, r;
-        private string unit;
-        private bool lockArea;
+        private string unit, invalidForegroundError, invalidBackgroundError;
+        private bool lockArea, enableRotation;
         private IEnumerable<RectangleF> bg;
         private RectangleF fullbg;
 
@@ -17,7 +17,7 @@ namespace OpenTabletDriver.UX.Controls
             set => this.RaiseAndSetIfChanged(ref this.w, value);
             get => this.w;
         }
-        
+
         public float Height
         {
             set => this.RaiseAndSetIfChanged(ref this.h, value);
@@ -46,6 +46,12 @@ namespace OpenTabletDriver.UX.Controls
         {
             set => this.RaiseAndSetIfChanged(ref this.lockArea, value);
             get => this.lockArea;
+        }
+
+        public bool EnableRotation
+        {
+            set => this.RaiseAndSetIfChanged(ref this.enableRotation, value);
+            get => this.enableRotation;
         }
 
         public IEnumerable<RectangleF> Background
@@ -79,8 +85,20 @@ namespace OpenTabletDriver.UX.Controls
 
         public string Unit
         {
-            set => this.RaiseAndSetIfChanged(ref unit, value);
-            get => unit;
+            set => this.RaiseAndSetIfChanged(ref this.unit, value);
+            get => this.unit;
+        }
+
+        public string InvalidForegroundError
+        {
+            set => this.RaiseAndSetIfChanged(ref this.invalidForegroundError, value);
+            get => this.invalidForegroundError ??= "Invalid area size.";
+        }
+
+        public string InvalidBackgroundError
+        {
+            set => this.RaiseAndSetIfChanged(ref this.invalidBackgroundError, value);
+            get => this.invalidBackgroundError ??= "Invalid background size.";
         }
     }
 }

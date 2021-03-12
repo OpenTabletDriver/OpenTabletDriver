@@ -63,7 +63,9 @@ namespace OpenTabletDriver.UX
             app.Run(mainForm);
         }
 
-        public const string FaqUrl = "https://github.com/InfinityGhost/OpenTabletDriver/wiki#frequently-asked-questions";
+        public const string PluginRepositoryUrl = "https://github.com/OpenTabletDriver/Plugin-Repository";
+        public const string FaqUrl = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki#frequently-asked-questions";
+        public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
         public static RpcProxy<IUserInterface> UserInterfaceProxy = new RpcProxy<IUserInterface>("OpenTabletDriver.UX");
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
@@ -75,7 +77,7 @@ namespace OpenTabletDriver.UX
         {
             set
             {
-                settings = SettingsMigrator.Migrate(value);
+                settings = value;
                 SettingsChanged?.Invoke(Settings);
             }
             get => settings;
@@ -87,8 +89,8 @@ namespace OpenTabletDriver.UX
             ProgramName = "OpenTabletDriver",
             ProgramDescription = "Open source, cross-platform tablet configurator",
             WebsiteLabel = "OpenTabletDriver GitHub Repository",
-            Website = new Uri(@"https://github.com/InfinityGhost/OpenTabletDriver"),
-            Version = $"v{Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}",
+            Website = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver"),
+            Version = $"v{Version}",
             Developers = new string[] { "InfinityGhost" },
             Designers = new string[] { "InfinityGhost" },
             Documenters = new string[] { "InfinityGhost" },

@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using HidSharp;
 using OpenTabletDriver.Devices;
@@ -11,7 +10,6 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
-using OpenTabletDriver.Reflection;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
@@ -31,14 +29,28 @@ namespace OpenTabletDriver
         }
         
         public event EventHandler<bool> Reading;
-        public event EventHandler<IDeviceReport> ReportRecieved;
+        public event EventHandler<IDeviceReport> ReportReceived;
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
         public event EventHandler<TabletState> TabletChanged;
 
+        private static readonly Dictionary<string, Func<IReportParser<IDeviceReport>>> reportParserDict = new Dictionary<string, Func<IReportParser<IDeviceReport>>>
+        {
+            { typeof(TabletReportParser).FullName, () => new TabletReportParser() },
+            { typeof(AuxReportParser).FullName, () => new AuxReportParser() },
+            { typeof(TiltTabletReportParser).FullName, () => new TiltTabletReportParser() },
+            { typeof(Vendors.SkipByteTabletReportParser).FullName, () => new Vendors.SkipByteTabletReportParser() },
+            { typeof(Vendors.Gaomon.GaomonReportParser).FullName, () => new Vendors.Gaomon.GaomonReportParser() },
+            { typeof(Vendors.Huion.GianoReportParser).FullName, () => new Vendors.Huion.GianoReportParser() },
+            { typeof(Vendors.Wacom.BambooReportParser).FullName, () => new Vendors.Wacom.BambooReportParser() },
+            { typeof(Vendors.Wacom.IntuosV2ReportParser).FullName, () => new Vendors.Wacom.IntuosV2ReportParser() },
+            { typeof(Vendors.Wacom.IntuosV3ReportParser).FullName, () => new Vendors.Wacom.IntuosV3ReportParser() },
+            { typeof(Vendors.Wacom.WacomDriverIntuosV2ReportParser).FullName, () => new Vendors.Wacom.WacomDriverIntuosV2ReportParser() },
+            { typeof(Vendors.Wacom.WacomDriverIntuosV3ReportParser).FullName, () => new Vendors.Wacom.WacomDriverIntuosV3ReportParser() },
+            { typeof(Vendors.XP_Pen.XP_PenReportParser).FullName, () => new Vendors.XP_Pen.XP_PenReportParser() }
+        };
+
         protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
 
-        protected virtual PluginManager PluginManager { get; } = new PluginManager();
-        
         public bool EnableInput { set; get; }
         public bool InterpolatorActive => Interpolators.Any();
 
@@ -47,11 +59,14 @@ namespace OpenTabletDriver
         {
             private set
             {
-                // Stored locally to avoid re-detecting to switch output modes
-                this.tablet = value;
-                if (OutputMode != null)
-                    OutputMode.Tablet = Tablet;
-                TabletChanged?.Invoke(this, Tablet);
+                if (value != this.tablet)
+                {
+                    // Stored locally to avoid re-detecting to switch output modes
+                    this.tablet = value;
+                    if (OutputMode != null)
+                        OutputMode.Tablet = Tablet;
+                    TabletChanged?.Invoke(this, value);
+                }
             }
             get => this.tablet;
         }
@@ -152,7 +167,14 @@ namespace OpenTabletDriver
         {
             TabletReader?.Dispose();
 
-            Log.Debug("Detect", $"Using device '{tabletDevice.GetFriendlyName()}'.");
+            string friendlyName = "Unnamed Device";
+            try
+            {
+                friendlyName = tabletDevice.GetFriendlyName();
+            }
+            catch { }
+
+            Log.Debug("Detect", $"Using device '{friendlyName}'.");
             Log.Debug("Detect", $"Using report parser type '{reportParser.GetType().FullName}'.");
             Log.Debug("Detect", $"Device path: {tabletDevice.DevicePath}");
 
@@ -173,14 +195,28 @@ namespace OpenTabletDriver
 
             if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
             {
-                Log.Debug("Device", "Setting feature: " + BitConverter.ToString(featureInitReport));
-                TabletReader.ReportStream.SetFeature(featureInitReport);
+                try
+                {
+                    TabletReader.ReportStream.SetFeature(featureInitReport);
+                    Log.Debug("Device", "Set tablet feature: " + BitConverter.ToString(featureInitReport));
+                }
+                catch
+                {
+                    Log.Write("Device", "Failed to set tablet feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
+                }
             }
 
             if (tablet.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
             {
-                Log.Debug("Device", "Setting output: " + BitConverter.ToString(outputInitReport));
-                TabletReader.ReportStream.Write(outputInitReport);
+                try
+                {
+                    TabletReader.ReportStream.Write(outputInitReport);
+                    Log.Debug("Device", "Set tablet output: " + BitConverter.ToString(outputInitReport));
+                }
+                catch
+                {
+                    Log.Write("Device", "Failed to set tablet output: " + BitConverter.ToString(outputInitReport), LogLevel.Warning);
+                }
             }
         }
 
@@ -188,7 +224,14 @@ namespace OpenTabletDriver
         {
             AuxReader?.Dispose();
 
-            Log.Debug("Detect", $"Using auxiliary device '{auxDevice.GetFriendlyName()}'.");
+            string friendlyName = "Unnamed Device";
+            try
+            {
+                friendlyName = auxDevice.GetFriendlyName();
+            }
+            catch { }
+
+            Log.Debug("Detect", $"Using device '{friendlyName}'.");
             Log.Debug("Detect", $"Using auxiliary report parser type '{reportParser.GetType().Name}'.");
             Log.Debug("Detect", $"Device path: {auxDevice.DevicePath}");
 
@@ -210,7 +253,7 @@ namespace OpenTabletDriver
                 }
                 catch
                 {
-                    Log.Write("Device", "Failed to set feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
+                    Log.Write("Device", "Failed to set aux feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
                 }
             }
 
@@ -219,7 +262,7 @@ namespace OpenTabletDriver
                 try
                 {
                     AuxReader.ReportStream.Write(outputInitReport);
-                    Log.Debug("Device", "Set output: " + BitConverter.ToString(outputInitReport));
+                    Log.Debug("Device", "Set aux output: " + BitConverter.ToString(outputInitReport));
                 }
                 catch
                 {
@@ -298,8 +341,7 @@ namespace OpenTabletDriver
 
         protected IReportParser<IDeviceReport> GetReportParser(string parserName) 
         {
-            var parserRef = PluginManager.GetPluginReference(parserName);
-            return parserRef.Construct<IReportParser<IDeviceReport>>();
+            return reportParserDict[parserName].Invoke();
         }
 
         public void Dispose()
@@ -315,7 +357,7 @@ namespace OpenTabletDriver
 
         public virtual void OnReportRecieved(object _, IDeviceReport report)
         {
-            this.ReportRecieved?.Invoke(this, report);
+            this.ReportReceived?.Invoke(this, report);
             if (EnableInput && OutputMode?.Tablet != null)
                 if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
                     HandleReport(report);

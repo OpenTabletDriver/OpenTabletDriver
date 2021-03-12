@@ -29,48 +29,51 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             lock (stateLock)
             {
-                sigEvent = new SigEvent
+                if (!Enabled)
                 {
-                    notify = SigEv.Thread,
-                    thread = new SigEvThread
+                    sigEvent = new SigEvent
                     {
-                        function = Marshal.GetFunctionPointerForDelegate(callbackDelegate),
-                        attribute = IntPtr.Zero
-                    },
-                    value = new SigVal()
-                };
+                        notify = SigEv.Thread,
+                        thread = new SigEvThread
+                        {
+                            function = Marshal.GetFunctionPointerForDelegate(callbackDelegate),
+                            attribute = IntPtr.Zero
+                        },
+                        value = new SigVal()
+                    };
 
-                var createErr = TimerCreate(ClockID.Monotonic, ref sigEvent, out timerID);
-                if (createErr != ERRNO.NONE)
-                {
-                    Log.Write("LinuxTimer", $"Failed creating timer: {(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
-                }
-
-                double interval = Interval * 1000 * 1000;
-
-                timeSpec = new TimerSpec
-                {
-                    interval = new TimeSpec
+                    var createErr = TimerCreate(ClockID.Monotonic, ref sigEvent, out timerID);
+                    if (createErr != ERRNO.NONE)
                     {
-                        sec = 0,
-                        nsec = (long)interval
-                    },
-                    value = new TimeSpec
-                    {
-                        sec = 0,
-                        nsec = 100
+                        Log.Write("LinuxTimer", $"Failed creating timer: {(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                     }
-                };
 
-                var oldTimeSpec = new TimerSpec();
+                    double interval = Interval * 1000 * 1000;
 
-                var setErr = TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, ref oldTimeSpec);
-                if (setErr != ERRNO.NONE)
-                {
-                    Log.Write("LinuxTimer", $"Failed activating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
+                    timeSpec = new TimerSpec
+                    {
+                        interval = new TimeSpec
+                        {
+                            sec = 0,
+                            nsec = (long)interval
+                        },
+                        value = new TimeSpec
+                        {
+                            sec = 0,
+                            nsec = 100
+                        }
+                    };
+
+                    var oldTimeSpec = new TimerSpec();
+
+                    var setErr = TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, ref oldTimeSpec);
+                    if (setErr != ERRNO.NONE)
+                    {
+                        Log.Write("LinuxTimer", $"Failed activating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
+                    }
+
+                    Enabled = true;
                 }
-
-                Enabled = true;
             }
         }
 
@@ -78,34 +81,37 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             lock (stateLock)
             {
-                Enabled = false;
-
-                var timeSpec = new TimerSpec
+                if (Enabled)
                 {
-                    interval = new TimeSpec
+                    Enabled = false;
+
+                    var timeSpec = new TimerSpec
                     {
-                        sec = 0,
-                        nsec = 0
+                        interval = new TimeSpec
+                        {
+                            sec = 0,
+                            nsec = 0
+                        }
+                    };
+
+                    var setErr = TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, IntPtr.Zero);
+                    if (setErr != ERRNO.NONE)
+                    {
+                        Log.Write("LinuxTimer", $"Failed deactivating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                     }
-                };
 
-                var setErr = TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, IntPtr.Zero);
-                if (setErr != ERRNO.NONE)
-                {
-                    Log.Write("LinuxTimer", $"Failed deactivating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
-                }
-
-                var delErr = TimerDelete(timerID);
-                if (delErr != ERRNO.NONE)
-                {
-                    Log.Write("LinuxTimer", $"Failed deleting the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
+                    var delErr = TimerDelete(timerID);
+                    if (delErr != ERRNO.NONE)
+                    {
+                        Log.Write("LinuxTimer", $"Failed deleting the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
+                    }
                 }
             }
         }
 
         private void Callback(SigVal _)
         {
-            Elapsed();
+            Elapsed?.Invoke();
         }
 
         public void Dispose()

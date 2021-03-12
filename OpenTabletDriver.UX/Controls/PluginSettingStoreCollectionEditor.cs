@@ -5,12 +5,11 @@ using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Text;
 using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls
@@ -187,7 +186,7 @@ namespace OpenTabletDriver.UX.Controls
                 { typeof(uint), (a,b) => GetNumericMaskedTextBox<uint>(a,b) },
                 { typeof(long), (a,b) => GetNumericMaskedTextBox<long>(a,b) },
                 { typeof(ulong), (a,b) => GetNumericMaskedTextBox<ulong>(a,b) },
-                { typeof(double), (a,b) => GetNumericMaskedTextBox<double>(a,b) },
+                { typeof(double), (a,b) => BindNumberBox(new DoubleNumberBox(), a, b) },
                 { typeof(DateTime), (a,b) => GetMaskedTextBox<DateTime>(a,b) },
                 { typeof(TimeSpan), (a,b) => GetMaskedTextBox<TimeSpan>(a,b) }
             };
@@ -282,7 +281,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
                 else if (property.PropertyType == typeof(float))
                 {
-                    var tb = GetNumericMaskedTextBox<float>(property, setting);
+                    var tb = BindNumberBox(new FloatNumberBox(), property, setting);
 
                     if (property.GetCustomAttribute<SliderPropertyAttribute>() is SliderPropertyAttribute sliderAttr)
                     {
@@ -351,6 +350,13 @@ namespace OpenTabletDriver.UX.Controls
                 return tb;
             }
 
+            private static MaskedTextBox<T> BindNumberBox<T>(MaskedTextBox<T> textBox, PropertyInfo property, PluginSetting setting)
+            {
+                textBox.Value = GetSetting<T>(property, setting);
+                textBox.ValueChanged += (sender, e) => setting.SetValue(textBox.Value);
+                return textBox;
+            }
+
             private static T GetSetting<T>(PropertyInfo property, PluginSetting setting)
             {
                 if (setting.HasValue)
@@ -363,6 +369,7 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         try
                         {
+                            setting.SetValue(defaults.Value);
                             return (T)defaults.Value;
                         }
                         catch (Exception e)

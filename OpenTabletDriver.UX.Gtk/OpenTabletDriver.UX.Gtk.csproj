@@ -3,12 +3,12 @@
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net5</TargetFrameworks>
-    <VersionPrefix>0.5.0</VersionPrefix>
+    <VersionPrefix>0.5.2.2</VersionPrefix>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.9" />
+    <PackageReference Include="Eto.Platform.Gtk" Version="2.5.10" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">

@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.filters = value;
+                this.filters = value ?? Array.Empty<IFilter>();
                 if (Info.Driver.InterpolatorActive)
                     this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
                 else
@@ -131,7 +131,7 @@ namespace OpenTabletDriver.Plugin.Output
             var pos = new Vector2(report.Position.X, report.Position.Y);
 
             // Pre Filter
-            foreach (IFilter filter in this.preFilters)
+            foreach (IFilter filter in this.preFilters ??= Array.Empty<IFilter>())
                 pos = filter.Filter(pos);
 
             // Apply transformation
@@ -146,7 +146,7 @@ namespace OpenTabletDriver.Plugin.Output
                 pos = clippedPoint;
 
             // Post Filter
-            foreach (IFilter filter in this.postFilters)
+            foreach (IFilter filter in this.postFilters ??= Array.Empty<IFilter>())
                 pos = filter.Filter(pos);
 
             return pos;

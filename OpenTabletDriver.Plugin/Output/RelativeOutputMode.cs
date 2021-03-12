@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Plugin.Output
         {
             set
             {
-                this.filters = value;
+                this.filters = value ?? Array.Empty<IFilter>();
                 if (Info.Driver.InterpolatorActive)
                     this.preFilters = Filters.Where(t => t.FilterStage == FilterStage.PreTranspose).ToList();
                 else
@@ -69,7 +69,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         private void UpdateTransformMatrix()
         {
-            this.skipReport = true;     // Prevents cursor from jumping on sensitivity change
+            this.skipReport = true; // Prevents cursor from jumping on sensitivity change
 
             this.transformationMatrix = Matrix3x2.CreateRotation(
                 (float)(-Rotation * System.Math.PI / 180));
@@ -87,6 +87,9 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 if (Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
+                    if (Pointer is IVirtualTablet pressureHandler)
+                        pressureHandler.SetPressure((float)tabletReport.Pressure / (float)Tablet.Digitizer.MaxPressure);
+
                     if (Transpose(tabletReport) is Vector2 position)
                         Pointer.Translate(position);
                 }
@@ -100,13 +103,13 @@ namespace OpenTabletDriver.Plugin.Output
             var pos = report.Position;
 
             // Pre Filter
-            foreach (IFilter filter in this.preFilters)
+            foreach (IFilter filter in this.preFilters ??= Array.Empty<IFilter>())
                 pos = filter.Filter(pos);
 
             pos = Vector2.Transform(pos, this.transformationMatrix);
 
             // Post Filter
-            foreach (IFilter filter in this.postFilters)
+            foreach (IFilter filter in this.postFilters ??= Array.Empty<IFilter>())
                 pos = filter.Filter(pos);
 
             var delta = pos - this.lastPos;

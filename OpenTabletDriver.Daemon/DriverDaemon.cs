@@ -6,7 +6,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using HidSharp;
-using OpenTabletDriver.Debugging;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
@@ -15,6 +14,7 @@ using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
@@ -33,7 +33,17 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.TabletChanged += (sender, tablet) => TabletChanged?.Invoke(sender, tablet);
+            Driver.TabletChanged += (sender, tablet) =>
+            {
+                TabletChanged?.Invoke(sender, tablet);
+                if (debugging)
+                {
+                    if (Driver.TabletReader != null)
+                        Driver.TabletReader.Report += DebugReportHandler;
+                    if (Driver.AuxReader != null)
+                        Driver.AuxReader.Report += DebugReportHandler;
+                }
+            };
             Driver.DevicesChanged += async (sender, args) =>
             {
                 if (await GetTablet() == null && args.Additions.Count() > 0)
@@ -57,24 +67,39 @@ namespace OpenTabletDriver.Daemon
             }
 
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
-            if (Settings == null && settingsFile.Exists)
+
+            if (settingsFile.Exists)
             {
                 var settings = Settings.Deserialize(settingsFile);
-                await SetSettings(settings);
+                if (settings != null)
+                {
+                    await SetSettings(settings);
+                }
+                else
+                {
+                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
+                    settings = Settings.Default;
+                    Settings.Recover(settingsFile, settings);
+                    Log.Write("Settings", "Recovery complete");
+                    await SetSettings(settings);
+                }
             }
             else
+            {
                 await ResetSettings();
+            }
         }
 
         public event EventHandler<LogMessage> Message;
-        public event EventHandler<DebugTabletReport> TabletReport;
-        public event EventHandler<DebugAuxReport> AuxReport;
+        public event EventHandler<RpcData> DeviceReport;
         public event EventHandler<TabletState> TabletChanged;
 
         public DesktopDriver Driver { private set; get; } = new DesktopDriver();
         private Settings Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+
+        private bool debugging;
 
         public Task WriteMessage(LogMessage message)
         {
@@ -88,6 +113,9 @@ namespace OpenTabletDriver.Daemon
             if (pluginDir.Exists)
             {
                 AppInfo.PluginManager.Load();
+                // Migrate if settings is available to avoid invalid settings
+                if (Settings != null)
+                    Settings = SettingsMigrator.Migrate(Settings);
             }
             else
             {
@@ -139,8 +167,33 @@ namespace OpenTabletDriver.Daemon
             return null;
         }
 
-        public Task SetSettings(Settings settings)
+        public async Task SetSettings(Settings settings)
         {
+            // Dispose all interpolators to begin changing settings
+            foreach (var interpolator in Driver.Interpolators)
+                interpolator.Dispose();
+            Driver.Interpolators.Clear();
+            
+            // Dispose filters that implement IDisposable interface
+            if (Driver.OutputMode?.Filters != null)
+            {
+                foreach (var filter in Driver.OutputMode.Filters)
+                {
+                    try
+                    {
+                        if (filter is IDisposable disposableFilter)
+                            disposableFilter.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        Log.Write("Plugin", $"Unable to dispose object '{filter.GetType().Name}'", LogLevel.Error);
+                    }
+                }
+            }
+
+            if (settings == null)
+                await ResetSettings();
+
             Settings = SettingsMigrator.Migrate(settings);
 
             var pluginRef = Settings.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
@@ -149,14 +202,14 @@ namespace OpenTabletDriver.Daemon
             if (Driver.OutputMode != null)
                 Log.Write("Settings", $"Output mode: {pluginRef.Name ?? pluginRef.Path}");
 
-            if (Driver.OutputMode is IOutputMode outputMode)
-                SetOutputModeSettings(outputMode);
-
             if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
                 SetAbsoluteModeSettings(absoluteMode);
 
             if (Driver.OutputMode is RelativeOutputMode relativeMode)
                 SetRelativeModeSettings(relativeMode);
+
+            if (Driver.OutputMode is IOutputMode outputMode)
+                SetOutputModeSettings(outputMode);
 
             SetBindingHandlerSettings();
 
@@ -168,49 +221,17 @@ namespace OpenTabletDriver.Daemon
 
             SetToolSettings();
             SetInterpolatorSettings();
-            return Task.CompletedTask;
         }
 
-        public Task ResetSettings()
+        public async Task ResetSettings()
         {
-            var virtualScreen = SystemInterop.VirtualScreen;
-            var tablet = Driver.Tablet?.Digitizer;
-
-            var defaults = new Settings
-            {
-                OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
-                DisplayWidth = virtualScreen.Width,
-                DisplayHeight = virtualScreen.Height,
-                DisplayX = virtualScreen.Width / 2,
-                DisplayY = virtualScreen.Height / 2,
-                TabletWidth = tablet?.Width ?? 0,
-                TabletHeight = tablet?.Height ?? 0,
-                TabletX = tablet?.Width / 2 ?? 0,
-                TabletY = tablet?.Height / 2 ?? 0,
-                AutoHook = true,
-                EnableClipping = true,
-                LockUsableAreaDisplay = true,
-                LockUsableAreaTablet = true,
-                TipButton = new PluginSettingStore(
-                    new MouseBinding
-                    {
-                        Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
-                    }
-                ),
-                TipActivationPressure = 1,
-                PenButtons = new PluginSettingStoreCollection(),
-                AuxButtons = new PluginSettingStoreCollection(),
-                XSensitivity = 10,
-                YSensitivity = 10,
-                RelativeRotation = 0,
-                ResetTime = TimeSpan.FromMilliseconds(100)
-            };
-            SetSettings(defaults);
-            return Task.CompletedTask;
+            await SetSettings(Settings.Default);
         }
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
+            outputMode.Tablet = Driver.Tablet;
+
             var filters = from store in Settings.Filters
                 where store.Enable == true
                 let filter = store.Construct<IFilter>()
@@ -220,8 +241,6 @@ namespace OpenTabletDriver.Daemon
 
             if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
-
-            outputMode.Tablet = Driver.Tablet;
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
@@ -323,10 +342,6 @@ namespace OpenTabletDriver.Daemon
 
         private void SetInterpolatorSettings()
         {
-            foreach (var interpolator in Driver.Interpolators)
-                interpolator.Dispose();
-            Driver.Interpolators.Clear();
-
             foreach (PluginSettingStore store in Settings.Interpolators)
             {
                 if (store.Enable == false)
@@ -341,6 +356,7 @@ namespace OpenTabletDriver.Daemon
                         select filter;
 
                     interpolator.Filters = filters.ToList();
+                    interpolator.Enabled = true;
                     Driver.Interpolators.Add(interpolator);
                     Log.Write("Settings", $"Interpolator: {interpolator}");
                 }
@@ -365,43 +381,38 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
-            void onDeviceReport(object _, IDeviceReport report)
+            if (enabled && !debugging)
             {
-                if (report is ITabletReport tabletReport)
-                    TabletReport?.Invoke(this, new DebugTabletReport(tabletReport));
-                if (report is IAuxReport auxReport)
-                    AuxReport?.Invoke(this, new DebugAuxReport(auxReport));
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report += DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report += DebugReportHandler;
+                debugging = true;
             }
-            if (enabled)
+            else if (!enabled && debugging)
             {
-                Driver.TabletReader.Report += onDeviceReport;
-                Driver.AuxReader.Report += onDeviceReport;
-            }
-            else
-            {
-                Driver.TabletReader.Report -= onDeviceReport;
-                Driver.AuxReader.Report -= onDeviceReport;
+                if (Driver.TabletReader != null)
+                    Driver.TabletReader.Report -= DebugReportHandler;
+                if (Driver.AuxReader != null)
+                    Driver.AuxReader.Report -= DebugReportHandler;
+                debugging = false;
             }
             return Task.CompletedTask;
         }
 
         public Task<string> RequestDeviceString(int index)
         {
-            return Task.FromResult(Driver.TabletReader?.Device?.GetDeviceString(index) ?? null);
+            if (Driver.TabletReader?.Device != null)
+                return Task.FromResult(Driver.TabletReader.Device.GetDeviceString(index));
+            else
+                throw new IOException("Device not found");
         }
 
         public Task<string> RequestDeviceString(int vid, int pid, int index)
         {
-            HidDevice tablet = null;
-            foreach (var device in DeviceList.Local.GetHidDevices(vendorID: vid, productID: pid))
-            {
-                tablet = device;
-                break;
-            }
+            var tablet = DeviceList.Local.GetHidDevices(vendorID: vid, productID: pid).FirstOrDefault();
             if (tablet == null)
-            {
-                throw new Exception("Device not found");
-            }
+                throw new IOException("Device not found");
 
             return Task.FromResult(tablet.GetDeviceString(index));
         }
@@ -410,6 +421,12 @@ namespace OpenTabletDriver.Daemon
         {
             IEnumerable<LogMessage> messages = LogMessages;
             return Task.FromResult(messages);
+        }
+
+        private void DebugReportHandler(object _, IDeviceReport report)
+        {
+            if (report != null)
+                DeviceReport?.Invoke(this, new RpcData(report));
         }
     }
 }

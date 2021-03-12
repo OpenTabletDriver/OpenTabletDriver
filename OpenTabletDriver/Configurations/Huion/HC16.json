@@ -1,0 +1,35 @@
+{
+  "Name": "Huion HC16",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 50800.0,
+      "MaxY": 31750.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T18C_\\d{6}$"
+      },
+      "InitializationStrings": [
+        "200"
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

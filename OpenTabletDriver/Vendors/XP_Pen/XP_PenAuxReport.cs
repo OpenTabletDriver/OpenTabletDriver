@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Vendors.XP_Pen
             }
         }
 
-        public bool[] AuxButtons { private set; get; }
-        public byte[] Raw { private set; get; }
+        public bool[] AuxButtons { set; get; }
+        public byte[] Raw { set; get; }
     }
 }

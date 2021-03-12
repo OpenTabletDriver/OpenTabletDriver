@@ -2,7 +2,7 @@
 	
   <PropertyGroup Label="Project Properties">
     <TargetFrameworks>net5</TargetFrameworks>
-    <VersionPrefix>0.5.0</VersionPrefix>
+    <VersionPrefix>0.5.2.2</VersionPrefix>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Forms" Version="2.5.9" />
+    <PackageReference Include="Eto.Forms" Version="2.5.10" />
   </ItemGroup>
   
   <ItemGroup Label="Project References">
