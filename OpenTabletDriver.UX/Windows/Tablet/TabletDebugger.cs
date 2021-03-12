@@ -194,8 +194,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     graphics.FillEllipse(AccentColor, drawRect);
 
                     float angle = (tabletReport.Pressure / tablet.Digitizer.MaxPressure) * 180;
-                    SolidBrush b = new SolidBrush(AccentColor);
-                    Pen p = new Pen(b, 5);
+                    Pen p = new Pen(AccentColor, 5);
                     graphics.DrawArc(p, graphics.ClipBounds, 0, angle);
                 }
             }
