@@ -67,8 +67,12 @@ namespace OpenTabletDriver.UX.Windows
             metadataViewer.RequestPluginUninstall += async (meta) => await Uninstall(pluginList.SelectedPlugin);
             metadataViewer.RequestPluginInstall += async (meta) => await DownloadAndInstall(meta);
 
+            Closed += (_, _) => IsClosed = true;
+
             _ = Refresh();
         }
+
+        public bool IsClosed { get; private set; }
 
         private static PluginMetadataCollection Repository;
         private readonly PluginDropPanel dropPanel = new PluginDropPanel();

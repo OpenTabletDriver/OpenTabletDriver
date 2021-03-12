@@ -50,6 +50,7 @@ namespace OpenTabletDriver.UX
         private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
         private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
+        private PluginManagerWindow pluginManager;
 
         public void Refresh()
         {
@@ -536,10 +537,13 @@ namespace OpenTabletDriver.UX
             configEditor.Show();
         }
 
-        private void ShowPluginManager()
+        public void ShowPluginManager()
         {
-            var pluginManager = new PluginManagerWindow();
+            if (pluginManager?.IsClosed ?? true)
+                pluginManager = new PluginManagerWindow();
+
             pluginManager.Show();
+            pluginManager.Focus();
         }
 
         private void ShowDeviceStringReader()

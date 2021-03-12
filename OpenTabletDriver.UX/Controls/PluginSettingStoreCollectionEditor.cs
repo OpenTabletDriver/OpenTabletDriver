@@ -110,8 +110,7 @@ namespace OpenTabletDriver.UX.Controls
                             Command = new Command(
                                 (s, e) =>
                                 {
-                                    var pluginManager = new PluginManagerWindow();
-                                    pluginManager.Show();
+                                    (Application.Instance.MainForm as MainForm).ShowPluginManager();
                                 }
                             )
                         },
