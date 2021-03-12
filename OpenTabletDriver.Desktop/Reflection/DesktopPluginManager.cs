@@ -96,10 +96,13 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private async Task ImportTypes(PluginContext context)
         {
-            foreach (var type in context.Assemblies.SelectMany(asm => asm.GetExportedTypes()))
+            await Task.Run(() =>
             {
-                await Add(type);
-            }
+                foreach (var type in context.Assemblies.SelectMany(asm => asm.GetExportedTypes()))
+                {
+                    Add(type);
+                }
+            });
         }
 
         public async Task<bool> InstallPlugin(string filePath)
@@ -203,12 +206,10 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public async Task<bool> RemoveAllTypesForAssembly(Assembly asm)
         {
-            bool ret = false;
-            foreach (var type in asm.GetExportedTypes())
+            return await Task.Run(() =>
             {
-                ret = await Remove(type);
-            }
-            return ret;
+                return asm.GetExportedTypes().All(type => Remove(type));
+            });
         }
     }
 }

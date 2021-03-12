@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.Threading;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
@@ -12,21 +13,18 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         public PluginManager()
         {
-            pluginLoadTask = taskFactory.RunAsync(async () =>
+            Task.Run(() =>
             {
-                await Task.Run(() =>
-                {
-                    pluginTypes = new Dictionary<Type, List<Type>>();
-                    internalImplementations = RetrieveAssemblies();
-                    LoadImplementableTypes();
-                    LoadInternalPluginTypes();
-                });
+                pluginTypes = new ConcurrentDictionary<Type, List<Type>>();
+                internalImplementations = RetrieveAssemblies();
+                LoadImplementableTypes();
+                LoadInternalPluginTypes();
+                waitHandle.Set();
             });
         }
 
-        private readonly JoinableTask pluginLoadTask;
-        private readonly JoinableTaskFactory taskFactory = new JoinableTaskFactory(new JoinableTaskContext());
-        private Dictionary<Type, List<Type>> pluginTypes;
+        private ManualResetEventSlim waitHandle = new ManualResetEventSlim();
+        private ConcurrentDictionary<Type, List<Type>> pluginTypes;
         private Assembly[] internalImplementations;
         private Type[] implementableTypes;
 
@@ -79,43 +77,42 @@ namespace OpenTabletDriver.Desktop.Reflection
             return new PluginReference(this, type.FullName);
         }
 
-        private static void Add(Type implementedType, Type subType, Dictionary<Type, List<Type>> store)
+        private void Add(Type pluginType, Type implementedType)
         {
-            if (!store.TryGetValue(implementedType, out var list))
-            {
-                list = new List<Type>();
-                store.Add(implementedType, list);
-            }
-
-            if (!list.Contains(subType))
-            {
-                list.Add(subType);
-            }
+            pluginTypes.AddOrUpdate(implementedType,
+                (t) => new List<Type>() { pluginType },
+                (t, l) =>
+                {
+                    l.Add(pluginType);
+                    return l;
+                }
+            );
         }
 
-        public async Task Add(Type pluginType)
+        public void Add(Type pluginType)
         {
-            await pluginLoadTask;
+            if (!waitHandle.IsSet)
+                waitHandle.Wait();
 
             foreach (var implementedType in GetImplementedPluginTypes(pluginType))
             {
-                Add(implementedType, pluginType, pluginTypes);
+                Add(pluginType, implementedType);
             }
         }
 
-        public async Task<bool> Remove(Type pluginType)
+        public bool Remove(Type pluginType)
         {
-            await pluginLoadTask;
+            if (!waitHandle.IsSet)
+                waitHandle.Wait();
 
-            bool ret = false;
-            foreach (var implementedType in GetImplementedPluginTypes(pluginType))
+            return GetImplementedPluginTypes(pluginType).All(implementedType =>
             {
                 if (pluginTypes.TryGetValue(implementedType, out var list))
                 {
-                    ret = list.Remove(pluginType);
+                    return list.Remove(pluginType);
                 }
-            }
-            return ret;
+                return false;
+            });
         }
 
         private void LoadImplementableTypes()
@@ -131,7 +128,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 foreach (var implementedType in GetImplementedPluginTypes(subType))
                 {
-                    Add(implementedType, subType, pluginTypes);
+                    Add(subType, implementedType);
                 }
             }
         }
@@ -151,13 +148,6 @@ namespace OpenTabletDriver.Desktop.Reflection
                         yield return implementableType;
                     }
                 }
-            }
-        }
-
-        public class CacheTypeException : Exception
-        {
-            public CacheTypeException(string msg) : base(msg)
-            {
             }
         }
     }
