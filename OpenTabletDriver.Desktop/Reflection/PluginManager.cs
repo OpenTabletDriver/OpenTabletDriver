@@ -28,7 +28,14 @@ namespace OpenTabletDriver.Desktop.Reflection
         private Assembly[] internalImplementations;
         private Type[] implementableTypes;
 
-        public IEnumerable<Type> PluginTypes => pluginTypes.Values.SelectMany(t => t);
+        public IEnumerable<Type> PluginTypes
+        {
+            get
+            {
+                WaitUntilReady();
+                return pluginTypes.Values.SelectMany(t => t);
+            }
+        }
 
         protected virtual Assembly[] RetrieveAssemblies()
         {
@@ -37,6 +44,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public IReadOnlyCollection<Type> GetChildTypes<T>()
         {
+            WaitUntilReady();
             var type = typeof(T);
             if (type.IsGenericType)
                 type = type.GetGenericTypeDefinition();
@@ -46,6 +54,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T ConstructObject<T>(string name, params object[] parameters) where T : class
         {
+            WaitUntilReady();
             if (!string.IsNullOrWhiteSpace(name))
             {
                 var objectType = GetChildTypes<T>().FirstOrDefault(t => t.FullName == name);
@@ -69,12 +78,13 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public PluginReference GetPluginReference(string path)
         {
+            WaitUntilReady();
             return new PluginReference(this, path);
         }
 
         public PluginReference GetPluginReference(Type type)
         {
-            return new PluginReference(this, type.FullName);
+            return GetPluginReference(type.FullName);
         }
 
         private void Add(Type pluginType, Type implementedType)
@@ -91,9 +101,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public void Add(Type pluginType)
         {
-            if (!waitHandle.IsSet)
-                waitHandle.Wait();
-
+            WaitUntilReady();
             foreach (var implementedType in GetImplementedPluginTypes(pluginType))
             {
                 Add(pluginType, implementedType);
@@ -102,9 +110,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public bool Remove(Type pluginType)
         {
-            if (!waitHandle.IsSet)
-                waitHandle.Wait();
-
+            WaitUntilReady();
             return GetImplementedPluginTypes(pluginType).All(implementedType =>
             {
                 if (pluginTypes.TryGetValue(implementedType, out var list))
@@ -149,6 +155,12 @@ namespace OpenTabletDriver.Desktop.Reflection
                     }
                 }
             }
+        }
+
+        private void WaitUntilReady()
+        {
+            if (!waitHandle.IsSet)
+                waitHandle.Wait();
         }
     }
 }
