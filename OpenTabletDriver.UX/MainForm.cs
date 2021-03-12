@@ -382,6 +382,7 @@ namespace OpenTabletDriver.UX
                 Application.Instance.Quit();
             }
 
+            await Driver.Instance.WaitForLoadCompletion();
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
             await AppInfo.PluginManager.Load();
 

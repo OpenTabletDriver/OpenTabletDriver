@@ -16,6 +16,8 @@ namespace OpenTabletDriver.Desktop.Contracts
 
         Task WriteMessage(LogMessage message);
 
+        Task WaitForLoadCompletion();
+
         Task LoadPlugins();
         Task<bool> InstallPlugin(string filePath);
         Task<bool> UninstallPlugin(string friendlyName);
