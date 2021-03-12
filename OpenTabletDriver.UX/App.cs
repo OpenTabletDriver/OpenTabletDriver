@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Reflection;
@@ -15,6 +16,7 @@ namespace OpenTabletDriver.UX
 {
     public static class App
     {
+        public static List<Settings> SettingsStore = new List<Settings>();
         public static void Run(string platform, string[] args)
         {
             var root = new RootCommand("OpenTabletDriver UX")
@@ -34,6 +36,8 @@ namespace OpenTabletDriver.UX
             int code = root.Invoke(args);
             if (code != 0)
                 Environment.Exit(code);
+
+
 
             var app = new Application(platform);
             var mainForm = new MainForm();
