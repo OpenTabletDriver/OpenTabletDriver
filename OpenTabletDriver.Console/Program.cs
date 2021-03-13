@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,7 +15,6 @@ namespace OpenTabletDriver.Console
             {
                 Name = "otd"
             };
-            
             root.AddRange(GenerateSTDIOCommands());  
             root.AddRange(GenerateIOCommands());
             root.AddRange(GenerateActionCommands());
@@ -25,12 +24,8 @@ namespace OpenTabletDriver.Console
             root.AddRange(GenerateListCommands());
             root.AddRange(GenerateScriptingCommands());
 
-
-
             await Driver.Connect();
             await root.InvokeAsync(args);
-
-
         }
 
         
@@ -38,8 +33,6 @@ namespace OpenTabletDriver.Console
         {
             yield return CreateCommand(stdioCommands, "Open with stdio", "stdio");
         }
-
-        
 
         static IEnumerable<Command> GenerateIOCommands()
         {

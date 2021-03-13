@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,36 @@ namespace OpenTabletDriver.Console
 {
     partial class Program
     {
+
+        #region STDIO
+            
+        static async Task stdioCommands()
+        {   
+            String stdiocmd;
+
+            var root = new RootCommand("OpenTabletDriver Console Client")
+            {
+                Name = "otd"
+            };
+            root.AddRange(GenerateIOCommands());
+            root.AddRange(GenerateActionCommands());
+            root.AddRange(GenerateDebugCommands());
+            root.AddRange(GenerateModifyCommands());
+            root.AddRange(GenerateRequestCommands());
+            root.AddRange(GenerateListCommands());
+            root.AddRange(GenerateScriptingCommands());
+
+
+            while(true) {
+                await Out.WriteAsync("$ ");
+                stdiocmd = In.ReadLine();
+                await root.InvokeAsync(stdiocmd);
+            }
+        }
+
+        #endregion
+
+
         #region I/O
             
         static async Task LoadSettings(FileInfo file)
