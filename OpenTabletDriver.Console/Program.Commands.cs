@@ -41,7 +41,6 @@ namespace OpenTabletDriver.Console
 
 
             while(true) {
-                await Out.WriteAsync("$ ");
                 stdiocmd = In.ReadLine();
                 await root.InvokeAsync(stdiocmd);
             }
