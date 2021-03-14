@@ -20,13 +20,10 @@ namespace OpenTabletDriver.Console
 {
     partial class Program
     {
-
         #region STDIO
             
         static async Task stdioCommands()
         {   
-            String stdiocmd;
-
             var root = new RootCommand("OpenTabletDriver Console Client")
             {
                 Name = "otd"
@@ -38,17 +35,15 @@ namespace OpenTabletDriver.Console
             root.AddRange(GenerateRequestCommands());
             root.AddRange(GenerateListCommands());
             root.AddRange(GenerateScriptingCommands());
-
-
+            
             while(true) {
-                stdiocmd = In.ReadLine();
+                string stdiocmd = await In.ReadLineAsync();
                 await root.InvokeAsync(stdiocmd);
             }
         }
 
         #endregion
-
-
+        
         #region I/O
             
         static async Task LoadSettings(FileInfo file)
