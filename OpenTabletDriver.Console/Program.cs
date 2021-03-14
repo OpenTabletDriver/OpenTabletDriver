@@ -27,7 +27,6 @@ namespace OpenTabletDriver.Console
             await Driver.Connect();
             await root.InvokeAsync(args);
         }
-
         
         static IEnumerable<Command> GenerateSTDIOCommands()
         {
