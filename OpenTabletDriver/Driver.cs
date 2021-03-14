@@ -20,11 +20,15 @@ namespace OpenTabletDriver
         {
             Info.GetDriverInstance = () => this;
 
-            DeviceList.Local.Changed += (sender, e) => 
+            DeviceList.Local.Changed += (sender, e) =>
             {
                 var newList = DeviceList.Local.GetHidDevices();
-                DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(CurrentDevices, newList));
-                CurrentDevices = newList;
+                var changes = new DevicesChangedEventArgs(CurrentDevices, newList);
+                if (changes.Any())
+                {
+                    DevicesChanged?.Invoke(this, changes);
+                    CurrentDevices = newList;
+                }
             };
         }
         
