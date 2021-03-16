@@ -21,7 +21,7 @@
         "FeatureInitReport": null,
         "OutputInitReport": null,
         "DeviceStrings": {
-          "201": "OEM02_T19m_200114"
+          "201": "OEM02_T19m_\\d{6}$"
         },
         "InitializationStrings": [
           200
