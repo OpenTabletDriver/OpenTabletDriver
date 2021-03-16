@@ -50,7 +50,8 @@ namespace OpenTabletDriver
             { typeof(Vendors.Wacom.IntuosV3ReportParser).FullName, () => new Vendors.Wacom.IntuosV3ReportParser() },
             { typeof(Vendors.Wacom.WacomDriverIntuosV2ReportParser).FullName, () => new Vendors.Wacom.WacomDriverIntuosV2ReportParser() },
             { typeof(Vendors.Wacom.WacomDriverIntuosV3ReportParser).FullName, () => new Vendors.Wacom.WacomDriverIntuosV3ReportParser() },
-            { typeof(Vendors.XP_Pen.XP_PenReportParser).FullName, () => new Vendors.XP_Pen.XP_PenReportParser() }
+            { typeof(Vendors.XP_Pen.XP_PenReportParser).FullName, () => new Vendors.XP_Pen.XP_PenReportParser() },
+            { typeof(Vendors.XP_Pen.XP_PenTiltReportParser).FullName, () => new Vendors.XP_Pen.XP_PenTiltReportParser() }
         };
 
         protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();

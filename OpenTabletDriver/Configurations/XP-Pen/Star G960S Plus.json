@@ -1,0 +1,30 @@
+{
+  "Name": "XP-Pen Star G960S Plus",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 228.8,
+      "Height": 152.6,
+      "MaxX": 22860.0,
+      "MaxY": 15240.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 2328,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenTiltReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
