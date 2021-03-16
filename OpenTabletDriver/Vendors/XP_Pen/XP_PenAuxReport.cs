@@ -8,18 +8,17 @@ namespace OpenTabletDriver.Vendors.XP_Pen
         {
             Raw = report;
             var ReportID = (uint)report[1] >> 1;
-            var ButtonInt = (uint)report[2];
             AuxButtons = new bool[6];
             if (ReportID == 120) 
             {
                 AuxButtons = new bool[] 
                 {
-                    ButtonInt == 1,
-                    ButtonInt == 2,
-                    ButtonInt == 4,
-                    ButtonInt == 8,
-                    ButtonInt == 16,
-                    ButtonInt == 32
+                    (report[2] & (1 << 0)) != 0,
+                    (report[2] & (1 << 1)) != 0,
+                    (report[2] & (1 << 2)) != 0,
+                    (report[2] & (1 << 3)) != 0,
+                    (report[2] & (1 << 4)) != 0,
+                    (report[2] & (1 << 5)) != 0
                 };
             }
         }
