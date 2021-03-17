@@ -56,7 +56,6 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 
         public virtual void FinalizeConfiguration()
         {
-
         }
 
         protected void HandleReport(object _, IDeviceReport report)
