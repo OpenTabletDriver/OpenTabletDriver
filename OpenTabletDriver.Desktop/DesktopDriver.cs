@@ -13,9 +13,9 @@ namespace OpenTabletDriver.Desktop
             BindingHandler.HandleBinding(Tablet, report);
         }
 
-        protected override IReportParser<IDeviceReport> GetReportParser(string parserName)
+        protected override IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
-            var pluginRef = AppInfo.PluginManager.GetPluginReference(parserName);
+            var pluginRef = AppInfo.PluginManager.GetPluginReference(identifier.ReportParser);
             return pluginRef.Construct<IReportParser<IDeviceReport>>();
         }
 
