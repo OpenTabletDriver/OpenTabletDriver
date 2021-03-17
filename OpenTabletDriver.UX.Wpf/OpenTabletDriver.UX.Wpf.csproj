@@ -3,7 +3,7 @@
   <PropertyGroup Label="Project Properties">
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net5-windows</TargetFrameworks>
-    <VersionPrefix>0.5.2.2</VersionPrefix>
+    <VersionPrefix>0.5.2.3</VersionPrefix>
     <ApplicationIcon>../OpenTabletDriver.UX/Assets/otd.ico</ApplicationIcon>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
