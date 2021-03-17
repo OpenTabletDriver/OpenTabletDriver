@@ -9,6 +9,9 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
+    /// <summary>
+    /// An absolutely positioned output mode.
+    /// </summary>
     [PluginIgnore]
     public abstract class AbsoluteOutputMode : IOutputMode
     {
@@ -43,6 +46,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         private Area outputArea, inputArea;
 
+        /// <summary>
+        /// The area in which the tablet's input is transformed to.
+        /// </summary>
         public Area Input
         {
             set
@@ -53,6 +59,9 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.inputArea;
         }
 
+        /// <summary>
+        /// The area in which the final processed output is transformed to.
+        /// </summary>
         public Area Output
         {
             set
@@ -63,9 +72,26 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.outputArea;
         }
 
+        /// <summary>
+        /// The class in which the final absolute positioned output is handled.
+        /// </summary>
         public abstract IAbsolutePointer Pointer { get; }
 
+        /// <summary>
+        /// Whether to clip all tablet inputs to the assigned areas.
+        /// </summary>
+        /// <remarks>
+        /// If false, input outside of the area can escape the assigned areas, but still will be transformed.
+        /// If true, input outside of the area will be clipped to the edges of the assigned areas.
+        /// </remarks>
         public bool AreaClipping { set; get; }
+
+        /// <summary>
+        /// Whether to stop accepting input outside of the assigned areas.
+        /// </summary>
+        /// <remarks>
+        /// If true, <see cref="AreaClipping"/> is automatically implied true.
+        /// </remarks>
         public bool AreaLimiting { set; get; }
 
         protected void UpdateTransformMatrix()
@@ -126,6 +152,11 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
+        /// <summary>
+        /// Transposes, transforms, and performs all absolute positioning calculations to a <see cref="ITabletReport"/>.
+        /// </summary>
+        /// <param name="report">The <see cref="ITabletReport"/> in which to transform.</param>
+        /// <returns>The transformed <see cref="Vector2"/> from the <see cref="ITabletReport"/>.</returns>
         public Vector2? Transpose(ITabletReport report)
         {
             var pos = new Vector2(report.Position.X, report.Position.Y);

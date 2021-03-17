@@ -9,6 +9,9 @@ using OpenTabletDriver.Plugin.Timing;
 
 namespace OpenTabletDriver.Plugin.Output
 {
+    /// <summary>
+    /// A relatively positioned output mode.
+    /// </summary>
     [PluginIgnore]
     public abstract class RelativeOutputMode : IOutputMode
     {
@@ -32,6 +35,9 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.filters;
         }
 
+        /// <summary>
+        /// The class in which the final relative positioned output is handled.
+        /// </summary>
         public abstract IRelativePointer Pointer { get; }
 
         private TabletState tablet;
@@ -46,6 +52,13 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private Vector2 sensitivity;
+
+        /// <summary>
+        /// The sensitivity vector in which input will be transformed.
+        /// <remarks>
+        /// This sensitivity is in mm/px.
+        /// </remarks>
+        /// </summary>
         public Vector2 Sensitivity
         {
             set
@@ -57,6 +70,10 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private float rotation;
+
+        /// <summary>
+        /// The angle of rotation to be applied to the input.
+        /// </summary>
         public float Rotation
         {
             set
@@ -79,6 +96,9 @@ namespace OpenTabletDriver.Plugin.Output
                 sensitivity.Y * ((Tablet?.Digitizer?.Height / Tablet?.Digitizer?.MaxY) ?? 0.01f));
         }
 
+        /// <summary>
+        /// The delay in which to reset the last known position in relative positioning.
+        /// </summary>
         public TimeSpan ResetTime { set; get; }
 
         public virtual void Read(IDeviceReport report)
