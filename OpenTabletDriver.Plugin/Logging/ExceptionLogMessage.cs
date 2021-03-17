@@ -7,6 +7,9 @@ namespace OpenTabletDriver.Plugin.Logging
             StackTrace = stackTrace;
         }
 
+        /// <summary>
+        /// The stack trace of the exception to be passed along in the log message
+        /// </summary>
         public string StackTrace { private set; get; }
     }
 }
