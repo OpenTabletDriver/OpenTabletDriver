@@ -239,7 +239,10 @@ namespace OpenTabletDriver.Daemon
                 select filter;
             outputMode.Filters = filters.ToList();
 
-            if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
+            foreach (var filter in outputMode.Filters)
+                filter.FinalizeConfiguration();
+
+            if (outputMode.Filters != null && outputMode.Filters.Count > 0)
                 Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
         }
 
@@ -355,7 +358,13 @@ namespace OpenTabletDriver.Daemon
                         where filter.FilterStage == FilterStage.PreInterpolate
                         select filter;
 
-                    interpolator.Filters = filters.ToList();
+                    var filterList = filters.ToList();
+                    foreach (var filter in filterList)
+                        filter.FinalizeConfiguration();
+
+                    interpolator.Filters = filterList;
+                    interpolator.FinalizeConfiguration();
+
                     interpolator.Enabled = true;
                     Driver.Interpolators.Add(interpolator);
                     Log.Write("Settings", $"Interpolator: {interpolator}");

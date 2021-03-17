@@ -54,6 +54,11 @@ namespace OpenTabletDriver.Plugin.Tablet.Interpolator
 
         public IList<IFilter> Filters { get; set; }
 
+        public virtual void FinalizeConfiguration()
+        {
+
+        }
+
         protected void HandleReport(object _, IDeviceReport report)
         {
             if (report is ITabletReport tabletReport && !(report is ISyntheticReport))
