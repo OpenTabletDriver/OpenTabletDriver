@@ -1,6 +1,5 @@
 using System;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin

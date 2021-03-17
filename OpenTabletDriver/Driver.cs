@@ -344,7 +344,7 @@ namespace OpenTabletDriver
             return true;
         }
 
-        protected IReportParser<IDeviceReport> GetReportParser(string parserName) 
+        protected virtual IReportParser<IDeviceReport> GetReportParser(string parserName) 
         {
             return reportParserDict[parserName].Invoke();
         }
