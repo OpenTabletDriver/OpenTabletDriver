@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 
 namespace OpenTabletDriver.Plugin
@@ -17,24 +16,29 @@ namespace OpenTabletDriver.Plugin
             Rotation = rotation;
         }
 
+        /// <summary>
+        /// The width of the area.
+        /// </summary>
         public float Width { set; get; } = 0;
+
+        /// <summary>
+        /// The height of the area.
+        /// </summary>
         public float Height { set; get; } = 0;
+
+        /// <summary>
+        /// The center offset of the area.
+        /// </summary>
+        /// <remarks>
+        /// This is also the rotation point of the area.
+        /// </remarks>
         public Vector2 Position { set; get; } = new Vector2();
+
+        /// <summary>
+        /// The rotation angle of the area.
+        /// </summary>
         public float Rotation { set; get; } = 0;
 
-        public float[] GetRotationMatrix()
-        {
-            var angle = -Rotation * (Math.PI / 180);
-            return new float[4]
-            {
-                (float)Math.Cos(angle),
-                (float)-Math.Sin(angle),
-                (float)Math.Sin(angle),
-                (float)Math.Cos(angle)
-            };
-        }
-
         public override string ToString() => $"[{Width}x{Height}@{Position}:{Rotation}°],";
-        public static implicit operator string(Area area) => area.ToString();
     }
 }

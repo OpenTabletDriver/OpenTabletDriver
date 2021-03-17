@@ -13,6 +13,12 @@ namespace OpenTabletDriver.Desktop
             BindingHandler.HandleBinding(Tablet, report);
         }
 
-        public IVirtualScreen VirtualScreen => SystemInterop.VirtualScreen;
+        protected override IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
+        {
+            var pluginRef = AppInfo.PluginManager.GetPluginReference(identifier.ReportParser);
+            return pluginRef.Construct<IReportParser<IDeviceReport>>();
+        }
+
+        IVirtualScreen IVirtualDisplayDriver.VirtualScreen => SystemInterop.VirtualScreen;
     }
 }

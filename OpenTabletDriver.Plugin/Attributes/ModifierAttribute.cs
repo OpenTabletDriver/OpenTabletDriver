@@ -2,7 +2,10 @@ using System;
 
 namespace OpenTabletDriver.Plugin.Attributes
 {
-    public class ModifierAttribute : Attribute
+    /// <summary>
+    /// Base attribute class for attributes which provide extra information to a property.
+    /// </summary>
+    public abstract class ModifierAttribute : Attribute
     {
     }
 }

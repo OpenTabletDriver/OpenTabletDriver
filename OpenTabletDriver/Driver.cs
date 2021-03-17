@@ -123,7 +123,7 @@ namespace OpenTabletDriver
                     // Try every matching device until we initialize successfully
                     try
                     {
-                        var parser = GetReportParser(identifier.ReportParser) ?? new TabletReportParser();
+                        var parser = GetReportParser(identifier) ?? new TabletReportParser();
                         InitializeDigitizerDevice(dev, identifier, parser);
                         digitizerIdentifier = identifier;
                         return true;
@@ -153,7 +153,7 @@ namespace OpenTabletDriver
                     // Try every matching device until we initialize successfully
                     try
                     {
-                        var parser = GetReportParser(identifier.ReportParser) ?? new AuxReportParser();
+                        var parser = GetReportParser(identifier) ?? new AuxReportParser();
                         InitializeAuxDevice(dev, identifier, parser);
                         auxIdentifier = identifier;
                         return true;
@@ -276,18 +276,40 @@ namespace OpenTabletDriver
             }
         }
 
+        /// <summary>
+        /// Retrieve and construct the the report parser for an identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier to retrieve the report parser path from.</param>
+        protected virtual IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier) 
+        {
+            return reportParserDict[identifier.ReportParser].Invoke();
+        }
+
+        private void OnReportRecieved(object _, IDeviceReport report)
+        {
+            this.ReportReceived?.Invoke(this, report);
+            if (EnableInput && OutputMode?.Tablet != null)
+                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
+                    HandleReport(report);
+        }
+
+        public virtual void HandleReport(IDeviceReport report)
+        {
+            OutputMode.Read(report);
+        }
+
         private IEnumerable<HidDevice> FindMatchingDigitizer(DeviceIdentifier identifier, Dictionary<string, string> attributes)
         {
             return from device in FindMatches(identifier)
-                   where DigitizerMatchesAttribute(device, attributes)
-                   select device;
+                where DigitizerMatchesAttribute(device, attributes)
+                select device;
         }
 
         private IEnumerable<HidDevice> FindMatchingAuxiliary(DeviceIdentifier identifier, Dictionary<string, string> attributes)
         {
             return from device in FindMatches(identifier)
-                   where AuxMatchesAttribute(device, attributes)
-                   select device;
+                where AuxMatchesAttribute(device, attributes)
+                select device;
         }
 
         private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
@@ -344,33 +366,15 @@ namespace OpenTabletDriver
             return true;
         }
 
-        protected IReportParser<IDeviceReport> GetReportParser(string parserName) 
-        {
-            return reportParserDict[parserName].Invoke();
-        }
-
         public void Dispose()
         {
-            TabletReader.Dispose();
+            TabletReader?.Dispose();
             TabletReader.Report -= OnReportRecieved;
             TabletReader = null;
             
-            AuxReader.Dispose();
+            AuxReader?.Dispose();
             AuxReader.Report -= OnReportRecieved;
             AuxReader = null;
-        }
-
-        public virtual void OnReportRecieved(object _, IDeviceReport report)
-        {
-            this.ReportReceived?.Invoke(this, report);
-            if (EnableInput && OutputMode?.Tablet != null)
-                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
-                    HandleReport(report);
-        }
-
-        public virtual void HandleReport(IDeviceReport report)
-        {
-            OutputMode.Read(report);
         }
     }
 }
