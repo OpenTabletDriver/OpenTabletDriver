@@ -13,7 +13,20 @@ namespace OpenTabletDriver.UX.Controls.Area
     {
         public AreaViewModel ViewModel
         {
-            set => this.DataContext = value;
+            set
+            {
+                this.DataContext = value;
+                this.ViewModel.PropertyChanged += (viewModelBase, args) =>
+                {
+                    if (!mouseDragging && !clamping)
+                    {
+                        var viewModel = (AreaViewModel)viewModelBase;
+                        clamping = true;
+                        ClampArea(viewModel, viewModel.X, viewModel.Y);
+                        clamping = false;
+                    }
+                };
+            }
             get => (AreaViewModel)this.DataContext;
         }
 
@@ -32,6 +45,7 @@ namespace OpenTabletDriver.UX.Controls.Area
         private readonly Color AreaBoundsFillColor = SystemColors.ControlBackground;
 
         private bool mouseDragging;
+        private bool clamping;
         private PointF? lastMouseLocation;
 
         private RectangleF BackgroundRect => ViewModel.FullBackground;
@@ -111,34 +125,12 @@ namespace OpenTabletDriver.UX.Controls.Area
                 if (lastMouseLocation != null)
                 {
                     var delta = e.Location - lastMouseLocation.Value;
-                    var newX = ViewModel.X + delta.X / PixelScale;
-                    var newY = ViewModel.Y + delta.Y / PixelScale;
 
-                    if (ViewModel.LockToUsableArea)
-                    {
-                        var bounds = ViewModel.FullBackground;
-                        var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(ViewModel.Width, ViewModel.Height));
-
-                        var corners = new PointF[]
-                        {
-                            PointF.Rotate(rect.TopLeft, ViewModel.Rotation),
-                            PointF.Rotate(rect.TopRight, ViewModel.Rotation),
-                            PointF.Rotate(rect.BottomRight, ViewModel.Rotation),
-                            PointF.Rotate(rect.BottomLeft, ViewModel.Rotation)
-                        };
-                        var pseudoArea = new RectangleF(
-                            PointF.Min(corners[0], PointF.Min(corners[1], PointF.Min(corners[2], corners[3]))),
-                            PointF.Max(corners[0], PointF.Max(corners[1], PointF.Max(corners[2], corners[3])))
-                        );
-                        pseudoArea.Center += new PointF(newX, newY);
-
-                        var correction = OutOfBoundsAmount(bounds, pseudoArea);
-                        newX -= correction.X;
-                        newY -= correction.Y;
-                    }
-
-                    ViewModel.X = newX;
-                    ViewModel.Y = newY;
+                    ClampArea(
+                        ViewModel,
+                        ViewModel.X + delta.X / PixelScale,
+                        ViewModel.Y + delta.Y / PixelScale
+                    );
                 }
                 lastMouseLocation = e.Location;
             }
@@ -292,6 +284,35 @@ namespace OpenTabletDriver.UX.Controls.Area
                 X = Math.Max(rect.Right - bounds.Right - 1, 0) + Math.Min(rect.Left - bounds.Left, 0),
                 Y = Math.Max(rect.Bottom - bounds.Bottom - 1, 0) + Math.Min(rect.Top - bounds.Top, 0)
             };
+        }
+
+        private static void ClampArea(AreaViewModel viewModel, float X, float Y)
+        {
+            if (viewModel.LockToUsableArea)
+            {
+                var bounds = viewModel.FullBackground;
+                var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(viewModel.Width, viewModel.Height));
+
+                var corners = new PointF[]
+                {
+                            PointF.Rotate(rect.TopLeft, viewModel.Rotation),
+                            PointF.Rotate(rect.TopRight, viewModel.Rotation),
+                            PointF.Rotate(rect.BottomRight, viewModel.Rotation),
+                            PointF.Rotate(rect.BottomLeft, viewModel.Rotation)
+                };
+                var pseudoArea = new RectangleF(
+                    PointF.Min(corners[0], PointF.Min(corners[1], PointF.Min(corners[2], corners[3]))),
+                    PointF.Max(corners[0], PointF.Max(corners[1], PointF.Max(corners[2], corners[3])))
+                );
+                pseudoArea.Center += new PointF(X, Y);
+
+                var correction = OutOfBoundsAmount(bounds, pseudoArea);
+                X -= correction.X;
+                Y -= correction.Y;
+            }
+
+            viewModel.X = X;
+            viewModel.Y = Y;
         }
     }
 }
