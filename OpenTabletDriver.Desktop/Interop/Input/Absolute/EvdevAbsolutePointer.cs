@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevAbsolutePointer : EvdevVirtualMouse, IAbsolutePointer
+    public class EvdevAbsolutePointer : EvdevVirtualMouse, IPointer
     {
         public unsafe EvdevAbsolutePointer()
         {
@@ -50,7 +50,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             }
         }
 
-        public void SetPosition(Vector2 pos)
+        public void HandlePoint(Vector2 pos)
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)pos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)pos.Y);

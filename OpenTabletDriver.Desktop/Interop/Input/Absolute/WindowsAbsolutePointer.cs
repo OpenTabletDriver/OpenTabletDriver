@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static Windows;
 
-    public class WindowsAbsolutePointer : WindowsVirtualMouse, IAbsolutePointer
+    public class WindowsAbsolutePointer : WindowsVirtualMouse, IPointer
     {
         static WindowsAbsolutePointer()
         {
@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         private static System.Threading.Timer timer;
         private static Vector2 ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
 
-        public void SetPosition(Vector2 pos)
+        public void HandlePoint(Vector2 pos)
         {
             var virtualDesktopCoords = pos / ScreenToVirtualDesktop;
 

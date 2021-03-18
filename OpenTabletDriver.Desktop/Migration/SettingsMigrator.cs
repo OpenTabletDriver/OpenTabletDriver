@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Desktop.Migration
             settings.TipButton = SafeMigrateNamespace(settings.TipButton, Settings.Default.TipButton);
 
             settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
-            settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
+            settings.AsyncFilters = SafeMigrateCollection(settings.AsyncFilters).Trim();
             settings.PenButtons = SafeMigrateCollection(settings.PenButtons).SetExpectedCount(Settings.PenButtonCount);
             settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons).SetExpectedCount(Settings.AuxButtonCount);
 

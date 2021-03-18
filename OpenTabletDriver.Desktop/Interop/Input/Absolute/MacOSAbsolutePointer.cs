@@ -8,9 +8,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static OSX;
 
-    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
+    public class MacOSAbsolutePointer : MacOSVirtualMouse, IPointer
     {
-        public void SetPosition(Vector2 pos)
+        public void HandlePoint(Vector2 pos)
         {
             var newPos = new CGPoint(pos.X, pos.Y) - offset;
             var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, moveEvent, newPos, pressedButtons);

@@ -7,11 +7,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static Windows;
 
-    public class WindowsRelativePointer : Input.WindowsVirtualMouse, IRelativePointer
+    public class WindowsRelativePointer : Input.WindowsVirtualMouse, IPointer
     {
         private Vector2 error;
 
-        public void Translate(Vector2 delta)
+        public void HandlePoint(Vector2 delta)
         {
             delta += error;
             error = new Vector2(delta.X % 1, delta.Y % 1);

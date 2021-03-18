@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
@@ -58,21 +56,6 @@ namespace OpenTabletDriver.Console
                 s.TabletY = y;
                 s.TabletRotation = rotation;
             });
-        }
-
-        static async Task SetSensitivity(float xSens, float ySens, float rotation = 0)
-        {
-            await ModifySettings(s => 
-            {
-                s.XSensitivity = xSens;
-                s.YSensitivity = ySens;
-                s.RelativeRotation = rotation;
-            });
-        }
-
-        static async Task SetResetTime(int ms)
-        {
-            await ModifySettings(s => s.ResetTime = TimeSpan.FromMilliseconds(ms));
         }
 
         static async Task SetTipBinding(string name, string property, float threshold)
@@ -177,7 +160,6 @@ namespace OpenTabletDriver.Console
         static async Task GetAllSettings()
         {
             await GetAreas();
-            await GetSensitivity();
             await GetBindings();
             await GetMiscSettings();
             await GetOutputMode();
@@ -212,15 +194,6 @@ namespace OpenTabletDriver.Console
                 Rotation = settings.TabletRotation
             };
             await Out.WriteLineAsync($"Tablet area: {tabletArea}");
-        }
-
-        static async Task GetSensitivity()
-        {
-            var settings = await GetSettings();
-            await Out.WriteLineAsync($"Horizontal Sensitivity: {settings.XSensitivity}px/mm");
-            await Out.WriteLineAsync($"Vertical Sensitivity: {settings.YSensitivity}px/mm");
-            await Out.WriteLineAsync($"Relative mode rotation: {settings.RelativeRotation}degrees");
-            await Out.WriteLineAsync($"Reset time: {settings.ResetTime}");
         }
 
         static async Task GetBindings()

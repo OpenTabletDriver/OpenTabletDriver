@@ -1,4 +1,3 @@
-using System;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -7,22 +6,11 @@ using OpenTabletDriver.UX.Controls.Utilities;
 
 namespace OpenTabletDriver.UX.Controls.Area
 {
-    public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
+    public partial class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
     {
-        public AreaViewModel ViewModel
+        public AreaEditor(AreaViewModel viewModel)
         {
-            set => this.DataContext = value;
-            get => (AreaViewModel)this.DataContext;
-        }
-
-        private MaskedTextBox<float> width, height, x, y, rotation;
-        private BooleanCommand lockToUsableArea;
-
-        protected AreaDisplay Display { set; get; }
-
-        protected override void OnLoadComplete(EventArgs e)
-        {
-            base.OnLoadComplete(e);
+            ViewModel = viewModel;
 
             StackLayout settingsPanel;
 
@@ -38,10 +26,7 @@ namespace OpenTabletDriver.UX.Controls.Area
                         Control = new Panel
                         {
                             Padding = new Padding(5),
-                            Content = this.Display ??= new AreaDisplay
-                            {
-                                ViewModel = this.ViewModel
-                            }
+                            Content = this.Display ??= new AreaDisplay(this.ViewModel)
                         }
                     },
                     new StackLayoutItem
@@ -228,6 +213,17 @@ namespace OpenTabletDriver.UX.Controls.Area
             BindAllToDataContext();
         }
 
+        public AreaViewModel ViewModel
+        {
+            private set => this.DataContext = value;
+            get => (AreaViewModel)this.DataContext;
+        }
+
+        private MaskedTextBox<float> width, height, x, y, rotation;
+        private BooleanCommand lockToUsableArea;
+
+        protected AreaDisplay Display { set; get; }
+
         public void BindAllToDataContext()
         {
             width?.ValueBinding.BindDataContext<AreaViewModel>(m => m.Width);
@@ -249,41 +245,6 @@ namespace OpenTabletDriver.UX.Controls.Area
                     this.ContextMenu.Show(this);
                     break;
                 }
-            }
-        }
-
-        private class UnitGroup : Group
-        {
-            public string Unit
-            {
-                set => unitLabel.Text = value;
-                get => unitLabel.Text;
-            }
-
-            private Label unitLabel = new Label();
-
-            private Control content;
-            public new Control Content
-            {
-                set
-                {
-                    this.content = value;
-                    base.Content = new StackLayout
-                    {
-                        Spacing = 5,
-                        Orientation = Orientation.Horizontal,
-                        Items =
-                        {
-                            new StackLayoutItem(this.Content, true),
-                            new StackLayoutItem
-                            {
-                                VerticalAlignment = VerticalAlignment.Center,
-                                Control = this.unitLabel
-                            }
-                        }
-                    };
-                }
-                get => this.content;
             }
         }
     }

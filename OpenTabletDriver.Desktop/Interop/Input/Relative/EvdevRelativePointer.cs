@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
-    public class EvdevRelativePointer : Interop.EvdevVirtualMouse, IVirtualMouse, IRelativePointer
+    public class EvdevRelativePointer : EvdevVirtualMouse, IVirtualMouse, IPointer
     {
         public unsafe EvdevRelativePointer()
         {
@@ -40,7 +40,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
         private Vector2 error;
 
-        public void Translate(Vector2 delta)
+        public void HandlePoint(Vector2 delta)
         {
             delta += error;
             error = new Vector2(delta.X % 1, delta.Y % 1);

@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IPointer, IPressureHandler
     {
         private const int Max = 1 << 28;
         private Vector2 ScreenScale = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height);
@@ -66,7 +66,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         private const int MaxPressure = ushort.MaxValue;
 
-        public void SetPosition(Vector2 pos)
+        public void HandlePoint(Vector2 pos)
         {
             var newPos = pos / ScreenScale * Max;
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)newPos.X);

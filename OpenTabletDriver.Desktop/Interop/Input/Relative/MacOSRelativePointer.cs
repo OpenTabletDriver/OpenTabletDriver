@@ -8,9 +8,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static OSX;
     
-    public class MacOSRelativePointer : Input.MacOSVirtualMouse, IRelativePointer
+    public class MacOSRelativePointer : MacOSVirtualMouse, IPointer
     {
-        public void Translate(Vector2 delta)
+        public void HandlePoint(Vector2 delta)
         {
             var lastPos = base.GetPosition();
             var newPos = lastPos + delta;

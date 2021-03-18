@@ -18,8 +18,8 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Output.Async;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -169,47 +169,23 @@ namespace OpenTabletDriver.Daemon
 
         public async Task SetSettings(Settings settings)
         {
-            // Dispose all interpolators to begin changing settings
-            foreach (var interpolator in Driver.Interpolators)
-                interpolator.Dispose();
-            Driver.Interpolators.Clear();
-            
-            // Dispose filters that implement IDisposable interface
-            if (Driver.OutputMode?.Filters != null)
-            {
-                foreach (var filter in Driver.OutputMode.Filters)
-                {
-                    try
-                    {
-                        if (filter is IDisposable disposableFilter)
-                            disposableFilter.Dispose();
-                    }
-                    catch (Exception)
-                    {
-                        Log.Write("Plugin", $"Unable to dispose object '{filter.GetType().Name}'", LogLevel.Error);
-                    }
-                }
-            }
+            // Dispose output mode to begin changing settings
+            if (Driver.OutputMode != null)
+                Driver.OutputMode.Dispose();
 
             if (settings == null)
                 await ResetSettings();
 
             Settings = SettingsMigrator.Migrate(settings);
 
-            var pluginRef = Settings.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
+            var pluginRef = Settings.OutputMode?.GetPluginReference();
             Driver.OutputMode = pluginRef.Construct<IOutputMode>();
 
             if (Driver.OutputMode != null)
+            {
                 Log.Write("Settings", $"Output mode: {pluginRef.Name ?? pluginRef.Path}");
-
-            if (Driver.OutputMode is AbsoluteOutputMode absoluteMode)
-                SetAbsoluteModeSettings(absoluteMode);
-
-            if (Driver.OutputMode is RelativeOutputMode relativeMode)
-                SetRelativeModeSettings(relativeMode);
-
-            if (Driver.OutputMode is IOutputMode outputMode)
-                SetOutputModeSettings(outputMode);
+                SetOutputModeSettings(Driver.OutputMode);
+            }
 
             SetBindingHandlerSettings();
 
@@ -220,7 +196,6 @@ namespace OpenTabletDriver.Daemon
             }
 
             SetToolSettings();
-            SetInterpolatorSettings();
         }
 
         public async Task ResetSettings()
@@ -230,22 +205,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeSettings(IOutputMode outputMode)
         {
-            outputMode.Tablet = Driver.Tablet;
-
-            var filters = from store in Settings.Filters
-                where store.Enable == true
-                let filter = store.Construct<IFilter>()
-                where filter != null
-                select filter;
-            outputMode.Filters = filters.ToList();
-
-            if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
-                Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
-        }
-
-        private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
-        {
-            absoluteMode.Output = new Area
+            var config = outputMode.Config;
+            config.Output = new Area
             {
                 Width = Settings.DisplayWidth,
                 Height = Settings.DisplayHeight,
@@ -255,9 +216,9 @@ namespace OpenTabletDriver.Daemon
                     Y = Settings.DisplayY
                 }
             };
-            Log.Write("Settings", $"Display area: {absoluteMode.Output}");
+            Log.Write("Settings", $"Display area: {config.Output}");
 
-            absoluteMode.Input = new Area
+            config.Input = new Area
             {
                 Width = Settings.TabletWidth,
                 Height = Settings.TabletHeight,
@@ -268,25 +229,41 @@ namespace OpenTabletDriver.Daemon
                 },
                 Rotation = Settings.TabletRotation
             };
-            Log.Write("Settings", $"Tablet area: {absoluteMode.Input}");
+            Log.Write("Settings", $"Tablet area: {config.Input}");
 
-            absoluteMode.AreaClipping = Settings.EnableClipping;
-            Log.Write("Settings", $"Clipping: {(absoluteMode.AreaClipping ? "Enabled" : "Disabled")}");
+            config.AreaClipping = Settings.EnableClipping;
+            Log.Write("Settings", $"Clipping: {(config.AreaClipping ? "Enabled" : "Disabled")}");
 
-            absoluteMode.AreaLimiting = Settings.EnableAreaLimiting;
-            Log.Write("Settings", $"Ignoring reports outside area: {(absoluteMode.AreaLimiting ? "Enabled" : "Disabled")}");
+            config.AreaLimiting = Settings.EnableAreaLimiting;
+            Log.Write("Settings", $"Ignoring reports outside area: {(config.AreaLimiting ? "Enabled" : "Disabled")}");
+
+            outputMode.Tablet = Driver.Tablet;
+
+            SetFilterSettings(outputMode);
         }
 
-        private void SetRelativeModeSettings(RelativeOutputMode relativeMode)
+        private void SetFilterSettings(IOutputMode outputMode)
         {
-            relativeMode.Sensitivity = new Vector2(Settings.XSensitivity, Settings.YSensitivity);
-            Log.Write("Settings", $"Relative Mode Sensitivity (X, Y): {relativeMode.Sensitivity}");
+            var filters = Settings.Filters.Where(s => s.Enable)
+                .Select(s => s.Construct<IFilter>())
+                .Where(filter => filter != null)
+                .ToArray();
 
-            relativeMode.Rotation = Settings.RelativeRotation;
-            Log.Write("Settings", $"Relative Mode Rotation: {relativeMode.Rotation}");
+            var syncFilters = filters.Where(f =>
+                f.FilterStage == FilterStage.PreTranspose ||
+                f.FilterStage == FilterStage.PostTranspose);
 
-            relativeMode.ResetTime = Settings.ResetTime;
-            Log.Write("Settings", $"Reset time: {relativeMode.ResetTime}");
+            var preAsyncFilters = filters.Where(f => f.FilterStage == FilterStage.PreAsync);
+
+            if (Settings.AsyncFrequency == 0)
+                syncFilters = syncFilters.Concat(preAsyncFilters);
+            else
+                SetAsyncHandlerSettings(outputMode, preAsyncFilters.ToArray());
+
+            outputMode.Filters = syncFilters.ToArray();
+
+            if (outputMode.Filters != null && outputMode.Filters.Length > 0)
+                Log.Write("Settings", $"Filters: {string.Join(", ", (object[])outputMode.Filters)}");
         }
 
         private void SetBindingHandlerSettings()
@@ -340,27 +317,21 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetInterpolatorSettings()
+        private void SetAsyncHandlerSettings(IOutputMode outputMode, IFilter[] preAsyncFilters)
         {
-            foreach (PluginSettingStore store in Settings.Interpolators)
+            var asyncFilterStore = Settings.AsyncFilters.FirstOrDefault(s => s.Enable);
+            var asyncFilter = asyncFilterStore?.Construct<IAsyncFilter>() ?? new NoopAsyncFilter();
+
+            Log.Write("Settings", $"Async Filter: {asyncFilter}");
+
+            outputMode.AsyncHandler = new AsyncFilterHandler(SystemInterop.Timer)
             {
-                if (store.Enable == false)
-                    continue;
+                PreAsyncFilters = preAsyncFilters,
+                AsyncFilter = asyncFilter,
+                Frequency = Settings.AsyncFrequency
+            };
 
-                if (store.Construct<Interpolator>(SystemInterop.Timer) is Interpolator interpolator)
-                {
-                    var filters = from filterStore in Settings?.Filters
-                        let filter = filterStore.Construct<IFilter>()
-                        where filter != null
-                        where filter.FilterStage == FilterStage.PreInterpolate
-                        select filter;
-
-                    interpolator.Filters = filters.ToList();
-                    interpolator.Enabled = true;
-                    Driver.Interpolators.Add(interpolator);
-                    Log.Write("Settings", $"Interpolator: {interpolator}");
-                }
-            }
+            outputMode.AsyncHandler.Enabled = true;
         }
 
         public Task<Settings> GetSettings()

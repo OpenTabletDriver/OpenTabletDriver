@@ -47,11 +47,9 @@ namespace OpenTabletDriver.Console
         {
             yield return CreateCommand<float, float, float, float>(SetDisplayArea, "Sets the display area");
             yield return CreateCommand<float, float, float, float, float>(SetTabletArea, "Sets the tablet area");
-            yield return CreateCommand<float, float, float>(SetSensitivity, "Sets the relative sensitivity");
             yield return CreateCommand<string, string, float>(SetTipBinding, "Sets the current tip binding");
             yield return CreateCommand<string, string, int>(SetPenBinding, "Sets the current pen button bindings");
             yield return CreateCommand<string, string, int>(SetAuxBinding, "Sets the current express key bindings");
-            yield return CreateCommand<int>(SetResetTime, "Sets the reset time in milliseconds");
             yield return CreateCommand<bool>(SetAutoHook, "Sets whether the driver should automatically enable on start");
             yield return CreateCommand<bool>(SetEnableClipping, "Sets whether inputs should be limited to the specified areas");
             yield return CreateCommand<bool>(SetEnableAreaLimiting, "Sets whether inputs outside of the tablet area should be ignored");
@@ -63,7 +61,6 @@ namespace OpenTabletDriver.Console
             yield return CreateCommand(GetCurrentLog, "Gets the current log", "log");
             yield return CreateCommand(GetAllSettings, "Gets all current settings");
             yield return CreateCommand(GetAreas, "Gets the current display and tablet area");
-            yield return CreateCommand(GetSensitivity, "Gets the current relative sensitivity");
             yield return CreateCommand(GetBindings, "Gets all current bindings");
             yield return CreateCommand(GetMiscSettings, "Gets other uncategorized settings");
             yield return CreateCommand(GetOutputMode, "Gets the current output mode");

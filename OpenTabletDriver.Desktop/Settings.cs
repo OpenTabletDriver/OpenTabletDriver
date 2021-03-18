@@ -18,8 +18,7 @@ namespace OpenTabletDriver.Desktop
         internal const int PenButtonCount = 2;
         internal const int AuxButtonCount = 8;
 
-        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
-        private TimeSpan _rT;
+        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _tP, _asyncFrequency;
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;
         private PluginSettingStore _outputMode, _tipButton;
 
@@ -27,7 +26,7 @@ namespace OpenTabletDriver.Desktop
             _penButtons = new PluginSettingStoreCollection(),
             _auxButtons = new PluginSettingStoreCollection(),
             _tools = new PluginSettingStoreCollection(),
-            _interpolators = new PluginSettingStoreCollection();
+            _asyncFilters = new PluginSettingStoreCollection();
 
         #region General Settings
 
@@ -68,7 +67,7 @@ namespace OpenTabletDriver.Desktop
 
         #endregion
 
-        #region Absolute Mode Settings
+        #region Output Mode Settings
 
         [JsonProperty("DisplayWidth")]
         public float DisplayWidth
@@ -189,38 +188,6 @@ namespace OpenTabletDriver.Desktop
 
         #endregion
 
-        #region Relative Mode Settings
-
-        [JsonProperty("XSensitivity")]
-        public float XSensitivity
-        {
-            set => RaiseAndSetIfChanged(ref _xS, value);
-            get => _xS;
-        }
-
-        [JsonProperty("YSensitivity")]
-        public float YSensitivity
-        {
-            set => RaiseAndSetIfChanged(ref _yS, value);
-            get => _yS;
-        }
-
-        [JsonProperty("RelativeRotation")]
-        public float RelativeRotation
-        {
-            set => RaiseAndSetIfChanged(ref _relRot, value);
-            get => _relRot;
-        }
-
-        [JsonProperty("RelativeResetDelay")]
-        public TimeSpan ResetTime
-        {
-            set => RaiseAndSetIfChanged(ref _rT, value);
-            get => _rT;
-        }
-
-        #endregion
-
         #region Bindings
 
         [JsonProperty("TipActivationPressure")]
@@ -258,11 +225,18 @@ namespace OpenTabletDriver.Desktop
             get => _tools;
         }
 
-        [JsonProperty("Interpolators")]
-        public PluginSettingStoreCollection Interpolators
+        [JsonProperty("AsyncFilters")]
+        public PluginSettingStoreCollection AsyncFilters
         {
-            set => RaiseAndSetIfChanged(ref _interpolators, value);
-            get => _interpolators;
+            set => RaiseAndSetIfChanged(ref _asyncFilters, value);
+            get => _asyncFilters;
+        }
+
+        [JsonProperty("AsyncFrequency")]
+        public float AsyncFrequency
+        {
+            set => RaiseAndSetIfChanged(ref _asyncFrequency, value);
+            get => _asyncFrequency;
         }
 
         #endregion
@@ -354,11 +328,7 @@ namespace OpenTabletDriver.Desktop
                     ),
                     TipActivationPressure = 1,
                     PenButtons = new PluginSettingStoreCollection(),
-                    AuxButtons = new PluginSettingStoreCollection(),
-                    XSensitivity = 10,
-                    YSensitivity = 10,
-                    RelativeRotation = 0,
-                    ResetTime = TimeSpan.FromMilliseconds(100)
+                    AuxButtons = new PluginSettingStoreCollection()
                 };
             }
         }

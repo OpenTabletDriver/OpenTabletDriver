@@ -54,8 +54,8 @@ namespace OpenTabletDriver.Desktop.Interop
             }
         }
 
-        public static IAbsolutePointer AbsolutePointer => _absolutePointer.Value;
-        public static IRelativePointer RelativePointer => _relativePointer.Value;
+        public static IPointer AbsolutePointer => _absolutePointer.Value;
+        public static IPointer RelativePointer => _relativePointer.Value;
         public static IVirtualKeyboard VirtualKeyboard => _virtualKeyboard.Value;
         public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
 
@@ -66,7 +66,7 @@ namespace OpenTabletDriver.Desktop.Interop
             _                      => new FallbackTimer()
         };
 
-        private static Lazy<IAbsolutePointer> _absolutePointer = new Lazy<IAbsolutePointer>(() => CurrentPlatform switch
+        private static Lazy<IPointer> _absolutePointer = new Lazy<IPointer>(() => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsAbsolutePointer(),
             PluginPlatform.Linux   => new EvdevAbsolutePointer(),
@@ -74,7 +74,7 @@ namespace OpenTabletDriver.Desktop.Interop
             _                      => null
         });
 
-        private static Lazy<IRelativePointer> _relativePointer = new Lazy<IRelativePointer>(() => CurrentPlatform switch
+        private static Lazy<IPointer> _relativePointer = new Lazy<IPointer>(() => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsRelativePointer(),
             PluginPlatform.Linux   => new EvdevRelativePointer(),

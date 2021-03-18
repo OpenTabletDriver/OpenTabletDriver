@@ -2,8 +2,8 @@ using System.Numerics;
 
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
-    public interface IRelativePointer
+    public interface IPointer
     {
-        void Translate(Vector2 delta);
+        void HandlePoint(Vector2 pos);
     }
 }

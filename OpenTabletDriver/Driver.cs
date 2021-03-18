@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HidSharp;
@@ -9,7 +8,6 @@ using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
@@ -31,7 +29,7 @@ namespace OpenTabletDriver
                 }
             };
         }
-        
+
         public event EventHandler<bool> Reading;
         public event EventHandler<IDeviceReport> ReportReceived;
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
@@ -57,8 +55,6 @@ namespace OpenTabletDriver
         protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
 
         public bool EnableInput { set; get; }
-        public bool InterpolatorActive => Interpolators.Any();
-
         private TabletState tablet;
         public TabletState Tablet
         {
@@ -80,8 +76,6 @@ namespace OpenTabletDriver
         
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
-
-        public Collection<Interpolator> Interpolators { set; get; } = new Collection<Interpolator>();
 
         public bool TryMatch(TabletConfiguration config)
         {
@@ -285,12 +279,11 @@ namespace OpenTabletDriver
             return reportParserDict[identifier.ReportParser].Invoke();
         }
 
-        private void OnReportRecieved(object _, IDeviceReport report)
+        public void OnReportRecieved(object _, IDeviceReport report)
         {
             this.ReportReceived?.Invoke(this, report);
             if (EnableInput && OutputMode?.Tablet != null)
-                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
-                    HandleReport(report);
+                HandleReport(report);
         }
 
         public virtual void HandleReport(IDeviceReport report)

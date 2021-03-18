@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Binding
@@ -10,17 +9,12 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName("Mouse Button Binding")]
     public class MouseBinding : IBinding, IValidateBinding
     {
-        private IVirtualMouse pointer => Info.Driver.OutputMode switch
-        {
-            IPointerOutputMode<IRelativePointer> outputMode => outputMode.Pointer as IVirtualMouse,
-            IPointerOutputMode<IAbsolutePointer> outputMode => outputMode.Pointer as IVirtualMouse,
-            _ => null
-        };
-        
+        private IVirtualMouse pointer => Info.Driver.OutputMode.Pointer as IVirtualMouse;
+
         [Property("Property")]
         public string Property { set; get; }
-        
-        public Action Press 
+
+        public Action Press
         {
             get 
             {

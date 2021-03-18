@@ -7,9 +7,10 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Output.Async;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
@@ -49,14 +50,14 @@ namespace OpenTabletDriver.UX
         private BindingEditor bindingEditor;
         private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
-        private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
+        private PluginSettingStoreCollectionEditor<IAsyncFilter> asyncFilterEditor;
 
         public void Refresh()
         {
-            bindingEditor = new BindingEditor();
+            bindingEditor.UpdateBindings();
             filterEditor.UpdateStore(Settings?.Filters);
             toolEditor.UpdateStore(Settings?.Tools);
-            interpolatorEditor.UpdateStore(Settings?.Interpolators);
+            asyncFilterEditor.UpdateStore(Settings?.AsyncFilters);
             outputModeEditor.Refresh();
         }
 
@@ -176,6 +177,13 @@ namespace OpenTabletDriver.UX
         private Control ConstructMainControls()
         {
             // Main Content
+            var asyncFreqBox = new NumericMaskedTextBox<float>
+            {
+                DataContext = App.Settings,
+                ToolTip = "Set Frequency from 0hz to 1000hz. Setting Frequency to 0 disables asynchronous input."
+            };
+            asyncFreqBox.ValueBinding.BindDataContext<Settings>(s => s.AsyncFrequency);
+
             var tabControl = new TabControl
             {
                 Pages =
@@ -201,20 +209,26 @@ namespace OpenTabletDriver.UX
                     },
                     new TabPage
                     {
+                        Text = "Async Filters",
+                        Padding = 5,
+                        Content = asyncFilterEditor = new PluginSettingStoreCollectionEditor<IAsyncFilter>(
+                            Settings?.AsyncFilters,
+                            "Async Filter",
+                            new UnitGroup
+                            {
+                                Text = "Frequency",
+                                Unit = "hz",
+                                Content = asyncFreqBox
+                            }
+                        )
+                    },
+                    new TabPage
+                    {
                         Text = "Tools",
                         Padding = 5,
                         Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
                             Settings?.Tools,
                             "Tool"
-                        )
-                    },
-                    new TabPage
-                    {
-                        Text = "Interpolators",
-                        Padding = 5,
-                        Content = interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
-                            Settings?.Interpolators,
-                            "Interpolator"
                         )
                     },
                     new TabPage
@@ -230,7 +244,7 @@ namespace OpenTabletDriver.UX
             {
                 filterEditor.UpdateStore(Settings?.Filters);
                 toolEditor.UpdateStore(Settings?.Tools);
-                interpolatorEditor.UpdateStore(Settings?.Interpolators);
+                asyncFilterEditor.UpdateStore(Settings?.AsyncFilters);
             };
 
             var commandsPanel = new StackLayout

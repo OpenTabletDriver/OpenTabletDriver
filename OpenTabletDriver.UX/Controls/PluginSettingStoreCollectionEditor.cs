@@ -18,11 +18,34 @@ namespace OpenTabletDriver.UX.Controls
     {
         public PluginSettingStoreCollectionEditor(
             PluginSettingStoreCollection store,
-            string friendlyName = null
+            string friendlyName = null,
+            Control extraControl = null
         )
         {
             this.baseControl.Panel1 = new Scrollable { Content = sourceSelector };
-            this.baseControl.Panel2 = new Scrollable { Content = settingStoreEditor };
+            this.extraControl = extraControl;
+
+            if (extraControl == null)
+            {
+                this.baseControl.Panel2 = new Scrollable { Content = settingStoreEditor };
+            }
+            else
+            {
+                this.baseControl.Panel2 = new StackLayout
+                {
+                    Orientation = Orientation.Vertical,
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Items =
+                    {
+                        new StackLayoutItem(new Scrollable { Content = settingStoreEditor }, true),
+                        new Panel
+                        {
+                            Content = extraControl,
+                            Padding = 5
+                        }
+                    }
+                };
+            }
 
             sourceSelector.SelectedSourceChanged += (sender, reference) => UpdateSelectedStore(reference);
             this.FriendlyTypeName = friendlyName;
@@ -31,6 +54,7 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         private readonly string FriendlyTypeName;
+        private Control extraControl;
 
         public WeakReference<PluginSettingStoreCollection> CollectionReference { protected set; get; }
 
@@ -44,7 +68,7 @@ namespace OpenTabletDriver.UX.Controls
             
             if (sourceSelector.Plugins.Count == 0)
             {
-                this.Content = new PluginSettingStoreEmptyPlaceholder(FriendlyTypeName);
+                this.Content = new PluginSettingStoreEmptyPlaceholder(FriendlyTypeName, extraControl);
             }
             else
             {
@@ -83,7 +107,7 @@ namespace OpenTabletDriver.UX.Controls
 
         private class PluginSettingStoreEmptyPlaceholder : StackView
         {
-            public PluginSettingStoreEmptyPlaceholder(string friendlyName)
+            public PluginSettingStoreEmptyPlaceholder(string friendlyName, Control extraControl)
             {
                 string pluginTypeName = string.IsNullOrWhiteSpace(friendlyName) ? typeof(TSource).Name : $"{friendlyName.ToLower()}s";
                 base.Items.Add(new StackLayoutItem(null, true));
@@ -119,6 +143,11 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 );
                 base.Items.Add(new StackLayoutItem(null, true));
+
+                if (extraControl != null)
+                {
+                    base.Items.Add(new StackLayoutItem(extraControl));
+                }
             }
         }
 
@@ -138,7 +167,9 @@ namespace OpenTabletDriver.UX.Controls
             public void Refresh()
             {
                 var items = from type in AppInfo.PluginManager.GetChildTypes<TSource>()
-                    select new PluginReference(AppInfo.PluginManager, type);
+                    let a = new PluginReference(AppInfo.PluginManager, type)
+                    where a.GetTypeReference().GetCustomAttribute<HideFromEditorAttribute>() == null
+                    select a;
 
                 Plugins = items.ToList();
 

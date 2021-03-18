@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
+using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Plugin.Tablet.Interpolator
+namespace OpenTabletDriver.Plugin.Output.Interpolator
 {
     public class SyntheticTabletReport : ITabletReport, ISyntheticReport
     {
