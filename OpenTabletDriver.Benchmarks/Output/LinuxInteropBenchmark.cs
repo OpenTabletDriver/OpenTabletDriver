@@ -13,13 +13,13 @@ namespace OpenTabletDriver.Benchmarks.Output
         [Benchmark]
         public void EvdevAbsolute()
         {
-            absolutePointer.SetPosition(Vector2.Zero);
+            absolutePointer.HandlePoint(Vector2.Zero);
         }
 
         [Benchmark]
         public void EvdevRelative()
         {
-            relativePointer.Translate(Vector2.Zero);
+            relativePointer.HandlePoint(Vector2.Zero);
         }
     }
 }

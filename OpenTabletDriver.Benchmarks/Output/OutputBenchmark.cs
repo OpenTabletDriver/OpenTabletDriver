@@ -27,27 +27,29 @@ namespace OpenTabletDriver.Benchmarks.Output
 
             OutputMode.Tablet = new TabletState(null, digitizer, null);
 
-            OutputMode.Output = new Area
+            OutputMode.Config = new OutputModeConfig
             {
-                Width = settings.DisplayWidth,
-                Height = settings.DisplayHeight,
-                Position = new Vector2
+                Output = new Area
                 {
-                    X = settings.DisplayX,
-                    Y = settings.DisplayY
-                }
-            };
-
-            OutputMode.Input = new Area
-            {
-                Width = settings.TabletWidth,
-                Height = settings.TabletHeight,
-                Position = new Vector2
-                {
-                    X = settings.TabletX,
-                    Y = settings.TabletY
+                    Width = settings.DisplayWidth,
+                    Height = settings.DisplayHeight,
+                    Position = new Vector2
+                    {
+                        X = settings.DisplayX,
+                        Y = settings.DisplayY
+                    }
                 },
-                Rotation = settings.TabletRotation
+                Input = new Area
+                {
+                    Width = settings.TabletWidth,
+                    Height = settings.TabletHeight,
+                    Position = new Vector2
+                    {
+                        X = settings.TabletX,
+                        Y = settings.TabletY
+                    },
+                    Rotation = settings.TabletRotation
+                }
             };
 
             var data = new byte[8];

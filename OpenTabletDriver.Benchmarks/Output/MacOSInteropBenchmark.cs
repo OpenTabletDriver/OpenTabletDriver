@@ -13,13 +13,13 @@ namespace OpenTabletDriver.Benchmarks.Output
         [Benchmark]
         public void CoreGraphicsAbsolute()
         {
-            absolutePointer.SetPosition(Vector2.Zero);
+            absolutePointer.HandlePoint(Vector2.Zero);
         }
 
         [Benchmark]
         public void CoreGraphicsRelative()
         {
-            relativePointer.Translate(Vector2.Zero);
+            relativePointer.HandlePoint(Vector2.Zero);
         }
     }
 }
