@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HidSharp;
@@ -99,6 +100,12 @@ namespace OpenTabletDriver
                     Tablet = new TabletState(config, digitizer, aux);
                     return true;
                 }
+            }
+            catch (IOException iex) when (iex.Message.Contains("Unable to open HID class device"))
+            {
+                Log.Write("DeviceUnathorizedAccessException",
+                    "Current user don't have the permissions to open device streams."
+                    + "To fix this issue, please follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#the-driver-fails-to-open-the-tablet-deviceioexception", LogLevel.Error);
             }
             catch (Exception ex)
             {
