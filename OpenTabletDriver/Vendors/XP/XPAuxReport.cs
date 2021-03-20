@@ -1,11 +1,11 @@
 using System.Collections.Specialized;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Vendors.XP_Pen
+namespace OpenTabletDriver.Vendors.XP
 {
-    public struct XP_PenAuxReport : IAuxReport
+    public struct XPAuxReport : IAuxReport
     {
-        public XP_PenAuxReport(byte[] report)
+        public XPAuxReport(byte[] report)
         {
             Raw = report;
 

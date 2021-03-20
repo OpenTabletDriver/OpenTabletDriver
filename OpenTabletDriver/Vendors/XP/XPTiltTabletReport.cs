@@ -3,11 +3,11 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Vendors.XP_Pen
+namespace OpenTabletDriver.Vendors.XP
 {
-    public struct XP_PenTiltTabletReport : ITabletReport, ITiltReport, IEraserReport
+    public struct XPTiltTabletReport : ITabletReport, ITiltReport, IEraserReport
     {
-        internal XP_PenTiltTabletReport(byte[] report)
+        internal XPTiltTabletReport(byte[] report)
         {
             Raw = report;
 
