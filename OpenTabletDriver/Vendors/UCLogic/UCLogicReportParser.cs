@@ -1,5 +1,5 @@
-using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.UCLogic
 {
@@ -7,11 +7,7 @@ namespace OpenTabletDriver.Vendors.UCLogic
     {
         public IDeviceReport Parse(byte[] data)
         {
-            var isAuxReport = ((data[1] & (1 << 5)) != 0) & ((data[1] & (1 << 6)) != 0);
-            if (isAuxReport)
-                return new UCLogicAuxReport(data);
-            else
-                return new TabletReport(data);
+            return (data[1] & 0xc0) == 0xc0 ? new UCLogicAuxReport(data) : new TabletReport(data);
         }
     }
 }
