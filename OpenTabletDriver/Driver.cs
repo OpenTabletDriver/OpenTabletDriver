@@ -101,16 +101,25 @@ namespace OpenTabletDriver
                     return true;
                 }
             }
-            catch (IOException iex) when (iex.Message.Contains("Unable to open HID class device"))
+            catch (IOException iex) when (iex.Message.Contains("Unable to open HID class device")
+                && SystemInterop.CurrentPlatform == PluginPlatform.Linux)
             {
                 Log.Write("DeviceUnathorizedAccessException",
-                    "Current user don't have the permissions to open device streams."
+                    "Current user don't have the permissions to open device streams. "
                     + "To fix this issue, please follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#the-driver-fails-to-open-the-tablet-deviceioexception", LogLevel.Error);
+            }
+            catch (ArgumentOutOfRangeException aex) when (aex.Message.Contains("Value range is [0, 15]")
+                && SystemInterop.CurrentPlatform == PluginPlatform.Linux)
+            {
+                Log.Write("DeviceInUseException",
+                    "Device is currently in use by another kernel module. "
+                    + "To fix this issue, please follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#argumentoutofrangeexception-value-0-15", LogLevel.Error);
             }
             catch (Exception ex)
             {
                 Log.Exception(ex);
             }
+
             Tablet = null;
             return false;
         }
