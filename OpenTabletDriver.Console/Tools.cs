@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.CommandLine;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Console
 {
-    public static class Tools
+    public static class Extensions
     {
         public static void AddRange(this Command command, IEnumerable<Symbol> symbols)
         {
@@ -14,7 +13,7 @@ namespace OpenTabletDriver.Console
                 command.Add(sym);
         }
 
-        public static string GetFormattedBinding(PluginSettingStore store)
+        public static string GetFormattedBinding(this PluginSettingStore store)
         {
             var pluginRef = store.GetPluginReference();
             var binding = pluginRef.Construct<IBinding>();
@@ -22,11 +21,11 @@ namespace OpenTabletDriver.Console
             return $"{pluginRef.Name}: {binding.Property}";
         }
 
-        public static IEnumerable<string> GetFormattedBindings(PluginSettingStoreCollection bindings)
+        public static IEnumerable<string> GetFormattedBindings(this PluginSettingStoreCollection bindings)
         {
             for (int i = 0; i < bindings.Count; i++)
             {
-                var str = GetFormattedBinding(bindings[i]);
+                var str = bindings[i].GetFormattedBinding();
                 yield return $"[{i}, {str}]";
             }
         }

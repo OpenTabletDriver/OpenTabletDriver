@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
@@ -22,13 +20,13 @@ namespace OpenTabletDriver.Console
     {
         #region I/O
 
-        static async Task LoadSettings(FileInfo file)
+        private static async Task LoadSettings(FileInfo file)
         {
             var settings = Settings.Deserialize(file);
             await ApplySettings(settings);
         }
 
-        static async Task SaveSettings(FileInfo file)
+        private static async Task SaveSettings(FileInfo file)
         {
             var settings = await GetSettings();
             settings.Serialize(file);
@@ -38,7 +36,7 @@ namespace OpenTabletDriver.Console
 
         #region Modify Settings
 
-        static async Task SetDisplayArea(float width, float height, float x, float y)
+        private static async Task SetDisplayArea(float width, float height, float x, float y)
         {
             await ModifySettings(s =>
             {
@@ -49,7 +47,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetTabletArea(float width, float height, float x, float y, float rotation = 0)
+        private static async Task SetTabletArea(float width, float height, float x, float y, float rotation = 0)
         {
             await ModifySettings(s =>
             {
@@ -61,7 +59,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetSensitivity(float xSens, float ySens, float rotation = 0)
+        private static async Task SetSensitivity(float xSens, float ySens, float rotation = 0)
         {
             await ModifySettings(s =>
             {
@@ -71,12 +69,12 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetResetTime(int ms)
+        private static async Task SetResetTime(int ms)
         {
             await ModifySettings(s => s.ResetTime = TimeSpan.FromMilliseconds(ms));
         }
 
-        static async Task SetTipBinding(string name, string property, float threshold)
+        private static async Task SetTipBinding(string name, string property, float threshold)
         {
             await ModifySettings(s =>
             {
@@ -88,7 +86,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetPenBinding(string name, string property, int index)
+        private static async Task SetPenBinding(string name, string property, int index)
         {
             await ModifySettings(s =>
             {
@@ -99,7 +97,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetAuxBinding(string name, string property, int index)
+        private static async Task SetAuxBinding(string name, string property, int index)
         {
             await ModifySettings(s =>
             {
@@ -110,32 +108,32 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetAutoHook(bool isEnabled)
+        private static async Task SetAutoHook(bool isEnabled)
         {
             await ModifySettings(s => s.AutoHook = isEnabled);
         }
 
-        static async Task SetEnableClipping(bool isEnabled)
+        private static async Task SetEnableClipping(bool isEnabled)
         {
             await ModifySettings(s => s.EnableClipping = isEnabled);
         }
 
-        static async Task SetEnableAreaLimiting(bool isEnabled)
+        private static async Task SetEnableAreaLimiting(bool isEnabled)
         {
             await ModifySettings(s => s.EnableAreaLimiting = isEnabled);
         }
 
-        static async Task SetLockAspectRatio(bool isEnabled)
+        private static async Task SetLockAspectRatio(bool isEnabled)
         {
             await ModifySettings(s => s.LockAspectRatio = isEnabled);
         }
 
-        static async Task SetOutputMode(string mode)
+        private static async Task SetOutputMode(string mode)
         {
             await ModifySettings(s => s.OutputMode = new PluginSettingStore(mode));
         }
 
-        static async Task SetFilters(IEnumerable<string> filters)
+        private static async Task SetFilters(IEnumerable<string> filters)
         {
             await ModifySettings(s =>
             {
@@ -147,7 +145,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetTools(IEnumerable<string> tools)
+        private static async Task SetTools(IEnumerable<string> tools)
         {
             await ModifySettings(s =>
             {
@@ -159,7 +157,7 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        static async Task SetInputHook(bool isHooked)
+        private static async Task SetInputHook(bool isHooked)
         {
             await Driver.Instance.EnableInput(isHooked);
         }
@@ -168,14 +166,14 @@ namespace OpenTabletDriver.Console
 
         #region Request Settings
 
-        static async Task GetCurrentLog()
+        private static async Task GetCurrentLog()
         {
             var log = await Driver.Instance.GetCurrentLog();
             foreach (var message in log)
                 await Out.WriteLineAsync(Log.GetStringFormat(message));
         }
 
-        static async Task GetAllSettings()
+        private static async Task GetAllSettings()
         {
             await GetAreas();
             await GetSensitivity();
@@ -186,7 +184,7 @@ namespace OpenTabletDriver.Console
             await GetTools();
         }
 
-        static async Task GetAreas()
+        private static async Task GetAreas()
         {
             var settings = await GetSettings();
             var displayArea = new Area
@@ -215,7 +213,7 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync($"Tablet area: {tabletArea}");
         }
 
-        static async Task GetSensitivity()
+        private static async Task GetSensitivity()
         {
             var settings = await GetSettings();
             await Out.WriteLineAsync($"Horizontal Sensitivity: {settings.XSensitivity}px/mm");
@@ -224,15 +222,15 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync($"Reset time: {settings.ResetTime}");
         }
 
-        static async Task GetBindings()
+        private static async Task GetBindings()
         {
             var settings = await GetSettings();
-            await Out.WriteLineAsync($"Tip Binding: '{Tools.GetFormattedBinding(settings.TipButton) ?? "None"}'@{settings.TipActivationPressure}%");
-            await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", Tools.GetFormattedBindings(settings.PenButtons))}");
-            await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", Tools.GetFormattedBindings(settings.AuxButtons))}");
+            await Out.WriteLineAsync($"Tip Binding: '{settings.TipButton.GetFormattedBinding() ?? "None"}'@{settings.TipActivationPressure}%");
+            await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", settings.PenButtons.GetFormattedBindings())}");
+            await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", settings.AuxButtons.GetFormattedBindings())}");
         }
 
-        static async Task GetMiscSettings()
+        private static async Task GetMiscSettings()
         {
             var settings = await GetSettings();
             await Out.WriteLineAsync($"Auto hook: {settings.AutoHook}");
@@ -241,13 +239,13 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync($"Lock aspect ratio: {settings.LockAspectRatio}");
         }
 
-        static async Task GetOutputMode()
+        private static async Task GetOutputMode()
         {
             var settings = await GetSettings();
             await Out.WriteLineAsync("Output Mode: " + settings.OutputMode);
         }
 
-        static async Task GetFilters()
+        private static async Task GetFilters()
         {
             var settings = await GetSettings();
             var filters = from path in settings.Filters
@@ -255,7 +253,7 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync("Filters: " + string.Join(", ", filters));
         }
 
-        static async Task GetTools()
+        private static async Task GetTools()
         {
             var settings = await GetSettings();
             var tools = from path in settings.Tools
@@ -267,7 +265,7 @@ namespace OpenTabletDriver.Console
 
         #region Actions
 
-        static async Task Detect()
+        private static async Task Detect()
         {
             await Driver.Instance.DetectTablets();
         }
@@ -276,7 +274,7 @@ namespace OpenTabletDriver.Console
 
         #region Debugging
 
-        static async Task GetString(int index)
+        private static async Task GetString(int index)
         {
             var str = await Driver.Instance.RequestDeviceString(index);
             await Out.WriteLineAsync(str);
@@ -286,22 +284,22 @@ namespace OpenTabletDriver.Console
 
         #region List Types
 
-        static async Task ListOutputModes()
+        private static async Task ListOutputModes()
         {
             await ListTypes<IOutputMode>();
         }
 
-        static async Task ListFilters()
+        private static async Task ListFilters()
         {
             await ListTypes<IFilter>();
         }
 
-        static async Task ListTools()
+        private static async Task ListTools()
         {
             await ListTypes<ITool>();
         }
 
-        static async Task ListBindings()
+        private static async Task ListBindings()
         {
             await ListTypes<IBinding>();
         }
@@ -310,36 +308,23 @@ namespace OpenTabletDriver.Console
 
         #region Scripting
 
-        static async Task GetAllSettingsJson()
+        private static async Task GetAllSettingsJson()
         {
             var settings = await GetSettings();
             await Out.WriteLineAsync(JsonConvert.SerializeObject(settings, Formatting.Indented));
         }
 
-        static async Task GetDiagnostics()
+        private static async Task GetDiagnostics()
         {
             var log = await Driver.Instance.GetCurrentLog();
             var diagnostics = new DiagnosticInfo(log);
             await Out.WriteLineAsync(diagnostics.ToString());
         }
 
-        static async Task STDIO()
+        private static async Task STDIO()
         {
-            // TODO: Execute these commands from an already existing source.
-            var root = new RootCommand("OpenTabletDriver Console Client")
-            {
-                Name = "otd"
-            };
-            root.AddRange(GenerateIOCommands());
-            root.AddRange(GenerateActionCommands());
-            root.AddRange(GenerateDebugCommands());
-            root.AddRange(GenerateModifyCommands());
-            root.AddRange(GenerateRequestCommands());
-            root.AddRange(GenerateListCommands());
-            root.AddRange(GenerateScriptingCommands());
-
             while (await System.Console.In.ReadLineAsync() is string cmd)
-                await root.InvokeAsync(cmd);
+                await Root.InvokeAsync(cmd);
         }
 
         #endregion
