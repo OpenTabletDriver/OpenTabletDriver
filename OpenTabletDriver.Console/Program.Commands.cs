@@ -218,16 +218,16 @@ namespace OpenTabletDriver.Console
             var settings = await GetSettings();
             await Out.WriteLineAsync($"Horizontal Sensitivity: {settings.XSensitivity}px/mm");
             await Out.WriteLineAsync($"Vertical Sensitivity: {settings.YSensitivity}px/mm");
-            await Out.WriteLineAsync($"Relative mode rotation: {settings.RelativeRotation}degrees");
+            await Out.WriteLineAsync($"Relative mode rotation: {settings.RelativeRotation}°");
             await Out.WriteLineAsync($"Reset time: {settings.ResetTime}");
         }
 
         private static async Task GetBindings()
         {
             var settings = await GetSettings();
-            await Out.WriteLineAsync($"Tip Binding: '{settings.TipButton.GetFormattedBinding() ?? "None"}'@{settings.TipActivationPressure}%");
-            await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", settings.PenButtons.GetFormattedBindings())}");
-            await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", settings.AuxButtons.GetFormattedBindings())}");
+            await Out.WriteLineAsync($"Tip Binding: {settings.TipButton.Format() ?? "None"}@{settings.TipActivationPressure}%");
+            await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", settings.PenButtons.Format())}");
+            await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", settings.AuxButtons.Format())}");
         }
 
         private static async Task GetMiscSettings()
@@ -242,23 +242,19 @@ namespace OpenTabletDriver.Console
         private static async Task GetOutputMode()
         {
             var settings = await GetSettings();
-            await Out.WriteLineAsync("Output Mode: " + settings.OutputMode);
+            await Out.WriteLineAsync("Output Mode: " + settings.OutputMode.Format());
         }
 
         private static async Task GetFilters()
         {
             var settings = await GetSettings();
-            var filters = from path in settings.Filters
-                select AppInfo.PluginManager.GetPluginReference(path);
-            await Out.WriteLineAsync("Filters: " + string.Join(", ", filters));
+            await Out.WriteLineAsync("Filters: " + string.Join(", ", settings.Filters.Format()));
         }
 
         private static async Task GetTools()
         {
             var settings = await GetSettings();
-            var tools = from path in settings.Tools
-                select AppInfo.PluginManager.GetPluginReference(path);
-            await Out.WriteLineAsync("Tools: " + string.Join(", ", tools));
+            await Out.WriteLineAsync("Tools: " + string.Join(", ", settings.Tools.Format()));
         }
 
         #endregion
