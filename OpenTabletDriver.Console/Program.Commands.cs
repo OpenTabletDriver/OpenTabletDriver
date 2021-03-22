@@ -20,32 +20,8 @@ namespace OpenTabletDriver.Console
 {
     partial class Program
     {
-        #region STDIO
-            
-        static async Task stdioCommands()
-        {   
-            var root = new RootCommand("OpenTabletDriver Console Client")
-            {
-                Name = "otd"
-            };
-            root.AddRange(GenerateIOCommands());
-            root.AddRange(GenerateActionCommands());
-            root.AddRange(GenerateDebugCommands());
-            root.AddRange(GenerateModifyCommands());
-            root.AddRange(GenerateRequestCommands());
-            root.AddRange(GenerateListCommands());
-            root.AddRange(GenerateScriptingCommands());
-            
-            while(true) {
-                string stdiocmd = await In.ReadLineAsync();
-                await root.InvokeAsync(stdiocmd);
-            }
-        }
-
-        #endregion
-        
         #region I/O
-            
+
         static async Task LoadSettings(FileInfo file)
         {
             var settings = Settings.Deserialize(file);
@@ -61,10 +37,10 @@ namespace OpenTabletDriver.Console
         #endregion
 
         #region Modify Settings
-            
+
         static async Task SetDisplayArea(float width, float height, float x, float y)
         {
-            await ModifySettings(s => 
+            await ModifySettings(s =>
             {
                 s.DisplayWidth = width;
                 s.DisplayHeight = height;
@@ -72,10 +48,10 @@ namespace OpenTabletDriver.Console
                 s.DisplayY = y;
             });
         }
-        
+
         static async Task SetTabletArea(float width, float height, float x, float y, float rotation = 0)
         {
-            await ModifySettings(s => 
+            await ModifySettings(s =>
             {
                 s.TabletWidth = width;
                 s.TabletHeight = height;
@@ -87,7 +63,7 @@ namespace OpenTabletDriver.Console
 
         static async Task SetSensitivity(float xSens, float ySens, float rotation = 0)
         {
-            await ModifySettings(s => 
+            await ModifySettings(s =>
             {
                 s.XSensitivity = xSens;
                 s.YSensitivity = ySens;
@@ -102,7 +78,7 @@ namespace OpenTabletDriver.Console
 
         static async Task SetTipBinding(string name, string property, float threshold)
         {
-            await ModifySettings(s => 
+            await ModifySettings(s =>
             {
                 var tipBinding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
                 tipBinding.Property = property;
@@ -125,7 +101,7 @@ namespace OpenTabletDriver.Console
 
         static async Task SetAuxBinding(string name, string property, int index)
         {
-            await ModifySettings(s => 
+            await ModifySettings(s =>
             {
                 var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
                 binding.Property = property;
@@ -161,7 +137,7 @@ namespace OpenTabletDriver.Console
 
         static async Task SetFilters(IEnumerable<string> filters)
         {
-            await ModifySettings(s => 
+            await ModifySettings(s =>
             {
                 var collection = new PluginSettingStoreCollection();
                 foreach (var path in filters)
@@ -191,7 +167,7 @@ namespace OpenTabletDriver.Console
         #endregion
 
         #region Request Settings
-            
+
         static async Task GetCurrentLog()
         {
             var log = await Driver.Instance.GetCurrentLog();
@@ -224,7 +200,7 @@ namespace OpenTabletDriver.Console
                 }
             };
             await Out.WriteLineAsync($"Display area: {displayArea}");
-            
+
             var tabletArea = new Area
             {
                 Width = settings.TabletWidth,
@@ -251,7 +227,7 @@ namespace OpenTabletDriver.Console
         static async Task GetBindings()
         {
             var settings = await GetSettings();
-            await Out.WriteLineAsync($"Tip Binding: '{Tools.GetFormattedBinding(settings.TipButton) ?? "None"}'@{settings.TipActivationPressure}%");            
+            await Out.WriteLineAsync($"Tip Binding: '{Tools.GetFormattedBinding(settings.TipButton) ?? "None"}'@{settings.TipActivationPressure}%");
             await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", Tools.GetFormattedBindings(settings.PenButtons))}");
             await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", Tools.GetFormattedBindings(settings.AuxButtons))}");
         }
@@ -264,7 +240,7 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync($"Tablet area limiting: {settings.EnableAreaLimiting}");
             await Out.WriteLineAsync($"Lock aspect ratio: {settings.LockAspectRatio}");
         }
-        
+
         static async Task GetOutputMode()
         {
             var settings = await GetSettings();
@@ -299,7 +275,7 @@ namespace OpenTabletDriver.Console
         #endregion
 
         #region Debugging
-            
+
         static async Task GetString(int index)
         {
             var str = await Driver.Instance.RequestDeviceString(index);
@@ -309,12 +285,12 @@ namespace OpenTabletDriver.Console
         #endregion
 
         #region List Types
-            
+
         static async Task ListOutputModes()
         {
             await ListTypes<IOutputMode>();
         }
-        
+
         static async Task ListFilters()
         {
             await ListTypes<IFilter>();
@@ -346,7 +322,26 @@ namespace OpenTabletDriver.Console
             var diagnostics = new DiagnosticInfo(log);
             await Out.WriteLineAsync(diagnostics.ToString());
         }
-            
+
+        static async Task STDIO()
+        {
+            // TODO: Execute these commands from an already existing source.
+            var root = new RootCommand("OpenTabletDriver Console Client")
+            {
+                Name = "otd"
+            };
+            root.AddRange(GenerateIOCommands());
+            root.AddRange(GenerateActionCommands());
+            root.AddRange(GenerateDebugCommands());
+            root.AddRange(GenerateModifyCommands());
+            root.AddRange(GenerateRequestCommands());
+            root.AddRange(GenerateListCommands());
+            root.AddRange(GenerateScriptingCommands());
+
+            while (await System.Console.In.ReadLineAsync() is string cmd)
+                await root.InvokeAsync(cmd);
+        }
+
         #endregion
     }
 }
