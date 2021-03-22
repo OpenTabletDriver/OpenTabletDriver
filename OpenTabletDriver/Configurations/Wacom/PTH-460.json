@@ -1,0 +1,67 @@
+{
+  "Name": "Wacom PTH-460",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 159.6,
+      "Height": 99.75,
+      "MaxX": 31920.0,
+      "MaxY": 19950.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": 19,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 914,
+      "InputReportLength": 192,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": [
+        0
+      ]
+    },
+    {
+      "Width": 159.6,
+      "Height": 99.75,
+      "MaxX": 31920.0,
+      "MaxY": 19950.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": 19,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 914,
+      "InputReportLength": 193,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": [
+        0
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 914,
+      "InputReportLength": 44,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {}
+}
