@@ -133,7 +133,7 @@ namespace OpenTabletDriver.Console
             await ModifySettings(s => s.OutputMode = new PluginSettingStore(mode));
         }
 
-        private static async Task SetFilters(IEnumerable<string> filters)
+        private static async Task SetFilters(params string[] filters)
         {
             await ModifySettings(s =>
             {
@@ -145,7 +145,19 @@ namespace OpenTabletDriver.Console
             });
         }
 
-        private static async Task SetTools(IEnumerable<string> tools)
+        private static async Task SetInterpolators(params string[] interpolators)
+        {
+            await ModifySettings(s =>
+            {
+                var collection = new PluginSettingStoreCollection();
+                foreach (var path in interpolators)
+                    collection.Add(new PluginSettingStore(path));
+
+                s.Interpolators = collection;
+            });
+        }
+
+        private static async Task SetTools(params string[] tools)
         {
             await ModifySettings(s =>
             {
@@ -155,11 +167,6 @@ namespace OpenTabletDriver.Console
 
                 s.Tools = collection;
             });
-        }
-
-        private static async Task SetInputHook(bool isHooked)
-        {
-            await Driver.Instance.EnableInput(isHooked);
         }
 
         #endregion
@@ -181,6 +188,7 @@ namespace OpenTabletDriver.Console
             await GetMiscSettings();
             await GetOutputMode();
             await GetFilters();
+            await GetInterpolators();
             await GetTools();
         }
 
@@ -249,6 +257,12 @@ namespace OpenTabletDriver.Console
         {
             var settings = await GetSettings();
             await Out.WriteLineAsync("Filters: " + string.Join(", ", settings.Filters.Format()));
+        }
+
+        private static async Task GetInterpolators()
+        {
+            var settings = await GetSettings();
+            await Out.WriteLineAsync("Interpolators: " + string.Join(", ", settings.Interpolators.Where(i => i.Enable).Format()));
         }
 
         private static async Task GetTools()

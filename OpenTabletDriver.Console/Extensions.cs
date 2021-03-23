@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Console
             return string.IsNullOrEmpty(suffix) ? $"'{prefix}'" : $"'{prefix}: {suffix}'";
         }
 
-        public static IEnumerable<string> Format(this PluginSettingStoreCollection storeCollection, bool showIndex = false)
+        public static IEnumerable<string> Format(this IEnumerable<PluginSettingStore> storeCollection, bool showIndex = false)
         {
             int index = 0;
             foreach (var store in storeCollection)

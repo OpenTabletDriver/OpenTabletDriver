@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,8 +16,8 @@ namespace OpenTabletDriver.Console
             await Root.InvokeAsync(args);
         }
 
-        private static RootCommand root;
-        public static RootCommand Root => root ??= GenerateRoot();
+        private static readonly Lazy<RootCommand> root = new Lazy<RootCommand>(GenerateRoot);
+        public static RootCommand Root => root.Value;
 
         private static RootCommand GenerateRoot()
         {
@@ -54,6 +55,10 @@ namespace OpenTabletDriver.Console
 
         private static readonly IEnumerable<Command> ModifyCommands = new Command[]
         {
+            CreateCommand<string>(SetOutputMode, "Sets the output mode"),
+            CreateCommand<string[]>(SetFilters, "Sets the filters applied to the current output mode"),
+            CreateCommand<string[]>(SetInterpolators, "Sets the active interpolators for the current output mode"),
+            CreateCommand<string[]>(SetTools, "Sets the active tools"),
             CreateCommand<float, float, float, float>(SetDisplayArea, "Sets the display area"),
             CreateCommand<float, float, float, float, float>(SetTabletArea, "Sets the tablet area"),
             CreateCommand<float, float, float>(SetSensitivity, "Sets the relative sensitivity"),
@@ -71,12 +76,13 @@ namespace OpenTabletDriver.Console
         {
             CreateCommand(GetCurrentLog, "Gets the current log", "log"),
             CreateCommand(GetAllSettings, "Gets all current settings"),
+            CreateCommand(GetOutputMode, "Gets the current output mode"),
             CreateCommand(GetAreas, "Gets the current display and tablet area"),
             CreateCommand(GetSensitivity, "Gets the current relative sensitivity"),
             CreateCommand(GetBindings, "Gets all current bindings"),
             CreateCommand(GetMiscSettings, "Gets other uncategorized settings"),
-            CreateCommand(GetOutputMode, "Gets the current output mode"),
             CreateCommand(GetFilters, "Gets the currently enabled filters"),
+            CreateCommand(GetInterpolators, "Gets the currently enabled interpolators"),
             CreateCommand(GetTools, "Gets the currently enabled tools")
         };
 
