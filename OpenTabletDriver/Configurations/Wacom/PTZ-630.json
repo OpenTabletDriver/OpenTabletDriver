@@ -1,0 +1,51 @@
+{
+  "Name": "Wacom PTZ-630",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 203.2,
+      "Height": 152.4,
+      "MaxX": 40640.0,
+      "MaxY": 30480.0,
+      "MaxPressure": 2046,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 177,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 203.2,
+      "Height": 152.4,
+      "MaxX": 40640.0,
+      "MaxY": 30480.0,
+      "MaxPressure": 2046,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 177,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
