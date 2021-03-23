@@ -6,10 +6,6 @@ namespace OpenTabletDriver.Console
 {
     partial class Program
     {
-        public static RpcClient<IDriverDaemon> Driver => _driverDaemon.Value;
-        private static Lazy<RpcClient<IDriverDaemon>> _driverDaemon = new Lazy<RpcClient<IDriverDaemon>>(() => 
-        {
-            return new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
-        });
+        public static readonly RpcClient<IDriverDaemon> Driver = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
     }
 }
