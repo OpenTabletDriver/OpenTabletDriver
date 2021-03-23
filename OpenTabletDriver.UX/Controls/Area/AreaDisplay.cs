@@ -295,10 +295,10 @@ namespace OpenTabletDriver.UX.Controls.Area
 
                 var corners = new PointF[]
                 {
-                            PointF.Rotate(rect.TopLeft, viewModel.Rotation),
-                            PointF.Rotate(rect.TopRight, viewModel.Rotation),
-                            PointF.Rotate(rect.BottomRight, viewModel.Rotation),
-                            PointF.Rotate(rect.BottomLeft, viewModel.Rotation)
+                    PointF.Rotate(rect.TopLeft, viewModel.Rotation),
+                    PointF.Rotate(rect.TopRight, viewModel.Rotation),
+                    PointF.Rotate(rect.BottomRight, viewModel.Rotation),
+                    PointF.Rotate(rect.BottomLeft, viewModel.Rotation)
                 };
                 var pseudoArea = new RectangleF(
                     PointF.Min(corners[0], PointF.Min(corners[1], PointF.Min(corners[2], corners[3]))),
