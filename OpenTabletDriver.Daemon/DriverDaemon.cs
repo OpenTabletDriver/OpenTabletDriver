@@ -9,6 +9,7 @@ using HidSharp;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
@@ -113,9 +114,14 @@ namespace OpenTabletDriver.Daemon
             if (pluginDir.Exists)
             {
                 AppInfo.PluginManager.Load();
+
                 // Migrate if settings is available to avoid invalid settings
                 if (Settings != null)
                     Settings = SettingsMigrator.Migrate(Settings);
+
+                // Add services to inject on plugin construction
+                AppInfo.PluginManager.ResetServices();
+                AppInfo.PluginManager.AddService(() => SystemInterop.Timer);
             }
             else
             {
