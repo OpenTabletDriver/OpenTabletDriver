@@ -2,8 +2,8 @@
   "Name": "Wacom PTH-451",
   "DigitizerIdentifiers": [
     {
-      "Width": 157.0,
-      "Height": 98.0,
+      "Width": 157.48,
+      "Height": 98.425,
       "MaxX": 31496.0,
       "MaxY": 19685.0,
       "MaxPressure": 2047,
@@ -24,8 +24,8 @@
       "InitializationStrings": []
     },
     {
-      "Width": 157.0,
-      "Height": 98.0,
+      "Width": 157.48,
+      "Height": 98.425,
       "MaxX": 31496.0,
       "MaxY": 19685.0,
       "MaxPressure": 2047,

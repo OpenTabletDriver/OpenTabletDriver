@@ -2,8 +2,8 @@
   "Name": "Wacom FT-0405-U",
   "DigitizerIdentifiers": [
     {
-      "Width": 129.6416,
-      "Height": 94.2848,
+      "Width": 127.6,
+      "Height": 92.8,
       "MaxX": 5104.0,
       "MaxY": 3712.0,
       "MaxPressure": 511,
@@ -24,8 +24,8 @@
       "InitializationStrings": []
     },
     {
-      "Width": 129.6416,
-      "Height": 94.2848,
+      "Width": 127.6,
+      "Height": 92.8,
       "MaxX": 5104.0,
       "MaxY": 3712.0,
       "MaxPressure": 511,
