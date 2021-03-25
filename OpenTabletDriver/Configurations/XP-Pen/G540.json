@@ -20,7 +20,9 @@
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": "ArAC",
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "201": "TABLET G3 5x4"
+      },
       "InitializationStrings": []
     }
   ],

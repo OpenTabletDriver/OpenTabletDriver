@@ -1,12 +1,12 @@
 {
-  "Name": "XP-Pen G430",
+  "Name": "XP-Pen G430S v2",
   "DigitizerIdentifiers": [
     {
-      "Width": 114.3,
-      "Height": 73.025,
-      "MaxX": 45720.0,
-      "MaxY": 29210.0,
-      "MaxPressure": 2047,
+      "Width": 101.6,
+      "Height": 76.2,
+      "MaxX": 10160.0,
+      "MaxY": 7620.0,
+      "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 80,
         "StartInclusive": true,
@@ -14,15 +14,13 @@
         "EndInclusive": false
       },
       "VendorID": 10429,
-      "ProductID": 117,
-      "InputReportLength": 8,
-      "OutputReportLength": 8,
+      "ProductID": 2323,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
-      "DeviceStrings": {
-        "2": "TABLET G3 4x3"
-      },
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
