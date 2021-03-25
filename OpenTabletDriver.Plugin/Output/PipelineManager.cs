@@ -20,12 +20,17 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
-        protected void UnlinkAll(IList<IPositionedPipelineElement<T>> elements)
+        protected void UnlinkElements(IList<IPositionedPipelineElement<T>> elements)
         {
-            foreach (var element in elements)
+            IPipelineElement<T> prevElement = null;
+            if (elements != null && elements.Count > 0)
             {
-                var emitEvent = typeof(IPipelineElement<T>).GetEvent(nameof(IPipelineElement<T>.Emit));
-                typeof(IPipelineElement<T>).GetProperty("Events");
+                foreach (var element in elements)
+                {
+                    if (prevElement != null)
+                        prevElement.Emit -= element.Consume;
+                    prevElement = element;
+                }
             }
         }
 
