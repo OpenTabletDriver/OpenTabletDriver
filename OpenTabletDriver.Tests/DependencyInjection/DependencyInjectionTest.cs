@@ -26,7 +26,10 @@ namespace OpenTabletDriver.Tests.DependencyInjection
             timer.Start();
             timer.Elapsed += timer.Stop;
 
-            while (timer.Enabled); // Busy wait until timer elapses.
+            while (timer.Enabled)
+            {
+                // Busy wait until timer elapses.
+            }
         }
 
         private class CLRTimer : ITimer
