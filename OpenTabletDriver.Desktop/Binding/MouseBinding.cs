@@ -12,8 +12,8 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         private IVirtualMouse pointer => Info.Driver.OutputMode switch
         {
-            IPointerOutputMode<IRelativePointer> outputMode => outputMode.Pointer as IVirtualMouse,
-            IPointerOutputMode<IAbsolutePointer> outputMode => outputMode.Pointer as IVirtualMouse,
+            IPointerProvider<IRelativePointer> outputMode => outputMode.Pointer as IVirtualMouse,
+            IPointerProvider<IAbsolutePointer> outputMode => outputMode.Pointer as IVirtualMouse,
             _ => null
         };
         

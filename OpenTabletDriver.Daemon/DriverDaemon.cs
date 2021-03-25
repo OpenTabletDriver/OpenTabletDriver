@@ -9,7 +9,6 @@ using HidSharp;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
@@ -19,7 +18,6 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -168,25 +166,20 @@ namespace OpenTabletDriver.Daemon
         }
 
         public async Task SetSettings(Settings settings)
-        {
-            // Dispose all interpolators to begin changing settings
-            foreach (var interpolator in Driver.Interpolators)
-                interpolator.Dispose();
-            Driver.Interpolators.Clear();
-            
+        {            
             // Dispose filters that implement IDisposable interface
-            if (Driver.OutputMode?.Filters != null)
+            if (Driver.OutputMode?.Elements != null)
             {
-                foreach (var filter in Driver.OutputMode.Filters)
+                foreach (var element in Driver.OutputMode.Elements)
                 {
                     try
                     {
-                        if (filter is IDisposable disposableFilter)
-                            disposableFilter.Dispose();
+                        if (element is IDisposable disposable)
+                            disposable.Dispose();
                     }
                     catch (Exception)
                     {
-                        Log.Write("Plugin", $"Unable to dispose object '{filter.GetType().Name}'", LogLevel.Error);
+                        Log.Write("Plugin", $"Unable to dispose object '{element.GetType().Name}'", LogLevel.Error);
                     }
                 }
             }
@@ -220,7 +213,6 @@ namespace OpenTabletDriver.Daemon
             }
 
             SetToolSettings();
-            SetInterpolatorSettings();
         }
 
         public async Task ResetSettings()
@@ -232,15 +224,15 @@ namespace OpenTabletDriver.Daemon
         {
             outputMode.Tablet = Driver.Tablet;
 
-            var filters = from store in Settings.Filters
+            var elements = from store in Settings.Filters
                 where store.Enable == true
-                let filter = store.Construct<IFilter>()
+                let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>()
                 where filter != null
                 select filter;
-            outputMode.Filters = filters.ToList();
+            outputMode.Elements = elements.ToList();
 
-            if (outputMode.Filters != null && outputMode.Filters.Count() > 0)
-                Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Filters)}");
+            if (outputMode.Elements != null && outputMode.Elements.Count() > 0)
+                Log.Write("Settings", $"Filters: {string.Join(", ", outputMode.Elements)}");
         }
 
         private void SetAbsoluteModeSettings(AbsoluteOutputMode absoluteMode)
@@ -337,29 +329,6 @@ namespace OpenTabletDriver.Daemon
                     Tools.Add(tool);
                 else
                     Log.Write("Tool", $"Failed to initialize {store.GetPluginReference().Name} tool.", LogLevel.Error);
-            }
-        }
-
-        private void SetInterpolatorSettings()
-        {
-            foreach (PluginSettingStore store in Settings.Interpolators)
-            {
-                if (store.Enable == false)
-                    continue;
-
-                if (store.Construct<Interpolator>(SystemInterop.Timer) is Interpolator interpolator)
-                {
-                    var filters = from filterStore in Settings?.Filters
-                        let filter = filterStore.Construct<IFilter>()
-                        where filter != null
-                        where filter.FilterStage == FilterStage.PreInterpolate
-                        select filter;
-
-                    interpolator.Filters = filters.ToList();
-                    interpolator.Enabled = true;
-                    Driver.Interpolators.Add(interpolator);
-                    Log.Write("Settings", $"Interpolator: {interpolator}");
-                }
             }
         }
 

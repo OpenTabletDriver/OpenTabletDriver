@@ -301,7 +301,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task ListFilters()
         {
-            await ListTypes<IFilter>();
+            await ListTypes<IPipelineElement<IDeviceReport>>();
         }
 
         private static async Task ListTools()

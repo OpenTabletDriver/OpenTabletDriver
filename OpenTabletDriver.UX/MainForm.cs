@@ -7,8 +7,8 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
@@ -47,16 +47,14 @@ namespace OpenTabletDriver.UX
         private FileInfo settingsFile;
         private OutputModeEditor outputModeEditor;
         private BindingEditor bindingEditor;
-        private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
+        private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
-        private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
 
         public void Refresh()
         {
             bindingEditor = new BindingEditor();
             filterEditor.UpdateStore(Settings?.Filters);
             toolEditor.UpdateStore(Settings?.Tools);
-            interpolatorEditor.UpdateStore(Settings?.Interpolators);
             outputModeEditor.Refresh();
         }
 
@@ -194,7 +192,7 @@ namespace OpenTabletDriver.UX
                     {
                         Text = "Filters",
                         Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
+                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>(
                             Settings?.Filters,
                             "Filter"
                         )
@@ -210,15 +208,6 @@ namespace OpenTabletDriver.UX
                     },
                     new TabPage
                     {
-                        Text = "Interpolators",
-                        Padding = 5,
-                        Content = interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
-                            Settings?.Interpolators,
-                            "Interpolator"
-                        )
-                    },
-                    new TabPage
-                    {
                         Text = "Console",
                         Padding = 5,
                         Content = new LogView()
@@ -230,7 +219,6 @@ namespace OpenTabletDriver.UX
             {
                 filterEditor.UpdateStore(Settings?.Filters);
                 toolEditor.UpdateStore(Settings?.Tools);
-                interpolatorEditor.UpdateStore(Settings?.Interpolators);
             };
 
             var commandsPanel = new StackLayout

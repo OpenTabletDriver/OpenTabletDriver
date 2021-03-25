@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Output
 {
     [PluginName("Relative Mode")]
-    public class RelativeMode : RelativeOutputMode, IPointerOutputMode<IRelativePointer>
+    public class RelativeMode : RelativeOutputMode, IPointerProvider<IRelativePointer>
     {
         public override IRelativePointer Pointer => SystemInterop.RelativePointer;
     }
