@@ -22,9 +22,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected void UnlinkElements(IList<IPositionedPipelineElement<T>> elements)
         {
-            IPipelineElement<T> prevElement = null;
             if (elements != null && elements.Count > 0)
             {
+                IPipelineElement<T> prevElement = null;
                 foreach (var element in elements)
                 {
                     if (prevElement != null)

@@ -34,12 +34,14 @@ namespace OpenTabletDriver.Daemon
             Driver.TabletChanged += (sender, tablet) =>
             {
                 TabletChanged?.Invoke(sender, tablet);
+                Driver.TabletReader.RawClone = debugging;
+                Driver.AuxReader.RawClone = debugging;
                 if (debugging)
                 {
                     if (Driver.TabletReader != null)
-                        Driver.TabletReader.Report += DebugReportHandler;
+                        Driver.TabletReader.RawReport += DebugReportHandler;
                     if (Driver.AuxReader != null)
-                        Driver.AuxReader.Report += DebugReportHandler;
+                        Driver.AuxReader.RawReport += DebugReportHandler;
                 }
             };
             Driver.DevicesChanged += async (sender, args) =>
@@ -166,7 +168,7 @@ namespace OpenTabletDriver.Daemon
         }
 
         public async Task SetSettings(Settings settings)
-        {            
+        {
             // Dispose filters that implement IDisposable interface
             if (Driver.OutputMode?.Elements != null)
             {
@@ -350,22 +352,28 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
+            if (Driver.TabletReader != null)
+                Driver.TabletReader.RawClone = enabled;
+            if (Driver.AuxReader != null)
+                Driver.AuxReader.RawClone = enabled;
+
             if (enabled && !debugging)
             {
                 if (Driver.TabletReader != null)
-                    Driver.TabletReader.Report += DebugReportHandler;
+                    Driver.TabletReader.RawReport += DebugReportHandler;
                 if (Driver.AuxReader != null)
-                    Driver.AuxReader.Report += DebugReportHandler;
+                    Driver.AuxReader.RawReport += DebugReportHandler;
                 debugging = true;
             }
             else if (!enabled && debugging)
             {
                 if (Driver.TabletReader != null)
-                    Driver.TabletReader.Report -= DebugReportHandler;
+                    Driver.TabletReader.RawReport -= DebugReportHandler;
                 if (Driver.AuxReader != null)
-                    Driver.AuxReader.Report -= DebugReportHandler;
+                    Driver.AuxReader.RawReport -= DebugReportHandler;
                 debugging = false;
             }
+
             return Task.CompletedTask;
         }
 
