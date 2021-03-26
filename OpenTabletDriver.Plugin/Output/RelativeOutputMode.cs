@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Plugin.Output
     {
         private Vector2? lastPos;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
-        private bool skipReport = false;
+        private bool skipReport;
 
         /// <summary>
         /// The class in which the final relative positioned output is handled.
@@ -86,7 +86,7 @@ namespace OpenTabletDriver.Plugin.Output
             var delta = pos - this.lastPos;
 
             this.lastPos = pos;
-            report.Position = pos;
+            report.Position = delta ?? Vector2.Zero;
 
             return (deltaTime > ResetTime) ? null : report;
         }
