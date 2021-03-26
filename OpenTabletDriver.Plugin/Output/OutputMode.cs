@@ -8,6 +8,12 @@ namespace OpenTabletDriver.Plugin.Output
 {
     public abstract class OutputMode : PipelineManager<IDeviceReport>, IPipelineElement<IDeviceReport>, IOutputMode
     {
+        public OutputMode()
+        {
+            this.DeviceOutput += this.Consume;
+            this.Emit += this.OnFinalReport;
+        }
+
         private TabletState tablet;
         private IList<IPositionedPipelineElement<IDeviceReport>> elements;
 
@@ -44,6 +50,9 @@ namespace OpenTabletDriver.Plugin.Output
 
                 if (Elements != null && Elements.Count > 0)
                 {
+                    this.DeviceOutput -= this.Consume;
+                    this.Emit -= this.OnFinalReport;
+
                     PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
                     
                     this.DeviceOutput += PreTransformElements.First().Consume;
@@ -58,11 +67,6 @@ namespace OpenTabletDriver.Plugin.Output
                     this.PostTransform += PostTransformElements.First().Consume;
                     LinkElements(PostTransformElements);
                     PostTransformElements.Last().Emit += this.OnFinalReport;
-                }
-                else
-                {
-                    this.DeviceOutput += this.Consume;
-                    this.Emit += this.OnFinalReport;
                 }
             }
             get => this.elements;
