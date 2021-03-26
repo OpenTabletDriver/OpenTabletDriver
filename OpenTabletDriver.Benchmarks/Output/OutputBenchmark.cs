@@ -50,6 +50,8 @@ namespace OpenTabletDriver.Benchmarks.Output
                 Rotation = settings.TabletRotation
             };
 
+            OutputMode.Elements = null;
+
             var data = new byte[8];
             var randGen = new Random();
             randGen.NextBytes(data);
