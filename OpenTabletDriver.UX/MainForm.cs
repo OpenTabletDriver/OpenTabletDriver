@@ -62,21 +62,21 @@ namespace OpenTabletDriver.UX
         {
             base.OnInitializePlatform(e);
 
-            switch (SystemInterop.CurrentPlatform)
+            switch (DesktopInterop.CurrentPlatform)
             {
                 case PluginPlatform.MacOS:
                     this.Padding = 10;
                     break;
             }
 
-            bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
+            bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => true,
                 PluginPlatform.MacOS   => true,
                 _                      => false,
             };
 
-            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
+            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 var bounds = Screen.PrimaryScreen.Bounds;
                 var minWidth = Math.Min(970, bounds.Width * 0.9);
@@ -240,7 +240,7 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
+            outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
             return new StackLayout
             {
@@ -291,7 +291,7 @@ namespace OpenTabletDriver.UX
             pluginManager.Executed += (sender, e) => ShowPluginManager();
 
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => SystemInterop.Open(FaqUrl);
+            faqUrl.Executed += (sender, e) => DesktopInterop.Open(FaqUrl);
 
             var showGuide = new Command { MenuText = "Show guide..." };
             showGuide.Executed += async (sender, e) => await ShowFirstStartupGreeter();

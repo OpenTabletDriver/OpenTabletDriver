@@ -121,7 +121,11 @@ namespace OpenTabletDriver.Daemon
 
                 // Add services to inject on plugin construction
                 AppInfo.PluginManager.ResetServices();
-                AppInfo.PluginManager.AddService(() => SystemInterop.Timer);
+                AppInfo.PluginManager.AddService(() => DesktopInterop.Timer);
+                AppInfo.PluginManager.AddService(() => DesktopInterop.AbsolutePointer);
+                AppInfo.PluginManager.AddService(() => DesktopInterop.RelativePointer);
+                AppInfo.PluginManager.AddService(() => DesktopInterop.VirtualScreen);
+                AppInfo.PluginManager.AddService(() => DesktopInterop.VirtualKeyboard);
             }
             else
             {

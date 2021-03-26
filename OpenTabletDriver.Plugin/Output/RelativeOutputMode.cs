@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The class in which the final relative positioned output is handled.
         /// </summary>
-        public abstract IRelativePointer Pointer { get; }
+        public abstract IRelativePointer Pointer { set; get; }
 
         private Vector2 sensitivity;
 

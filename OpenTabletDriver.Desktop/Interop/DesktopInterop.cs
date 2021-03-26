@@ -5,6 +5,7 @@ using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
@@ -13,12 +14,16 @@ using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop
 {
-    public class SystemInterop : OpenTabletDriver.Interop.SystemInterop
+    public class DesktopInterop : SystemInterop
     {
-        protected SystemInterop()
+        protected DesktopInterop()
             : base()
         {
         }
+
+        private static IAbsolutePointer absolutePointer;
+        private static IRelativePointer relativePointer;
+        private static IVirtualKeyboard virtualKeyboard;
 
         public static void Open(string path)
         {
@@ -54,11 +59,6 @@ namespace OpenTabletDriver.Desktop.Interop
             }
         }
 
-        public static IAbsolutePointer AbsolutePointer => _absolutePointer.Value;
-        public static IRelativePointer RelativePointer => _relativePointer.Value;
-        public static IVirtualKeyboard VirtualKeyboard => _virtualKeyboard.Value;
-        public static IVirtualScreen VirtualScreen => _virtualScreen.Value;
-
         public static ITimer Timer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsTimer(),
@@ -66,37 +66,37 @@ namespace OpenTabletDriver.Desktop.Interop
             _                      => new FallbackTimer()
         };
 
-        private static Lazy<IAbsolutePointer> _absolutePointer = new Lazy<IAbsolutePointer>(() => CurrentPlatform switch
+        public static IAbsolutePointer AbsolutePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsAbsolutePointer(),
-            PluginPlatform.Linux   => new EvdevAbsolutePointer(),
+            PluginPlatform.Linux   => absolutePointer ??= new EvdevAbsolutePointer(),
             PluginPlatform.MacOS   => new MacOSAbsolutePointer(),
             _                      => null
-        });
+        };
 
-        private static Lazy<IRelativePointer> _relativePointer = new Lazy<IRelativePointer>(() => CurrentPlatform switch
+        public static IRelativePointer RelativePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsRelativePointer(),
-            PluginPlatform.Linux   => new EvdevRelativePointer(),
+            PluginPlatform.Linux   => relativePointer ??= new EvdevRelativePointer(),
             PluginPlatform.MacOS   => new MacOSRelativePointer(),
             _                      => null
-        });
+        };
 
-        private static Lazy<IVirtualKeyboard> _virtualKeyboard = new Lazy<IVirtualKeyboard>(() => CurrentPlatform switch
+        public static IVirtualKeyboard VirtualKeyboard => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-            PluginPlatform.Linux   => new EvdevVirtualKeyboard(),
+            PluginPlatform.Linux   => virtualKeyboard ??= new EvdevVirtualKeyboard(),
             PluginPlatform.MacOS   => new MacOSVirtualKeyboard(),
             _                      => null
-        });
+        };
 
-        private static Lazy<IVirtualScreen> _virtualScreen = new Lazy<IVirtualScreen>(() => CurrentPlatform switch
+        public static IVirtualScreen VirtualScreen => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsDisplay(),
             PluginPlatform.Linux   => ConstructLinuxDisplay(),
             PluginPlatform.MacOS   => new MacOSDisplay(),
             _                      => null
-        });
+        };
 
         private static IVirtualScreen ConstructLinuxDisplay()
         {

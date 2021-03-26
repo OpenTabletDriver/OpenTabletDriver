@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The class in which the final absolute positioned output is handled.
         /// </summary>
-        public abstract IAbsolutePointer Pointer { get; }
+        public abstract IAbsolutePointer Pointer { set; get; }
 
         /// <summary>
         /// Whether to clip all tablet inputs to the assigned areas.

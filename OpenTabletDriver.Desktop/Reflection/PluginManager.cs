@@ -68,6 +68,17 @@ namespace OpenTabletDriver.Desktop.Reflection
                                     if (service != null)
                                         property.SetValue(obj, service);
                                 }
+
+                                var resolvedFields = from field in type.GetFields()
+                                    where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                                    select field;
+
+                                foreach (var field in resolvedFields)
+                                {
+                                    var service = GetService(field.FieldType);
+                                    if (service != null)
+                                        field.SetValue(obj, service);
+                                }
                             }
 
                             return obj;

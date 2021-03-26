@@ -4,6 +4,7 @@ using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
 namespace OpenTabletDriver.Desktop.Binding
@@ -11,24 +12,25 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName("Key Binding")]
     public class KeyBinding : IBinding, IValidateBinding
     {
-        private IVirtualKeyboard keyboard => SystemInterop.VirtualKeyboard;
+        [Resolved]
+        public IVirtualKeyboard Keyboard { set; get; }
 
         [Property("Property")]
         public string Property { set; get; }
 
         public Action Press
         {
-            get => () => keyboard.Press(Property);
+            get => () => Keyboard.Press(Property);
         }
 
         public Action Release
         {
-            get => () => keyboard.Release(Property);
+            get => () => Keyboard.Release(Property);
         }
 
         public string[] ValidProperties
         {
-            get => SystemInterop.CurrentPlatform switch
+            get => DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
                 PluginPlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys.ToArray(),

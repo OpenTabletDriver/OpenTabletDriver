@@ -328,7 +328,7 @@ namespace OpenTabletDriver.Desktop
         {
             get
             {
-                var virtualScreen = SystemInterop.VirtualScreen;
+                var virtualScreen = DesktopInterop.VirtualScreen;
                 var tablet = Info.Driver.Tablet?.Digitizer;
 
                 return new Settings

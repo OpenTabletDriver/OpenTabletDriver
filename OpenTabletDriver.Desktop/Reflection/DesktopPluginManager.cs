@@ -101,7 +101,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (!IsPlatformSupported(type))
                 {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {DesktopInterop.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
                 if (IsPluginIgnored(type))
