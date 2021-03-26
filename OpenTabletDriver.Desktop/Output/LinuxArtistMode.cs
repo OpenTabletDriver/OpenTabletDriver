@@ -9,7 +9,6 @@ namespace OpenTabletDriver.Desktop.Output
     [PluginName("Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
     public class LinuxArtistMode : AbsoluteOutputMode, IPointerProvider<IAbsolutePointer>
     {
-        private static IAbsolutePointer pointer;
-        public override IAbsolutePointer Pointer { set; get; } = pointer ??= new EvdevVirtualTablet();
+        public override IAbsolutePointer Pointer { set; get; } = new EvdevVirtualTablet();
     }
 }
