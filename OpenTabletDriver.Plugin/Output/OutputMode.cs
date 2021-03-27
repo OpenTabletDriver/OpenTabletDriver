@@ -16,10 +16,7 @@ namespace OpenTabletDriver.Plugin.Output
         private bool isPassthrough;
         private TabletState tablet;
         private IList<IPositionedPipelineElement<IDeviceReport>> elements;
-
-        private event Action<IDeviceReport> DeviceOutput;
-        private event Action<IDeviceReport> PreTransform;
-        private event Action<IDeviceReport> PostTransform;
+        private IPipelineElement<IDeviceReport> entryElement;
 
         public event Action<IDeviceReport> Emit;
 
@@ -39,13 +36,10 @@ namespace OpenTabletDriver.Plugin.Output
             Emit?.Invoke(report);
         }
 
-        public virtual void Read(IDeviceReport deviceReport) => DeviceOutput?.Invoke(deviceReport);
+        public virtual void Read(IDeviceReport deviceReport) => entryElement?.Consume(deviceReport);
 
         protected abstract ITabletReport Transform(ITabletReport tabletReport);
-        protected abstract void OnFinalReport(IDeviceReport report);
-
-        protected virtual void OnPreTransform(IDeviceReport report) => PreTransform?.Invoke(report);
-        protected virtual void OnPostTransform(IDeviceReport report) => PostTransform?.Invoke(report);
+        protected abstract void OnOutput(IDeviceReport report);
         
         public IList<IPositionedPipelineElement<IDeviceReport>> Elements
         {
@@ -57,19 +51,43 @@ namespace OpenTabletDriver.Plugin.Output
                 {
                     UnsetPassthrough();
                     PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
-                    
-                    this.DeviceOutput += PreTransformElements.First().Consume;
-                    LinkElements(PreTransformElements);
-                    PreTransformElements.Last().Emit += this.OnPreTransform;
-
-                    this.PreTransform += this.Consume;
-                    this.Emit += this.OnPostTransform;
-
                     PostTransformElements = GroupElements(Elements, PipelinePosition.PostTransform);
-                    
-                    this.PostTransform += PostTransformElements.First().Consume;
+                    LinkElements(PreTransformElements);
                     LinkElements(PostTransformElements);
-                    PostTransformElements.Last().Emit += this.OnFinalReport;
+
+                    if (PreTransformElements.Any() && !PostTransformElements.Any())
+                    {
+                        entryElement = PreTransformElements.First();
+
+                        // Link PreTransformElements to TransformElement
+                        LinkElement(PreTransformElements.Last(), this);
+
+                        // Link TransformElement to output
+                        this.Emit += this.OnOutput;
+                    }
+                    else if (PostTransformElements.Any() && !PreTransformElements.Any())
+                    {
+                        entryElement = this;
+
+                        // Link TransformElement to PostTransformElements
+                        this.Emit += PostTransformElements.Last().Consume;
+
+                        // Hook PostTransformElements to output
+                        PostTransformElements.Last().Emit += this.OnOutput;
+                    }
+                    else if (PreTransformElements.Any() && PostTransformElements.Any())
+                    {
+                        entryElement = PreTransformElements.First();
+
+                        // Link PreTransformElements to TransformElement
+                        PreTransformElements.Last().Emit += this.Consume;
+
+                        // Link TransformElement to PostTransformElements
+                        this.Emit += PostTransformElements.First().Consume;
+
+                        // Link PostTransformElements to output
+                        PostTransformElements.Last().Emit += this.OnOutput;
+                    }
                 }
                 else
                 {
@@ -95,8 +113,8 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (!isPassthrough)
             {
-                this.DeviceOutput += this.Consume;
-                this.Emit += this.OnFinalReport;
+                this.entryElement = this;
+                this.Emit += this.OnOutput;
                 isPassthrough = true;
             }
         }
@@ -105,8 +123,8 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (isPassthrough)
             {
-                this.DeviceOutput -= this.Consume;
-                this.Emit -= this.OnFinalReport;
+                this.entryElement = null;
+                this.Emit -= this.OnOutput;
                 isPassthrough = false;
             }
         }

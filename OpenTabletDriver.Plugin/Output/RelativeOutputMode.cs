@@ -91,7 +91,7 @@ namespace OpenTabletDriver.Plugin.Output
             return report;
         }
 
-        protected override void OnFinalReport(IDeviceReport report)
+        protected override void OnOutput(IDeviceReport report)
         {
             if (report is ITabletReport tabletReport && Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
             {
