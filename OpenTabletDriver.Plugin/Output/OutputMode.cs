@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Plugin.Output
             SetPassthrough();
         }
 
+        private bool isPassthrough;
         private TabletState tablet;
         private IList<IPositionedPipelineElement<IDeviceReport>> elements;
 
@@ -92,14 +93,22 @@ namespace OpenTabletDriver.Plugin.Output
 
         private void SetPassthrough()
         {
-            this.DeviceOutput += this.Consume;
-            this.Emit += this.OnFinalReport;
+            if (!isPassthrough)
+            {
+                this.DeviceOutput += this.Consume;
+                this.Emit += this.OnFinalReport;
+                isPassthrough = true;
+            }
         }
 
         private void UnsetPassthrough()
         {
-            this.DeviceOutput -= this.Consume;
-            this.Emit -= this.OnFinalReport;
+            if (isPassthrough)
+            {
+                this.DeviceOutput -= this.Consume;
+                this.Emit -= this.OnFinalReport;
+                isPassthrough = false;
+            }
         }
     }
 }
