@@ -10,8 +10,7 @@ namespace OpenTabletDriver.Plugin.Output
     {
         public OutputMode()
         {
-            this.DeviceOutput += this.Consume;
-            this.Emit += this.OnFinalReport;
+            SetPassthrough();
         }
 
         private TabletState tablet;
@@ -22,6 +21,11 @@ namespace OpenTabletDriver.Plugin.Output
         private event Action<IDeviceReport> PostTransform;
 
         public event Action<IDeviceReport> Emit;
+
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; }
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; }
+
+        public Matrix3x2 TransformationMatrix { protected set; get; }
 
         public virtual void Consume(IDeviceReport report)
         {
@@ -41,7 +45,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected virtual void OnPreTransform(IDeviceReport report) => PreTransform?.Invoke(report);
         protected virtual void OnPostTransform(IDeviceReport report) => PostTransform?.Invoke(report);
-
+        
         public IList<IPositionedPipelineElement<IDeviceReport>> Elements
         {
             set
@@ -50,9 +54,7 @@ namespace OpenTabletDriver.Plugin.Output
 
                 if (Elements != null && Elements.Count > 0)
                 {
-                    this.DeviceOutput -= this.Consume;
-                    this.Emit -= this.OnFinalReport;
-
+                    UnsetPassthrough();
                     PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
                     
                     this.DeviceOutput += PreTransformElements.First().Consume;
@@ -68,11 +70,13 @@ namespace OpenTabletDriver.Plugin.Output
                     LinkElements(PostTransformElements);
                     PostTransformElements.Last().Emit += this.OnFinalReport;
                 }
+                else
+                {
+                    SetPassthrough();
+                }
             }
             get => this.elements;
         }
-
-        public Matrix3x2 TransformationMatrix { protected set; get; }
 
         public virtual TabletState Tablet
         {
@@ -84,9 +88,18 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.tablet;
         }
 
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; }
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; }
-
         protected abstract Matrix3x2 CreateTransformationMatrix();
+
+        private void SetPassthrough()
+        {
+            this.DeviceOutput += this.Consume;
+            this.Emit += this.OnFinalReport;
+        }
+
+        private void UnsetPassthrough()
+        {
+            this.DeviceOutput -= this.Consume;
+            this.Emit -= this.OnFinalReport;
+        }
     }
 }
