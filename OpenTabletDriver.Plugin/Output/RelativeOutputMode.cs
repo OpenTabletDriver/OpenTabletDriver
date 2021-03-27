@@ -74,21 +74,21 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override ITabletReport Transform(ITabletReport report)
         {
-            if (skipReport)
-            {
-                skipReport = false;
-                return null;
-            }
-
             var deltaTime = stopwatch.Restart();
 
             var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
             var delta = pos - this.lastPos;
 
             this.lastPos = pos;
-            report.Position = delta ?? Vector2.Zero;
+            report.Position = deltaTime < ResetTime ? delta.GetValueOrDefault() : Vector2.Zero;
 
-            return (deltaTime > ResetTime) ? null : report;
+            if (skipReport)
+            {
+                skipReport = false;
+                return null;
+            }
+
+            return report;
         }
 
         protected override void OnFinalReport(IDeviceReport report)
