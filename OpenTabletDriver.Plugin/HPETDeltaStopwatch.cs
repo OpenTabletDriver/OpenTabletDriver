@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Plugin.Timing
             start = isRunning ? internalWatch.Elapsed : default;
         }
 
-        public static TimeSpan RunitmeElapsed => internalWatch.Elapsed;
+        public static TimeSpan RuntimeElapsed => internalWatch.Elapsed;
 
         public TimeSpan Elapsed => isRunning ? internalWatch.Elapsed - start : end - start;
 
