@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
-    public abstract class MacOSVirtualMouse : IVirtualMouse
+    public abstract class MacOSVirtualMouse : IMouseButtonHandler
     {
         protected MacOSVirtualMouse()
         {

@@ -10,10 +10,10 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName("Mouse Button Binding")]
     public class MouseBinding : IBinding, IValidateBinding
     {
-        private IVirtualMouse pointer => Info.Driver.OutputMode switch
+        private IMouseButtonHandler pointer => Info.Driver.OutputMode switch
         {
-            IPointerProvider<IRelativePointer> outputMode => outputMode.Pointer as IVirtualMouse,
-            IPointerProvider<IAbsolutePointer> outputMode => outputMode.Pointer as IVirtualMouse,
+            IPointerProvider<IRelativePointer> outputMode => outputMode.Pointer as IMouseButtonHandler,
+            IPointerProvider<IAbsolutePointer> outputMode => outputMode.Pointer as IMouseButtonHandler,
             _ => null
         };
         
