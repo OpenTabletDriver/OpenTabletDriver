@@ -60,6 +60,7 @@ namespace OpenTabletDriver.Plugin.Output
             lock (synchronizationObject)
             {
                 State = value;
+                ConsumeState();
                 var consumeDelta = (float)consumeWatch.Restart().TotalMilliseconds;
                 if (consumeDelta < 150)
                     reportMsAvg += ((consumeDelta - reportMsAvg) * 0.1f) ?? consumeDelta;
