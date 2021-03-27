@@ -29,7 +29,13 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 this.scheduler = value;
-                this.scheduler.Elapsed += OnTimerElapsed;
+                this.scheduler.Elapsed += () =>
+                {
+                    lock (synchronizationObject)
+                    {
+                        UpdateState();
+                    }
+                };
                 this.scheduler.Start();
             }
             get => this.scheduler;
@@ -69,7 +75,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// Updates the state of the <see cref="AsyncPositionedPipelineElement{T}"/> within a synchronized context.
         /// This is invoked by the <see cref="Scheduler"/> on the interval defined by <see cref="Frequency"/>.
-        /// The implementer must invoke <see cref="Emit"/> to continue the input processing.
+        /// The implementer must invoke <see cref="OnEmit"/> to continue the input processing.
         /// </summary>
         /// <remarks>
         /// Call <see cref="PenIsInRange"/> to check if the pen is in range and avoid false emit.
@@ -85,12 +91,12 @@ namespace OpenTabletDriver.Plugin.Output
             return (float)consumeWatch.Elapsed.TotalMilliseconds < Math.Max(3, (reportMsAvg * 1.5f) ?? float.MaxValue);
         }
 
-        private void OnTimerElapsed()
+        /// <summary>
+        /// Invokes <see cref="Emit"/> event and transfers the data to next element
+        /// </summary>
+        protected void OnEmit()
         {
-            lock (synchronizationObject)
-            {
-                UpdateState();
-            }
+            Emit?.Invoke(State);
         }
 
         public void Dispose()
