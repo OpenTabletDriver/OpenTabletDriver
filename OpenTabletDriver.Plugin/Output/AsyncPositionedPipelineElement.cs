@@ -49,11 +49,7 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.frequency;
         }
 
-        /// <summary>
-        /// Sets the internal state.
-        /// </summary>
-        /// <param name="value"></param>
-        public virtual void Consume(T value)
+        public void Consume(T value)
         {
             lock (synchronizationObject)
             {
@@ -63,6 +59,12 @@ namespace OpenTabletDriver.Plugin.Output
                     reportMsAvg += ((consumeDelta - reportMsAvg) * 0.1f) ?? consumeDelta;
             }
         }
+
+        /// <summary>
+        /// Sets the internal state.
+        /// </summary>
+        /// <param name="value"></param>
+        protected abstract void ConsumeState();
 
         /// <summary>
         /// Updates the state of the <see cref="AsyncPositionedPipelineElement{T}"/> within a synchronized context.
