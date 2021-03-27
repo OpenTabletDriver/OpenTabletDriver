@@ -35,7 +35,7 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.scheduler;
         }
 
-        [PropertyAttribute("Frequency"), UnitAttribute("hz"), DefaultPropertyValue(1000.0f)]
+        [Property("Frequency"), Unit("hz"), DefaultPropertyValue(1000.0f)]
         public float Frequency
         {
             set
