@@ -1,0 +1,61 @@
+{
+  "Name": "Gaomon S56K",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 163.8,
+      "Height": 163.8,
+      "MaxX": 32767.0,
+      "MaxY": 32767.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 96,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T156_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "Width": 163.8,
+      "Height": 163.8,
+      "MaxX": 32767.0,
+      "MaxY": 32767.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 96,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T156_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+} 
