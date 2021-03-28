@@ -2,8 +2,8 @@
   "Name": "Gaomon S56K",
   "DigitizerIdentifiers": [
     {
-      "Width": 163.8,
-      "Height": 163.8,
+      "Width": 163.835,
+      "Height": 163.835,
       "MaxX": 32767.0,
       "MaxY": 32767.0,
       "MaxPressure": 2047,
@@ -28,8 +28,8 @@
       ]
     },
     {
-      "Width": 163.8,
-      "Height": 163.8,
+      "Width": 163.835,
+      "Height": 163.835,
       "MaxX": 32767.0,
       "MaxY": 32767.0,
       "MaxPressure": 2047,
