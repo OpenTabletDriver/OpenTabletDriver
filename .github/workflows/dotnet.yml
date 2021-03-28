@@ -74,7 +74,7 @@ jobs:
           runtime: win-x64
           framework: net5
         run: |
-          $options= @('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '--self-contained', 'false')
+          $options= @('--configuration', 'Release', '-p:DebugType=embedded', '--self-contained', 'false')
           dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime --framework $ENV:framework-windows -o build/$ENV:runtime
