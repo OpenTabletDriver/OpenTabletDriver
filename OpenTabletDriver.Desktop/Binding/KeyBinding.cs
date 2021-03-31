@@ -35,8 +35,7 @@ namespace OpenTabletDriver.Desktop.Binding
                 PluginPlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
                 _                       => null
             };
-        } 
-            
+        }
 
         public override string ToString() => BindingTools.GetShortBindingString(this);
     }
