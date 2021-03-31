@@ -2,8 +2,8 @@
   "Name": "Huion H950P",
   "DigitizerIdentifiers": [
     {
-      "Width": 221.8,
-      "Height": 138.8,
+      "Width": 221.0,
+      "Height": 138.0,
       "MaxX": 44200.0,
       "MaxY": 27600.0,
       "MaxPressure": 8191,
@@ -17,19 +17,19 @@
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Gaomon.GaomonReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T172_\\d{6}$"
+        "201": "HUION_T(172|204)_\\d{6}$"
       },
       "InitializationStrings": [
         200
       ]
     },
     {
-      "Width": 221.8,
-      "Height": 138.8,
+      "Width": 221.0,
+      "Height": 138.0,
       "MaxX": 44200.0,
       "MaxY": 27600.0,
       "MaxPressure": 8191,
@@ -43,11 +43,11 @@
       "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Gaomon.GaomonReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T172_\\d{6}$"
+        "201": "HUION_T(172|204)_\\d{6}$"
       },
       "InitializationStrings": [
         200

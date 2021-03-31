@@ -1,7 +1,7 @@
 {
-    "Name": "Gaomon M10K",
+    "Name": "Huion GC610",
     "DigitizerIdentifiers": [
-      {
+    {
         "Width": 254.0,
         "Height": 158.75,
         "MaxX": 50800.0,
@@ -21,12 +21,12 @@
         "FeatureInitReport": null,
         "OutputInitReport": null,
         "DeviceStrings": {
-          "201": "OEM02_T17b_\\d{6}$"
+          "201": "HUION_T166_\\d{6}$"
         },
         "InitializationStrings": [
-          200
+          "200"
         ]
-      }
+    }
     ],
     "AuxilaryDeviceIdentifiers": [],
     "Attributes": {

@@ -44,7 +44,7 @@ namespace OpenTabletDriver
             { typeof(AuxReportParser).FullName, () => new AuxReportParser() },
             { typeof(TiltTabletReportParser).FullName, () => new TiltTabletReportParser() },
             { typeof(Vendors.SkipByteTabletReportParser).FullName, () => new Vendors.SkipByteTabletReportParser() },
-            { typeof(Vendors.Gaomon.GaomonReportParser).FullName, () => new Vendors.Gaomon.GaomonReportParser() },
+            { typeof(Vendors.UCLogic.UCLogicReportParser).FullName, () => new Vendors.UCLogic.UCLogicReportParser() },
             { typeof(Vendors.Huion.GianoReportParser).FullName, () => new Vendors.Huion.GianoReportParser() },
             { typeof(Vendors.Wacom.BambooReportParser).FullName, () => new Vendors.Wacom.BambooReportParser() },
             { typeof(Vendors.Wacom.IntuosV2ReportParser).FullName, () => new Vendors.Wacom.IntuosV2ReportParser() },
