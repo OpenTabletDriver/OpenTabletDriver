@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace OpenTabletDriver.Plugin.Output
@@ -10,6 +9,12 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (source != null && destination != null)
                 source.Emit += destination.Consume;
+        }
+
+        protected void UnlinkElement(IPipelineElement<T> source, IPipelineElement<T> destination)
+        {
+            if (source != null && destination != null)
+                source.Emit -= destination.Consume;
         }
 
         protected void LinkElements(IEnumerable<IPipelineElement<T>> elements)
@@ -25,17 +30,6 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
-        protected void LinkElements(IEnumerable<IPositionedPipelineElement<T>> elements)
-        {
-            LinkElements(elements.Select(e => (IPipelineElement<T>)e));
-        }
-
-        protected void UnlinkElement(IPipelineElement<T> source, IPipelineElement<T> destination)
-        {
-            if (source != null && destination != null)
-                source.Emit -= destination.Consume;
-        }
-
         protected void UnlinkElements(IEnumerable<IPipelineElement<T>> elements)
         {
             if (elements != null && elements.Any())
@@ -47,11 +41,6 @@ namespace OpenTabletDriver.Plugin.Output
                     prevElement = element;
                 }
             }
-        }
-
-        protected void UnlinkElements(IEnumerable<IPositionedPipelineElement<T>> elements)
-        {
-            UnlinkElements(elements.Select(e => (IPipelineElement<T>)e));
         }
 
         protected IList<IPositionedPipelineElement<T>> GroupElements(IList<IPositionedPipelineElement<T>> elements, PipelinePosition position)
