@@ -139,7 +139,7 @@ namespace OpenTabletDriver.Plugin.Output
         {
             if (report is ITabletReport tabletReport && Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
             {
-                if (Pointer is IPressureHandler pressureHandler)
+                if (Pointer is IVirtualTablet pressureHandler)
                 {
                     float normalizedPressure = (float)tabletReport.Pressure / (float)Tablet.Digitizer.MaxPressure;
                     pressureHandler.SetPressure(normalizedPressure);

@@ -1,6 +1,6 @@
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
-    public interface IPressureHandler
+    public interface IVirtualTablet
     {
         void SetPressure(float percentage);
     }

@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Interop
 {
     [PluginIgnore]
-    public abstract class EvdevVirtualMouse : IMouseButtonHandler, IDisposable
+    public abstract class EvdevVirtualMouse : IVirtualMouse, IDisposable
     {
         protected EvdevDevice Device { set; get; }
 

@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
-    public class EvdevRelativePointer : Interop.EvdevVirtualMouse, IMouseButtonHandler, IRelativePointer
+    public class EvdevRelativePointer : Interop.EvdevVirtualMouse, IVirtualMouse, IRelativePointer
     {
         public unsafe EvdevRelativePointer()
         {
