@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Vendors.Wacom
             }
 
             var nChunks = Raw[1];
-            for (var i = 0; i < nChunks; ++i)
+            for (var i = 0; i < nChunks; i++)
             {
                 var offset = i << 3;
                 var touchID = Raw[2 + offset];
@@ -59,7 +59,7 @@ namespace OpenTabletDriver.Vendors.Wacom
 
         private void ApplyTouchMask(ushort mask)
         {
-            for (var i = 0; i < maxPoints; ++i)
+            for (var i = 0; i < maxPoints; i++)
             {
                 if ((mask & 1) == 0)
                 {

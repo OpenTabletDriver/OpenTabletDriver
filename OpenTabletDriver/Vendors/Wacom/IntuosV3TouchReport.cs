@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Vendors.Wacom
             Raw = report;
             Touches = PrevTouches ?? new TouchPoint[maxPoints];
 
-            for (var i = 0; i < 5; ++i)
+            for (var i = 0; i < 5; i++)
             {
                 var offset = i << 3;
                 var touchID = Raw[2 + offset];
