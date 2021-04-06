@@ -10,15 +10,35 @@ namespace OpenTabletDriver.Plugin.Output
     {
         public OutputMode()
         {
-            SetPassthrough();
+            Passthrough = true;
         }
 
-        private bool isPassthrough;
+        private bool passthrough;
         private TabletState tablet;
         private IList<IPositionedPipelineElement<IDeviceReport>> elements;
         private IPipelineElement<IDeviceReport> entryElement;
 
         public event Action<IDeviceReport> Emit;
+
+        protected bool Passthrough
+        {
+            private set
+            {
+                if (value && !passthrough)
+                {
+                    this.entryElement = this;
+                    this.Emit += this.OnOutput;
+                    this.passthrough = true;
+                }
+                else if (!value && passthrough)
+                {
+                    this.entryElement = null;
+                    this.Emit -= this.OnOutput;
+                    this.passthrough = false;
+                }
+            }
+            get => this.passthrough;
+        }
 
         protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; }
         protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; }
@@ -49,7 +69,7 @@ namespace OpenTabletDriver.Plugin.Output
 
                 if (Elements != null && Elements.Count > 0)
                 {
-                    UnsetPassthrough();
+                    Passthrough = false;
                     PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
                     PostTransformElements = GroupElements(Elements, PipelinePosition.PostTransform);
                     LinkElements(PreTransformElements);
@@ -91,7 +111,7 @@ namespace OpenTabletDriver.Plugin.Output
                 }
                 else
                 {
-                    SetPassthrough();
+                    Passthrough = false;
                 }
             }
             get => this.elements;
@@ -108,25 +128,5 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         protected abstract Matrix3x2 CreateTransformationMatrix();
-
-        private void SetPassthrough()
-        {
-            if (!isPassthrough)
-            {
-                this.entryElement = this;
-                this.Emit += this.OnOutput;
-                isPassthrough = true;
-            }
-        }
-
-        private void UnsetPassthrough()
-        {
-            if (isPassthrough)
-            {
-                this.entryElement = null;
-                this.Emit -= this.OnOutput;
-                isPassthrough = false;
-            }
-        }
     }
 }
