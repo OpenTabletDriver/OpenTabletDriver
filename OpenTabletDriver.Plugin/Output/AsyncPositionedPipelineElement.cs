@@ -95,7 +95,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// after a time equivalent to a report and a half has already passed. If however, the report interval is faster than 3ms,
         /// we instead check if 3ms has already passed before declaring that the pen is out of range.
         /// </remarks>
-        /// <returns>true if pen is in range</returns>
+        /// <returns>True if pen is in range</returns>
         protected bool PenIsInRange()
         {
             return (float)consumeWatch.Elapsed.TotalMilliseconds < Math.Max(3, (reportMsAvg * 1.5f) ?? float.MaxValue);

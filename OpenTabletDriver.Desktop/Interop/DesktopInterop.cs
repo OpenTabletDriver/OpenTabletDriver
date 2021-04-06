@@ -22,7 +22,6 @@ namespace OpenTabletDriver.Desktop.Interop
         }
 
         private static IVirtualScreen virtualScreen;
-
         private static IAbsolutePointer absolutePointer;
         private static IRelativePointer relativePointer;
         private static IVirtualKeyboard virtualKeyboard;
