@@ -9,18 +9,18 @@ namespace OpenTabletDriver.Vendors.Wacom
         public IntuosV3TouchReport(byte[] report)
         {
             Raw = report;
-            Touches = PrevTouches ?? new TouchPoint[maxPoints];
+            Touches = prevTouches ?? new TouchPoint[MAX_POINTS];
 
             for (var i = 0; i < 5; i++)
             {
-                var offset = i << 3;
-                var touchID = Raw[2 + offset];
+                var offset = (i << 3) + 2;
+                var touchID = Raw[offset];
                 if (touchID == 0)
                     continue;
                 touchID -= 1;
-                if (touchID >= maxPoints)
+                if (touchID >= MAX_POINTS)
                     continue;
-                var touchState = Raw[3 + offset];
+                var touchState = Raw[1 + offset];
                 if (touchState == 0)
                     Touches[touchID] = null;
                 else
@@ -30,17 +30,17 @@ namespace OpenTabletDriver.Vendors.Wacom
                         TouchID = touchID,
                         Position = new Vector2
                         {
-                            X = BitConverter.ToUInt16(Raw, 4 + offset),
-                            Y = BitConverter.ToUInt16(Raw, 6 + offset),
+                            X = BitConverter.ToUInt16(Raw, 2 + offset),
+                            Y = BitConverter.ToUInt16(Raw, 4 + offset),
                         },
                     };
                 }
             }
-            PrevTouches = (TouchPoint[])Touches.Clone();
+            prevTouches = (TouchPoint[])Touches.Clone();
         }
 
-        private static TouchPoint[] PrevTouches;
-        public const int maxPoints = 16;
+        private static TouchPoint[] prevTouches;
+        public const int MAX_POINTS = 16;
         public byte[] Raw { set; get; }
         public TouchPoint[] Touches { set; get; }
         public bool ShouldSerializeTouches() => true;
