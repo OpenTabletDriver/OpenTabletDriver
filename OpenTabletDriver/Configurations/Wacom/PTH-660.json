@@ -22,28 +22,6 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
-    },
-    {
-      "Width": 224.0,
-      "Height": 148.0,
-      "MaxX": 44800.0,
-      "MaxY": 29600.0,
-      "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": 19,
-        "EndInclusive": false
-      },
-      "VendorID": 1386,
-      "ProductID": 855,
-      "InputReportLength": null,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

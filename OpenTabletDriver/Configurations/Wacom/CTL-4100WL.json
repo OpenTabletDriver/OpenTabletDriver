@@ -46,18 +46,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 884,
-      "InputReportLength": null,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }
