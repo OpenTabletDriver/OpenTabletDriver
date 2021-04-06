@@ -95,7 +95,7 @@ namespace OpenTabletDriver.Plugin.Output
                 }
                 else
                 {
-                    Passthrough = false;
+                    Passthrough = true;
                 }
             }
             get => this.elements;
