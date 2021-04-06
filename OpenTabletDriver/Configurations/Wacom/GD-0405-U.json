@@ -1,0 +1,51 @@
+{
+  "Name": "Wacom GD-0405-U",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 127.0,
+      "Height": 106.0,
+      "MaxX": 25400.0,
+      "MaxY": 21200.0,
+      "MaxPressure": 2046,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 32,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 127.0,
+      "Height": 106.0,
+      "MaxX": 25400.0,
+      "MaxY": 21200.0,
+      "MaxPressure": 2046,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 32,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
