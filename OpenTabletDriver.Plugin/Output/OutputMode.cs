@@ -45,22 +45,6 @@ namespace OpenTabletDriver.Plugin.Output
 
         public Matrix3x2 TransformationMatrix { protected set; get; }
 
-        public virtual void Consume(IDeviceReport report)
-        {
-            if (report is ITabletReport tabletReport)
-            {
-                if (Transform(tabletReport) is ITabletReport transformedTabletReport)
-                    report = transformedTabletReport;
-            }
-
-            Emit?.Invoke(report);
-        }
-
-        public virtual void Read(IDeviceReport deviceReport) => entryElement?.Consume(deviceReport);
-
-        protected abstract ITabletReport Transform(ITabletReport tabletReport);
-        protected abstract void OnOutput(IDeviceReport report);
-        
         public IList<IPositionedPipelineElement<IDeviceReport>> Elements
         {
             set
@@ -127,6 +111,21 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.tablet;
         }
 
+        public virtual void Consume(IDeviceReport report)
+        {
+            if (report is ITabletReport tabletReport)
+            {
+                if (Transform(tabletReport) is ITabletReport transformedTabletReport)
+                    report = transformedTabletReport;
+            }
+
+            Emit?.Invoke(report);
+        }
+
+        public virtual void Read(IDeviceReport deviceReport) => entryElement?.Consume(deviceReport);
+
         protected abstract Matrix3x2 CreateTransformationMatrix();
+        protected abstract ITabletReport Transform(ITabletReport tabletReport);
+        protected abstract void OnOutput(IDeviceReport report);
     }
 }
