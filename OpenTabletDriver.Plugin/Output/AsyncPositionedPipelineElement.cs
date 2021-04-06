@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Plugin.Output
         private float frequency;
 
         /// <summary>
-        /// The current state of the <see cref="AsyncPositionedPipelineElement{T}"/>
+        /// The current state of the <see cref="AsyncPositionedPipelineElement{T}"/>.
         /// </summary>
         protected T State { set; get; }
 
@@ -68,15 +68,19 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         /// <summary>
-        /// Sets the internal state.
+        /// Sets the internal state of the <see cref="AsyncPositionedPipelineElement{T}"/> within a synchronized context
+        /// to avoid race conditions against <see cref="UpdateState"/>.
         /// </summary>
+        /// <remarks>
+        /// This is called by <see cref="Consume"/> whenever a report is received from a linked upstream element.
+        /// </remarks>
         /// <param name="value"></param>
         protected abstract void ConsumeState();
 
         /// <summary>
         /// Updates the state of the <see cref="AsyncPositionedPipelineElement{T}"/> within a synchronized context.
         /// This is invoked by the <see cref="Scheduler"/> on the interval defined by <see cref="Frequency"/>.
-        /// The implementer must invoke <see cref="OnEmit"/> to continue the input processing.
+        /// The implementer must invoke <see cref="OnEmit"/> to continue the input pipeline.
         /// </summary>
         /// <remarks>
         /// Call <see cref="PenIsInRange"/> to check if the pen is in range and avoid false emit.
@@ -84,16 +88,21 @@ namespace OpenTabletDriver.Plugin.Output
         protected abstract void UpdateState();
 
         /// <summary>
-        /// Determines if pen is in tablet hover range
+        /// Determines if pen is in tablet hover range.
         /// </summary>
-        /// <returns><see cref="true"/> if pen is in range</returns>
+        /// <remarks>
+        /// We determine that a pen is out of range when <see cref="PenIsInRange"/> is called within <see cref="UpdateState"/>
+        /// after a time equivalent to a report and a half has already passed. If however, the report interval is faster than 3ms,
+        /// we instead check if 3ms has already passed before declaring that the pen is out of range.
+        /// </remarks>
+        /// <returns>true if pen is in range</returns>
         protected bool PenIsInRange()
         {
             return (float)consumeWatch.Elapsed.TotalMilliseconds < Math.Max(3, (reportMsAvg * 1.5f) ?? float.MaxValue);
         }
 
         /// <summary>
-        /// Invokes <see cref="Emit"/> event and transfers the data to next element
+        /// Invokes <see cref="Emit"/> event and transfers data to the next element.
         /// </summary>
         protected void OnEmit()
         {
