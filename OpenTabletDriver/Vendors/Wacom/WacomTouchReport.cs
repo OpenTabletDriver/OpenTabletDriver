@@ -1,13 +1,15 @@
 ﻿using System.Numerics;
+using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
-    public struct WacomTouchReport : ITouchReport
+    public struct WacomTouchReport : ITouchReport, IAuxReport
     {
         public WacomTouchReport(byte[] report)
         {
             Raw = report;
+            AuxButtons = prevAuxButtons ?? new bool[4] { false, false, false, false };
             Touches = PrevTouches ?? new TouchPoint[maxPoints];
             if (report[2] == 0x81)
             {
@@ -21,6 +23,17 @@ namespace OpenTabletDriver.Vendors.Wacom
             {
                 var offset = i << 3;
                 var touchID = Raw[2 + offset];
+                if (touchID == 0x80)
+                {
+                    AuxButtons = new bool[]
+                    {
+                        (report[3 + offset] & (1 << 0)) != 0,
+                        (report[3 + offset] & (1 << 1)) != 0,
+                        (report[3 + offset] & (1 << 2)) != 0,
+                        (report[3 + offset] & (1 << 3)) != 0
+                    };
+                    continue;
+                }
                 touchID -= 2;
                 if (touchID >= maxPoints)
                     continue;
@@ -40,6 +53,7 @@ namespace OpenTabletDriver.Vendors.Wacom
                     };
                 }
             }
+            prevAuxButtons = (bool[])AuxButtons.Clone();
             PrevTouches = (TouchPoint[])Touches.Clone();
         }
 
@@ -54,9 +68,11 @@ namespace OpenTabletDriver.Vendors.Wacom
                 mask >>= 1;
             }
         }
+        private static bool[] prevAuxButtons;
         private static TouchPoint[] PrevTouches;
         public const int maxPoints = 16;
         public byte[] Raw { set; get; }
+        public bool[] AuxButtons { set; get; }
         public TouchPoint[] Touches { set; get; }
         public bool ShouldSerializeTouches() => true;
     }
