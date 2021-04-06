@@ -35,14 +35,18 @@ namespace OpenTabletDriver.Daemon
             Driver.TabletChanged += (sender, tablet) =>
             {
                 TabletChanged?.Invoke(sender, tablet);
-                Driver.TabletReader.RawClone = debugging;
-                Driver.AuxReader.RawClone = debugging;
                 if (debugging)
                 {
                     if (Driver.TabletReader != null)
+                    {
+                        Driver.TabletReader.RawClone = true;
                         Driver.TabletReader.RawReport += DebugReportHandler;
+                    }
                     if (Driver.AuxReader != null)
+                    {
+                        Driver.AuxReader.RawClone = true;
                         Driver.AuxReader.RawReport += DebugReportHandler;
+                    }
                 }
             };
             Driver.DevicesChanged += async (sender, args) =>

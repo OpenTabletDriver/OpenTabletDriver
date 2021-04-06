@@ -21,6 +21,7 @@ namespace OpenTabletDriver.Desktop.Interop
         {
         }
 
+        private static IVirtualScreen virtualScreen;
         private static IAbsolutePointer absolutePointer;
         private static IRelativePointer relativePointer;
         private static IVirtualKeyboard virtualKeyboard;
@@ -92,10 +93,10 @@ namespace OpenTabletDriver.Desktop.Interop
 
         public static IVirtualScreen VirtualScreen => CurrentPlatform switch
         {
-            PluginPlatform.Windows => new WindowsDisplay(),
-            PluginPlatform.Linux   => ConstructLinuxDisplay(),
-            PluginPlatform.MacOS   => new MacOSDisplay(),
-            _                      => null
+            PluginPlatform.Windows => virtualScreen ??= new WindowsDisplay(),
+            PluginPlatform.Linux => virtualScreen ??= ConstructLinuxDisplay(),
+            PluginPlatform.MacOS => virtualScreen ??= new MacOSDisplay(),
+            _ => null
         };
 
         private static IVirtualScreen ConstructLinuxDisplay()
