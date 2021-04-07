@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Vendors.Wacom
         public WacomTouchReport(byte[] report)
         {
             Raw = report;
-            AuxButtons = prevAuxButtons ?? new bool[4] { false, false, false, false };
+            AuxButtons = new bool[0];
             Touches = prevTouches ?? new TouchPoint[MAX_POINTS];
             if (report[2] == 0x81)
             {
@@ -53,7 +53,6 @@ namespace OpenTabletDriver.Vendors.Wacom
                     };
                 }
             }
-            prevAuxButtons = (bool[])AuxButtons.Clone();
             prevTouches = (TouchPoint[])Touches.Clone();
         }
 
@@ -68,7 +67,6 @@ namespace OpenTabletDriver.Vendors.Wacom
                 mask >>= 1;
             }
         }
-        private static bool[] prevAuxButtons;
         private static TouchPoint[] prevTouches;
         public const int MAX_POINTS = 16;
         public byte[] Raw { set; get; }
