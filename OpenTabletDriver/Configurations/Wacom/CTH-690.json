@@ -52,7 +52,7 @@
       "ProductID": 830,
       "InputReportLength": 64,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
