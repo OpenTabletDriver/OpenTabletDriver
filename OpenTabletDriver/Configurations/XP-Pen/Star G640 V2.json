@@ -1,20 +1,20 @@
 {
-  "Name": "XP-Pen G430S",
+  "Name": "XP-Pen Star G640 V2",
   "DigitizerIdentifiers": [
     {
-      "Width": 101.6,
-      "Height": 76.2,
-      "MaxX": 10160.0,
-      "MaxY": 7620.0,
+      "Width": 160.0,
+      "Height": 100.0,
+      "MaxX": 15999.0,
+      "MaxY": 9999.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 80,
-        "StartInclusive": true,
-        "End": 96,
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
         "EndInclusive": false
       },
       "VendorID": 10429,
-      "ProductID": 2323,
+      "ProductID": 2324,
       "InputReportLength": 12,
       "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",

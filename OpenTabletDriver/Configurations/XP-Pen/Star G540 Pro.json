@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Artist Pro 12",
+  "Name": "XP-Pen Star G540 Pro",
   "DigitizerIdentifiers": [
     {
-      "Width": 256.34,
-      "Height": 144.15,
-      "MaxX": 25634,
-      "MaxY": 14415,
+      "Width": 136.8,
+      "Height": 73.025,
+      "MaxX": 54720.0,
+      "MaxY": 29210.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 80,
@@ -14,12 +14,12 @@
         "EndInclusive": false
       },
       "VendorID": 10429,
-      "ProductID": 2335,
-      "InputReportLength": 12,
-      "OutputReportLength": 12,
+      "ProductID": 97,
+      "InputReportLength": 8,
+      "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAE",
+      "OutputInitReport": "ArAC",
       "DeviceStrings": {},
       "InitializationStrings": []
     }

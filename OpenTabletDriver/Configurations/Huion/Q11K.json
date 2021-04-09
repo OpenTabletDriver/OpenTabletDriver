@@ -1,27 +1,31 @@
 {
-  "Name": "XP-Pen G640 v2",
+  "Name": "Huion Q11K",
   "DigitizerIdentifiers": [
     {
-      "Width": 160.0,
-      "Height": 100.0,
-      "MaxX": 15999.0,
-      "MaxY": 9999.0,
+      "Width": 258.4,
+      "Height": 165.1,
+      "MaxX": 51680.0,
+      "MaxY": 33020.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
-        "StartInclusive": false,
+        "StartInclusive": true,
         "End": null,
         "EndInclusive": false
       },
-      "VendorID": 10429,
-      "ProductID": 2324,
+      "VendorID": 9580,
+      "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": 12,
+      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAE",
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_TI64_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

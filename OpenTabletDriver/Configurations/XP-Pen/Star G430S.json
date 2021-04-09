@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen G540",
+  "Name": "XP-Pen Star G430S",
   "DigitizerIdentifiers": [
     {
-      "Width": 228.6,
-      "Height": 146.05,
-      "MaxX": 45720.0,
-      "MaxY": 29210.0,
+      "Width": 101.6,
+      "Height": 76.2,
+      "MaxX": 10160.0,
+      "MaxY": 7620.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 80,
@@ -14,12 +14,12 @@
         "EndInclusive": false
       },
       "VendorID": 10429,
-      "ProductID": 117,
-      "InputReportLength": 8,
-      "OutputReportLength": 8,
+      "ProductID": 2323,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
+      "OutputInitReport": "ArAE",
       "DeviceStrings": {},
       "InitializationStrings": []
     }
