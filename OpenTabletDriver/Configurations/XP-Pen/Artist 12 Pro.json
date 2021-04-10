@@ -1,25 +1,25 @@
 {
-  "Name": "XP-Pen G640",
+  "Name": "XP-Pen Artist 12 Pro",
   "DigitizerIdentifiers": [
     {
-      "Width": 160.0,
-      "Height": 100.0,
-      "MaxX": 32000.0,
-      "MaxY": 20000.0,
+      "Width": 256.34,
+      "Height": 144.15,
+      "MaxX": 25634,
+      "MaxY": 14415,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": false,
-        "End": null,
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
         "EndInclusive": false
       },
       "VendorID": 10429,
-      "ProductID": 148,
-      "InputReportLength": 8,
-      "OutputReportLength": 8,
+      "ProductID": 2335,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
+      "OutputInitReport": "ArAE",
       "DeviceStrings": {},
       "InitializationStrings": []
     }

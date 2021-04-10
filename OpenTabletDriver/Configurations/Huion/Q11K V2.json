@@ -1,11 +1,11 @@
 {
-  "Name": "Huion Inspiroy Q11K",
+  "Name": "Huion Q11K V2",
   "DigitizerIdentifiers": [
     {
-      "Width": 258.4,
-      "Height": 165.1,
-      "MaxX": 51680.0,
-      "MaxY": 33020.0,
+      "Width": 279.4,
+      "Height": 174.625,
+      "MaxX": 55880.0,
+      "MaxY": 34925.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -14,14 +14,14 @@
         "EndInclusive": false
       },
       "VendorID": 9580,
-      "ProductID": 109,
+      "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_TI64_\\d{6}$"
+        "201": "HUION_T185_\\d{6}$"
       },
       "InitializationStrings": [
         200

@@ -1,25 +1,25 @@
 {
-  "Name": "XP-Pen G540 Pro",
+  "Name": "XP-Pen Star G960",
   "DigitizerIdentifiers": [
     {
-      "Width": 136.8,
-      "Height": 73.025,
-      "MaxX": 54720.0,
-      "MaxY": 29210.0,
+      "Width": 223.52,
+      "Height": 139.7,
+      "MaxX": 22352.0,
+      "MaxY": 13970.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 80,
-        "StartInclusive": true,
-        "End": 96,
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
         "EndInclusive": false
       },
       "VendorID": 10429,
-      "ProductID": 97,
-      "InputReportLength": 8,
-      "OutputReportLength": 8,
+      "ProductID": 2336,
+      "InputReportLength": 10,
+      "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
+      "OutputInitReport": "ArAE",
       "DeviceStrings": {},
       "InitializationStrings": []
     }
