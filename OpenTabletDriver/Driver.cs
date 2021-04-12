@@ -328,30 +328,29 @@ namespace OpenTabletDriver
                 select device;
         }
 
+        private bool TryDeviceOpen(HidDevice device)
+        {
+            try
+            {
+                return device.CanOpen;
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                return false;
+            }
+        }
+
         private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
         {
-            foreach (HidDevice device in DeviceList.Local.GetHidDevices().ToList())
-            {
-                try
-                {
-                    if (identifier.VendorID != device.VendorID ||
-                        identifier.ProductID != device.ProductID ||
-                        !device.CanOpen ||
-                        (identifier.InputReportLength != null && identifier.InputReportLength != device.GetMaxInputReportLength()) ||
-                        (identifier.OutputReportLength != null && identifier.OutputReportLength != device.GetMaxOutputReportLength()) ||
-                        !DeviceMatchesAllStrings(device, identifier))
-                    {
-                        continue;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Log.Exception(e);
-                    continue;
-                }
-
-                yield return device;
-            }
+            return from device in DeviceList.Local.GetHidDevices()
+                   where identifier.VendorID == device.VendorID
+                   where identifier.ProductID == device.ProductID
+                   where TryDeviceOpen(device)
+                   where identifier.InputReportLength == null || identifier.InputReportLength == device.GetMaxInputReportLength()
+                   where identifier.OutputReportLength == null || identifier.OutputReportLength == device.GetMaxOutputReportLength()
+                   where DeviceMatchesAllStrings(device, identifier)
+                   select device;
         }
 
         private bool DigitizerMatchesAttribute(HidDevice device, Dictionary<string, string> attributes)
