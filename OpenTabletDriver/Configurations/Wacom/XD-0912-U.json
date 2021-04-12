@@ -1,0 +1,50 @@
+{
+  "Name": "Wacom XD-0912-U",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 304.8,
+      "Height": 240.6,
+      "MaxX": 60960.0,
+      "MaxY": 48120.0,
+      "MaxPressure": 1023,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 67,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 304.8,
+      "Height": 240.6,
+      "MaxX": 60960.0,
+      "MaxY": 48120.0,
+      "MaxPressure": 1023,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 67,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
