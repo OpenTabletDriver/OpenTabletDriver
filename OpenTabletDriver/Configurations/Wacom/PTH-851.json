@@ -1,20 +1,20 @@
 {
-  "Name": "Wacom CTL-690",
+  "Name": "Wacom PTH-851",
   "DigitizerIdentifiers": [
     {
-      "Width": 216.0,
-      "Height": 135.0,
-      "MaxX": 21600.0,
-      "MaxY": 13500.0,
+      "Width": 325.12,
+      "Height": 203.2,
+      "MaxX": 65024.0,
+      "MaxY": 40640.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
-        "Start": 1,
+        "Start": 0,
         "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 829,
+      "ProductID": 317,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
@@ -24,19 +24,19 @@
       "InitializationStrings": []
     },
     {
-      "Width": 216.0,
-      "Height": 135.0,
-      "MaxX": 21600.0,
-      "MaxY": 13500.0,
+      "Width": 325.12,
+      "Height": 203.2,
+      "MaxX": 65024.0,
+      "MaxY": 40640.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
-        "Start": 1,
+        "Start": 0,
         "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 829,
+      "ProductID": 317,
       "InputReportLength": 11,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
@@ -49,7 +49,7 @@
   "AuxilaryDeviceIdentifiers": [
     {
       "VendorID": 1386,
-      "ProductID": 829,
+      "ProductID": 317,
       "InputReportLength": 64,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",

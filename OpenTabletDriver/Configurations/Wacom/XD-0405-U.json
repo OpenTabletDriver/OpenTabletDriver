@@ -1,20 +1,20 @@
 {
-  "Name": "Wacom CTL-690",
+  "Name": "Wacom XD-0405-U",
   "DigitizerIdentifiers": [
     {
-      "Width": 216.0,
-      "Height": 135.0,
-      "MaxX": 21600.0,
-      "MaxY": 13500.0,
-      "MaxPressure": 2047,
+      "Width": 127.0,
+      "Height": 106.0,
+      "MaxX": 25400.0,
+      "MaxY": 21200.0,
+      "MaxPressure": 1023,
       "ActiveReportID": {
-        "Start": 1,
+        "Start": 0,
         "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 829,
+      "ProductID": 65,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
@@ -24,19 +24,19 @@
       "InitializationStrings": []
     },
     {
-      "Width": 216.0,
-      "Height": 135.0,
-      "MaxX": 21600.0,
-      "MaxY": 13500.0,
-      "MaxPressure": 2047,
+      "Width": 127.0,
+      "Height": 106.0,
+      "MaxX": 25400.0,
+      "MaxY": 21200.0,
+      "MaxPressure": 1023,
       "ActiveReportID": {
-        "Start": 1,
+        "Start": 0,
         "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 829,
+      "ProductID": 65,
       "InputReportLength": 11,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
@@ -44,20 +44,7 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
-    }
-  ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 829,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+    }],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }

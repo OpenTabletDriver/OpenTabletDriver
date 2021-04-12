@@ -9,7 +9,7 @@
       "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 0,
-        "StartInclusive": true,
+        "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
@@ -31,7 +31,7 @@
       "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 0,
-        "StartInclusive": true,
+        "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
