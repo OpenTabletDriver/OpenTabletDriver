@@ -328,12 +328,25 @@ namespace OpenTabletDriver
                 select device;
         }
 
+        private bool TryDeviceOpen(HidDevice device)
+        {
+            try
+            {
+                return device.CanOpen;
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                return false;
+            }
+        }
+
         private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
         {
             return from device in DeviceList.Local.GetHidDevices()
-                where device.CanOpen
                 where identifier.VendorID == device.VendorID
                 where identifier.ProductID == device.ProductID
+                where TryDeviceOpen(device)
                 where identifier.InputReportLength == null || identifier.InputReportLength == device.GetMaxInputReportLength()
                 where identifier.OutputReportLength == null || identifier.OutputReportLength == device.GetMaxOutputReportLength()
                 where DeviceMatchesAllStrings(device, identifier)
