@@ -1,12 +1,12 @@
 {
-  "Name": "Wacom PTH-451",
+  "Name": "Wacom PTZ-1230",
   "DigitizerIdentifiers": [
     {
-      "Width": 157.48,
-      "Height": 98.425,
-      "MaxX": 31496.0,
-      "MaxY": 19685.0,
-      "MaxPressure": 2047,
+      "Width": 304.8,
+      "Height": 304.8,
+      "MaxX": 60960.0,
+      "MaxY": 60960.0,
+      "MaxPressure": 2046,
       "ActiveReportID": {
         "Start": 0,
         "StartInclusive": false,
@@ -14,7 +14,7 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 788,
+      "ProductID": 179,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
@@ -24,11 +24,11 @@
       "InitializationStrings": []
     },
     {
-      "Width": 157.48,
-      "Height": 98.425,
-      "MaxX": 31496.0,
-      "MaxY": 19685.0,
-      "MaxPressure": 2047,
+      "Width": 304.8,
+      "Height": 304.8,
+      "MaxX": 60960.0,
+      "MaxY": 60960.0,
+      "MaxPressure": 2046,
       "ActiveReportID": {
         "Start": 0,
         "StartInclusive": false,
@@ -36,28 +36,16 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 788,
+      "ProductID": 179,
       "InputReportLength": 11,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
       "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 788,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }

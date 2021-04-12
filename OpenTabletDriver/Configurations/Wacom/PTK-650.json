@@ -1,11 +1,11 @@
 {
-  "Name": "Wacom PTH-451",
+  "Name": "Wacom PTK-650",
   "DigitizerIdentifiers": [
     {
-      "Width": 157.48,
-      "Height": 98.425,
-      "MaxX": 31496.0,
-      "MaxY": 19685.0,
+      "Width": 223.52,
+      "Height": 139.7,
+      "MaxX": 44704.0,
+      "MaxY": 27940.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 0,
@@ -14,7 +14,7 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 788,
+      "ProductID": 42,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
@@ -24,10 +24,10 @@
       "InitializationStrings": []
     },
     {
-      "Width": 157.48,
-      "Height": 98.425,
-      "MaxX": 31496.0,
-      "MaxY": 19685.0,
+      "Width": 223.52,
+      "Height": 139.7,
+      "MaxX": 44704.0,
+      "MaxY": 27940.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 0,
@@ -36,28 +36,16 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 788,
+      "ProductID": 42,
       "InputReportLength": 11,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
       "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 788,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }

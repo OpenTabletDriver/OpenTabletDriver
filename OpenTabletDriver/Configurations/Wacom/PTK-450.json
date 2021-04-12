@@ -1,5 +1,5 @@
 {
-  "Name": "Wacom PTH-451",
+  "Name": "Wacom PTK-450",
   "DigitizerIdentifiers": [
     {
       "Width": 157.48,
@@ -14,7 +14,7 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 788,
+      "ProductID": 41,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
@@ -36,7 +36,7 @@
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 788,
+      "ProductID": 41,
       "InputReportLength": 11,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
@@ -46,18 +46,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 788,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }
