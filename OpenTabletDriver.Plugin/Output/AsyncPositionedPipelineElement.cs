@@ -112,7 +112,7 @@ namespace OpenTabletDriver.Plugin.Output
         public void Dispose()
         {
             Scheduler?.Dispose();
-            Scheduler = null;
+            scheduler = null;
         }
 
         ~AsyncPositionedPipelineElement() => Dispose();
