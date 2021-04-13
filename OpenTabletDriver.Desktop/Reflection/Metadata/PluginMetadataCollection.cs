@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
@@ -27,6 +28,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public const string REPOSITORY_OWNER = "OpenTabletDriver";
         public const string REPOSITORY_NAME = "Plugin-Repository";
+        public const string GIT_REF_REGEX = @"(.+?):(.+$)";
 
         protected static GitHubClient GitHub { get; } = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
 
@@ -44,9 +46,13 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return await DownloadAsync(REPOSITORY_OWNER, REPOSITORY_NAME);
         }
 
-        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name, string gitRef = null)
+        public static async Task<PluginMetadataCollection> DownloadAsync(string branchRef, string repoName)
         {
-            string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/{gitRef}";
+            var match = Regex.Match(branchRef, GIT_REF_REGEX);
+            string owner = match.Success ? match.Groups[1].Value : branchRef;
+            string gitRef = match.Success ? match.Groups[2].Value : null;
+
+            string archiveUrl = $"https://api.github.com/repos/{owner}/{repoName}/tarball/{gitRef}";
             return await DownloadAsync(archiveUrl);
         }
 

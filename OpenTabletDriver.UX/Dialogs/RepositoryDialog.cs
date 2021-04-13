@@ -23,19 +23,15 @@ namespace OpenTabletDriver.UX.Dialogs
         {
             base.OnLoadComplete(e);
 
-            var owner = new TextBoxGroup("Owner")
-            {
-                DefaultInputText = PluginMetadataCollection.REPOSITORY_OWNER
-            };
-
             var repo = new TextBoxGroup("Name")
             {
                 DefaultInputText = PluginMetadataCollection.REPOSITORY_NAME
             };
 
-            var gitRef = new TextBoxGroup("Ref")
+            var branchRef = new TextBoxGroup("Git Reference")
             {
-                DefaultInputText = "master"
+                ToolTip = "{Owner}:{GitRef}",
+                DefaultInputText = $"{PluginMetadataCollection.REPOSITORY_OWNER}:master"
             };
 
             var actions = new StackLayout
@@ -56,7 +52,7 @@ namespace OpenTabletDriver.UX.Dialogs
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new Button((sender, e) => Return(owner, repo, gitRef))
+                        Control = new Button((sender, e) => Return(branchRef, repo))
                         {
                             Text = "Apply"
                         }
@@ -71,18 +67,17 @@ namespace OpenTabletDriver.UX.Dialogs
                 Spacing = 5,
                 Items =
                 {
-                    new StackLayoutItem(owner),
                     new StackLayoutItem(repo),
-                    new StackLayoutItem(gitRef),
+                    new StackLayoutItem(branchRef),
                     new StackLayoutItem(null, true),
                     new StackLayoutItem(actions)
                 }
             };
         }
 
-        protected async void Return(TextBoxGroup owner, TextBoxGroup repo, TextBoxGroup gitRef)
+        protected async void Return(TextBoxGroup branchRef, TextBoxGroup repoName)
         {
-            var collection = await PluginMetadataCollection.DownloadAsync(owner.InputText, repo.InputText, gitRef.InputText);
+            var collection = await PluginMetadataCollection.DownloadAsync(branchRef, repoName);
             Close(collection);
         }
 
@@ -126,6 +121,8 @@ namespace OpenTabletDriver.UX.Dialogs
                     }
                 };
             }
+
+            public static implicit operator string(TextBoxGroup grp) => grp.InputText;
         }
     }
 }
