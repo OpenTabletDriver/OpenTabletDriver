@@ -29,14 +29,18 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 this.scheduler = value;
-                this.scheduler.Elapsed += () =>
+
+                if (this.scheduler != null)
                 {
-                    lock (synchronizationObject)
+                    this.scheduler.Elapsed += () =>
                     {
-                        UpdateState();
-                    }
-                };
-                this.scheduler.Start();
+                        lock (synchronizationObject)
+                        {
+                            UpdateState();
+                        }
+                    };
+                    this.scheduler.Start();
+                }
             }
             get => this.scheduler;
         }
