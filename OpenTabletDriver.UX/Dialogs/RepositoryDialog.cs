@@ -93,7 +93,7 @@ namespace OpenTabletDriver.UX.Dialogs
             public string InputText
             {
                 protected set => this.inputText = value;
-                get => this.inputText ?? DefaultInputText;
+                get => string.IsNullOrWhiteSpace(this.inputText) ? DefaultInputText : this.inputText;
             }
 
             public string DefaultInputText { set; get; }
