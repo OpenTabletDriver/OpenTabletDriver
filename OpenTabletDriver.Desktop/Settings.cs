@@ -349,7 +349,7 @@ namespace OpenTabletDriver.Desktop
                     TipButton = new PluginSettingStore(
                         new MouseBinding
                         {
-                            Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
+                            Button = nameof(Plugin.Platform.Pointer.MouseButton.Left)
                         }
                     ),
                     TipActivationPressure = 1,

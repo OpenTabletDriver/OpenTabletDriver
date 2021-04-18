@@ -33,9 +33,9 @@ namespace OpenTabletDriver.Desktop.Binding
                 float pressurePercent = (float)report.Pressure / identifier.MaxPressure * 100f;
 
                 if (pressurePercent > TipActivationPressure && !TipState)
-                    TipBinding.Press();
+                    TipBinding.Press(report);
                 else if (pressurePercent <= TipActivationPressure && TipState)
-                    TipBinding.Release();
+                    TipBinding.Release(report);
                 TipState = pressurePercent > TipActivationPressure;
             }
 
@@ -44,9 +44,9 @@ namespace OpenTabletDriver.Desktop.Binding
                 if (PenButtonBindings.TryGetValue(penButton, out var binding) && binding != null)
                 {
                     if (report.PenButtons[penButton] && !PenButtonStates[penButton])
-                        binding.Press();
+                        binding.Press(report);
                     else if (!report.PenButtons[penButton] && PenButtonStates[penButton])
-                        binding.Release();
+                        binding.Release(report);
                 }
                 PenButtonStates[penButton] = report.PenButtons[penButton];
             }
@@ -59,9 +59,9 @@ namespace OpenTabletDriver.Desktop.Binding
                 if (AuxButtonBindings.TryGetValue(auxButton, out var binding) && binding != null)
                 {
                     if (report.AuxButtons[auxButton] && !AuxButtonStates[auxButton])
-                        binding.Press();
+                        binding.Press(report);
                     else if (!report.AuxButtons[auxButton] && AuxButtonStates[auxButton])
-                        binding.Release();
+                        binding.Release(report);
                 }
                 AuxButtonStates[auxButton] = report.AuxButtons[auxButton];
             }

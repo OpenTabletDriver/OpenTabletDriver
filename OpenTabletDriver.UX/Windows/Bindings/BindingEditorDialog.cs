@@ -50,7 +50,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
         {
             var keyBind = new KeyBinding
             {
-                Property = e.Key.ToString(),
+                Keys = e.Key.ToString(),
             };
             Return(keyBind);
         }
@@ -59,7 +59,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
         {
             var mouseBind = new MouseBinding
             {
-                Property = ParseMouseButton(e)
+                Button = ParseMouseButton(e)
             };
             Return(mouseBind);
         }

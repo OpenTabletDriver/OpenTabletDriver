@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
@@ -157,13 +159,13 @@ namespace OpenTabletDriver.UX.Controls
 
             private string GetFriendlyDisplayString(PluginSettingStore store)
             {
-                if (store == null || store["Property"] == null)
+                if (store == null)
                     return null;
 
-                var property = store["Property"].GetValue<string>();
                 var name = store.GetPluginReference().Name;
+                string settings = string.Join(", ", store.Settings.Select(s => $"({s.Property}: {s.Value})"));
 
-                return $"{name}: {property}";
+                return $"{name}: {settings}";
             }
         }
 
