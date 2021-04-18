@@ -21,11 +21,11 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-		"201": "HUION_T161_\\d{6}$"
-	  },
+        "201": "HUION_T161_\\d{6}$"
+      },
       "InitializationStrings": [
-		"200"
-	  ]
+        200
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
