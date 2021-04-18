@@ -8,13 +8,39 @@
       "MaxY": 24000.0,
       "MaxPressure": 2047,
       "ActiveReportID": {
-        "Start": 127,
-        "StartInclusive": false,
+        "Start": 96,
+        "StartInclusive": true,
         "End": null,
         "EndInclusive": false
       },
       "VendorID": 9580,
       "ProductID": 109,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T156_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "Width": 160.0,
+      "Height": 120.0,
+      "MaxX": 32000.0,
+      "MaxY": 24000.0,
+      "MaxPressure": 2047,
+      "ActiveReportID": {
+        "Start": 96,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 9580,
+      "ProductID": 110,
       "InputReportLength": 8,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
@@ -32,4 +58,4 @@
   "Attributes": {
     "libinputoverride": "1"
   }
-}
+}  
