@@ -69,10 +69,10 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 }
             };
 
-            settingStoreEditor.Refresh(currentBinding);
-
-            bindingTypeDropDown.SelectedValueChanged += (sender, e) => settingStoreEditor.Refresh(new PluginSettingStore(bindingTypeDropDown.SelectedType));
             bindingTypeDropDown.SelectedType = currentBinding?.GetPluginReference().GetTypeReference();
+            bindingTypeDropDown.SelectedValueChanged += (sender, e) => settingStoreEditor.Refresh(new PluginSettingStore(bindingTypeDropDown.SelectedType));
+
+            settingStoreEditor.Refresh(currentBinding);
         }
 
         private TypeDropDown<IBinding> bindingTypeDropDown;

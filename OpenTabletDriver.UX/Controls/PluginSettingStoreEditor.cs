@@ -62,8 +62,15 @@ namespace OpenTabletDriver.UX.Controls
 
         private IEnumerable<Control> GetControlsForStore(PluginSettingStore store)
         {
-            var type = store.GetPluginReference().GetTypeReference<TSource>();
-            return GetControlsForType(store, type);
+            if (store != null)
+            {
+                var type = store.GetPluginReference().GetTypeReference<TSource>();
+                return GetControlsForType(store, type);
+            }
+            else
+            {
+                return Array.Empty<Control>();
+            }
         }
 
         private IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)
@@ -110,12 +117,13 @@ namespace OpenTabletDriver.UX.Controls
             if (property.PropertyType == typeof(string))
             {
                 if (property.GetCustomAttribute<PropertyValidatedAttribute>() is PropertyValidatedAttribute validateAttr)
-                {
+                {                    
                     var comboBox = new ComboBox
                     {
-                        SelectedValue = GetSetting<string>(property, setting),
-                        DataStore = validateAttr.GetValue<IEnumerable<string>>(property)
+                        DataStore = validateAttr.GetValue<IList<string>>(property),
+                        SelectedValue = GetSetting<string>(property, setting)
                     };
+                    
                     comboBox.SelectedValueChanged += (sender, e) => setting.SetValue(comboBox.SelectedValue);
                     return comboBox;
                 }
