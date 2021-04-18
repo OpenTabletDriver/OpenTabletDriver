@@ -42,13 +42,10 @@ namespace OpenTabletDriver.UX.Controls
         {
             this.Items.Clear();
 
-            var enableButton = new CheckBox
+            foreach (var control in GetHeaderControlsForStore(store))
             {
-                Text = $"Enable {store.GetPluginReference().Name ?? store.Path}",
-                Checked = store.Enable
-            };
-            enableButton.CheckedChanged += (sender, e) => store.Enable = enableButton.Checked ?? false;
-            AddControl(enableButton);
+                AddControl(control);
+            }
 
             foreach (var control in GetControlsForStore(store))
             {
@@ -56,6 +53,11 @@ namespace OpenTabletDriver.UX.Controls
             }
 
             Store = store;
+        }
+
+        protected virtual IEnumerable<Control> GetHeaderControlsForStore(PluginSettingStore store)
+        {
+            return Array.Empty<Control>();
         }
 
         private IEnumerable<Control> GetControlsForStore(PluginSettingStore store)

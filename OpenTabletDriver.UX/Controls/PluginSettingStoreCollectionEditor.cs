@@ -58,7 +58,7 @@ namespace OpenTabletDriver.UX.Controls
         public PluginReference SelectedPlugin => sourceSelector.SelectedSource;
 
         private PluginSourceSelector sourceSelector = new PluginSourceSelector();
-        private PluginSettingStoreEditor<TSource> settingStoreEditor = new PluginSettingStoreEditor<TSource>();
+        private ToggleablePluginSettingStoreEditor settingStoreEditor = new ToggleablePluginSettingStoreEditor();
 
         private void UpdateSelectedStore(PluginReference reference)
         {
@@ -115,6 +115,20 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 );
                 base.Items.Add(new StackLayoutItem(null, true));
+            }
+        }
+
+        private class ToggleablePluginSettingStoreEditor : PluginSettingStoreEditor<TSource>
+        {
+            protected override IEnumerable<Control> GetHeaderControlsForStore(PluginSettingStore store)
+            {
+                var enableButton = new CheckBox
+                {
+                    Text = $"Enable {store.GetPluginReference().Name ?? store.Path}",
+                    Checked = store.Enable
+                };
+                enableButton.CheckedChanged += (sender, e) => store.Enable = enableButton.Checked ?? false;
+                yield return enableButton;
             }
         }
 
