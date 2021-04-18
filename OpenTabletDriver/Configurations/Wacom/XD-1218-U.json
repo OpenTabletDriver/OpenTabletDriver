@@ -44,7 +44,8 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
-    }],
+    }
+  ],
   "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }
