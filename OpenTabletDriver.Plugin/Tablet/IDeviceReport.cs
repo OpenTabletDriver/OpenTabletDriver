@@ -4,6 +4,6 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface IDeviceReport
     {
-        byte[] Raw { get; }
+        byte[] Raw { set; get; }
     }
 }

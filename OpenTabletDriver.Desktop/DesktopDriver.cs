@@ -19,6 +19,6 @@ namespace OpenTabletDriver.Desktop
             return pluginRef.Construct<IReportParser<IDeviceReport>>();
         }
 
-        IVirtualScreen IVirtualDisplayDriver.VirtualScreen => SystemInterop.VirtualScreen;
+        IVirtualScreen IVirtualDisplayDriver.VirtualScreen => DesktopInterop.VirtualScreen;
     }
 }

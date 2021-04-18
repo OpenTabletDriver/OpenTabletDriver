@@ -10,7 +10,6 @@ using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
@@ -60,7 +59,6 @@ namespace OpenTabletDriver
         protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
 
         public bool EnableInput { set; get; }
-        public bool InterpolatorActive => Interpolators.Any();
 
         private TabletState tablet;
         public TabletState Tablet
@@ -83,8 +81,6 @@ namespace OpenTabletDriver
         
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
-
-        public Collection<Interpolator> Interpolators { set; get; } = new Collection<Interpolator>();
 
         public bool TryMatch(TabletConfiguration config)
         {
@@ -307,8 +303,7 @@ namespace OpenTabletDriver
         {
             this.ReportReceived?.Invoke(this, report);
             if (EnableInput && OutputMode?.Tablet != null)
-                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
-                    HandleReport(report);
+                HandleReport(report);
         }
 
         public virtual void HandleReport(IDeviceReport report)

@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     {
         protected MacOSVirtualMouse()
         {
-            var primary = SystemInterop.VirtualScreen.Displays.FirstOrDefault();
+            var primary = DesktopInterop.VirtualScreen.Displays.FirstOrDefault();
             offset = new CGPoint(primary.Position.X, primary.Position.Y);
         }
 

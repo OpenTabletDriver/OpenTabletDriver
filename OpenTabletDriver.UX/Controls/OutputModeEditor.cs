@@ -107,7 +107,7 @@ namespace OpenTabletDriver.UX.Controls
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
                 showNull = !(showAbsolute | showRelative);
             }
-            switch (SystemInterop.CurrentPlatform)
+            switch (DesktopInterop.CurrentPlatform)
             {
                 case PluginPlatform.Linux:
                     noModeEditor.Visible = showNull;
@@ -222,7 +222,7 @@ namespace OpenTabletDriver.UX.Controls
                     base.OnLoadComplete(e);
 
                     var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
-                    foreach (var display in SystemInterop.VirtualScreen.Displays)
+                    foreach (var display in DesktopInterop.VirtualScreen.Displays)
                     {
                         subMenu.Items.Add(
                             new ActionCommand
@@ -239,7 +239,7 @@ namespace OpenTabletDriver.UX.Controls
                                     }
                                     else
                                     {
-                                        virtualScreen = SystemInterop.VirtualScreen;
+                                        virtualScreen = DesktopInterop.VirtualScreen;
                                         this.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                                         this.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                                     }

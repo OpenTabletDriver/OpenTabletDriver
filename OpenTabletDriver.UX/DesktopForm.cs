@@ -50,7 +50,7 @@ namespace OpenTabletDriver.UX
                 this.ClientSize = new Size(width, height);
             }
 
-            switch (SystemInterop.CurrentPlatform)
+            switch (DesktopInterop.CurrentPlatform)
             {
                 case PluginPlatform.Windows:
                 case PluginPlatform.MacOS:
