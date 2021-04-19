@@ -93,13 +93,5 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
             Close(settingStoreEditor.Store);
         }
-
-        private class BindingPropertyDropDown : DropDown
-        {
-            public BindingPropertyDropDown(string[] validProperties)
-            {
-                this.DataStore = validProperties;
-            }
-        }
     }
 }
