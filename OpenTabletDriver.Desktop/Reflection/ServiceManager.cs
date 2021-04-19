@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class ServiceManager : IServiceProvider
+    public class ServiceManager : IServiceManager
     {
         private readonly IDictionary<Type, Func<object>> services = new Dictionary<Type, Func<object>>();
 

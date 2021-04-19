@@ -117,24 +117,27 @@ namespace OpenTabletDriver.Daemon
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
-                AppInfo.PluginManager.Load();
+                var pluginManager = AppInfo.PluginManager;
+                pluginManager.Load();
 
                 // Migrate if settings is available to avoid invalid settings
                 if (Settings != null)
                     Settings = SettingsMigrator.Migrate(Settings);
 
                 // Add services to inject on plugin construction
-                AppInfo.PluginManager.ResetServices();
-                AppInfo.PluginManager.AddService(() => DesktopInterop.Timer);
-                AppInfo.PluginManager.AddService(() => DesktopInterop.AbsolutePointer);
-                AppInfo.PluginManager.AddService(() => DesktopInterop.RelativePointer);
-                AppInfo.PluginManager.AddService(() => DesktopInterop.VirtualScreen);
-                AppInfo.PluginManager.AddService(() => DesktopInterop.VirtualKeyboard);
+                pluginManager.ResetServices();
+                pluginManager.AddService<IServiceProvider>(() => pluginManager);
+                pluginManager.AddService<IDriver>(() => this.Driver);
+                pluginManager.AddService(() => DesktopInterop.Timer);
+                pluginManager.AddService(() => DesktopInterop.AbsolutePointer);
+                pluginManager.AddService(() => DesktopInterop.RelativePointer);
+                pluginManager.AddService(() => DesktopInterop.VirtualScreen);
+                pluginManager.AddService(() => DesktopInterop.VirtualKeyboard);
             }
             else
             {
                 pluginDir.Create();
-                Log.Write("Detect", $"The plugin directory '{pluginDir.FullName}' has been created");
+                Log.Write("Plugin", $"The plugin directory '{pluginDir.FullName}' has been created");
             }
             return Task.CompletedTask;
         }
