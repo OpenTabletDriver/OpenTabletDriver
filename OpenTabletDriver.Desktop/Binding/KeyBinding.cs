@@ -1,4 +1,4 @@
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
@@ -6,39 +6,45 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
-    [PluginName("Key Binding")]
-    public class KeyBinding : IBinding, IValidateBinding
+    [PluginName(PLUGIN_NAME)]
+    public class KeyBinding : IBinding
     {
+        private const string PLUGIN_NAME = "Key Binding";
+
         [Resolved]
         public IVirtualKeyboard Keyboard { set; get; }
 
-        [Property("Property")]
-        public string Property { set; get; }
+        [Property("Key"), PropertyValidated(nameof(ValidKeys))]
+        public string Key { set; get; }
 
-        public Action Press
+        public void Press(IDeviceReport report)
         {
-            get => () => Keyboard.Press(Property);
+            if (string.IsNullOrWhiteSpace(Key))
+                Keyboard.Press(Key);
         }
 
-        public Action Release
+        public void Release(IDeviceReport report)
         {
-            get => () => Keyboard.Release(Property);
+            if (string.IsNullOrWhiteSpace(Key))
+                Keyboard.Release(Key);
         }
 
-        public string[] ValidProperties
+        private static IEnumerable<string> validKeys;
+        public static IEnumerable<string> ValidKeys
         {
-            get => DesktopInterop.CurrentPlatform switch
+            get => validKeys ??= DesktopInterop.CurrentPlatform switch
             {
-                PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
-                PluginPlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys.ToArray(),
-                PluginPlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
-                _                       => null
+                PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
+                PluginPlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
+                PluginPlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
+                _                      => null
             };
         }
 
-        public override string ToString() => BindingTools.GetShortBindingString(this);
+        public override string ToString() => $"{PLUGIN_NAME}: {Key}";
     }
 }

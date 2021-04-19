@@ -11,9 +11,9 @@ namespace OpenTabletDriver.Desktop.Binding
         public static Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
         public static Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
 
-        private static bool TipState = false;
-        private static IList<bool> PenButtonStates = new bool[2];
-        private static IList<bool> AuxButtonStates = new bool[8];
+        private static bool TipState { set; get; } = false;
+        private static IList<bool> PenButtonStates { get; } = new bool[2];
+        private static IList<bool> AuxButtonStates { get; } = new bool[8];
 
         public static void HandleBinding(TabletState tablet, IDeviceReport report)
         {
@@ -21,50 +21,45 @@ namespace OpenTabletDriver.Desktop.Binding
                 return;
 
             if (report is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
-                HandlePenBinding(tablet.Digitizer, tabletReport);
+                HandleTabletReport(tablet.Digitizer, tabletReport);
             if (report is IAuxReport auxReport)
-                HandleAuxBinding(auxReport);
+                HandleAuxiliaryReport(auxReport);
         }
 
-        private static void HandlePenBinding(DigitizerIdentifier identifier, ITabletReport report)
+        private static void HandleTabletReport(DigitizerIdentifier identifier, ITabletReport report)
         {
             if (TipBinding != null)
             {
-                float pressurePercent = (float)report.Pressure / identifier.MaxPressure * 100f;
+                float pressurePercent = (float)report.Pressure / (float)identifier.MaxPressure * 100f;
 
-                if (pressurePercent > TipActivationPressure && !TipState)
-                    TipBinding.Press();
-                else if (pressurePercent <= TipActivationPressure && TipState)
-                    TipBinding.Release();
+                InvokeBinding(report, TipBinding, TipState, pressurePercent > TipActivationPressure);
                 TipState = pressurePercent > TipActivationPressure;
             }
 
-            for (var penButton = 0; penButton < report.PenButtons.Length; penButton++)
+            HandleBindingCollection(report, PenButtonStates, report.PenButtons, PenButtonBindings);
+        }
+
+        private static void HandleAuxiliaryReport(IAuxReport report)
+        {
+            HandleBindingCollection(report, AuxButtonStates, report.AuxButtons, AuxButtonBindings);
+        }
+
+        private static void HandleBindingCollection(IDeviceReport report, IList<bool> prevStates, IList<bool> newStates, IDictionary<int, IBinding> bindings)
+        {
+            for (int i = 0; i < newStates.Count; i++)
             {
-                if (PenButtonBindings.TryGetValue(penButton, out var binding) && binding != null)
-                {
-                    if (report.PenButtons[penButton] && !PenButtonStates[penButton])
-                        binding.Press();
-                    else if (!report.PenButtons[penButton] && PenButtonStates[penButton])
-                        binding.Release();
-                }
-                PenButtonStates[penButton] = report.PenButtons[penButton];
+                if (bindings.TryGetValue(i, out IBinding binding) && binding != null)
+                    InvokeBinding(report, binding, prevStates[i], newStates[i]);
+                prevStates[i] = newStates[i];
             }
         }
 
-        private static void HandleAuxBinding(IAuxReport report)
+        private static void InvokeBinding(IDeviceReport report, IBinding binding, bool prevState, bool newState)
         {
-            for (var auxButton = 0; auxButton < report.AuxButtons.Length; auxButton++)
-            {
-                if (AuxButtonBindings.TryGetValue(auxButton, out var binding) && binding != null)
-                {
-                    if (report.AuxButtons[auxButton] && !AuxButtonStates[auxButton])
-                        binding.Press();
-                    else if (!report.AuxButtons[auxButton] && AuxButtonStates[auxButton])
-                        binding.Release();
-                }
-                AuxButtonStates[auxButton] = report.AuxButtons[auxButton];
-            }
+            if (newState && !prevState)
+                binding.Press(report);
+            else if (!newState && prevState)
+                binding.Release(report);
         }
     }
 }
