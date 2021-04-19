@@ -17,7 +17,6 @@ namespace OpenTabletDriver.Desktop.Interop
     public class DesktopInterop : SystemInterop
     {
         protected DesktopInterop()
-            : base()
         {
         }
 
@@ -91,11 +90,11 @@ namespace OpenTabletDriver.Desktop.Interop
             _                      => null
         };
 
-        public static IVirtualScreen VirtualScreen => CurrentPlatform switch
+        public static IVirtualScreen VirtualScreen => virtualScreen ??= CurrentPlatform switch
         {
-            PluginPlatform.Windows => virtualScreen ??= new WindowsDisplay(),
-            PluginPlatform.Linux => virtualScreen ??= ConstructLinuxDisplay(),
-            PluginPlatform.MacOS => virtualScreen ??= new MacOSDisplay(),
+            PluginPlatform.Windows => new WindowsDisplay(),
+            PluginPlatform.Linux => ConstructLinuxDisplay(),
+            PluginPlatform.MacOS => new MacOSDisplay(),
             _ => null
         };
 

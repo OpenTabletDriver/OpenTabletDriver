@@ -54,7 +54,7 @@ namespace OpenTabletDriver.Desktop
                     PluginPlatform.Windows => Path.Join(Environment.GetEnvironmentVariable("LOCALAPPDATA"), "OpenTabletDriver"),
                     PluginPlatform.Linux   => Path.Join(Environment.GetEnvironmentVariable("HOME"), ".config", "OpenTabletDriver"),
                     PluginPlatform.MacOS   => Path.Join(Environment.GetEnvironmentVariable("HOME"), "Library", "Application Support", "OpenTabletDriver"),
-                    _                       => null
+                    _                      => null
                 };
                 return Directory.Exists(path) ? path : fallbackPath;
             }
