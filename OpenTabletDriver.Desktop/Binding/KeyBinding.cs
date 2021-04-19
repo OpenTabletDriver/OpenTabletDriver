@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
@@ -17,30 +18,33 @@ namespace OpenTabletDriver.Desktop.Binding
         [Resolved]
         public IVirtualKeyboard Keyboard { set; get; }
 
-        [Property("Keys"), PropertyValidated(nameof(ValidKeys))]
-        public string Keys { set; get; }
+        [Property("Key"), PropertyValidated(nameof(ValidKeys))]
+        public string Key { set; get; }
 
         public void Press(IDeviceReport report)
         {
-            Keyboard.Press(Keys);
+            if (string.IsNullOrWhiteSpace(Key))
+                Keyboard.Press(Key);
         }
 
         public void Release(IDeviceReport report)
         {
-            Keyboard.Release(Keys);
+            if (string.IsNullOrWhiteSpace(Key))
+                Keyboard.Release(Key);
         }
 
-        public static string[] ValidKeys
+        private static IEnumerable<string> validKeys;
+        public static IEnumerable<string> ValidKeys
         {
-            get => DesktopInterop.CurrentPlatform switch
+            get => validKeys ??= DesktopInterop.CurrentPlatform switch
             {
-                PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
-                PluginPlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys.ToArray(),
-                PluginPlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys.ToArray(),
+                PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
+                PluginPlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
+                PluginPlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
                 _                      => null
             };
         }
 
-        public override string ToString() => $"{PLUGIN_NAME}: {Keys}";
+        public override string ToString() => $"{PLUGIN_NAME}: {Key}";
     }
 }

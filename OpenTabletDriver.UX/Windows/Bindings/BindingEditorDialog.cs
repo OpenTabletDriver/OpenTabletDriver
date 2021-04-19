@@ -50,7 +50,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
         private void CreateKeyBinding(object sender, KeyEventArgs e)
         {
             var store = new PluginSettingStore(typeof(KeyBinding));
-            store[nameof(KeyBinding.Keys)].SetValue(e.Key.ToString());
+            store[nameof(KeyBinding.Key)].SetValue(e.Key.ToString());
             Close(store);
         }
 

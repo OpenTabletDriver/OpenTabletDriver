@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -35,17 +36,10 @@ namespace OpenTabletDriver.Desktop.Binding
                 pointer?.MouseUp(mouseButton);
         }
 
-        public static string[] ValidButtons
+        private static IEnumerable<string> validButtons;
+        public static IEnumerable<string> ValidButtons
         {
-            get
-            {
-                var items = Enum.GetValues(typeof(MouseButton));
-                var properties = new MouseButton[items.Length];
-                items.CopyTo(properties, 0);
-                var converted = from item in properties
-                    select Enum.GetName(typeof(MouseButton), item);
-                return converted.ToArray();
-            }
+            get => validButtons ??= Enum.GetValues(typeof(MouseButton)).Cast<MouseButton>().Select(Enum.GetName);
         }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";

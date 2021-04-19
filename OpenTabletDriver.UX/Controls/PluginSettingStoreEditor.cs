@@ -120,7 +120,7 @@ namespace OpenTabletDriver.UX.Controls
                 {                    
                     var comboBox = new ComboBox
                     {
-                        DataStore = validateAttr.GetValue<IList<string>>(property),
+                        DataStore = validateAttr.GetValue<IEnumerable<string>>(property),
                         SelectedValue = GetSetting<string>(property, setting)
                     };
                     

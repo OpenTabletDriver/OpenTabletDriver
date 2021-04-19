@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Plugin.Attributes
         /// The name of the member in which the property this is assigned to is allowed to have.
         /// </summary>
         /// <remarks>
-        /// This member must return a static array.
+        /// This member must return <see cref="IEnumerable{T}"/> statically.
         /// </remarks>
         public string MemberName { get; }
 
