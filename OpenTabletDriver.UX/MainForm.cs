@@ -50,6 +50,10 @@ namespace OpenTabletDriver.UX
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
+        private WindowSingleton<ConfigurationEditor> configEditorWindow = new WindowSingleton<ConfigurationEditor>();
+        private WindowSingleton<PluginManagerWindow> pluginManagerWindow = new WindowSingleton<PluginManagerWindow>();
+        private WindowSingleton<TabletDebugger> debuggerWindow = new WindowSingleton<TabletDebugger>();
+
         public void Refresh()
         {
             bindingEditor = new BindingEditor();
@@ -520,14 +524,12 @@ namespace OpenTabletDriver.UX
 
         private void ShowConfigurationEditor()
         {
-            var configEditor = new ConfigurationEditor();
-            configEditor.Show();
+            configEditorWindow.ShowSingleton();
         }
 
-        private void ShowPluginManager()
+        public void ShowPluginManager()
         {
-            var pluginManager = new PluginManagerWindow();
-            pluginManager.Show();
+            pluginManagerWindow.ShowSingleton();
         }
 
         private void ShowDeviceStringReader()
@@ -538,8 +540,7 @@ namespace OpenTabletDriver.UX
 
         private void ShowTabletDebugger()
         {
-            var debugger = new TabletDebugger();
-            debugger.Show();
+            debuggerWindow.ShowSingleton();
         }
 
         private async Task ExportDiagnostics()
