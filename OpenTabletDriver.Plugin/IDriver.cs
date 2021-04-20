@@ -27,12 +27,6 @@ namespace OpenTabletDriver.Plugin
         bool EnableInput { set; get; }
 
         /// <summary>
-        /// Whether an interpolator filter is currently active.
-        /// </summary>
-        /// <value></value>
-        bool InterpolatorActive { get; }
-
-        /// <summary>
         /// The currently active and detected tablet.
         /// </summary>
         TabletState Tablet { get; }

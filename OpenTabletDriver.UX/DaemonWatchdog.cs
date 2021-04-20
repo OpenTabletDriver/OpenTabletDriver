@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX
 
         private Process daemonProcess;
 
-        private readonly static ProcessStartInfo startInfo = SystemInterop.CurrentPlatform switch
+        private readonly static ProcessStartInfo startInfo = DesktopInterop.CurrentPlatform switch
         {
             PluginPlatform.Windows => new ProcessStartInfo
             {

@@ -7,8 +7,8 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
@@ -47,9 +47,8 @@ namespace OpenTabletDriver.UX
         private FileInfo settingsFile;
         private OutputModeEditor outputModeEditor;
         private BindingEditor bindingEditor;
-        private PluginSettingStoreCollectionEditor<IFilter> filterEditor;
+        private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
-        private PluginSettingStoreCollectionEditor<Interpolator> interpolatorEditor;
         private PluginManagerWindow pluginManager;
 
         public void Refresh()
@@ -57,7 +56,6 @@ namespace OpenTabletDriver.UX
             bindingEditor = new BindingEditor();
             filterEditor.UpdateStore(Settings?.Filters);
             toolEditor.UpdateStore(Settings?.Tools);
-            interpolatorEditor.UpdateStore(Settings?.Interpolators);
             outputModeEditor.Refresh();
         }
 
@@ -65,21 +63,21 @@ namespace OpenTabletDriver.UX
         {
             base.OnInitializePlatform(e);
 
-            switch (SystemInterop.CurrentPlatform)
+            switch (DesktopInterop.CurrentPlatform)
             {
                 case PluginPlatform.MacOS:
                     this.Padding = 10;
                     break;
             }
 
-            bool enableDaemonWatchdog = SystemInterop.CurrentPlatform switch
+            bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => true,
                 PluginPlatform.MacOS   => true,
                 _                      => false,
             };
 
-            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
+            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 var bounds = Screen.PrimaryScreen.Bounds;
                 var minWidth = Math.Min(970, bounds.Width * 0.9);
@@ -195,7 +193,7 @@ namespace OpenTabletDriver.UX
                     {
                         Text = "Filters",
                         Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IFilter>(
+                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>(
                             Settings?.Filters,
                             "Filter"
                         )
@@ -211,15 +209,6 @@ namespace OpenTabletDriver.UX
                     },
                     new TabPage
                     {
-                        Text = "Interpolators",
-                        Padding = 5,
-                        Content = interpolatorEditor = new PluginSettingStoreCollectionEditor<Interpolator>(
-                            Settings?.Interpolators,
-                            "Interpolator"
-                        )
-                    },
-                    new TabPage
-                    {
                         Text = "Console",
                         Padding = 5,
                         Content = new LogView()
@@ -231,7 +220,6 @@ namespace OpenTabletDriver.UX
             {
                 filterEditor.UpdateStore(Settings?.Filters);
                 toolEditor.UpdateStore(Settings?.Tools);
-                interpolatorEditor.UpdateStore(Settings?.Interpolators);
             };
 
             var commandsPanel = new StackLayout
@@ -253,7 +241,7 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            outputModeEditor.SetDisplaySize(SystemInterop.VirtualScreen.Displays);
+            outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
             return new StackLayout
             {
@@ -304,7 +292,7 @@ namespace OpenTabletDriver.UX
             pluginManager.Executed += (sender, e) => ShowPluginManager();
 
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => SystemInterop.Open(FaqUrl);
+            faqUrl.Executed += (sender, e) => DesktopInterop.Open(FaqUrl);
 
             var showGuide = new Command { MenuText = "Show guide..." };
             showGuide.Executed += async (sender, e) => await ShowFirstStartupGreeter();

@@ -6,10 +6,11 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.DependencyInjection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class PluginManager
+    public class PluginManager : ServiceManager
     {
         public PluginManager()
         {
@@ -60,7 +61,34 @@ namespace OpenTabletDriver.Desktop.Reflection
                 var objectType = GetChildTypes<T>().FirstOrDefault(t => t.FullName == name);
                 try
                 {
-                    return (T)Activator.CreateInstance(objectType, parameters);
+                    var obj = (T)Activator.CreateInstance(objectType, parameters);
+
+                    if (obj != null)
+                    {
+                        var resolvedProperties = from property in objectType.GetProperties()
+                            where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                            select property;
+
+                        foreach (var property in resolvedProperties)
+                        {
+                            var service = GetService(property.PropertyType);
+                            if (service != null)
+                                property.SetValue(obj, service);
+                        }
+
+                        var resolvedFields = from field in objectType.GetFields()
+                            where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                            select field;
+
+                        foreach (var field in resolvedFields)
+                        {
+                            var service = GetService(field.FieldType);
+                            if (service != null)
+                                field.SetValue(obj, service);
+                        }
+                    }
+
+                    return obj;
                 }
                 catch (MissingMethodException e)
                 {

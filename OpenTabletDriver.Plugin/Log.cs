@@ -26,12 +26,11 @@ namespace OpenTabletDriver.Plugin
         /// <returns>A formatted string.</returns>
         public static string GetStringFormat(LogMessage message)
         {
-            string level = Enum.GetName(typeof(LogLevel), message.Level);
-            var text = string.Format("[{0}:{1}]\t{2}", message.Group, level, message.Message);
-            
+            string text = message.ToString();
+
             // Append stack trace if an exception was caught.
-            if (message is ExceptionLogMessage exceptionMessage && exceptionMessage.StackTrace != null)
-                text += Environment.NewLine + exceptionMessage.StackTrace;
+            if (!string.IsNullOrWhiteSpace(message.StackTrace))
+                text += Environment.NewLine + message.StackTrace;
 
             return text;
         }
@@ -42,9 +41,15 @@ namespace OpenTabletDriver.Plugin
         /// <param name="group">The group in which the <see cref="LogMessage"/> belongs to.</param>
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
         /// <param name="level">The severity level of the <see cref="LogMessage"/>.</param>
-        public static void Write(string group, string text, LogLevel level = LogLevel.Info)
+        public static void Write(string group, string text, LogLevel level = LogLevel.Info, bool createStackTrace  = false)
         {
-            var message = new LogMessage(group, text, level);
+            var message = new LogMessage
+            {
+                Group = group,
+                Message = text,
+                Level = level,
+                StackTrace = createStackTrace ? Environment.StackTrace : null
+            };
             OnOutput(message);
         }
 
@@ -55,8 +60,7 @@ namespace OpenTabletDriver.Plugin
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
         public static void Debug(string group, string text)
         {
-            var message = new LogMessage(group, text, LogLevel.Debug);
-            OnOutput(message);
+            Write(group, text, LogLevel.Debug);
         }
 
         /// <summary>
@@ -68,7 +72,7 @@ namespace OpenTabletDriver.Plugin
             if (ex == null)
                 return;
 
-            var message = new ExceptionLogMessage(ex.GetType().Name, ex.Message, ex.StackTrace);
+            var message = new LogMessage(ex);
             OnOutput(message);
         }
     }

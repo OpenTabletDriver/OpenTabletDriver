@@ -72,7 +72,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static string ToDllName(string dllName)
         {
-            return SystemInterop.CurrentPlatform switch
+            return DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => $"{dllName}.dll",
                 PluginPlatform.Linux => $"lib{dllName}.so",

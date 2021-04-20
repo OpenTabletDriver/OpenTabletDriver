@@ -10,7 +10,6 @@ using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
@@ -40,15 +39,17 @@ namespace OpenTabletDriver
 
         private static readonly Dictionary<string, Func<IReportParser<IDeviceReport>>> reportParserDict = new Dictionary<string, Func<IReportParser<IDeviceReport>>>
         {
+            { typeof(DeviceReportParser).FullName, () => new DeviceReportParser() },
             { typeof(TabletReportParser).FullName, () => new TabletReportParser() },
             { typeof(AuxReportParser).FullName, () => new AuxReportParser() },
             { typeof(TiltTabletReportParser).FullName, () => new TiltTabletReportParser() },
             { typeof(Vendors.SkipByteTabletReportParser).FullName, () => new Vendors.SkipByteTabletReportParser() },
-            { typeof(Vendors.Gaomon.GaomonReportParser).FullName, () => new Vendors.Gaomon.GaomonReportParser() },
+            { typeof(Vendors.UCLogic.UCLogicReportParser).FullName, () => new Vendors.UCLogic.UCLogicReportParser() },
             { typeof(Vendors.Huion.GianoReportParser).FullName, () => new Vendors.Huion.GianoReportParser() },
             { typeof(Vendors.Wacom.BambooReportParser).FullName, () => new Vendors.Wacom.BambooReportParser() },
             { typeof(Vendors.Wacom.IntuosV2ReportParser).FullName, () => new Vendors.Wacom.IntuosV2ReportParser() },
             { typeof(Vendors.Wacom.IntuosV3ReportParser).FullName, () => new Vendors.Wacom.IntuosV3ReportParser() },
+            { typeof(Vendors.Wacom.Wacom64bAuxReportParser).FullName, () => new Vendors.Wacom.Wacom64bAuxReportParser() },
             { typeof(Vendors.Wacom.WacomDriverIntuosV2ReportParser).FullName, () => new Vendors.Wacom.WacomDriverIntuosV2ReportParser() },
             { typeof(Vendors.Wacom.WacomDriverIntuosV3ReportParser).FullName, () => new Vendors.Wacom.WacomDriverIntuosV3ReportParser() },
             { typeof(Vendors.XP_Pen.XP_PenReportParser).FullName, () => new Vendors.XP_Pen.XP_PenReportParser() },
@@ -58,7 +59,6 @@ namespace OpenTabletDriver
         protected IEnumerable<HidDevice> CurrentDevices { set; get; } = DeviceList.Local.GetHidDevices();
 
         public bool EnableInput { set; get; }
-        public bool InterpolatorActive => Interpolators.Any();
 
         private TabletState tablet;
         public TabletState Tablet
@@ -81,8 +81,6 @@ namespace OpenTabletDriver
         
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
-
-        public Collection<Interpolator> Interpolators { set; get; } = new Collection<Interpolator>();
 
         public bool TryMatch(TabletConfiguration config)
         {
@@ -305,8 +303,7 @@ namespace OpenTabletDriver
         {
             this.ReportReceived?.Invoke(this, report);
             if (EnableInput && OutputMode?.Tablet != null)
-                if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
-                    HandleReport(report);
+                HandleReport(report);
         }
 
         public virtual void HandleReport(IDeviceReport report)
@@ -328,12 +325,25 @@ namespace OpenTabletDriver
                 select device;
         }
 
+        private bool TryDeviceOpen(HidDevice device)
+        {
+            try
+            {
+                return device.CanOpen;
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                return false;
+            }
+        }
+
         private IEnumerable<HidDevice> FindMatches(DeviceIdentifier identifier)
         {
             return from device in DeviceList.Local.GetHidDevices()
-                where device.CanOpen
                 where identifier.VendorID == device.VendorID
                 where identifier.ProductID == device.ProductID
+                where TryDeviceOpen(device)
                 where identifier.InputReportLength == null || identifier.InputReportLength == device.GetMaxInputReportLength()
                 where identifier.OutputReportLength == null || identifier.OutputReportLength == device.GetMaxOutputReportLength()
                 where DeviceMatchesAllStrings(device, identifier)

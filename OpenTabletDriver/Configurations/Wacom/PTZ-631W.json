@@ -1,0 +1,51 @@
+{
+  "Name": "Wacom PTZ-631W",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 271.02,
+      "Height": 158.75,
+      "MaxX": 54204.0,
+      "MaxY": 31750.0,
+      "MaxPressure": 2046,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 181,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 271.02,
+      "Height": 158.75,
+      "MaxX": 54204.0,
+      "MaxY": 31750.0,
+      "MaxPressure": 2046,
+      "ActiveReportID": {
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 181,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": "AgI=",
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}

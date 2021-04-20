@@ -88,7 +88,7 @@ namespace OpenTabletDriver.UX
             Logo = Logo.WithSize(256, 256)
         };
 
-        public readonly static bool EnableTrayIcon = SystemInterop.CurrentPlatform switch
+        public readonly static bool EnableTrayIcon = DesktopInterop.CurrentPlatform switch
         {
             PluginPlatform.Windows => true,
             PluginPlatform.MacOS   => true,

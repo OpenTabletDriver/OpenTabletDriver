@@ -3,6 +3,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.UX.Windows.Bindings
@@ -48,30 +49,21 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
         private void CreateKeyBinding(object sender, KeyEventArgs e)
         {
-            var keyBind = new KeyBinding
-            {
-                Property = e.Key.ToString(),
-            };
-            Return(keyBind);
+            var store = new PluginSettingStore(typeof(KeyBinding));
+            store[nameof(KeyBinding.Key)].SetValue(e.Key.ToString());
+            Close(store);
         }
 
         private void CreateMouseBinding(object sender, MouseEventArgs e)
         {
-            var mouseBind = new MouseBinding
-            {
-                Property = ParseMouseButton(e)
-            };
-            Return(mouseBind);
+            var store = new PluginSettingStore(typeof(MouseBinding));
+            store[nameof(MouseBinding.Button)].SetValue(ParseMouseButton(e));
+            Close(store);
         }
 
         private void ClearBinding(object sender, EventArgs e)
         {
             Close(null);
-        }
-
-        private void Return<T>(T binding) where T : OpenTabletDriver.Plugin.IBinding
-        {
-            Close(new PluginSettingStore(binding));
         }
 
         private static string ParseMouseButton(MouseEventArgs e)
