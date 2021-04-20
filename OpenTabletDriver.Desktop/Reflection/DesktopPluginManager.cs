@@ -229,5 +229,18 @@ namespace OpenTabletDriver.Desktop.Reflection
                 return false;
             }
         }
+
+        public override void ResetServices()
+        {
+            base.ResetServices();
+
+            // These services will always be provided on the desktop
+            AddService<IServiceProvider>(() => this);
+            AddService(() => DesktopInterop.Timer);
+            AddService(() => DesktopInterop.AbsolutePointer);
+            AddService(() => DesktopInterop.RelativePointer);
+            AddService(() => DesktopInterop.VirtualScreen);
+            AddService(() => DesktopInterop.VirtualKeyboard);
+        }
     }
 }
