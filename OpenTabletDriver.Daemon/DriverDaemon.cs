@@ -125,7 +125,6 @@ namespace OpenTabletDriver.Daemon
                     Settings = SettingsMigrator.Migrate(Settings);
 
                 // Add services to inject on plugin construction
-                pluginManager.ResetServices();
                 pluginManager.AddService<IDriver>(() => this.Driver);
             }
             else

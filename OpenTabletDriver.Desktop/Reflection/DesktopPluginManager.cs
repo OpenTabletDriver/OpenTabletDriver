@@ -65,6 +65,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
+
+            AppInfo.PluginManager.ResetServices();
         }
 
         protected void LoadPlugin(DirectoryInfo directory)
