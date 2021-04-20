@@ -111,8 +111,8 @@ namespace OpenTabletDriver.UX.Controls.Area
                 if (lastMouseLocation != null)
                 {
                     var delta = e.Location - lastMouseLocation.Value;
-                    var newX = ViewModel.X + delta.X / PixelScale;
-                    var newY = ViewModel.Y + delta.Y / PixelScale;
+                    var newX = ViewModel.X + (delta.X / PixelScale);
+                    var newY = ViewModel.Y + (delta.Y / PixelScale);
 
                     if (ViewModel.LockToUsableArea)
                     {

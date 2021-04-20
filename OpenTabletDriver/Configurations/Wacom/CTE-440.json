@@ -2,8 +2,8 @@
   "Name": "Wacom CTE-440",
   "DigitizerIdentifiers": [
     {
-      "Width": 102.08,
-      "Height": 74.24,
+      "Width": 127.6,
+      "Height": 92.8,
       "MaxX": 10208.0,
       "MaxY": 7424.0,
       "MaxPressure": 511,
@@ -24,8 +24,8 @@
       "InitializationStrings": []
     },
     {
-      "Width": 102.08,
-      "Height": 74.24,
+      "Width": 127.6,
+      "Height": 92.8,
       "MaxX": 10208.0,
       "MaxY": 7424.0,
       "MaxPressure": 511,

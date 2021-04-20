@@ -74,35 +74,32 @@ namespace OpenTabletDriver.Console
             await ModifySettings(s => s.ResetTime = TimeSpan.FromMilliseconds(ms));
         }
 
-        private static async Task SetTipBinding(string name, string property, float threshold)
+        private static async Task SetTipBinding(string name, float threshold)
         {
             await ModifySettings(s =>
             {
                 var tipBinding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
-                tipBinding.Property = property;
 
                 s.TipButton = new PluginSettingStore(tipBinding);
                 s.TipActivationPressure = threshold;
             });
         }
 
-        private static async Task SetPenBinding(string name, string property, int index)
+        private static async Task SetPenBinding(string name, int index)
         {
             await ModifySettings(s =>
             {
                 var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
-                binding.Property = property;
 
                 s.PenButtons[index] = new PluginSettingStore(binding);
             });
         }
 
-        private static async Task SetAuxBinding(string name, string property, int index)
+        private static async Task SetAuxBinding(string name, int index)
         {
             await ModifySettings(s =>
             {
                 var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
-                binding.Property = property;
 
                 s.AuxButtons[index] = new PluginSettingStore(binding);
             });
@@ -301,7 +298,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task ListFilters()
         {
-            await ListTypes<IFilter>();
+            await ListTypes<IPipelineElement<IDeviceReport>>();
         }
 
         private static async Task ListTools()

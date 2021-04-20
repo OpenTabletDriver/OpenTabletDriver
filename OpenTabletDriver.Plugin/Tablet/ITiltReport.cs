@@ -4,6 +4,6 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface ITiltReport : IDeviceReport
     {
-        Vector2 Tilt { get; }
+        Vector2 Tilt { set; get; }
     }
 }

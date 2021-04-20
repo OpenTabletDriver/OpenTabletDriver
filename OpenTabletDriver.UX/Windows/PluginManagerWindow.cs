@@ -207,7 +207,7 @@ namespace OpenTabletDriver.UX.Windows
             alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             return new MenuBar()
             {
@@ -365,7 +365,7 @@ namespace OpenTabletDriver.UX.Windows
                         Width = 175,
                         Enabled = !string.IsNullOrEmpty(link)
                     };
-                    linkButton.Click += (sender, e) => SystemInterop.Open(link);
+                    linkButton.Click += (sender, e) => DesktopInterop.Open(link);
 
                     this.Text = header;
                     this.Content = new StackLayout
@@ -467,7 +467,7 @@ namespace OpenTabletDriver.UX.Windows
 
             private void ShowPluginFolder(object sender, EventArgs e)
             {
-                SystemInterop.Open(SelectedPlugin.Directory.FullName);
+                DesktopInterop.Open(SelectedPlugin.Directory.FullName);
             }
 
             private void UninstallPlugin(object sender, EventArgs e)

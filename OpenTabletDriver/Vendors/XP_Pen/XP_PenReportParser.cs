@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Vendors.XP_Pen
     {
         public IDeviceReport Parse(byte[] data)
         {
-            return (data[1] & 0xc0) == 0xc0 ? new XP_PenAuxReport(data) : new TabletReport(data);
+            return (data[1] & 0xf0) == 0xf0 ? new XP_PenAuxReport(data) : new TabletReport(data);
         }
     }
 }

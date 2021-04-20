@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -44,8 +45,11 @@ namespace OpenTabletDriver.UX.Controls
 
             outputModeSelector.SelectedValueChanged += (sender, args) =>
             {
-                App.Settings.OutputMode = new PluginSettingStore(outputModeSelector.SelectedType);
-                UpdateOutputMode(App.Settings.OutputMode);
+                if (outputModeSelector.SelectedType is TypeInfo type)
+                {
+                    App.Settings.OutputMode = new PluginSettingStore(type);
+                    UpdateOutputMode(App.Settings.OutputMode);
+                }
             };
         }
 
@@ -107,7 +111,7 @@ namespace OpenTabletDriver.UX.Controls
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
                 showNull = !(showAbsolute | showRelative);
             }
-            switch (SystemInterop.CurrentPlatform)
+            switch (DesktopInterop.CurrentPlatform)
             {
                 case PluginPlatform.Linux:
                     noModeEditor.Visible = showNull;
@@ -222,7 +226,7 @@ namespace OpenTabletDriver.UX.Controls
                     base.OnLoadComplete(e);
 
                     var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
-                    foreach (var display in SystemInterop.VirtualScreen.Displays)
+                    foreach (var display in DesktopInterop.VirtualScreen.Displays)
                     {
                         subMenu.Items.Add(
                             new ActionCommand
@@ -239,7 +243,7 @@ namespace OpenTabletDriver.UX.Controls
                                     }
                                     else
                                     {
-                                        virtualScreen = SystemInterop.VirtualScreen;
+                                        virtualScreen = DesktopInterop.VirtualScreen;
                                         this.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                                         this.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                                     }

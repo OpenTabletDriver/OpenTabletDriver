@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 
 namespace OpenTabletDriver.UX.Tools
 {
@@ -26,6 +27,8 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(proximityReport));
             if (report is ITiltReport tiltReport)
                 sb.AppendLines(GetStringFormat(tiltReport));
+            if (report is ITouchReport touchReport)
+                sb.AppendLines(GetStringFormat(touchReport));
 
             return sb.ToString();
         }
@@ -57,6 +60,14 @@ namespace OpenTabletDriver.UX.Tools
         private static IEnumerable<string> GetStringFormat(ITiltReport tiltReport)
         {
             yield return $"Tilt:[{tiltReport.Tilt.X},{tiltReport.Tilt.Y}]";
+        }
+
+        private static IEnumerable<string> GetStringFormat(ITouchReport touchReport)
+        {
+            yield return $"Touch data:";
+            foreach (var touch in touchReport.Touches)
+                if (touch != null)
+                    yield return touch.ToString();
         }
 
         private static void AppendLines(this StringBuilder sb, IEnumerable<string> lines)

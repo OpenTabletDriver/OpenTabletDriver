@@ -1,0 +1,33 @@
+{
+  "Name": "XP-Pen Star G430S",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 101.6,
+      "Height": 76.2,
+      "MaxX": 20320.0,
+      "MaxY": 15240.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 117,
+      "InputReportLength": 8,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAC",
+      "DeviceStrings": {
+        "201": "G430S"
+      },
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

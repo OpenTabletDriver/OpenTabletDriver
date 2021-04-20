@@ -4,6 +4,6 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface IAuxReport : IDeviceReport
     {
-        bool[] AuxButtons { get; }
+        bool[] AuxButtons { set; get; }
     }
 }

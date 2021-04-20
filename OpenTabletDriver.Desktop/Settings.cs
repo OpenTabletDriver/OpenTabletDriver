@@ -328,7 +328,7 @@ namespace OpenTabletDriver.Desktop
         {
             get
             {
-                var virtualScreen = SystemInterop.VirtualScreen;
+                var virtualScreen = DesktopInterop.VirtualScreen;
                 var tablet = Info.Driver.Tablet?.Digitizer;
 
                 return new Settings
@@ -349,7 +349,7 @@ namespace OpenTabletDriver.Desktop
                     TipButton = new PluginSettingStore(
                         new MouseBinding
                         {
-                            Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
+                            Button = nameof(Plugin.Platform.Pointer.MouseButton.Left)
                         }
                     ),
                     TipActivationPressure = 1,

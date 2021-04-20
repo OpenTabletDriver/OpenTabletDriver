@@ -1,0 +1,31 @@
+{
+  "Name": "XP-Pen Star G540 Pro",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 136.8,
+      "Height": 73.025,
+      "MaxX": 54720.0,
+      "MaxY": 29210.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 97,
+      "InputReportLength": 8,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAC",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

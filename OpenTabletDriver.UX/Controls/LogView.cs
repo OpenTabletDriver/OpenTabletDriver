@@ -26,7 +26,7 @@ namespace OpenTabletDriver.UX.Controls
                 Padding = new Padding(0, 5, 0, 0),
                 Spacing = 5,
                 HorizontalContentAlignment = HorizontalAlignment.Left,
-                Items = 
+                Items =
                 {
                     filterSelector,
                     new Button((sender, e) => Copy(this.messageStore))
@@ -43,7 +43,7 @@ namespace OpenTabletDriver.UX.Controls
 
             messageList.ContextMenu = new ContextMenu
             {
-                Items = 
+                Items =
                 {
                     copyCommand
                 }
