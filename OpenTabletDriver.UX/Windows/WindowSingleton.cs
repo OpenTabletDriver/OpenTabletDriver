@@ -1,32 +1,30 @@
-using System;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class WindowSingleton<T> where T : Form, new()
+    public class WindowSingleton<T> where T : Window, new()
     {
-        public WindowSingleton()
+        private T window;
+
+        public void Show()
         {
-            RefreshInternalForm();
-        }
+            if (window == null)
+            {
+                window = new T();
+                window.Closed += (_, _) => window = null;
+            }
 
-        private T form;
-        private bool isClosed;
+            switch (window)
+            {
+                case Form:
+                    (window as Form).Show();
+                    break;
+                case Dialog:
+                    (window as Dialog).ShowModal();
+                    break;
+            }
 
-        public void ShowSingleton()
-        {
-            if (isClosed)
-                RefreshInternalForm();
-
-            form.Show();
-            form.Focus();
-        }
-
-        private void RefreshInternalForm()
-        {
-            isClosed = false;
-            form = new T();
-            form.Closed += (_, _) => isClosed = true;
+            window.Focus();
         }
     }
 }

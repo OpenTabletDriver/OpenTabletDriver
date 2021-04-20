@@ -524,12 +524,12 @@ namespace OpenTabletDriver.UX
 
         private void ShowConfigurationEditor()
         {
-            configEditorWindow.ShowSingleton();
+            configEditorWindow.Show();
         }
 
         public void ShowPluginManager()
         {
-            pluginManagerWindow.ShowSingleton();
+            pluginManagerWindow.Show();
         }
 
         private void ShowDeviceStringReader()
@@ -540,7 +540,7 @@ namespace OpenTabletDriver.UX
 
         private void ShowTabletDebugger()
         {
-            debuggerWindow.ShowSingleton();
+            debuggerWindow.Show();
         }
 
         private async Task ExportDiagnostics()
