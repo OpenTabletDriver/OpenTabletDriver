@@ -174,7 +174,6 @@ namespace OpenTabletDriver.UX.Windows
         {
             if (await App.Driver.Instance.InstallPlugin(path))
             {
-                AppInfo.PluginManager.Load();
                 await Refresh();
             }
             else

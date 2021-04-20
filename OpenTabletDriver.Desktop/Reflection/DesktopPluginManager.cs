@@ -215,8 +215,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public bool RemoveAllTypesForAssembly(Assembly asm)
         {
-
-            return asm.GetExportedTypes().All(type => Remove(type));
+            return PluginTypes.Where(t => t.Assembly == asm).ToArray().All(type => Remove(type));
         }
     }
 }
