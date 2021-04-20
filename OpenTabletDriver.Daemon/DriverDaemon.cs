@@ -116,13 +116,13 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
-        public async Task LoadPlugins()
+        public Task LoadPlugins()
         {
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
                 var pluginManager = AppInfo.PluginManager;
-                await pluginManager.Load();
+                pluginManager.Load();
 
                 // Migrate if settings is available to avoid invalid settings
                 if (Settings != null)
@@ -143,18 +143,19 @@ namespace OpenTabletDriver.Daemon
                 pluginDir.Create();
                 Log.Write("Plugin", $"The plugin directory '{pluginDir.FullName}' has been created");
             }
+            return Task.CompletedTask;
         }
 
-        public async Task<bool> InstallPlugin(string filePath)
+        public Task<bool> InstallPlugin(string filePath)
         {
-            return await AppInfo.PluginManager.InstallPlugin(filePath);
+            return Task.FromResult(AppInfo.PluginManager.InstallPlugin(filePath));
         }
 
-        public async Task<bool> UninstallPlugin(string friendlyName)
+        public Task<bool> UninstallPlugin(string friendlyName)
         {
             var plugins = AppInfo.PluginManager.GetLoadedPlugins();
             var plugin = plugins.FirstOrDefault(ctx => ctx.FriendlyName == friendlyName);
-            return await AppInfo.PluginManager.UninstallPlugin(plugin);
+            return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(plugin));
         }
 
         public Task<bool> DownloadPlugin(PluginMetadata metadata)

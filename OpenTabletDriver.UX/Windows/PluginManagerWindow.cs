@@ -87,7 +87,7 @@ namespace OpenTabletDriver.UX.Windows
         public async Task Refresh()
         {
             var repoFetch = PluginMetadataCollection.DownloadAsync();
-            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(5));
+            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(30));
             PluginMetadataCollection collection = null;
 
             try
@@ -120,7 +120,7 @@ namespace OpenTabletDriver.UX.Windows
             Repository = newRepository;
 
             await App.Driver.Instance.LoadPlugins();
-            await AppInfo.PluginManager.Load();
+            AppInfo.PluginManager.Load();
 
             // Refresh settings
             App.Settings = await App.Driver.Instance.GetSettings();
@@ -174,7 +174,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             if (await App.Driver.Instance.InstallPlugin(path))
             {
-                await AppInfo.PluginManager.Load();
+                AppInfo.PluginManager.Load();
                 await Refresh();
             }
             else
@@ -192,7 +192,7 @@ namespace OpenTabletDriver.UX.Windows
                 return;
             }
 
-            await AppInfo.PluginManager.UnloadPlugin(context);
+            AppInfo.PluginManager.UnloadPlugin(context);
             await Refresh();
         }
 

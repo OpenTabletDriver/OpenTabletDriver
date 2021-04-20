@@ -372,7 +372,7 @@ namespace OpenTabletDriver.UX
 
             await Driver.Instance.WaitForLoadCompletion();
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
-            await AppInfo.PluginManager.Load();
+            AppInfo.PluginManager.Load();
 
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 

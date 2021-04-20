@@ -5,8 +5,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Reflection.Extensions;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -64,15 +66,15 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
-        public async Task Load()
+        public void Load()
         {
             foreach (var dir in PluginDirectory.GetDirectories())
             {
-                await LoadPlugin(dir);
+                LoadPlugin(dir);
             }
         }
 
-        protected async Task LoadPlugin(DirectoryInfo directory)
+        protected void LoadPlugin(DirectoryInfo directory)
         {
             // "Plugins" are directories that contain managed and unmanaged dll
             // These dlls are loaded into a PluginContext per directory
@@ -84,7 +86,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     var context = new DesktopPluginContext(directory);
 
                     // Populate PluginTypes so desktop implementations can access them
-                    await ImportTypes(context);
+                    ImportTypes(context);
                     Plugins.Add(context);
                 }
                 else
@@ -94,18 +96,30 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
-        private async Task ImportTypes(PluginContext context)
+        private void ImportTypes(DesktopPluginContext context)
         {
-            await Task.Run(() =>
+            try
             {
                 foreach (var type in context.Assemblies.SelectMany(asm => asm.GetExportedTypes()))
                 {
+                    if (!type.IsPlatformSupported())
+                    {
+                        Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {DesktopInterop.CurrentPlatform}", LogLevel.Info);
+                        continue;
+                    }
+                    if (type.IsIgnoredPlugin())
+                        continue;
+
                     Add(type);
                 }
-            });
+            }
+            catch (TypeLoadException e)
+            {
+                Log.Write("Plugin", $"Failed to load '{context.FriendlyName}'. Incompatible plugin type '{e.TypeName}'");
+            }
         }
 
-        public async Task<bool> InstallPlugin(string filePath)
+        public bool InstallPlugin(string filePath)
         {
             var file = new FileInfo(filePath);
             if (!file.Exists)
@@ -134,7 +148,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     throw new InvalidOperationException($"Unsupported archive type: {file.Extension}");
             }
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == pluginDir.FullName);
-            var result = pluginDir.Exists ? await UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
+            var result = pluginDir.Exists ? UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
                 Directory.Delete(TemporaryDirectory.FullName, true);
@@ -153,7 +167,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             await metadata.DownloadAsync(sourcePath);
 
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == targetDir.FullName);
-            var result = targetDir.Exists ? await UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
+            var result = targetDir.Exists ? UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
 
             using (var fs = File.Create(metadataPath))
                 Serialization.Serialize(fs, metadata);
@@ -170,7 +184,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
-        public async Task<bool> UninstallPlugin(DesktopPluginContext plugin)
+        public bool UninstallPlugin(DesktopPluginContext plugin)
         {
             var random = new Random();
             if (!Directory.Exists(TrashDirectory.FullName))
@@ -181,35 +195,28 @@ namespace OpenTabletDriver.Desktop.Reflection
             var trashPath = Path.Join(TrashDirectory.FullName, $"{plugin.FriendlyName}_{random.Next()}");
             plugin.Directory.MoveTo(trashPath);
 
-            return await UnloadPlugin(plugin);
+            return UnloadPlugin(plugin);
         }
 
-        public async Task<bool> UpdatePlugin(DesktopPluginContext plugin, DirectoryInfo source)
+        public bool UpdatePlugin(DesktopPluginContext plugin, DirectoryInfo source)
         {
             var targetDir = new DirectoryInfo(plugin.Directory.FullName);
-            if (await UninstallPlugin(plugin))
+            if (UninstallPlugin(plugin))
                 return InstallPlugin(targetDir, source);
             return false;
         }
 
-        public async Task<bool> UnloadPlugin(DesktopPluginContext context)
+        public bool UnloadPlugin(DesktopPluginContext context)
         {
             Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);
             Plugins.Remove(context);
-            bool ret = false;
-            foreach (var p in context.Assemblies)
-            {
-                ret = await RemoveAllTypesForAssembly(p);
-            }
-            return ret;
+            return context.Assemblies.All(asm => RemoveAllTypesForAssembly(asm));
         }
 
-        public async Task<bool> RemoveAllTypesForAssembly(Assembly asm)
+        public bool RemoveAllTypesForAssembly(Assembly asm)
         {
-            return await Task.Run(() =>
-            {
-                return asm.GetExportedTypes().All(type => Remove(type));
-            });
+
+            return asm.GetExportedTypes().All(type => Remove(type));
         }
     }
 }
