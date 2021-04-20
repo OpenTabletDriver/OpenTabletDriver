@@ -32,7 +32,6 @@ namespace OpenTabletDriver.Desktop.Binding
             get => this.keysString;
         }
 
-
         public void Press(IDeviceReport report)
         {
             if (keys.Count > 0)
