@@ -135,7 +135,6 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 store[nameof(MouseBinding.Button)].SetValue(ParseMouseButton(e));
                 this.Store = store;
             }
-
         }
     }
 }
