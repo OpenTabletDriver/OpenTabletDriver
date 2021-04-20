@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Binding;
@@ -116,15 +117,29 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             protected override void OnKeyDown(KeyEventArgs e)
             {
                 PluginSettingStore store;
-                if (e.Modifiers == 0)
+                Keys keys = e.KeyData;
+
+                if (keys == Keys.None)
+                    return;
+
+                if (keys.HasFlag(Keys.Control | Keys.LeftControl) || keys.HasFlag(Keys.Control | Keys.RightControl))
+                    keys &= ~Keys.Control;
+                if (keys.HasFlag(Keys.Alt | Keys.LeftAlt) || keys.HasFlag(Keys.Alt | Keys.RightAlt))
+                    keys &= ~Keys.Alt;
+                if (keys.HasFlag(Keys.Shift | Keys.LeftShift) || keys.HasFlag(Keys.Shift | Keys.RightShift))
+                    keys &= ~Keys.Shift;
+                if (keys.HasFlag(Keys.Application | Keys.LeftApplication) || keys.HasFlag(Keys.Application | Keys.RightApplication))
+                    keys &= ~Keys.Application;
+
+                if ((keys & Keys.ModifierMask) == 0)
                 {
                     store = new PluginSettingStore(typeof(KeyBinding));
-                    store[nameof(KeyBinding.Key)].SetValue(e.Key.ToString());   
+                    store[nameof(KeyBinding.Key)].SetValue(keys.ToString());
                 }
                 else
                 {
                     store = new PluginSettingStore(typeof(MultiKeyBinding));
-                    store[nameof(MultiKeyBinding.Keys)].SetValue(e.KeyData.ToShortcutString());
+                    store[nameof(MultiKeyBinding.Keys)].SetValue(CreateShortcutString(keys));
                 }
                 this.Store = store;
             }
@@ -134,6 +149,32 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 var store = new PluginSettingStore(typeof(MouseBinding));
                 store[nameof(MouseBinding.Button)].SetValue(ParseMouseButton(e));
                 this.Store = store;
+            }
+
+            private static void AppendSeparator(StringBuilder sb, string separator, string text)
+            {
+                if (sb.Length > 0)
+                    sb.Append(separator);
+                sb.Append(text);
+            }
+
+            private static string CreateShortcutString(Keys keys)
+            {
+                var sb = new StringBuilder();
+
+                if (keys.HasFlag(Keys.Application))
+                    AppendSeparator(sb, "+", nameof(Keys.Application));
+                if (keys.HasFlag(Keys.Control))
+                    AppendSeparator(sb, "+", nameof(Keys.Control));
+                if (keys.HasFlag(Keys.Shift))
+                    AppendSeparator(sb, "+", nameof(Keys.Shift));
+                if (keys.HasFlag(Keys.Alt))
+                    AppendSeparator(sb, "+", nameof(Keys.Alt));
+
+                var mainKey = keys & Keys.KeyMask;
+                AppendSeparator(sb, "+", mainKey.ToString());
+
+                return sb.ToString();
             }
         }
     }
