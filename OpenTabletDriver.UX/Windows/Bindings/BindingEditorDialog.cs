@@ -122,13 +122,13 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 if (keys == Keys.None)
                     return;
 
-                if (keys.HasFlag(Keys.Control | Keys.LeftControl) || keys.HasFlag(Keys.Control | Keys.RightControl))
-                    keys &= ~Keys.Control;
                 if (keys.HasFlag(Keys.Alt | Keys.LeftAlt) || keys.HasFlag(Keys.Alt | Keys.RightAlt))
                     keys &= ~Keys.Alt;
-                if (keys.HasFlag(Keys.Shift | Keys.LeftShift) || keys.HasFlag(Keys.Shift | Keys.RightShift))
+                else if (keys.HasFlag(Keys.Control | Keys.LeftControl) || keys.HasFlag(Keys.Control | Keys.RightControl))
+                    keys &= ~Keys.Control;
+                else if (keys.HasFlag(Keys.Shift | Keys.LeftShift) || keys.HasFlag(Keys.Shift | Keys.RightShift))
                     keys &= ~Keys.Shift;
-                if (keys.HasFlag(Keys.Application | Keys.LeftApplication) || keys.HasFlag(Keys.Application | Keys.RightApplication))
+                else if (keys.HasFlag(Keys.Application | Keys.LeftApplication) || keys.HasFlag(Keys.Application | Keys.RightApplication))
                     keys &= ~Keys.Application;
 
                 if ((keys & Keys.ModifierMask) == 0)
