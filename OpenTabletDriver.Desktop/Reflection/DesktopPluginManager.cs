@@ -218,8 +218,9 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             try
             {
-                var types = from type in asm.GetTypes()
-                    select type.GetTypeInfo();
+                var types = pluginTypes.Where(t => t.Assembly == asm)
+                    .Select(t => t.GetTypeInfo());
+
                 pluginTypes = new ConcurrentBag<TypeInfo>(pluginTypes.Except(types));
                 return true;
             }
