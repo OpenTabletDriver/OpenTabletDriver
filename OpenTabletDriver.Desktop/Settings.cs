@@ -243,7 +243,6 @@ namespace OpenTabletDriver.Desktop
             set => this.RaiseAndSetIfChanged(ref _eP, value);
             get => _eP;
         }
-        
 
         [JsonProperty("EraserButton")]
         public PluginSettingStore EraserButton
