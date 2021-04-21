@@ -85,10 +85,18 @@ namespace OpenTabletDriver.Desktop.Reflection
                         }
                     }
                 }
-                catch
+                catch (TargetInvocationException e) when (e.Message == "Exception has been thrown by the target of an invocation.")
+                {
+                    Log.Write("Plugin", "Object construction has thrown an error", LogLevel.Error);
+                    Log.Exception(e.InnerException);
+                }
+                catch (Exception e)
                 {
                     Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
+                    Log.Exception(e);
                 }
+
+                return null;
             }
             Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Debug);
             return null;
