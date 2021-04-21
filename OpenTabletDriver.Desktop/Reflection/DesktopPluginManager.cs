@@ -65,6 +65,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
+
+            AppInfo.PluginManager.ResetServices();
         }
 
         protected void LoadPlugin(DirectoryInfo directory)
@@ -229,6 +231,19 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Log.Exception(ex);
                 return false;
             }
+        }
+
+        public override void ResetServices()
+        {
+            base.ResetServices();
+
+            // These services will always be provided on the desktop
+            AddService<IServiceProvider>(() => this);
+            AddService(() => DesktopInterop.Timer);
+            AddService(() => DesktopInterop.AbsolutePointer);
+            AddService(() => DesktopInterop.RelativePointer);
+            AddService(() => DesktopInterop.VirtualScreen);
+            AddService(() => DesktopInterop.VirtualKeyboard);
         }
     }
 }
