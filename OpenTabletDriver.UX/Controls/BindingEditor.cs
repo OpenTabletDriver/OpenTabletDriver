@@ -1,6 +1,4 @@
 using System;
-using System.Linq;
-using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
@@ -13,97 +11,157 @@ namespace OpenTabletDriver.UX.Controls
     {
         public BindingEditor()
         {
-            this.Padding = 5;
-            content.Orientation = Orientation.Vertical;
-            content.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-
+            Padding = 5;
             UpdateBindings();
             App.SettingsChanged += (s) => UpdateBindings();
-            base.Content = content;
         }
-
-        private StackView content = new StackView();
 
         public void UpdateBindings()
         {
-            content.Items.Clear();
-
-            var tipButton = new BindingDisplay(App.Settings?.TipButton)
-            {
-                MinimumSize = new Size(300, 0)
-            };
-            tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
-
-            var tipPressure = new PressureSlider(
-                "Tip Pressure",
-                () => App.Settings.TipActivationPressure,
-                (v) => App.Settings.TipActivationPressure = v
-            );
+            BindingDisplay tipButton, eraserButton;
 
             var tipSettingsStack = new StackView
             {
                 Items =
                 {
-                    new Group("Tip Button", tipButton, Orientation.Horizontal, false),
-                    tipPressure
+                    new Group
+                    {
+                        Text = "Tip Button",
+                        Orientation = Orientation.Horizontal,
+                        ExpandContent = false,
+                        Content = tipButton = new BindingDisplay(App.Settings?.TipButton)
+                        {
+                            MinimumSize = new Size(300, 0)
+                        }
+                    },
+                    new PressureSlider(
+                        "Tip Pressure",
+                        () => App.Settings.TipActivationPressure,
+                        (v) => App.Settings.TipActivationPressure = v
+                    )
                 }
             };
+            tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
 
-            var tipSettings = new Group("Tip Bindings", tipSettingsStack);
+            var eraserSettingsStack = new StackView
+            {
+                Items =
+                {
+                    new Group
+                    {
+                        Text = "Eraser Button",
+                        ExpandContent = false,
+                        Orientation = Orientation.Horizontal,
+                        Content = eraserButton = new BindingDisplay(App.Settings?.EraserButton)
+                        {
+                            MinimumSize = new Size(300, 0)
+                        }
+                    },
+                    new PressureSlider(
+                        "Eraser Pressure",
+                        () => App.Settings.EraserActivationPressure,
+                        (v) => App.Settings.EraserActivationPressure = v
+                    )
+                }
+            };
+            eraserButton.BindingUpdated += (sender, binding) => App.Settings.EraserButton = binding;
 
             var penBindingsStack = new StackView();
             for (int i = 0; i < App.Settings?.PenButtons.Count; i++)
             {
-                var penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
+                BindingDisplay penBinding;
+
+                var penBindingGroup = new Group
                 {
-                    MinimumSize = new Size(300, 0),
-                    Tag = i
+                    Text = $"Pen Button {i + 1}",
+                    Orientation = Orientation.Horizontal,
+                    ExpandContent = false,
+                    Content = penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
+                    {
+                        MinimumSize = new Size(300, 0),
+                        Tag = i
+                    }
                 };
                 penBinding.BindingUpdated += (sender, binding) =>
                 {
                     var index = (int)(sender as BindingDisplay).Tag;
                     App.Settings.PenButtons[index] = binding;
                 };
-                var penBindingGroup = new Group($"Pen Button {i + 1}", penBinding, Orientation.Horizontal, false);
                 penBindingsStack.AddControl(penBindingGroup);
             }
-
-            var penBindingSettings = new Group("Pen Button Bindings", penBindingsStack);
-
-            var penSettings = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
-                Items =
-                {
-                    new StackLayoutItem(tipSettings, true),
-                    new StackLayoutItem(penBindingSettings, true)
-                }
-            };
-            content.AddControl(penSettings);
 
             var auxBindingsStack = new StackView();
             for (int i = 0; i < App.Settings?.AuxButtons.Count; i++)
             {
-                var auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
+                BindingDisplay auxBinding;
+
+                var auxBindingGroup = new Group
                 {
-                    MinimumSize = new Size(300, 0),
-                    Tag = i
+                    Text = $"Auxiliary Button {i + 1}",
+                    Orientation = Orientation.Horizontal,
+                    ExpandContent = false,
+                    Content = auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
+                    {
+                        MinimumSize = new Size(300, 0),
+                        Tag = i
+                    }
                 };
                 auxBinding.BindingUpdated += (sender, Binding) =>
                 {
                     var index = (int)(sender as BindingDisplay).Tag;
                     App.Settings.AuxButtons[index] = Binding;
                 };
-                var auxBindingGroup = new Group($"Auxiliary Button {i + 1}", auxBinding, Orientation.Horizontal, false);
                 auxBindingsStack.AddControl(auxBindingGroup);
             }
 
-            var auxBindingSettings = new Group("Auxiliary Button Bindings", auxBindingsStack)
+            var firstRow = new StackLayout
             {
-                TitleHorizontalAlignment = HorizontalAlignment.Center
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Items =
+                {
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Tip Bindings", tipSettingsStack)
+                    },
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Eraser Bindings", eraserSettingsStack)
+                    }
+                }
             };
-            content.AddControl(auxBindingSettings);
+
+            var secondRow = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Items =
+                {
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Pen Button Bindings", penBindingsStack)
+                    },
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Auxiliary Button Bindings", auxBindingsStack)
+                    }
+                }
+            };
+
+            this.Content = new StackView
+            {
+                Orientation = Orientation.Vertical,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Items = 
+                {
+                    new StackLayoutItem(firstRow, true),
+                    new StackLayoutItem(secondRow, true)
+                }
+            };
         }
 
         internal class BindingDisplay : StackLayout

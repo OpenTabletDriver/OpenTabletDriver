@@ -299,6 +299,10 @@ namespace OpenTabletDriver.Daemon
             BindingHandler.TipActivationPressure = Settings.TipActivationPressure;
             Log.Write("Settings", $"Tip Binding: [{BindingHandler.TipBinding}]@{BindingHandler.TipActivationPressure}%");
 
+            BindingHandler.EraserBinding = Settings.EraserButton?.Construct<IBinding>();
+            BindingHandler.EraserActivationPressure = Settings.EraserActivationPressure;
+            Log.Write("Settings", $"Eraser Binding: [{BindingHandler.EraserBinding}]@{BindingHandler.EraserActivationPressure}%");
+
             if (Settings.PenButtons != null)
             {
                 for (int index = 0; index < Settings.PenButtons.Count; index++)
