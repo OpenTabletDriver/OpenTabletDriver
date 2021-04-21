@@ -80,8 +80,11 @@ namespace OpenTabletDriver.Desktop.Reflection
                                         field.SetValue(obj, service);
                                 }
                             }
-
                             return obj;
+                        }
+                        else
+                        {
+                            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
                         }
                     }
                 }
@@ -95,10 +98,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
                     Log.Exception(e);
                 }
-
-                return null;
             }
-            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Debug);
             return null;
         }
 
