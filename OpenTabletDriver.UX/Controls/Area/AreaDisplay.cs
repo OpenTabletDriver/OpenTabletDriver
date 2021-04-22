@@ -117,6 +117,9 @@ namespace OpenTabletDriver.UX.Controls.Area
                     if (ViewModel.LockToUsableArea)
                     {
                         var bounds = ViewModel.FullBackground;
+                        bounds.X = 0;
+                        bounds.Y = 0;
+
                         var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(ViewModel.Width, ViewModel.Height));
 
                         var corners = new PointF[]
