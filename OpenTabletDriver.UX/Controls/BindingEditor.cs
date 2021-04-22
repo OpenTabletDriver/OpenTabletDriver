@@ -1,10 +1,7 @@
-using System;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
-using OpenTabletDriver.UX.Windows.Bindings;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -17,12 +14,12 @@ namespace OpenTabletDriver.UX.Controls
             App.SettingsChanged += (s) => UpdateBindings();
         }
 
+        private BindingDisplay tipButton, eraserButton;
+        private FloatSlider tipPressure, eraserPressure;
+
         public void UpdateBindings()
         {
             this.DataContext = App.Settings;
-
-            BindingDisplay tipButton, eraserButton;
-            FloatSlider tipPressure, eraserPressure;
 
             var tipSettingsStack = new StackView
             {
@@ -33,9 +30,10 @@ namespace OpenTabletDriver.UX.Controls
                         Text = "Tip Button",
                         Orientation = Orientation.Horizontal,
                         ExpandContent = false,
-                        Content = tipButton = new BindingDisplay(App.Settings?.TipButton)
+                        Content = tipButton = new BindingDisplay
                         {
-                            MinimumSize = new Size(300, 0)
+                            MinimumSize = new Size(300, 0),
+                            Store = App.Settings?.TipButton
                         }
                     },
                     new Group
@@ -46,7 +44,7 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 }
             };
-            tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
+            tipButton.StoreBinding.BindDataContext<Settings>(s => s.TipButton);
             tipPressure.ValueBinding.BindDataContext<Settings>(s => s.TipActivationPressure);
 
             var eraserSettingsStack = new StackView
@@ -58,9 +56,10 @@ namespace OpenTabletDriver.UX.Controls
                         Text = "Eraser Button",
                         ExpandContent = false,
                         Orientation = Orientation.Horizontal,
-                        Content = eraserButton = new BindingDisplay(App.Settings?.EraserButton)
+                        Content = eraserButton = new BindingDisplay
                         {
-                            MinimumSize = new Size(300, 0)
+                            MinimumSize = new Size(300, 0),
+                            Store = App.Settings?.EraserButton
                         }
                     },
                     new Group
@@ -71,7 +70,7 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 }
             };
-            eraserButton.BindingUpdated += (sender, binding) => App.Settings.EraserButton = binding;
+            eraserButton.StoreBinding.BindDataContext<Settings>(s => s.EraserButton);
             eraserPressure.ValueBinding.BindDataContext<Settings>(s => s.EraserActivationPressure);
 
             var penBindingsStack = new StackView();
@@ -84,16 +83,18 @@ namespace OpenTabletDriver.UX.Controls
                     Text = $"Pen Button {i + 1}",
                     Orientation = Orientation.Horizontal,
                     ExpandContent = false,
-                    Content = penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
+                    Content = penBinding = new BindingDisplay
                     {
                         MinimumSize = new Size(300, 0),
-                        Tag = i
+                        Tag = i,
+                        Store = App.Settings?.PenButtons[i]
                     }
                 };
-                penBinding.BindingUpdated += (sender, binding) =>
+                penBinding.StoreChanged += (sender, e) =>
                 {
-                    var index = (int)(sender as BindingDisplay).Tag;
-                    App.Settings.PenButtons[index] = binding;
+                    var display = sender as BindingDisplay;
+                    var index = (int)display.Tag;
+                    App.Settings.PenButtons[index] = display.Store;
                 };
                 penBindingsStack.AddControl(penBindingGroup);
             }
@@ -108,16 +109,18 @@ namespace OpenTabletDriver.UX.Controls
                     Text = $"Auxiliary Button {i + 1}",
                     Orientation = Orientation.Horizontal,
                     ExpandContent = false,
-                    Content = auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
+                    Content = auxBinding = new BindingDisplay
                     {
                         MinimumSize = new Size(300, 0),
-                        Tag = i
+                        Tag = i,
+                        Store = App.Settings?.AuxButtons[i]
                     }
                 };
-                auxBinding.BindingUpdated += (sender, Binding) =>
+                auxBinding.StoreChanged += (sender, e) =>
                 {
-                    var index = (int)(sender as BindingDisplay).Tag;
-                    App.Settings.AuxButtons[index] = Binding;
+                    var display = sender as BindingDisplay;
+                    var index = (int)display.Tag;
+                    App.Settings.AuxButtons[index] = display.Store;
                 };
                 auxBindingsStack.AddControl(auxBindingGroup);
             }
@@ -170,58 +173,6 @@ namespace OpenTabletDriver.UX.Controls
                     new StackLayoutItem(secondRow, true)
                 }
             };
-        }
-
-        internal class BindingDisplay : StackLayout
-        {
-            public BindingDisplay(PluginSettingStore store)
-            {
-                var bindingCommand = new Command();
-                bindingCommand.Executed += async (sender, e) =>
-                {
-                    var dialog = new BindingEditorDialog(Binding);
-                    this.Binding = await dialog.ShowModalAsync(this);
-                };
-                var advancedBindingCommand = new Command();
-                advancedBindingCommand.Executed += async (sender, e) =>
-                {
-                    var dialog = new AdvancedBindingEditorDialog(Binding);
-                    this.Binding = await dialog.ShowModalAsync(this);
-                };
-
-                mainButton = new Button
-                {
-                    Command = bindingCommand
-                };
-                advancedButton = new Button
-                {
-                    Command = advancedBindingCommand,
-                    Text = "...",
-                    Width = 25
-                };
-
-                Spacing = 5;
-                Orientation = Orientation.Horizontal;
-                Items.Add(new StackLayoutItem(mainButton, true));
-                Items.Add(advancedButton);
-
-                this.Binding = store;
-            }
-
-            public event EventHandler<PluginSettingStore> BindingUpdated;
-
-            private Button mainButton, advancedButton;
-            private PluginSettingStore binding;
-            public PluginSettingStore Binding
-            {
-                set
-                {
-                    this.binding = value;
-                    mainButton.Text = Binding?.GetHumanReadableString();
-                    BindingUpdated?.Invoke(this, Binding);
-                }
-                get => this.binding;
-            }
         }
     }
 }
