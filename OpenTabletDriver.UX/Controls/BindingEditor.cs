@@ -1,6 +1,7 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows.Bindings;
@@ -18,7 +19,10 @@ namespace OpenTabletDriver.UX.Controls
 
         public void UpdateBindings()
         {
+            this.DataContext = App.Settings;
+
             BindingDisplay tipButton, eraserButton;
+            FloatSlider tipPressure, eraserPressure;
 
             var tipSettingsStack = new StackView
             {
@@ -34,14 +38,16 @@ namespace OpenTabletDriver.UX.Controls
                             MinimumSize = new Size(300, 0)
                         }
                     },
-                    new PressureSlider(
-                        "Tip Pressure",
-                        () => App.Settings.TipActivationPressure,
-                        (v) => App.Settings.TipActivationPressure = v
-                    )
+                    new Group
+                    {
+                        Text = "Tip Pressure",
+                        Orientation = Orientation.Horizontal,
+                        Content = tipPressure = new FloatSlider()
+                    }
                 }
             };
             tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
+            tipPressure.ValueBinding.BindDataContext<Settings>(s => s.TipActivationPressure);
 
             var eraserSettingsStack = new StackView
             {
@@ -57,14 +63,16 @@ namespace OpenTabletDriver.UX.Controls
                             MinimumSize = new Size(300, 0)
                         }
                     },
-                    new PressureSlider(
-                        "Eraser Pressure",
-                        () => App.Settings.EraserActivationPressure,
-                        (v) => App.Settings.EraserActivationPressure = v
-                    )
+                    new Group
+                    {
+                        Text = "Eraser Pressure",
+                        Orientation = Orientation.Horizontal,
+                        Content = eraserPressure = new FloatSlider()
+                    }
                 }
             };
             eraserButton.BindingUpdated += (sender, binding) => App.Settings.EraserButton = binding;
+            eraserPressure.ValueBinding.BindDataContext<Settings>(s => s.EraserActivationPressure);
 
             var penBindingsStack = new StackView();
             for (int i = 0; i < App.Settings?.PenButtons.Count; i++)
@@ -156,7 +164,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 Orientation = Orientation.Vertical,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Items = 
+                Items =
                 {
                     new StackLayoutItem(firstRow, true),
                     new StackLayoutItem(secondRow, true)
@@ -214,57 +222,6 @@ namespace OpenTabletDriver.UX.Controls
                 }
                 get => this.binding;
             }
-        }
-
-        private class PressureSlider : Group
-        {
-            public PressureSlider(
-                string header,
-                Func<float> getValue,
-                Action<float> setValue
-            )
-            {
-                this.Text = header;
-                this.Orientation = Orientation.Horizontal;
-
-                this.setValue = setValue;
-                this.getValue = getValue;
-
-                var pressureslider = new Slider
-                {
-                    MinValue = 0,
-                    MaxValue = 100
-                };
-                var fineTune = new TextBox();
-
-                pressureslider.ValueChanged += (sender, e) =>
-                {
-                    this.setValue(pressureslider.Value);
-                    fineTune.Text = this.getValue().ToString();
-                    fineTune.CaretIndex = fineTune.Text.Length;
-                };
-
-                fineTune.TextChanged += (sender, e) =>
-                {
-                    var newValue = float.TryParse(fineTune.Text, out var val) ? val : 0f;
-                    this.setValue(newValue);
-                    pressureslider.Value = (int)this.getValue();
-                };
-                fineTune.Text = App.Settings?.TipActivationPressure.ToString();
-
-                content.AddControl(pressureslider, true);
-                content.AddControl(fineTune);
-                base.Content = content;
-            }
-
-            private Action<float> setValue;
-            private Func<float> getValue;
-
-            private StackView content = new StackView
-            {
-                Orientation = Orientation.Horizontal,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
         }
     }
 }
