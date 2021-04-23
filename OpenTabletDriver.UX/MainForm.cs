@@ -426,7 +426,7 @@ namespace OpenTabletDriver.UX
                 var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
                 var fileDialog = new SaveFileDialog
                 {
-                    Title = "Exporting diagnostic information...",
+                    Title = "Save diagnostic information to...",
                     Filters =
                     {
                         new FileFilter("Diagnostic information", ".json")
