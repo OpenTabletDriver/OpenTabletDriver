@@ -5,9 +5,9 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface ITabletReport : IDeviceReport
     {
-        uint ReportID { get; }
-        Vector2 Position { get; }
-        uint Pressure { get; }
-        bool[] PenButtons { get; }
+        uint ReportID { set; get; }
+        Vector2 Position { set; get; }
+        uint Pressure { set; get; }
+        bool[] PenButtons { set; get; }
     }
 }

@@ -6,10 +6,11 @@ using System.Reflection;
 using System.Runtime.Loader;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class PluginManager
+    public class PluginManager : ServiceManager
     {
         public PluginManager()
         {
@@ -46,21 +47,58 @@ namespace OpenTabletDriver.Desktop.Reflection
                     if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
                     {
                         var matchingConstructors = from ctor in type.GetConstructors()
-                        let parameters = ctor.GetParameters()
-                        where parameters.Length == args.Length
-                        where IsValidParameterFor(args, parameters)
-                        select ctor;
+                            let parameters = ctor.GetParameters()
+                            where parameters.Length == args.Length
+                            where IsValidParameterFor(args, parameters)
+                            select ctor;
 
                         if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
-                            return (T)constructor.Invoke(args) ?? null;
+                        {
+                            T obj = (T)constructor.Invoke(args) ?? null;
+                            
+                            if (obj != null)
+                            {
+                                var resolvedProperties = from property in type.GetProperties()
+                                    where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                                    select property;
+
+                                foreach (var property in resolvedProperties)
+                                {
+                                    var service = GetService(property.PropertyType);
+                                    if (service != null)
+                                        property.SetValue(obj, service);
+                                }
+
+                                var resolvedFields = from field in type.GetFields()
+                                    where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                                    select field;
+
+                                foreach (var field in resolvedFields)
+                                {
+                                    var service = GetService(field.FieldType);
+                                    if (service != null)
+                                        field.SetValue(obj, service);
+                                }
+                            }
+                            return obj;
+                        }
+                        else
+                        {
+                            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
+                        }
                     }
                 }
-                catch
+                catch (TargetInvocationException e) when (e.Message == "Exception has been thrown by the target of an invocation.")
+                {
+                    Log.Write("Plugin", "Object construction has thrown an error", LogLevel.Error);
+                    Log.Exception(e.InnerException);
+                }
+                catch (Exception e)
                 {
                     Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
+                    Log.Exception(e);
                 }
             }
-            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Debug);
             return null;
         }
 

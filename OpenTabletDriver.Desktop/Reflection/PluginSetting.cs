@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         }
 
         [JsonProperty]
-        public string Property { protected set; get; }
+        public string Property { set; get; }
 
         [JsonProperty]
         public JToken Value { set; get; }

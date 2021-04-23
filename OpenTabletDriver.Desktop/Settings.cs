@@ -18,10 +18,10 @@ namespace OpenTabletDriver.Desktop
         internal const int PenButtonCount = 2;
         internal const int AuxButtonCount = 8;
 
-        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP;
+        private float _dW, _dH, _dX, _dY, _tW, _tH, _tX, _tY, _r, _xS, _yS, _relRot, _tP, _eP;
         private TimeSpan _rT;
         private bool _lockar, _sizeChanging, _autoHook, _clipping, _areaLimiting, _lockUsableAreaDisplay, _lockUsableAreaTablet;
-        private PluginSettingStore _outputMode, _tipButton;
+        private PluginSettingStore _outputMode, _tipButton, _eraserButton;
 
         private PluginSettingStoreCollection _filters = new PluginSettingStoreCollection(),
             _penButtons = new PluginSettingStoreCollection(),
@@ -237,6 +237,20 @@ namespace OpenTabletDriver.Desktop
             get => _tipButton;
         }
 
+        [JsonProperty("EraserActivationPressure")]
+        public float EraserActivationPressure
+        {
+            set => this.RaiseAndSetIfChanged(ref _eP, value);
+            get => _eP;
+        }
+
+        [JsonProperty("EraserButton")]
+        public PluginSettingStore EraserButton
+        {
+            set => this.RaiseAndSetIfChanged(ref _eraserButton, value);
+            get => _eraserButton;
+        }
+
         [JsonProperty("PenButtons")]
         public PluginSettingStoreCollection PenButtons
         {
@@ -328,7 +342,7 @@ namespace OpenTabletDriver.Desktop
         {
             get
             {
-                var virtualScreen = SystemInterop.VirtualScreen;
+                var virtualScreen = DesktopInterop.VirtualScreen;
                 var tablet = Info.Driver.Tablet?.Digitizer;
 
                 return new Settings
@@ -349,7 +363,7 @@ namespace OpenTabletDriver.Desktop
                     TipButton = new PluginSettingStore(
                         new MouseBinding
                         {
-                            Property = nameof(Plugin.Platform.Pointer.MouseButton.Left)
+                            Button = nameof(Plugin.Platform.Pointer.MouseButton.Left)
                         }
                     ),
                     TipActivationPressure = 1,

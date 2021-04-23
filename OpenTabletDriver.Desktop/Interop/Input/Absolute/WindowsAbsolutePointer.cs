@@ -14,8 +14,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             timer = new System.Threading.Timer(
                 state => ScreenToVirtualDesktop = new Vector2(
-                    SystemInterop.VirtualScreen.Width,
-                    SystemInterop.VirtualScreen.Height
+                    DesktopInterop.VirtualScreen.Width,
+                    DesktopInterop.VirtualScreen.Height
                 ) / 65535,
                 null,
                 TimeSpan.Zero,
@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         }
 
         private static System.Threading.Timer timer;
-        private static Vector2 ScreenToVirtualDesktop = new Vector2(SystemInterop.VirtualScreen.Width, SystemInterop.VirtualScreen.Height) / 65535;
+        private static Vector2 ScreenToVirtualDesktop = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height) / 65535;
 
         public void SetPosition(Vector2 pos)
         {

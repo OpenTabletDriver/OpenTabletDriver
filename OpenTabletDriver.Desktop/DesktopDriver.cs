@@ -1,11 +1,9 @@
 using OpenTabletDriver.Desktop.Binding;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop
 {
-    public class DesktopDriver : Driver, IVirtualDisplayDriver
+    public class DesktopDriver : Driver
     {
         public override void HandleReport(IDeviceReport report)
         {
@@ -13,6 +11,10 @@ namespace OpenTabletDriver.Desktop
             BindingHandler.HandleBinding(Tablet, report);
         }
 
-        public IVirtualScreen VirtualScreen => SystemInterop.VirtualScreen;
+        protected override IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
+        {
+            var pluginRef = AppInfo.PluginManager.GetPluginReference(identifier.ReportParser);
+            return pluginRef.Construct<IReportParser<IDeviceReport>>();
+        }
     }
 }

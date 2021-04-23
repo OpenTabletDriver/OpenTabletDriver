@@ -24,7 +24,7 @@
         "201": "HUION_T18C_\\d{6}$"
       },
       "InitializationStrings": [
-        "200"
+        200
       ]
     }
   ],

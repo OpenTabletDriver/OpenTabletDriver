@@ -3,7 +3,7 @@
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net5</TargetFrameworks>
-    <VersionPrefix>0.5.2.2</VersionPrefix>
+    <VersionPrefix>0.5.3.1</VersionPrefix>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 

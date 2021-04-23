@@ -7,10 +7,9 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Output
 {
     [PluginName("Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
-    public class LinuxArtistMode : AbsoluteOutputMode, IPointerOutputMode<IAbsolutePointer>
+    public class LinuxArtistMode : AbsoluteOutputMode, IPointerProvider<IAbsolutePointer>
     {
-        private readonly EvdevVirtualTablet penHandler = new EvdevVirtualTablet();
-
-        public override IAbsolutePointer Pointer => penHandler;
+        private static IAbsolutePointer pointer;
+        public override IAbsolutePointer Pointer { set; get; } = pointer ??= new EvdevVirtualTablet();
     }
 }

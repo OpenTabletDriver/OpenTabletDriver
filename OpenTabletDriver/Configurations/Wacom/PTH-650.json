@@ -9,7 +9,7 @@
       "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 0,
-        "StartInclusive": true,
+        "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
@@ -31,7 +31,7 @@
       "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 0,
-        "StartInclusive": true,
+        "StartInclusive": false,
         "End": null,
         "EndInclusive": false
       },
@@ -52,7 +52,7 @@
       "ProductID": 39,
       "InputReportLength": 64,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},

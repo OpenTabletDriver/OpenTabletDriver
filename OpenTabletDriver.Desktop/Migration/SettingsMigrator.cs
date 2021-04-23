@@ -10,10 +10,10 @@ namespace OpenTabletDriver.Desktop.Migration
         public static Settings Migrate(Settings settings)
         {
             // Output mode
-            settings.OutputMode = SafeMigrateNamespace(settings.OutputMode, Settings.Default.OutputMode);
+            settings.OutputMode = SafeMigrate(settings.OutputMode, Settings.Default.OutputMode);
 
             // Bindings
-            settings.TipButton = SafeMigrateNamespace(settings.TipButton, Settings.Default.TipButton);
+            settings.TipButton = SafeMigrate(settings.TipButton, Settings.Default.TipButton);
 
             settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
             settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
@@ -29,6 +29,19 @@ namespace OpenTabletDriver.Desktop.Migration
             { new Regex(@"OpenTabletDriver\.Binding\.(.+?)$"), $"OpenTabletDriver.Desktop.Binding.{{0}}" },
             { new Regex(@"OpenTabletDriver\.Output\.(.+?)$"), $"OpenTabletDriver.Desktop.Output.{{0}}" }
         };
+
+        private static readonly Dictionary<Regex, (string, string)> propertyMigrationDict = new Dictionary<Regex, (string, string)>
+        {
+            { new Regex(@"OpenTabletDriver\.Desktop\.Binding\.KeyBinding$"), ("^Property$", "Key") },
+            { new Regex(@"OpenTabletDriver\.Desktop\.Binding\.MouseBinding$"), ("^Property$", "Button") }
+        };
+
+        public static PluginSettingStore SafeMigrate(PluginSettingStore store, PluginSettingStore defaultStore = null)
+        {
+            store = SafeMigrateNamespace(store, defaultStore);
+            store = MigrateProperty(store);
+            return store;
+        }
 
         public static void MigrateNamespace(PluginSettingStore store)
         {
@@ -56,7 +69,32 @@ namespace OpenTabletDriver.Desktop.Migration
             return input;
         }
 
-        private static PluginSettingStore SafeMigrateNamespace(PluginSettingStore store, PluginSettingStore defaultStore = null)
+        public static PluginSettingStore MigrateProperty(PluginSettingStore store)
+        {
+            if (store != null)
+            {
+                foreach (var pair in propertyMigrationDict)
+                {
+                    var type = pair.Key;
+                    (var property, var replacementProperty) = pair.Value;
+
+                    if (type.IsMatch(store.Path))
+                    {
+                        foreach (var setting in store.Settings)
+                        {
+                            if (Regex.IsMatch(setting.Property, property))
+                            {
+                                setting.Property = replacementProperty;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return store;
+        }
+
+        private static PluginSettingStore SafeMigrateNamespace(PluginSettingStore store, PluginSettingStore defaultStore)
         {
             MigrateNamespace(store);
             if (store != null && PluginSettingStore.FromPath(store.Path) == null && defaultStore != null)
@@ -73,7 +111,7 @@ namespace OpenTabletDriver.Desktop.Migration
                 collection = new PluginSettingStoreCollection();
 
             for (int i = 0; i < collection.Count; i++)
-                collection[i] = SafeMigrateNamespace(collection[i]);
+                collection[i] = SafeMigrate(collection[i]);
 
             return collection;
         }

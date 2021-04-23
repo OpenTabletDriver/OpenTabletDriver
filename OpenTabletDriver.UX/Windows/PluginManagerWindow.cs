@@ -138,12 +138,14 @@ namespace OpenTabletDriver.UX.Windows
             {
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
+                    metadataViewer.OperationInProgress = false;
                     await Refresh();
                     pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
                 }
             }
             catch (RemoteInvocationException ex)
             {
+                metadataViewer.OperationInProgress = false;
                 var data = ex.DeserializedErrorData as CommonErrorData;
                 if (data.TypeName == typeof(CryptographicException).FullName)
                 {
@@ -184,11 +186,13 @@ namespace OpenTabletDriver.UX.Windows
             context.Directory.Refresh();
             if (context.Directory.Exists && !await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
             {
+                metadataViewer.OperationInProgress = false;
                 MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
                 return;
             }
 
             AppInfo.PluginManager.UnloadPlugin(context);
+            metadataViewer.OperationInProgress = false;
             await Refresh();
         }
 
@@ -207,7 +211,7 @@ namespace OpenTabletDriver.UX.Windows
             alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             return new MenuBar()
             {
@@ -250,10 +254,13 @@ namespace OpenTabletDriver.UX.Windows
             public event Action<PluginMetadata> RequestPluginUninstall;
             public event Action<PluginMetadata> RequestPluginInstall;
 
+            public bool OperationInProgress { get; set; }
+
             protected WeakReference<PluginMetadata> MetadataReference { set; get; } = new WeakReference<PluginMetadata>(null);
 
             private EmptyMetadataControl emptyMetadataControl = new EmptyMetadataControl();
             private Version driverVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            private Button uninstallButton, installUpdateButton;
 
             public void Update(PluginMetadata metadata)
             {
@@ -294,19 +301,31 @@ namespace OpenTabletDriver.UX.Windows
                             new StackLayoutItem
                             {
                                 Expand = true,
-                                Control = new Button((sender, e) => RequestPluginUninstall?.Invoke(metadata))
+                                Control = uninstallButton = new Button((sender, e) =>
+                                {
+                                    installUpdateButton.Enabled = false;
+                                    uninstallButton.Enabled = false;
+                                    OperationInProgress = true;
+                                    RequestPluginUninstall?.Invoke(metadata);
+                                })
                                 {
                                     Text = "Uninstall",
-                                    Enabled = isInstalled
+                                    Enabled = isInstalled & !OperationInProgress
                                 }
                             },
                             new StackLayoutItem
                             {
                                 Expand = true,
-                                Control = new Button((sender, e) => RequestPluginInstall?.Invoke(canUpdate ? updatableFromRepository.First() : metadata))
+                                Control = installUpdateButton = new Button((sender, e) =>
+                                {
+                                    installUpdateButton.Enabled = false;
+                                    uninstallButton.Enabled = false;
+                                    OperationInProgress = true;
+                                    RequestPluginInstall?.Invoke(canUpdate ? updatableFromRepository.First() : metadata);
+                                })
                                 {
                                     Text = canUpdate ? "Update" : "Install",
-                                    Enabled = canUpdate || !isInstalled
+                                    Enabled = (canUpdate || !isInstalled) & !OperationInProgress
                                 },
                             }
                         }
@@ -365,7 +384,7 @@ namespace OpenTabletDriver.UX.Windows
                         Width = 175,
                         Enabled = !string.IsNullOrEmpty(link)
                     };
-                    linkButton.Click += (sender, e) => SystemInterop.Open(link);
+                    linkButton.Click += (sender, e) => DesktopInterop.Open(link);
 
                     this.Text = header;
                     this.Content = new StackLayout
@@ -467,7 +486,7 @@ namespace OpenTabletDriver.UX.Windows
 
             private void ShowPluginFolder(object sender, EventArgs e)
             {
-                SystemInterop.Open(SelectedPlugin.Directory.FullName);
+                DesktopInterop.Open(SelectedPlugin.Directory.FullName);
             }
 
             private void UninstallPlugin(object sender, EventArgs e)

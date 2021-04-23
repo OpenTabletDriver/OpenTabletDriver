@@ -11,6 +11,7 @@ namespace OpenTabletDriver.Vendors.Wacom
             {
                 0x10 => new IntuosV3Report(data),
                 0x11 => new IntuosV3AuxReport(data),
+                0xD2 => new IntuosV3TouchReport(data),
                 _ => new DeviceReport(data)
             };
         }

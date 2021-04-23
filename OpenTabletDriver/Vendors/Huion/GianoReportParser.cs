@@ -1,6 +1,6 @@
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Vendors.Gaomon;
+using OpenTabletDriver.Vendors.UCLogic;
 
 namespace OpenTabletDriver.Vendors.Huion
 {
@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Vendors.Huion
         {
             var isAuxReport = ((data[1] & (1 << 5)) != 0) & ((data[1] & (1 << 6)) != 0);
             if (isAuxReport)
-                return new GaomonAuxReport(data);
+                return new UCLogicAuxReport(data);
             else
                 return new GianoReport(data);
         }

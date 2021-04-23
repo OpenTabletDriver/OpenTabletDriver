@@ -62,7 +62,7 @@
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
-      "FeatureInitReport": null,
+      "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []

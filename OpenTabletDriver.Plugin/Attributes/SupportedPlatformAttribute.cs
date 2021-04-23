@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Plugin.Attributes
 {
+    /// <summary>
+    /// Locks a class, struct, or interface to a specific platform.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
     public class SupportedPlatformAttribute : Attribute
     {

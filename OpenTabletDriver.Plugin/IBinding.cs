@@ -1,12 +1,19 @@
-﻿using System;
-using OpenTabletDriver.Plugin.Attributes;
+﻿using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin
 {
     public interface IBinding
     {
-        string Property { set; get; }
-        Action Press { get; }
-        Action Release { get; }
+        /// <summary>
+        /// The method to perform when the binding is being activated.
+        /// </summary>
+        /// <param name="report">The report that triggered the press.</param>
+        void Press(IDeviceReport report);
+
+        /// <summary>
+        /// Invoked when the binding is being released.
+        /// </summary>
+        /// <param name="report">The report that triggered the release.</param>
+        void Release(IDeviceReport report);
     }
 }

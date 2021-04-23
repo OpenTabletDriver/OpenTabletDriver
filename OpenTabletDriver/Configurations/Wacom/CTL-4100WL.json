@@ -18,7 +18,7 @@
       "InputReportLength": 192,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
-      "FeatureInitReport": null,
+      "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
@@ -40,24 +40,56 @@
       "InputReportLength": 193,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
-      "FeatureInitReport": null,
+      "FeatureInitReport": "AgI=",
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
-    }
-  ],
-  "AuxilaryDeviceIdentifiers": [
+    },
     {
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0,
+      "MaxPressure": 4095,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
       "VendorID": 1386,
-      "ProductID": 884,
-      "InputReportLength": null,
+      "ProductID": 887,
+      "InputReportLength": 361,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0,
+      "MaxPressure": 4095,
+      "ActiveReportID": {
+        "Start": 16,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 1386,
+      "ProductID": 887,
+      "InputReportLength": 193,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }
