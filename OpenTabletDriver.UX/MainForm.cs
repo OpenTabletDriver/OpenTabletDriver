@@ -57,8 +57,8 @@ namespace OpenTabletDriver.UX
         public void Refresh()
         {
             bindingEditor = new BindingEditor();
-            filterEditor.UpdateStore(Settings?.Filters);
-            toolEditor.UpdateStore(Settings?.Tools);
+            filterEditor.StoreCollection = Settings?.Filters;
+            toolEditor.StoreCollection = Settings?.Tools;
             outputModeEditor.Refresh();
         }
 
@@ -221,8 +221,8 @@ namespace OpenTabletDriver.UX
 
             SettingsChanged += (settings) =>
             {
-                filterEditor.UpdateStore(Settings?.Filters);
-                toolEditor.UpdateStore(Settings?.Tools);
+                filterEditor.StoreCollection = Settings?.Filters;
+                toolEditor.StoreCollection = Settings?.Tools;
             };
 
             var commandsPanel = new StackLayout

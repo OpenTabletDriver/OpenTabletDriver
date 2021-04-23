@@ -13,40 +13,21 @@ namespace OpenTabletDriver.UX.Controls
     public class PluginSettingStoreCollectionEditor<TSource> : Panel
     {
         public PluginSettingStoreCollectionEditor(
-            PluginSettingStoreCollection store,
+            PluginSettingStoreCollection storeCollection,
             string friendlyName = null
         )
         {
             this.baseControl.Panel1 = new Scrollable { Content = sourceSelector };
             this.baseControl.Panel2 = new Scrollable { Content = settingStoreEditor };
 
-            sourceSelector.SelectedSourceChanged += (sender, reference) => UpdateSelectedStore(reference);
+            sourceSelector.SelectedValueChanged += (sender, e) => SelectStore(sourceSelector.SelectedItem);
             this.FriendlyTypeName = friendlyName;
 
-            UpdateStore(store);
+            StoreCollection = storeCollection;
         }
 
-        private readonly string FriendlyTypeName;
-
-        public WeakReference<PluginSettingStoreCollection> CollectionReference { protected set; get; }
-
-        public void UpdateStore(PluginSettingStoreCollection storeCollection)
-        {
-            if (CollectionReference == null)
-                CollectionReference = new WeakReference<PluginSettingStoreCollection>(storeCollection);
-            else
-                CollectionReference.SetTarget(storeCollection);
-            sourceSelector.Refresh();
-            
-            if (sourceSelector.Plugins.Count == 0)
-            {
-                this.Content = new PluginSettingStoreEmptyPlaceholder(FriendlyTypeName);
-            }
-            else
-            {
-                this.Content = baseControl;
-            }
-        }
+        private PluginSourceSelector sourceSelector = new PluginSourceSelector();
+        private ToggleablePluginSettingStoreEditor settingStoreEditor = new ToggleablePluginSettingStoreEditor();
 
         private Splitter baseControl = new Splitter
         {
@@ -55,62 +36,72 @@ namespace OpenTabletDriver.UX.Controls
             BackgroundColor = SystemColors.WindowBackground
         };
 
-        public PluginReference SelectedPlugin => sourceSelector.SelectedSource;
+        public string FriendlyTypeName { protected set; get; }
 
-        private PluginSourceSelector sourceSelector = new PluginSourceSelector();
-        private ToggleablePluginSettingStoreEditor settingStoreEditor = new ToggleablePluginSettingStoreEditor();
-
-        private void UpdateSelectedStore(PluginReference reference)
+        private PluginSettingStoreCollection storeCollection;
+        public PluginSettingStoreCollection StoreCollection
         {
-            if (CollectionReference.TryGetTarget(out PluginSettingStoreCollection storeCollection))
+            set
             {
-                if (storeCollection.FirstOrDefault(store => store.Path == reference.Path) is PluginSettingStore store)
+                this.storeCollection = value;
+                this.sourceSelector.Refresh();
+                this.Content = this.sourceSelector.DataStore.Any() ? baseControl : new PluginSettingStoreEmptyPlaceholder(FriendlyTypeName);
+            }
+            get => this.storeCollection;
+        }
+
+        private void SelectStore(PluginReference reference)
+        {
+            if (StoreCollection != null && reference != null)
+            {
+                if (StoreCollection.FirstOrDefault(store => store.Path == reference.Path) is PluginSettingStore store)
                 {
                     settingStoreEditor.Refresh(store);
                 }
                 else
                 {
                     var newStore = new PluginSettingStore(reference.GetTypeReference<TSource>(), false);
-                    storeCollection.Add(newStore);
+                    StoreCollection.Add(newStore);
                     settingStoreEditor.Refresh(newStore);
                 }
             }
         }
 
-        private class PluginSettingStoreEmptyPlaceholder : StackView
+        private class PluginSettingStoreEmptyPlaceholder : Panel
         {
             public PluginSettingStoreEmptyPlaceholder(string friendlyName)
             {
                 string pluginTypeName = string.IsNullOrWhiteSpace(friendlyName) ? typeof(TSource).Name : $"{friendlyName.ToLower()}s";
-                base.Items.Add(new StackLayoutItem(null, true));
-                base.Items.Add(
-                    new StackLayoutItem
+                this.Content = new StackView
+                {
+                    Items =
                     {
-                        Control = new Bitmap(App.Logo.WithSize(256, 256)),
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    }
-                );
-                base.Items.Add(
-                    new StackLayoutItem
-                    {
-                        Control = $"No plugins containing {pluginTypeName} are installed.",
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    }
-                );
-                base.Items.Add(
-                    new StackLayoutItem
-                    {
-                        Control = new Button
+                        new StackLayoutItem(null, true),
+                        new StackLayoutItem
                         {
-                            Text = "Open Plugin Manager",
-                            Command = new Command(
-                                (s, e) => (Application.Instance.MainForm as MainForm).ShowPluginManager()
-                            )
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Control = new Bitmap(App.Logo.WithSize(256, 256))
                         },
-                        HorizontalAlignment = HorizontalAlignment.Center
+                        new StackLayoutItem(null, true),
+                        new StackLayoutItem
+                        {
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            Control = $"No plugins containing {pluginTypeName} are installed."
+                        },
+                        new StackLayoutItem
+                        {
+                            Control = new Button
+                            {
+                                Text = "Open Plugin Manager",
+                                Command = new Command(
+                                    (s, e) => (Application.Instance.MainForm as MainForm).ShowPluginManager()
+                                )
+                            },
+                            HorizontalAlignment = HorizontalAlignment.Center
+                        },
+                        new StackLayoutItem(null, true)
                     }
-                );
-                base.Items.Add(new StackLayoutItem(null, true));
+                };
             }
         }
 
@@ -128,47 +119,23 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private class PluginSourceSelector : ListBox
+        private class PluginSourceSelector : ListBox<PluginReference>
         {
             public PluginSourceSelector()
             {
+                this.ItemTextBinding = Binding.Property<PluginReference, string>(p => p.Name ?? p.Path);
                 Refresh();
             }
-
-            public IList<PluginReference> Plugins { protected set; get; }
-
-            public PluginReference SelectedSource { protected set; get; }
-
-            public event EventHandler<PluginReference> SelectedSourceChanged;
 
             public void Refresh()
             {
                 var items = from type in AppInfo.PluginManager.GetChildTypes<TSource>()
                     select new PluginReference(AppInfo.PluginManager, type);
 
-                Plugins = items.ToList();
-
-                this.DataStore = Plugins;
-                this.ItemTextBinding = Binding.Property<PluginReference, string>(p => p.Name ?? p.Path);
+                this.Source = items.ToList();
 
                 var lastIndex = this.SelectedIndex;
-                this.SelectedIndex = -1;
                 this.SelectedIndex = lastIndex;
-            }
-
-            protected override void OnSelectedIndexChanged(EventArgs e)
-            {
-                base.OnSelectedIndexChanged(e);
-                this.OnSelectedSourceChanged(e);
-            }
-
-            protected virtual void OnSelectedSourceChanged(EventArgs e)
-            {
-                if (this.SelectedIndex < 0 || this.SelectedIndex > Plugins.Count - 1)
-                    return;
-
-                SelectedSource = Plugins[this.SelectedIndex];
-                SelectedSourceChanged?.Invoke(this, SelectedSource);
             }
         }
     }
