@@ -29,6 +29,11 @@ namespace OpenTabletDriver.UX
             Content = ConstructPlaceholderControl();
             Menu = ConstructMenu();
 
+            Driver.Connected += (_, _) =>
+            {
+                Menu = ConstructMenu();
+            };
+
             Driver.Disconnected += (_, _) =>
             {
                 Application.Instance.AsyncInvoke(async () =>
