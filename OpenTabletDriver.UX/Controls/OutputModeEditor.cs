@@ -8,7 +8,6 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
@@ -23,16 +22,14 @@ namespace OpenTabletDriver.UX.Controls
     {
         public OutputModeEditor()
         {
-            this.Content = outputPanel = new StackLayout
+            this.Content = new StackLayout
             {
                 Padding = 5,
                 Spacing = 5,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
-                    new StackLayoutItem(absoluteModeEditor, true),
-                    new StackLayoutItem(relativeModeEditor, true),
-                    new StackLayoutItem(noModeEditor, true),
+                    new StackLayoutItem(outputModeEditor, true),
                     new StackLayout(outputModeSelector)
                     {
                         Size = new Size(300, -1)
@@ -58,9 +55,7 @@ namespace OpenTabletDriver.UX.Controls
             outputModeSelector.Refresh();
         }
 
-        private StackLayout outputPanel;
-
-        private Control noModeEditor = new Panel();
+        private Panel outputModeEditor = new Panel();
         private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
         private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
         private OutputModeSelector outputModeSelector = new OutputModeSelector { Width = 300 };
@@ -100,7 +95,6 @@ namespace OpenTabletDriver.UX.Controls
 
         private void UpdateOutputMode(PluginSettingStore store)
         {
-            bool showNull = true;
             bool showAbsolute = false;
             bool showRelative = false;
             if (store != null)
@@ -109,43 +103,12 @@ namespace OpenTabletDriver.UX.Controls
                 var outputMode = store.GetPluginReference().GetTypeReference<IOutputMode>();
                 showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
-                showNull = !(showAbsolute | showRelative);
             }
-            switch (DesktopInterop.CurrentPlatform)
-            {
-                case PluginPlatform.Linux:
-                    noModeEditor.Visible = showNull;
-                    absoluteModeEditor.Visible = showAbsolute;
-                    relativeModeEditor.Visible = showRelative;
-                    break;
-                default:
-                    SetVisibilityWorkaround(absoluteModeEditor, showAbsolute, 0);
-                    SetVisibilityWorkaround(relativeModeEditor, showRelative, 1);
-                    SetVisibilityWorkaround(noModeEditor, showNull, 2);
-                    break;
-            }
-        }
 
-        private void SetVisibilityWorkaround(
-            Control control,
-            bool visibility,
-            int index
-        )
-        {
-            if (control == null || outputPanel == null)
-                return;
-            var isContained = outputPanel.Items.Any(d => d.Control == control);
-            if (!isContained & visibility)
-            {
-                if (outputPanel.Items.Count - index - 1 < 0)
-                    index = 0;
-                outputPanel.Items.Insert(index, new StackLayoutItem(control, HorizontalAlignment.Stretch, true));
-            }
-            else if (isContained & !visibility)
-            {
-                var item = outputPanel.Items.FirstOrDefault(d => d.Control == control);
-                outputPanel.Items.Remove(item);
-            }
+            if (showAbsolute)
+                outputModeEditor.Content = absoluteModeEditor;
+            else if (showRelative)
+                outputModeEditor.Content = relativeModeEditor;
         }
 
         private class OutputModeSelector : TypeDropDown<IOutputMode>
