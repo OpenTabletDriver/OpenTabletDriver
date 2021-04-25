@@ -30,14 +30,14 @@
       "MaxY": 29600.0,
       "MaxPressure": 8191,
       "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": 19,
+        "Start": 0,
+        "StartInclusive": false,
+        "End": null,
         "EndInclusive": false
       },
       "VendorID": 1386,
-      "ProductID": 855,
-      "InputReportLength": null,
+      "ProductID": 864,
+      "InputReportLength": 361,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
@@ -46,6 +46,18 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 855,
+      "InputReportLength": 44,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
   "Attributes": {}
 }

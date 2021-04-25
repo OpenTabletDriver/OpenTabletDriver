@@ -18,5 +18,6 @@ namespace OpenTabletDriver.Devices
 
         public IEnumerable<HidDevice> Additions => Current.Except(Previous);
         public IEnumerable<HidDevice> Removals => Previous.Except(Current);
+        public bool Any() => Additions.Any() | Removals.Any();
     }
 }

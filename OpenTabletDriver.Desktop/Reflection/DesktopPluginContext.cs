@@ -5,7 +5,6 @@ using System.Reflection;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -17,7 +16,14 @@ namespace OpenTabletDriver.Desktop.Reflection
             FriendlyName = Directory.Name;
 
             foreach (var plugin in Directory.EnumerateFiles("*.dll"))
+            {
+                // Ignore a plugin library build artifact
+                // Loading it seems to stop loading any further DLLs from the directory
+                if (string.Equals(plugin.Name, "OpenTabletDriver.Plugin.dll", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 LoadAssemblyFromFile(plugin);
+            }
         }
 
         public DirectoryInfo Directory { get; }
@@ -73,7 +79,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static string ToDllName(string dllName)
         {
-            return SystemInterop.CurrentPlatform switch
+            return DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => $"{dllName}.dll",
                 PluginPlatform.Linux => $"lib{dllName}.so",

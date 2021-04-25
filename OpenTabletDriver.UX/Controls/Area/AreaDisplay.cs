@@ -3,6 +3,8 @@ using System.Linq;
 using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Interop;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Area
@@ -26,19 +28,19 @@ namespace OpenTabletDriver.UX.Controls.Area
         private static readonly Brush TextBrush = new SolidBrush(SystemColors.ControlText);
 
         private readonly Color AccentColor = SystemColors.Highlight;
-        private readonly Color AreaBoundsBorderColor = SystemColors.Control;
+        private readonly Color AreaBoundsBorderColor = SystemInterop.CurrentPlatform switch
+        {
+            PluginPlatform.Windows => new Color(64, 64, 64),
+            _                      => SystemColors.Control
+        };
+
         private readonly Color AreaBoundsFillColor = SystemColors.ControlBackground;
 
         private bool mouseDragging;
-        private PointF? lastMouseLocation;
+        private PointF? mouseOffset;
+        private PointF? viewModelOffset;
 
-        private RectangleF BackgroundRect => new RectangleF(
-            new PointF(0, 0),
-            new SizeF(
-                ViewModel.FullBackground.Width,
-                ViewModel.FullBackground.Height
-            )
-        );
+        private RectangleF BackgroundRect => ViewModel.FullBackground;
 
         private RectangleF ForegroundRect => RectangleF.FromCenter(
             new PointF(ViewModel.X, ViewModel.Y),
@@ -112,15 +114,18 @@ namespace OpenTabletDriver.UX.Controls.Area
 
             if (mouseDragging)
             {
-                if (lastMouseLocation != null)
+                if (mouseOffset != null)
                 {
-                    var delta = e.Location - lastMouseLocation.Value;
-                    var newX = ViewModel.X + delta.X / PixelScale;
-                    var newY = ViewModel.Y + delta.Y / PixelScale;
+                    var delta = e.Location - mouseOffset.Value;
+                    var newX = viewModelOffset.Value.X + (delta.X / PixelScale);
+                    var newY = viewModelOffset.Value.Y + (delta.Y / PixelScale);
 
                     if (ViewModel.LockToUsableArea)
                     {
                         var bounds = ViewModel.FullBackground;
+                        bounds.X = 0;
+                        bounds.Y = 0;
+
                         var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(ViewModel.Width, ViewModel.Height));
 
                         var corners = new PointF[]
@@ -144,11 +149,16 @@ namespace OpenTabletDriver.UX.Controls.Area
                     ViewModel.X = newX;
                     ViewModel.Y = newY;
                 }
-                lastMouseLocation = e.Location;
+                else
+                {
+                    mouseOffset = e.Location;
+                    viewModelOffset = new PointF(ViewModel.X, ViewModel.Y);
+                }
             }
-            else if (!mouseDragging && lastMouseLocation != null)
+            else if (!mouseDragging && mouseOffset != null)
             {
-                lastMouseLocation = null;
+                mouseOffset = null;
+                viewModelOffset = null;
             }
         }
 
@@ -190,11 +200,15 @@ namespace OpenTabletDriver.UX.Controls.Area
 
         private void DrawBackground(Graphics graphics, float scale)
         {
-            foreach (var rect in ViewModel.Background)
+            using (graphics.SaveTransformState())
             {
-                var scaledRect = rect * scale;
-                graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
-                graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
+                graphics.TranslateTransform(-BackgroundRect.TopLeft * scale);
+                foreach (var rect in ViewModel.Background)
+                {
+                    var scaledRect = rect * scale;
+                    graphics.FillRectangle(AreaBoundsFillColor, scaledRect);
+                    graphics.DrawRectangle(AreaBoundsBorderColor, scaledRect);
+                }
             }
         }
 
@@ -224,20 +238,25 @@ namespace OpenTabletDriver.UX.Controls.Area
         {
             string ratio = Math.Round(ViewModel.Width / ViewModel.Height, 4).ToString();
             SizeF ratioMeasure = graphics.MeasureString(Font, ratio);
+            var offsetY = area.Center.Y + (ratioMeasure.Height / 2);
+            if (offsetY + ratioMeasure.Height > area.Y + area.Height)
+                offsetY = area.Y + area.Height;
+
             var ratioPos = new PointF(
                 area.Center.X - (ratioMeasure.Width / 2),
-                area.Center.Y + (ratioMeasure.Height / 2)
+                offsetY
             );
             graphics.DrawText(Font, TextBrush, ratioPos, ratio);
         }
 
         private void DrawWidthText(Graphics graphics, RectangleF area)
         {
-            string widthText = $"{ViewModel.Width}{ViewModel.Unit}";
+            var minDist = area.Center.Y - 40;
+            string widthText = $"{MathF.Round(ViewModel.Width, 3)}{ViewModel.Unit}";
             var widthTextSize = graphics.MeasureString(Font, widthText);
             var widthTextPos = new PointF(
                 area.MiddleTop.X - (widthTextSize.Width / 2),
-                area.MiddleTop.Y
+                Math.Min(area.MiddleTop.Y, minDist)
             );
             graphics.DrawText(Font, TextBrush, widthTextPos, widthText);
         }
@@ -246,11 +265,12 @@ namespace OpenTabletDriver.UX.Controls.Area
         {
             using (graphics.SaveTransformState())
             {
-                string heightText = $"{ViewModel.Height}{ViewModel.Unit}";
+                var minDist = area.Center.X - 40;
+                string heightText = $"{MathF.Round(ViewModel.Height, 3)}{ViewModel.Unit}";
                 var heightSize = graphics.MeasureString(Font, heightText) / 2;
                 var heightPos = new PointF(
                     -area.MiddleLeft.Y - heightSize.Width,
-                    area.MiddleLeft.X
+                    Math.Min(area.MiddleLeft.X, minDist)
                 );
                 graphics.RotateTransform(-90);
                 graphics.DrawText(Font, TextBrush, heightPos, heightText);
@@ -269,8 +289,8 @@ namespace OpenTabletDriver.UX.Controls.Area
 
         private float CalculateScale(RectangleF rect)
         {
-            float scaleX = this.ClientSize.Width / rect.Width;
-            float scaleY = this.ClientSize.Height / rect.Height;
+            float scaleX = (this.ClientSize.Width - 2) / rect.Width;
+            float scaleY = (this.ClientSize.Height - 2) / rect.Height;
             return scaleX > scaleY ? scaleY : scaleX;
         }
 

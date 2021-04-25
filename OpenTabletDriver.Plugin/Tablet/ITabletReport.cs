@@ -5,14 +5,9 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface ITabletReport : IDeviceReport
     {
-        uint ReportID { get; }
-        Vector2 Position { get; }
-        uint Pressure { get; }
-        bool[] PenButtons { get; }
-        string IDeviceReport.GetStringFormat() =>
-            $"ReportID:{ReportID}, " +
-            $"Position:[{Position.X},{Position.Y}], " +
-            $"Pressure:{Pressure}, " +
-            $"PenButtons:[{String.Join(" ", PenButtons)}]";
+        uint ReportID { set; get; }
+        Vector2 Position { set; get; }
+        uint Pressure { set; get; }
+        bool[] PenButtons { set; get; }
     }
 }

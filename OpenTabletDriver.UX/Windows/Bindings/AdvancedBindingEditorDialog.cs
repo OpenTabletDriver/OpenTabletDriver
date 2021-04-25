@@ -1,10 +1,7 @@
 using System;
-using System.Linq;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Reflection;
+using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 using IBinding = OpenTabletDriver.Plugin.IBinding;
 
@@ -18,16 +15,11 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             Result = currentBinding;
             Padding = 5;
 
-            bindingPropertyGroup = new Group
-            {
-                Text = "Property"
-            };
-
             this.Content = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Width = 300,
-                Height = 250,
+                Width = 500,
+                Height = 450,
                 Items =
                 {
                     new StackLayoutItem
@@ -41,9 +33,9 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                                 new Group
                                 {
                                     Text = "Type",
-                                    Content = bindingTypeDropDown = new TypeDropDown<IBinding>() 
+                                    Content = bindingTypeDropDown = new TypeDropDown<IBinding>()
                                 },
-                                bindingPropertyGroup
+                                settingStoreEditor
                             }
                         }
                     },
@@ -77,47 +69,14 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 }
             };
 
-            bindingTypeDropDown.SelectedValueChanged += (sender, e) => bindingPropertyGroup.Content = GetPropertyControl();
             bindingTypeDropDown.SelectedType = currentBinding?.GetPluginReference().GetTypeReference();
+            bindingTypeDropDown.SelectedValueChanged += (sender, e) => settingStoreEditor.Refresh(new PluginSettingStore(bindingTypeDropDown.SelectedType));
 
-            string bindingProperty = currentBinding?["Property"]?.GetValue<string>();
-            switch (bindingPropertyGroup.Content)
-            {
-                case BindingPropertyDropDown bindingPropertyDropDown:
-                {
-                    bindingPropertyDropDown.SelectedKey = bindingProperty;
-                    break;
-                }
-                case TextControl textControl:
-                {
-                    textControl.Text = bindingProperty;
-                    break;
-                }
-                default:
-                {
-                    bindingPropertyGroup.Content = GetPropertyControl();
-                    break;
-                }
-            };
-        }
-
-        public Control GetPropertyControl()
-        {
-            var selectedType = bindingTypeDropDown.SelectedType;
-            if (selectedType != null)
-            {
-                var pluginRef = AppInfo.PluginManager.GetPluginReference(bindingTypeDropDown.SelectedType);
-                bool isValidateBinding = typeof(IValidateBinding).IsAssignableFrom(selectedType);
-                return isValidateBinding ? new BindingPropertyDropDown(pluginRef.Construct<IValidateBinding>()) : new TextBox();
-            }
-            else
-            {
-                return new TextBox();
-            }
+            settingStoreEditor.Refresh(currentBinding);
         }
 
         private TypeDropDown<IBinding> bindingTypeDropDown;
-        private Group bindingPropertyGroup;
+        private PluginSettingStoreEditor<IBinding> settingStoreEditor = new PluginSettingStoreEditor<IBinding>();
 
         private void ClearBinding(object sender, EventArgs e)
         {
@@ -131,27 +90,8 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 Close(null);
                 return;
             }
-            
-            var pluginRef = AppInfo.PluginManager.GetPluginReference(bindingTypeDropDown.SelectedType);
-            var type = pluginRef.GetTypeReference();
 
-            var newStore = new PluginSettingStore(type);
-            newStore[nameof(IBinding.Property)].Value = bindingPropertyGroup.Content switch
-            {
-                BindingPropertyDropDown propertyDropDown => propertyDropDown.SelectedKey,
-                TextControl textControl => textControl.Text,
-                _ => throw new Exception("Invalid control type")
-            };
-
-            Close(newStore);
-        }
-
-        private class BindingPropertyDropDown : DropDown
-        {
-            public BindingPropertyDropDown(IValidateBinding validateBinding)
-            {
-                this.DataStore = validateBinding.ValidProperties;
-            }
+            Close(settingStoreEditor.Store);
         }
     }
 }

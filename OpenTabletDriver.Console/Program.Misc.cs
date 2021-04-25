@@ -2,8 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Reflection;
 using static System.Console;
 
 namespace OpenTabletDriver.Console

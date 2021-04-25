@@ -9,8 +9,13 @@ namespace OpenTabletDriver.Vendors.Wacom
         public IntuosV2TabletReport(byte[] report)
         {
             Raw = report;
-
-            ReportID = (uint)report[9] >> 2;
+            ReportID = report[1] switch
+            {
+                0x80 => 0u, // 0x80 is pen out of range report,
+                0xC2 => 0u, // <- should fix the GD 0405 U,
+                0x20 => 1u, // this should be excluded from IntuosHT2
+                _ => 2u     // everything else should have position data.
+            };
             Position = new Vector2
             {
                 X = (report[3] | report[2] << 8) << 1 | ((report[9] >> 1) & 1),
@@ -27,25 +32,17 @@ namespace OpenTabletDriver.Vendors.Wacom
                 (report[1] & (1 << 1)) != 0,
                 (report[1] & (1 << 2)) != 0
             };
-            NearProximity = (report[1] & (1 << 7)) != 0;
+            NearProximity = (report[1] & (1 << 6)) != 0;
             HoverDistance = (uint)report[9] >> 2;
         }
 
-        public byte[] Raw { private set; get; }
-        public uint ReportID { private set; get; }
-        public Vector2 Position { private set; get; }
-        public Vector2 Tilt { private set; get; }
-        public uint Pressure { private set; get; }
-        public bool[] PenButtons { private set; get; }
-        public bool NearProximity { private set; get; }
-        public uint HoverDistance { private set; get; }
-        public string GetStringFormat() =>
-            $"ReportID:{ReportID}, " +
-            $"Position:[{Position.X},{Position.Y}], " +
-            $"Tilt:[{Tilt.X},{Tilt.Y}], " +
-            $"Pressure:{Pressure}, " +
-            $"PenButtons:[{String.Join(" ", PenButtons)}], " +
-            $"NearProximity:{NearProximity}, " +
-            $"HoverDistance:{HoverDistance}";
+        public byte[] Raw { set; get; }
+        public uint ReportID { set; get; }
+        public Vector2 Position { set; get; }
+        public Vector2 Tilt { set; get; }
+        public uint Pressure { set; get; }
+        public bool[] PenButtons { set; get; }
+        public bool NearProximity { set; get; }
+        public uint HoverDistance { set; get; }
     }
 }

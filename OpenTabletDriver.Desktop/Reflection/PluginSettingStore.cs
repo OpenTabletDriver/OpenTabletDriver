@@ -4,26 +4,31 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Reflection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginSettingStore
     {
+        public PluginSettingStore(Type type, bool enable = true)
+        {
+            Path = type.FullName;
+            Settings = GetSettingsForType(type);
+            Enable = enable;
+        }
+
         public PluginSettingStore(object source, bool enable = true)
         {
-            if (source is Type type)
-            {
-                Path = type.FullName;
-                Settings = GetSettingsForType(type);
-            }
-            else
+            if (source != null)
             {
                 var sourceType = source.GetType();
                 Path = sourceType.FullName;
                 Settings = GetSettingsForType(sourceType, source);
+                Enable = enable;
             }
-            Enable = enable;
+            else
+            {
+                throw new NullReferenceException("Creating a plugin setting store from a null object is not allowed.");
+            }
         }
 
         [JsonConstructor]
@@ -102,13 +107,21 @@ namespace OpenTabletDriver.Desktop.Reflection
                     return newSetting;
                 }
                 return result;
-            } 
+            }
         }
 
         public PluginSetting this[PropertyInfo property]
         {
             set => this[property.Name] = value;
             get => this[property.Name];
+        }
+
+        public string GetHumanReadableString()
+        {
+            var name = this.GetPluginReference().Name;
+            string settings = string.Join(", ", this.Settings.Select(s => $"({s.Property}: {s.Value})"));
+
+            return $"{name}: {settings}";
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Vendors.XP_Pen
@@ -7,24 +8,22 @@ namespace OpenTabletDriver.Vendors.XP_Pen
         public XP_PenAuxReport(byte[] report)
         {
             Raw = report;
-            var ReportID = (uint)report[1] >> 1;
-            var ButtonInt = (uint)report[2];
-            AuxButtons = new bool[6];
-            if (ReportID == 120) 
+
+            var bitVector = new BitVector32(report[2]);
+            AuxButtons = new bool[]
             {
-                AuxButtons = new bool[] 
-                {
-                    ButtonInt == 1,
-                    ButtonInt == 2,
-                    ButtonInt == 4,
-                    ButtonInt == 8,
-                    ButtonInt == 16,
-                    ButtonInt == 32
-                };
-            }
+                bitVector[1 << 0],
+                bitVector[1 << 1],
+                bitVector[1 << 2],
+                bitVector[1 << 3],
+                bitVector[1 << 4],
+                bitVector[1 << 5],
+                bitVector[1 << 6],
+                bitVector[1 << 7]
+            };
         }
 
-        public bool[] AuxButtons { private set; get; }
-        public byte[] Raw { private set; get; }
+        public bool[] AuxButtons { set; get; }
+        public byte[] Raw { set; get; }
     }
 }

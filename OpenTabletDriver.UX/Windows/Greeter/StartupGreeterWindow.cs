@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows.Greeter.Pages;
 
@@ -17,17 +21,9 @@ namespace OpenTabletDriver.UX.Windows.Greeter
         {
             base.OnLoadComplete(e);
 
-            var pageViewer = new StartupGreeterPageViewer
-            {
-                Pages =
-                {
-                    new WelcomePage(),
-                    new AreaEditorPage(),
-                    new BindingPage(),
-                    new PluginPage(),
-                    new FAQPage()
-                }
-            };
+            var pageViewer = new StartupGreeterPageViewer();
+            foreach (var page in GetGreeterPages())
+                pageViewer.Pages.Add(page);
 
             var nextButton = new Button((sender, e) => pageViewer.NextPage())
             {
@@ -68,6 +64,17 @@ namespace OpenTabletDriver.UX.Windows.Greeter
                     }
                 }
             };
+        }
+
+        private IEnumerable<DocumentPage> GetGreeterPages()
+        {
+            yield return new WelcomePage();
+            yield return new AreaEditorPage();
+            yield return new BindingPage();
+            yield return new PluginPage();
+            if (App.EnableTrayIcon)
+                yield return new SystemTrayPage();
+            yield return new FAQPage();
         }
 
         private class StartupGreeterPageViewer : DocumentControl

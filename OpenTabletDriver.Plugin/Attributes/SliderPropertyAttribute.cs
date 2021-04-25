@@ -2,6 +2,9 @@
 
 namespace OpenTabletDriver.Plugin.Attributes
 {
+    /// <summary>
+    /// Creates a slider for a property value between <see cref="Min"/> and <see cref="Max"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     public class SliderPropertyAttribute : PropertyAttribute
     {

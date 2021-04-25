@@ -2,7 +2,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
-    public class IntuosV3AuxReport : IAuxReport
+    public struct IntuosV3AuxReport : IAuxReport
     {
         public IntuosV3AuxReport(byte[] report)
         {
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Vendors.Wacom
             };
         }
         
-        public byte[] Raw { private set; get; }
-        public bool[] AuxButtons { private set; get; }
+        public byte[] Raw { set; get; }
+        public bool[] AuxButtons { set; get; }
     }
 }

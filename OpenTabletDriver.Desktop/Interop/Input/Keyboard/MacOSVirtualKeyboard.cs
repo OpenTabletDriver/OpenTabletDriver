@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
     public class MacOSVirtualKeyboard : IVirtualKeyboard
     {
-        private void KeyPress(string key, bool isPress)
+        private void KeyEvent(string key, bool isPress)
         {
             if (EtoKeysymToVK.TryGetValue(key, out var code))
             {
@@ -23,15 +23,29 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
         public void Press(string key)
         {
-            KeyPress(key, true);
+            KeyEvent(key, true);
         }
 
         public void Release(string key)
         {
-            KeyPress(key, false);
+            KeyEvent(key, false);
         }
 
-        public static readonly Dictionary<string, CGKeyCode> EtoKeysymToVK = new Dictionary<string, CGKeyCode>
+        public void Press(IEnumerable<string> keys)
+        {
+            foreach (var key in keys)
+                KeyEvent(key, true);
+        }
+
+        public void Release(IEnumerable<string> keys)
+        {
+            foreach (var key in keys)
+                KeyEvent(key, false);
+        }
+
+        public IEnumerable<string> SupportedKeys => EtoKeysymToVK.Keys;
+
+        internal static readonly Dictionary<string, CGKeyCode> EtoKeysymToVK = new Dictionary<string, CGKeyCode>
         {
             { "None", 0x00 },
             { "A", CGKeyCode.kVK_ANSI_A },

@@ -1,9 +1,7 @@
-using System;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.UX.Controls.Generic;
-using OpenTabletDriver.UX.Windows.Bindings;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -11,210 +9,169 @@ namespace OpenTabletDriver.UX.Controls
     {
         public BindingEditor()
         {
-            this.Padding = 5;
-            content.Orientation = Orientation.Vertical;
-            content.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-
+            Padding = 5;
             UpdateBindings();
             App.SettingsChanged += (s) => UpdateBindings();
-            base.Content = content;
         }
 
-        private StackView content = new StackView();
+        private BindingDisplay tipButton, eraserButton;
+        private FloatSlider tipPressure, eraserPressure;
 
         public void UpdateBindings()
         {
-            content.Items.Clear();
-
-            var tipButton = new BindingDisplay(App.Settings?.TipButton)
-            {
-                MinimumSize = new Size(300, 0)
-            };
-            tipButton.BindingUpdated += (sender, binding) => App.Settings.TipButton = binding;
-
-            var tipPressure = new PressureSlider(
-                "Tip Pressure",
-                () => App.Settings.TipActivationPressure,
-                (v) => App.Settings.TipActivationPressure = v
-            );
+            this.DataContext = App.Settings;
 
             var tipSettingsStack = new StackView
             {
                 Items =
                 {
-                    new Group("Tip Button", tipButton, Orientation.Horizontal, false),
-                    tipPressure
+                    new Group
+                    {
+                        Text = "Tip Button",
+                        Orientation = Orientation.Horizontal,
+                        ExpandContent = false,
+                        Content = tipButton = new BindingDisplay
+                        {
+                            MinimumSize = new Size(300, 0),
+                            Store = App.Settings?.TipButton
+                        }
+                    },
+                    new Group
+                    {
+                        Text = "Tip Pressure",
+                        Orientation = Orientation.Horizontal,
+                        Content = tipPressure = new FloatSlider()
+                    }
                 }
             };
+            tipButton.StoreBinding.BindDataContext<Settings>(s => s.TipButton);
+            tipPressure.ValueBinding.BindDataContext<Settings>(s => s.TipActivationPressure);
 
-            var tipSettings = new Group("Tip Bindings", tipSettingsStack);
+            var eraserSettingsStack = new StackView
+            {
+                Items =
+                {
+                    new Group
+                    {
+                        Text = "Eraser Button",
+                        ExpandContent = false,
+                        Orientation = Orientation.Horizontal,
+                        Content = eraserButton = new BindingDisplay
+                        {
+                            MinimumSize = new Size(300, 0),
+                            Store = App.Settings?.EraserButton
+                        }
+                    },
+                    new Group
+                    {
+                        Text = "Eraser Pressure",
+                        Orientation = Orientation.Horizontal,
+                        Content = eraserPressure = new FloatSlider()
+                    }
+                }
+            };
+            eraserButton.StoreBinding.BindDataContext<Settings>(s => s.EraserButton);
+            eraserPressure.ValueBinding.BindDataContext<Settings>(s => s.EraserActivationPressure);
 
             var penBindingsStack = new StackView();
             for (int i = 0; i < App.Settings?.PenButtons.Count; i++)
             {
-                var penBinding = new BindingDisplay(App.Settings?.PenButtons[i])
+                BindingDisplay penBinding;
+
+                var penBindingGroup = new Group
                 {
-                    MinimumSize = new Size(300, 0),
-                    Tag = i
+                    Text = $"Pen Button {i + 1}",
+                    Orientation = Orientation.Horizontal,
+                    ExpandContent = false,
+                    Content = penBinding = new BindingDisplay
+                    {
+                        MinimumSize = new Size(300, 0),
+                        Tag = i,
+                        Store = App.Settings?.PenButtons[i]
+                    }
                 };
-                penBinding.BindingUpdated += (sender, binding) =>
+                penBinding.StoreChanged += (sender, e) =>
                 {
-                    var index = (int)(sender as BindingDisplay).Tag;
-                    App.Settings.PenButtons[index] = binding;
+                    var display = sender as BindingDisplay;
+                    var index = (int)display.Tag;
+                    App.Settings.PenButtons[index] = display.Store;
                 };
-                var penBindingGroup = new Group($"Pen Button {i + 1}", penBinding, Orientation.Horizontal, false);
                 penBindingsStack.AddControl(penBindingGroup);
             }
 
-            var penBindingSettings = new Group("Pen Button Bindings", penBindingsStack);
+            var auxBindingsStack = new StackView();
+            for (int i = 0; i < App.Settings?.AuxButtons.Count; i++)
+            {
+                BindingDisplay auxBinding;
 
-            var penSettings = new StackLayout
+                var auxBindingGroup = new Group
+                {
+                    Text = $"Auxiliary Button {i + 1}",
+                    Orientation = Orientation.Horizontal,
+                    ExpandContent = false,
+                    Content = auxBinding = new BindingDisplay
+                    {
+                        MinimumSize = new Size(300, 0),
+                        Tag = i,
+                        Store = App.Settings?.AuxButtons[i]
+                    }
+                };
+                auxBinding.StoreChanged += (sender, e) =>
+                {
+                    var display = sender as BindingDisplay;
+                    var index = (int)display.Tag;
+                    App.Settings.AuxButtons[index] = display.Store;
+                };
+                auxBindingsStack.AddControl(auxBindingGroup);
+            }
+
+            var firstRow = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Items =
                 {
-                    new StackLayoutItem(tipSettings, true),
-                    new StackLayoutItem(penBindingSettings, true)
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Tip Bindings", tipSettingsStack)
+                    },
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Eraser Bindings", eraserSettingsStack)
+                    }
                 }
             };
-            content.AddControl(penSettings);
 
-            var auxBindingsStack = new StackView();
-            for (int i = 0; i < App.Settings?.AuxButtons.Count; i++)
-            {
-                var auxBinding = new BindingDisplay(App.Settings?.AuxButtons[i])
-                {
-                    MinimumSize = new Size(300, 0),
-                    Tag = i
-                };
-                auxBinding.BindingUpdated += (sender, Binding) =>
-                {
-                    var index = (int)(sender as BindingDisplay).Tag;
-                    App.Settings.AuxButtons[index] = Binding;
-                };
-                var auxBindingGroup = new Group($"Auxiliary Button {i + 1}", auxBinding, Orientation.Horizontal, false);
-                auxBindingsStack.AddControl(auxBindingGroup);
-            }
-
-            var auxBindingSettings = new Group("Auxiliary Button Bindings", auxBindingsStack)
-            {
-                TitleHorizontalAlignment = HorizontalAlignment.Center
-            };
-            content.AddControl(auxBindingSettings);
-        }
-
-        internal class BindingDisplay : StackLayout
-        {
-            public BindingDisplay(PluginSettingStore store)
-            {
-                var bindingCommand = new Command();
-                bindingCommand.Executed += async (sender, e) =>
-                {
-                    var dialog = new BindingEditorDialog(Binding);
-                    this.Binding = await dialog.ShowModalAsync(this);
-                };
-                var advancedBindingCommand = new Command();
-                advancedBindingCommand.Executed += async (sender, e) =>
-                {
-                    var dialog = new AdvancedBindingEditorDialog(Binding);
-                    this.Binding = await dialog.ShowModalAsync(this);
-                };
-
-                mainButton = new Button
-                {
-                    Command = bindingCommand
-                };
-                advancedButton = new Button
-                {
-                    Command = advancedBindingCommand,
-                    Text = "...",
-                    Width = 25
-                };
-
-                Spacing = 5;
-                Orientation = Orientation.Horizontal;
-                Items.Add(new StackLayoutItem(mainButton, true));
-                Items.Add(advancedButton);
-
-                this.Binding = store;
-            }
-
-            public event EventHandler<PluginSettingStore> BindingUpdated;
-
-            private Button mainButton, advancedButton;
-            private PluginSettingStore binding;
-            public PluginSettingStore Binding
-            {
-                set
-                {
-                    this.binding = value;
-                    mainButton.Text = GetFriendlyDisplayString(Binding);
-                    BindingUpdated?.Invoke(this, Binding);
-                }
-                get => this.binding;
-            }
-
-            private string GetFriendlyDisplayString(PluginSettingStore store)
-            {
-                if (store == null || store["Property"] == null)
-                    return null;
-
-                var property = store["Property"].GetValue<string>();
-                var name = store.GetPluginReference().Name;
-
-                return $"{name}: {property}";
-            }
-        }
-
-        private class PressureSlider : Group
-        {
-            public PressureSlider(
-                string header,
-                Func<float> getValue,
-                Action<float> setValue
-            )
-            {
-                this.Text = header;
-                this.Orientation = Orientation.Horizontal;
-
-                this.setValue = setValue;
-                this.getValue = getValue;
-
-                var pressureslider = new Slider
-                {
-                    MinValue = 0,
-                    MaxValue = 100
-                };
-                var fineTune = new TextBox();
-
-                pressureslider.ValueChanged += (sender, e) =>
-                {
-                    this.setValue(pressureslider.Value);
-                    fineTune.Text = this.getValue().ToString();
-                    fineTune.CaretIndex = fineTune.Text.Length;
-                };
-
-                fineTune.TextChanged += (sender, e) =>
-                {
-                    var newValue = float.TryParse(fineTune.Text, out var val) ? val : 0f;
-                    this.setValue(newValue);
-                    pressureslider.Value = (int)this.getValue();
-                };
-                fineTune.Text = App.Settings?.TipActivationPressure.ToString();
-
-                content.AddControl(pressureslider, true);
-                content.AddControl(fineTune);
-                base.Content = content;
-            }
-
-            private Action<float> setValue;
-            private Func<float> getValue;
-
-            private StackView content = new StackView
+            var secondRow = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
-                VerticalContentAlignment = VerticalAlignment.Center
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Items =
+                {
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Pen Button Bindings", penBindingsStack)
+                    },
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new Group("Auxiliary Button Bindings", auxBindingsStack)
+                    }
+                }
+            };
+
+            this.Content = new StackView
+            {
+                Orientation = Orientation.Vertical,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Items =
+                {
+                    new StackLayoutItem(firstRow, true),
+                    new StackLayoutItem(secondRow, true)
+                }
             };
         }
     }

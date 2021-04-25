@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+jobs:
+  unix:
+    runs-on: ubuntu-latest
+    name: Unix Release
+    steps:
+      - name: Checkout Packaging Repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'OpenTabletDriver/OpenTabletDriver.Packaging'
+      - name: Checkout OpenTabletDriver Repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'OpenTabletDriver/OpenTabletDriver'
+          path: 'src/OpenTabletDriver'
+      - name: Checkout OpenTabletDriver-udev Repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'OpenTabletDriver/OpenTabletDriver-udev'
+          path: 'src/OpenTabletDriver-udev'
+          submodules: false
+      - name: Link modules
+        run: |
+          rm -rf ${GITHUB_WORKSPACE}/src/OpenTabletDriver-udev/.modules/OpenTabletDriver; ln -s ${GITHUB_WORKSPACE}/src/OpenTabletDriver ${GITHUB_WORKSPACE}/src/OpenTabletDriver-udev/.modules/OpenTabletDriver
+          if [ -e ${GITHUB_WORKSPACE}/src/OpenTabletDriver-udev/.modules/OpenTabletDriver ]; then echo "Successfully linked."; else exit 1; fi
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Debian Build
+        run: ./Debian/package build
+      - name: Generic Linux Build
+        run: ./Linux/package build
+      - name: MacOS Build
+        run: ./MacOS/package build
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./Debian/OpenTabletDriver.deb
+            ./Linux/OpenTabletDriver.linux-x64.tar.gz
+            ./MacOS/OpenTabletDriver.osx-x64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  windows:
+    runs-on: windows-latest
+    name: Windows Release
+    steps:
+      - name: Checkout Packaging Repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'OpenTabletDriver/OpenTabletDriver.Packaging'
+      - name: Checkout OpenTabletDriver Repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'OpenTabletDriver/OpenTabletDriver'
+          path: 'src/OpenTabletDriver'
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Package
+        run: ./Windows/package.ps1 build
+      - name: Upload assets for tag
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./Windows/OpenTabletDriver.win-x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

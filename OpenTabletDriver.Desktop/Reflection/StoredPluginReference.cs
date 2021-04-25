@@ -1,5 +1,3 @@
-using OpenTabletDriver.Reflection;
-
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public class StoredPluginReference : PluginReference

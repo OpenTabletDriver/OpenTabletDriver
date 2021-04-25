@@ -9,6 +9,9 @@
 **/nupkg
 /Build
 
+# BenchmarkDotNet Artifacts
+**/BenchmarkDotNet.Artifacts
+
 # User Preferences
 *.user
 
