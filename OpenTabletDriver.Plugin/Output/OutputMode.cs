@@ -74,7 +74,7 @@ namespace OpenTabletDriver.Plugin.Output
                         entryElement = this;
 
                         // Link TransformElement to PostTransformElements
-                        this.Emit += PostTransformElements.Last().Consume;
+                        LinkElement(this, PostTransformElements.Last());
 
                         // Hook PostTransformElements to output
                         PostTransformElements.Last().Emit += this.OnOutput;
@@ -84,10 +84,10 @@ namespace OpenTabletDriver.Plugin.Output
                         entryElement = PreTransformElements.First();
 
                         // Link PreTransformElements to TransformElement
-                        PreTransformElements.Last().Emit += this.Consume;
+                        LinkElement(PreTransformElements.Last(), this);
 
                         // Link TransformElement to PostTransformElements
-                        this.Emit += PostTransformElements.First().Consume;
+                        LinkElement(this, PostTransformElements.First());
 
                         // Link PostTransformElements to output
                         PostTransformElements.Last().Emit += this.OnOutput;
