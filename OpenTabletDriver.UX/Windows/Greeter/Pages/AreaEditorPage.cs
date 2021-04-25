@@ -17,6 +17,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                 new StackLayoutItem
                 {
                     Expand = true,
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
                     Control = new Group
                     {
                         Text = "Demo Area Editor",

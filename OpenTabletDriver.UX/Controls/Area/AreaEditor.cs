@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -7,7 +8,7 @@ using OpenTabletDriver.UX.Controls.Utilities;
 
 namespace OpenTabletDriver.UX.Controls.Area
 {
-    public class AreaEditor : Panel, IViewModelRoot<AreaViewModel>
+    public class AreaEditor : DynamicLayout, IViewModelRoot<AreaViewModel>
     {
         public AreaViewModel ViewModel
         {
@@ -24,101 +25,74 @@ namespace OpenTabletDriver.UX.Controls.Area
         {
             base.OnLoadComplete(e);
 
-            StackLayout settingsPanel;
-
-            this.Content = new StackLayout
+            var areaEditorDisplay = new Panel
             {
-                Spacing = 5,
-                Items =
+                Padding = new Padding(5),
+                Content = this.Display ??= new AreaDisplay
                 {
-                    new StackLayoutItem
-                    {
-                        Expand = true,
-                        HorizontalAlignment = HorizontalAlignment.Stretch,
-                        Control = new Panel
-                        {
-                            Padding = new Padding(5),
-                            Content = this.Display ??= new AreaDisplay
-                            {
-                                ViewModel = this.ViewModel
-                            }
-                        }
-                    },
-                    new StackLayoutItem
-                    {
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Control = settingsPanel = new StackLayout
-                        {
-                            Orientation = Orientation.Horizontal,
-                            Spacing = 5,
-                            Items =
-                            {
-                                new StackLayoutItem
-                                {
-                                    Control = new UnitGroup
-                                    {
-                                        Text = "Width",
-                                        Unit = ViewModel.Unit,
-                                        ToolTip = $"Area width in {ViewModel.Unit}",
-                                        Orientation = Orientation.Horizontal,
-                                        Content = width = new FloatNumberBox()
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Control = new UnitGroup
-                                    {
-                                        Text = "Height",
-                                        Unit = ViewModel.Unit,
-                                        ToolTip = $"Area height in {ViewModel.Unit}",
-                                        Orientation = Orientation.Horizontal,
-                                        Content = height = new FloatNumberBox()
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Control = new UnitGroup
-                                    {
-                                        Text = "X",
-                                        Unit = ViewModel.Unit,
-                                        ToolTip = $"Area center X offset in {ViewModel.Unit}",
-                                        Orientation = Orientation.Horizontal,
-                                        Content = x = new FloatNumberBox()
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Control = new UnitGroup
-                                    {
-                                        Text = "Y",
-                                        Unit = ViewModel.Unit,
-                                        ToolTip = $"Area center Y offset in {ViewModel.Unit}",
-                                        Orientation = Orientation.Horizontal,
-                                        Content = y = new FloatNumberBox()
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    ViewModel = this.ViewModel
+                }
+            };
+
+            var unitGroups = new List<UnitGroup>
+            {
+                new UnitGroup
+                {
+                    Text = "Width",
+                    Unit = ViewModel.Unit,
+                    ToolTip = $"Area width in {ViewModel.Unit}",
+                    Orientation = Orientation.Horizontal,
+                    Content = width = new FloatNumberBox()
+                },
+                new UnitGroup
+                {
+                    Text = "Height",
+                    Unit = ViewModel.Unit,
+                    ToolTip = $"Area height in {ViewModel.Unit}",
+                    Orientation = Orientation.Horizontal,
+                    Content = height = new FloatNumberBox()
+                },
+                new UnitGroup
+                {
+                    Text = "X",
+                    Unit = ViewModel.Unit,
+                    ToolTip = $"Area center X offset in {ViewModel.Unit}",
+                    Orientation = Orientation.Horizontal,
+                    Content = x = new FloatNumberBox()
+                },
+                new UnitGroup
+                {
+                    Text = "Y",
+                    Unit = ViewModel.Unit,
+                    ToolTip = $"Area center Y offset in {ViewModel.Unit}",
+                    Orientation = Orientation.Horizontal,
+                    Content = y = new FloatNumberBox()
                 }
             };
 
             if (ViewModel.EnableRotation)
             {
-                settingsPanel.Items.Add(
-                    new StackLayoutItem
-                    {
-                        Control = new UnitGroup
-                        {
-                            Text = "Rotation",
-                            Unit = "°",
-                            ToolTip = "Angle of rotation about the center of the area.",
-                            Orientation = Orientation.Horizontal,
-                            Content = rotation = new FloatNumberBox()
-                        }
-                    }
-                );
+                unitGroups.Add(new UnitGroup
+                {
+                    Text = "Rotation",
+                    Unit = "°",
+                    ToolTip = "Angle of rotation about the center of the area.",
+                    Orientation = Orientation.Horizontal,
+                    Content = rotation = new FloatNumberBox()
+                });
             }
+
+            Clear();
+            BeginVertical(xscale: true);
+            Add(areaEditorDisplay, true, true);
+
+            BeginCentered(spacing: new Size(5, 5));
+            AddRow(unitGroups.ToArray());
+            EndCentered();
+
+            EndVertical();
+
+            Create();
 
             this.ContextMenu = new ContextMenu();
 
