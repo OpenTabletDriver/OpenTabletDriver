@@ -86,10 +86,6 @@ namespace OpenTabletDriver.Desktop.Reflection
                             if (service != null)
                                 field.SetValue(obj, service);
                         }
-                        else
-                        {
-                            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
-                        }
                     }
 
                     return obj;
