@@ -51,6 +51,10 @@ namespace OpenTabletDriver.UX
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
         private PluginManagerWindow pluginManager;
 
+        private WindowSingleton<ConfigurationEditor> configEditorWindow = new WindowSingleton<ConfigurationEditor>();
+        private WindowSingleton<PluginManagerWindow> pluginManagerWindow = new WindowSingleton<PluginManagerWindow>();
+        private WindowSingleton<TabletDebugger> debuggerWindow = new WindowSingleton<TabletDebugger>();
+
         public void Refresh()
         {
             bindingEditor = new BindingEditor();
@@ -262,7 +266,7 @@ namespace OpenTabletDriver.UX
             aboutCommand.Executed += (sender, e) => AboutDialog.ShowDialog(this);
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
-            resetSettings.Executed += async (sender, e) => await ResetSettings(false);
+            resetSettings.Executed += async (sender, e) => await ResetSettingsDialog();
 
             var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
             loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
@@ -401,19 +405,22 @@ namespace OpenTabletDriver.UX
             this.Title = $"OpenTabletDriver v{App.Version} - {tablet?.TabletProperties?.Name ?? "No tablet detected"}";
         }
 
+        private async Task ResetSettings()
+        {
+            await Driver.Instance.ResetSettings();
+            Settings = await Driver.Instance.GetSettings();
+        }
+
+        private async Task ResetSettingsDialog()
+        {
+            if (MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) == DialogResult.Ok)
+                await ResetSettings();
+        }
+
         private async Task LoadSettings(AppInfo appInfo = null)
         {
             appInfo ??= await Driver.Instance.GetApplicationInfo();
             settingsFile = new FileInfo(appInfo.SettingsFile);
-            Settings = await Driver.Instance.GetSettings();
-        }
-
-        private async Task ResetSettings(bool force = true)
-        {
-            if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
-                return;
-
-            await Driver.Instance.ResetSettings();
             Settings = await Driver.Instance.GetSettings();
         }
 
@@ -522,17 +529,12 @@ namespace OpenTabletDriver.UX
 
         private void ShowConfigurationEditor()
         {
-            var configEditor = new ConfigurationEditor();
-            configEditor.Show();
+            configEditorWindow.Show();
         }
 
         public void ShowPluginManager()
         {
-            if (pluginManager?.IsClosed ?? true)
-                pluginManager = new PluginManagerWindow();
-
-            pluginManager.Show();
-            pluginManager.Focus();
+            pluginManagerWindow.Show();
         }
 
         private void ShowDeviceStringReader()
@@ -543,8 +545,7 @@ namespace OpenTabletDriver.UX
 
         private void ShowTabletDebugger()
         {
-            var debugger = new TabletDebugger();
-            debugger.Show();
+            debuggerWindow.Show();
         }
 
         private async Task ExportDiagnostics()

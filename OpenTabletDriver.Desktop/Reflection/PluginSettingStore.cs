@@ -115,5 +115,13 @@ namespace OpenTabletDriver.Desktop.Reflection
             set => this[property.Name] = value;
             get => this[property.Name];
         }
+
+        public string GetHumanReadableString()
+        {
+            var name = this.GetPluginReference().Name;
+            string settings = string.Join(", ", this.Settings.Select(s => $"({s.Property}: {s.Value})"));
+
+            return $"{name}: {settings}";
+        }
     }
 }

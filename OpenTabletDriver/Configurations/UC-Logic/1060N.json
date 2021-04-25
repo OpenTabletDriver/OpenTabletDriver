@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen Star 06",
+  "Name": "UC-Logic 1060N",
   "DigitizerIdentifiers": [
     {
       "Width": 254.0,
@@ -13,15 +13,17 @@
         "End": 96,
         "EndInclusive": false
       },
-      "VendorID": 10429,
-      "ProductID": 120,
+      "VendorID": 21827,
+      "ProductID": 129,
       "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": "ArAC",
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [
+        100
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

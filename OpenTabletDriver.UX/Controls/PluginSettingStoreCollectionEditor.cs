@@ -104,10 +104,7 @@ namespace OpenTabletDriver.UX.Controls
                         {
                             Text = "Open Plugin Manager",
                             Command = new Command(
-                                (s, e) =>
-                                {
-                                    (Application.Instance.MainForm as MainForm).ShowPluginManager();
-                                }
+                                (s, e) => (Application.Instance.MainForm as MainForm).ShowPluginManager()
                             )
                         },
                         HorizontalAlignment = HorizontalAlignment.Center

@@ -8,10 +8,15 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         public static float TipActivationPressure { set; get; }
         public static IBinding TipBinding { set; get; } = null;
+
+        public static float EraserActivationPressure { set; get; }
+        public static IBinding EraserBinding { set; get; } = null;
+
         public static Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
         public static Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
 
         private static bool TipState { set; get; } = false;
+        private static bool EraserState { set; get; } = false;
         private static IList<bool> PenButtonStates { get; } = new bool[2];
         private static IList<bool> AuxButtonStates { get; } = new bool[8];
 
@@ -28,12 +33,18 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private static void HandleTabletReport(DigitizerIdentifier identifier, ITabletReport report)
         {
-            if (TipBinding != null)
+            float pressurePercent = (float)report.Pressure / (float)identifier.MaxPressure * 100f;
+            if (report is IEraserReport eraserReport && eraserReport.Eraser)
             {
-                float pressurePercent = (float)report.Pressure / (float)identifier.MaxPressure * 100f;
-
-                InvokeBinding(report, TipBinding, TipState, pressurePercent > TipActivationPressure);
-                TipState = pressurePercent > TipActivationPressure;
+                bool threshold = pressurePercent > EraserActivationPressure;
+                InvokeBinding(report, EraserBinding, EraserState, threshold);
+                EraserState = threshold;
+            }
+            else
+            {
+                bool threshold = pressurePercent > TipActivationPressure;
+                InvokeBinding(report, TipBinding, TipState, threshold);
+                TipState = threshold;
             }
 
             HandleBindingCollection(report, PenButtonStates, report.PenButtons, PenButtonBindings);
@@ -48,7 +59,7 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             for (int i = 0; i < newStates.Count; i++)
             {
-                if (bindings.TryGetValue(i, out IBinding binding) && binding != null)
+                if (bindings.TryGetValue(i, out IBinding binding))
                     InvokeBinding(report, binding, prevStates[i], newStates[i]);
                 prevStates[i] = newStates[i];
             }
@@ -56,10 +67,13 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private static void InvokeBinding(IDeviceReport report, IBinding binding, bool prevState, bool newState)
         {
-            if (newState && !prevState)
-                binding.Press(report);
-            else if (!newState && prevState)
-                binding.Release(report);
+            if (binding != null)
+            {
+                if (newState && !prevState)
+                    binding.Press(report);
+                else if (!newState && prevState)
+                    binding.Release(report);
+            }
         }
     }
 }

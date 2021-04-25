@@ -86,6 +86,10 @@ namespace OpenTabletDriver.Desktop.Reflection
                             if (service != null)
                                 field.SetValue(obj, service);
                         }
+                        else
+                        {
+                            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
+                        }
                     }
 
                     return obj;
@@ -94,6 +98,11 @@ namespace OpenTabletDriver.Desktop.Reflection
                 {
                     Log.Write("Plugin", $"No matching constructor found for '{name}'", LogLevel.Error);
                     Log.Write("Plugin", $"{e}", LogLevel.Debug);
+                }
+                catch (TargetInvocationException e) when (e.Message == "Exception has been thrown by the target of an invocation.")
+                {
+                    Log.Write("Plugin", "Object construction has thrown an error", LogLevel.Error);
+                    Log.Exception(e.InnerException);
                 }
                 catch (Exception e)
                 {

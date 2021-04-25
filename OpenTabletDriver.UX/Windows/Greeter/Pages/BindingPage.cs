@@ -1,6 +1,5 @@
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Attributes;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -60,12 +59,11 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
             };
         }
 
-        private class DemoBindingDisplay : BindingEditor.BindingDisplay
+        private class DemoBindingDisplay : BindingDisplay
         {
             public DemoBindingDisplay()
-                : base(PluginSettingStore.FromPath(typeof(OpenTabletDriver.Plugin.IBinding).FullName))
             {
-                Width = 256;
+                Width = 512;
             }
         }
     }

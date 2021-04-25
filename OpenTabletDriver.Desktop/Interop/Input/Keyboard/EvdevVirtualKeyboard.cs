@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
         private EvdevDevice Device { set; get; }
 
-        private void KeyPress(string key, bool isPress)
+        private void KeyEvent(string key, bool isPress)
         {
             var keyEventCode = EtoKeysymToEventCode[key];
 
@@ -40,12 +40,24 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
         public void Press(string key)
         {
-            KeyPress(key, true);
+            KeyEvent(key, true);
         }
 
         public void Release(string key)
         {
-            KeyPress(key, false);
+            KeyEvent(key, false);
+        }
+
+        public void Press(IEnumerable<string> keys)
+        {
+            foreach (var key in keys)
+                KeyEvent(key, true);
+        }
+
+        public void Release(IEnumerable<string> keys)
+        {
+            foreach (var key in keys)
+                KeyEvent(key, false);
         }
 
         public void Dispose()
@@ -53,7 +65,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             Device?.Dispose();
         }
 
-        public static readonly Dictionary<string, EventCode> EtoKeysymToEventCode = new Dictionary<string, EventCode>
+        public IEnumerable<string> SupportedKeys => EtoKeysymToEventCode.Keys;
+
+        internal static readonly Dictionary<string, EventCode> EtoKeysymToEventCode = new Dictionary<string, EventCode>
         {
             { "None", 0x0 },
             { "A", EventCode.KEY_A },

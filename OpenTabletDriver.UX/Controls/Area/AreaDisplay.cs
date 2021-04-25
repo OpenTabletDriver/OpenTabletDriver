@@ -32,7 +32,8 @@ namespace OpenTabletDriver.UX.Controls.Area
         private readonly Color AreaBoundsFillColor = SystemColors.ControlBackground;
 
         private bool mouseDragging;
-        private PointF? lastMouseLocation;
+        private PointF? mouseOffset;
+        private PointF? viewModelOffset;
 
         private RectangleF BackgroundRect => ViewModel.FullBackground;
 
@@ -108,15 +109,18 @@ namespace OpenTabletDriver.UX.Controls.Area
 
             if (mouseDragging)
             {
-                if (lastMouseLocation != null)
+                if (mouseOffset != null)
                 {
-                    var delta = e.Location - lastMouseLocation.Value;
-                    var newX = ViewModel.X + (delta.X / PixelScale);
-                    var newY = ViewModel.Y + (delta.Y / PixelScale);
+                    var delta = e.Location - mouseOffset.Value;
+                    var newX = viewModelOffset.Value.X + (delta.X / PixelScale);
+                    var newY = viewModelOffset.Value.Y + (delta.Y / PixelScale);
 
                     if (ViewModel.LockToUsableArea)
                     {
                         var bounds = ViewModel.FullBackground;
+                        bounds.X = 0;
+                        bounds.Y = 0;
+
                         var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(ViewModel.Width, ViewModel.Height));
 
                         var corners = new PointF[]
@@ -140,11 +144,16 @@ namespace OpenTabletDriver.UX.Controls.Area
                     ViewModel.X = newX;
                     ViewModel.Y = newY;
                 }
-                lastMouseLocation = e.Location;
+                else
+                {
+                    mouseOffset = e.Location;
+                    viewModelOffset = new PointF(ViewModel.X, ViewModel.Y);
+                }
             }
-            else if (!mouseDragging && lastMouseLocation != null)
+            else if (!mouseDragging && mouseOffset != null)
             {
-                lastMouseLocation = null;
+                mouseOffset = null;
+                viewModelOffset = null;
             }
         }
 
