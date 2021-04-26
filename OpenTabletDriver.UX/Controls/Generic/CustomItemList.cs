@@ -5,7 +5,7 @@ using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
-    public abstract class CustomItemList<T> : StackLayout
+    public abstract class CustomItemList<T> : StackLayout where T : class
     {
         private IList<T> itemSource;
         public IList<T> ItemSource
@@ -45,9 +45,9 @@ namespace OpenTabletDriver.UX.Controls.Generic
         /// <summary>
         /// Creates a control for an instance of a T in the enumerable.
         /// </summary>
-        /// <param name="sourceObj">The object in which the control is to be created for.</param>
+        /// <param name="itemBinding">A binding to the item sourced from <see cref="ItemSource"/>.</param>
         /// <returns>A control that handles the object</returns>
-        protected abstract Control CreateControl(int index, T sourceObj);
+        protected abstract Control CreateControl(int index, DirectBinding<T> itemBinding);
 
         protected virtual void OnItemSourceChanged()
         {
@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                     int index = 0;
                     foreach (T item in ItemSource ?? Array.Empty<T>())
                     {
-                        Insert(index, item);
+                        Insert(index);
                         index++;
                     }
                     break;
@@ -76,11 +76,14 @@ namespace OpenTabletDriver.UX.Controls.Generic
             }
         }
 
-        protected virtual void Insert(int index, T item)
+        protected virtual void Insert(int index)
         {
-            var control = CreateControl(index, (T)item);
-            control.DataContext = item;
+            var itemBinding = new DelegateBinding<T>(
+                () => ItemSource[index],
+                (v) => ItemSource[index] = v
+            );
 
+            var control = CreateControl(index, itemBinding);
             this.Items.Insert(index, control);
         }
     }

@@ -182,7 +182,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             public string Prefix { set; get; }
 
-            protected override Control CreateControl(int index, PluginSettingStore sourceObj)
+            protected override Control CreateControl(int index, DirectBinding<PluginSettingStore> itemBinding)
             {
                 BindingDisplay display;
 
@@ -193,13 +193,11 @@ namespace OpenTabletDriver.UX.Controls
                     ExpandContent = false,
                     Content = display = new BindingDisplay
                     {
-                        MinimumSize = new Size(300, 0),
-                        DataContext = sourceObj
+                        MinimumSize = new Size(300, 0)
                     }
                 };
 
-                display.StoreBinding.BindDataContext<PluginSettingStore>(s => s);
-
+                display.StoreBinding.Bind(itemBinding);
                 return group;
             }
         }
