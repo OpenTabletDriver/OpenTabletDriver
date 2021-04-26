@@ -7,12 +7,14 @@ namespace OpenTabletDriver.Tablet
         public AuxReport(byte[] report)
         {
             Raw = report;
+
+            var auxByte = report[3];
             AuxButtons = new bool[]
             {
-                (report[3] & (1 << 0)) != 0,
-                (report[3] & (1 << 1)) != 0,
-                (report[3] & (1 << 2)) != 0,
-                (report[3] & (1 << 3)) != 0
+                auxByte.IsBitSet(0),
+                auxByte.IsBitSet(1),
+                auxByte.IsBitSet(2),
+                auxByte.IsBitSet(3)
             };
         }
 
