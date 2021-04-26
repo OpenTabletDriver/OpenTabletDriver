@@ -217,18 +217,15 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            outputModeEditor.StoreBinding.BindDataContext<App>(
-                a => a.Settings.OutputMode
-            );
-            bindingEditor.SettingsBinding.BindDataContext<App>(
-                a => a.Settings
-            );
-            filterEditor.StoreCollectionBinding.BindDataContext<App>(
-                a => a.Settings.Filters
-            );
-            toolEditor.StoreCollectionBinding.BindDataContext<App>(
-                a => a.Settings.Tools
-            );
+            outputModeEditor.StoreBinding.BindDataContext<App>(a => a.Settings.OutputMode);
+            bindingEditor.TipButtonStoreBinding.BindDataContext<App>(a => a.Settings.TipButton);
+            bindingEditor.EraserButtonStoreBinding.BindDataContext<App>(a => a.Settings.EraserButton);
+            bindingEditor.TipPressureValueBinding.BindDataContext<App>(a => a.Settings.TipActivationPressure);
+            bindingEditor.EraserPressureValueBinding.BindDataContext<App>(a => a.Settings.EraserActivationPressure);
+            bindingEditor.PenButtonItemSourceBinding.BindDataContext<App>(a => a.Settings.PenButtons);
+            bindingEditor.AuxiliaryButtonItemSourceBinding.BindDataContext<App>(a => a.Settings.AuxButtons);
+            filterEditor.StoreCollectionBinding.BindDataContext<App>(a => a.Settings.Filters);
+            toolEditor.StoreCollectionBinding.BindDataContext<App>(a => a.Settings.Tools);
 
             var commandsPanel = new StackLayout
             {
