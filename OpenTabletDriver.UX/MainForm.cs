@@ -30,7 +30,7 @@ namespace OpenTabletDriver.UX
 
             Driver.Connected += (_, _) =>
             {
-                Menu = ConstructMenu();
+                Application.Instance.AsyncInvoke(() => Menu = ConstructMenu());
             };
 
             Driver.Disconnected += (_, _) =>
