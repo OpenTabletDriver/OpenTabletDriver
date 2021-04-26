@@ -13,7 +13,7 @@ using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {
-    public class Settings : Notifier
+    public class Settings : ViewModel
     {
         internal const int PenButtonCount = 2;
         internal const int AuxButtonCount = 8;

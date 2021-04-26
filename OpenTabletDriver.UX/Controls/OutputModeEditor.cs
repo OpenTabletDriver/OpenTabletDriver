@@ -30,35 +30,61 @@ namespace OpenTabletDriver.UX.Controls
                 Items =
                 {
                     new StackLayoutItem(outputModeEditor, true),
-                    new StackLayout(outputModeSelector)
-                    {
-                        Size = new Size(300, -1)
-                    }
+                    outputModeSelector
                 }
             };
-
-            UpdateOutputMode(App.Settings?.OutputMode);
-            App.SettingsChanged += (settings) => UpdateOutputMode(settings?.OutputMode);
 
             outputModeSelector.SelectedValueChanged += (sender, args) =>
             {
                 if (outputModeSelector.SelectedType is TypeInfo type)
-                {
-                    App.Settings.OutputMode = new PluginSettingStore(type);
-                    UpdateOutputMode(App.Settings.OutputMode);
-                }
+                    this.Store = new PluginSettingStore(type);
             };
+
+            outputModeSelector.SelectedTypeBinding.Bind(
+                StoreBinding.Convert<TypeInfo>(
+                    c => c?.GetPluginReference().GetTypeReference(),
+                    t => PluginSettingStore.FromPath(t.FullName)
+                )
+            );
         }
 
-        public void Refresh()
+        private PluginSettingStore store;
+        public PluginSettingStore Store
         {
-            outputModeSelector.Refresh();
+            set
+            {
+                this.store = value;
+                this.OnStoreChanged();
+            }
+            get => this.store;
+        }
+        
+        public event EventHandler<EventArgs> StoreChanged;
+        
+        protected virtual void OnStoreChanged()
+        {
+            StoreChanged?.Invoke(this, new EventArgs());
+            UpdateOutputMode(this.Store);
+        }
+        
+        public BindableBinding<OutputModeEditor, PluginSettingStore> StoreBinding
+        {
+            get
+            {
+                return new BindableBinding<OutputModeEditor, PluginSettingStore>(
+                    this,
+                    c => c.Store,
+                    (c, v) => c.Store = v,
+                    (c, h) => c.StoreChanged += h,
+                    (c, h) => c.StoreChanged -= h
+                );
+            }
         }
 
         private Panel outputModeEditor = new Panel();
         private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
         private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
-        private OutputModeSelector outputModeSelector = new OutputModeSelector { Width = 300 };
+        private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
 
         public void SetTabletSize(TabletState tablet)
         {
@@ -70,7 +96,7 @@ namespace OpenTabletDriver.UX.Controls
                     new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height)
                 };
 
-                var settings = App.Settings;
+                var settings = App.Current.Settings;
                 if (settings != null && settings.TabletWidth == 0 && settings.TabletHeight == 0)
                 {
                     settings.TabletWidth = tablet.Digitizer.Width;
@@ -99,7 +125,6 @@ namespace OpenTabletDriver.UX.Controls
             bool showRelative = false;
             if (store != null)
             {
-                App.Settings.OutputMode = store;
                 var outputMode = store.GetPluginReference().GetTypeReference<IOutputMode>();
                 showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
@@ -109,21 +134,6 @@ namespace OpenTabletDriver.UX.Controls
                 outputModeEditor.Content = absoluteModeEditor;
             else if (showRelative)
                 outputModeEditor.Content = relativeModeEditor;
-        }
-
-        private class OutputModeSelector : TypeDropDown<IOutputMode>
-        {
-            public OutputModeSelector()
-            {
-                UpdateSelectedMode(App.Settings?.OutputMode);
-                App.SettingsChanged += (settings) => UpdateSelectedMode(settings?.OutputMode);
-            }
-
-            public void UpdateSelectedMode(PluginSettingStore store)
-            {
-                var typeReference = store?.GetPluginReference().GetTypeReference();
-                this.SelectedValue = typeReference;
-            }
         }
 
         private class AbsoluteModeEditor : Panel
@@ -140,7 +150,7 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 };
 
-                var settings = App.Settings;
+                var settings = App.Current.Settings;
                 displayAreaEditor.Rebind(settings);
                 tabletAreaEditor.Rebind(settings);
             }
@@ -171,8 +181,7 @@ namespace OpenTabletDriver.UX.Controls
                 {
                     this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
 
-                    Rebind(App.Settings);
-                    App.SettingsChanged += Rebind;
+                    Rebind(App.Current.Settings);
                 }
 
                 public void Rebind(Settings settings)
@@ -247,20 +256,17 @@ namespace OpenTabletDriver.UX.Controls
 
                     lockAr = new BooleanCommand
                     {
-                        MenuText = "Lock aspect ratio",
-                        DataContext = App.Settings
+                        MenuText = "Lock aspect ratio"
                     };
 
                     areaClipping = new BooleanCommand
                     {
-                        MenuText = "Area clipping",
-                        DataContext = App.Settings
+                        MenuText = "Area clipping"
                     };
 
                     ignoreOutsideArea = new BooleanCommand
                     {
-                        MenuText = "Ignore input outside area",
-                        DataContext = App.Settings
+                        MenuText = "Ignore input outside area"
                     };
 
                     base.ContextMenu.Items.AddRange(
@@ -281,9 +287,6 @@ namespace OpenTabletDriver.UX.Controls
                             Action = async () => await ConvertAreaDialog()
                         }
                     );
-
-                    Rebind(App.Settings);
-                    App.SettingsChanged += Rebind;
                 }
 
                 private async Task ConvertAreaDialog()
@@ -309,7 +312,7 @@ namespace OpenTabletDriver.UX.Controls
                     base.VerticalContentAlignment = VerticalAlignment.Top;
 
                     UpdateBindings();
-                    App.SettingsChanged += (s) => UpdateBindings();
+                    // App.SettingsChanged += (s) => UpdateBindings();
                 }
 
                 public void UpdateBindings()
@@ -318,32 +321,32 @@ namespace OpenTabletDriver.UX.Controls
 
                     var xSensBox = new SensitivityEditorBox(
                         "X Sensitivity",
-                        (s) => App.Settings.XSensitivity = float.TryParse(s, out var val) ? val : 0f,
-                        () => App.Settings?.XSensitivity.ToString(),
+                        (s) => App.Current.Settings.XSensitivity = float.TryParse(s, out var val) ? val : 0f,
+                        () => App.Current.Settings?.XSensitivity.ToString(),
                         "px/mm"
                     );
                     AddControl(xSensBox, true);
 
                     var ySensBox = new SensitivityEditorBox(
                         "Y Sensitivity",
-                        (s) => App.Settings.YSensitivity = float.TryParse(s, out var val) ? val : 0f,
-                        () => App.Settings?.YSensitivity.ToString(),
+                        (s) => App.Current.Settings.YSensitivity = float.TryParse(s, out var val) ? val : 0f,
+                        () => App.Current.Settings?.YSensitivity.ToString(),
                         "px/mm"
                     );
                     AddControl(ySensBox, true);
 
                     var rotationBox = new SensitivityEditorBox(
                         "Rotation",
-                        (s) => App.Settings.RelativeRotation = float.TryParse(s, out var val) ? val : 0f,
-                        () => App.Settings?.RelativeRotation.ToString(),
+                        (s) => App.Current.Settings.RelativeRotation = float.TryParse(s, out var val) ? val : 0f,
+                        () => App.Current.Settings?.RelativeRotation.ToString(),
                         "°"
                     );
                     AddControl(rotationBox, true);
 
                     var resetTimeBox = new SensitivityEditorBox(
                         "Reset Time",
-                        (s) => App.Settings.ResetTime = TimeSpan.TryParse(s, out var val) ? val : TimeSpan.FromMilliseconds(100),
-                        () => App.Settings?.ResetTime.ToString()
+                        (s) => App.Current.Settings.ResetTime = TimeSpan.TryParse(s, out var val) ? val : TimeSpan.FromMilliseconds(100),
+                        () => App.Current.Settings?.ResetTime.ToString()
                     );
                     AddControl(resetTimeBox, true);
                 }
@@ -379,7 +382,7 @@ namespace OpenTabletDriver.UX.Controls
                         }
 
                         UpdateBindings();
-                        App.SettingsChanged += (Settings) => UpdateBindings();
+                        // App.Current.SettingsChanged += (Settings) => UpdateBindings();
                         this.Content = layout;
                     }
 

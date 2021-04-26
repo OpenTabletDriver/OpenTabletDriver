@@ -27,10 +27,30 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 select type;
         }
 
+        public event EventHandler<EventArgs> SelectedTypeChanged;
+
         public TypeInfo SelectedType
         {
-            set => this.SelectedValue = value;
+            set
+            {
+                this.SelectedValue = value;
+                SelectedTypeChanged?.Invoke(this, new EventArgs());
+            }
             get => (TypeInfo)this.SelectedValue;
+        }
+
+        public BindableBinding<TypeDropDown<T>, TypeInfo> SelectedTypeBinding
+        {
+            get
+            {
+                return new BindableBinding<TypeDropDown<T>, TypeInfo>(
+                    this,
+                    c => c.SelectedType,
+                    (c, v) => c.SelectedType = v,
+                    (c, h) => c.SelectedTypeChanged += h,
+                    (c, h) => c.SelectedTypeChanged -= h
+                );
+            }
         }
 
         public T ConstructSelectedType(params object[] args)

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Eto.Drawing;
+using OpenTabletDriver.Desktop;
 
 namespace OpenTabletDriver.UX.Controls.Area
 {
-    public class AreaViewModel : ViewModelBase
+    public class AreaViewModel : ViewModel
     {
         private float w, h, x, y, r;
         private string unit, invalidForegroundError, invalidBackgroundError;
