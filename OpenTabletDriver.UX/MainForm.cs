@@ -27,7 +27,11 @@ namespace OpenTabletDriver.UX
             UpdateTitle(null);
             ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
             Content = ConstructPlaceholderControl();
-            Menu = ConstructMenu();
+
+            Driver.Connected += (_, _) =>
+            {
+                Application.Instance.AsyncInvoke(() => Menu = ConstructMenu());
+            };
 
             Driver.Disconnected += (_, _) =>
             {
