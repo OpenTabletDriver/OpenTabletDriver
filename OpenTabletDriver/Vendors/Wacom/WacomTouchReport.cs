@@ -1,6 +1,8 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
@@ -9,7 +11,7 @@ namespace OpenTabletDriver.Vendors.Wacom
         public WacomTouchReport(byte[] report)
         {
             Raw = report;
-            AuxButtons = new bool[0];
+            AuxButtons = Array.Empty<bool>();
             Touches = prevTouches ?? new TouchPoint[MAX_POINTS];
             if (report[2] == 0x81)
             {
@@ -25,12 +27,13 @@ namespace OpenTabletDriver.Vendors.Wacom
                 var touchID = Raw[offset];
                 if (touchID == 0x80)
                 {
+                    var auxByte = report[1 + offset];
                     AuxButtons = new bool[]
                     {
-                        (report[1 + offset] & (1 << 0)) != 0,
-                        (report[1 + offset] & (1 << 1)) != 0,
-                        (report[1 + offset] & (1 << 2)) != 0,
-                        (report[1 + offset] & (1 << 3)) != 0
+                        auxByte.IsBitSet(0),
+                        auxByte.IsBitSet(1),
+                        auxByte.IsBitSet(2),
+                        auxByte.IsBitSet(3),
                     };
                     continue;
                 }

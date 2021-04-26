@@ -1,6 +1,6 @@
-using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
@@ -27,10 +27,12 @@ namespace OpenTabletDriver.Vendors.Wacom
                 Y = (report[8] & 0x7F) - 64
             };
             Pressure = (uint)((report[6] << 3) | ((report[7] & 0xC0) >> 5) | (report[1] & 1));
+
+            var penByte = report[1];
             PenButtons = new bool[]
             {
-                (report[1] & (1 << 1)) != 0,
-                (report[1] & (1 << 2)) != 0
+                penByte.IsBitSet(1),
+                penByte.IsBitSet(2)
             };
             NearProximity = (report[1] & (1 << 6)) != 0;
             HoverDistance = (uint)report[9] >> 2;
