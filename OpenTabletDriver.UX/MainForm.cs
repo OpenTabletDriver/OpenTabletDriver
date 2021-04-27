@@ -402,7 +402,7 @@ namespace OpenTabletDriver.UX
 
         public void UpdateTitle(TabletState tablet)
         {
-            this.Title = $"OpenTabletDriver v{App.Version} - {tablet?.TabletProperties?.Name ?? "No tablet detected"}";
+            this.Title = $"OpenTabletDriver v{App.Version} - {tablet?.Properties?.Name ?? "No tablet detected"}";
         }
 
         private async Task ResetSettings()

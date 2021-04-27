@@ -13,6 +13,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Dictionary;
 using OpenTabletDriver.UX.Windows.Configurations.Controls;
+using OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications;
 
 namespace OpenTabletDriver.UX.Windows.Configurations
 {
@@ -247,7 +248,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                             Name = device.GetManufacturer() + " " + device.GetProductName(),
                             DigitizerIdentifiers =
                             {
-                                new DigitizerIdentifier
+                                new DeviceIdentifier
                                 {
                                     VendorID = device.VendorID,
                                     ProductID = device.ProductID,
@@ -273,33 +274,45 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 this.Content = new StackLayout
                 {
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Spacing = 5,
                     Items =
                     {
                         new Group
                         {
                             Text = "Name",
+                            Orientation = Orientation.Horizontal,
                             Content = name = new TextBox()
                         },
-                        new Group
+                        new Expander
                         {
-                            Text = "Digitizer Identifiers",
-                            Content = digitizerIdentifierEditor = new DigitizerIdentifierEditor()
+                            Header = "Specifications",
+                            Content = specificationEditor = new TabletSpecificationsEditor()
                         },
-                        new Group
+                        new Expander
                         {
-                            Text = "Auxiliary Identifiers",
-                            Content = auxiliaryIdentifierEditor = new DeviceIdentifierEditor<DeviceIdentifier>()
+                            Header = "Digitizer Identifiers",
+                            Content = digitizerIdentifierEditor = new DeviceIdentifierEditor()
                         },
-                        new Group
+                        new Expander
                         {
-                            Text = "Attributes",
-                            Content = attributeEditor = new StringDictionaryEditor()
+                            Header = "Auxiliary Identifiers",
+                            Content = auxiliaryIdentifierEditor = new DeviceIdentifierEditor()
+                        },
+                        new Expander
+                        {
+                            Header = "Attributes",
+                            Content = new Group
+                            {
+                                Text = "Attributes",
+                                Content = attributeEditor = new StringDictionaryEditor()
+                            }
                         }
                     }
                 };
 
                 name.TextBinding.Bind(ConfigurationBinding.Child(c => c.Name));
-                digitizerIdentifierEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IList<DigitizerIdentifier>>(c => c.DigitizerIdentifiers));
+                specificationEditor.TabletSpecificationsBinding.Bind(ConfigurationBinding.Child(c => c.Specifications));
+                digitizerIdentifierEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IList<DeviceIdentifier>>(c => c.DigitizerIdentifiers));
                 auxiliaryIdentifierEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IList<DeviceIdentifier>>(c => c.AuxilaryDeviceIdentifiers));
                 attributeEditor.ItemSourceBinding.Bind(
                     ConfigurationBinding.Child(c => c.Attributes).Convert<IList<KeyValuePair<string, string>>>(
@@ -310,8 +323,9 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             }
 
             private TextBox name;
-            private DigitizerIdentifierEditor digitizerIdentifierEditor;
-            private DeviceIdentifierEditor<DeviceIdentifier> auxiliaryIdentifierEditor;
+            private TabletSpecificationsEditor specificationEditor;
+            private DeviceIdentifierEditor digitizerIdentifierEditor;
+            private DeviceIdentifierEditor auxiliaryIdentifierEditor;
             private StringDictionaryEditor attributeEditor;
 
             private TabletConfiguration configuration;

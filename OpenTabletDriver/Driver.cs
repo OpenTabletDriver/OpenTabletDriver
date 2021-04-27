@@ -31,7 +31,7 @@ namespace OpenTabletDriver
                 }
             };
         }
-        
+
         public event EventHandler<bool> Reading;
         public event EventHandler<IDeviceReport> ReportReceived;
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
@@ -78,7 +78,7 @@ namespace OpenTabletDriver
         }
 
         public IOutputMode OutputMode { set; get; }
-        
+
         public DeviceReader<IDeviceReport> TabletReader { private set; get; }
         public DeviceReader<IDeviceReport> AuxReader { private set; get; }
 
@@ -122,7 +122,7 @@ namespace OpenTabletDriver
             return false;
         }
 
-        protected bool TryMatchDigitizer(TabletConfiguration config, out DigitizerIdentifier digitizerIdentifier)
+        protected bool TryMatchDigitizer(TabletConfiguration config, out DeviceIdentifier digitizerIdentifier)
         {
             digitizerIdentifier = default;
             foreach (var identifier in config.DigitizerIdentifiers)
@@ -182,7 +182,7 @@ namespace OpenTabletDriver
             return config.AuxilaryDeviceIdentifiers.Count == 0;
         }
 
-        protected void InitializeDigitizerDevice(HidDevice tabletDevice, DigitizerIdentifier tablet, IReportParser<IDeviceReport> reportParser)
+        protected void InitializeDigitizerDevice(HidDevice tabletDevice, DeviceIdentifier tablet, IReportParser<IDeviceReport> reportParser)
         {
             TabletReader?.Dispose();
 
@@ -212,29 +212,41 @@ namespace OpenTabletDriver
                     Tablet = null;
             };
 
-            if (tablet.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
+            if (tablet.FeatureInitReport is List<byte[]> featureInitReport)
             {
-                try
+                foreach (var report in featureInitReport)
                 {
-                    TabletReader.ReportStream.SetFeature(featureInitReport);
-                    Log.Debug("Device", "Set tablet feature: " + BitConverter.ToString(featureInitReport));
-                }
-                catch
-                {
-                    Log.Write("Device", "Failed to set tablet feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
+                    if (report == null || report.Length == 0)
+                        continue;
+
+                    try
+                    {
+                        TabletReader.ReportStream.SetFeature(report);
+                        Log.Debug("Device", "Set tablet feature: " + BitConverter.ToString(report));
+                    }
+                    catch
+                    {
+                        Log.Write("Device", "Failed to set tablet feature: " + BitConverter.ToString(report), LogLevel.Warning);
+                    }
                 }
             }
 
-            if (tablet.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
+            if (tablet.OutputInitReport is List<byte[]> outputInitReport)
             {
-                try
+                foreach (var report in outputInitReport)
                 {
-                    TabletReader.ReportStream.Write(outputInitReport);
-                    Log.Debug("Device", "Set tablet output: " + BitConverter.ToString(outputInitReport));
-                }
-                catch
-                {
-                    Log.Write("Device", "Failed to set tablet output: " + BitConverter.ToString(outputInitReport), LogLevel.Warning);
+                    if (report == null || report.Length == 0)
+                        continue;
+
+                    try
+                    {
+                        TabletReader.ReportStream.Write(report);
+                        Log.Debug("Device", "Set tablet output: " + BitConverter.ToString(report));
+                    }
+                    catch
+                    {
+                        Log.Write("Device", "Failed to set tablet output: " + BitConverter.ToString(report), LogLevel.Warning);
+                    }
                 }
             }
         }
@@ -263,29 +275,41 @@ namespace OpenTabletDriver
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
             AuxReader.Report += OnReportRecieved;
 
-            if (identifier.FeatureInitReport is byte[] featureInitReport && featureInitReport.Length > 0)
+            if (identifier.FeatureInitReport is List<byte[]> featureInitReport)
             {
-                try
+                foreach (var report in featureInitReport)
                 {
-                    AuxReader.ReportStream.SetFeature(featureInitReport);
-                    Log.Debug("Device", "Set aux feature: " + BitConverter.ToString(featureInitReport));
-                }
-                catch
-                {
-                    Log.Write("Device", "Failed to set aux feature: " + BitConverter.ToString(featureInitReport), LogLevel.Warning);
+                    if (report == null || report.Length == 0)
+                        continue;
+
+                    try
+                    {
+                        TabletReader.ReportStream.SetFeature(report);
+                        Log.Debug("Device", "Set auxiliary feature: " + BitConverter.ToString(report));
+                    }
+                    catch
+                    {
+                        Log.Write("Device", "Failed to set auxiliary feature: " + BitConverter.ToString(report), LogLevel.Warning);
+                    }
                 }
             }
 
-            if (identifier.OutputInitReport is byte[] outputInitReport && outputInitReport.Length > 0)
+            if (identifier.OutputInitReport is List<byte[]> outputInitReport)
             {
-                try
+                foreach (var report in outputInitReport)
                 {
-                    AuxReader.ReportStream.Write(outputInitReport);
-                    Log.Debug("Device", "Set aux output: " + BitConverter.ToString(outputInitReport));
-                }
-                catch
-                {
-                    Log.Write("Device", "Failed to set output: " + BitConverter.ToString(outputInitReport), LogLevel.Warning);
+                    if (report == null || report.Length == 0)
+                        continue;
+
+                    try
+                    {
+                        TabletReader.ReportStream.Write(report);
+                        Log.Debug("Device", "Set auxiliary output: " + BitConverter.ToString(report));
+                    }
+                    catch
+                    {
+                        Log.Write("Device", "Failed to set auxiliary output: " + BitConverter.ToString(report), LogLevel.Warning);
+                    }
                 }
             }
         }
@@ -294,7 +318,7 @@ namespace OpenTabletDriver
         /// Retrieve and construct the the report parser for an identifier.
         /// </summary>
         /// <param name="identifier">The identifier to retrieve the report parser path from.</param>
-        protected virtual IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier) 
+        protected virtual IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
             return reportParserDict[identifier.ReportParser].Invoke();
         }
@@ -372,7 +396,7 @@ namespace OpenTabletDriver
         {
             if (identifier.DeviceStrings == null || identifier.DeviceStrings.Count == 0)
                 return true;
-            
+
             foreach (var matchQuery in identifier.DeviceStrings)
             {
                 try
@@ -397,7 +421,7 @@ namespace OpenTabletDriver
             TabletReader?.Dispose();
             TabletReader.Report -= OnReportRecieved;
             TabletReader = null;
-            
+
             AuxReader?.Dispose();
             AuxReader.Report -= OnReportRecieved;
             AuxReader = null;

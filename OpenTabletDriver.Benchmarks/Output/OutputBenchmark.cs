@@ -16,16 +16,24 @@ namespace OpenTabletDriver.Benchmarks.Output
 
         public void SetSettings(Settings settings)
         {
-            var digitizer = new DigitizerIdentifier
-            {
-                MaxX = 2000,
-                MaxY = 2000,
-                Width = 20,
-                Height = 20,
-                ActiveReportID = new DetectionRange(null, null)
-            };
+            var digitizer = 
 
-            OutputMode.Tablet = new TabletState(null, digitizer, null);
+            OutputMode.Tablet = new TabletState
+            {
+                Properties = new TabletConfiguration
+                {
+                    Specifications = new TabletSpecifications
+                    {
+                        Digitizer = new DigitizerSpecifications
+                        {
+                            MaxX = 2000,
+                            MaxY = 2000,
+                            Width = 20,
+                            Height = 20,
+                        }
+                    }
+                }
+            };
 
             OutputMode.Output = new Area
             {

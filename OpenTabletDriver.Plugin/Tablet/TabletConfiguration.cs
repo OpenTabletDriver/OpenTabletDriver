@@ -10,9 +10,14 @@ namespace OpenTabletDriver.Plugin.Tablet
         public string Name { set; get; }
 
         /// <summary>
+        /// The tablet's specifications.
+        /// </summary>
+        public TabletSpecifications Specifications { set; get; }
+
+        /// <summary>
         /// The digitizer device identifier.
         /// </summary>
-        public List<DigitizerIdentifier> DigitizerIdentifiers { set; get; } = new List<DigitizerIdentifier>();
+        public List<DeviceIdentifier> DigitizerIdentifiers { set; get; } = new List<DeviceIdentifier>();
 
         /// <summary>
         /// The auxiliary device identifier.

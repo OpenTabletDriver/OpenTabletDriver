@@ -16,7 +16,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
             return new StackLayout
             {
                 Orientation = Orientation.Horizontal,
-                Padding = 5,
+                Spacing = 5,
                 Items =
                 {
                     keyBox,

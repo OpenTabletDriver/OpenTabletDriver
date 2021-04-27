@@ -11,11 +11,11 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             Provider = new HexTextProvider();
         }
 
-        private class HexTextProvider : NumberTextProvider<int>
+        private class HexTextProvider : HexTextProvider<int>
         {
             public override int Value
             {
-                set => Text = value.ToString("X");
+                set => Text = "0x" + value.ToString("X4");
                 get => int.TryParse(Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result) ? result : default(int);
             }
         }

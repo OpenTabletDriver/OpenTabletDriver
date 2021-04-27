@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             Provider = new HexByteArrayTextProvider();
         }
 
-        private class HexByteArrayTextProvider : NumberArrayTextProvider<byte[]>
+        private class HexByteArrayTextProvider : HexArrayTextProvider<byte[]>
         {
             public override byte[] Value
             {

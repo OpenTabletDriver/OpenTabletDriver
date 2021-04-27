@@ -8,6 +8,11 @@ namespace OpenTabletDriver.UX.Controls.Generic
 {
     public abstract class CustomItemList<T> : StackLayout
     {
+        public CustomItemList()
+        {
+            this.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+        }
+
         private IList<T> itemSource;
         public IList<T> ItemSource
         {
