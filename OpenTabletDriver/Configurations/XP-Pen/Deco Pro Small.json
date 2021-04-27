@@ -1,11 +1,13 @@
 {
   "Name": "XP-Pen Deco Pro Small",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 230.12,
       "Height": 129.54,
       "MaxX": 46024.0,
-      "MaxY": 25908.0,
+      "MaxY": 25908.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 80,
@@ -13,13 +15,28 @@
         "End": 96,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 10429,
       "ProductID": 2313,
       "InputReportLength": 10,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": "ArAE",
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        "ArAE"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

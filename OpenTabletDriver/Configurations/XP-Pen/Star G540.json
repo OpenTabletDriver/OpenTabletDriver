@@ -1,11 +1,13 @@
 {
   "Name": "XP-Pen Star G540",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 228.6,
       "Height": 146.05,
       "MaxX": 45720.0,
-      "MaxY": 29210.0,
+      "MaxY": 29210.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 80,
@@ -13,13 +15,28 @@
         "End": 96,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 10429,
       "ProductID": 117,
       "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        "ArAC"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

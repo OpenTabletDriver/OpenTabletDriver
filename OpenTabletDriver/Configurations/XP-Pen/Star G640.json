@@ -1,11 +1,13 @@
 {
   "Name": "XP-Pen Star G640",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 160.0,
       "Height": 100.0,
       "MaxX": 32000.0,
-      "MaxY": 20000.0,
+      "MaxY": 20000.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -13,13 +15,28 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 10429,
       "ProductID": 148,
       "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        "ArAC"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

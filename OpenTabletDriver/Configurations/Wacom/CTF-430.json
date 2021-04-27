@@ -1,11 +1,13 @@
 {
   "Name": "Wacom CTF-430",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
       "MaxX": 5104.0,
-      "MaxY": 3712.0,
+      "MaxY": 3712.0
+    },
+    "Pen": {
       "MaxPressure": 511,
       "ActiveReportID": {
         "Start": 12,
@@ -13,13 +15,28 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 105,
       "InputReportLength": 8,
       "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": "AgI=",
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }
