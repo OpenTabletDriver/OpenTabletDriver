@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
-    public abstract class CustomItemList<T> : StackLayout where T : class
+    public abstract class CustomItemList<T> : StackLayout
     {
         private IList<T> itemSource;
         public IList<T> ItemSource

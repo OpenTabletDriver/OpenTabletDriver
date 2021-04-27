@@ -1,172 +1,181 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
-using OpenTabletDriver.UX.Tools;
+using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 {
-    using static ParseTools;
-
-    public class DeviceIdentifierEntry<T> : CollectionEntry<List<T>> where T : DeviceIdentifier
+    public class DeviceIdentifierEntry<T> : Panel where T : DeviceIdentifier
     {
-        public DeviceIdentifierEntry(
-            Func<List<T>> getValue,
-            Action<List<T>> setValue,
-            string name,
-            int index,
-            Type reportParser
-        ) : base(getValue, setValue)
+        public DeviceIdentifierEntry()
         {
-            this.name = name;
-            this.Index = index;
-            this.reportParser = reportParser;
-            Build();
-        }
-
-        public int Index { set; get; }
-
-        private string name;
-        protected Type reportParser;
-
-        protected override void Build()
-        {
-            var container = new StackView();
-            foreach (var control in GetControls())
-                container.AddControl(control);
-
-            base.controlContainer = new ExpanderBase(name, false)
+            this.Content = layout = new StackLayout
             {
-                Content = container
-            };
-
-            base.contentAlignment = Eto.Forms.VerticalAlignment.Top;
-            base.deleteButtonAlignment = Eto.Forms.VerticalAlignment.Top;
-
-            base.Build();
-        }
-
-        protected override void OnDestroy()
-        {
-            ModifyValue(source =>
-            {
-                if (source.Count > this.Index)
-                    source.RemoveAt(this.Index);
-            });
-            base.OnDestroy();
-        }
-
-        protected T GetCurrent()
-        {
-            var source = base.getValue();
-            if (source.Count > this.Index)
-                return source[this.Index];
-            else
-                return null;
-        }
-
-        protected void ModifyCurrent(Action<T> modify)
-        {
-            var current = GetCurrent();
-            modify(current);
-            ModifyValue(source =>
-            {
-                if (source.Count > this.Index)
-                    source[this.Index] = current;
-                else
-                    source.Add(current);
-            });
-        }
-
-        protected virtual IEnumerable<Control> GetControls()
-        {
-            yield return new InputBox("Vendor ID",
-                () => GetCurrent().VendorID.ToString(),
-                (o) => ModifyCurrent(id => id.VendorID = ToInt(o))
-            );
-            yield return new InputBox("Product ID",
-                () => GetCurrent().ProductID.ToString(),
-                (o) => ModifyCurrent(id => id.ProductID = ToInt(o))
-            );
-            yield return new InputBox("Input Report Length",
-                () => GetCurrent().InputReportLength.ToString(),
-                (o) => ModifyCurrent(id => id.InputReportLength = ToNullableUInt(o))
-            );
-            yield return new InputBox("Output Report Length",
-                () => GetCurrent().OutputReportLength.ToString(),
-                (o) => ModifyCurrent(id => id.OutputReportLength = ToNullableUInt(o))
-            );
-
-            var reportParser = new TypeDropDown<IReportParser<IDeviceReport>>();
-            reportParser.SelectedKeyBinding.Bind(
-                () => GetCurrent().ReportParser,
-                (o) => ModifyCurrent(id => id.ReportParser = o)
-            );
-            yield return new Group
-            {
-                Orientation = Orientation.Horizontal,
-                Text = "Report Parser",
-                Content = new StackLayout
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Items =
                 {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalContentAlignment = Eto.Forms.HorizontalAlignment.Right,
-                    Items =
+                    new Group
                     {
-                        new PaddingSpacerItem(),
-                        reportParser
+                        Text = "Vendor ID",
+                        Content = vendorId = new HexNumberBox()
+                    },
+                    new Group
+                    {
+                        Text = "Product ID",
+                        Content = productId = new HexNumberBox()
+                    },
+                    new Group
+                    {
+                        Text = "Input Report Length",
+                        Content = inputReportLength = new UnsignedIntegerNumberBox()
+                    },
+                    new Group
+                    {
+                        Text = "Output Report Length",
+                        Content = outputReportLength = new UnsignedIntegerNumberBox()
+                    },
+                    new Group
+                    {
+                        Text = "Report Parser",
+                        Content = new StackLayout
+                        {
+                            HorizontalContentAlignment = HorizontalAlignment.Right,
+                            Items =
+                            {
+                                new StackLayoutItem
+                                {
+                                    Control = reportParser = new TypeDropDown<IReportParser<IDeviceReport>>()
+                                }
+                            }
+                        }
+                    },
+                    new Group
+                    {
+                        Text = "Feature Initialization Report",
+                        Content = featureInitReport = new HexByteArrayBox()
+                    },
+                    new Group
+                    {
+                        Text = "Output Initialization Report",
+                        Content = outputInitReport = new HexByteArrayBox()
+                    },
+                    new Group
+                    {
+                        Text = "Device Strings",
+                        Content = deviceStrings = new DeviceStringEditor()
+                    },
+                    new Group
+                    {
+                        Text = "Initialization String Indexes",
+                        Content = initializationStrings = new IntegerArrayBox()
                     }
                 }
             };
 
-            yield return new InputBox("Feature Initialization Report",
-                () => ToHexString(GetCurrent().FeatureInitReport),
-                (o) => ModifyCurrent(id => id.FeatureInitReport = ToByteArray(o))
+            vendorId.ValueBinding.Bind(EntryBinding.Child(e => e.VendorID));
+            productId.ValueBinding.Bind(EntryBinding.Child(e => e.ProductID));
+
+            inputReportLength.ValueBinding.Bind(
+                EntryBinding.Child(e => e.InputReportLength).Convert<uint>(
+                    c => c ?? 0,
+                    v => v
+                )
             );
-            yield return new InputBox("Output Initialization Report",
-                () => ToHexString(GetCurrent().OutputInitReport),
-                (o) => ModifyCurrent(id => id.OutputInitReport = ToByteArray(o))
+
+            outputReportLength.ValueBinding.Bind(
+                EntryBinding.Child(e => e.OutputReportLength).Convert<uint>(
+                    c => c ?? 0,
+                    v => v
+                )
             );
-            yield return new DictionaryEditor("Device Strings",
-                () =>
+
+            reportParser.SelectedKeyBinding.Bind(EntryBinding.Child(e => e.ReportParser));
+
+            featureInitReport.ValueBinding.Bind(EntryBinding.Child(e => e.FeatureInitReport));
+            outputInitReport.ValueBinding.Bind(EntryBinding.Child(e => e.OutputInitReport));
+
+            deviceStrings.ItemSourceBinding.Bind(
+                EntryBinding.Child(e => e.DeviceStrings).Convert<IList<KeyValuePair<byte, string>>>(
+                    s => s?.ToList(),
+                    c => new Dictionary<byte, string>(c)
+                )
+            );
+
+            initializationStrings.ValueBinding.Bind(
+                EntryBinding.Child(e => e.InitializationStrings).Convert<int[]>(
+                    o => o?.ConvertAll<int>(c => (int)c).ToArray(),
+                    k => k.ToList().ConvertAll<byte>(c => (byte)c)
+                )
+            );
+        }
+
+        protected StackLayout layout;
+
+        private MaskedTextBox<int> vendorId, productId;
+        private MaskedTextBox<uint> inputReportLength, outputReportLength;
+        private MaskedTextBox<byte[]> featureInitReport, outputInitReport;
+        private TypeDropDown<IReportParser<IDeviceReport>> reportParser;
+        private DeviceStringEditor deviceStrings;
+        private MaskedTextBox<int[]> initializationStrings;
+
+        private T entry;
+        public T Entry
+        {
+            set
+            {
+                this.entry = value;
+                this.OnEntryChanged();
+            }
+            get => this.entry;
+        }
+
+        public event EventHandler<EventArgs> EntryChanged;
+
+        protected virtual void OnEntryChanged() => EntryChanged?.Invoke(this, new EventArgs());
+
+        public BindableBinding<DeviceIdentifierEntry<T>, T> EntryBinding
+        {
+            get
+            {
+                return new BindableBinding<DeviceIdentifierEntry<T>, T>(
+                    this,
+                    c => c.Entry,
+                    (c, v) => c.Entry = v,
+                    (c, h) => c.EntryChanged += h,
+                    (c, h) => c.EntryChanged -= h
+                );
+            }
+        }
+
+        private class DeviceStringEditor : CustomItemList<KeyValuePair<byte, string>>
+        {
+            protected override Control CreateControl(int index, DirectBinding<KeyValuePair<byte, string>> itemBinding)
+            {
+                MaskedTextBox<int> keyBox = new IntegerNumberBox();
+                keyBox.ValueBinding.Bind(
+                    itemBinding.Child(i => i.Key).Convert<int>(
+                        c => (int)c,
+                        v => (byte)v
+                    )
+                );
+
+                TextBox valueBox = new TextBox();
+                valueBox.TextBinding.Bind(itemBinding.Child(i => i.Value));
+
+                return new StackLayout
                 {
-                    var dictionaryBuffer = new Dictionary<string, string>();
-                    foreach (var pair in GetCurrent().DeviceStrings)
-                        dictionaryBuffer.Add($"{pair.Key}", pair.Value);
-                    return dictionaryBuffer;
-                },
-                (o) =>
-                {
-                    ModifyCurrent(id =>
+                    Orientation = Orientation.Horizontal,
+                    Padding = 5,
+                    Items =
                     {
-                        id.DeviceStrings.Clear();
-                        foreach (KeyValuePair<string, string> pair in o)
-                            if (byte.TryParse(pair.Key, out var keyByte))
-                                id.DeviceStrings.Add(keyByte, pair.Value);
-                    });
-                }
-            );
-            yield return new ListEditor("Initialization String Indexes",
-                () =>
-                {
-                    var listBuffer = new List<string>();
-                    foreach (var value in GetCurrent().InitializationStrings)
-                        listBuffer.Add($"{value}");
-                    return listBuffer;
-                },
-                (o) =>
-                {
-                    ModifyCurrent(id =>
-                    {
-                        id.InitializationStrings.Clear();
-                        foreach (string value in o)
-                            if (byte.TryParse(value, out var byteValue))
-                                id.InitializationStrings.Add(byteValue);
-                            else
-                                id.InitializationStrings.Add(0);
-                    });
-                }
-            );
+                        keyBox,
+                        new StackLayoutItem(valueBox, true)
+                    }
+                };
+            }
         }
     }
 }
