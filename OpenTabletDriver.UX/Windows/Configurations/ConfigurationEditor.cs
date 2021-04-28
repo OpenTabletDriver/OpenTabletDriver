@@ -301,6 +301,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                         new Expander
                         {
                             Header = "Attributes",
+                            Padding = new Padding(5, 5, 0, 5),
                             Content = attributeEditor = new StringDictionaryEditor()
                         }
                     }
