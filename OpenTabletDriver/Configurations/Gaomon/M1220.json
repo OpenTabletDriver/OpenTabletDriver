@@ -1,11 +1,13 @@
 {
   "Name": "Gaomon M1220",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 258.5,
       "Height": 161.55,
       "MaxX": 51700.0,
-      "MaxY": 32310.0,
+      "MaxY": 32310.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -13,13 +15,28 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {
         "201": "GM001_T201_\\d{6}$"
       },

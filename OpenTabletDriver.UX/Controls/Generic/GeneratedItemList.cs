@@ -5,8 +5,19 @@ using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
-    public abstract class CustomItemList<T> : StackLayout where T : class
+    public abstract class GeneratedItemList<T> : Panel
     {
+        public GeneratedItemList()
+        {
+            this.Content = layout;
+        }
+
+        protected StackLayout layout = new StackLayout
+        {
+            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+            Spacing = 5
+        };
+
         private IList<T> itemSource;
         public IList<T> ItemSource
         {
@@ -28,11 +39,11 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public event EventHandler<EventArgs> ItemSourceChanged;
 
-        public BindableBinding<CustomItemList<T>, IList<T>> ItemSourceBinding
+        public BindableBinding<GeneratedItemList<T>, IList<T>> ItemSourceBinding
         {
             get
             {
-                return new BindableBinding<CustomItemList<T>, IList<T>>(
+                return new BindableBinding<GeneratedItemList<T>, IList<T>>(
                     this,
                     c => c.ItemSource,
                     (c, v) => c.ItemSource = v,
@@ -45,9 +56,18 @@ namespace OpenTabletDriver.UX.Controls.Generic
         /// <summary>
         /// Creates a control for an instance of a T in the enumerable.
         /// </summary>
+        /// <param name="index">The index in which the item was sourced from.</param>
         /// <param name="itemBinding">A binding to the item sourced from <see cref="ItemSource"/>.</param>
         /// <returns>A control that handles the object</returns>
         protected abstract Control CreateControl(int index, DirectBinding<T> itemBinding);
+
+        /// <summary>
+        /// Internally used to create the base control item for the control created at <see cref="CreateControl"/>.
+        /// </summary>
+        /// <param name="index">The index in which the item was sourced from.</param>
+        /// <param name="itemBinding">A binding to the item sourced from <see cref="ItemSource"/>.</param>
+        /// <returns>A base control that handles the object</returns>
+        protected virtual Control CreateControlBase(int index, DirectBinding<T> itemBinding) => CreateControl(index, itemBinding);
 
         protected virtual void OnItemSourceChanged()
         {
@@ -63,7 +83,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 case NotifyCollectionChangedAction.Reset:
                 default:
                 {
-                    this.Items.Clear();
+                    layout.Items.Clear();
 
                     int index = 0;
                     foreach (T item in ItemSource ?? Array.Empty<T>())
@@ -83,8 +103,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 (v) => ItemSource[index] = v
             );
 
-            var control = CreateControl(index, itemBinding);
-            this.Items.Insert(index, control);
+            var control = CreateControlBase(index, itemBinding);
+            layout.Items.Insert(index, control);
         }
     }
 }

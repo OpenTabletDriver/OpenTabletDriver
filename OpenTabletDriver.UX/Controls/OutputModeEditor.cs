@@ -89,20 +89,20 @@ namespace OpenTabletDriver.UX.Controls
         public void SetTabletSize(TabletState tablet)
         {
             var tabletAreaEditor = absoluteModeEditor.tabletAreaEditor;
-            if (tablet != null && tablet.Digitizer != null)
+            if (tablet.Properties?.Specifications?.Digitizer is DigitizerSpecifications digitizer)
             {
                 tabletAreaEditor.ViewModel.Background = new RectangleF[]
                 {
-                    new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height)
+                    new RectangleF(0, 0, digitizer.Width, digitizer.Height)
                 };
 
                 var settings = App.Current.Settings;
                 if (settings != null && settings.TabletWidth == 0 && settings.TabletHeight == 0)
                 {
-                    settings.TabletWidth = tablet.Digitizer.Width;
-                    settings.TabletHeight = tablet.Digitizer.Height;
-                    settings.TabletX = tablet.Digitizer.Width / 2;
-                    settings.TabletY = tablet.Digitizer.Height / 2;
+                    settings.TabletWidth = digitizer.Width;
+                    settings.TabletHeight = digitizer.Height;
+                    settings.TabletX = digitizer.Width / 2;
+                    settings.TabletY = digitizer.Height / 2;
                 }
             }
             else

@@ -98,9 +98,7 @@ namespace OpenTabletDriver.UX.Controls
                                         Border = BorderType.None,
                                         Content = penButtons = new BindingDisplayList
                                         {
-                                            Prefix = "Pen Button",
-                                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                            Spacing = 5
+                                            Prefix = "Pen Button"
                                         }
                                     }
                                 }
@@ -116,9 +114,7 @@ namespace OpenTabletDriver.UX.Controls
                                         Border = BorderType.None,
                                         Content = auxButtons = new BindingDisplayList
                                         {
-                                            Prefix = "Auxiliary Button",
-                                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                            Spacing = 5
+                                            Prefix = "Auxiliary Button"
                                         }
                                     }
                                 }
@@ -139,10 +135,10 @@ namespace OpenTabletDriver.UX.Controls
         public BindableBinding<FloatSlider, float> TipPressureValueBinding => tipPressure.ValueBinding;
         public BindableBinding<FloatSlider, float> EraserPressureValueBinding => eraserPressure.ValueBinding;
 
-        public BindableBinding<CustomItemList<PluginSettingStore>, IList<PluginSettingStore>> PenButtonItemSourceBinding => penButtons.ItemSourceBinding;
-        public BindableBinding<CustomItemList<PluginSettingStore>, IList<PluginSettingStore>> AuxiliaryButtonItemSourceBinding => auxButtons.ItemSourceBinding;
+        public BindableBinding<GeneratedItemList<PluginSettingStore>, IList<PluginSettingStore>> PenButtonItemSourceBinding => penButtons.ItemSourceBinding;
+        public BindableBinding<GeneratedItemList<PluginSettingStore>, IList<PluginSettingStore>> AuxiliaryButtonItemSourceBinding => auxButtons.ItemSourceBinding;
 
-        private class BindingDisplayList : CustomItemList<PluginSettingStore>
+        private class BindingDisplayList : GeneratedItemList<PluginSettingStore>
         {
             public string Prefix { set; get; }
 

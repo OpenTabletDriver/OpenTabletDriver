@@ -1,11 +1,13 @@
 {
   "Name": "Huion H950P",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 221.0,
       "Height": 138.0,
       "MaxX": 44200.0,
-      "MaxY": 27600.0,
+      "MaxY": 27600.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -13,13 +15,28 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {
         "201": "HUION_T(172|204)_\\d{6}$"
       },
@@ -28,24 +45,17 @@
       ]
     },
     {
-      "Width": 221.0,
-      "Height": 138.0,
-      "MaxX": 44200.0,
-      "MaxY": 27600.0,
-      "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {
         "201": "HUION_T(172|204)_\\d{6}$"
       },

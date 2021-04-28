@@ -1,11 +1,13 @@
 {
   "Name": "Gaomon PD1661",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 256.32,
       "Height": 144.18,
       "MaxX": 51264.0,
-      "MaxY": 28836.0,
+      "MaxY": 28836.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -13,13 +15,28 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {
         "201": "OEM02_M191_\\d{6}$"
       },

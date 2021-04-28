@@ -1,11 +1,13 @@
 {
   "Name": "Wacom XD-1212-U",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 304.8,
       "Height": 316.8,
       "MaxX": 60960.0,
-      "MaxY": 63360.0,
+      "MaxY": 63360.0
+    },
+    "Pen": {
       "MaxPressure": 1023,
       "ActiveReportID": {
         "Start": 0,
@@ -13,35 +15,43 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 68,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
-      "FeatureInitReport": "AgI=",
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     },
     {
-      "Width": 304.8,
-      "Height": 316.8,
-      "MaxX": 60960.0,
-      "MaxY": 63360.0,
-      "MaxPressure": 1023,
-      "ActiveReportID": {
-        "Start": 0,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 68,
       "InputReportLength": 11,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
-      "FeatureInitReport": "AgI=",
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

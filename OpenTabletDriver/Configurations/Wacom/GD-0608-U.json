@@ -1,11 +1,13 @@
 {
   "Name": "Wacom GD-0608-U",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 203.2,
       "Height": 162.4,
       "MaxX": 40640.0,
-      "MaxY": 32480.0,
+      "MaxY": 32480.0
+    },
+    "Pen": {
       "MaxPressure": 2046,
       "ActiveReportID": {
         "Start": 0,
@@ -13,35 +15,43 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 33,
       "InputReportLength": 10,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
-      "FeatureInitReport": "AgI=",
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     },
     {
-      "Width": 203.2,
-      "Height": 162.4,
-      "MaxX": 40640.0,
-      "MaxY": 32480.0,
-      "MaxPressure": 2046,
-      "ActiveReportID": {
-        "Start": 0,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 33,
       "InputReportLength": 11,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
-      "FeatureInitReport": "AgI=",
-      "OutputInitReport": null,
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": [
+        null
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }
