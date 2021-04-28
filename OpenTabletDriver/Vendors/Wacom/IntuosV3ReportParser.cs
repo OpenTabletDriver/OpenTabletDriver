@@ -9,6 +9,10 @@ namespace OpenTabletDriver.Vendors.Wacom
         {
             if (data.Length < 10)
             {
+                return new DeviceReport(data);
+            }
+            else
+            {
                 return data[0] switch
                 {
                     0x10 => new IntuosV3Report(data),
@@ -16,10 +20,6 @@ namespace OpenTabletDriver.Vendors.Wacom
                     0xD2 => new IntuosV3TouchReport(data),
                     _ => new DeviceReport(data)
                 };
-            }
-            else
-            {
-                return new DeviceReport(data);
             }
         }
     }
