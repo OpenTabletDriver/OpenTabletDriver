@@ -301,11 +301,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                         new Expander
                         {
                             Header = "Attributes",
-                            Content = new Group
-                            {
-                                Text = "Attributes",
-                                Content = attributeEditor = new StringDictionaryEditor()
-                            }
+                            Content = attributeEditor = new StringDictionaryEditor()
                         }
                     }
                 };

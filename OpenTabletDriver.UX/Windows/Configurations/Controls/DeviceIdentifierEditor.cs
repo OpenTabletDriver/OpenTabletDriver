@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -8,14 +9,22 @@ using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 {
-    public class DeviceIdentifierEditor : CustomItemList<DeviceIdentifier>
+    public class DeviceIdentifierEditor : ModifiableConstructableItemList<DeviceIdentifier>
     {
         protected override Control CreateControl(int index, DirectBinding<DeviceIdentifier> itemBinding)
         {
             var entry = new DeviceIdentifierEntry<DeviceIdentifier>();
             entry.EntryBinding.Bind(itemBinding);
 
-            return entry;
+            return new Panel
+            {
+                Padding = 5,
+                Content = new Expander
+                {
+                    Header = $"Identifier {index + 1}",
+                    Content = entry
+                }
+            };
         }
 
         private class DeviceIdentifierEntry<T> : Panel where T : DeviceIdentifier
@@ -59,29 +68,29 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                             Orientation = Orientation.Horizontal,
                             Content = reportParser = new TypeDropDown<IReportParser<IDeviceReport>>()
                         },
-                        new Group
+                        new Expander
                         {
-                            Text = "Feature Initialization Report",
-                            Orientation = Orientation.Horizontal,
-                            Content = featureInitReport = new ReportEditor()
+                            Header = "Feature Initialization Report",
+                            Padding = 5,
+                            Content = featureInitReport = new ReportEditor() 
                         },
-                        new Group
+                        new Expander
                         {
-                            Text = "Output Initialization Report",
-                            Orientation = Orientation.Horizontal,
+                            Header = "Output Initialization Report",
+                            Padding = 5,
                             Content = outputInitReport = new ReportEditor()
                         },
-                        new Group
+                        new Expander
                         {
-                            Text = "Device Strings",
-                            Orientation = Orientation.Horizontal,
+                            Header = "Device Strings",
+                            Padding = 5,
                             Content = deviceStrings = new DeviceStringEditor()
                         },
-                        new Group
+                        new Expander
                         {
-                            Text = "Initialization String Indexes",
-                            Orientation = Orientation.Horizontal,
-                            Content = initializationStrings = new IntegerArrayBox()
+                            Header = "Initialization String Indexes",
+                            Padding = 5,
+                            Content = initializationStrings = new ByteListEditor()
                         }
                     }
                 };
@@ -115,12 +124,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                     )
                 );
 
-                initializationStrings.ValueBinding.Bind(
-                    EntryBinding.Child(e => e.InitializationStrings).Convert<int[]>(
-                        o => o?.ConvertAll<int>(c => (int)c).ToArray(),
-                        k => k.ToList().ConvertAll<byte>(c => (byte)c)
-                    )
-                );
+                initializationStrings.ItemSourceBinding.Bind(EntryBinding.Child(e => (IList<byte>)e.InitializationStrings));
             }
 
             protected StackLayout layout;
@@ -130,7 +134,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
             private ReportEditor featureInitReport, outputInitReport;
             private TypeDropDown<IReportParser<IDeviceReport>> reportParser;
             private DeviceStringEditor deviceStrings;
-            private MaskedTextBox<int[]> initializationStrings;
+            private ByteListEditor initializationStrings;
 
             private T entry;
             public T Entry
@@ -161,17 +165,24 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                 }
             }
 
-            private class ReportEditor : CustomItemList<byte[]>
+            private class ReportEditor : ModifiableItemList<byte[]>
             {
+                protected override void AddNew(int index) => Add(index, new byte[0]);
+
                 protected override Control CreateControl(int index, DirectBinding<byte[]> itemBinding)
                 {
                     MaskedTextBox<byte[]> arrayEditor = new HexByteArrayBox();
                     arrayEditor.ValueBinding.Bind(itemBinding);
-                    return arrayEditor;
+
+                    return new Panel
+                    {
+                        Padding = new Padding(0, 0, 5, 0),
+                        Content = arrayEditor
+                    };
                 }
             }
 
-            private class DeviceStringEditor : CustomItemList<KeyValuePair<byte, string>>
+            private class DeviceStringEditor : ModifiableConstructableItemList<KeyValuePair<byte, string>>
             {
                 protected override Control CreateControl(int index, DirectBinding<KeyValuePair<byte, string>> itemBinding)
                 {
@@ -189,12 +200,33 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                     return new StackLayout
                     {
                         Orientation = Orientation.Horizontal,
+                        Padding = new Padding(0, 0, 5, 0),
                         Spacing = 5,
                         Items =
                         {
                             keyBox,
                             new StackLayoutItem(valueBox, true)
                         }
+                    };
+                }
+            }
+
+            private class ByteListEditor : ModifiableConstructableItemList<byte>
+            {
+                protected override Control CreateControl(int index, DirectBinding<byte> itemBinding)
+                {
+                    MaskedTextBox<int> intBox = new IntegerNumberBox();
+                    intBox.ValueBinding.Bind(
+                        itemBinding.Convert<int>(
+                            c => (int)c,
+                            v => (byte)v
+                        )
+                    );
+
+                    return new Panel
+                    {
+                        Padding = new Padding(0, 0, 5, 0),
+                        Content = intBox
                     };
                 }
             }
