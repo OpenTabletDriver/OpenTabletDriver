@@ -43,11 +43,14 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             try
             {
-                foreach (var file in PluginDirectory.GetFiles())
+                if (PluginDirectory.Exists)
                 {
-                    var newPath = Path.Join(PluginDirectory.FullName, file.Name.Replace(file.Extension, string.Empty), file.Name);
-                    Directory.CreateDirectory(Directory.GetParent(newPath).FullName);
-                    file.MoveTo(newPath);
+                    foreach (var file in PluginDirectory.GetFiles())
+                    {
+                        var newPath = Path.Join(PluginDirectory.FullName, file.Name.Replace(file.Extension, string.Empty), file.Name);
+                        Directory.CreateDirectory(Directory.GetParent(newPath).FullName);
+                        file.MoveTo(newPath);
+                    }
                 }
 
                 if (TrashDirectory.Exists)
