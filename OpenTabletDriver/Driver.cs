@@ -212,7 +212,7 @@ namespace OpenTabletDriver
                     Tablet = null;
             };
 
-            if (tablet.FeatureInitReport is List<byte[]> featureInitReport)
+            if (tablet.FeatureInitReport is IList<byte[]> featureInitReport)
             {
                 foreach (var report in featureInitReport)
                 {
@@ -231,7 +231,7 @@ namespace OpenTabletDriver
                 }
             }
 
-            if (tablet.OutputInitReport is List<byte[]> outputInitReport)
+            if (tablet.OutputInitReport is IList<byte[]> outputInitReport)
             {
                 foreach (var report in outputInitReport)
                 {
@@ -275,7 +275,7 @@ namespace OpenTabletDriver
             AuxReader = new DeviceReader<IDeviceReport>(auxDevice, reportParser);
             AuxReader.Report += OnReportRecieved;
 
-            if (identifier.FeatureInitReport is List<byte[]> featureInitReport)
+            if (identifier.FeatureInitReport is IList<byte[]> featureInitReport)
             {
                 foreach (var report in featureInitReport)
                 {
@@ -294,7 +294,7 @@ namespace OpenTabletDriver
                 }
             }
 
-            if (identifier.OutputInitReport is List<byte[]> outputInitReport)
+            if (identifier.OutputInitReport is IList<byte[]> outputInitReport)
             {
                 foreach (var report in outputInitReport)
                 {

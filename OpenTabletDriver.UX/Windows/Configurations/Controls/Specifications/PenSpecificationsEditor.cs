@@ -99,16 +99,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
 
                 public bool MaskCompleted => true;
 
-                public IEnumerable<int> EditPositions
-                {
-                    get
-                    {
-                        for (int i = 0; i <= builder.Length; i++)
-                        {
-                            yield return i;
-                        }
-                    }
-                }
+                public IEnumerable<int> EditPositions => Enumerable.Range(0, builder.Length);
 
                 public bool IsEmpty => builder.Length == 0;
 

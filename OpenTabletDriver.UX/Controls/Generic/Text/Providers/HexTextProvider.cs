@@ -9,11 +9,9 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
 {
     public abstract class HexTextProvider<T> : IMaskedTextProvider<T>
     {
-        protected virtual Regex HexadecimalRegex => new Regex(SINGLE_HEXADECIMAL_REGEX);
+        protected virtual Regex HexadecimalRegex => new Regex($"^{HEXADECIMAL_REGEX}$");
 
-        protected const string SINGLE_HEXADECIMAL_REGEX = $"^{HEXADECIMAL_REGEX}$";
-        protected const string HEXADECIMAL_REGEX = "(?:0x)?(?:[0-9A-Fa-f]+[0-9A-Fa-f]?)?";
-        protected const string VALID_CHAR_REGEX = @"[0-9A-Fa-f]";
+        protected const string HEXADECIMAL_REGEX = @"(?:0x)?(?:[0-9A-Fa-f]+[0-9A-Fa-f]?)?";
 
         protected readonly StringBuilder builder = new StringBuilder();
 
@@ -40,16 +38,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
 
         public bool MaskCompleted => true;
 
-        public IEnumerable<int> EditPositions
-        {
-            get
-            {
-                for (int i = 0; i <= builder.Length; i++)
-                {
-                    yield return i;
-                }
-            }
-        }
+        public IEnumerable<int> EditPositions => Enumerable.Range(0, builder.Length);
 
         public bool IsEmpty => builder.Length == 0;
 
