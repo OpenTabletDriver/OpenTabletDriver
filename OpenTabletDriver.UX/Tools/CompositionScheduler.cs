@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX.Tools
             }
         }
 
-        private const int MAX_FRAMES_PER_SEC = 500;
+        private const int MAX_FRAMES_PER_SEC = 60;
 
         public static void Register(EventHandler handler)
         {
