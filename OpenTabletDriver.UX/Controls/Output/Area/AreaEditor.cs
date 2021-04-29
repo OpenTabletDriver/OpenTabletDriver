@@ -40,7 +40,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                             {
                                 new StackLayoutItem
                                 {
-                                    Control = new UnitGroup
+                                    Control = widthGroup = new UnitGroup
                                     {
                                         Text = "Width",
                                         Unit = Unit,
@@ -51,7 +51,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 },
                                 new StackLayoutItem
                                 {
-                                    Control = new UnitGroup
+                                    Control = heightGroup = new UnitGroup
                                     {
                                         Text = "Height",
                                         Unit = Unit,
@@ -62,7 +62,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 },
                                 new StackLayoutItem
                                 {
-                                    Control = new UnitGroup
+                                    Control = xGroup = new UnitGroup
                                     {
                                         Text = "X",
                                         Unit = Unit,
@@ -73,7 +73,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 },
                                 new StackLayoutItem
                                 {
-                                    Control = new UnitGroup
+                                    Control = yGroup = new UnitGroup
                                     {
                                         Text = "Y",
                                         Unit = Unit,
@@ -89,6 +89,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             };
 
             CreateMenu();
+
+            widthGroup.UnitBinding.Bind(UnitBinding);
+            heightGroup.UnitBinding.Bind(UnitBinding);
+            xGroup.UnitBinding.Bind(UnitBinding);
+            yGroup.UnitBinding.Bind(UnitBinding);
 
             width.ValueBinding.Bind(AreaWidthBinding);
             height.ValueBinding.Bind(AreaHeightBinding);
@@ -112,7 +117,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             MenuText = "Lock to usable area"
         };
 
-        protected MaskedTextBox<float> width, height, x, y, rotation;
+        private UnitGroup widthGroup, heightGroup, xGroup, yGroup;
+        private MaskedTextBox<float> width, height, x, y;
 
         protected AreaDisplay display;
         protected StackLayout settingsPanel;
@@ -283,10 +289,38 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         protected class UnitGroup : Group
         {
+            public UnitGroup()
+            {
+                unitLabel.TextBinding.Bind(UnitBinding);
+            }
+
+            private string unit;
             public string Unit
             {
-                set => unitLabel.Text = value;
-                get => unitLabel.Text;
+                set
+                {
+                    this.unit = value;
+                    this.OnUnitChanged();
+                }
+                get => this.unit;
+            }
+            
+            public event EventHandler<EventArgs> UnitChanged;
+            
+            protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
+            
+            public BindableBinding<UnitGroup, string> UnitBinding
+            {
+                get
+                {
+                    return new BindableBinding<UnitGroup, string>(
+                        this,
+                        c => c.Unit,
+                        (c, v) => c.Unit = v,
+                        (c, h) => c.UnitChanged += h,
+                        (c, h) => c.UnitChanged -= h
+                    );
+                }
             }
 
             private Label unitLabel = new Label();

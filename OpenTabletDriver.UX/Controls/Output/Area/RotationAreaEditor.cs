@@ -28,6 +28,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             display.AreaRotationBinding.Bind(AreaRotationBinding);
         }
 
+        private MaskedTextBox<float> rotation;
+
         protected override void CreateMenu()
         {
             base.CreateMenu();
