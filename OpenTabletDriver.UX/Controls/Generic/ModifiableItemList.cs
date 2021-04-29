@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using Eto.Forms;
 
@@ -30,6 +31,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
             add.Click += (sender, e) =>
             {
+                if (ItemSource == null)
+                    ItemSource = new List<T>();
                 AddNew(ItemSource.Count);
             };
         }
@@ -62,6 +65,10 @@ namespace OpenTabletDriver.UX.Controls.Generic
         {
             var oldObj = ItemSource[index];
             ItemSource.RemoveAt(index);
+
+            if (ItemSource.Count == 0)
+                ItemSource = null;
+
             if (!(ItemSource is INotifyCollectionChanged))
                 HandleCollectionChanged(this , new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldObj, index));
         }
