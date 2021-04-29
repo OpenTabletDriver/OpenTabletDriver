@@ -31,12 +31,8 @@
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T167_\\d{6}$"
       },
@@ -50,12 +46,8 @@
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T205_\\d{6}$"
       },

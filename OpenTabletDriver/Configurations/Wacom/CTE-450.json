@@ -34,9 +34,7 @@
       "FeatureInitReport": [
         "AgI="
       ],
-      "OutputInitReport": [
-        null
-      ],
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }

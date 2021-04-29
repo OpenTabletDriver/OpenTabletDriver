@@ -34,9 +34,7 @@
       "FeatureInitReport": [
         "AgI="
       ],
-      "OutputInitReport": [
-        null
-      ],
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     },
@@ -49,9 +47,7 @@
       "FeatureInitReport": [
         "AgI="
       ],
-      "OutputInitReport": [
-        null
-      ],
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     },
@@ -64,9 +60,7 @@
       "FeatureInitReport": [
         "AgI="
       ],
-      "OutputInitReport": [
-        null
-      ],
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
@@ -78,12 +72,8 @@
       "InputReportLength": 64,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     },
@@ -93,12 +83,8 @@
       "InputReportLength": 64,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }

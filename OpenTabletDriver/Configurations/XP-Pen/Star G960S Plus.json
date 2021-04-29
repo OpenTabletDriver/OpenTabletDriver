@@ -31,9 +31,7 @@
       "InputReportLength": 12,
       "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenTiltReportParser",
-      "FeatureInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
       ],

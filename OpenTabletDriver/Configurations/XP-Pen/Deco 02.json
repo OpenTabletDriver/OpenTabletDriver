@@ -31,9 +31,7 @@
       "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"
       ],

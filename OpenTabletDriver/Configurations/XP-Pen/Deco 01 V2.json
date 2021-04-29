@@ -31,9 +31,7 @@
       "InputReportLength": 12,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
       ],

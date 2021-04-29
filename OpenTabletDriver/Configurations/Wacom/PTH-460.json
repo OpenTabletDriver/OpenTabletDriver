@@ -34,9 +34,7 @@
       "FeatureInitReport": [
         "AgI="
       ],
-      "OutputInitReport": [
-        null
-      ],
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": [
         0
@@ -48,12 +46,8 @@
       "InputReportLength": 193,
       "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": [
         0
@@ -67,12 +61,8 @@
       "InputReportLength": 44,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }

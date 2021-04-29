@@ -31,12 +31,8 @@
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T161_\\d{6}$"
       },

@@ -31,12 +31,8 @@
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Huion.GianoReportParser",
-      "FeatureInitReport": [
-        null
-      ],
-      "OutputInitReport": [
-        null
-      ],
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T188_\\d{6}$"
       },
