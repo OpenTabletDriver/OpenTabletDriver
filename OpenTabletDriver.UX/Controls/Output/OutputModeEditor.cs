@@ -118,7 +118,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         public void SetTabletSize(TabletState tablet)
         {
             var tabletAreaEditor = absoluteModeEditor.tabletAreaEditor;
-            if (tablet.Properties?.Specifications?.Digitizer is DigitizerSpecifications digitizer)
+            if (tablet?.Properties?.Specifications?.Digitizer is DigitizerSpecifications digitizer)
             {
                 tabletAreaEditor.AreaBounds = new RectangleF[]
                 {
