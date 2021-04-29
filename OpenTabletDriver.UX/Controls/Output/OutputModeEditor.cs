@@ -11,12 +11,12 @@ using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.UX.Controls.Area;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Output.Area;
 using OpenTabletDriver.UX.Controls.Utilities;
 using OpenTabletDriver.UX.Windows;
 
-namespace OpenTabletDriver.UX.Controls
+namespace OpenTabletDriver.UX.Controls.Output
 {
     public class OutputModeEditor : Panel
     {
@@ -58,15 +58,15 @@ namespace OpenTabletDriver.UX.Controls
             }
             get => this.store;
         }
-        
+
         public event EventHandler<EventArgs> StoreChanged;
-        
+
         protected virtual void OnStoreChanged()
         {
             StoreChanged?.Invoke(this, new EventArgs());
             UpdateOutputMode(this.Store);
         }
-        
+
         public BindableBinding<OutputModeEditor, PluginSettingStore> StoreBinding
         {
             get
@@ -81,6 +81,35 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
+        private Settings settings;
+        public Settings Settings
+        {
+            set
+            {
+                this.settings = value;
+                this.OnSettingsChanged();
+            }
+            get => this.settings;
+        }
+
+        public event EventHandler<EventArgs> SettingsChanged;
+
+        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
+
+        public BindableBinding<OutputModeEditor, Settings> SettingsBinding
+        {
+            get
+            {
+                return new BindableBinding<OutputModeEditor, Settings>(
+                    this,
+                    c => c.Settings,
+                    (c, v) => c.Settings = v,
+                    (c, h) => c.SettingsChanged += h,
+                    (c, h) => c.SettingsChanged -= h
+                );
+            }
+        }
+
         private Panel outputModeEditor = new Panel();
         private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
         private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
@@ -91,7 +120,7 @@ namespace OpenTabletDriver.UX.Controls
             var tabletAreaEditor = absoluteModeEditor.tabletAreaEditor;
             if (tablet.Properties?.Specifications?.Digitizer is DigitizerSpecifications digitizer)
             {
-                tabletAreaEditor.ViewModel.Background = new RectangleF[]
+                tabletAreaEditor.AreaBounds = new RectangleF[]
                 {
                     new RectangleF(0, 0, digitizer.Width, digitizer.Height)
                 };
@@ -107,7 +136,7 @@ namespace OpenTabletDriver.UX.Controls
             }
             else
             {
-                tabletAreaEditor.ViewModel.Background = null;
+                tabletAreaEditor.AreaBounds = null;
             }
         }
 
@@ -116,7 +145,7 @@ namespace OpenTabletDriver.UX.Controls
             var bgs = from disp in displays
                 where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
-            absoluteModeEditor.displayAreaEditor.ViewModel.Background = bgs;
+            absoluteModeEditor.displayAreaEditor.AreaBounds = bgs;
         }
 
         private void UpdateOutputMode(PluginSettingStore store)
@@ -145,34 +174,53 @@ namespace OpenTabletDriver.UX.Controls
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
                     Items =
                     {
-                        new StackLayoutItem(new Group("Display", displayAreaEditor), true),
-                        new StackLayoutItem(new Group("Tablet", tabletAreaEditor), true)
+                        new StackLayoutItem
+                        {
+                            Expand = true,
+                            Control = new Group
+                            {
+                                Text = "Display",
+                                Content = displayAreaEditor = new DisplayAreaEditor
+                                {
+                                    Unit = "px"
+                                }
+                            }
+                        },
+                        new StackLayoutItem
+                        {
+                            Expand = true,
+                            Control = new Group
+                            {
+                                Text = "Tablet",
+                                Content = tabletAreaEditor = new TabletAreaEditor
+                                {
+                                    InvalidBackgroundError = "No tablet detected.",
+                                    Unit = "mm"
+                                }
+                            }
+                        }
                     }
                 };
 
-                var settings = App.Current.Settings;
-                displayAreaEditor.Rebind(settings);
-                tabletAreaEditor.Rebind(settings);
+                displayAreaEditor.AreaWidthBinding.BindDataContext<App>(c => c.Settings.DisplayWidth);
+                displayAreaEditor.AreaHeightBinding.BindDataContext<App>(c => c.Settings.DisplayHeight);
+                displayAreaEditor.AreaXOffsetBinding.BindDataContext<App>(c => c.Settings.DisplayX);
+                displayAreaEditor.AreaYOffsetBinding.BindDataContext<App>(c => c.Settings.DisplayY);
+                displayAreaEditor.LockToUsableAreaBinding.BindDataContext<App>(c => c.Settings.LockUsableAreaDisplay);
+
+                tabletAreaEditor.AreaWidthBinding.BindDataContext<App>(c => c.Settings.TabletWidth);
+                tabletAreaEditor.AreaHeightBinding.BindDataContext<App>(c => c.Settings.TabletHeight);
+                tabletAreaEditor.AreaXOffsetBinding.BindDataContext<App>(c => c.Settings.TabletX);
+                tabletAreaEditor.AreaYOffsetBinding.BindDataContext<App>(c => c.Settings.TabletY);
+                tabletAreaEditor.AreaRotationBinding.BindDataContext<App>(c => c.Settings.TabletRotation);
+                tabletAreaEditor.LockToUsableAreaBinding.BindDataContext<App>(c => c.Settings.LockUsableAreaTablet);
+                tabletAreaEditor.LockAspectRatioBinding.BindDataContext<App>(c => c.Settings.LockAspectRatio);
+                tabletAreaEditor.AreaClippingBinding.BindDataContext<App>(c => c.Settings.EnableClipping);
+                tabletAreaEditor.IgnoreOutsideAreaBinding.BindDataContext<App>(c => c.Settings.EnableAreaLimiting);
             }
 
-            public DisplayAreaEditor displayAreaEditor = new DisplayAreaEditor
-            {
-                ViewModel = new AreaViewModel
-                {
-                    Unit = "px",
-                    EnableRotation = false
-                }
-            };
-
-            public TabletAreaEditor tabletAreaEditor = new TabletAreaEditor
-            {
-                ViewModel = new AreaViewModel
-                {
-                    InvalidBackgroundError = "No tablet detected.",
-                    Unit = "mm",
-                    EnableRotation = true
-                }
-            };
+            internal DisplayAreaEditor displayAreaEditor;
+            internal TabletAreaEditor tabletAreaEditor;
 
             public class DisplayAreaEditor : AreaEditor
             {
@@ -180,22 +228,11 @@ namespace OpenTabletDriver.UX.Controls
                     : base()
                 {
                     this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
-
-                    Rebind(App.Current.Settings);
                 }
 
-                public void Rebind(Settings settings)
+                protected override void CreateMenu()
                 {
-                    this.Bind(c => c.ViewModel.Width, settings, m => m.DisplayWidth);
-                    this.Bind(c => c.ViewModel.Height, settings, m => m.DisplayHeight);
-                    this.Bind(c => c.ViewModel.X, settings, m => m.DisplayX);
-                    this.Bind(c => c.ViewModel.Y, settings, m => m.DisplayY);
-                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaDisplay);
-                }
-
-                protected override void OnLoadComplete(EventArgs e)
-                {
-                    base.OnLoadComplete(e);
+                    base.CreateMenu();
 
                     var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
                     foreach (var display in DesktopInterop.VirtualScreen.Displays)
@@ -206,18 +243,18 @@ namespace OpenTabletDriver.UX.Controls
                                 MenuText = display.ToString(),
                                 Action = () =>
                                 {
-                                    this.ViewModel.Width = display.Width;
-                                    this.ViewModel.Height = display.Height;
+                                    this.AreaWidth = display.Width;
+                                    this.AreaHeight = display.Height;
                                     if (display is IVirtualScreen virtualScreen)
                                     {
-                                        this.ViewModel.X = virtualScreen.Width / 2;
-                                        this.ViewModel.Y = virtualScreen.Height / 2;
+                                        this.AreaXOffset = virtualScreen.Width / 2;
+                                        this.AreaYOffset = virtualScreen.Height / 2;
                                     }
                                     else
                                     {
                                         virtualScreen = DesktopInterop.VirtualScreen;
-                                        this.ViewModel.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
-                                        this.ViewModel.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
+                                        this.AreaXOffset = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
+                                        this.AreaYOffset = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                                     }
                                 }
                             }
@@ -226,45 +263,114 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            public class TabletAreaEditor : AreaEditor
+            public class TabletAreaEditor : RotationAreaEditor
             {
                 public TabletAreaEditor()
                     : base()
                 {
-                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";                }
-
-                private BooleanCommand lockAr, areaClipping, ignoreOutsideArea;
-
-                public void Rebind(Settings settings)
-                {
-                    this.Bind(c => c.ViewModel.Width, settings, m => m.TabletWidth);
-                    this.Bind(c => c.ViewModel.Height, settings, m => m.TabletHeight);
-                    this.Bind(c => c.ViewModel.X, settings, m => m.TabletX);
-                    this.Bind(c => c.ViewModel.Y, settings, m => m.TabletY);
-                    this.Bind(c => c.ViewModel.Rotation, settings, m => m.TabletRotation);
-                    this.Bind(c => c.ViewModel.LockToUsableArea, settings, m => m.LockUsableAreaTablet);
-                    lockAr?.CheckedBinding.BindDataContext<Settings>(m => m.LockAspectRatio);
-                    areaClipping?.CheckedBinding.BindDataContext<Settings>(m => m.EnableClipping);
-                    ignoreOutsideArea?.CheckedBinding.BindDataContext<Settings>(m => m.EnableAreaLimiting);
+                    this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
                 }
 
-                protected override void OnLoadComplete(EventArgs e)
+                private BooleanCommand lockArCmd, areaClippingCmd, ignoreOutsideAreaCmd;
+                private bool lockAspectRatio, areaClipping, ignoreOutsideArea;
+
+                public event EventHandler<EventArgs> LockAspectRatioChanged;
+                public event EventHandler<EventArgs> AreaClippingChanged;
+                public event EventHandler<EventArgs> IgnoreOutsideAreaChanged;
+
+                protected virtual void OnLockAspectRatioChanged() => LockAspectRatioChanged?.Invoke(this, new EventArgs());
+                protected virtual void OnAreaClippingChanged() => AreaClippingChanged?.Invoke(this, new EventArgs());
+                protected virtual void OnIgnoreOutsideAreaChanged() => IgnoreOutsideAreaChanged?.Invoke(this, new EventArgs());
+
+                public bool LockAspectRatio
                 {
-                    base.OnLoadComplete(e);
+                    set
+                    {
+                        this.lockAspectRatio = value;
+                        this.OnLockAspectRatioChanged();
+                    }
+                    get => this.lockAspectRatio;
+                }
+
+                public bool AreaClipping
+                {
+                    set
+                    {
+                        this.areaClipping = value;
+                        this.OnAreaClippingChanged();
+                    }
+                    get => this.areaClipping;
+                }
+
+                public bool IgnoreOutsideArea
+                {
+                    set
+                    {
+                        this.ignoreOutsideArea = value;
+                        this.OnIgnoreOutsideAreaChanged();
+                    }
+                    get => this.ignoreOutsideArea;
+                }
+
+                public BindableBinding<TabletAreaEditor, bool> LockAspectRatioBinding
+                {
+                    get
+                    {
+                        return new BindableBinding<TabletAreaEditor, bool>(
+                            this,
+                            c => c.LockAspectRatio,
+                            (c, v) => c.LockAspectRatio = v,
+                            (c, h) => c.LockAspectRatioChanged += h,
+                            (c, h) => c.LockAspectRatioChanged -= h
+                        );
+                    }
+                }
+
+                public BindableBinding<TabletAreaEditor, bool> AreaClippingBinding
+                {
+                    get
+                    {
+                        return new BindableBinding<TabletAreaEditor, bool>(
+                            this,
+                            c => c.AreaClipping,
+                            (c, v) => c.AreaClipping = v,
+                            (c, h) => c.AreaClippingChanged += h,
+                            (c, h) => c.AreaClippingChanged -= h
+                        );
+                    }
+                }
+
+                public BindableBinding<TabletAreaEditor, bool> IgnoreOutsideAreaBinding
+                {
+                    get
+                    {
+                        return new BindableBinding<TabletAreaEditor, bool>(
+                            this,
+                            c => c.IgnoreOutsideArea,
+                            (c, v) => c.IgnoreOutsideArea = v,
+                            (c, h) => c.IgnoreOutsideAreaChanged += h,
+                            (c, h) => c.IgnoreOutsideAreaChanged -= h
+                        );
+                    }
+                }
+
+                protected override void CreateMenu()
+                {
+                    base.CreateMenu();
 
                     base.ContextMenu.Items.AddSeparator();
 
-                    lockAr = new BooleanCommand
+                    lockArCmd = new BooleanCommand
                     {
                         MenuText = "Lock aspect ratio"
                     };
 
-                    areaClipping = new BooleanCommand
+                    areaClippingCmd = new BooleanCommand
                     {
                         MenuText = "Area clipping"
                     };
 
-                    ignoreOutsideArea = new BooleanCommand
+                    ignoreOutsideAreaCmd = new BooleanCommand
                     {
                         MenuText = "Ignore input outside area"
                     };
@@ -272,9 +378,9 @@ namespace OpenTabletDriver.UX.Controls
                     base.ContextMenu.Items.AddRange(
                         new Command[]
                         {
-                            lockAr,
-                            areaClipping,
-                            ignoreOutsideArea
+                            lockArCmd,
+                            areaClippingCmd,
+                            ignoreOutsideAreaCmd
                         }
                     );
 
@@ -287,6 +393,10 @@ namespace OpenTabletDriver.UX.Controls
                             Action = async () => await ConvertAreaDialog()
                         }
                     );
+
+                    lockArCmd.CheckedBinding.Cast<bool>().Bind(LockAspectRatioBinding);
+                    areaClippingCmd.CheckedBinding.Cast<bool>().Bind(AreaClippingBinding);
+                    ignoreOutsideAreaCmd.CheckedBinding.Cast<bool>().Bind(IgnoreOutsideAreaBinding);
                 }
 
                 private async Task ConvertAreaDialog()

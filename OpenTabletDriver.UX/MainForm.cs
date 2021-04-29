@@ -10,6 +10,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Controls.Output;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
@@ -217,6 +218,7 @@ namespace OpenTabletDriver.UX
                 }
             };
 
+            outputModeEditor.SettingsBinding.BindDataContext<App>(a => a.Settings);
             outputModeEditor.StoreBinding.BindDataContext<App>(a => a.Settings.OutputMode);
             bindingEditor.TipButtonStoreBinding.BindDataContext<App>(a => a.Settings.TipButton);
             bindingEditor.EraserButtonStoreBinding.BindDataContext<App>(a => a.Settings.EraserButton);
