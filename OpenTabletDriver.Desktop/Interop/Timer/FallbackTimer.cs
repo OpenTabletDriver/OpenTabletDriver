@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
             this.runTimer = true;
 
-            this.IgnoreEventIfLateBy = Interval;
+            this.IgnoreEventIfLateBy = Interval * 2;
 
             this.threadTimer = new Thread(ThreadMain)
             {
