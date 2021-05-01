@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Vendors.Wacom
                 HoverDistance = 0;
                 return;
             }
-            ReportID = report[1] != 0 ? report[0] : 0;
+            ReportID = report[1] != 0 ? report[0] : 0u;
             Position = new Vector2
             {
                 X = (report[2] | (report[3] << 8) | (report[4] << 16)),
