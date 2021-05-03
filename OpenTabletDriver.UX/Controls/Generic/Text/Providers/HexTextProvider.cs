@@ -9,9 +9,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
 {
     public abstract class HexTextProvider<T> : IMaskedTextProvider<T>
     {
-        protected virtual Regex HexadecimalRegex => new Regex($"^{HEXADECIMAL_REGEX}$");
-
-        protected const string HEXADECIMAL_REGEX = @"(?:0x)?(?:[0-9A-Fa-f]+[0-9A-Fa-f]?)?";
+        protected virtual Regex HexadecimalRegex => new Regex(@"^(?:0x)?(?:[0-9A-Fa-f]+[0-9A-Fa-f]?)?$");
 
         protected readonly StringBuilder builder = new StringBuilder();
 
@@ -87,14 +85,21 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
             return true;
         }
 
-        protected virtual bool Allow(ref char character, ref int position)
+        protected virtual string BuildString(ref char character, ref int position)
         {
             char[] characters = builder.ToString().ToCharArray();
             if (position == characters.Length)
                 characters = characters.Append(character).ToArray();
             else
                 characters[position] = character;
-            return HexadecimalRegex.IsMatch(new string(characters));
+
+            return new string(characters);
+        }
+
+        protected virtual bool Allow(ref char character, ref int position)
+        {
+            string str = BuildString(ref character, ref position);
+            return HexadecimalRegex.IsMatch(str);
         }
     }
 }

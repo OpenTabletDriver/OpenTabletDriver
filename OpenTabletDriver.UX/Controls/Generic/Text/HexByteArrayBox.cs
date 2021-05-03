@@ -20,6 +20,13 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
                 get => ToByteArray(Text);
             }
 
+            protected override bool Validate(string str)
+            {
+                if (string.IsNullOrWhiteSpace(str) || str == "0" || str == "0x")
+                    return true;
+                return base.Validate(str) && TryGetHexValue(str, out _);
+            }
+
             private bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
 
             private string ToHexString(byte[] value)
