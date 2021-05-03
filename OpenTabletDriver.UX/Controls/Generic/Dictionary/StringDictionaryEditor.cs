@@ -1,3 +1,4 @@
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -9,6 +10,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
         {
             TextBox keyBox = new TextBox();
             keyBox.TextBinding.Bind(keyBinding);
+            keyBox.TextChanging += (sender, e) => e.Cancel = ItemSource.Keys.Contains(e.NewText);
 
             TextBox valueBox = new TextBox();
             valueBox.TextBinding.Bind(valueBinding);
