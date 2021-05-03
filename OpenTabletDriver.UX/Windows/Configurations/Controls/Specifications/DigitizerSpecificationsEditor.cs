@@ -17,6 +17,13 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                 Padding = 5,
                 Items = 
                 {
+                    new StackLayoutItem
+                    {
+                        Control = enable = new CheckBox
+                        {
+                            Text = "Enable"
+                        }
+                    },
                     new Group
                     {
                         Text = "Width (mm)",
@@ -44,12 +51,24 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                 }
             };
 
+            enable.CheckedBinding.Cast<bool>().Bind(
+                DigitizerSpecificationsBinding.Convert(
+                    c => c != null,
+                    v => v ? new DigitizerSpecifications() : null
+                )
+            );
+            enable.CheckedBinding.Bind(width, c => c.Enabled);
+            enable.CheckedBinding.Bind(height, c => c.Enabled);
+            enable.CheckedBinding.Bind(maxX, c => c.Enabled);
+            enable.CheckedBinding.Bind(maxY, c => c.Enabled);
+
             width.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.Width));
             height.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.Height));
             maxX.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.MaxX));
             maxY.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.MaxY));
         }
 
+        private CheckBox enable;
         private MaskedTextBox<float> width, height, maxX, maxY;
 
         private DigitizerSpecifications digitizerSpecs;

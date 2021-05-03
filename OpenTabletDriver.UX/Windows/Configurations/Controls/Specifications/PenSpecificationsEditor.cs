@@ -22,6 +22,13 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                 Padding = 5,
                 Items =
                 {
+                    new StackLayoutItem
+                    {
+                        Control = enable = new CheckBox
+                        {
+                            Text = "Enable"
+                        }
+                    },
                     new Group
                     {
                         Text = "Max Pressure",
@@ -38,11 +45,22 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                 }
             };
 
+            enable.CheckedBinding.Cast<bool>().Bind(
+                PenSpecificationsBinding.Convert(
+                    c => c != null,
+                    v => v ? new PenSpecifications() : null
+                )
+            );
+            enable.CheckedBinding.Bind(maxPressure, c => c.Enabled);
+            enable.CheckedBinding.Bind(activeReportId, c => c.Enabled);
+            enable.CheckedBinding.Bind(buttonSpecifications, c => c.Enabled);
+            
             maxPressure.ValueBinding.Bind(PenSpecificationsBinding.Child(c => c.MaxPressure));
             activeReportId.ValueBinding.Bind(PenSpecificationsBinding.Child(c => c.ActiveReportID));
             buttonSpecifications.ButtonSpecificationsBinding.Bind(PenSpecificationsBinding.Child(c => c.Buttons));
         }
 
+        private CheckBox enable;
         private MaskedTextBox<uint> maxPressure;
         private MaskedTextBox<DetectionRange> activeReportId;
         private ButtonSpecificationsEditor buttonSpecifications;
