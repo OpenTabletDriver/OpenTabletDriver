@@ -67,7 +67,7 @@ namespace OpenTabletDriver.Plugin.Output
                 ConsumeState();
                 var consumeDelta = (float)consumeWatch.Restart().TotalMilliseconds;
                 if (consumeDelta < 150)
-                    reportMsAvg += ((consumeDelta - reportMsAvg) * 0.1f) ?? consumeDelta;
+                    reportMsAvg = (reportMsAvg + ((consumeDelta - reportMsAvg) * 0.1f)) ?? consumeDelta;
             }
         }
 
