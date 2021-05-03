@@ -30,7 +30,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                 Items =
                 {
                     new StackLayoutItem(outputModeEditor, true),
-                    outputModeSelector
+                    new StackLayoutItem(outputModeSelector, HorizontalAlignment.Left)
                 }
             };
 
