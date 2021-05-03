@@ -4,9 +4,9 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
-    public struct BambooReport : ITabletReport, IAuxReport, IEraserReport
+    public struct BambooCaptureReport : ITabletReport, IAuxReport, IEraserReport
     {
-        public BambooReport(byte[] report)
+        public BambooCaptureReport(byte[] report)
         {
             Raw = report;
 
