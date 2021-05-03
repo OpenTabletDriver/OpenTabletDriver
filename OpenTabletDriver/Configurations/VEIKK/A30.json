@@ -1,11 +1,13 @@
 {
   "Name": "VEIKK A30",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 254.0,
       "Height": 152.4,
       "MaxX": 50800.0,
-      "MaxY": 30480.0,
+      "MaxY": 30480.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -13,13 +15,26 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 12267,
       "ProductID": 2,
       "InputReportLength": 9,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "CQEE",
+      "OutputInitReport": [
+        "CQEE"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

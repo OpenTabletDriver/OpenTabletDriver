@@ -67,9 +67,10 @@ namespace OpenTabletDriver.Plugin.Output
             var transform = Matrix3x2.CreateRotation(
                 (float)(-Rotation * System.Math.PI / 180));
 
+            var digitizer = Tablet?.Properties.Specifications.Digitizer;
             return transform *= Matrix3x2.CreateScale(
-                sensitivity.X * ((Tablet?.Digitizer?.Width / Tablet?.Digitizer?.MaxX) ?? 0.01f),
-                sensitivity.Y * ((Tablet?.Digitizer?.Height / Tablet?.Digitizer?.MaxY) ?? 0.01f));
+                sensitivity.X * ((digitizer?.Width / digitizer?.MaxX) ?? 0.01f),
+                sensitivity.Y * ((digitizer?.Height / digitizer?.MaxY) ?? 0.01f));
         }
 
         protected override ITabletReport Transform(ITabletReport report)
@@ -93,7 +94,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport && Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+            if (report is ITabletReport tabletReport && Tablet.Properties.Specifications.Pen.ActiveReportID.IsInRange(tabletReport.ReportID))
             {
                 Pointer.Translate(tabletReport.Position);
             }

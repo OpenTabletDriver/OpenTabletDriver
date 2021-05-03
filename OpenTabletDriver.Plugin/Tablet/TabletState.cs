@@ -2,19 +2,23 @@
 {
     public class TabletState
     {
+        public TabletState()
+        {
+        }
+
         public TabletState(
-            TabletConfiguration tabletProperties,
-            DigitizerIdentifier digitizer,
+            TabletConfiguration properties,
+            DeviceIdentifier digitizer,
             DeviceIdentifier auxiliary
         )
         {
-            TabletProperties = tabletProperties;
+            Properties = properties;
             Digitizer = digitizer;
             Auxiliary = auxiliary;
         }
 
-        public TabletConfiguration TabletProperties { get; }
-        public DigitizerIdentifier Digitizer { get; }
-        public DeviceIdentifier Auxiliary { get; }
+        public TabletConfiguration Properties { set; get; }
+        public DeviceIdentifier Digitizer { set; get; }
+        public DeviceIdentifier Auxiliary { set; get; }
     }
 }

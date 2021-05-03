@@ -1,11 +1,13 @@
 {
   "Name": "Wacom CTL-4100",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 152.0,
       "Height": 95.0,
       "MaxX": 15200.0,
-      "MaxY": 9500.0,
+      "MaxY": 9500.0
+    },
+    "Pen": {
       "MaxPressure": 4095,
       "ActiveReportID": {
         "Start": 16,
@@ -13,6 +15,17 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 884,
       "InputReportLength": 192,
@@ -24,17 +37,6 @@
       "InitializationStrings": []
     },
     {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0,
-      "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 884,
       "InputReportLength": 193,

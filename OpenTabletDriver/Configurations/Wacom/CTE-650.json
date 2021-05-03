@@ -1,11 +1,13 @@
 {
   "Name": "Wacom CTE-650",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 216.48,
       "Height": 135.3,
       "MaxX": 21648.0,
-      "MaxY": 13530.0,
+      "MaxY": 13530.0
+    },
+    "Pen": {
       "MaxPressure": 511,
       "ActiveReportID": {
         "Start": 0,
@@ -13,12 +15,25 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 24,
       "InputReportLength": 9,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": "AgI=",
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
