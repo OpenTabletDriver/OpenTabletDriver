@@ -1,18 +1,17 @@
-using System.Collections.Generic;
 using Eto.Drawing;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
 {
-    public class StringDictionaryEditor : ModifiableConstructableItemList<KeyValuePair<string, string>>
+    public class StringDictionaryEditor : DictionaryEditor<string, string>
     {
-        protected override Control CreateControl(int index, DirectBinding<KeyValuePair<string, string>> itemBinding)
+        protected override Control CreateControl(DirectBinding<string> keyBinding, DirectBinding<string> valueBinding)
         {
             TextBox keyBox = new TextBox();
-            keyBox.TextBinding.Bind(itemBinding.Child(i => i.Key));
+            keyBox.TextBinding.Bind(keyBinding);
 
             TextBox valueBox = new TextBox();
-            valueBox.TextBinding.Bind(itemBinding.Child(i => i.Value));
+            valueBox.TextBinding.Bind(valueBinding);
 
             return new StackLayout
             {
@@ -21,10 +20,12 @@ namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
                 Spacing = 5,
                 Items =
                 {
-                    keyBox,
+                    new StackLayoutItem(keyBox, true),
                     new StackLayoutItem(valueBox, true)
                 }
             };
         }
+
+        protected override void AddNew() => Add(string.Empty, string.Empty);
     }
 }

@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             {
                 if (ItemSource == null)
                     ItemSource = new List<T>();
-                AddNew(ItemSource.Count);
+                AddNew();
             };
         }
 
@@ -42,8 +42,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         /// <summary>
         /// Invoked by the user to request addition of a new object at a specific index.
         /// </summary>
-        /// <param name="index">The index in which the item will be added.</param>
-        protected abstract void AddNew(int index);
+        protected abstract void AddNew();
 
         /// <summary>
         /// Invoked internally to add a new object at a specific
@@ -100,6 +99,5 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 }
             };
         }
-
     }
 }

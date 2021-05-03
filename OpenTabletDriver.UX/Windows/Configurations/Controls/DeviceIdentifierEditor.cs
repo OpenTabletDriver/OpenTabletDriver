@@ -167,7 +167,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 
             private class ReportEditor : ModifiableItemList<byte[]>
             {
-                protected override void AddNew(int index) => Add(index, new byte[0]);
+                protected override void AddNew() => Add(ItemSource.Count, new byte[0]);
 
                 protected override Control CreateControl(int index, DirectBinding<byte[]> itemBinding)
                 {

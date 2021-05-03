@@ -311,12 +311,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 specificationEditor.TabletSpecificationsBinding.Bind(ConfigurationBinding.Child(c => c.Specifications));
                 digitizerIdentifierEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IList<DeviceIdentifier>>(c => c.DigitizerIdentifiers));
                 auxiliaryIdentifierEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IList<DeviceIdentifier>>(c => c.AuxilaryDeviceIdentifiers));
-                attributeEditor.ItemSourceBinding.Bind(
-                    ConfigurationBinding.Child(c => c.Attributes).Convert<IList<KeyValuePair<string, string>>>(
-                        s => s?.ToList(),
-                        c => new Dictionary<string, string>(c)
-                    )
-                );
+                attributeEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IDictionary<string, string>>(c => c.Attributes));
             }
 
             private TextBox name;
