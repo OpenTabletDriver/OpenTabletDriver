@@ -11,7 +11,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 {
     public class AreaDisplay : TimedDrawable
     {
-                private float areaWidth, areaHeight, areaX, areaY, areaRotation;
+        private float areaWidth, areaHeight, areaX, areaY, areaRotation;
         private bool lockToUsableArea;
         private string unit, invalidForegroundError, invalidBackgroundError;
         protected IEnumerable<RectangleF> areaBounds;

@@ -218,7 +218,6 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            outputModeEditor.SettingsBinding.BindDataContext<App>(a => a.Settings);
             outputModeEditor.StoreBinding.BindDataContext<App>(a => a.Settings.OutputMode);
             bindingEditor.TipButtonStoreBinding.BindDataContext<App>(a => a.Settings.TipButton);
             bindingEditor.EraserButtonStoreBinding.BindDataContext<App>(a => a.Settings.EraserButton);
