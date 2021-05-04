@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Dictionary;
 using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows.Configurations.Controls
@@ -114,17 +114,10 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 
                 reportParser.SelectedKeyBinding.Bind(EntryBinding.Child(e => e.ReportParser));
 
-                featureInitReport.ItemSourceBinding.Bind(EntryBinding.Child(e => (IList<byte[]>)e.FeatureInitReport));
-                outputInitReport.ItemSourceBinding.Bind(EntryBinding.Child(e => (IList<byte[]>)e.OutputInitReport));
-
-                deviceStrings.ItemSourceBinding.Bind(
-                    EntryBinding.Child(e => e.DeviceStrings).Convert<IList<KeyValuePair<byte, string>>>(
-                        s => s?.ToList(),
-                        c => new Dictionary<byte, string>(c)
-                    )
-                );
-
-                initializationStrings.ItemSourceBinding.Bind(EntryBinding.Child(e => (IList<byte>)e.InitializationStrings));
+                featureInitReport.ItemSourceBinding.Bind(EntryBinding.Child<IList<byte[]>>(e => e.FeatureInitReport));
+                outputInitReport.ItemSourceBinding.Bind(EntryBinding.Child<IList<byte[]>>(e => e.OutputInitReport));
+                deviceStrings.ItemSourceBinding.Bind(EntryBinding.Child<IDictionary<byte, string>>(e => e.DeviceStrings));
+                initializationStrings.ItemSourceBinding.Bind(EntryBinding.Child<IList<byte>>(e => e.InitializationStrings));
             }
 
             protected StackLayout layout;
@@ -182,20 +175,19 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                 }
             }
 
-            private class DeviceStringEditor : ModifiableConstructableItemList<KeyValuePair<byte, string>>
+            private class DeviceStringEditor : DictionaryEditor<byte, string>
             {
-                protected override Control CreateControl(int index, DirectBinding<KeyValuePair<byte, string>> itemBinding)
+                protected override Control CreateControl(DirectBinding<byte> keyBinding, DirectBinding<string> valueBinding)
                 {
-                    MaskedTextBox<int> keyBox = new IntegerNumberBox();
-                    keyBox.ValueBinding.Bind(
-                        itemBinding.Child(i => i.Key).Convert<int>(
-                            c => (int)c,
-                            v => (byte)v
-                        )
-                    );
+                    var keyBox = new IntegerNumberBox();
+                    keyBox.ValueBinding.Bind(keyBinding.Convert(
+                        b => (int)b,
+                        i => (byte)i
+                    ));
+                    keyBox.TextChanging += (sender, e) => e.Cancel = byte.TryParse(e.NewText, out byte newByte) && ItemSource.Keys.Contains(newByte);
 
-                    TextBox valueBox = new TextBox();
-                    valueBox.TextBinding.Bind(itemBinding.Child(i => i.Value));
+                    var valueBox = new TextBox();
+                    valueBox.TextBinding.Bind(valueBinding);
 
                     return new StackLayout
                     {
@@ -209,6 +201,8 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                         }
                     };
                 }
+
+                protected override void AddNew() => Add(0, string.Empty);
             }
 
             private class ByteListEditor : ModifiableConstructableItemList<byte>
