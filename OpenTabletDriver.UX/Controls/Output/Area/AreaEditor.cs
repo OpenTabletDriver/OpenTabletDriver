@@ -286,5 +286,4 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
     }
-
 }
