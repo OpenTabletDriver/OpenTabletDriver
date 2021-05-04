@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using Eto.Drawing;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
 {
-    public abstract class DictionaryEditor<TKey, TValue> : Panel where TKey : class where TValue : class
+    public abstract class DictionaryEditor<TKey, TValue> : Panel
     {
         public DictionaryEditor()
         {
@@ -173,7 +172,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
         {
             if (ItemSource.TryAdd(key, value))
             {
-                var pair = ItemSource.First(t => t.Key == key);
+                var pair = ItemSource.First(t => t.Key.Equals(key));
                 if (!(ItemSource is INotifyCollectionChanged))
                     HandleCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pair));   
             }
@@ -181,7 +180,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
 
         protected virtual void Remove(TKey key)
         {
-            var oldObj = ItemSource.First(k => k.Key == key);
+            var oldObj = ItemSource.First(k => k.Key.Equals(key));
             ItemSource.Remove(key);
 
             if (ItemSource.Count == 0)
