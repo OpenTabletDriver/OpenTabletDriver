@@ -16,7 +16,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             public override int Value
             {
                 set => Text = "0x" + value.ToString("X4");
-                get => int.TryParse(Text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result) ? result : default(int);
+                get => int.TryParse(Text.Replace("0x", string.Empty), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var result) ? result : default(int);
             }
         }
     }

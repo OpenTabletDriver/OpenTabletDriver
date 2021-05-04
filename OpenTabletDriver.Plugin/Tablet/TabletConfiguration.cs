@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The tablet's specifications.
         /// </summary>
-        public TabletSpecifications Specifications { set; get; }
+        public TabletSpecifications Specifications { set; get; } = new TabletSpecifications();
 
         /// <summary>
         /// The digitizer device identifier.
