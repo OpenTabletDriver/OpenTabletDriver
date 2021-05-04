@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             Provider = new HexTextProvider();
         }
 
-        private class HexTextProvider : RegexBasedTextProvider<int>
+        private class HexTextProvider : RegexTextProvider<int>
         {
             protected override Regex Regex => new Regex(@"^(?:0x)?(?:[0-9A-F]{1,4})?$");
 

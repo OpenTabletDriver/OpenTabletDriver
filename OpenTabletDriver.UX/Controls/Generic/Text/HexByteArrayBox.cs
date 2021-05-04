@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             Provider = new HexByteArrayTextProvider();
         }
 
-        private class HexByteArrayTextProvider : RegexBasedTextProvider<byte[]>
+        private class HexByteArrayTextProvider : RegexTextProvider<byte[]>
         {
             protected override Regex Regex => new Regex(@"^(?:(?:(?:(?<=^| )0?(?<=0)x?)?(?:(?<=0x)[0-9A-F]{1,2})?)(?:(?<! ) ?))*$");
 
