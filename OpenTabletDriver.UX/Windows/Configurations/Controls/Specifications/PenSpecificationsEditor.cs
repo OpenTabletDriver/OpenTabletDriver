@@ -105,14 +105,29 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
             {
                 private StringBuilder builder = new StringBuilder();
 
-                public DetectionRange Value { set; get; }
+                public DetectionRange Value
+                {
+                    set => Text = value?.ToString() ?? string.Empty;
+                    get => DetectionRange.Parse(Text);
+                }
 
                 public string DisplayText => Text;
 
-                public string Text
+                public virtual string Text
                 {
-                    set => Value = DetectionRange.Parse(value);
-                    get => Value?.ToString();
+                    set
+                    {
+                        builder.Clear();
+                        if (value != null)
+                        {
+                            int pos = 0;
+                            foreach (char ch in value)
+                            {
+                                Insert(ch, ref pos);
+                            }
+                        }
+                    }
+                    get => builder.ToString();
                 }
 
                 public bool MaskCompleted => true;
@@ -172,15 +187,24 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                     {
                         return leftOperators.Contains(character);
                     }
-                    else if (position == builder.Length && rightOperators.Contains(builder[builder.Length - 1]))
+                    else if (position == builder.Length)
                     {
-                        return false;
+                        if (rightOperators.Contains(builder[builder.Length - 1]))
+                            return false;
+                        
+                        return rightOperators.Contains(character) ||
+                            char.IsDigit(character) ||
+                            allowedAlpha.Contains(character);
                     }
-                    else
+                    else if (position > 0 && builder.Length < position)
                     {
-                        return char.IsDigit(character) || rightOperators.Contains(character);
+                        return char.IsLetterOrDigit(character) ||
+                            character == '.';
                     }
+                    return false;
                 }
+
+                private static readonly char[] allowedAlpha = "nul.".ToCharArray();
 
                 private static readonly char[] leftOperators =
                 {

@@ -110,7 +110,8 @@ namespace OpenTabletDriver.Plugin.Output
         /// </summary>
         protected void OnEmit()
         {
-            Emit?.Invoke(State);
+            if (State != null)
+                Emit?.Invoke(State);
         }
 
         public void Dispose()
