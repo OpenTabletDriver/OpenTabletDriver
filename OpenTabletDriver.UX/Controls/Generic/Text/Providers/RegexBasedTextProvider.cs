@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
 {
-    public abstract class RegexBasedTextProvider<T> : MaskedTextProvider<T>
+    public abstract class RegexTextProvider<T> : MaskedTextProvider<T>
     {
         protected abstract Regex Regex { get; }
 
