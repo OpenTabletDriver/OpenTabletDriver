@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// Specifications for the auxiliary buttons.
         /// </summary>
         /// <value></value>
-        public ButtonSpecifications AuxiliaryButtons { set; get; }
+        public ButtonSpecifications AuxiliaryButtons { set; get; } = new ButtonSpecifications();
 
         /// <summary>
         /// Specifications for the touch digitizer.

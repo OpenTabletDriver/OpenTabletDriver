@@ -15,6 +15,6 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// Specifications for the pen buttons.
         /// </summary>
-        public ButtonSpecifications Buttons { set; get; }
+        public ButtonSpecifications Buttons { set; get; } = new ButtonSpecifications();
     }
 }
