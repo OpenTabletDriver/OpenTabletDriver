@@ -196,7 +196,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                         Spacing = 5,
                         Items =
                         {
-                            new StackLayoutItem(keyBox, true),
+                            keyBox,
                             new StackLayoutItem(valueBox, true)
                         }
                     };
