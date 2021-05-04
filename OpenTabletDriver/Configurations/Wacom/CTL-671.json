@@ -2,10 +2,10 @@
   "Name": "Wacom CTL-671",
   "Specifications": {
     "Digitizer": {
-      "Width": 216.48,
-      "Height": 153.3,
-      "MaxX": 21648.0,
-      "MaxY": 15330.0
+      "Width": 216.0,
+      "Height": 135.0,
+      "MaxX": 21600.0,
+      "MaxY": 13500.0
     },
     "Pen": {
       "MaxPressure": 1023,
