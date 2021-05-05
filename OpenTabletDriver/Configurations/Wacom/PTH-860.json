@@ -1,11 +1,13 @@
 {
   "Name": "Wacom PTH-860",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 311.0,
       "Height": 216.0,
       "MaxX": 62200.0,
-      "MaxY": 43200.0,
+      "MaxY": 43200.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 16,
@@ -13,6 +15,17 @@
         "End": 19,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 856,
       "InputReportLength": 192,
@@ -24,17 +37,6 @@
       "InitializationStrings": []
     },
     {
-      "Width": 311.0,
-      "Height": 216.0,
-      "MaxX": 62200.0,
-      "MaxY": 43200.0,
-      "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": 19,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 856,
       "InputReportLength": 193,

@@ -25,15 +25,16 @@ namespace OpenTabletDriver.Desktop.Binding
             if (tablet == null)
                 return;
 
-            if (report is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
-                HandleTabletReport(tablet.Digitizer, tabletReport);
+            var pen = tablet.Properties.Specifications.Pen;
+            if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+                HandleTabletReport(pen, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(auxReport);
         }
 
-        private static void HandleTabletReport(DigitizerIdentifier identifier, ITabletReport report)
+        private static void HandleTabletReport(PenSpecifications pen, ITabletReport report)
         {
-            float pressurePercent = (float)report.Pressure / (float)identifier.MaxPressure * 100f;
+            float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
             if (report is IEraserReport eraserReport && eraserReport.Eraser)
             {
                 bool threshold = pressurePercent > EraserActivationPressure;

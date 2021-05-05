@@ -158,9 +158,7 @@ namespace OpenTabletDriver.UX.Windows
             var converter = this.converterList.ConstructSelectedType();
             var convertedArea = converter.Convert(tabletState, top.Value, left.Value, bottom.Value, right.Value);
 
-            App.Settings.SetTabletArea(convertedArea);
-
-            (Application.Instance.MainForm as MainForm).Refresh();
+            App.Current.Settings.SetTabletArea(convertedArea);
             this.Close();
         }
 

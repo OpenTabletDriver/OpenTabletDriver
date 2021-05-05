@@ -1,11 +1,13 @@
 {
   "Name": "Huion osu!tablet",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 101.6,
       "Height": 56.6,
       "MaxX": 8340.0,
-      "MaxY": 4680.0,
+      "MaxY": 4680.0
+    },
+    "Pen": {
       "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 128,
@@ -13,6 +15,17 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 8,
