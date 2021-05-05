@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic.Text.Providers;
 
@@ -11,8 +12,10 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             Provider = new HexTextProvider();
         }
 
-        private class HexTextProvider : HexTextProvider<int>
+        private class HexTextProvider : RegexTextProvider<int>
         {
+            protected override Regex Regex => new Regex(@"^(?:0x)?(?:[0-9A-F]{1,4})?$");
+
             public override int Value
             {
                 set => Text = "0x" + value.ToString("X4");

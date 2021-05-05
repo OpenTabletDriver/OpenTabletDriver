@@ -72,7 +72,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                         {
                             Header = "Feature Initialization Report",
                             Padding = 5,
-                            Content = featureInitReport = new ReportEditor() 
+                            Content = featureInitReport = new ReportEditor()
                         },
                         new Expander
                         {
@@ -122,8 +122,8 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
 
             protected StackLayout layout;
 
-            private MaskedTextBox<int> vendorId, productId;
-            private MaskedTextBox<uint> inputReportLength, outputReportLength;
+            private HexNumberBox vendorId, productId;
+            private UnsignedIntegerNumberBox inputReportLength, outputReportLength;
             private ReportEditor featureInitReport, outputInitReport;
             private TypeDropDown<IReportParser<IDeviceReport>> reportParser;
             private DeviceStringEditor deviceStrings;

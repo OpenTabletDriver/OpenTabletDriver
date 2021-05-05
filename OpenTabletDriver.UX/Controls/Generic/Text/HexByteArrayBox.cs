@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic.Text.Providers;
 
@@ -12,19 +13,14 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             Provider = new HexByteArrayTextProvider();
         }
 
-        private class HexByteArrayTextProvider : HexArrayTextProvider<byte[]>
+        private class HexByteArrayTextProvider : RegexTextProvider<byte[]>
         {
+            protected override Regex Regex => new Regex(@"^(?:(?:(?:(?<=^| )0?(?<=0)x?)?(?:(?<=0x)[0-9A-F]{1,2})?)(?:(?<! ) ?))*$");
+
             public override byte[] Value
             {
                 set => Text = ToHexString(value);
                 get => ToByteArray(Text);
-            }
-
-            protected override bool Validate(string str)
-            {
-                if (string.IsNullOrWhiteSpace(str) || str == "0" || str == "0x")
-                    return true;
-                return base.Validate(str) && TryGetHexValue(str, out _);
             }
 
             private bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
@@ -36,7 +32,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
                 else
                     return string.Empty;
             }
-            
+
             private byte[] ToByteArray(string hex)
             {
                 var raw = hex.Split(' ');

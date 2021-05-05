@@ -2,22 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
 {
-    public abstract class HexTextProvider<T> : IMaskedTextProvider<T>
+    public abstract class MaskedTextProvider<T> : IMaskedTextProvider<T>
     {
-        protected virtual Regex HexadecimalRegex => new Regex(@"^(?:0x)?(?:[0-9A-Fa-f]+[0-9A-Fa-f]?)?$");
-
         protected readonly StringBuilder builder = new StringBuilder();
 
         public abstract T Value { get; set; }
 
-        public virtual string DisplayText => builder.ToString();
+        public string DisplayText => builder.ToString();
 
-        public virtual string Text
+        public string Text
         {
             set
             {
@@ -85,21 +82,6 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
             return true;
         }
 
-        protected virtual string BuildString(ref char character, ref int position)
-        {
-            char[] characters = builder.ToString().ToCharArray();
-            if (position == characters.Length)
-                characters = characters.Append(character).ToArray();
-            else
-                characters[position] = character;
-
-            return new string(characters);
-        }
-
-        protected virtual bool Allow(ref char character, ref int position)
-        {
-            string str = BuildString(ref character, ref position);
-            return HexadecimalRegex.IsMatch(str);
-        }
+        protected abstract bool Allow(ref char character, ref int position);
     }
 }
