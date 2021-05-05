@@ -1,5 +1,5 @@
 using System;
-using System.Threading.Tasks;
+using System.Threading;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Tools
@@ -10,15 +10,7 @@ namespace OpenTabletDriver.UX.Tools
     /// </summary>
     public static class CompositionScheduler
     {
-        private static async Task SchedulerFunc()
-        {
-            while (running)
-            {
-                await Application.Instance.InvokeAsync(OnCompose);
-                await Task.Delay(1000 / MAX_FRAMES_PER_SEC);
-            }
-        }
-
+        private static Timer scheduler = new Timer(_ => Application.Instance.AsyncInvoke(OnCompose));
         private const int MAX_FRAMES_PER_SEC = 60;
 
         public static void Register(EventHandler handler)
@@ -46,14 +38,17 @@ namespace OpenTabletDriver.UX.Tools
             if (!running)
             {
                 running = true;
-                Task.Run(SchedulerFunc);
+                scheduler.Change(0, 1000 /MAX_FRAMES_PER_SEC);
             }
         }
 
         private static void Stop()
         {
             if (running)
+            {
                 running = false;
+                scheduler.Change(0, Timeout.Infinite);
+            }
         }
 
         private static void OnCompose()
