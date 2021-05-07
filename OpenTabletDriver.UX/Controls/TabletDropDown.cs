@@ -21,6 +21,8 @@ namespace OpenTabletDriver.UX.Controls
                 Application.Instance.Invoke(() => SelectedID = App.Current.ProfileCache.HandlerInFocus);
             };
 
+            SelectedValueChanged += (_, _) => SelectedIDChanged?.Invoke(this, EventArgs.Empty);
+
             App.Driver.Instance.TabletHandlerCreated += async (_, id) => await tablets.Add(id);
             App.Driver.Instance.TabletHandlerDestroyed += (_, id) => tablets.Remove(id);
 
@@ -33,11 +35,7 @@ namespace OpenTabletDriver.UX.Controls
         public TabletHandlerID SelectedID
         {
             get => SelectedValue != null ? (TabletHandlerID)SelectedValue : TabletHandlerID.Invalid;
-            set
-            {
-                SelectedValue = (object)value;
-                SelectedIDChanged?.Invoke(this, EventArgs.Empty);
-            }
+            set => SelectedValue = value;
         }
 
         public BindableBinding<TabletDropDown, TabletHandlerID> SelectedIDBinding
