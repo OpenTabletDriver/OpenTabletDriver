@@ -135,7 +135,7 @@ namespace OpenTabletDriver.UX.Tools
 
         private void OnHandlerInFocusChanged()
         {
-            Application.Instance.AsyncInvoke(async () =>
+            Application.Instance.Invoke(async () =>
             {
                 ProfileInFocus = HandlerInFocus != TabletHandlerID.Invalid ? await Get(HandlerInFocus) : null;
                 HandlerInFocusChanged?.Invoke(this, EventArgs.Empty);

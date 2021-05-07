@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.Controls
 
             App.Current.ProfileCache.HandlerInFocusChanged += (_, _) =>
             {
-                Application.Instance.AsyncInvoke(() => SelectedID = App.Current.ProfileCache.HandlerInFocus);
+                Application.Instance.Invoke(() => SelectedID = App.Current.ProfileCache.HandlerInFocus);
             };
 
             App.Driver.Instance.TabletHandlerCreated += async (_, id) => await tablets.Add(id);
@@ -73,7 +73,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             public TabletList()
             {
-                observer.CollectionChanged += (_, args) => Application.Instance.AsyncInvoke(() => CollectionChanged?.Invoke(this, args));
+                observer.CollectionChanged += (_, args) => Application.Instance.Invoke(() => CollectionChanged?.Invoke(this, args));
             }
 
             public event NotifyCollectionChangedEventHandler CollectionChanged;
