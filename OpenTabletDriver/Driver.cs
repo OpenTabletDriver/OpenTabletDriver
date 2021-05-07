@@ -71,7 +71,7 @@ namespace OpenTabletDriver
             var hidDevices = device.Select(d => (HidDevice)d);
 
             // Group HIDs by their VID:PID before iterating
-            foreach (var deviceGroup in hidDevices.GroupBy(hid => (hid.VendorID, hid.ProductID)))
+            foreach (var deviceGroup in hidDevices.OrderBy(h => h.DevicePath).GroupBy(hid => (hid.VendorID, hid.ProductID)))
             {
                 // Skip if device VendorID is not supported
                 if (!availableVendorIDs.Contains(deviceGroup.Key.VendorID))
