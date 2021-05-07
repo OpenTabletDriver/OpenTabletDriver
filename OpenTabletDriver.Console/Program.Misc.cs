@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Plugin;
 using static System.Console;
 
 namespace OpenTabletDriver.Console
@@ -13,9 +14,19 @@ namespace OpenTabletDriver.Console
             return await Driver.Instance.GetSettings();
         }
 
+        static async Task<Profile> GetProfile(int id)
+        {
+            return await Driver.Instance.GetProfile(new TabletHandlerID { Value = id });
+        }
+
         static async Task ApplySettings(Settings settings)
         {
             await Driver.Instance.SetSettings(settings);
+        }
+
+        static async Task ApplyProfile(int id, Profile profile)
+        {
+            await Driver.Instance.SetProfile(new TabletHandlerID { Value = id }, profile);
         }
 
         static async Task ModifySettings(Action<Settings> func)
@@ -23,6 +34,13 @@ namespace OpenTabletDriver.Console
             var settings = await GetSettings();
             func.Invoke(settings);
             await ApplySettings(settings);
+        }
+
+        static async Task ModifyProfile(int handle, Action<Profile> func)
+        {
+            var profile = await GetProfile(handle);
+            func.Invoke(profile);
+            await ApplyProfile(handle, profile);
         }
 
         static async Task ListTypes<T>()

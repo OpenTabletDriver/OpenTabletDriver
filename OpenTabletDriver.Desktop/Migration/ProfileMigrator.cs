@@ -1,26 +1,33 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using OpenTabletDriver.Desktop.Binding;
+using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Migration
 {
-    public static class SettingsMigrator
+    public static class ProfileMigrator
     {
-        public static Settings Migrate(Settings settings)
+        public static Profile Migrate(Profile profile)
         {
             // Output mode
-            settings.OutputMode = SafeMigrate(settings.OutputMode, Settings.Default.OutputMode);
+            profile.OutputMode = SafeMigrate(profile.OutputMode, () => new PluginSettingStore(typeof(AbsoluteMode)));
 
             // Bindings
-            settings.TipButton = SafeMigrate(settings.TipButton, Settings.Default.TipButton);
+            profile.TipButton = SafeMigrate(profile.TipButton, () => new PluginSettingStore(
+                new MouseBinding
+                {
+                    Button = nameof(Plugin.Platform.Pointer.MouseButton.Left)
+                }
+            ));
 
-            settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
-            settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
-            settings.PenButtons = SafeMigrateCollection(settings.PenButtons).SetExpectedCount(Settings.PenButtonCount);
-            settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons).SetExpectedCount(Settings.AuxButtonCount);
+            profile.Filters = SafeMigrateCollection(profile.Filters).Trim();
+            profile.PenButtons = SafeMigrateCollection(profile.PenButtons).SetExpectedCount(Profile.PenButtonCount);
+            profile.AuxButtons = SafeMigrateCollection(profile.AuxButtons).SetExpectedCount(Profile.AuxButtonCount);
 
-            return settings;
+            return profile;
         }
 
         private static readonly Dictionary<Regex, string> namespaceMigrationDict = new Dictionary<Regex, string>
@@ -36,7 +43,7 @@ namespace OpenTabletDriver.Desktop.Migration
             { new Regex(@"OpenTabletDriver\.Desktop\.Binding\.MouseBinding$"), ("^Property$", "Button") }
         };
 
-        public static PluginSettingStore SafeMigrate(PluginSettingStore store, PluginSettingStore defaultStore = null)
+        public static PluginSettingStore SafeMigrate(PluginSettingStore store, Func<PluginSettingStore> defaultStore = null)
         {
             store = SafeMigrateNamespace(store, defaultStore);
             store = MigrateProperty(store);
@@ -94,13 +101,13 @@ namespace OpenTabletDriver.Desktop.Migration
             return store;
         }
 
-        private static PluginSettingStore SafeMigrateNamespace(PluginSettingStore store, PluginSettingStore defaultStore)
+        private static PluginSettingStore SafeMigrateNamespace(PluginSettingStore store, Func<PluginSettingStore> defaultStore)
         {
             MigrateNamespace(store);
             if (store != null && PluginSettingStore.FromPath(store.Path) == null && defaultStore != null)
             {
-                Log.Write("Settings", $"Invalid plugin path '{store.Path ?? "null"}' has been changed to '{defaultStore.Path}'", LogLevel.Warning);
-                store = defaultStore;
+                store = defaultStore();
+                Log.Write("Settings", $"Invalid plugin path '{store.Path ?? "null"}' has been changed to '{store.Path}'", LogLevel.Warning);
             }
             return store;
         }

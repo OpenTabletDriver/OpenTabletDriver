@@ -1,52 +1,59 @@
 using System;
+using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin
 {
-    public interface IDriver
+    public interface IDriver : IDisposable
     {
         /// <summary>
-        /// Invoked when a device endpoint begins reading or stops being read.
+        /// Populates OTD's internal tablet handler list using the specified <see cref="IEnumerable{TabletConfiguration}"/>
         /// </summary>
-        event EventHandler<bool> Reading;
+        /// <param name="tabletConfigurations"></param>
+        void EnumerateTablets(IEnumerable<TabletConfiguration> tabletConfigurations);
 
         /// <summary>
-        /// Invoked whenever an <see cref="IDeviceReport"/> is recieved from a device endpoint.
+        /// Process specific devices and create tablet handlers if possible
         /// </summary>
-        event EventHandler<IDeviceReport> ReportReceived;
+        /// <typeparam name="T"></typeparam>
+        /// <param name="device"></param>
+        void ProcessDevices(IEnumerable<object> device, IEnumerable<TabletConfiguration> tabletConfigurations);
 
         /// <summary>
-        /// Invoked whenever a tablet is either detected or is disconnected.
+        /// Retrieves the IDs of the currently active tablet handllers
         /// </summary>
-        event EventHandler<TabletState> TabletChanged;
+        /// <returns>An enumerable </returns>
+        IEnumerable<TabletHandlerID> GetActiveTabletHandlerIDs();
 
         /// <summary>
-        /// Whether to allow input to be pushed to the active output mode.
+        /// Sets the output mode of a TabletHandler associated with <see cref="TabletHandlerID"/>
         /// </summary>
-        bool EnableInput { set; get; }
+        /// <param name="ID"></param>
+        void SetOutputMode(TabletHandlerID ID, IOutputMode outputMode);
 
         /// <summary>
-        /// The currently active and detected tablet.
+        /// Gets the output mode of a TabletHandler associated with <see cref="TabletHandlerID"/>
         /// </summary>
-        TabletState Tablet { get; }
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        IOutputMode GetOutputMode(TabletHandlerID ID);
 
         /// <summary>
-        /// The active output mode at the end of the data pipeline for all data to be processed.
+        /// Gets the <see cref="TabletState"/> of a TabletHandler associated with <see cref="TabletHandlerID"/>
         /// </summary>
-        IOutputMode OutputMode { set; get; }
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        TabletState GetTabletState(TabletHandlerID ID);
 
         /// <summary>
-        /// Pushes an <see cref="IDeviceReport"/> to the active output mode.
+        /// Is raised whenever a new TabletHandler is created with an assigned <see cref="TabletHandlerID"/>
         /// </summary>
-        /// <param name="report">The <see cref="IDeviceReport"/> to push to the output mode.</param>
-        void HandleReport(IDeviceReport report);
+        event EventHandler<TabletHandlerID> TabletHandlerCreated;
 
         /// <summary>
-        /// Attempts to detect a tablet via the parameters set in the <see cref="TabletConfiguration"/>.
+        /// Is raised whenever an existing TabletHandler is destroyed either due to an unhandled exception or disconnection
         /// </summary>
-        /// <param name="tablet">The tablet configuration to match.</param>
-        /// <returns>True if the tablet configuration successfully matched and a tablet was detected.</returns>
-        bool TryMatch(TabletConfiguration tablet);
+        event EventHandler<TabletHandlerID> TabletHandlerDestroyed;
     }
 }

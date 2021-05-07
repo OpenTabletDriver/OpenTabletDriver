@@ -9,10 +9,11 @@ using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.UX.Tools;
 
 namespace OpenTabletDriver.UX
 {
-    public class App : ViewModel
+    public class App : Bindable
     {
         public static void Run(string platform, string[] args)
         {
@@ -55,17 +56,21 @@ namespace OpenTabletDriver.UX
         public const string FaqUrl = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki#frequently-asked-questions";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
+        private static readonly Lazy<Bitmap> _logo = new Lazy<Bitmap>(() =>
+        {
+            var dataStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png");
+            return new Bitmap(dataStream);
+        });
+
+        public readonly static bool EnableTrayIcon = DesktopInterop.CurrentPlatform switch
+        {
+            PluginPlatform.Windows => true,
+            PluginPlatform.MacOS => true,
+            _ => false
+        };
+
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo => _logo.Value;
-
-        public static readonly App Current = new App();
-
-        private Settings settings;
-        public Settings Settings
-        {
-            set => this.RaiseAndSetIfChanged(ref this.settings, value);
-            get => this.settings;
-        }
 
         public static AboutDialog AboutDialog => new AboutDialog
         {
@@ -83,17 +88,60 @@ namespace OpenTabletDriver.UX
             Logo = Logo.WithSize(256, 256)
         };
 
-        public readonly static bool EnableTrayIcon = DesktopInterop.CurrentPlatform switch
-        {
-            PluginPlatform.Windows => true,
-            PluginPlatform.MacOS   => true,
-            _                       => false
-        };
+        public static readonly App Current = new App();
 
-        private static readonly Lazy<Bitmap> _logo = new Lazy<Bitmap>(() =>
+        private Settings settings;
+        private ProfileCache profileCache;
+
+        public event EventHandler<EventArgs> SettingsChanged;
+        public event EventHandler<EventArgs> ProfileCacheChanged;
+
+        public Settings Settings
         {
-            var dataStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png");
-            return new Bitmap(dataStream);
-        });
+            get => this.settings;
+            set
+            {
+                settings = value;
+                SettingsChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public ProfileCache ProfileCache
+        {
+            get => this.profileCache;
+            set
+            {
+                profileCache = value;
+                ProfileCacheChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public BindableBinding<App, Settings> SettingsBinding
+        {
+            get
+            {
+                return new BindableBinding<App, Settings>(
+                    this,
+                    a => a.Settings,
+                    (a, s) => a.Settings = s,
+                    (a, h) => a.SettingsChanged += h,
+                    (a, h) => a.SettingsChanged -= h
+                );
+            }
+        }
+
+        public BindableBinding<App, Profile> ProfileBinding
+        {
+            get
+            {
+                return new BindableBinding<App, Profile>(
+                    this,
+                    a => a.ProfileCache.ProfileInFocus,
+                    (a, p) => a.ProfileCache.ProfileInFocus = p,
+                    (a, h) => a.ProfileCache.ProfileInFocusChanged += h,
+                    (a, h) => a.ProfileCache.ProfileInFocusChanged -= h
+                );
+            }
+        }
     }
 }

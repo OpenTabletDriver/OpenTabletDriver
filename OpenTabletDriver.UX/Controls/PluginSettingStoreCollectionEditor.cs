@@ -63,7 +63,15 @@ namespace OpenTabletDriver.UX.Controls
             else
                 CollectionReference.SetTarget(storeCollection);
             sourceSelector.Refresh();
-            
+
+            if (settingStoreEditor.Store != null && storeCollection != null)
+            {
+                foreach (var pluginSettingStore in storeCollection.Where(s => s.Path == settingStoreEditor.Store.Path))
+                {
+                    settingStoreEditor.Refresh(pluginSettingStore);
+                }
+            }
+
             if (sourceSelector.Plugins.Count == 0)
             {
                 this.Content = new PluginSettingStoreEmptyPlaceholder(FriendlyTypeName);

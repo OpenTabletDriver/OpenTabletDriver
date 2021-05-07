@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Text;
@@ -56,13 +55,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                 }
             };
 
-            xSens.ValueBinding.BindDataContext<App>(a => a.Settings.XSensitivity);
-            ySens.ValueBinding.BindDataContext<App>(a => a.Settings.YSensitivity);
-            rotation.ValueBinding.BindDataContext<App>(a => a.Settings.RelativeRotation);
+            xSens.ValueBinding.Bind(App.Current.ProfileBinding.Child(p => p.XSensitivity));
+            ySens.ValueBinding.Bind(App.Current.ProfileBinding.Child(p => p.YSensitivity));
+            rotation.ValueBinding.Bind(App.Current.ProfileBinding.Child(p => p.RelativeRotation));
             resetTime.ValueBinding.Convert<TimeSpan>(
                 c => TimeSpan.FromMilliseconds(c),
                 v => (float)v.TotalMilliseconds
-            ).BindDataContext<App>(a => a.Settings.ResetTime);
+            ).Bind(App.Current.ProfileBinding.Child(p => p.ResetTime));
         }
 
         private MaskedTextBox<float> xSens, ySens, rotation, resetTime;

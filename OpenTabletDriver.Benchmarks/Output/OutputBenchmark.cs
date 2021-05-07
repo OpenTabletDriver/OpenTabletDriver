@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Benchmarks.Output
         public AbsoluteOutputMode OutputMode { get; set; } = new NoopAbsoluteMode();
         public IDeviceReport Report { get; set; }
 
-        public void SetSettings(Settings settings)
+        public void SetProfile(Profile profile)
         {
             var digitizer = 
 
@@ -41,25 +41,25 @@ namespace OpenTabletDriver.Benchmarks.Output
 
             OutputMode.Output = new Area
             {
-                Width = settings.DisplayWidth,
-                Height = settings.DisplayHeight,
+                Width = profile.DisplayWidth,
+                Height = profile.DisplayHeight,
                 Position = new Vector2
                 {
-                    X = settings.DisplayX,
-                    Y = settings.DisplayY
+                    X = profile.DisplayX,
+                    Y = profile.DisplayY
                 }
             };
 
             OutputMode.Input = new Area
             {
-                Width = settings.TabletWidth,
-                Height = settings.TabletHeight,
+                Width = profile.TabletWidth,
+                Height = profile.TabletHeight,
                 Position = new Vector2
                 {
-                    X = settings.TabletX,
-                    Y = settings.TabletY
+                    X = profile.TabletX,
+                    Y = profile.TabletY
                 },
-                Rotation = settings.TabletRotation
+                Rotation = profile.TabletRotation
             };
 
             var data = new byte[8];
@@ -74,7 +74,7 @@ namespace OpenTabletDriver.Benchmarks.Output
         [GlobalSetup]
         public void Setup()
         {
-            var settings = new Settings()
+            var profile = new Profile()
             {
                 DisplayWidth = 1366,
                 DisplayHeight = 768,
@@ -84,7 +84,7 @@ namespace OpenTabletDriver.Benchmarks.Output
                 TabletHeight = 20
             };
 
-            SetSettings(settings);
+            SetProfile(profile);
         }
 
         [Benchmark]

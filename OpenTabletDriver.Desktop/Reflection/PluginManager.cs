@@ -7,6 +7,7 @@ using System.Runtime.Loader;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -100,6 +101,33 @@ namespace OpenTabletDriver.Desktop.Reflection
                 }
             }
             return null;
+        }
+
+        public T Tag<T>(ITabletHandler handler, T obj)
+        {
+            if (obj == null)
+                return default;
+
+            var type = obj.GetType();
+            var taggedProperties = from property in type.GetProperties()
+                where property.GetCustomAttribute<TabletHandlerTagAttribute>() is TabletHandlerTagAttribute
+                select property;
+
+            foreach (var property in taggedProperties)
+            {
+                property.SetValue(obj, handler);
+            }
+
+            var taggedFields = from field in type.GetFields()
+                where field.GetCustomAttribute<TabletHandlerTagAttribute>() is TabletHandlerTagAttribute
+                select field;
+
+            foreach (var field in taggedFields)
+            {
+                field.SetValue(obj, handler);
+            }
+
+            return obj;
         }
 
         public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()

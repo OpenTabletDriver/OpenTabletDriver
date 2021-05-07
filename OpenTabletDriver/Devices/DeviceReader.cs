@@ -9,8 +9,9 @@ namespace OpenTabletDriver.Devices
 {
     public class DeviceReader<T> : IDisposable where T : IDeviceReport
     {
-        public DeviceReader(HidDevice device, IReportParser<T> reportParser)
+        public DeviceReader(TabletHandlerID handle, HidDevice device, IReportParser<T> reportParser)
         {
+            Handle = handle;
             Device = device;
             Parser = reportParser;
             workerThread = new Thread(Main)
@@ -33,6 +34,11 @@ namespace OpenTabletDriver.Devices
 
         private readonly Thread workerThread;
         private bool _reading;
+
+        /// <summary>
+        /// The <see cref="TabletHandlerID"/> containing this reader
+        /// </summary>
+        public TabletHandlerID Handle { protected set; get; }
 
         /// <summary>
         /// The HID endpoint in which is reporting data in the <see cref="ReportStream"/>.
@@ -66,7 +72,7 @@ namespace OpenTabletDriver.Devices
         /// This will only be invoked when <see cref="RawClone"/> is set to true.
         /// This report is not meant in any way to be modified, as it is supposed to represent the original data.
         /// </remarks>
-        public event EventHandler<T> RawReport;
+        public event EventHandler<(TabletHandlerID, T)> RawReport;
 
         /// <summary>
         /// Whether or not the device is actively emitting reports and being parsed.
@@ -75,11 +81,19 @@ namespace OpenTabletDriver.Devices
         {
             protected set
             {
-                _reading = value;
-                ReadingChanged?.Invoke(this, Reading);
+                if (value != _reading)
+                {
+                    _reading = value;
+                    ReadingChanged?.Invoke(this, Reading);
+                }
             }
             get => _reading;
         }
+
+        /// <summary>
+        /// Contains the exception that caused the reading change if there is any
+        /// </summary>
+        public Exception ReadingChangeException;
 
         /// <summary>
         /// Invoked when <see cref="Reading"/> is changed.
@@ -97,27 +111,15 @@ namespace OpenTabletDriver.Devices
                     var data = ReportStream.Read();
                     if (Parser.Parse(data) is T report)
                         Report?.Invoke(this, report);
-                    
+
                     // We create a clone of the report to avoid data being modified on the tablet debugger.
                     if (RawClone && RawReport != null && Parser.Parse(data) is T debugReport)
-                        RawReport?.Invoke(this, debugReport);
+                        RawReport?.Invoke(this, (Handle, debugReport));
                 }
-            }
-            catch (ObjectDisposedException dex)
-            {
-                Log.Debug("Device", $"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
-            }
-            catch (IOException ioex) when (ioex.Message == "I/O disconnected." || ioex.Message == "Operation failed after some time.")
-            {
-                Log.Write("Device", "Device disconnected.");
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                Log.Write("Device", "Not enough report data returned by the device. Was it disconnected?");
             }
             catch (Exception ex)
             {
-                Log.Exception(ex);
+                ReadingChangeException = ex;
             }
             finally
             {
@@ -127,7 +129,9 @@ namespace OpenTabletDriver.Devices
 
         public void Dispose()
         {
-            Reading = false;
+            ReadingChanged = null;
+            if (Reading)
+                Reading = false;
             ReportStream?.Dispose();
         }
     }

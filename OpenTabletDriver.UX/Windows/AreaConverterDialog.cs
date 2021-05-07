@@ -12,7 +12,8 @@ namespace OpenTabletDriver.UX.Windows
         {
             base.Title = "Area Converter";
 
-            App.Driver.Instance.TabletChanged += (sender, newState) => Application.Instance.AsyncInvoke(() => SelectConverterForTablet(newState));
+            App.Current.ProfileCache.HandlerInFocusChanged += OnHandlerInFocusChanged;
+
             converterList.SelectedIndexChanged += (sender, e) => OnSelectionChanged();
         }
 
@@ -21,6 +22,12 @@ namespace OpenTabletDriver.UX.Windows
         private FloatNumberBox top, left, bottom, right;
         private Button applyButton;
         private TabletState tabletState;
+
+        private async void OnHandlerInFocusChanged(object _, EventArgs args)
+        {
+            var id = App.Current.ProfileCache.HandlerInFocus;
+            SelectConverterForTablet(await App.Driver.Instance.GetTablet(id));
+        }
 
         protected void OnSelectionChanged()
         {
@@ -142,7 +149,7 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var tablet = await App.Driver.Instance.GetTablet();
+            var tablet = await App.Driver.Instance.GetTablet(App.Current.ProfileCache.HandlerInFocus);
             SelectConverterForTablet(tablet);
         }
 
@@ -158,7 +165,7 @@ namespace OpenTabletDriver.UX.Windows
             var converter = this.converterList.ConstructSelectedType();
             var convertedArea = converter.Convert(tabletState, top.Value, left.Value, bottom.Value, right.Value);
 
-            App.Current.Settings.SetTabletArea(convertedArea);
+            App.Current.ProfileCache.ProfileInFocus.SetTabletArea(convertedArea);
             this.Close();
         }
 

@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
@@ -47,22 +46,6 @@ namespace OpenTabletDriver.UX.Controls.Output
                     }
                 }
             };
-
-            displayAreaEditor.AreaWidthBinding.BindDataContext<App>(c => c.Settings.DisplayWidth);
-            displayAreaEditor.AreaHeightBinding.BindDataContext<App>(c => c.Settings.DisplayHeight);
-            displayAreaEditor.AreaXOffsetBinding.BindDataContext<App>(c => c.Settings.DisplayX);
-            displayAreaEditor.AreaYOffsetBinding.BindDataContext<App>(c => c.Settings.DisplayY);
-            displayAreaEditor.LockToUsableAreaBinding.BindDataContext<App>(c => c.Settings.LockUsableAreaDisplay);
-
-            tabletAreaEditor.AreaWidthBinding.BindDataContext<App>(c => c.Settings.TabletWidth);
-            tabletAreaEditor.AreaHeightBinding.BindDataContext<App>(c => c.Settings.TabletHeight);
-            tabletAreaEditor.AreaXOffsetBinding.BindDataContext<App>(c => c.Settings.TabletX);
-            tabletAreaEditor.AreaYOffsetBinding.BindDataContext<App>(c => c.Settings.TabletY);
-            tabletAreaEditor.AreaRotationBinding.BindDataContext<App>(c => c.Settings.TabletRotation);
-            tabletAreaEditor.LockToUsableAreaBinding.BindDataContext<App>(c => c.Settings.LockUsableAreaTablet);
-            tabletAreaEditor.LockAspectRatioBinding.BindDataContext<App>(c => c.Settings.LockAspectRatio);
-            tabletAreaEditor.AreaClippingBinding.BindDataContext<App>(c => c.Settings.EnableClipping);
-            tabletAreaEditor.IgnoreOutsideAreaBinding.BindDataContext<App>(c => c.Settings.EnableAreaLimiting);
         }
 
         internal DisplayAreaEditor displayAreaEditor;
@@ -74,6 +57,12 @@ namespace OpenTabletDriver.UX.Controls.Output
                 : base()
             {
                 this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
+
+                AreaWidthBinding.Bind(App.Current.ProfileBinding.Child(p => p.DisplayWidth));
+                AreaHeightBinding.Bind(App.Current.ProfileBinding.Child(p => p.DisplayHeight));
+                AreaXOffsetBinding.Bind(App.Current.ProfileBinding.Child(p => p.DisplayX));
+                AreaYOffsetBinding.Bind(App.Current.ProfileBinding.Child(p => p.DisplayY));
+                LockToUsableAreaBinding.Bind(App.Current.ProfileBinding.Child(p => p.LockUsableAreaDisplay));
             }
 
             protected override void CreateMenu()
@@ -115,6 +104,16 @@ namespace OpenTabletDriver.UX.Controls.Output
                 : base()
             {
                 this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
+
+                AreaWidthBinding.Bind(App.Current.ProfileBinding.Child(p => p.TabletWidth));
+                AreaHeightBinding.Bind(App.Current.ProfileBinding.Child(p => p.TabletHeight));
+                AreaXOffsetBinding.Bind(App.Current.ProfileBinding.Child(p => p.TabletX));
+                AreaYOffsetBinding.Bind(App.Current.ProfileBinding.Child(p => p.TabletY));
+                AreaRotationBinding.Bind(App.Current.ProfileBinding.Child(p => p.TabletRotation));
+                LockToUsableAreaBinding.Bind(App.Current.ProfileBinding.Child(p => p.LockUsableAreaTablet));
+                LockAspectRatioBinding.Bind(App.Current.ProfileBinding.Child(p => p.LockAspectRatio));
+                AreaClippingBinding.Bind(App.Current.ProfileBinding.Child(p => p.EnableClipping));
+                IgnoreOutsideAreaBinding.Bind(App.Current.ProfileBinding.Child(p => p.EnableAreaLimiting));
             }
 
             private BooleanCommand lockArCmd, areaClippingCmd, ignoreOutsideAreaCmd;

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
@@ -13,11 +14,11 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Output
 {
-    public class OutputModeEditor : Panel
+    public partial class OutputModeEditor : Panel
     {
         public OutputModeEditor()
         {
-            this.Content = new StackLayout
+            var outputPanel = new StackLayout
             {
                 Padding = 5,
                 Spacing = 5,
@@ -36,14 +37,59 @@ namespace OpenTabletDriver.UX.Controls.Output
             };
 
             outputModeSelector.SelectedTypeBinding.Bind(
-                StoreBinding.Convert<TypeInfo>(
+                StoreBinding.Convert(
                     c => c?.GetPluginReference().GetTypeReference(),
                     t => PluginSettingStore.FromPath(t.FullName)
                 )
             );
+
+            tabletDropDown.SelectedIDChanged += (_, _) => OnSelectedIDChanged(tabletDropDown.SelectedID);
+
+            StoreBinding.Bind(App.Current.ProfileBinding.Child(p => p.OutputMode));
+
+            this.Content = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Padding = 5,
+                Spacing = 5,
+                Items =
+                {
+                    tabletDropDown,
+                    new StackLayoutItem(outputPanel, HorizontalAlignment.Stretch, true)
+                }
+            };
+
+            SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
         }
 
+        private Control noModeEditor = new StackLayout
+        {
+            Items =
+            {
+                new StackLayoutItem(null, true),
+                new StackLayoutItem
+                {
+                    Control = new Bitmap(App.Logo.WithSize(256, 256)),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                },
+                new StackLayoutItem
+                {
+                    Control = "No tablet detected...",
+                    HorizontalAlignment = HorizontalAlignment.Center
+                },
+                new StackLayoutItem(null, true)
+            }
+        };
+
+        private Panel editorContainer = new Panel();
+        private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
+        private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
+        private TabletDropDown tabletDropDown = new TabletDropDown { Width = 300 };
+        private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
         private PluginSettingStore store;
+
+        public event EventHandler<EventArgs> StoreChanged;
+
         public PluginSettingStore Store
         {
             set
@@ -52,14 +98,6 @@ namespace OpenTabletDriver.UX.Controls.Output
                 this.OnStoreChanged();
             }
             get => this.store;
-        }
-
-        public event EventHandler<EventArgs> StoreChanged;
-
-        protected virtual void OnStoreChanged()
-        {
-            StoreChanged?.Invoke(this, new EventArgs());
-            UpdateOutputMode(this.Store);
         }
 
         public BindableBinding<OutputModeEditor, PluginSettingStore> StoreBinding
@@ -76,11 +114,6 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
         }
 
-        private Panel editorContainer = new Panel();
-        private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
-        private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
-        private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
-
         public void SetTabletSize(TabletState tablet)
         {
             var tabletAreaEditor = absoluteModeEditor.tabletAreaEditor;
@@ -91,13 +124,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                     new RectangleF(0, 0, digitizer.Width, digitizer.Height)
                 };
 
-                var settings = App.Current.Settings;
-                if (settings != null && settings.TabletWidth == 0 && settings.TabletHeight == 0)
+                var profile = App.Current.ProfileCache.ProfileInFocus;
+                if (profile != null && profile.TabletWidth == 0 && profile.TabletHeight == 0)
                 {
-                    settings.TabletWidth = digitizer.Width;
-                    settings.TabletHeight = digitizer.Height;
-                    settings.TabletX = digitizer.Width / 2;
-                    settings.TabletY = digitizer.Height / 2;
+                    profile.TabletWidth = digitizer.Width;
+                    profile.TabletHeight = digitizer.Height;
+                    profile.TabletX = digitizer.Width / 2;
+                    profile.TabletY = digitizer.Height / 2;
                 }
             }
             else
@@ -112,6 +145,20 @@ namespace OpenTabletDriver.UX.Controls.Output
                 where !(disp is IVirtualScreen)
                 select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
             absoluteModeEditor.displayAreaEditor.AreaBounds = bgs;
+        }
+
+        private void OnStoreChanged()
+        {
+            StoreChanged?.Invoke(this, EventArgs.Empty);
+            UpdateOutputMode(this.Store);
+        }
+
+        private void OnSelectedIDChanged(TabletHandlerID selected)
+        {
+            App.Current.ProfileCache.HandlerInFocus = selected;
+            var show = tabletDropDown.SelectedID != TabletHandlerID.Invalid;
+            tabletDropDown.Visible = show;
+            outputModeSelector.Visible = show;
         }
 
         private void UpdateOutputMode(PluginSettingStore store)
@@ -129,6 +176,8 @@ namespace OpenTabletDriver.UX.Controls.Output
                 editorContainer.Content = absoluteModeEditor;
             else if (showRelative)
                 editorContainer.Content = relativeModeEditor;
+            else
+                editorContainer.Content = noModeEditor;
         }
     }
 }

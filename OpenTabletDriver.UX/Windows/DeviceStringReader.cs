@@ -170,7 +170,7 @@ namespace OpenTabletDriver.UX.Windows
                     if (int.TryParse(strVid, out var vid) && int.TryParse(strPid, out var pid))
                         return await App.Driver.Instance.RequestDeviceString(vid, pid, index);
                     else
-                        return await App.Driver.Instance.RequestDeviceString(index);
+                        return await App.Driver.Instance.RequestDeviceString(App.Current.ProfileCache.HandlerInFocus, index);
                 }
                 catch
                 {

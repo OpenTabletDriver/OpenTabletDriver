@@ -13,11 +13,13 @@ namespace OpenTabletDriver.Devices
             Current = newList;
         }
 
+        private DeviceEqualityComparer comparer = new DeviceEqualityComparer();
+
         public IEnumerable<HidDevice> Previous { get; }
         public IEnumerable<HidDevice> Current { get; }
 
-        public IEnumerable<HidDevice> Additions => Current.Except(Previous);
-        public IEnumerable<HidDevice> Removals => Previous.Except(Current);
+        public IEnumerable<HidDevice> Additions => Current.Except(Previous, comparer);
+        public IEnumerable<HidDevice> Removals => Previous.Except(Current, comparer);
         public bool Any() => Additions.Any() | Removals.Any();
     }
 }

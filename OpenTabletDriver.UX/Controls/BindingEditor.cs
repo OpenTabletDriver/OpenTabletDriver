@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -123,6 +121,13 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 }
             };
+
+            TipButtonStoreBinding.Bind(App.Current.ProfileBinding.Child(p => p.TipButton));
+            EraserButtonStoreBinding.Bind(App.Current.ProfileBinding.Child(p => p.EraserButton));
+            TipPressureValueBinding.Bind(App.Current.ProfileBinding.Child(p => p.TipActivationPressure));
+            EraserPressureValueBinding.Bind(App.Current.ProfileBinding.Child(p => p.EraserActivationPressure));
+            PenButtonItemSourceBinding.Bind(App.Current.ProfileBinding.Child(p => p.PenButtons).Cast<IList<PluginSettingStore>>());
+            AuxiliaryButtonItemSourceBinding.Bind(App.Current.ProfileBinding.Child(p => p.AuxButtons).Cast<IList<PluginSettingStore>>());
         }
 
         private BindingDisplay tipButton, eraserButton;
