@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using HidSharp;
+using Microsoft.Win32;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
@@ -54,6 +55,19 @@ namespace OpenTabletDriver.Daemon
                 if (await GetTablet() == null && args.Additions.Count() > 0)
                     await DetectTablets();
             };
+
+            if (OperatingSystem.IsWindows() == true)
+            {
+#pragma warning disable CA1416 // Validate platform compatibility
+                SystemEvents.PowerModeChanged += async (object sender, PowerModeChangedEventArgs e) =>
+                {
+                    if (e.Mode == PowerModes.Resume)
+                    {
+                        await DetectTablets();
+                    }
+                };
+#pragma warning restore CA1416 // Validate platform compatibility
+            }
 
             LoadUserSettings();
         }
