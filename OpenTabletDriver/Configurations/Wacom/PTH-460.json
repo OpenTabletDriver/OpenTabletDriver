@@ -1,11 +1,13 @@
 {
   "Name": "Wacom PTH-460",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 159.6,
       "Height": 99.75,
       "MaxX": 31920.0,
-      "MaxY": 19950.0,
+      "MaxY": 19950.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 16,
@@ -13,12 +15,25 @@
         "End": 19,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 914,
       "InputReportLength": 192,
       "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
-      "FeatureInitReport": "AgI=",
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": [
@@ -26,17 +41,6 @@
       ]
     },
     {
-      "Width": 159.6,
-      "Height": 99.75,
-      "MaxX": 31920.0,
-      "MaxY": 19950.0,
-      "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": 19,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 914,
       "InputReportLength": 193,

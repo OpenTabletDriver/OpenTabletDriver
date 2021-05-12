@@ -7,13 +7,12 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
-    public static class App
+    public class App : ViewModel
     {
         public static void Run(string platform, string[] args)
         {
@@ -53,23 +52,19 @@ namespace OpenTabletDriver.UX
             app.Run(mainForm);
         }
 
-        public const string PluginRepositoryUrl = "https://github.com/OpenTabletDriver/Plugin-Repository";
         public const string FaqUrl = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki#frequently-asked-questions";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo => _logo.Value;
 
-        public static event Action<Settings> SettingsChanged;
-        private static Settings settings;
-        public static Settings Settings
+        public static readonly App Current = new App();
+
+        private Settings settings;
+        public Settings Settings
         {
-            set
-            {
-                settings = value;
-                SettingsChanged?.Invoke(Settings);
-            }
-            get => settings;
+            set => this.RaiseAndSetIfChanged(ref this.settings, value);
+            get => this.settings;
         }
 
         public static AboutDialog AboutDialog => new AboutDialog

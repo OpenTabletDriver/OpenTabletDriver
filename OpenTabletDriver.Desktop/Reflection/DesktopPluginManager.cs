@@ -43,11 +43,14 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             try
             {
-                foreach (var file in PluginDirectory.GetFiles())
+                if (PluginDirectory.Exists)
                 {
-                    var newPath = Path.Join(PluginDirectory.FullName, file.Name.Replace(file.Extension, string.Empty), file.Name);
-                    Directory.CreateDirectory(Directory.GetParent(newPath).FullName);
-                    file.MoveTo(newPath);
+                    foreach (var file in PluginDirectory.GetFiles())
+                    {
+                        var newPath = Path.Join(PluginDirectory.FullName, file.Name.Replace(file.Extension, string.Empty), file.Name);
+                        Directory.CreateDirectory(Directory.GetParent(newPath).FullName);
+                        file.MoveTo(newPath);
+                    }
                 }
 
                 if (TrashDirectory.Exists)
@@ -65,6 +68,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
+
+            AppInfo.PluginManager.ResetServices();
         }
 
         protected void LoadPlugin(DirectoryInfo directory)
@@ -218,8 +223,9 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             try
             {
-                var types = from type in asm.GetTypes()
-                    select type.GetTypeInfo();
+                var types = pluginTypes.Where(t => t.Assembly == asm)
+                    .Select(t => t.GetTypeInfo());
+
                 pluginTypes = new ConcurrentBag<TypeInfo>(pluginTypes.Except(types));
                 return true;
             }
@@ -228,6 +234,19 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Log.Exception(ex);
                 return false;
             }
+        }
+
+        public override void ResetServices()
+        {
+            base.ResetServices();
+
+            // These services will always be provided on the desktop
+            AddService<IServiceProvider>(() => this);
+            AddService(() => DesktopInterop.Timer);
+            AddService(() => DesktopInterop.AbsolutePointer);
+            AddService(() => DesktopInterop.RelativePointer);
+            AddService(() => DesktopInterop.VirtualScreen);
+            AddService(() => DesktopInterop.VirtualKeyboard);
         }
     }
 }

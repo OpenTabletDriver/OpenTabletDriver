@@ -119,9 +119,8 @@ namespace OpenTabletDriver.UX.Windows
             AppInfo.PluginManager.Load();
 
             // Refresh settings
-            App.Settings = await App.Driver.Instance.GetSettings();
+            App.Current.Settings = await App.Driver.Instance.GetSettings();
 
-            (Application.Instance.MainForm as MainForm).Refresh();
             pluginList.Refresh();
         }
 
@@ -138,12 +137,14 @@ namespace OpenTabletDriver.UX.Windows
             {
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
+                    metadataViewer.OperationInProgress = false;
                     await Refresh();
                     pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
                 }
             }
             catch (RemoteInvocationException ex)
             {
+                metadataViewer.OperationInProgress = false;
                 var data = ex.DeserializedErrorData as CommonErrorData;
                 if (data.TypeName == typeof(CryptographicException).FullName)
                 {
@@ -184,11 +185,13 @@ namespace OpenTabletDriver.UX.Windows
             context.Directory.Refresh();
             if (context.Directory.Exists && !await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
             {
+                metadataViewer.OperationInProgress = false;
                 MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
                 return;
             }
 
             AppInfo.PluginManager.UnloadPlugin(context);
+            metadataViewer.OperationInProgress = false;
             await Refresh();
         }
 
@@ -250,10 +253,13 @@ namespace OpenTabletDriver.UX.Windows
             public event Action<PluginMetadata> RequestPluginUninstall;
             public event Action<PluginMetadata> RequestPluginInstall;
 
+            public bool OperationInProgress { get; set; }
+
             protected WeakReference<PluginMetadata> MetadataReference { set; get; } = new WeakReference<PluginMetadata>(null);
 
             private EmptyMetadataControl emptyMetadataControl = new EmptyMetadataControl();
             private Version driverVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            private Button uninstallButton, installUpdateButton;
 
             public void Update(PluginMetadata metadata)
             {
@@ -294,19 +300,31 @@ namespace OpenTabletDriver.UX.Windows
                             new StackLayoutItem
                             {
                                 Expand = true,
-                                Control = new Button((sender, e) => RequestPluginUninstall?.Invoke(metadata))
+                                Control = uninstallButton = new Button((sender, e) =>
+                                {
+                                    installUpdateButton.Enabled = false;
+                                    uninstallButton.Enabled = false;
+                                    OperationInProgress = true;
+                                    RequestPluginUninstall?.Invoke(metadata);
+                                })
                                 {
                                     Text = "Uninstall",
-                                    Enabled = isInstalled
+                                    Enabled = isInstalled & !OperationInProgress
                                 }
                             },
                             new StackLayoutItem
                             {
                                 Expand = true,
-                                Control = new Button((sender, e) => RequestPluginInstall?.Invoke(canUpdate ? updatableFromRepository.First() : metadata))
+                                Control = installUpdateButton = new Button((sender, e) =>
+                                {
+                                    installUpdateButton.Enabled = false;
+                                    uninstallButton.Enabled = false;
+                                    OperationInProgress = true;
+                                    RequestPluginInstall?.Invoke(canUpdate ? updatableFromRepository.First() : metadata);
+                                })
                                 {
                                     Text = canUpdate ? "Update" : "Install",
-                                    Enabled = canUpdate || !isInstalled
+                                    Enabled = (canUpdate || !isInstalled) & !OperationInProgress
                                 },
                             }
                         }

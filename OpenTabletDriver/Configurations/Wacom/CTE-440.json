@@ -1,11 +1,13 @@
 {
   "Name": "Wacom CTE-440",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
       "MaxX": 10208.0,
-      "MaxY": 7424.0,
+      "MaxY": 7424.0
+    },
+    "Pen": {
       "MaxPressure": 511,
       "ActiveReportID": {
         "Start": 0,
@@ -13,6 +15,17 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 21,
       "InputReportLength": 9,
@@ -24,17 +37,6 @@
       "InitializationStrings": []
     },
     {
-      "Width": 127.6,
-      "Height": 92.8,
-      "MaxX": 10208.0,
-      "MaxY": 7424.0,
-      "MaxPressure": 511,
-      "ActiveReportID": {
-        "Start": 0,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 21,
       "InputReportLength": 10,

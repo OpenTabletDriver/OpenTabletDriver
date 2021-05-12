@@ -6,6 +6,11 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
 {
     public class DoubleNumberBox : MaskedTextBox<double>
     {
+        public DoubleNumberBox()
+        {
+            Provider = new DoubleTextProvider();
+        }
+
         private class DoubleTextProvider : NumberTextProvider<double>
         {
             public override double Value

@@ -1,11 +1,13 @@
 {
   "Name": "Huion WH1409 V2",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 350.0,
       "Height": 218.0,
       "MaxX": 70000.0,
-      "MaxY": 43600.0,
+      "MaxY": 43600.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 64,
@@ -13,6 +15,17 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,

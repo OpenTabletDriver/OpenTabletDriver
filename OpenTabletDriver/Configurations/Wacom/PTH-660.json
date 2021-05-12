@@ -1,11 +1,13 @@
 {
   "Name": "Wacom PTH-660",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 224.0,
       "Height": 148.0,
       "MaxX": 44800.0,
-      "MaxY": 29600.0,
+      "MaxY": 29600.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 16,
@@ -13,6 +15,17 @@
         "End": 19,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 855,
       "InputReportLength": 192,
@@ -24,17 +37,6 @@
       "InitializationStrings": []
     },
     {
-      "Width": 224.0,
-      "Height": 148.0,
-      "MaxX": 44800.0,
-      "MaxY": 29600.0,
-      "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 0,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 864,
       "InputReportLength": 361,

@@ -1,11 +1,13 @@
 {
   "Name": "XP-Pen Star G960",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 223.52,
       "Height": 139.7,
       "MaxX": 22352.0,
-      "MaxY": 13970.0,
+      "MaxY": 13970.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 0,
@@ -13,13 +15,26 @@
         "End": null,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 10429,
       "ProductID": 2336,
       "InputReportLength": 10,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAE",
+      "OutputInitReport": [
+        "ArAE"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

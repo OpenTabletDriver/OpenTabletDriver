@@ -125,14 +125,7 @@ namespace OpenTabletDriver.Daemon
                     Settings = SettingsMigrator.Migrate(Settings);
 
                 // Add services to inject on plugin construction
-                pluginManager.ResetServices();
-                pluginManager.AddService<IServiceProvider>(() => pluginManager);
                 pluginManager.AddService<IDriver>(() => this.Driver);
-                pluginManager.AddService(() => DesktopInterop.Timer);
-                pluginManager.AddService(() => DesktopInterop.AbsolutePointer);
-                pluginManager.AddService(() => DesktopInterop.RelativePointer);
-                pluginManager.AddService(() => DesktopInterop.VirtualScreen);
-                pluginManager.AddService(() => DesktopInterop.VirtualKeyboard);
             }
             else
             {
@@ -305,6 +298,10 @@ namespace OpenTabletDriver.Daemon
             BindingHandler.TipBinding = Settings.TipButton?.Construct<IBinding>();
             BindingHandler.TipActivationPressure = Settings.TipActivationPressure;
             Log.Write("Settings", $"Tip Binding: [{BindingHandler.TipBinding}]@{BindingHandler.TipActivationPressure}%");
+
+            BindingHandler.EraserBinding = Settings.EraserButton?.Construct<IBinding>();
+            BindingHandler.EraserActivationPressure = Settings.EraserActivationPressure;
+            Log.Write("Settings", $"Eraser Binding: [{BindingHandler.EraserBinding}]@{BindingHandler.EraserActivationPressure}%");
 
             if (Settings.PenButtons != null)
             {

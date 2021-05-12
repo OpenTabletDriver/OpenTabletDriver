@@ -10,6 +10,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Controls.Output;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
@@ -24,10 +25,16 @@ namespace OpenTabletDriver.UX
         public MainForm()
             : base()
         {
+            this.DataContext = App.Current;
+
             UpdateTitle(null);
             ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
             Content = ConstructPlaceholderControl();
-            Menu = ConstructMenu();
+
+            Driver.Connected += (_, _) =>
+            {
+                Application.Instance.AsyncInvoke(() => Menu = ConstructMenu());
+            };
 
             Driver.Disconnected += (_, _) =>
             {
@@ -50,13 +57,9 @@ namespace OpenTabletDriver.UX
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
-        public void Refresh()
-        {
-            bindingEditor = new BindingEditor();
-            filterEditor.UpdateStore(Settings?.Filters);
-            toolEditor.UpdateStore(Settings?.Tools);
-            outputModeEditor.Refresh();
-        }
+        private WindowSingleton<ConfigurationEditor> configEditorWindow = new WindowSingleton<ConfigurationEditor>();
+        private WindowSingleton<PluginManagerWindow> pluginManagerWindow = new WindowSingleton<PluginManagerWindow>();
+        private WindowSingleton<TabletDebugger> debuggerWindow = new WindowSingleton<TabletDebugger>();
 
         protected override void OnInitializePlatform(EventArgs e)
         {
@@ -192,19 +195,19 @@ namespace OpenTabletDriver.UX
                     {
                         Text = "Filters",
                         Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>(
-                            Settings?.Filters,
-                            "Filter"
-                        )
+                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>
+                        {
+                            FriendlyTypeName = "Filter"
+                        }
                     },
                     new TabPage
                     {
                         Text = "Tools",
                         Padding = 5,
-                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>(
-                            Settings?.Tools,
-                            "Tool"
-                        )
+                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>
+                        {
+                            FriendlyTypeName = "Tool"
+                        }
                     },
                     new TabPage
                     {
@@ -215,11 +218,15 @@ namespace OpenTabletDriver.UX
                 }
             };
 
-            SettingsChanged += (settings) =>
-            {
-                filterEditor.UpdateStore(Settings?.Filters);
-                toolEditor.UpdateStore(Settings?.Tools);
-            };
+            outputModeEditor.StoreBinding.BindDataContext<App>(a => a.Settings.OutputMode);
+            bindingEditor.TipButtonStoreBinding.BindDataContext<App>(a => a.Settings.TipButton);
+            bindingEditor.EraserButtonStoreBinding.BindDataContext<App>(a => a.Settings.EraserButton);
+            bindingEditor.TipPressureValueBinding.BindDataContext<App>(a => a.Settings.TipActivationPressure);
+            bindingEditor.EraserPressureValueBinding.BindDataContext<App>(a => a.Settings.EraserActivationPressure);
+            bindingEditor.PenButtonItemSourceBinding.BindDataContext<App>(a => a.Settings.PenButtons);
+            bindingEditor.AuxiliaryButtonItemSourceBinding.BindDataContext<App>(a => a.Settings.AuxButtons);
+            filterEditor.StoreCollectionBinding.BindDataContext<App>(a => a.Settings.Filters);
+            toolEditor.StoreCollectionBinding.BindDataContext<App>(a => a.Settings.Tools);
 
             var commandsPanel = new StackLayout
             {
@@ -229,7 +236,7 @@ namespace OpenTabletDriver.UX
                 Spacing = 5,
                 Items =
                 {
-                    new Button(async (s, e) => await SaveSettings(Settings))
+                    new Button(async (s, e) => await SaveSettings(App.Current.Settings))
                     {
                         Text = "Save"
                     },
@@ -261,7 +268,7 @@ namespace OpenTabletDriver.UX
             aboutCommand.Executed += (sender, e) => AboutDialog.ShowDialog(this);
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
-            resetSettings.Executed += async (sender, e) => await ResetSettings(false);
+            resetSettings.Executed += async (sender, e) => await ResetSettingsDialog();
 
             var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
             loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
@@ -270,7 +277,7 @@ namespace OpenTabletDriver.UX
             saveSettingsAs.Executed += async (sender, e) => await SaveSettingsDialog();
 
             var saveSettings = new Command { MenuText = "Save settings", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveSettings.Executed += async (sender, e) => await SaveSettings(Settings);
+            saveSettings.Executed += async (sender, e) => await SaveSettings(App.Current.Settings);
 
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
@@ -396,23 +403,26 @@ namespace OpenTabletDriver.UX
 
         public void UpdateTitle(TabletState tablet)
         {
-            this.Title = $"OpenTabletDriver v{App.Version} - {tablet?.TabletProperties?.Name ?? "No tablet detected"}";
+            this.Title = $"OpenTabletDriver v{App.Version} - {tablet?.Properties?.Name ?? "No tablet detected"}";
+        }
+
+        private async Task ResetSettings()
+        {
+            await Driver.Instance.ResetSettings();
+            App.Current.Settings = await Driver.Instance.GetSettings();
+        }
+
+        private async Task ResetSettingsDialog()
+        {
+            if (MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) == DialogResult.Ok)
+                await ResetSettings();
         }
 
         private async Task LoadSettings(AppInfo appInfo = null)
         {
             appInfo ??= await Driver.Instance.GetApplicationInfo();
             settingsFile = new FileInfo(appInfo.SettingsFile);
-            Settings = await Driver.Instance.GetSettings();
-        }
-
-        private async Task ResetSettings(bool force = true)
-        {
-            if (!force && MessageBox.Show("Reset settings to default?", "Reset to defaults", MessageBoxButtons.OKCancel, MessageBoxType.Question) != DialogResult.Ok)
-                return;
-
-            await Driver.Instance.ResetSettings();
-            Settings = await Driver.Instance.GetSettings();
+            App.Current.Settings = await Driver.Instance.GetSettings();
         }
 
         private async Task LoadSettingsDialog()
@@ -432,8 +442,8 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        Settings = Settings.Deserialize(file);
-                        await Driver.Instance.SetSettings(Settings);
+                        App.Current.Settings = Settings.Deserialize(file);
+                        await Driver.Instance.SetSettings(App.Current.Settings);
                     }
                     break;
             }
@@ -454,7 +464,7 @@ namespace OpenTabletDriver.UX
                 case DialogResult.Ok:
                 case DialogResult.Yes:
                     var file = new FileInfo(fileDialog.FileName);
-                    if (Settings is Settings settings)
+                    if (App.Current.Settings is Settings settings)
                     {
                         settings.Serialize(file);
                         await ApplySettings();
@@ -494,7 +504,7 @@ namespace OpenTabletDriver.UX
         {
             try
             {
-                if (Settings is Settings settings)
+                if (App.Current.Settings is Settings settings)
                     await Driver.Instance.SetSettings(settings);
             }
             catch (StreamJsonRpc.RemoteInvocationException riex)
@@ -520,14 +530,12 @@ namespace OpenTabletDriver.UX
 
         private void ShowConfigurationEditor()
         {
-            var configEditor = new ConfigurationEditor();
-            configEditor.Show();
+            configEditorWindow.Show();
         }
 
-        private void ShowPluginManager()
+        public void ShowPluginManager()
         {
-            var pluginManager = new PluginManagerWindow();
-            pluginManager.Show();
+            pluginManagerWindow.Show();
         }
 
         private void ShowDeviceStringReader()
@@ -538,8 +546,7 @@ namespace OpenTabletDriver.UX
 
         private void ShowTabletDebugger()
         {
-            var debugger = new TabletDebugger();
-            debugger.Show();
+            debuggerWindow.Show();
         }
 
         private async Task ExportDiagnostics()

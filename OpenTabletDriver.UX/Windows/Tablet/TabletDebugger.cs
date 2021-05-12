@@ -112,7 +112,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private void HandleTabletChanged(object sender, TabletState tablet)
         {
             tabletVisualizer.SetTablet(tablet);
-            this.Title = $"Tablet Debugger" + (tablet != null ? $" - {tablet.TabletProperties.Name}" : string.Empty);
+            this.Title = $"Tablet Debugger" + (tablet != null ? $" - {tablet.Properties.Name}" : string.Empty);
         }
 
         private class DebuggerGroup : Group
@@ -160,8 +160,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     {
                         var pxToMM = (float)graphics.DPI / 25.4f;
 
+                        var digitizer = tablet.Properties.Specifications.Digitizer;
                         var clientCenter = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;
-                        var tabletCenter = new PointF(tablet.Digitizer.Width, tablet.Digitizer.Height) / 2 * pxToMM;
+                        var tabletCenter = new PointF(digitizer.Width, digitizer.Height) / 2 * pxToMM;
 
                         graphics.TranslateTransform(clientCenter - tabletCenter);
 
@@ -173,7 +174,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             protected void DrawBackground(Graphics graphics, float scale)
             {
-                var bg = new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height) * scale;
+                var digitizer = tablet.Properties.Specifications.Digitizer;
+                var bg = new RectangleF(0, 0, digitizer.Width, digitizer.Height) * scale;
                 graphics.FillRectangle(SystemColors.WindowBackground, bg);
                 graphics.DrawRectangle(AccentColor, bg);
             }
@@ -182,10 +184,12 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 var report = data?.GetData(AppInfo.PluginManager);
 
-                if (report is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+                var digitizer = tablet.Properties.Specifications.Digitizer;
+                var pen = tablet.Properties.Specifications.Pen;
+                if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    var tabletMm = new SizeF(tablet.Digitizer.Width, tablet.Digitizer.Height);
-                    var tabletPx = new SizeF(tablet.Digitizer.MaxX, tablet.Digitizer.MaxY);
+                    var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
+                    var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);
                     var tabletScale = tabletMm / tabletPx * scale;
                     var position = new PointF(tabletReport.Position.X, tabletReport.Position.Y) * tabletScale;
 
