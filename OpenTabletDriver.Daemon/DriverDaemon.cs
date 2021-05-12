@@ -49,17 +49,6 @@ namespace OpenTabletDriver.Daemon
                     Driver.ProcessDevices(args.Additions, tabletConfigurations);
             };
 
-            var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
-            if (configDir.Exists)
-            {
-                tabletConfigurations = configDir.EnumerateFiles("*.json", SearchOption.AllDirectories)
-                    .Select(f => TryDeserializeTabletConfig(f));
-            }
-            else
-            {
-                Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", LogLevel.Error);
-            }
-
             InitializeAsync();
         }
 
@@ -74,7 +63,7 @@ namespace OpenTabletDriver.Daemon
         private Collection<ITool> Tools = new Collection<ITool>();
         private Settings Settings;
         private Dictionary<TabletHandlerID, Profile> Profiles = new Dictionary<TabletHandlerID, Profile>();
-        private IEnumerable<TabletConfiguration> tabletConfigurations;
+        private TabletConfiguration[] tabletConfigurations;
 
         private async void InitializeAsync()
         {
@@ -163,6 +152,17 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<TabletHandlerID>> DetectTablets()
         {
+            var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
+            if (configDir.Exists)
+            {
+                tabletConfigurations = configDir.EnumerateFiles("*.json", SearchOption.AllDirectories)
+                    .Select(f => TryDeserializeTabletConfig(f)).ToArray();
+            }
+            else
+            {
+                Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", LogLevel.Error);
+            }
+
             Driver.EnumerateTablets(tabletConfigurations);
             return Task.FromResult(Driver.GetActiveTabletHandlerIDs());
         }
