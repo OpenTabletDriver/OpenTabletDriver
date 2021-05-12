@@ -74,15 +74,14 @@ namespace OpenTabletDriver
             foreach (var deviceGroup in hidDevices.OrderBy(h => h.DevicePath).GroupBy(hid => (hid.VendorID, hid.ProductID)))
             {
                 var vidpid = $"{deviceGroup.Key.VendorID}:{deviceGroup.Key.ProductID}";
-                var tempname = $"'{SafeGetDeviceName(deviceGroup.First())}' {{{vidpid}}}";
 
-                Log.Debug("Detect", $"Processing device: {tempname}");
+                Log.Debug("Detect", $"Processing device/s: {vidpid}");
 
                 // Skip if device VendorID is not supported
                 if (!availableVendorIDs.Contains(deviceGroup.Key.VendorID))
                     continue;
 
-                Log.Write("Detect", $"Found compatible device: {tempname}");
+                Log.Write("Detect", $"Found compatible device: {vidpid}");
 
                 // Retrieve matching configuration and identifiers for the device
                 var compatibleConfigs = groupedConfigs[deviceGroup.Key.VendorID];
