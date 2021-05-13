@@ -77,7 +77,7 @@ namespace OpenTabletDriver.UX.Controls
             private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
             {
                 var profiles = (this.DataContext as App).Settings.Profiles;
-                this.DataStore = profiles;
+                this.DataStore = profiles.Where(p => tablets.Any(t => t.Properties.Name == p.Tablet));
 
                 if (tablets.Any())
                 {

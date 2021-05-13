@@ -125,7 +125,6 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-
             tipButton.StoreBinding.Bind(SettingsBinding.Child(c => c.TipButton));
             eraserButton.StoreBinding.Bind(SettingsBinding.Child(c => c.EraserButton));
             tipPressure.ValueBinding.Bind(SettingsBinding.Child(c => c.TipActivationPressure));

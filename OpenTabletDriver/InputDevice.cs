@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using HidSharp;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
@@ -50,7 +48,6 @@ namespace OpenTabletDriver
         {
             if (!base.Initialize())
                 return false;
-
 
             Log.Debug("Device", $"Initializing device '{Endpoint.FriendlyName}' {Endpoint.DevicePath}");
             Log.Debug("Device", $"Using report parser type '{Identifier.ReportParser}'");

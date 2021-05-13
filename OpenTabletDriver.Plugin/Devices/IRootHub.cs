@@ -7,8 +7,6 @@ namespace OpenTabletDriver.Plugin.Devices
     {
         event EventHandler<DevicesChangedEventArgs> DevicesChanged;
 
-        IEnumerable<IDeviceEndpoint> GetDevices();
-
-        
+        IEnumerable<IDeviceEndpoint> GetDevices();        
     }
 }

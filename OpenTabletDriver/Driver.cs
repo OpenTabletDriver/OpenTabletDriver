@@ -14,11 +14,6 @@ namespace OpenTabletDriver
 {
     public abstract class Driver : IDriver, IDisposable
     {
-        public Driver()
-        {
-            
-        }
-
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
         public event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
 

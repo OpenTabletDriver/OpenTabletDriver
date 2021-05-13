@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         public float Width
         {
             set => this.RaiseAndSetIfChanged(ref this.width, value);
-            get => this.width ;
+            get => this.width;
         }
 
         [JsonProperty("Height")]

@@ -19,6 +19,7 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Daemon
@@ -269,11 +270,17 @@ namespace OpenTabletDriver.Daemon
             string group = dev.Properties.Name;
             var bindingHandler = new BindingHandler(outputMode);
 
-            bindingHandler.TipBinding = settings.TipButton?.Construct<IBinding>();
+            var bindingServiceProvider = new ServiceManager();
+            if (outputMode is IVirtualMouse virtualMouse)
+                bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
+
+            var tipbinding = bindingHandler.TipBinding = settings.TipButton?.Construct<IBinding>();
+            bindingServiceProvider.Inject(tipbinding);
             bindingHandler.TipActivationPressure = settings.TipActivationPressure;
             Log.Write(group, $"Tip Binding: [{bindingHandler.TipBinding}]@{bindingHandler.TipActivationPressure}%");
 
-            bindingHandler.EraserBinding = settings.EraserButton?.Construct<IBinding>();
+            var eraserBinding = bindingHandler.EraserBinding = settings.EraserButton?.Construct<IBinding>();
+            bindingServiceProvider.Inject(eraserBinding);
             bindingHandler.EraserActivationPressure = settings.EraserActivationPressure;
             Log.Write(group, $"Eraser Binding: [{bindingHandler.EraserBinding}]@{bindingHandler.EraserActivationPressure}%");
 
@@ -283,7 +290,10 @@ namespace OpenTabletDriver.Daemon
                 {
                     var bind = settings.PenButtons[index]?.Construct<IBinding>();
                     if (!bindingHandler.PenButtonBindings.TryAdd(index, bind))
+                    {
                         bindingHandler.PenButtonBindings[index] = bind;
+                        bindingServiceProvider.Inject(bind);
+                    }
                 }
 
                 Log.Write(group, $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
@@ -295,7 +305,10 @@ namespace OpenTabletDriver.Daemon
                 {
                     var bind = settings.AuxButtons[index]?.Construct<IBinding>();
                     if (!bindingHandler.AuxButtonBindings.TryAdd(index, bind))
+                    {
                         bindingHandler.AuxButtonBindings[index] = bind;
+                        bindingServiceProvider.Inject(bind);
+                    }
                 }
 
                 Log.Write(group, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));

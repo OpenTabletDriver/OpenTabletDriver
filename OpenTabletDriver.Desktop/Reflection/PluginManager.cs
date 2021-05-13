@@ -55,31 +55,9 @@ namespace OpenTabletDriver.Desktop.Reflection
                         if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
                         {
                             T obj = (T)constructor.Invoke(args) ?? null;
-                            
+
                             if (obj != null)
-                            {
-                                var resolvedProperties = from property in type.GetProperties()
-                                    where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                                    select property;
-
-                                foreach (var property in resolvedProperties)
-                                {
-                                    var service = GetService(property.PropertyType);
-                                    if (service != null)
-                                        property.SetValue(obj, service);
-                                }
-
-                                var resolvedFields = from field in type.GetFields()
-                                    where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                                    select field;
-
-                                foreach (var field in resolvedFields)
-                                {
-                                    var service = GetService(field.FieldType);
-                                    if (service != null)
-                                        field.SetValue(obj, service);
-                                }
-                            }
+                                Inject(obj, type);
                             return obj;
                         }
                         else

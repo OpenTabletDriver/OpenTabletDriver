@@ -128,7 +128,6 @@ namespace OpenTabletDriver.UX.Controls.Output
             bool showRelative = false;
             if (store != null)
             {
-                Plugin.Log.Debug(nameof(OutputModeEditor), store.Path);
                 var outputMode = store.GetPluginReference().GetTypeReference<IOutputMode>();
                 showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
