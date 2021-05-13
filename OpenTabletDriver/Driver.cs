@@ -81,43 +81,34 @@ namespace OpenTabletDriver
                 if (!availableVendorIDs.Contains(deviceGroup.Key.VendorID))
                     continue;
 
-                Log.Write("Detect", $"Found compatible device: {vidpid}");
+                Log.Write("Detect", $"Found device: {vidpid}");
 
-                // Retrieve matching configuration and identifiers for the device
                 var compatibleConfigs = groupedConfigs[deviceGroup.Key.VendorID];
-
-                PartialTabletMatch[] partialTabletMatch;
+                TabletMatch[] tabletMatch;
 
                 try
                 {
-                    partialTabletMatch = GetMatchingConfiguration(deviceGroup, compatibleConfigs).ToArray();
+                    tabletMatch = GetMatchingConfiguration(deviceGroup, compatibleConfigs).ToArray();
                 }
                 catch (TabletEnumerationException e)
                 {
-                    // GetMatchingConfiguration() encountered known exceptions, stop enumeration
                     Log.Exception(e);
                     Log.Write("Detect", "Tablet enumeration stopped due to detection issues", LogLevel.Error);
                     break;
                 }
 
-                if (partialTabletMatch == null || !partialTabletMatch.Any())
+                if (tabletMatch == null || !tabletMatch.Any())
                 {
-                    Log.Write("Detect", $"No matching configuration found for device: {tempname}", LogLevel.Warning);
-                    LogPossibleWinUSBInterference(deviceGroup.Key.VendorID);
+                    Log.Write("Detect", $"No matching configuration found for device: {vidpid}", LogLevel.Warning);
                     continue;
                 }
 
-                var tabletDigitizers = partialTabletMatch
-                    .Select(p => new TabletMatch<DeviceIdentifier>(p.TabletConfiguration, p.Device, p.DigitizerIdentifiers))
-                    .Where(m => m.Identifiers.Length > 0).ToArray();
-
-                var tabletAuxilary = partialTabletMatch
-                    .Select(p => new TabletMatch<DeviceIdentifier>(p.TabletConfiguration, p.Device, p.AuxilaryIdentifiers))
-                    .Where(m => m.Identifiers.Length > 0).ToArray();
+                var tabletDigitizers = tabletMatch.Where(t => t.IsDigitizer).ToArray();
+                var tabletAuxilary = tabletMatch.Where(t => !t.IsDigitizer).ToArray();
 
                 if (!tabletDigitizers.Any())
                 {
-                    Log.Write("Detect", $"Failed to find digitizer for device: {tempname}", LogLevel.Warning);
+                    Log.Write("Detect", $"Failed to find digitizer for device: {vidpid}", LogLevel.Warning);
                     LogPossibleWinUSBInterference(deviceGroup.Key.VendorID);
                     continue;
                 }
@@ -131,7 +122,7 @@ namespace OpenTabletDriver
                 {
                     Log.Write("Detect", $"Unbalanced amount of digitizers ({tabletDigitizers.Length}) and auxilaries ({tabletAuxilary.Length}) detected, " +
                         "auxilary feature will be disabled", LogLevel.Warning);
-                    tabletAuxilary = Array.Empty<TabletMatch<DeviceIdentifier>>();
+                    tabletAuxilary = Array.Empty<TabletMatch>();
                 }
 
                 if (tabletAuxilary.Any())
@@ -190,19 +181,19 @@ namespace OpenTabletDriver
             return GetTabletHandler(ID)?.TabletState;
         }
 
-        private TabletHandler CreateTabletHandler(TabletMatch<DeviceIdentifier> digitizer)
+        private TabletHandler CreateTabletHandler(TabletMatch digitizer, TabletMatch aux = null)
         {
-            if (digitizer.Identifiers.Length > 1)
-                Log.Write("Detect", "More than one matching digitizer identifier found, will ignore other identifiers", LogLevel.Warning);
-
-            var tabletDigitizerIdentifier = digitizer.Identifiers[0];
+            if (aux != null && !IsUniqueEndpoint(digitizer.Identifier, aux.Identifier))
+            {
+                Log.Write("Detect", "Conflicting auxiliary identifier detected and removed", LogLevel.Warning);
+                aux = null;
+            }
             var config = digitizer.Configuration;
 
             Log.Write("Detect", $"Using device identified as '{config.Name}'");
-
-            var tabletHandler = new TabletHandler(digitizer.Device, null)
+            var tabletHandler = new TabletHandler(digitizer.Device, aux?.Device)
             {
-                TabletState = new TabletState(config, tabletDigitizerIdentifier, null)
+                TabletState = new TabletState(config, digitizer.Identifier, aux?.Identifier)
             };
 
             tabletHandler.Disconnected += (sender, id) =>
@@ -212,56 +203,41 @@ namespace OpenTabletDriver
             };
 
             tabletHandler.Initialize();
-
             return tabletHandler;
         }
 
-        private TabletHandler CreateTabletHandler(TabletMatch<DeviceIdentifier> digitizer, TabletMatch<DeviceIdentifier> auxilary)
-        {
-            var uniqueAux = GetMatchingUniqueAuxilaryIdentifiers(digitizer.Identifiers, auxilary.Identifiers);
-            if (digitizer.Identifiers.Length > 1)
-                Log.Write("Detect", "More than one matching digitizer identifier found, will ignore other identifiers", LogLevel.Warning);
-            if (auxilary.Identifiers.Length > 1)
-                Log.Write("Detect", "More than one matching auxilary identifier found, will ignore other identifiers", LogLevel.Warning);
-
-            var tabletDigitizerIdentifier = digitizer.Identifiers[0];
-            var tabletAuxilaryIdentifier = uniqueAux.FirstOrDefault();
-            var config = digitizer.Configuration;
-
-            Log.Write("Detect", $"Using device identified as '{config.Name}'");
-
-            var tabletHandler = new TabletHandler(digitizer.Device, auxilary.Device)
-            {
-                TabletState = new TabletState(config, tabletDigitizerIdentifier, tabletAuxilaryIdentifier)
-            };
-
-            tabletHandler.Disconnected += (sender, id) =>
-            {
-                TabletHandlerDestroyed?.Invoke(this, id);
-                TabletHandlerStore.Remove(id);
-            };
-
-            tabletHandler.Initialize();
-
-            return tabletHandler;
-        }
-
-        private static IEnumerable<PartialTabletMatch> GetMatchingConfiguration(IEnumerable<HidDevice> devices, IGrouping<int, TabletConfiguration> configurations)
+        private static IEnumerable<TabletMatch> GetMatchingConfiguration(IEnumerable<HidDevice> devices, IGrouping<int, TabletConfiguration> configurations)
         {
             foreach (var device in devices.Where(d => SafeGetCanOpen(d)))
             {
                 Log.Write("Detect", $"Searching matching configuration for path: {device.DevicePath}");
                 foreach (var config in configurations)
                 {
-                    var digitizerIdentifiers = Enumerable.Empty<DeviceIdentifier>();
-                    var auxilaryIdentifiers = Enumerable.Empty<DeviceIdentifier>();
-
                     Log.Write("Detect", $"Trying to match configuration: {config.Name}");
 
+                    TabletMatch tabletMatch = null;
                     try
                     {
-                        digitizerIdentifiers = GetMatchingIdentifiers(device, config.DigitizerIdentifiers) ?? Enumerable.Empty<DeviceIdentifier>();
-                        auxilaryIdentifiers = GetMatchingIdentifiers(device, config.AuxilaryDeviceIdentifiers) ?? Enumerable.Empty<DeviceIdentifier>();
+                        if (GetMatchingIdentifier(device, config.DigitizerIdentifiers, out var digitizerIdentifier))
+                        {
+                            tabletMatch = new TabletMatch
+                            {
+                                Device = device,
+                                Configuration = config,
+                                Identifier = digitizerIdentifier,
+                                IsDigitizer = true
+                            };
+                        }
+                        else if (GetMatchingIdentifier(device, config.AuxilaryDeviceIdentifiers, out var auxilaryIdentifier))
+                        {
+                            tabletMatch = new TabletMatch
+                            {
+                                Device = device,
+                                Configuration = config,
+                                Identifier = auxilaryIdentifier,
+                                IsDigitizer = false
+                            };
+                        }
                     }
                     catch (IOException iex) when (iex.Message.Contains("Unable to open HID class device")
                         && SystemInterop.CurrentPlatform == PluginPlatform.Linux)
@@ -281,50 +257,43 @@ namespace OpenTabletDriver
                         Log.Exception(ex);
                     }
 
-                    if (digitizerIdentifiers.Any() || auxilaryIdentifiers.Any())
+                    if (tabletMatch != null)
                     {
-                        yield return new PartialTabletMatch
-                        {
-                            Device = device,
-                            TabletConfiguration = config,
-                            DigitizerIdentifiers = digitizerIdentifiers.ToArray(),
-                            AuxilaryIdentifiers = auxilaryIdentifiers.ToArray()
-                        };
-
-                        // Already found a matching config, break and continue to next device
+                        yield return tabletMatch;
                         break;
                     }
                 }
             }
         }
 
-        private static IEnumerable<T> GetMatchingIdentifiers<T>(HidDevice device, IEnumerable<T> deviceIdentifiers) where T : DeviceIdentifier
+        private static bool GetMatchingIdentifier(HidDevice device, IEnumerable<DeviceIdentifier> deviceIdentifiers, out DeviceIdentifier deviceIdentifier)
         {
-            return deviceIdentifiers.Where(identifier =>
-                identifier.ProductID == device.ProductID
-                && (identifier.InputReportLength == null || identifier.InputReportLength == device.GetMaxInputReportLength())
-                && (identifier.OutputReportLength == null || identifier.OutputReportLength == device.GetMaxOutputReportLength())
-                && DeviceMatchesAllStrings(device, identifier)
-            );
+            foreach (var identifier in deviceIdentifiers)
+            {
+                if (identifier.ProductID == device.ProductID
+                    && (identifier.InputReportLength == null || identifier.InputReportLength == device.GetMaxInputReportLength())
+                    && (identifier.OutputReportLength == null || identifier.OutputReportLength == device.GetMaxOutputReportLength())
+                    && DeviceMatchesAllStrings(device, identifier))
+                {
+                    deviceIdentifier = identifier;
+                    return true;
+                }
+            }
+
+            deviceIdentifier = null;
+            return false;
         }
 
-        private static IEnumerable<DeviceIdentifier> GetMatchingUniqueAuxilaryIdentifiers(IEnumerable<DeviceIdentifier> digitizerIdentifiers, IEnumerable<DeviceIdentifier> auxilaryIdentifiers)
+        private static bool IsUniqueEndpoint(DeviceIdentifier digitizerIdentifier, DeviceIdentifier identifier)
         {
-            return auxilaryIdentifiers.Where(identifier =>
-            {
-                // Remove auxiliary identifiers that match the same device specified by digitizer identifiers
-                var isConflicting = digitizerIdentifiers.Any(digitizerIdentifier =>
-                    identifier.ProductID == digitizerIdentifier.ProductID
-                    && (identifier.InputReportLength == null || digitizerIdentifier.InputReportLength == null
+            var isConflicting = identifier.VendorID == digitizerIdentifier.VendorID
+                && identifier.ProductID == digitizerIdentifier.ProductID
+                && (identifier.InputReportLength == null || digitizerIdentifier.InputReportLength == null
                     || identifier.InputReportLength == digitizerIdentifier.InputReportLength)
-                    && (identifier.OutputReportLength == null || digitizerIdentifier.OutputReportLength == null
-                    || identifier.OutputReportLength == digitizerIdentifier.OutputReportLength));
+                && (identifier.OutputReportLength == null || digitizerIdentifier.OutputReportLength == null
+                    || identifier.OutputReportLength == digitizerIdentifier.OutputReportLength);
 
-                if (isConflicting)
-                    Log.Write("Detect", "Conflicting auxiliary identifier detected and removed", LogLevel.Warning);
-
-                return !isConflicting;
-            });
+            return !isConflicting;
         }
 
         private static bool DeviceMatchesAllStrings(HidDevice device, DeviceIdentifier identifier)
