@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -71,9 +73,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             App.Driver.Instance.DeviceReport += HandleReport;
             await App.Driver.Instance.SetTabletDebug(true);
 
-            var tablet = await App.Driver.Instance.GetTablet();
-            HandleTabletChanged(this, tablet);
-            App.Driver.Instance.TabletChanged += HandleTabletChanged;
+            var tablets = await App.Driver.Instance.GetTablets();
+            HandleTabletChanged(this, tablets);
+            App.Driver.Instance.TabletsChanged += HandleTabletChanged;
         }
 
         protected override async void OnClosing(CancelEventArgs e)
@@ -82,7 +84,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             App.Driver.Instance.DeviceReport -= HandleReport;
             await App.Driver.Instance.SetTabletDebug(false);
-            App.Driver.Instance.TabletChanged -= HandleTabletChanged;
+            App.Driver.Instance.TabletsChanged -= HandleTabletChanged;
         }
 
         private TextGroup rawTabletBox, tabletBox, reportRateBox;
@@ -109,8 +111,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         }
 
-        private void HandleTabletChanged(object sender, TabletState tablet)
+        private void HandleTabletChanged(object sender, IEnumerable<TabletReference> tablets)
         {
+            // TODO: handle multiple tablets
+            var tablet = tablets.FirstOrDefault();
             tabletVisualizer.SetTablet(tablet);
             this.Title = $"Tablet Debugger" + (tablet != null ? $" - {tablet.Properties.Name}" : string.Empty);
         }
@@ -146,10 +150,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             private static readonly Color AccentColor = SystemColors.Highlight;
 
             private RpcData data;
-            private TabletState tablet;
+            private TabletReference tablet;
 
             public void SetData(RpcData data) => this.data = data;
-            public void SetTablet(TabletState tablet) => this.tablet = tablet;
+            public void SetTablet(TabletReference tablet) => this.tablet = tablet;
 
             protected override void OnNextFrame(PaintEventArgs e)
             {

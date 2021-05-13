@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
-    public class TypeDropDown<T> : DropDown where T : class
+    public class TypeDropDown<T> : DropDown<TypeInfo> where T : class
     {
         public TypeDropDown()
         {
@@ -18,47 +18,28 @@ namespace OpenTabletDriver.UX.Controls.Generic
             Refresh();
         }
 
-        public IEnumerable<TypeInfo> Types { protected set; get; }
+        public IList<TypeInfo> Types { protected set; get; }
 
         public void Refresh()
         {
-            this.DataStore = Types = from type in AppInfo.PluginManager.GetChildTypes<T>()
+            var newTypes = from type in AppInfo.PluginManager.GetChildTypes<T>()
                 orderby GetFriendlyName(type)
                 select type;
+            this.DataStore = Types = newTypes.ToList();
         }
 
-        public event EventHandler<EventArgs> SelectedTypeChanged;
-
-        public TypeInfo SelectedType
+        protected override void OnSelectedIndexChanged(EventArgs e)
         {
-            set
-            {
-                this.SelectedValue = value;
-                SelectedTypeChanged?.Invoke(this, new EventArgs());
-            }
-            get => (TypeInfo)this.SelectedValue;
-        }
-
-        public BindableBinding<TypeDropDown<T>, TypeInfo> SelectedTypeBinding
-        {
-            get
-            {
-                return new BindableBinding<TypeDropDown<T>, TypeInfo>(
-                    this,
-                    c => c.SelectedType,
-                    (c, v) => c.SelectedType = v,
-                    (c, h) => c.SelectedTypeChanged += h,
-                    (c, h) => c.SelectedTypeChanged -= h
-                );
-            }
+            base.OnSelectedIndexChanged(e);
+            SelectedItem = Types[SelectedIndex];
         }
 
         public T ConstructSelectedType(params object[] args)
         {
-            if (SelectedType != null)
+            if (SelectedItem != null)
             {
                 args ??= Array.Empty<object>();
-                var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedType);
+                var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedItem);
                 return pluginRef.Construct<T>();
             }
             return null;

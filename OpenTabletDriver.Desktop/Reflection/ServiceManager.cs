@@ -30,5 +30,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             return services.ContainsKey(serviceType) ? services[serviceType].Invoke() : null;
         }
+
+        public T GetService<T>() where T : class => GetService(typeof(T)) as T;
     }
 }

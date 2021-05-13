@@ -165,17 +165,8 @@ namespace OpenTabletDriver.UX.Windows
         {
             if (int.TryParse(strIndex, out var index) && index < 256 && index > 0)
             {
-                try
-                {
-                    if (int.TryParse(strVid, out var vid) && int.TryParse(strPid, out var pid))
-                        return await App.Driver.Instance.RequestDeviceString(vid, pid, index);
-                    else
-                        return await App.Driver.Instance.RequestDeviceString(index);
-                }
-                catch
-                {
-                    throw;
-                }
+                if (int.TryParse(strVid, out var vid) && int.TryParse(strPid, out var pid))
+                    return await App.Driver.Instance.RequestDeviceString(vid, pid, index);
             }
             throw new ArgumentException("Invalid index");
         }

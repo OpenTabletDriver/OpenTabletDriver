@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -29,49 +29,57 @@ namespace OpenTabletDriver.UX.Controls.Output
                 }
             };
 
-            outputModeSelector.SelectedValueChanged += (sender, args) =>
-            {
-                if (outputModeSelector.SelectedType is TypeInfo type)
-                    this.Store = new PluginSettingStore(type);
-            };
+            absoluteModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.AbsoluteModeSettings));
+            relativeModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.RelativeModeSettings));
 
-            outputModeSelector.SelectedTypeBinding.Bind(
-                StoreBinding.Convert<TypeInfo>(
-                    c => c?.GetPluginReference().GetTypeReference(),
-                    t => PluginSettingStore.FromPath(t.FullName)
-                )
-            );
+            outputModeSelector.SelectedItemBinding.Convert<PluginSettingStore>(
+                c => PluginSettingStore.FromPath(c?.FullName),
+                v => v?.GetPluginReference().GetTypeReference()
+            ).Bind(ProfileBinding.Child(c => c.OutputMode));
+
+            outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
+
+            UpdateTablet();
+            App.Driver.Instance.TabletsChanged += (sender, e) => UpdateTablet(e);
         }
 
-        private PluginSettingStore store;
-        public PluginSettingStore Store
+        private async void UpdateTablet(IEnumerable<TabletReference> tablets = null)
+        {
+            tablets ??= await App.Driver.Instance.GetTablets();
+            var selectedTablet = tablets.FirstOrDefault(t => t.Properties.Name == Profile?.Tablet);
+            if (selectedTablet != null)
+                SetTabletSize(selectedTablet);
+        }
+
+        private Profile profile;
+        public Profile Profile
         {
             set
             {
-                this.store = value;
-                this.OnStoreChanged();
+                this.profile = value;
+                this.OnProfileChanged();
             }
-            get => this.store;
+            get => this.profile;
         }
 
-        public event EventHandler<EventArgs> StoreChanged;
+        public event EventHandler<EventArgs> ProfileChanged;
 
-        protected virtual void OnStoreChanged()
+        protected virtual void OnProfileChanged()
         {
-            StoreChanged?.Invoke(this, new EventArgs());
-            UpdateOutputMode(this.Store);
+            ProfileChanged?.Invoke(this, new EventArgs());
+            UpdateTablet();
         }
 
-        public BindableBinding<OutputModeEditor, PluginSettingStore> StoreBinding
+        public BindableBinding<OutputModeEditor, Profile> ProfileBinding
         {
             get
             {
-                return new BindableBinding<OutputModeEditor, PluginSettingStore>(
+                return new BindableBinding<OutputModeEditor, Profile>(
                     this,
-                    c => c.Store,
-                    (c, v) => c.Store = v,
-                    (c, h) => c.StoreChanged += h,
-                    (c, h) => c.StoreChanged -= h
+                    c => c.Profile,
+                    (c, v) => c.Profile = v,
+                    (c, h) => c.ProfileChanged += h,
+                    (c, h) => c.ProfileChanged -= h
                 );
             }
         }
@@ -81,7 +89,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
         private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
 
-        public void SetTabletSize(TabletState tablet)
+        public void SetTabletSize(TabletReference tablet)
         {
             var tabletAreaEditor = absoluteModeEditor.tabletAreaEditor;
             if (tablet?.Properties?.Specifications?.Digitizer is DigitizerSpecifications digitizer)
@@ -91,13 +99,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                     new RectangleF(0, 0, digitizer.Width, digitizer.Height)
                 };
 
-                var settings = App.Current.Settings;
-                if (settings != null && settings.TabletWidth == 0 && settings.TabletHeight == 0)
+                var settings = App.Current.Settings.Profiles[tablet].AbsoluteModeSettings;
+                if (settings != null && settings.Tablet.Width == 0 && settings.Tablet.Height == 0)
                 {
-                    settings.TabletWidth = digitizer.Width;
-                    settings.TabletHeight = digitizer.Height;
-                    settings.TabletX = digitizer.Width / 2;
-                    settings.TabletY = digitizer.Height / 2;
+                    settings.Tablet.Width = digitizer.Width;
+                    settings.Tablet.Height = digitizer.Height;
+                    settings.Tablet.X = digitizer.Width / 2;
+                    settings.Tablet.Y = digitizer.Height / 2;
                 }
             }
             else
@@ -120,6 +128,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             bool showRelative = false;
             if (store != null)
             {
+                Plugin.Log.Debug(nameof(OutputModeEditor), store.Path);
                 var outputMode = store.GetPluginReference().GetTypeReference<IOutputMode>();
                 showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));

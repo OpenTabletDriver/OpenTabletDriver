@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output.Area;
@@ -48,25 +49,48 @@ namespace OpenTabletDriver.UX.Controls.Output
                 }
             };
 
-            displayAreaEditor.AreaWidthBinding.BindDataContext<App>(c => c.Settings.DisplayWidth);
-            displayAreaEditor.AreaHeightBinding.BindDataContext<App>(c => c.Settings.DisplayHeight);
-            displayAreaEditor.AreaXOffsetBinding.BindDataContext<App>(c => c.Settings.DisplayX);
-            displayAreaEditor.AreaYOffsetBinding.BindDataContext<App>(c => c.Settings.DisplayY);
-            displayAreaEditor.LockToUsableAreaBinding.BindDataContext<App>(c => c.Settings.LockUsableAreaDisplay);
+            displayAreaEditor.AreaBinding.Bind(SettingsBinding.Child(c => c.Display));
+            displayAreaEditor.LockToUsableAreaBinding.Bind(App.Current, c => c.Settings.LockUsableAreaDisplay);
 
-            tabletAreaEditor.AreaWidthBinding.BindDataContext<App>(c => c.Settings.TabletWidth);
-            tabletAreaEditor.AreaHeightBinding.BindDataContext<App>(c => c.Settings.TabletHeight);
-            tabletAreaEditor.AreaXOffsetBinding.BindDataContext<App>(c => c.Settings.TabletX);
-            tabletAreaEditor.AreaYOffsetBinding.BindDataContext<App>(c => c.Settings.TabletY);
-            tabletAreaEditor.AreaRotationBinding.BindDataContext<App>(c => c.Settings.TabletRotation);
-            tabletAreaEditor.LockToUsableAreaBinding.BindDataContext<App>(c => c.Settings.LockUsableAreaTablet);
-            tabletAreaEditor.LockAspectRatioBinding.BindDataContext<App>(c => c.Settings.LockAspectRatio);
-            tabletAreaEditor.AreaClippingBinding.BindDataContext<App>(c => c.Settings.EnableClipping);
-            tabletAreaEditor.IgnoreOutsideAreaBinding.BindDataContext<App>(c => c.Settings.EnableAreaLimiting);
+            tabletAreaEditor.AreaBinding.Bind(SettingsBinding.Child(c => c.Tablet));
+            tabletAreaEditor.LockToUsableAreaBinding.Bind(App.Current, c => c.Settings.LockUsableAreaTablet);
+            
+            tabletAreaEditor.LockAspectRatioBinding.Bind(SettingsBinding.Child(c => c.LockAspectRatio));
+            tabletAreaEditor.AreaClippingBinding.Bind(SettingsBinding.Child(c => c.EnableClipping));
+            tabletAreaEditor.IgnoreOutsideAreaBinding.Bind(SettingsBinding.Child(c => c.EnableAreaLimiting));
         }
 
         internal DisplayAreaEditor displayAreaEditor;
         internal TabletAreaEditor tabletAreaEditor;
+
+        private AbsoluteModeSettings settings;
+        public AbsoluteModeSettings Settings
+        {
+            set
+            {
+                this.settings = value;
+                this.OnSettingsChanged();
+            }
+            get => this.settings;
+        }
+        
+        public event EventHandler<EventArgs> SettingsChanged;
+        
+        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
+        
+        public BindableBinding<AbsoluteModeEditor, AbsoluteModeSettings> SettingsBinding
+        {
+            get
+            {
+                return new BindableBinding<AbsoluteModeEditor, AbsoluteModeSettings>(
+                    this,
+                    c => c.Settings,
+                    (c, v) => c.Settings = v,
+                    (c, h) => c.SettingsChanged += h,
+                    (c, h) => c.SettingsChanged -= h
+                );
+            }
+        }
 
         public class DisplayAreaEditor : AreaEditor
         {
@@ -89,18 +113,18 @@ namespace OpenTabletDriver.UX.Controls.Output
                             MenuText = display.ToString(),
                             Action = () =>
                             {
-                                this.AreaWidth = display.Width;
-                                this.AreaHeight = display.Height;
+                                this.Area.Width = display.Width;
+                                this.Area.Height = display.Height;
                                 if (display is IVirtualScreen virtualScreen)
                                 {
-                                    this.AreaXOffset = virtualScreen.Width / 2;
-                                    this.AreaYOffset = virtualScreen.Height / 2;
+                                    this.Area.X = virtualScreen.Width / 2;
+                                    this.Area.Y = virtualScreen.Height / 2;
                                 }
                                 else
                                 {
                                     virtualScreen = DesktopInterop.VirtualScreen;
-                                    this.AreaXOffset = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
-                                    this.AreaYOffset = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
+                                    this.Area.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
+                                    this.Area.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                                 }
                             }
                         }
@@ -247,6 +271,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             private async Task ConvertAreaDialog()
             {
+                // TODO: Fix area conversion
                 var converter = new AreaConverterDialog();
                 await converter.ShowModalAsync(Application.Instance.MainForm);
             }

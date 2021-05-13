@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -52,10 +54,7 @@ namespace OpenTabletDriver.UX
         }
 
         private FileInfo settingsFile;
-        private OutputModeEditor outputModeEditor;
-        private BindingEditor bindingEditor;
-        private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
-        private PluginSettingStoreCollectionEditor<ITool> toolEditor;
+        private TabletSwitcherPanel tabletSwitcherPanel;
 
         private WindowSingleton<ConfigurationEditor> configEditorWindow = new WindowSingleton<ConfigurationEditor>();
         private WindowSingleton<PluginManagerWindow> pluginManagerWindow = new WindowSingleton<PluginManagerWindow>();
@@ -170,91 +169,6 @@ namespace OpenTabletDriver.UX
                         HorizontalAlignment = HorizontalAlignment.Center
                     },
                     new StackLayoutItem(null, true)
-                }
-            };
-        }
-
-        private Control ConstructMainControls()
-        {
-            // Main Content
-            var tabControl = new TabControl
-            {
-                Pages =
-                {
-                    new TabPage
-                    {
-                        Text = "Output",
-                        Content = outputModeEditor = new OutputModeEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Bindings",
-                        Content = bindingEditor = new BindingEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Filters",
-                        Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>
-                        {
-                            FriendlyTypeName = "Filter"
-                        }
-                    },
-                    new TabPage
-                    {
-                        Text = "Tools",
-                        Padding = 5,
-                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>
-                        {
-                            FriendlyTypeName = "Tool"
-                        }
-                    },
-                    new TabPage
-                    {
-                        Text = "Console",
-                        Padding = 5,
-                        Content = new LogView()
-                    }
-                }
-            };
-
-            outputModeEditor.StoreBinding.BindDataContext<App>(a => a.Settings.OutputMode);
-            bindingEditor.TipButtonStoreBinding.BindDataContext<App>(a => a.Settings.TipButton);
-            bindingEditor.EraserButtonStoreBinding.BindDataContext<App>(a => a.Settings.EraserButton);
-            bindingEditor.TipPressureValueBinding.BindDataContext<App>(a => a.Settings.TipActivationPressure);
-            bindingEditor.EraserPressureValueBinding.BindDataContext<App>(a => a.Settings.EraserActivationPressure);
-            bindingEditor.PenButtonItemSourceBinding.BindDataContext<App>(a => a.Settings.PenButtons);
-            bindingEditor.AuxiliaryButtonItemSourceBinding.BindDataContext<App>(a => a.Settings.AuxButtons);
-            filterEditor.StoreCollectionBinding.BindDataContext<App>(a => a.Settings.Filters);
-            toolEditor.StoreCollectionBinding.BindDataContext<App>(a => a.Settings.Tools);
-
-            var commandsPanel = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalContentAlignment = HorizontalAlignment.Right,
-                Padding = new Padding(0, 5),
-                Spacing = 5,
-                Items =
-                {
-                    new Button(async (s, e) => await SaveSettings(App.Current.Settings))
-                    {
-                        Text = "Save"
-                    },
-                    new Button(async (s, e) => await ApplySettings())
-                    {
-                        Text = "Apply"
-                    }
-                }
-            };
-
-            outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
-
-            return new StackLayout
-            {
-                Items =
-                {
-                    new StackLayoutItem(tabControl, HorizontalAlignment.Stretch, true),
-                    new StackLayoutItem(commandsPanel, HorizontalAlignment.Right)
                 }
             };
         }
@@ -383,27 +297,54 @@ namespace OpenTabletDriver.UX
 
             await LoadSettings(AppInfo.Current);
 
-            Content = ConstructMainControls();
-
-            if (await Driver.Instance.GetTablet() is TabletState tablet)
+            Content = tabletSwitcherPanel = new TabletSwitcherPanel
             {
-                outputModeEditor.SetTabletSize(tablet);
-                UpdateTitle(tablet);
+                CommandsControl = new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalContentAlignment = HorizontalAlignment.Right,
+                    Spacing = 5,
+                    Items =
+                    {
+                        new Button(async (s, e) => await SaveSettings(App.Current.Settings))
+                        {
+                            Text = "Save"
+                        },
+                        new Button(async (s, e) => await ApplySettings())
+                        {
+                            Text = "Apply"
+                        }
+                    }
+                }
+            };
+
+            if (await Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
+            {
+                UpdateTitle(tablets);
             }
 
             if (!settingsFile.Exists && this.WindowState != WindowState.Minimized)
                 await ShowFirstStartupGreeter();
 
-            Driver.Instance.TabletChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() =>
+            Driver.Instance.TabletsChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() =>
             {
-                outputModeEditor.SetTabletSize(tablet);
                 UpdateTitle(tablet);
             });
         }
 
-        public void UpdateTitle(TabletState tablet)
+        public void UpdateTitle(IEnumerable<TabletReference> tablets)
         {
-            this.Title = $"OpenTabletDriver v{App.Version} - {tablet?.Properties?.Name ?? "No tablet detected"}";
+            string prefix = $"OpenTabletDriver v{App.Version} - ";
+            if (tablets?.Any() ?? false)
+            {
+                // Limit to 3 tablets in the title
+                int numTablets = Math.Min(tablets.Count(), 3);
+                this.Title = prefix + string.Join(", ", tablets.Take(numTablets).Select(t => t.Properties.Name));
+            }
+            else
+            {
+                this.Title = prefix + "No tablets detected.";
+            }
         }
 
         private async Task ResetSettings()
@@ -473,11 +414,11 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private async Task SaveSettings(Settings settings)
+        internal async Task SaveSettings(Settings settings)
         {
             if (settings != null)
             {
-                if (settings.TabletWidth == 0 || settings.TabletHeight == 0)
+                if (settings.Profiles.Any(p => p.AbsoluteModeSettings.Tablet.Width + p.AbsoluteModeSettings.Tablet.Height == 0))
                 {
                     var result = MessageBox.Show(
                         "Warning: Your tablet area is invalid. Saving this configuration may cause problems." + Environment.NewLine +
@@ -500,7 +441,7 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private async Task ApplySettings()
+        internal async Task ApplySettings()
         {
             try
             {
@@ -515,11 +456,7 @@ namespace OpenTabletDriver.UX
 
         private async Task DetectAllTablets()
         {
-            if (await Driver.Instance.DetectTablets() is TabletState tablet)
-            {
-                var settings = await Driver.Instance.GetSettings();
-                await Driver.Instance.EnableInput(settings?.AutoHook ?? false);
-            }
+            await Driver.Instance.DetectTablets();
         }
 
         private async Task ShowFirstStartupGreeter()

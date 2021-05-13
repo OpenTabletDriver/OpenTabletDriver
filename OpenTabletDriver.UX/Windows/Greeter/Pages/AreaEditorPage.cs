@@ -1,6 +1,7 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Attributes;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output.Area;
@@ -22,11 +23,14 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                         Text = "Demo Area Editor",
                         Content = new RotationAreaEditor
                         {
-                            AreaWidth = 75,
-                            AreaHeight = 75,
-                            AreaXOffset = 75,
-                            AreaYOffset = 75,
-                            AreaRotation = 15,
+                            Area = new AreaSettings
+                            {
+                                Width = 75,
+                                Height = 75,
+                                X = 75,
+                                Y = 75,
+                                Rotation = 15,
+                            },
                             Unit = "mm",
                             AreaBounds = new RectangleF[]
                             {

@@ -2,22 +2,19 @@ using System;
 using System.Collections.Generic;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 
 namespace OpenTabletDriver.UX.Controls.Output.Area
 {
     public abstract class AreaControl : Panel
     {
-        private float areaWidth, areaHeight, areaX, areaY, areaRotation;
+        private AreaSettings area;
         private bool lockToUsableArea;
         private string unit, invalidForegroundError, invalidBackgroundError;
         protected IEnumerable<RectangleF> areaBounds;
         private RectangleF fullAreaBounds;
 
-        public event EventHandler<EventArgs> AreaWidthChanged;
-        public event EventHandler<EventArgs> AreaHeightChanged;
-        public event EventHandler<EventArgs> AreaXOffsetChanged;
-        public event EventHandler<EventArgs> AreaYOffsetChanged;
-        public event EventHandler<EventArgs> AreaRotationChanged;
+        public event EventHandler<EventArgs> AreaChanged;
         public event EventHandler<EventArgs> LockToUsableAreaChanged;
         public event EventHandler<EventArgs> UnitChanged;
         public event EventHandler<EventArgs> AreaBoundsChanged;
@@ -25,11 +22,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public event EventHandler<EventArgs> InvalidForegroundErrorChanged;
         public event EventHandler<EventArgs> InvalidBackgroundErrorChanged;
 
-        protected virtual void OnAreaWidthChanged() => AreaWidthChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaHeightChanged() => AreaHeightChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaXOffsetChanged() => AreaXOffsetChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaYOffsetChanged() => AreaYOffsetChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaRotationChanged() => AreaRotationChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, new EventArgs());
         protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, new EventArgs());
         protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
         protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, new EventArgs());
@@ -37,54 +30,14 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, new EventArgs());
         protected virtual void OnInvalidBackgroundErrorChanged() => InvalidBackgroundErrorChanged?.Invoke(this, new EventArgs());
 
-        public float AreaWidth
+        public AreaSettings Area
         {
             set
             {
-                this.areaWidth = value;
-                this.OnAreaWidthChanged();
+                this.area = value;
+                this.OnAreaChanged();
             }
-            get => this.areaWidth;
-        }
-
-        public float AreaHeight
-        {
-            set
-            {
-                this.areaHeight = value;
-                this.OnAreaHeightChanged();
-            }
-            get => this.areaHeight;
-        }
-
-        public float AreaXOffset
-        {
-            set
-            {
-                this.areaX = value;
-                this.OnAreaXOffsetChanged();
-            }
-            get => this.areaX;
-        }
-
-        public float AreaYOffset
-        {
-            set
-            {
-                this.areaY = value;
-                this.OnAreaYOffsetChanged();
-            }
-            get => this.areaY;
-        }
-
-        public float AreaRotation
-        {
-            set
-            {
-                this.areaRotation = value;
-                this.OnAreaRotationChanged();
-            }
-            get => this.areaRotation;
+            get => this.area;
         }
 
         public bool LockToUsableArea
@@ -147,72 +100,16 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.invalidBackgroundError;
         }
 
-        public BindableBinding<AreaControl, float> AreaWidthBinding
+        public BindableBinding<AreaControl, AreaSettings> AreaBinding
         {
             get
             {
-                return new BindableBinding<AreaControl, float>(
+                return new BindableBinding<AreaControl, AreaSettings>(
                     this,
-                    c => c.AreaWidth,
-                    (c, v) => c.AreaWidth = v,
-                    (c, h) => c.AreaWidthChanged += h,
-                    (c, h) => c.AreaWidthChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaControl, float> AreaHeightBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaControl, float>(
-                    this,
-                    c => c.AreaHeight,
-                    (c, v) => c.AreaHeight = v,
-                    (c, h) => c.AreaHeightChanged += h,
-                    (c, h) => c.AreaHeightChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaControl, float> AreaXOffsetBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaControl, float>(
-                    this,
-                    c => c.AreaXOffset,
-                    (c, v) => c.AreaXOffset = v,
-                    (c, h) => c.AreaXOffsetChanged += h,
-                    (c, h) => c.AreaXOffsetChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaControl, float> AreaYOffsetBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaControl, float>(
-                    this,
-                    c => c.AreaYOffset,
-                    (c, v) => c.AreaYOffset = v,
-                    (c, h) => c.AreaYOffsetChanged += h,
-                    (c, h) => c.AreaYOffsetChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaControl, float> AreaRotationBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaControl, float>(
-                    this,
-                    c => c.AreaRotation,
-                    (c, v) => c.AreaRotation = v,
-                    (c, h) => c.AreaRotationChanged += h,
-                    (c, h) => c.AreaRotationChanged -= h
+                    c => c.Area,
+                    (c, v) => c.Area = v,
+                    (c, h) => c.AreaChanged += h,
+                    (c, h) => c.AreaChanged -= h
                 );
             }
         }
@@ -286,7 +183,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 );
             }
         }
-        
+
         public BindableBinding<AreaControl, string> InvalidBackgroundErrorBinding
         {
             get

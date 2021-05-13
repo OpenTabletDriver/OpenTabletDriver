@@ -238,7 +238,6 @@ namespace OpenTabletDriver.Console
         private static async Task GetMiscSettings()
         {
             var settings = await GetSettings();
-            await Out.WriteLineAsync($"Auto hook: {settings.AutoHook}");
             await Out.WriteLineAsync($"Area clipping: {settings.EnableClipping}");
             await Out.WriteLineAsync($"Tablet area limiting: {settings.EnableAreaLimiting}");
             await Out.WriteLineAsync($"Lock aspect ratio: {settings.LockAspectRatio}");

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -11,17 +12,13 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 {
     public class AreaDisplay : TimedDrawable
     {
-        private float areaWidth, areaHeight, areaX, areaY, areaRotation;
+        private AreaSettings area;
         private bool lockToUsableArea;
         private string unit, invalidForegroundError, invalidBackgroundError;
         protected IEnumerable<RectangleF> areaBounds;
         private RectangleF fullAreaBounds;
 
-        public event EventHandler<EventArgs> AreaWidthChanged;
-        public event EventHandler<EventArgs> AreaHeightChanged;
-        public event EventHandler<EventArgs> AreaXOffsetChanged;
-        public event EventHandler<EventArgs> AreaYOffsetChanged;
-        public event EventHandler<EventArgs> AreaRotationChanged;
+        public event EventHandler<EventArgs> AreaChanged;
         public event EventHandler<EventArgs> LockToUsableAreaChanged;
         public event EventHandler<EventArgs> UnitChanged;
         public event EventHandler<EventArgs> AreaBoundsChanged;
@@ -29,11 +26,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public event EventHandler<EventArgs> InvalidForegroundErrorChanged;
         public event EventHandler<EventArgs> InvalidBackgroundErrorChanged;
 
-        protected virtual void OnAreaWidthChanged() => AreaWidthChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaHeightChanged() => AreaHeightChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaXOffsetChanged() => AreaXOffsetChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaYOffsetChanged() => AreaYOffsetChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaRotationChanged() => AreaRotationChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, new EventArgs());
         protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, new EventArgs());
         protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
         protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, new EventArgs());
@@ -41,54 +34,14 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, new EventArgs());
         protected virtual void OnInvalidBackgroundErrorChanged() => InvalidBackgroundErrorChanged?.Invoke(this, new EventArgs());
 
-        public float AreaWidth
+        public AreaSettings Area
         {
             set
             {
-                this.areaWidth = value;
-                this.OnAreaWidthChanged();
+                this.area = value;
+                this.OnAreaChanged();
             }
-            get => this.areaWidth;
-        }
-
-        public float AreaHeight
-        {
-            set
-            {
-                this.areaHeight = value;
-                this.OnAreaHeightChanged();
-            }
-            get => this.areaHeight;
-        }
-
-        public float AreaXOffset
-        {
-            set
-            {
-                this.areaX = value;
-                this.OnAreaXOffsetChanged();
-            }
-            get => this.areaX;
-        }
-
-        public float AreaYOffset
-        {
-            set
-            {
-                this.areaY = value;
-                this.OnAreaYOffsetChanged();
-            }
-            get => this.areaY;
-        }
-
-        public float AreaRotation
-        {
-            set
-            {
-                this.areaRotation = value;
-                this.OnAreaRotationChanged();
-            }
-            get => this.areaRotation;
+            get => this.area;
         }
 
         public bool LockToUsableArea
@@ -151,72 +104,16 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             get => this.invalidBackgroundError;
         }
 
-        public BindableBinding<AreaDisplay, float> AreaWidthBinding
+        public BindableBinding<AreaDisplay, AreaSettings> AreaBinding
         {
             get
             {
-                return new BindableBinding<AreaDisplay, float>(
+                return new BindableBinding<AreaDisplay, AreaSettings>(
                     this,
-                    c => c.AreaWidth,
-                    (c, v) => c.AreaWidth = v,
-                    (c, h) => c.AreaWidthChanged += h,
-                    (c, h) => c.AreaWidthChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaDisplay, float> AreaHeightBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaDisplay, float>(
-                    this,
-                    c => c.AreaHeight,
-                    (c, v) => c.AreaHeight = v,
-                    (c, h) => c.AreaHeightChanged += h,
-                    (c, h) => c.AreaHeightChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaDisplay, float> AreaXOffsetBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaDisplay, float>(
-                    this,
-                    c => c.AreaXOffset,
-                    (c, v) => c.AreaXOffset = v,
-                    (c, h) => c.AreaXOffsetChanged += h,
-                    (c, h) => c.AreaXOffsetChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaDisplay, float> AreaYOffsetBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaDisplay, float>(
-                    this,
-                    c => c.AreaYOffset,
-                    (c, v) => c.AreaYOffset = v,
-                    (c, h) => c.AreaYOffsetChanged += h,
-                    (c, h) => c.AreaYOffsetChanged -= h
-                );
-            }
-        }
-
-        public BindableBinding<AreaDisplay, float> AreaRotationBinding
-        {
-            get
-            {
-                return new BindableBinding<AreaDisplay, float>(
-                    this,
-                    c => c.AreaRotation,
-                    (c, v) => c.AreaRotation = v,
-                    (c, h) => c.AreaRotationChanged += h,
-                    (c, h) => c.AreaRotationChanged -= h
+                    c => c.Area,
+                    (c, v) => c.Area = v,
+                    (c, h) => c.AreaChanged += h,
+                    (c, h) => c.AreaChanged -= h
                 );
             }
         }
@@ -290,7 +187,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 );
             }
         }
-        
+
         public BindableBinding<AreaDisplay, string> InvalidBackgroundErrorBinding
         {
             get
@@ -321,8 +218,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private PointF? viewModelOffset;
 
         private RectangleF ForegroundRect => RectangleF.FromCenter(
-            new PointF(AreaXOffset, AreaYOffset),
-            new SizeF(AreaWidth, AreaHeight)
+            new PointF(Area.X, Area.Y),
+            new SizeF(Area.Width, Area.Height)
         );
 
         public float PixelScale => CalculateScale(FullAreaBounds);
@@ -373,14 +270,14 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                         bounds.X = 0;
                         bounds.Y = 0;
 
-                        var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(AreaWidth, AreaHeight));
+                        var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(Area.Width, Area.Height));
 
                         var corners = new PointF[]
                         {
-                            PointF.Rotate(rect.TopLeft, AreaRotation),
-                            PointF.Rotate(rect.TopRight, AreaRotation),
-                            PointF.Rotate(rect.BottomRight, AreaRotation),
-                            PointF.Rotate(rect.BottomLeft, AreaRotation)
+                            PointF.Rotate(rect.TopLeft, Area.Rotation),
+                            PointF.Rotate(rect.TopRight, Area.Rotation),
+                            PointF.Rotate(rect.BottomRight, Area.Rotation),
+                            PointF.Rotate(rect.BottomLeft, Area.Rotation)
                         };
                         var pseudoArea = new RectangleF(
                             PointF.Min(corners[0], PointF.Min(corners[1], PointF.Min(corners[2], corners[3]))),
@@ -393,13 +290,13 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                         newY -= correction.Y;
                     }
 
-                    AreaXOffset = newX;
-                    AreaYOffset = newY;
+                    Area.X = newX;
+                    Area.Y = newY;
                 }
                 else
                 {
                     mouseOffset = e.Location;
-                    viewModelOffset = new PointF(AreaXOffset, AreaYOffset);
+                    viewModelOffset = new PointF(Area.X, Area.Y);
                 }
             }
             else if (!mouseDragging && mouseOffset != null)
@@ -466,7 +363,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 var area = ForegroundRect * scale;
 
                 graphics.TranslateTransform(area.Center);
-                graphics.RotateTransform(AreaRotation);
+                graphics.RotateTransform(Area.Rotation);
                 graphics.TranslateTransform(-area.Center);
 
                 graphics.FillRectangle(AccentColor, area);
@@ -483,7 +380,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private void DrawRatioText(Graphics graphics, RectangleF area)
         {
-            string ratio = Math.Round(AreaWidth / AreaHeight, 4).ToString();
+            string ratio = Math.Round(Area.Width / Area.Height, 4).ToString();
             SizeF ratioMeasure = graphics.MeasureString(Font, ratio);
             var offsetY = area.Center.Y + (ratioMeasure.Height / 2);
             if (offsetY + ratioMeasure.Height > area.Y + area.Height)
@@ -499,7 +396,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private void DrawWidthText(Graphics graphics, RectangleF area)
         {
             var minDist = area.Center.Y - 40;
-            string widthText = $"{MathF.Round(AreaWidth, 3)}{Unit}";
+            string widthText = $"{MathF.Round(Area.Width, 3)}{Unit}";
             var widthTextSize = graphics.MeasureString(Font, widthText);
             var widthTextPos = new PointF(
                 area.MiddleTop.X - (widthTextSize.Width / 2),
@@ -513,7 +410,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             using (graphics.SaveTransformState())
             {
                 var minDist = area.Center.X - 40;
-                string heightText = $"{MathF.Round(AreaHeight, 3)}{Unit}";
+                string heightText = $"{MathF.Round(Area.Height, 3)}{Unit}";
                 var heightSize = graphics.MeasureString(Font, heightText) / 2;
                 var heightPos = new PointF(
                     -area.MiddleLeft.Y - heightSize.Width,

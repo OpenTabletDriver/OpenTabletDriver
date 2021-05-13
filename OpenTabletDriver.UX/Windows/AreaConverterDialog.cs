@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Text;
@@ -12,7 +15,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             base.Title = "Area Converter";
 
-            App.Driver.Instance.TabletChanged += (sender, newState) => Application.Instance.AsyncInvoke(() => SelectConverterForTablet(newState));
+            App.Driver.Instance.TabletsChanged += (sender, newStates) => Application.Instance.AsyncInvoke(() => SelectConverterForTablets(newStates));
             converterList.SelectedIndexChanged += (sender, e) => OnSelectionChanged();
         }
 
@@ -20,7 +23,7 @@ namespace OpenTabletDriver.UX.Windows
         private Group topGroup, leftGroup, bottomGroup, rightGroup;
         private FloatNumberBox top, left, bottom, right;
         private Button applyButton;
-        private TabletState tabletState;
+        private TabletReference tabletState;
 
         protected void OnSelectionChanged()
         {
@@ -142,14 +145,13 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var tablet = await App.Driver.Instance.GetTablet();
-            SelectConverterForTablet(tablet);
+            var tablets = await App.Driver.Instance.GetTablets();
+            SelectConverterForTablets(tablets);
         }
 
         protected void ConvertArea()
         {
-            var digitizer = tabletState?.Digitizer;
-            if (digitizer == null)
+            if (tabletState == null)
             {
                 MessageBox.Show("No tablet detected. Unable to convert area.", MessageBoxType.Error);
                 return;
@@ -158,16 +160,16 @@ namespace OpenTabletDriver.UX.Windows
             var converter = this.converterList.ConstructSelectedType();
             var convertedArea = converter.Convert(tabletState, top.Value, left.Value, bottom.Value, right.Value);
 
-            App.Current.Settings.SetTabletArea(convertedArea);
+            (this.DataContext as Profile).AbsoluteModeSettings.Tablet.Area = convertedArea;
             this.Close();
         }
 
-        private void SelectConverterForTablet(TabletState tablet)
+        private void SelectConverterForTablets(IEnumerable<TabletReference> tablets)
         {
-            tabletState = tablet;
+            var profile = (this.DataContext as Profile);
+            tabletState = tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
 
-            var vendorId = tabletState?.Digitizer?.VendorID;
-            if (vendorId != null)
+            if (tabletState.Identifiers?.FirstOrDefault()?.VendorID is int vendorId)
             {
                 var vendor = (DeviceVendor)vendorId;
                 converterList.Select(t => t.Vendor.HasFlag(vendor));

@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
-    public abstract class OutputMode : PipelineManager<IDeviceReport>, IPipelineElement<IDeviceReport>, IOutputMode
+    public abstract class OutputMode : PipelineManager<IDeviceReport>, IOutputMode
     {
         public OutputMode()
         {
@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private bool passthrough;
-        private TabletState tablet;
+        private TabletReference tablet;
         private IList<IPositionedPipelineElement<IDeviceReport>> elements;
         private IPipelineElement<IDeviceReport> entryElement;
 
@@ -101,7 +101,7 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.elements;
         }
 
-        public virtual TabletState Tablet
+        public virtual TabletReference Tablet
         {
             set
             {
