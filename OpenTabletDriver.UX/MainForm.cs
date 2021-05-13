@@ -178,6 +178,17 @@ namespace OpenTabletDriver.UX
         private Control ConstructMainControls()
         {
             // Main Content
+            outputModeEditor = new OutputModeEditor();
+            filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>
+            {
+                FriendlyTypeName = "Filter"
+            };
+            toolEditor = new PluginSettingStoreCollectionEditor<ITool>
+            {
+                FriendlyTypeName = "Tool"
+            };
+            var bindingEditor = new BindingEditor();
+
             var tabControl = new TabControl
             {
                 Pages =
@@ -185,30 +196,22 @@ namespace OpenTabletDriver.UX
                     new TabPage
                     {
                         Text = "Output",
-                        Content = outputModeEditor = new OutputModeEditor()
+                        Content = new TabletControl(outputModeEditor)
                     },
                     new TabPage
                     {
                         Text = "Bindings",
-                        Content = new BindingEditor()
+                        Content = new TabletControl(bindingEditor)
                     },
                     new TabPage
                     {
                         Text = "Filters",
-                        Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>
-                        {
-                            FriendlyTypeName = "Filter"
-                        }
+                        Content = new TabletControl(filterEditor)
                     },
                     new TabPage
                     {
                         Text = "Tools",
-                        Padding = 5,
-                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>
-                        {
-                            FriendlyTypeName = "Tool"
-                        }
+                        Content = new TabletControl(toolEditor)
                     },
                     new TabPage
                     {

@@ -6,7 +6,6 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
@@ -14,11 +13,11 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Output
 {
-    public partial class OutputModeEditor : Panel
+    public class OutputModeEditor : Panel
     {
         public OutputModeEditor()
         {
-            var outputPanel = new StackLayout
+            this.Content = new StackLayout
             {
                 Padding = 5,
                 Spacing = 5,
@@ -43,48 +42,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                 )
             );
 
-            tabletDropDown.SelectedIDChanged += (_, _) => OnSelectedIDChanged(tabletDropDown.SelectedID);
-
             StoreBinding.Bind(App.Current.ProfileBinding.Child(p => p.OutputMode));
-
-            this.Content = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                Padding = 5,
-                Spacing = 5,
-                Items =
-                {
-                    tabletDropDown,
-                    new StackLayoutItem(outputPanel, HorizontalAlignment.Stretch, true)
-                }
-            };
-
             SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
         }
-
-        private Control noModeEditor = new StackLayout
-        {
-            Items =
-            {
-                new StackLayoutItem(null, true),
-                new StackLayoutItem
-                {
-                    Control = new Bitmap(App.Logo.WithSize(256, 256)),
-                    HorizontalAlignment = HorizontalAlignment.Center
-                },
-                new StackLayoutItem
-                {
-                    Control = "No tablet detected...",
-                    HorizontalAlignment = HorizontalAlignment.Center
-                },
-                new StackLayoutItem(null, true)
-            }
-        };
 
         private Panel editorContainer = new Panel();
         private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
         private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
-        private TabletDropDown tabletDropDown = new TabletDropDown { Width = 300 };
         private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
         private PluginSettingStore store;
 
@@ -153,14 +117,6 @@ namespace OpenTabletDriver.UX.Controls.Output
             UpdateOutputMode(this.Store);
         }
 
-        private void OnSelectedIDChanged(TabletHandlerID selected)
-        {
-            App.Current.ProfileCache.HandlerInFocus = selected;
-            var show = tabletDropDown.SelectedID != TabletHandlerID.Invalid;
-            tabletDropDown.Visible = show;
-            outputModeSelector.Visible = show;
-        }
-
         private void UpdateOutputMode(PluginSettingStore store)
         {
             bool showAbsolute = false;
@@ -176,8 +132,6 @@ namespace OpenTabletDriver.UX.Controls.Output
                 editorContainer.Content = absoluteModeEditor;
             else if (showRelative)
                 editorContainer.Content = relativeModeEditor;
-            else
-                editorContainer.Content = noModeEditor;
         }
     }
 }

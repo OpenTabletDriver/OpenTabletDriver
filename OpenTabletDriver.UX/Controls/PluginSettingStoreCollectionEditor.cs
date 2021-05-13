@@ -78,7 +78,7 @@ namespace OpenTabletDriver.UX.Controls
             }
             else
             {
-                this.Content = baseControl;
+                this.Content = new Panel { Content = baseControl, Padding = 5 };
             }
         }
 
