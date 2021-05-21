@@ -1,6 +1,9 @@
 using System;
 
-public interface IPowerManager : IDisposable
+namespace OpenTabletDriver.Desktop.Interop.Power 
 {
+    public interface IPowerManager : IDisposable
+    {
     event EventHandler<PowerEventArgs> PowerEvent;
+    }
 }

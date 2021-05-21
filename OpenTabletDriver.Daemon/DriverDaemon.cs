@@ -55,14 +55,6 @@ namespace OpenTabletDriver.Daemon
                     await DetectTablets();
             };
 
-            DesktopInterop.PowerManager.PowerEvent += async (object sender, PowerEventArgs e) =>
-            {
-                if (e.EventType == PowerEventType.Resume)
-                {
-                    await DetectTablets();
-                }
-            };
-
             LoadUserSettings();
         }
 

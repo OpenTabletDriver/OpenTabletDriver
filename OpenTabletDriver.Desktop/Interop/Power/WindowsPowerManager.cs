@@ -1,39 +1,41 @@
 using System;
 using Microsoft.Win32;
-
-public class WindowsPowerManager : IPowerManager
+namespace OpenTabletDriver.Desktop.Interop.Power 
 {
-    public event EventHandler<PowerEventArgs> PowerEvent;
-
-    public WindowsPowerManager() 
+    public class WindowsPowerManager : IPowerManager
     {
-        SystemEvents.PowerModeChanged += OnPowerEvent;
-    }
+        public event EventHandler<PowerEventArgs> PowerEvent;
 
-    void OnPowerEvent(object sender, PowerModeChangedEventArgs e)
-    {
-        PowerEvent?.Invoke(this, ConvertArgs(e));
-    }
-
-    private PowerEventArgs ConvertArgs(PowerModeChangedEventArgs e)
-    {
-        switch (e.Mode)
+        public WindowsPowerManager() 
         {
-            case PowerModes.Suspend:
-                return new PowerEventArgs(PowerEventType.Suspend);
-
-            case PowerModes.Resume:
-                return new PowerEventArgs(PowerEventType.Resume);
+            SystemEvents.PowerModeChanged += OnPowerEvent;
         }
 
-        return new PowerEventArgs(PowerEventType.Unknown);
-    }
+        void OnPowerEvent(object sender, PowerModeChangedEventArgs e)
+        {
+            PowerEvent?.Invoke(this, ConvertArgs(e));
+        }
 
-    public void Dispose()
-    {
-        // detach static event handler to prevent memory leaks
-        // https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.systemevents.powermodechanged?view=net-5.0#remarks
+        private PowerEventArgs ConvertArgs(PowerModeChangedEventArgs e)
+        {
+            switch (e.Mode)
+            {
+                case PowerModes.Suspend:
+                    return new PowerEventArgs(PowerEventType.Suspend);
+
+                case PowerModes.Resume:
+                    return new PowerEventArgs(PowerEventType.Resume);
+            }
+
+            return new PowerEventArgs(PowerEventType.Unknown);
+        }
+
+        public void Dispose()
+        {
+            // detach static event handler to prevent memory leaks
+            // https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.systemevents.powermodechanged?view=net-5.0#remarks
         
-        SystemEvents.PowerModeChanged -= OnPowerEvent;
+            SystemEvents.PowerModeChanged -= OnPowerEvent;
+        }
     }
 }

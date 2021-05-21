@@ -1,14 +1,18 @@
 using System;
-public enum PowerEventType
-{
-    Unknown,
-    Suspend,
-    Resume
-}
 
-public class PowerEventArgs : EventArgs 
+namespace OpenTabletDriver.Desktop.Interop.Power 
 {
-    public PowerEventType EventType;
+    public enum PowerEventType
+    {
+        Unknown,
+        Suspend,
+        Resume
+    }
 
-    public PowerEventArgs(PowerEventType type) => EventType = type;
+    public class PowerEventArgs : EventArgs 
+    {
+        public PowerEventType EventType;
+
+        public PowerEventArgs(PowerEventType type) => EventType = type;
+    }
 }

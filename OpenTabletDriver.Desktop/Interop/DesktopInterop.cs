@@ -5,6 +5,7 @@ using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
+using OpenTabletDriver.Desktop.Interop.Power;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
