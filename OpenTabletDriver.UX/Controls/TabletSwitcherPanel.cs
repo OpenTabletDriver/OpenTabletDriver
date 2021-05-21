@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin;
@@ -26,7 +28,7 @@ namespace OpenTabletDriver.UX.Controls
                         Control = new StackLayout
                         {
                             Orientation = Orientation.Horizontal,
-                            Padding = new Eto.Drawing.Padding(5, 5, 0, 5),
+                            Padding = new Padding(5, 5, 0, 5),
                             Spacing = 5,
                             Items =
                             {
@@ -46,6 +48,8 @@ namespace OpenTabletDriver.UX.Controls
             };
 
             controlPanel.ProfileBinding.Bind(tabletSwitcher.SelectedValueBinding.Cast<Profile>());
+
+            tabletSwitcher.ProfilesBinding.BindDataContext<App>(a => a.Settings.Profiles);
         }
 
         private TabletSwitcher tabletSwitcher;
@@ -65,33 +69,76 @@ namespace OpenTabletDriver.UX.Controls
                 App.Driver.Instance.TabletsChanged += HandleTabletsChanged;
 
                 this.ItemTextBinding = Binding.Property<Profile, string>(t => t.Tablet);
+                
+                App.Current.PropertyChanged += (sender, e) =>
+                {
+                    switch (e.PropertyName)
+                    {
+                        case nameof(App.Settings):
+                        {
+                            UpdateAsync();
+                            break;
+                        }
+                    }
+                };
 
-                InitializeAsync();
+                UpdateAsync();
             }
 
-            private async void InitializeAsync()
+            private ProfileCollection profiles;
+            public ProfileCollection Profiles
+            {
+                set
+                {
+                    this.profiles = value;
+                    this.OnProfilesChanged();
+                }
+                get => this.profiles;
+            }
+            
+            public event EventHandler<EventArgs> ProfilesChanged;
+            
+            protected virtual void OnProfilesChanged() => ProfilesChanged?.Invoke(this, new EventArgs());
+            
+            public BindableBinding<TabletSwitcher, ProfileCollection> ProfilesBinding
+            {
+                get
+                {
+                    return new BindableBinding<TabletSwitcher, ProfileCollection>(
+                        this,
+                        c => c.Profiles,
+                        (c, v) => c.Profiles = v,
+                        (c, h) => c.ProfilesChanged += h,
+                        (c, h) => c.ProfilesChanged -= h
+                    );
+                }
+            }
+
+            private async void UpdateAsync()
             {
                 HandleTabletsChanged(this, await App.Driver.Instance.GetTablets());
             }
 
             private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
             {
-                var profiles = (this.DataContext as App).Settings.Profiles;
-                this.DataStore = profiles.Where(p => tablets.Any(t => t.Properties.Name == p.Tablet));
-
-                if (tablets.Any())
+                if (Profiles is ProfileCollection profiles)
                 {
-                    var tabletsWithoutProfile = tablets.Where(t => profiles.Any(p => p.Tablet == t.Properties.Name));
-                    foreach (var tablet in tabletsWithoutProfile)
-                        profiles.Generate(tablet);
+                    this.DataStore = profiles.Where(p => tablets.Any(t => t.Properties.Name == p.Tablet));
 
-                    if (this.SelectedIndex == -1)
-                        this.SelectedIndex = 0;
-                }
-                else
-                {
-                    // Deselect when no tablets are detected
-                    this.SelectedIndex = -1;
+                    if (tablets.Any())
+                    {
+                        var tabletsWithoutProfile = tablets.Where(t => profiles.Any(p => p.Tablet == t.Properties.Name));
+                        foreach (var tablet in tabletsWithoutProfile)
+                            profiles.Generate(tablet);
+
+                        if (this.SelectedIndex == -1)
+                            this.SelectedIndex = 0;
+                    }
+                    else
+                    {
+                        // Deselect when no tablets are detected
+                        this.SelectedIndex = -1;
+                    }
                 }
             }
         }

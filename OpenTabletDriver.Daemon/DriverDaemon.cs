@@ -176,8 +176,9 @@ namespace OpenTabletDriver.Daemon
         public async Task SetSettings(Settings settings)
         {
             // Dispose filters that implement IDisposable interface
-            foreach (IDisposable disposable in Driver.Devices.Select(d => d.OutputMode))
-                disposable?.Dispose();
+            foreach (var obj in Driver.Devices?.SelectMany(d => d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
+                if (obj is IDisposable disposable)
+                    disposable.Dispose();
 
             if (settings == null)
                 await ResetSettings();
@@ -271,7 +272,14 @@ namespace OpenTabletDriver.Daemon
             var bindingHandler = new BindingHandler(outputMode);
 
             var bindingServiceProvider = new ServiceManager();
-            if (outputMode is IVirtualMouse virtualMouse)
+            object pointer = outputMode switch
+            {
+                AbsoluteOutputMode absoluteOutputMode => absoluteOutputMode.Pointer,
+                RelativeOutputMode relativeOutputMode => relativeOutputMode.Pointer,
+                _ => null
+            };
+
+            if (pointer is IVirtualMouse virtualMouse)
                 bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
 
             var tipbinding = bindingHandler.TipBinding = settings.TipButton?.Construct<IBinding>();

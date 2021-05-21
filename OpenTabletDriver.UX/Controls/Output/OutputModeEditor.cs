@@ -39,8 +39,8 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
 
-            UpdateTablet();
             App.Driver.Instance.TabletsChanged += (sender, e) => UpdateTablet(e);
+            UpdateTablet();
         }
 
         private async void UpdateTablet(IEnumerable<TabletReference> tablets = null)
@@ -48,7 +48,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             tablets ??= await App.Driver.Instance.GetTablets();
             var selectedTablet = tablets.FirstOrDefault(t => t.Properties.Name == Profile?.Tablet);
             if (selectedTablet != null)
-                SetTabletSize(selectedTablet);
+                SetTabletSize(selectedTablet); 
         }
 
         private Profile profile;
@@ -98,15 +98,6 @@ namespace OpenTabletDriver.UX.Controls.Output
                 {
                     new RectangleF(0, 0, digitizer.Width, digitizer.Height)
                 };
-
-                var settings = App.Current.Settings.Profiles[tablet].AbsoluteModeSettings;
-                if (settings != null && settings.Tablet.Width == 0 && settings.Tablet.Height == 0)
-                {
-                    settings.Tablet.Width = digitizer.Width;
-                    settings.Tablet.Height = digitizer.Height;
-                    settings.Tablet.X = digitizer.Width / 2;
-                    settings.Tablet.Y = digitizer.Height / 2;
-                }
             }
             else
             {

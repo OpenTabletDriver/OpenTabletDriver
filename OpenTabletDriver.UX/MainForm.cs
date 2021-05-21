@@ -5,14 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls;
-using OpenTabletDriver.UX.Controls.Output;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
@@ -295,8 +295,6 @@ namespace OpenTabletDriver.UX
 
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
 
-            await LoadSettings(AppInfo.Current);
-
             Content = tabletSwitcherPanel = new TabletSwitcherPanel
             {
                 CommandsControl = new StackLayout
@@ -317,6 +315,8 @@ namespace OpenTabletDriver.UX
                     }
                 }
             };
+            
+            await LoadSettings(AppInfo.Current);
 
             if (await Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
             {
@@ -448,9 +448,18 @@ namespace OpenTabletDriver.UX
                 if (App.Current.Settings is Settings settings)
                     await Driver.Instance.SetSettings(settings);
             }
-            catch (StreamJsonRpc.RemoteInvocationException riex)
+            catch (StreamJsonRpc.RemoteInvocationException riex) when (riex.ErrorData is JObject err)
             {
-                Log.Exception(riex.InnerException);
+                var type = (string)err["type"];
+                var message = (string)err["message"];
+                var stack = (string)err["stack"];
+                var logMessage = new LogMessage
+                {
+                    Group = type,
+                    Message = message,
+                    StackTrace = stack
+                };
+                Log.OnOutput(logMessage);
             }
         }
 

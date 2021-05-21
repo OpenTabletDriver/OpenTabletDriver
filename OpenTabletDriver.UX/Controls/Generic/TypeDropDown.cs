@@ -31,7 +31,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
         protected override void OnSelectedIndexChanged(EventArgs e)
         {
             base.OnSelectedIndexChanged(e);
-            SelectedItem = Types[SelectedIndex];
+            if (SelectedIndex >= 0)
+                SelectedItem = Types[SelectedIndex];
         }
 
         public T ConstructSelectedType(params object[] args)

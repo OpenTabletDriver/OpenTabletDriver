@@ -217,7 +217,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private PointF? mouseOffset;
         private PointF? viewModelOffset;
 
-        private RectangleF ForegroundRect => RectangleF.FromCenter(
+        private RectangleF ForegroundRect => Area == null ? RectangleF.Empty : RectangleF.FromCenter(
             new PointF(Area.X, Area.Y),
             new SizeF(Area.Width, Area.Height)
         );
