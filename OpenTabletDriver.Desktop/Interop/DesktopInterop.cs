@@ -108,5 +108,11 @@ namespace OpenTabletDriver.Desktop.Interop
             Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
             return new XScreen();
         }
+
+        public static IPowerManager PowerManager => CurrentPlatform switch 
+        {
+            PluginPlatform.Windows => new WindowsPowerManager(),
+            _ => null
+        };
     }
 }
