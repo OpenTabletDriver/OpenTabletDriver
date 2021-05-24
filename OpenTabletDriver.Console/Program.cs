@@ -50,39 +50,36 @@ namespace OpenTabletDriver.Console
 
         private static readonly IEnumerable<Command> DebugCommands = new Command[]
         {
-            CreateCommand<int>(GetString, "Requests a device string")
+            CreateCommand<int, int, int>(GetString, "Requests a device string")
         };
 
         private static readonly IEnumerable<Command> ModifyCommands = new Command[]
         {
-            CreateCommand<string>(SetOutputMode, "Sets the output mode"),
-            CreateCommand<string[]>(SetFilters, "Sets the filters applied to the current output mode"),
-            CreateCommand<string[]>(SetInterpolators, "Sets the active interpolators for the current output mode"),
+            CreateCommand<string, string>(SetOutputMode, "Sets the output mode"),
+            CreateCommand<string, string[]>(SetFilters, "Sets the filters applied to the current output mode"),
             CreateCommand<string[]>(SetTools, "Sets the active tools"),
-            CreateCommand<float, float, float, float>(SetDisplayArea, "Sets the display area"),
-            CreateCommand<float, float, float, float, float>(SetTabletArea, "Sets the tablet area"),
-            CreateCommand<float, float, float>(SetSensitivity, "Sets the relative sensitivity"),
-            CreateCommand<string, float>(SetTipBinding, "Sets the current tip binding"),
-            CreateCommand<string, int>(SetPenBinding, "Sets the current pen button bindings"),
-            CreateCommand<string, int>(SetAuxBinding, "Sets the current express key bindings"),
-            CreateCommand<int>(SetResetTime, "Sets the reset time in milliseconds"),
-            CreateCommand<bool>(SetAutoHook, "Sets whether the driver should automatically enable on start"),
-            CreateCommand<bool>(SetEnableClipping, "Sets whether inputs should be limited to the specified areas"),
-            CreateCommand<bool>(SetEnableAreaLimiting, "Sets whether inputs outside of the tablet area should be ignored"),
-            CreateCommand<bool>(SetLockAspectRatio, "Sets whether to lock tablet width/height to display width/height ratio")
+            CreateCommand<string, float, float, float, float>(SetDisplayArea, "Sets the display area"),
+            CreateCommand<string, float, float, float, float, float>(SetTabletArea, "Sets the tablet area"),
+            CreateCommand<string, float, float, float>(SetSensitivity, "Sets the relative sensitivity"),
+            CreateCommand<string, string, float>(SetTipBinding, "Sets the current tip binding"),
+            CreateCommand<string, string, int>(SetPenBinding, "Sets the current pen button bindings"),
+            CreateCommand<string, string, int>(SetAuxBinding, "Sets the current express key bindings"),
+            CreateCommand<string, int>(SetResetTime, "Sets the reset time in milliseconds"),
+            CreateCommand<string, bool>(SetEnableClipping, "Sets whether inputs should be limited to the specified areas"),
+            CreateCommand<string, bool>(SetEnableAreaLimiting, "Sets whether inputs outside of the tablet area should be ignored"),
+            CreateCommand<string, bool>(SetLockAspectRatio, "Sets whether to lock tablet width/height to display width/height ratio")
         };
 
         private static readonly IEnumerable<Command> RequestCommands = new Command[]
         {
             CreateCommand(GetCurrentLog, "Gets the current log", "log"),
             CreateCommand(GetAllSettings, "Gets all current settings"),
-            CreateCommand(GetOutputMode, "Gets the current output mode"),
-            CreateCommand(GetAreas, "Gets the current display and tablet area"),
-            CreateCommand(GetSensitivity, "Gets the current relative sensitivity"),
-            CreateCommand(GetBindings, "Gets all current bindings"),
-            CreateCommand(GetMiscSettings, "Gets other uncategorized settings"),
-            CreateCommand(GetFilters, "Gets the currently enabled filters"),
-            CreateCommand(GetInterpolators, "Gets the currently enabled interpolators"),
+            CreateCommand<string>(GetOutputMode, "Gets the current output mode"),
+            CreateCommand<string>(GetAreas, "Gets the current display and tablet area"),
+            CreateCommand<string>(GetSensitivity, "Gets the current relative sensitivity"),
+            CreateCommand<string>(GetBindings, "Gets all current bindings"),
+            CreateCommand<string>(GetMiscSettings, "Gets other uncategorized settings"),
+            CreateCommand<string>(GetFilters, "Gets the currently enabled filters"),
             CreateCommand(GetTools, "Gets the currently enabled tools")
         };
 
@@ -97,7 +94,8 @@ namespace OpenTabletDriver.Console
         private static readonly IEnumerable<Command> ScriptingCommands = new Command[]
         {
             CreateCommand(GetDiagnostics, "Gets diagnostic information"),
-            CreateCommand(STDIO, "Open with standard input and output", "stdio")
+            CreateCommand(STDIO, "Open with standard input and output", "stdio"),
+            CreateCommand(EditSettings, "Opens the settings file with the editor defined in the EDITOR environment variable.", "edit")
         };
     }
 }

@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             set => RaiseAndSetIfChanged(ref filters, value);
             get => filters;
         }
-        
+
         [JsonProperty("AbsoluteModeSettings")]
         public AbsoluteModeSettings AbsoluteModeSettings
         {
