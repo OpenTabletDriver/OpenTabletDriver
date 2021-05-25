@@ -19,6 +19,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Desktop.Interop.Power;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -53,6 +54,14 @@ namespace OpenTabletDriver.Daemon
             {
                 if (await GetTablet() == null && args.Additions.Count() > 0)
                     await DetectTablets();
+            };
+
+            DesktopInterop.PowerManager.PowerEvent += async (sender, args) =>
+            {
+                if (args.EventType == PowerEventType.Resume) 
+                {
+                    await DetectTablets();
+                }
             };
 
             LoadUserSettings();
