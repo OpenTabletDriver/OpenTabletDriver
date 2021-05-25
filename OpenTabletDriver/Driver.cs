@@ -14,7 +14,6 @@ namespace OpenTabletDriver
 {
     public abstract class Driver : IDriver, IDisposable
     {
-        public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
         public event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
 
         private static readonly Dictionary<string, Func<IReportParser<IDeviceReport>>> reportParserDict = new Dictionary<string, Func<IReportParser<IDeviceReport>>>

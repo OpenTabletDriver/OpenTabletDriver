@@ -3,19 +3,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Threading.Tasks;
 using HidSharp;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
@@ -49,10 +48,13 @@ namespace OpenTabletDriver.Daemon
                     }
                 }
             };
-            Driver.DevicesChanged += async (sender, args) =>
+            HidSharpDeviceRootHub.Current.DevicesChanged += async (sender, args) =>
             {
-                if (await GetTablets() == null && args.Additions.Count() > 0)
+                if (args.Additions.Any())
+                {
                     await DetectTablets();
+                    await SetSettings(Settings);
+                }
             };
 
             LoadUserSettings();
