@@ -69,7 +69,7 @@ namespace OpenTabletDriver.UX.Controls
                 App.Driver.Instance.TabletsChanged += HandleTabletsChanged;
 
                 this.ItemTextBinding = Binding.Property<Profile, string>(t => t.Tablet);
-                
+
                 App.Current.PropertyChanged += (sender, e) =>
                 {
                     switch (e.PropertyName)
@@ -95,11 +95,11 @@ namespace OpenTabletDriver.UX.Controls
                 }
                 get => this.profiles;
             }
-            
+
             public event EventHandler<EventArgs> ProfilesChanged;
-            
+
             protected virtual void OnProfilesChanged() => ProfilesChanged?.Invoke(this, new EventArgs());
-            
+
             public BindableBinding<TabletSwitcher, ProfileCollection> ProfilesBinding
             {
                 get
@@ -127,7 +127,7 @@ namespace OpenTabletDriver.UX.Controls
 
                     if (tablets.Any())
                     {
-                        var tabletsWithoutProfile = tablets.Where(t => profiles.Any(p => p.Tablet == t.Properties.Name));
+                        var tabletsWithoutProfile = tablets.Where(t => !profiles.Any(p => p.Tablet == t.Properties.Name));
                         foreach (var tablet in tabletsWithoutProfile)
                             profiles.Generate(tablet);
 
