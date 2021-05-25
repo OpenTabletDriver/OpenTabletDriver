@@ -165,23 +165,28 @@ namespace OpenTabletDriver.Console
         private static async Task GetAllSettings()
         {
             var settings = await GetSettings();
+
+            await Out.WriteLineAsync("--- Generic Settings ---");
+            await GetTools();
+
             foreach (var profile in settings.Profiles)
             {
+                await Out.WriteLineAsync();
+                await Out.WriteLineAsync($"--- Profile for '{profile.Tablet}' ---");
+                await GetOutputMode(profile.Tablet);
                 await GetAreas(profile.Tablet);
                 await GetSensitivity(profile.Tablet);
                 await GetBindings(profile.Tablet);
                 await GetMiscSettings(profile.Tablet);
-                await GetOutputMode(profile.Tablet);
                 await GetFilters(profile.Tablet);
-                await GetTools();
             }
         }
 
         private static async Task GetAreas(string tablet)
         {
             var profile = await GetProfile(tablet);
-            await Out.WriteLineAsync($"Display area: {profile.AbsoluteModeSettings.Display}");
-            await Out.WriteLineAsync($"Tablet area: {profile.AbsoluteModeSettings.Tablet}");
+            await Out.WriteLineAsync($"Display area: {profile.AbsoluteModeSettings.Display.Area}");
+            await Out.WriteLineAsync($"Tablet area: {profile.AbsoluteModeSettings.Tablet.Area}");
         }
 
         private static async Task GetSensitivity(string tablet)
@@ -289,7 +294,7 @@ namespace OpenTabletDriver.Console
                 var tempDir = Environment.GetEnvironmentVariable("TEMP") ?? AppInfo.Current.TemporaryDirectory;
                 var tempFile = $"OpenTabletDriver-{Guid.NewGuid()}.json";
                 var sha256 = SHA256.Create();
-                
+
                 var path = Path.Join(tempDir, tempFile);
                 var cmd = $"{editor} {path}";
                 var tokens = cmd.Split(' ');
@@ -309,7 +314,7 @@ namespace OpenTabletDriver.Console
                     await proc.WaitForExitAsync();
 
                 var newHash = GetSHA256(path);
-                
+
                 using (var fs = File.OpenRead(path))
                     settings = Serialization.Deserialize<Settings>(fs);
 
