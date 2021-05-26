@@ -89,16 +89,22 @@ namespace OpenTabletDriver
             catch (IOException iex) when (iex.Message.Contains("Unable to open HID class device")
                 && SystemInterop.CurrentPlatform == PluginPlatform.Linux)
             {
-                Log.Write("DeviceUnathorizedAccessException",
-                    "Current user don't have the permissions to open device streams. "
-                    + "To fix this issue, please follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#the-driver-fails-to-open-the-tablet-deviceioexception", LogLevel.Error);
+                Log.Write(
+                    "Driver",
+                    "The current user does not have the permissions to open the device stream. " +
+                    "Follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#the-driver-fails-to-open-the-tablet-deviceioexception to resolve this issue.",
+                    LogLevel.Error
+                );
             }
             catch (ArgumentOutOfRangeException aex) when (aex.Message.Contains("Value range is [0, 15]")
                 && SystemInterop.CurrentPlatform == PluginPlatform.Linux)
             {
-                Log.Write("DeviceInUseException",
-                    "Device is currently in use by another kernel module. "
-                    + "To fix this issue, please follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#argumentoutofrangeexception-value-0-15", LogLevel.Error);
+                Log.Write(
+                    "Driver",
+                    "Device is currently in use by another kernel module. " +
+                    "Follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#argumentoutofrangeexception-value-0-15 to resolve this issue.",
+                    LogLevel.Error
+                );
             }
             catch (Exception ex)
             {
@@ -111,7 +117,7 @@ namespace OpenTabletDriver
         {
             foreach (var identifier in identifiers)
             {
-                var matches = FindMatchingDigitizer(identifier, config.Attributes);
+                var matches = GetMatchingDevices(config, identifier);
 
                 if (matches.Count() > 1)
                     Log.Write("Detect", "More than 1 matching device has been found.", LogLevel.Warning);
@@ -132,21 +138,7 @@ namespace OpenTabletDriver
             return null;
         }
 
-        private IEnumerable<IDeviceEndpoint> FindMatchingDigitizer(DeviceIdentifier identifier, Dictionary<string, string> attributes)
-        {
-            return from device in FindMatches(identifier)
-                where DigitizerMatchesAttribute(device, attributes)
-                select device;
-        }
-
-        private IEnumerable<IDeviceEndpoint> FindMatchingAuxiliary(DeviceIdentifier identifier, Dictionary<string, string> attributes)
-        {
-            return from device in FindMatches(identifier)
-                where AuxMatchesAttribute(device, attributes)
-                select device;
-        }
-
-        private IEnumerable<IDeviceEndpoint> FindMatches(DeviceIdentifier identifier)
+        private IEnumerable<IDeviceEndpoint> GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
         {
             return from device in HidSharpDeviceRootHub.Current.GetDevices()
                 where identifier.VendorID == device.VendorID
@@ -154,34 +146,17 @@ namespace OpenTabletDriver
                 where device.CanOpen
                 where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                 where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
-                where DeviceMatchesAllStrings(device, identifier)
+                where DeviceMatchesStrings(device, identifier.DeviceStrings)
+                where DeviceMatchesAttribute(device, configuration.Attributes)
                 select device;
         }
 
-        private bool DigitizerMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        private bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string> deviceStrings)
         {
-            if (SystemInterop.CurrentPlatform != PluginPlatform.Windows)
+            if (deviceStrings == null || deviceStrings.Count == 0)
                 return true;
 
-            var devName = device.DevicePath;
-
-            bool interfaceMatches = attributes.ContainsKey("WinInterface") ? Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}") : true;
-            bool keyMatches = attributes.ContainsKey("WinUsage") ? Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}") : true;
-
-            return interfaceMatches && keyMatches;
-        }
-
-        private bool AuxMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
-        {
-            return true; // Future proofing
-        }
-
-        private bool DeviceMatchesAllStrings(IDeviceEndpoint device, DeviceIdentifier identifier)
-        {
-            if (identifier.DeviceStrings == null || identifier.DeviceStrings.Count == 0)
-                return true;
-
-            foreach (var matchQuery in identifier.DeviceStrings)
+            foreach (var matchQuery in deviceStrings)
             {
                 try
                 {
@@ -198,6 +173,26 @@ namespace OpenTabletDriver
                 }
             }
             return true;
+        }
+
+        private bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        {
+            switch (SystemInterop.CurrentPlatform)
+            {
+                case PluginPlatform.Windows:
+                {
+                    var devName = device.DevicePath;
+
+                    bool interfaceMatches = attributes.ContainsKey("WinInterface") ? Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}") : true;
+                    bool keyMatches = attributes.ContainsKey("WinUsage") ? Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}") : true;
+
+                    return interfaceMatches && keyMatches;
+                }
+                default:
+                {
+                    return true;
+                }
+            }
         }
 
         public void Dispose()
