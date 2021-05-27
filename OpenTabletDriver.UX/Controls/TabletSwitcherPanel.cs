@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         public TabletSwitcherPanel()
         {
-            base.Content = new StackLayout
+            base.Content = layout = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
@@ -50,8 +50,13 @@ namespace OpenTabletDriver.UX.Controls
             controlPanel.ProfileBinding.Bind(tabletSwitcher.SelectedValueBinding.Cast<Profile>());
 
             tabletSwitcher.ProfilesBinding.BindDataContext<App>(a => a.Settings.Profiles);
+
+            App.Driver.Instance.TabletsChanged += HandleTabletsChanged;
+            Application.Instance.AsyncInvoke(async () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
         }
 
+        private StackLayout layout;
+        private Placeholder placeholder;
         private TabletSwitcher tabletSwitcher;
         private ControlPanel controlPanel;
         private Panel commandsPanel;
@@ -60,6 +65,14 @@ namespace OpenTabletDriver.UX.Controls
         {
             set => commandsPanel.Content = value;
             get => commandsPanel.Content;
+        }
+
+        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
+        {
+            this.Content = tablets.Any() ? layout : placeholder ??= new Placeholder
+            {
+                Text = "No tablets are detected."
+            };
         }
 
         private class TabletSwitcher : DropDown

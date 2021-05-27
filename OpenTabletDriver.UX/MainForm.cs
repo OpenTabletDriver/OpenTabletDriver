@@ -153,23 +153,9 @@ namespace OpenTabletDriver.UX
 
         private Control ConstructPlaceholderControl()
         {
-            return new StackLayout
+            return new Placeholder
             {
-                Items =
-                {
-                    new StackLayoutItem(null, true),
-                    new StackLayoutItem
-                    {
-                        Control = new Bitmap(Logo.WithSize(256, 256)),
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    },
-                    new StackLayoutItem
-                    {
-                        Control = "Connecting to OpenTabletDriver Daemon...",
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    },
-                    new StackLayoutItem(null, true)
-                }
+                Text = "Connecting to OpenTabletDriver Daemon..."
             };
         }
 

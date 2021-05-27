@@ -54,7 +54,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             tabletAreaEditor.AreaBinding.Bind(SettingsBinding.Child(c => c.Tablet));
             tabletAreaEditor.LockToUsableAreaBinding.Bind(App.Current, c => c.Settings.LockUsableAreaTablet);
-            
+
             tabletAreaEditor.LockAspectRatioBinding.Bind(SettingsBinding.Child(c => c.LockAspectRatio));
             tabletAreaEditor.AreaClippingBinding.Bind(SettingsBinding.Child(c => c.EnableClipping));
             tabletAreaEditor.IgnoreOutsideAreaBinding.Bind(SettingsBinding.Child(c => c.EnableAreaLimiting));
@@ -73,11 +73,11 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
             get => this.settings;
         }
-        
+
         public event EventHandler<EventArgs> SettingsChanged;
-        
+
         protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
-        
+
         public BindableBinding<AbsoluteModeEditor, AbsoluteModeSettings> SettingsBinding
         {
             get
@@ -271,9 +271,11 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             private async Task ConvertAreaDialog()
             {
-                // TODO: Fix area conversion
-                var converter = new AreaConverterDialog();
-                await converter.ShowModalAsync(Application.Instance.MainForm);
+                var converter = new AreaConverterDialog
+                {
+                    DataContext = base.Area
+                };
+                await converter.ShowModalAsync(base.ParentWindow);
             }
         }
     }

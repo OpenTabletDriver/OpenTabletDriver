@@ -14,8 +14,9 @@ namespace OpenTabletDriver.Devices
             {
                 var newList = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
                 var changes = new DevicesChangedEventArgs(hidDevices, newList);
-                if (changes.Any())
+                if (changes.Changes.Any())
                 {
+                    Plugin.Log.Debug(nameof(HidSharpDeviceRootHub.Current.DevicesChanged), $"Changes: {changes.Changes.Count()}, Add: {changes.Additions.Count()}, Remove: {changes.Removals.Count()}");
                     DevicesChanged?.Invoke(this, changes);
                     hidDevices = newList;
                 }
