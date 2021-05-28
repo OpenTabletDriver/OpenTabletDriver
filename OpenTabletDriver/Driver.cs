@@ -43,14 +43,15 @@ namespace OpenTabletDriver
             bool success = false;
 
             Devices.Clear();
-            foreach (var config in GetTabletConfigurations())
+            var configs = GetTabletConfigurations().AsParallel();
+            configs.ForAll(config =>
             {
                 if (Match(config) is InputDeviceTree tree)
                 {
                     success = true;
                     Devices.Add(tree);
                 }
-            }
+            });
 
             TabletsChanged?.Invoke(this, Tablets);
 
