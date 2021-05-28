@@ -50,6 +50,12 @@ namespace OpenTabletDriver
                 {
                     success = true;
                     Devices.Add(tree);
+
+                    tree.Disconnected += (sender, e) =>
+                    {
+                        Devices.Remove(tree);
+                        TabletsChanged.Invoke(this, Tablets);
+                    };
                 }
             });
 

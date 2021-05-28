@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Plugin.Output;
@@ -11,9 +12,25 @@ namespace OpenTabletDriver
         {
             Properties = configuration;
             InputDevices = inputDevices;
+
+            foreach (var dev in InputDevices)
+            {
+                // Hook endpoint states
+                dev.ConnectionStateChanged += (sender, reading) =>
+                {
+                    if (this.connected && !reading)
+                    {
+                        this.connected = false;
+                        Disconnected?.Invoke(this, new EventArgs());
+                    }
+                };
+            }
         }
 
-        IList<InputDevice> inputDevices;
+        private bool connected = true;
+        private IList<InputDevice> inputDevices;
+
+        public event EventHandler<EventArgs> Disconnected;
 
         public TabletConfiguration Properties { protected set; get; }
         public IList<InputDevice> InputDevices

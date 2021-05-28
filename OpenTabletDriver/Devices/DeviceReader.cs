@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Devices
         }
 
         private readonly Thread workerThread;
-        private bool initialized, reading;
+        private bool initialized, connected;
 
         /// <summary>
         /// The device endpoint in which is reporting data in the <see cref="ReportStream"/>.
@@ -62,20 +62,20 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// Whether or not the device is actively emitting reports and being parsed.
         /// </summary>
-        public bool Reading
+        public bool Connected
         {
             protected set
             {
-                reading = value;
-                ReadingChanged?.Invoke(this, Reading);
+                connected = value;
+                ConnectionStateChanged?.Invoke(this, Connected);
             }
-            get => reading;
+            get => connected;
         }
 
         /// <summary>
-        /// Invoked when <see cref="Reading"/> is changed.
+        /// Invoked when <see cref="Connected"/> is changed.
         /// </summary>
-        public event EventHandler<bool> ReadingChanged;
+        public event EventHandler<bool> ConnectionStateChanged;
 
         protected virtual bool Initialize()
         {
@@ -104,8 +104,8 @@ namespace OpenTabletDriver.Devices
         {
             try
             {
-                Reading = true;
-                while (Reading)
+                Connected = true;
+                while (Connected)
                 {
                     var data = ReportStream.Read();
                     if (Parser.Parse(data) is T report)
@@ -134,7 +134,7 @@ namespace OpenTabletDriver.Devices
             }
             finally
             {
-                Reading = false;
+                Connected = false;
             }
         }
 
@@ -143,7 +143,7 @@ namespace OpenTabletDriver.Devices
 
         public void Dispose()
         {
-            Reading = false;
+            Connected = false;
             ReportStream?.Dispose();
         }
     }
