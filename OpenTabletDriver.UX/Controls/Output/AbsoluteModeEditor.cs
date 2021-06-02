@@ -58,10 +58,26 @@ namespace OpenTabletDriver.UX.Controls.Output
             tabletAreaEditor.LockAspectRatioBinding.Bind(SettingsBinding.Child(c => c.LockAspectRatio));
             tabletAreaEditor.AreaClippingBinding.Bind(SettingsBinding.Child(c => c.EnableClipping));
             tabletAreaEditor.IgnoreOutsideAreaBinding.Bind(SettingsBinding.Child(c => c.EnableAreaLimiting));
+
+            displayWidth = SettingsBinding.Child(c => c.Display.Width);
+            displayHeight = SettingsBinding.Child(c => c.Display.Height);
+            tabletWidth = SettingsBinding.Child(c => c.Tablet.Width);
+            tabletHeight = SettingsBinding.Child(c => c.Tablet.Height);
+
+            displayWidth.DataValueChanged += HandleAspectRatioLock;
+            displayHeight.DataValueChanged += HandleAspectRatioLock;
+            tabletWidth.DataValueChanged += HandleAspectRatioLock;
+            tabletHeight.DataValueChanged += HandleAspectRatioLock;
         }
 
         internal DisplayAreaEditor displayAreaEditor;
         internal TabletAreaEditor tabletAreaEditor;
+
+        private bool handlingArLock;
+        private DirectBinding<float> displayWidth;
+        private DirectBinding<float> displayHeight;
+        private DirectBinding<float> tabletWidth;
+        private DirectBinding<float> tabletHeight;
 
         private AbsoluteModeSettings settings;
         public AbsoluteModeSettings Settings
@@ -89,6 +105,22 @@ namespace OpenTabletDriver.UX.Controls.Output
                     (c, h) => c.SettingsChanged += h,
                     (c, h) => c.SettingsChanged -= h
                 );
+            }
+        }
+
+        private void HandleAspectRatioLock(object sender, EventArgs e)
+        {
+            if (!handlingArLock && (Settings?.LockAspectRatio ?? false))
+            {
+                // Avoids looping
+                handlingArLock = true;
+
+                if (sender == displayWidth || sender == tabletWidth)
+                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                if (sender == displayHeight || sender == tabletHeight)
+                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+
+                handlingArLock = false;
             }
         }
 

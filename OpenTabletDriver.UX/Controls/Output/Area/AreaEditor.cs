@@ -114,7 +114,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             display.InvalidBackgroundErrorBinding.Bind(InvalidBackgroundErrorBinding);
         }
 
-        // TODO: Fix aspect ratio locking
         private BooleanCommand lockToUsableArea = new BooleanCommand
         {
             MenuText = "Lock to usable area"
