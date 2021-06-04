@@ -1,14 +1,14 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
-using Octokit;
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
@@ -27,8 +27,6 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public const string REPOSITORY_OWNER = "OpenTabletDriver";
         public const string REPOSITORY_NAME = "Plugin-Repository";
-
-        protected static GitHubClient GitHub { get; } = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
 
         public static PluginMetadataCollection Empty => new PluginMetadataCollection();
 
@@ -59,20 +57,39 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public static PluginMetadataCollection FromStream(Stream stream)
         {
-            using (var gzipStream = new GZipInputStream(stream))
+            var memStream = new MemoryStream();
+            stream.CopyTo(memStream);
+
+            using (memStream)
+            using (var gzipStream = new GZipInputStream(memStream))
             using (var archive = TarArchive.CreateInputTarArchive(gzipStream, null))
             {
-                // TODO: Properly cache instead of storing in the temporary directory
-                string cacheDir = Path.Join(AppInfo.Current.TemporaryDirectory, Guid.NewGuid().ToString());
+                string hash = CalculateSHA256(memStream);
+                string cacheDir = Path.Join(AppInfo.Current.CacheDirectory, $"{hash}-OpenTabletDriver-PluginMetadata");
 
-                archive.ExtractContents(cacheDir);
+                if (!Directory.Exists(cacheDir))
+                    archive.ExtractContents(cacheDir);
+
                 var collection = EnumeratePluginMetadata(cacheDir);
                 var metadataCollection = new PluginMetadataCollection(collection);
 
-                if (Directory.Exists(cacheDir))
-                    Directory.Delete(cacheDir, true);
-
                 return metadataCollection;
+            }
+        }
+
+        protected static string CalculateSHA256(Stream stream)
+        {
+            using (var sha256 = SHA256Managed.Create())
+            {
+                var hashData = sha256.ComputeHash(stream);
+                stream.Position = 0;
+                var sb = new StringBuilder();
+                foreach (var val in hashData)
+                {
+                    var hex = val.ToString("x2");
+                    sb.Append(hex);
+                }
+                return sb.ToString();
             }
         }
 

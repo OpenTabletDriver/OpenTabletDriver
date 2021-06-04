@@ -8,16 +8,15 @@ namespace OpenTabletDriver.Tests
 {
     public static class ConsoleExtensions
     {
-        public static void WriteLines(this TextWriter tw, IList<string> strings) => tw.WriteLine(string.Concat(strings));
+        public static void WriteLines(this TextWriter tw, IEnumerable<string> strings) => tw.WriteLine(string.Concat(strings));
         public static void WriteLines(this TextWriter tw, params string[] strings) => WriteLines(tw, (IList<string>)strings);
 
         public static void WriteProperties<T>(this TextWriter tw, T source)
         {
             var properties = from property in typeof(T).GetProperties()
-                select (Name: property.Name, Value: property.GetValue(source) ?? "{null}");
+                select $"{property.Name}: {property.GetValue(source) ?? "{null}"}";
 
-            foreach (var propertyPair in properties)
-                tw.WriteLine($"{propertyPair.Name}: {propertyPair.Value}");
+            tw.WriteLines(properties);
         }
     }
 }
