@@ -93,7 +93,7 @@ namespace OpenTabletDriver.Desktop
         private class LinuxAppInfo : AppInfo
         {
             protected override string GetDefaultAppDataDirectory() => GetDirectory("$XDG_CONFIG_HOME/OpenTabletDriver", "$HOME/.config/OpenTabletDriver");
-            public override string TemporaryDirectory => GetDirectory("$TEMP/OpenTabletDriver", base.TemporaryDirectory);
+            public override string TemporaryDirectory => GetDirectory("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver", base.TemporaryDirectory);
             public override string CacheDirectory => GetDirectory("$XDG_CACHE_HOME/OpenTabletDriver", "$HOME/.cache/OpenTabletDriver", base.CacheDirectory);
         }
 
