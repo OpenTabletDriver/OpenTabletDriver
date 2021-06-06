@@ -9,67 +9,108 @@ using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {
-    public abstract class AppInfo
+    public class AppInfo
     {
-        public static AppInfo Current { set; get; } = DesktopInterop.CurrentPlatform switch
+        private string configurationDirectory, settingsFile, pluginDirectory, temporaryDirectory, cacheDirectory, trashDirectory;
+        private static AppInfo _current;
+
+        public static AppInfo Current
         {
-            PluginPlatform.Windows => new WindowsAppInfo(),
-            PluginPlatform.Linux => new LinuxAppInfo(),
-            PluginPlatform.MacOS => new MacOSAppInfo(),
-            _ => null
-        };
+            set => _current = value;
+            get => _current ??= DesktopInterop.CurrentPlatform switch
+            {
+                PluginPlatform.Windows => new AppInfo
+                {
+                    AppDataDirectory = GetDirectory(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver")
+                },
+                PluginPlatform.Linux => new AppInfo
+                {
+                    AppDataDirectory = GetDirectory("$XDG_CONFIG_HOME/OpenTabletDriver", "$HOME/.config/OpenTabletDriver"),
+                    TemporaryDirectory = GetDirectory("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver"),
+                    CacheDirectory = GetDirectory("$XDG_CACHE_HOME/OpenTabletDriver", "$HOME/.cache/OpenTabletDriver")
+                },
+                PluginPlatform.MacOS => new AppInfo()
+                {
+                    AppDataDirectory = GetDirectory("$HOME/Library/Application Support/OpenTabletDriver"),
+                    TemporaryDirectory = GetDirectory("$TMPDIR/OpenTabletDriver"),
+                    CacheDirectory = GetDirectory("$HOME/Library/Caches/OpenTabletDriver")
+                },
+                _ => null
+            };
+        }
 
         public static DesktopPluginManager PluginManager { get; } = new DesktopPluginManager();
 
-        private string appDataDir, configDir;
+        public virtual string AppDataDirectory { set; get; }
 
-        public virtual string AppDataDirectory
+        public string ConfigurationDirectory
         {
-            set => this.appDataDir = value;
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(this.appDataDir))
-                    return this.appDataDir;
-
-                // Allows for userdata folder to be created
-                var userData = Path.Join(ProgramDirectory, "userdata");
-                return this.appDataDir = Directory.Exists(userData) ? userData : GetDefaultAppDataDirectory();
-            }
+            set => this.configurationDirectory = value;
+            get => this.configurationDirectory ?? GetDefaultConfigurationDirectory();
         }
 
-        public virtual string ConfigurationDirectory
+        public string SettingsFile
         {
-            set => this.configDir = value;
-            get => this.configDir ??= GetDefaultConfigurationDirectory();
+            set => this.settingsFile = value;
+            get => this.settingsFile ?? GetDefaultSettingsFile();
         }
 
-        public virtual string SettingsFile => Path.Join(AppDataDirectory, "settings.json");
-        public virtual string PluginDirectory => Path.Join(AppDataDirectory, "Plugins");
-        public virtual string TemporaryDirectory => Path.Join(AppDataDirectory, "Temp");
-        public virtual string CacheDirectory => Path.Join(AppDataDirectory, "Cache");
-        public virtual string TrashDirectory => Path.Join(AppDataDirectory, "Trash");
+        public string PluginDirectory
+        {
+            set => this.pluginDirectory = value;
+            get => this.pluginDirectory ?? GetDefaultPluginDirectory();
+        }
+
+        public string TemporaryDirectory
+        {
+            set => this.temporaryDirectory = value;
+            get => this.temporaryDirectory ?? GetDefaultTemporaryDirectory();
+        }
+
+        public string CacheDirectory
+        {
+            set => this.cacheDirectory = value;
+            get => this.temporaryDirectory ?? GetDefaultCacheDirectory();
+        }
+
+        public string TrashDirectory
+        {
+            set => this.trashDirectory = value;
+            get => this.trashDirectory ?? GetDefaultTrashDirectory();
+        }
 
         protected static string ProgramDirectory => AppContext.BaseDirectory;
 
-        protected abstract string GetDefaultAppDataDirectory();
-
-        protected virtual string GetDefaultConfigurationDirectory()
-        {
-            var path = Path.Join(ProgramDirectory, "Configurations");
-            var fallbackPath = Path.Join(Environment.CurrentDirectory, "Configurations");
-            return Directory.Exists(path) ? path : fallbackPath;
-        }
-
         private static string GetDirectory(params string[] directories)
         {
-            foreach (var dir in directories.Select(d => InjectVariables(d)))
+            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
                 if (Path.IsPathRooted(dir))
                     return dir;
 
             return null;
         }
 
-        private static string InjectVariables(string str)
+        private static string GetDirectoryIfExists(params string[] directories)
+        {
+            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
+                if (Directory.Exists(dir))
+                    return dir;
+
+            return null;
+        }
+
+        private string GetDefaultConfigurationDirectory() => GetDirectoryIfExists(
+            Path.Join(ProgramDirectory, "Configurations"),
+            Path.Join(Environment.CurrentDirectory, "Configurations")
+        );
+
+        private string GetDefaultSettingsFile() => Path.Join(AppDataDirectory, "settings.json");
+        private string GetDefaultPluginDirectory() => Path.Join(AppDataDirectory, "Plugins");
+        private string GetDefaultTemporaryDirectory() => Path.Join(AppDataDirectory, "Temp");
+        private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
+        private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
+
+        private static string InjectVariablesIntoPath(string str)
         {
             StringBuilder sb = new StringBuilder(str);
             sb.Replace("~", Environment.GetEnvironmentVariable("HOME"));
@@ -83,25 +124,6 @@ namespace OpenTabletDriver.Desktop
             }
 
             return sb.ToString();
-        }
-
-        private class WindowsAppInfo : AppInfo
-        {
-            protected override string GetDefaultAppDataDirectory() => GetDirectory("$LOCALAPPDATA\\OpenTabletDriver");
-        }
-
-        private class LinuxAppInfo : AppInfo
-        {
-            protected override string GetDefaultAppDataDirectory() => GetDirectory("$XDG_CONFIG_HOME/OpenTabletDriver", "$HOME/.config/OpenTabletDriver");
-            public override string TemporaryDirectory => GetDirectory("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver", base.TemporaryDirectory);
-            public override string CacheDirectory => GetDirectory("$XDG_CACHE_HOME/OpenTabletDriver", "$HOME/.cache/OpenTabletDriver", base.CacheDirectory);
-        }
-
-        private class MacOSAppInfo : AppInfo
-        {
-            protected override string GetDefaultAppDataDirectory() => GetDirectory("$HOME/Library/Application Support/OpenTabletDriver");
-            public override string TemporaryDirectory => GetDirectory("$TMPDIR/OpenTabletDriver", base.TemporaryDirectory);
-            public override string CacheDirectory => GetDirectory("$HOME/Library/Caches/OpenTabletDriver", base.CacheDirectory);
         }
     }
 }

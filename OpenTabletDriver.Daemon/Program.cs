@@ -52,8 +52,10 @@ namespace OpenTabletDriver.Daemon
                 };
                 rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((appdata, config) => 
                 {
-                    AppInfo.Current.AppDataDirectory = appdata?.FullName;
-                    AppInfo.Current.ConfigurationDirectory = config?.FullName;
+                    if (!string.IsNullOrWhiteSpace(appdata?.FullName))
+                        AppInfo.Current.AppDataDirectory = appdata.FullName;
+                    if (!string.IsNullOrWhiteSpace(config?.FullName))
+                        AppInfo.Current.ConfigurationDirectory = config.FullName;
                 });
                 rootCommand.Invoke(args);
 

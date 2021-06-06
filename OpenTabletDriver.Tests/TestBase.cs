@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Tests
 
         protected class TestAppInfo : AppInfo
         {
-            protected override string GetDefaultAppDataDirectory() => Path.Join(TestDirectory, nameof(PluginRepositoryTest));
+            public override string AppDataDirectory => Path.Join(TestDirectory, nameof(PluginRepositoryTest));
         }
     }
 }
