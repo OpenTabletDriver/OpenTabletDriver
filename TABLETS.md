@@ -63,7 +63,7 @@
 | Huion Kamvas 16        | Missing Features |
 | Huion Q620M            | Missing Features |
 | Wacom CTE-450          | Missing Features |
-| Wacom MTE-450          | Missing Features |
+| Wacom MTE-450          | Missing Features | Touch wheel is unsupported.
 | Wacom PTH-460          | Missing Features |
 | Wacom PTH-651          | Missing Features |
 | Wacom PTH-660          | Missing Features |
@@ -79,10 +79,10 @@
 | XP-Pen Deco Pro Medium | Missing Features |
 | XP-Pen Deco Pro Small  | Missing Features |
 | XP-Pen Star 06C        | Missing Features |
-| Huion 420              |      Broken      |
-| Huion H420             |      Broken      |
-| Wacom ISD-V4           |      Broken      | #394  |
-| XP-Pen G540            |      Broken      | #698  |
+| Huion 420              |      Broken      | WinUSB implementation required.
+| Huion H420             |      Broken      | WinUSB implementation required.
+| Wacom ISD-V4           |      Broken      | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
+| XP-Pen G540            |      Broken      | [#698](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/698)
 | Huion G10T             |     Untested     |
 | Huion H950 P           |     Untested     |
 | Huion Inspiroy Q11K    |     Untested     |
