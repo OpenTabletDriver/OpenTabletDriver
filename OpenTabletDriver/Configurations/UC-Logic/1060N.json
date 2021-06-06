@@ -35,7 +35,9 @@
       "OutputInitReport": [
         "ArAC"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "201": "F600_A60n_E\\d{4}$"
+      },
       "InitializationStrings": [
         100
       ]
