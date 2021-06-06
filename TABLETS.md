@@ -56,6 +56,7 @@
 | XP-Pen Star G960S      |    Supported     |
 | XP-Pen Star G960S Plus |    Supported     |
 | XP-Pen Star G960v2     |    Supported     |
+| Artisul M0610 Pro      | Missing Features | Buttons, tilt, and touch wheel are unsupported.
 | Huion H1161            | Missing Features |
 | Huion HC16             | Missing Features |
 | Huion HS610            | Missing Features |
