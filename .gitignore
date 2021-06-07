@@ -4,13 +4,13 @@
 .idea/
 
 # Build Artifacts
-**/obj
-**/bin
-**/nupkg
-/Build
+obj/
+bin/
+nupkg/
+[Bb]uild/
 
 # BenchmarkDotNet Artifacts
-**/BenchmarkDotNet.Artifacts
+BenchmarkDotNet.Artifacts/
 
 # User Preferences
 *.user
