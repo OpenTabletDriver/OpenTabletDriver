@@ -32,6 +32,14 @@ jobs:
         with:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
+      - name: Generate udev Rules
+        run: |
+          ./generate-rules.sh
+      - name: Upload udev Rules
+        uses: actions/upload-artifact@master
+        with:
+          name: udev Rules
+          path: bin/99-opentabletdriver.rules
 
   macospublish:
     runs-on: ubuntu-latest
