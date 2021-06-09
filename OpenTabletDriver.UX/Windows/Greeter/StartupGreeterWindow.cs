@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows.Greeter.Pages;
 
 namespace OpenTabletDriver.UX.Windows.Greeter
 {
-    public class StartupGreeterWindow : DesktopDialog
+    public class StartupGreeterWindow : Dialog
     {
-        public StartupGreeterWindow(Window parent)
-            : base(parent)
+        public StartupGreeterWindow()
         {
             base.Title = "OpenTabletDriver Guide";
         }

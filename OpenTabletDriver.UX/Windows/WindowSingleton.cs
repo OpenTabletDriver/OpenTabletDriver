@@ -1,3 +1,4 @@
+using System;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Windows
@@ -11,20 +12,26 @@ namespace OpenTabletDriver.UX.Windows
             if (window == null)
             {
                 window = new T();
-                window.Closed += (_, _) => window = null;
+                window.Closed += HandleWindowClosed;
             }
 
             switch (window)
             {
-                case Form:
-                    (window as Form).Show();
+                case Form form:
+                    form.Show();
                     break;
-                case Dialog:
-                    (window as Dialog).ShowModal();
+                case Dialog dialog:
+                    dialog.ShowModal();
                     break;
             }
 
             window.Focus();
+        }
+
+        private void HandleWindowClosed(object sender, EventArgs e)
+        {
+            window?.Dispose();
+            window = null;
         }
     }
 }

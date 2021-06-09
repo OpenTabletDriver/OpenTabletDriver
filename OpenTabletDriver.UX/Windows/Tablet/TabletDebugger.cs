@@ -111,13 +111,13 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         }
 
-        private void HandleTabletChanged(object sender, IEnumerable<TabletReference> tablets)
+        private void HandleTabletChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
         {
             // TODO: handle multiple tablets
             var tablet = tablets.FirstOrDefault();
             tabletVisualizer.SetTablet(tablet);
             this.Title = $"Tablet Debugger" + (tablet != null ? $" - {tablet.Properties.Name}" : string.Empty);
-        }
+        });
 
         private class DebuggerGroup : Group
         {

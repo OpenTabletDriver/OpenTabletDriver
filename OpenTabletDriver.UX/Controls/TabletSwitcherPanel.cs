@@ -51,7 +51,7 @@ namespace OpenTabletDriver.UX.Controls
 
             tabletSwitcher.ProfilesBinding.BindDataContext<App>(a => a.Settings.Profiles);
 
-            App.Driver.Instance.TabletsChanged += HandleTabletsChanged;
+            App.Driver.AddConnectionHook(i => i.TabletsChanged += HandleTabletsChanged);
             Application.Instance.AsyncInvoke(async () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
         }
 
@@ -67,35 +67,22 @@ namespace OpenTabletDriver.UX.Controls
             get => commandsPanel.Content;
         }
 
-        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
+        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
         {
             this.Content = tablets.Any() ? layout : placeholder ??= new Placeholder
             {
                 Text = "No tablets are detected."
             };
-        }
+            tabletSwitcher.HandleTabletsChanged(sender, tablets);
+        });
 
         private class TabletSwitcher : DropDown
         {
             public TabletSwitcher()
             {
-                App.Driver.Instance.TabletsChanged += HandleTabletsChanged;
+                App.Driver.AddConnectionHook(i => i.TabletsChanged += HandleTabletsChanged);
 
                 this.ItemTextBinding = Binding.Property<Profile, string>(t => t.Tablet);
-
-                App.Current.PropertyChanged += (sender, e) =>
-                {
-                    switch (e.PropertyName)
-                    {
-                        case nameof(App.Settings):
-                        {
-                            UpdateAsync();
-                            break;
-                        }
-                    }
-                };
-
-                UpdateAsync();
             }
 
             private ProfileCollection profiles;
@@ -111,7 +98,11 @@ namespace OpenTabletDriver.UX.Controls
 
             public event EventHandler<EventArgs> ProfilesChanged;
 
-            protected virtual void OnProfilesChanged() => ProfilesChanged?.Invoke(this, new EventArgs());
+            protected virtual async void OnProfilesChanged()
+            {
+                ProfilesChanged?.Invoke(this, new EventArgs());
+                HandleTabletsChanged(this, await App.Driver.Instance.GetTablets());
+            }
 
             public BindableBinding<TabletSwitcher, ProfileCollection> ProfilesBinding
             {
@@ -127,12 +118,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            private async void UpdateAsync()
-            {
-                HandleTabletsChanged(this, await App.Driver.Instance.GetTablets());
-            }
-
-            private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
+            public void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
             {
                 if (Profiles is ProfileCollection profiles)
                 {
@@ -140,20 +126,15 @@ namespace OpenTabletDriver.UX.Controls
 
                     if (tablets.Any())
                     {
-                        var tabletsWithoutProfile = tablets.Where(t => !profiles.Any(p => p.Tablet == t.Properties.Name));
-                        foreach (var tablet in tabletsWithoutProfile)
-                            profiles.Generate(tablet);
-
                         if (this.SelectedIndex == -1)
                             this.SelectedIndex = 0;
                     }
                     else
                     {
-                        // Deselect when no tablets are detected
                         this.SelectedIndex = -1;
                     }
                 }
-            }
+            });
         }
     }
 }

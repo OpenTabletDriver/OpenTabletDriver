@@ -13,10 +13,6 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls;
-using OpenTabletDriver.UX.Windows;
-using OpenTabletDriver.UX.Windows.Configurations;
-using OpenTabletDriver.UX.Windows.Greeter;
-using OpenTabletDriver.UX.Windows.Tablet;
 
 namespace OpenTabletDriver.UX
 {
@@ -29,36 +25,34 @@ namespace OpenTabletDriver.UX
         {
             this.DataContext = App.Current;
 
-            UpdateTitle(null);
+            SetTitle();
             ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
-            Content = ConstructPlaceholderControl();
 
-            Driver.Connected += (_, _) =>
+            base.Content = placeholder = new Placeholder
             {
-                Application.Instance.AsyncInvoke(() => Menu = ConstructMenu());
+                Text = "Connecting to OpenTabletDriver Daemon..."
             };
 
-            Driver.Disconnected += (_, _) =>
+            Driver.Connected += HandleDaemonConnected;
+            Driver.Disconnected += HandleDaemonDisconnected;
+
+            Application.Instance.AsyncInvoke(async () =>
             {
-                Application.Instance.AsyncInvoke(async () =>
+                try
                 {
-                    var content = this.Content;
-                    Content = ConstructPlaceholderControl();
                     await Driver.Connect();
-                    await LoadSettings(AppInfo.Current);
-                    Content = content;
-                });
-            };
-
-            InitializeAsync();
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("Daemon connection timed out after some time. Verify that the daemon is running.", "Daemon Connection Timed Out");
+                    Application.Instance.Quit();
+                }
+            });
         }
 
-        private FileInfo settingsFile;
-        private TabletSwitcherPanel tabletSwitcherPanel;
-
-        private WindowSingleton<ConfigurationEditor> configEditorWindow = new WindowSingleton<ConfigurationEditor>();
-        private WindowSingleton<PluginManagerWindow> pluginManagerWindow = new WindowSingleton<PluginManagerWindow>();
-        private WindowSingleton<TabletDebugger> debuggerWindow = new WindowSingleton<TabletDebugger>();
+        private TabletSwitcherPanel mainPanel;
+        private MenuBar menu;
+        private Placeholder placeholder;
 
         protected override void OnInitializePlatform(EventArgs e)
         {
@@ -70,13 +64,6 @@ namespace OpenTabletDriver.UX
                     this.Padding = 10;
                     break;
             }
-
-            bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => true,
-                PluginPlatform.MacOS   => true,
-                _                      => false,
-            };
 
             if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
@@ -112,7 +99,7 @@ namespace OpenTabletDriver.UX
                 Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
             }
 
-            if (enableDaemonWatchdog)
+            if (App.EnableDaemonWatchdog)
             {
                 // Check if daemon is already active, if not then start it as a subprocess if it exists in the local path.
                 if (!Instance.Exists("OpenTabletDriver.Daemon") && DaemonWatchdog.CanExecute)
@@ -125,7 +112,7 @@ namespace OpenTabletDriver.UX
                         {
                             var dialogResult = MessageBox.Show(
                                 this,
-                                "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart it and reload OpenTabletDriver?",
+                                "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart it?",
                                 "OpenTabletDriver Fatal Error",
                                 MessageBoxButtons.YesNo,
                                 MessageBoxType.Error
@@ -151,14 +138,6 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private Control ConstructPlaceholderControl()
-        {
-            return new Placeholder
-            {
-                Text = "Connecting to OpenTabletDriver Daemon..."
-            };
-        }
-
         private MenuBar ConstructMenu()
         {
             var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
@@ -177,31 +156,31 @@ namespace OpenTabletDriver.UX
             saveSettingsAs.Executed += async (sender, e) => await SaveSettingsDialog();
 
             var saveSettings = new Command { MenuText = "Save settings", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveSettings.Executed += async (sender, e) => await SaveSettings(App.Current.Settings);
+            saveSettings.Executed += async (sender, e) => await SaveSettings();
 
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
-            detectTablet.Executed += async (sender, e) => await DetectAllTablets();
+            detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
-            showTabletDebugger.Executed += (sender, e) => ShowTabletDebugger();
+            showTabletDebugger.Executed += (sender, e) => App.Current.DebuggerWindow.Show();
 
             var deviceStringReader = new Command { MenuText = "Device string reader..." };
-            deviceStringReader.Executed += (sender, e) => ShowDeviceStringReader();
+            deviceStringReader.Executed += (sender, e) => App.Current.StringReaderWindow.Show();
 
             var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
-            configurationEditor.Executed += (sender, e) => ShowConfigurationEditor();
+            configurationEditor.Executed += (sender, e) => App.Current.ConfigEditorWindow.Show();
 
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
-            pluginManager.Executed += (sender, e) => ShowPluginManager();
+            pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
 
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
             faqUrl.Executed += (sender, e) => DesktopInterop.Open(FaqUrl);
 
             var showGuide = new Command { MenuText = "Show guide..." };
-            showGuide.Executed += async (sender, e) => await ShowFirstStartupGreeter();
+            showGuide.Executed += (sender, e) => App.Current.StartupGreeterWindow.Show();
 
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
@@ -264,61 +243,7 @@ namespace OpenTabletDriver.UX
             };
         }
 
-        private async void InitializeAsync()
-        {
-            try
-            {
-                await Driver.Connect();
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show("Daemon connection timed out after some time. Verify that the daemon is running.", "Daemon Connection Timed Out");
-                Application.Instance.Quit();
-            }
-
-            AppInfo.Current = await Driver.Instance.GetApplicationInfo();
-            AppInfo.PluginManager.Load();
-
-            Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
-
-            Content = tabletSwitcherPanel = new TabletSwitcherPanel
-            {
-                CommandsControl = new StackLayout
-                {
-                    Orientation = Orientation.Horizontal,
-                    HorizontalContentAlignment = HorizontalAlignment.Right,
-                    Spacing = 5,
-                    Items =
-                    {
-                        new Button(async (s, e) => await SaveSettings(App.Current.Settings))
-                        {
-                            Text = "Save"
-                        },
-                        new Button(async (s, e) => await ApplySettings())
-                        {
-                            Text = "Apply"
-                        }
-                    }
-                }
-            };
-            
-            await LoadSettings(AppInfo.Current);
-
-            if (await Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
-            {
-                UpdateTitle(tablets);
-            }
-
-            if (!settingsFile.Exists && this.WindowState != WindowState.Minimized)
-                await ShowFirstStartupGreeter();
-
-            Driver.Instance.TabletsChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() =>
-            {
-                UpdateTitle(tablet);
-            });
-        }
-
-        public void UpdateTitle(IEnumerable<TabletReference> tablets)
+        private void SetTitle(IEnumerable<TabletReference> tablets = null)
         {
             string prefix = $"OpenTabletDriver v{App.Version} - ";
             if (tablets?.Any() ?? false)
@@ -333,6 +258,62 @@ namespace OpenTabletDriver.UX
             }
         }
 
+        private void HandleDaemonConnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
+        {
+            // Hook events after the instance is (re)instantiated
+            Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
+            Driver.Instance.TabletsChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => SetTitle(tablet));
+
+            // Load the application information from the daemon
+            AppInfo.Current = await Driver.Instance.GetApplicationInfo();
+            
+            // Load any new plugins
+            AppInfo.PluginManager.Load();
+
+            // Show the startup greeter
+            if (!File.Exists(AppInfo.Current.SettingsFile) && this.WindowState != WindowState.Minimized)
+                App.Current.StartupGreeterWindow.Show();
+
+            // Synchronize settings
+            await SyncSettings();
+
+            // Set window content
+            base.Menu = menu ??= ConstructMenu();
+            base.Content = mainPanel ??= new TabletSwitcherPanel
+            {
+                CommandsControl = new StackLayout
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalContentAlignment = HorizontalAlignment.Right,
+                    Spacing = 5,
+                    Items =
+                    {
+                        new Button(async (s, e) => await SaveSettings())
+                        {
+                            Text = "Save"
+                        },
+                        new Button(async (s, e) => await ApplySettings())
+                        {
+                            Text = "Apply"
+                        }
+                    }
+                }
+            };
+
+            // Update title to new instance
+            if (await Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
+                SetTitle(tablets);
+        });
+
+        private void HandleDaemonDisconnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
+        {
+            // Hide all controls until reconnected
+            base.Content = placeholder;
+            base.Menu = null;
+            // Attempt to reconnect
+            await Driver.Connect();
+        });
+
         private async Task ResetSettings()
         {
             await Driver.Instance.ResetSettings();
@@ -345,10 +326,8 @@ namespace OpenTabletDriver.UX
                 await ResetSettings();
         }
 
-        private async Task LoadSettings(AppInfo appInfo = null)
+        private async Task SyncSettings()
         {
-            appInfo ??= await Driver.Instance.GetApplicationInfo();
-            settingsFile = new FileInfo(appInfo.SettingsFile);
             App.Current.Settings = await Driver.Instance.GetSettings();
         }
 
@@ -381,6 +360,7 @@ namespace OpenTabletDriver.UX
             var fileDialog = new SaveFileDialog
             {
                 Title = "Save OpenTabletDriver settings...",
+                Directory = new Uri(AppInfo.Current.AppDataDirectory),
                 Filters =
                 {
                     new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
@@ -400,9 +380,9 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        internal async Task SaveSettings(Settings settings)
+        private async Task SaveSettings()
         {
-            if (settings != null)
+            if (App.Current.Settings is Settings settings)
             {
                 if (settings.Profiles.Any(p => p.AbsoluteModeSettings.Tablet.Width + p.AbsoluteModeSettings.Tablet.Height == 0))
                 {
@@ -427,7 +407,7 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        internal async Task ApplySettings()
+        private async Task ApplySettings()
         {
             try
             {
@@ -447,38 +427,6 @@ namespace OpenTabletDriver.UX
                 };
                 Log.OnOutput(logMessage);
             }
-        }
-
-        private async Task DetectAllTablets()
-        {
-            await Driver.Instance.DetectTablets();
-        }
-
-        private async Task ShowFirstStartupGreeter()
-        {
-            var greeter = new StartupGreeterWindow(this);
-            await greeter.ShowModalAsync();
-        }
-
-        private void ShowConfigurationEditor()
-        {
-            configEditorWindow.Show();
-        }
-
-        public void ShowPluginManager()
-        {
-            pluginManagerWindow.Show();
-        }
-
-        private void ShowDeviceStringReader()
-        {
-            var stringReader = new DeviceStringReader();
-            stringReader.Show();
-        }
-
-        private void ShowTabletDebugger()
-        {
-            debuggerWindow.Show();
         }
 
         private async Task ExportDiagnostics()

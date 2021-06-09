@@ -43,13 +43,13 @@ namespace OpenTabletDriver.UX.Controls.Output
             UpdateTablet();
         }
 
-        private async void UpdateTablet(IEnumerable<TabletReference> tablets = null)
+        private void UpdateTablet(IEnumerable<TabletReference> tablets = null) => Application.Instance.AsyncInvoke(async () =>
         {
             tablets ??= await App.Driver.Instance.GetTablets();
             var selectedTablet = tablets.FirstOrDefault(t => t.Properties.Name == Profile?.Tablet);
             if (selectedTablet != null)
-                SetTabletSize(selectedTablet); 
-        }
+                SetTabletSize(selectedTablet);
+        });
 
         private Profile profile;
         public Profile Profile

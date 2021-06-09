@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Threading.Tasks;
 using StreamJsonRpc;
@@ -10,8 +11,10 @@ namespace OpenTabletDriver.Desktop.RPC
         private readonly string pipeName;
         private NamedPipeClientStream stream;
         private JsonRpc rpc;
+        private IList<Action<T>> reconnectHooks = new List<Action<T>>();
 
         public T Instance { private set; get; }
+
         public event EventHandler Connected;
         public event EventHandler Disconnected;
 
@@ -26,16 +29,41 @@ namespace OpenTabletDriver.Desktop.RPC
             await this.stream.ConnectAsync();
 
             rpc = new JsonRpc(this.stream);
-            this.Instance = this.rpc.Attach<T>();
-            rpc.StartListening();
-
             rpc.Disconnected += (_, _) =>
             {
                 this.stream.Dispose();
-                Disconnected?.Invoke(this, null);
+                OnDisconnected();
                 rpc.Dispose();
             };
-            Connected?.Invoke(this, null);
+
+            this.Instance = this.rpc.Attach<T>();
+            rpc.StartListening();
+
+            OnConnected();
+        }
+
+        /// <summary>
+        /// Adds a hook to invoke when the client connects and the instance is changed.
+        /// </summary>
+        /// <param name="action">The action to invoke</param>
+        /// <param name="executeNow"></param>
+        public void AddConnectionHook(Action<T> action, bool executeNow = true)
+        {
+            this.reconnectHooks.Add(action);
+            if (executeNow)
+                action(Instance);
+        }
+
+        protected void OnConnected()
+        {
+            this.Connected?.Invoke(this, EventArgs.Empty);
+            foreach (var hook in reconnectHooks)
+                hook(Instance);
+        }
+
+        protected void OnDisconnected()
+        {
+            this.Disconnected?.Invoke(this, EventArgs.Empty);
         }
 
         private NamedPipeClientStream GetStream()
