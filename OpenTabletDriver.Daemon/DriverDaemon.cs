@@ -119,21 +119,21 @@ namespace OpenTabletDriver.Daemon
             var pluginDir = new DirectoryInfo(AppInfo.Current.PluginDirectory);
             if (pluginDir.Exists)
             {
-                var pluginManager = AppInfo.PluginManager;
-                pluginManager.Load();
+                AppInfo.PluginManager.Load();
 
                 // Migrate if settings is available to avoid invalid settings
                 if (Settings != null)
                     Settings = SettingsMigrator.Migrate(Settings);
-
-                // Add services to inject on plugin construction
-                pluginManager.AddService<IDriver>(() => this.Driver);
             }
             else
             {
                 pluginDir.Create();
                 Log.Write("Plugin", $"The plugin directory '{pluginDir.FullName}' has been created");
             }
+
+            // Add services to inject on plugin construction
+            AppInfo.PluginManager.AddService<IDriver>(() => this.Driver);
+
             return Task.CompletedTask;
         }
 

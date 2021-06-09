@@ -58,8 +58,7 @@ namespace OpenTabletDriver.Desktop
 
         private static ProfileCollection GetDefaultProfiles()
         {
-            var driver = AppInfo.PluginManager.GetService<IDriver>() as DesktopDriver;
-            return new ProfileCollection(driver.Tablets);
+            return new ProfileCollection(AppInfo.PluginManager.GetService<IDriver>().Tablets);
         }
 
         #region Custom Serialization
