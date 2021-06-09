@@ -19,18 +19,16 @@ namespace OpenTabletDriver.UX.Windows
             {
                 case Form form:
                     form.Show();
+                    form.Focus();
                     break;
                 case Dialog dialog:
                     dialog.ShowModal();
                     break;
             }
-
-            window.Focus();
         }
 
         private void HandleWindowClosed(object sender, EventArgs e)
         {
-            window?.Dispose();
             window = null;
         }
     }
