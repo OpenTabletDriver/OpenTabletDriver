@@ -126,6 +126,10 @@ namespace OpenTabletDriver.UX.Controls
 
                     if (tablets.Any())
                     {
+                        var tabletsWithoutProfile = tablets.Where(t => !profiles.Any(p => p.Tablet == t.Properties.Name));
+                        foreach (var tablet in tabletsWithoutProfile)
+                            profiles.Generate(tablet);
+
                         if (this.SelectedIndex == -1)
                             this.SelectedIndex = 0;
                     }
