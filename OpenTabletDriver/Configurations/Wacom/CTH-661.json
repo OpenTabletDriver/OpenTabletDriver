@@ -1,16 +1,16 @@
 {
-  "Name": "Wacom XD-1212-U",
+  "Name": "Wacom CTH-661",
   "Specifications": {
     "Digitizer": {
-      "Width": 304.8,
-      "Height": 316.8,
-      "MaxX": 60960.0,
-      "MaxY": 63360.0
+      "Width": 216.48,
+      "Height": 137.0,
+      "MaxX": 21648.0,
+      "MaxY": 13700.0
     },
     "Pen": {
       "MaxPressure": 1023,
       "ActiveReportID": {
-        "Start": 0,
+        "Start": 64,
         "StartInclusive": false,
         "End": null,
         "EndInclusive": false
@@ -27,12 +27,12 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
-      "ProductID": 68,
-      "InputReportLength": 10,
+      "ProductID": 211,
+      "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2ReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": [
-        "BAA="
+        "AgI="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -40,18 +40,30 @@
     },
     {
       "VendorID": 1386,
-      "ProductID": 68,
-      "InputReportLength": 11,
+      "ProductID": 223,
+      "InputReportLength": 10,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV2ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
       "FeatureInitReport": [
-        "BAA="
+        "AgI="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 223,
+      "InputReportLength": 20,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
   "Attributes": {}
 }
