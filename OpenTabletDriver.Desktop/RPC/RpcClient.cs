@@ -54,6 +54,11 @@ namespace OpenTabletDriver.Desktop.RPC
                 action(Instance);
         }
 
+        public void RemoveConnectionHook(Action<T> action)
+        {
+            this.reconnectHooks.Remove(action);
+        }
+
         protected void OnConnected()
         {
             this.Connected?.Invoke(this, EventArgs.Empty);

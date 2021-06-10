@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Contracts
     public interface IDriverDaemon
     {
         event EventHandler<LogMessage> Message;
-        event EventHandler<RpcData> DeviceReport;
+        event EventHandler<DebugReportData> DeviceReport;
         event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
 
         Task WriteMessage(LogMessage message);

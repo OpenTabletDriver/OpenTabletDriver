@@ -53,7 +53,7 @@ namespace OpenTabletDriver
                     tree.Disconnected += (sender, e) =>
                     {
                         Devices.Remove(tree);
-                        TabletsChanged.Invoke(this, Tablets);
+                        TabletsChanged?.Invoke(this, Tablets);
                     };
                 }
             }

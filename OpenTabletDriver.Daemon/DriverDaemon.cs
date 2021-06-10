@@ -33,21 +33,7 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.TabletsChanged += (sender, tablets) =>
-            {
-                TabletsChanged?.Invoke(sender, tablets);
-                if (debugging)
-                {
-                    foreach (var dev in Driver.Devices.SelectMany(s => s.InputDevices))
-                    {
-                        if (dev?.RawClone != true)
-                        {
-                            dev.RawClone = true;
-                            dev.RawReport += DebugReportHandler;
-                        }
-                    }
-                }
-            };
+            Driver.TabletsChanged += TabletsChanged;
             HidSharpDeviceRootHub.Current.DevicesChanged += async (sender, args) =>
             {
                 if (args.Additions.Any())
@@ -98,7 +84,7 @@ namespace OpenTabletDriver.Daemon
         }
 
         public event EventHandler<LogMessage> Message;
-        public event EventHandler<RpcData> DeviceReport;
+        public event EventHandler<DebugReportData> DeviceReport;
         public event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
 
         public DesktopDriver Driver { private set; get; } = new DesktopDriver();
@@ -165,6 +151,16 @@ namespace OpenTabletDriver.Daemon
             if (configDir.Exists)
             {
                 Driver.Detect();
+
+                foreach (var tablet in Driver.Devices)
+                {
+                    foreach (var dev in tablet.InputDevices)
+                    {
+                        dev.RawReport += (_, report) => PostDebugReport(tablet, report);
+                        dev.RawClone = debugging;
+                    }
+                }
+
                 return await GetTablets();
             }
             else
@@ -357,18 +353,11 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletDebug(bool enabled)
         {
-            foreach (var tablet in Driver.Devices)
-            {
-                foreach (var dev in tablet.InputDevices)
-                {
-                    if (enabled && !debugging)
-                        dev.RawReport += DebugReportHandler;
-                    if (!enabled && debugging)
-                        dev.RawReport -= DebugReportHandler;
-                    dev.RawClone = enabled;
-                }
-            }
             debugging = enabled;
+            foreach (var dev in Driver.Devices.SelectMany(d => d.InputDevices))
+                dev.RawClone = debugging;
+
+            Log.Debug("Tablet", $"Tablet debugging is {(debugging ? "enabled" : "disabled")}");
 
             return Task.CompletedTask;
         }
@@ -388,10 +377,10 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(messages);
         }
 
-        private void DebugReportHandler(object _, IDeviceReport report)
+        private void PostDebugReport(TabletReference tablet, IDeviceReport report)
         {
-            if (report != null)
-                DeviceReport?.Invoke(this, new RpcData(report));
+            if (report != null && tablet != null)
+                DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
         }
     }
 }
