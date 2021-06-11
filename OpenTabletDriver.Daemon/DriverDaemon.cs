@@ -33,7 +33,7 @@ namespace OpenTabletDriver.Daemon
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
-            Driver.TabletsChanged += TabletsChanged;
+            Driver.TabletsChanged += (sender, e) => TabletsChanged?.Invoke(sender, e);
             HidSharpDeviceRootHub.Current.DevicesChanged += async (sender, args) =>
             {
                 if (args.Additions.Any())

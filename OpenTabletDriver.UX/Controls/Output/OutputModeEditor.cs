@@ -39,7 +39,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
 
-            App.Driver.Instance.TabletsChanged += (sender, e) => UpdateTablet(e);
+            App.Driver.AddConnectionHook(i => i.TabletsChanged += (sender, e) => UpdateTablet(e));
             UpdateTablet();
         }
 
