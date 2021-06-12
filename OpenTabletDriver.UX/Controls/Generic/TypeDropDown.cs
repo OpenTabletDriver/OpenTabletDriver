@@ -14,25 +14,14 @@ namespace OpenTabletDriver.UX.Controls.Generic
         {
             this.ItemTextBinding = Binding.Property<TypeInfo, string>(t => GetFriendlyName(t));
             this.ItemKeyBinding = Binding.Property<TypeInfo, string>(t => t.FullName);
-
-            Refresh();
         }
 
-        public IList<TypeInfo> Types { protected set; get; }
-
-        public void Refresh()
+        protected override IEnumerable<object> CreateDefaultDataStore()
         {
             var newTypes = from type in AppInfo.PluginManager.GetChildTypes<T>()
                 orderby GetFriendlyName(type)
                 select type;
-            this.DataStore = Types = newTypes.ToList();
-        }
-
-        protected override void OnSelectedIndexChanged(EventArgs e)
-        {
-            base.OnSelectedIndexChanged(e);
-            if (SelectedIndex >= 0)
-                SelectedItem = Types[SelectedIndex];
+            return newTypes.ToList();
         }
 
         public T ConstructSelectedType(params object[] args)
@@ -48,7 +37,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public void Select(Func<T, bool> predicate)
         {
-            foreach (TypeInfo type in Types)
+            foreach (TypeInfo type in DataStore)
             {
                 var obj = AppInfo.PluginManager.ConstructObject<T>(type.FullName);
                 if (predicate(obj))
