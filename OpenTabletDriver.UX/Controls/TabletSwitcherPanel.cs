@@ -80,8 +80,6 @@ namespace OpenTabletDriver.UX.Controls
         {
             public TabletSwitcher()
             {
-                App.Driver.AddConnectionHook(i => i.TabletsChanged += HandleTabletsChanged);
-
                 this.ItemTextBinding = Binding.Property<Profile, string>(t => t.Tablet);
             }
 
@@ -122,16 +120,21 @@ namespace OpenTabletDriver.UX.Controls
             {
                 if (Profiles is ProfileCollection profiles)
                 {
-                    this.DataStore = profiles.Where(p => tablets.Any(t => t.Properties.Name == p.Tablet));
+                    this.DataStore = from profile in profiles
+                        where tablets.Any(t => t.Properties.Name == profile.Tablet)
+                        orderby profile.Tablet
+                        select profile;
 
                     if (tablets.Any())
                     {
-                        var tabletsWithoutProfile = tablets.Where(t => !profiles.Any(p => p.Tablet == t.Properties.Name));
+                        var tabletsWithoutProfile = from tablet in tablets 
+                            where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
+                            select tablet;
+
                         foreach (var tablet in tabletsWithoutProfile)
                             profiles.Generate(tablet);
 
-                        if (this.SelectedIndex == -1)
-                            this.SelectedIndex = 0;
+                        this.SelectedValue ??= this.DataStore.FirstOrDefault();
                     }
                     else
                     {
