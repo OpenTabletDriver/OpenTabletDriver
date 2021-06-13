@@ -43,20 +43,21 @@
 | Wacom FT-0405-U        |    Supported     |
 | Wacom GD-0405-U        |    Supported     |
 | Wacom XD-0608-U        |    Supported     |
+| XP-Pen CT430           |    Supported     |
 | XP-Pen Deco 01         |    Supported     |
 | XP-Pen Star 03         |    Supported     |
 | XP-Pen Star G430       |    Supported     |
 | XP-Pen Star G430S      |    Supported     |
 | XP-Pen Star G540 Pro   |    Supported     |
-| XP-Pen Star G640 V2    |    Supported     |
 | XP-Pen Star G640       |    Supported     |
+| XP-Pen Star G640 V2    |    Supported     |
 | XP-Pen Star G640S      |    Supported     |
-| XP-Pen Star G960S Plus |    Supported     |
 | XP-Pen Star G960S      |    Supported     |
+| XP-Pen Star G960S Plus |    Supported     |
 | Artisul M0610 Pro      | Missing Features | Tablet buttons, tilt, and wheel are unsupported.
 | Gaomon M106K Pro       | Missing Features | Tilt is unsupported.
-| Gaomon M10K Pro        | Missing Features | Tilt and wheel are unsupported.
 | Gaomon M10K            | Missing Features | Wheel is unsupported.
+| Gaomon M10K Pro        | Missing Features | Tilt and wheel are unsupported.
 | Gaomon M1120           | Missing Features | Tilt and wheel are unsupported.
 | Huion GC610            | Missing Features | Touchpad is unsupported.
 | Huion H1060P           | Missing Features | Tilt is unsupported.
@@ -99,7 +100,7 @@
 | XP-Pen Deco 01 V2      | Missing Features | Tilt is unsupported.
 | XP-Pen Deco 02         | Missing Features | Wheel is unsupported.
 | XP-Pen Deco 03         | Missing Features | Wheel is unsupported.
-| XP-Pen Deco Mini7      | Missing Features | 
+| XP-Pen Deco Mini7      | Missing Features |
 | XP-Pen Deco Pro Medium | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Deco Pro Small  | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Star 06         | Missing Features | Wheel is unsupported.
