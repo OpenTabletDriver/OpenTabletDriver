@@ -10,17 +10,13 @@ namespace OpenTabletDriver.Tests
     [TestClass]
     public class PluginRepositoryTest : TestBase
     {
-        private static string TestAppDataDirectory => Path.Join(TestDirectory, nameof(PluginRepositoryTest));
         private static string CollectionTarball => Path.Join(AppInfo.Current.AppDataDirectory, TarballName);
         private const string TarballName = "repository.tar.gz";
 
         [TestInitialize]
         public void Initialize()
         {
-            AppInfo.Current = new AppInfo
-            {
-                AppDataDirectory = TestAppDataDirectory
-            };
+            AppInfo.Current = new TestAppInfo();
         }
 
         [TestCleanup]
