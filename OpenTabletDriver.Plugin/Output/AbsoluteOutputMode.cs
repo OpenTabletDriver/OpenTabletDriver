@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -64,7 +65,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override Matrix3x2 CreateTransformationMatrix()
         {
-            if (Input != null && Output != null && Tablet?.Digitizer != null)
+            if (Input != null && Output != null && Tablet != null)
             {
                 var transform = CalculateTransformation(Input, Output, Tablet.Properties.Specifications.Digitizer);
 

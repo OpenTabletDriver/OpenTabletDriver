@@ -9,11 +9,19 @@ using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.UX.Windows;
+using OpenTabletDriver.UX.Windows.Configurations;
+using OpenTabletDriver.UX.Windows.Greeter;
+using OpenTabletDriver.UX.Windows.Tablet;
 
 namespace OpenTabletDriver.UX
 {
-    public class App : ViewModel
+    public sealed class App : ViewModel
     {
+        private App()
+        {
+        }
+
         public static void Run(string platform, string[] args)
         {
             var root = new RootCommand("OpenTabletDriver UX")
@@ -52,13 +60,13 @@ namespace OpenTabletDriver.UX
             app.Run(mainForm);
         }
 
+        public static App Current { get; } = new App();
+
         public const string FaqUrl = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki#frequently-asked-questions";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
-        public static Bitmap Logo => _logo.Value;
-
-        public static readonly App Current = new App();
+        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
 
         private Settings settings;
         public Settings Settings
@@ -83,17 +91,13 @@ namespace OpenTabletDriver.UX
             Logo = Logo.WithSize(256, 256)
         };
 
-        public readonly static bool EnableTrayIcon = DesktopInterop.CurrentPlatform switch
-        {
-            PluginPlatform.Windows => true,
-            PluginPlatform.MacOS   => true,
-            _                       => false
-        };
+        public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
+        public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
 
-        private static readonly Lazy<Bitmap> _logo = new Lazy<Bitmap>(() =>
-        {
-            var dataStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png");
-            return new Bitmap(dataStream);
-        });
+        public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();
+        public WindowSingleton<ConfigurationEditor> ConfigEditorWindow { get; } = new WindowSingleton<ConfigurationEditor>();
+        public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
+        public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
+        public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
     }
 }

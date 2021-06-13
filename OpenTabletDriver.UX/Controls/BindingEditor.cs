@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -123,20 +124,47 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 }
             };
+
+            tipButton.StoreBinding.Bind(SettingsBinding.Child(c => c.TipButton));
+            eraserButton.StoreBinding.Bind(SettingsBinding.Child(c => c.EraserButton));
+            tipPressure.ValueBinding.Bind(SettingsBinding.Child(c => c.TipActivationPressure));
+            eraserPressure.ValueBinding.Bind(SettingsBinding.Child(c => c.EraserActivationPressure));
+            penButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.PenButtons));
+            auxButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.AuxButtons));
         }
 
         private BindingDisplay tipButton, eraserButton;
         private FloatSlider tipPressure, eraserPressure;
         private BindingDisplayList penButtons, auxButtons;
-
-        public BindableBinding<BindingDisplay, PluginSettingStore> TipButtonStoreBinding => tipButton.StoreBinding;
-        public BindableBinding<BindingDisplay, PluginSettingStore> EraserButtonStoreBinding => eraserButton.StoreBinding;
-
-        public BindableBinding<FloatSlider, float> TipPressureValueBinding => tipPressure.ValueBinding;
-        public BindableBinding<FloatSlider, float> EraserPressureValueBinding => eraserPressure.ValueBinding;
-
-        public BindableBinding<GeneratedItemList<PluginSettingStore>, IList<PluginSettingStore>> PenButtonItemSourceBinding => penButtons.ItemSourceBinding;
-        public BindableBinding<GeneratedItemList<PluginSettingStore>, IList<PluginSettingStore>> AuxiliaryButtonItemSourceBinding => auxButtons.ItemSourceBinding;
+        
+        private BindingSettings settings;
+        public BindingSettings Settings
+        {
+            set
+            {
+                this.settings = value;
+                this.OnSettingsChanged();
+            }
+            get => this.settings;
+        }
+        
+        public event EventHandler<EventArgs> SettingsChanged;
+        
+        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
+        
+        public BindableBinding<BindingEditor, BindingSettings> SettingsBinding
+        {
+            get
+            {
+                return new BindableBinding<BindingEditor, BindingSettings>(
+                    this,
+                    c => c.Settings,
+                    (c, v) => c.Settings = v,
+                    (c, h) => c.SettingsChanged += h,
+                    (c, h) => c.SettingsChanged -= h
+                );
+            }
+        }
 
         private class BindingDisplayList : GeneratedItemList<PluginSettingStore>
         {

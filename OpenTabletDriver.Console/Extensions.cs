@@ -38,13 +38,20 @@ namespace OpenTabletDriver.Console
 
         public static IEnumerable<string> Format(this IEnumerable<PluginSettingStore> storeCollection, bool showIndex = false)
         {
-            int index = 0;
-            foreach (var store in storeCollection)
+            if (storeCollection.Any(s => s != null))
             {
-                var str = store.Format();
-                if (!string.IsNullOrWhiteSpace(str))
-                    yield return showIndex ? $"[{index}]: {str}" : store.Format();
-                index++;
+                int index = 0;
+                foreach (var store in storeCollection)
+                {
+                    var str = store.Format();
+                    if (!string.IsNullOrWhiteSpace(str))
+                        yield return showIndex ? $"[{index}]: {str}" : store.Format();
+                    index++;
+                }
+            }
+            else
+            {
+                yield return "None";
             }
         }
     }

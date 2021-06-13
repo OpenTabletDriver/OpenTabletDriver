@@ -91,7 +91,7 @@ namespace OpenTabletDriver.UX.Controls
             foreach (var message in currentMessages)
                 AddMessage(message);
 
-            App.Driver.Instance.Message += (sender, message) => AddMessage(message);
+            App.Driver.AddConnectionHook(i => i.Message += (sender, message) => AddMessage(message));
         }
 
         private readonly GridView<LogMessage> messageList = new GridView<LogMessage>

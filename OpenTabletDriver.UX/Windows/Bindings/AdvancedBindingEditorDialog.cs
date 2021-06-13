@@ -69,8 +69,8 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 }
             };
 
-            bindingTypeDropDown.SelectedType = currentBinding?.GetPluginReference().GetTypeReference();
-            bindingTypeDropDown.SelectedValueChanged += (sender, e) => settingStoreEditor.Refresh(new PluginSettingStore(bindingTypeDropDown.SelectedType));
+            bindingTypeDropDown.SelectedItem = currentBinding?.GetPluginReference().GetTypeReference();
+            bindingTypeDropDown.SelectedValueChanged += (sender, e) => settingStoreEditor.Refresh(new PluginSettingStore(bindingTypeDropDown.SelectedItem));
 
             settingStoreEditor.Refresh(currentBinding);
         }
@@ -85,7 +85,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
         private void ApplyBinding(object sender, EventArgs e)
         {
-            if (bindingTypeDropDown.SelectedType == null)
+            if (bindingTypeDropDown.SelectedItem == null)
             {
                 Close(null);
                 return;

@@ -23,9 +23,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 }
             );
 
-            rotation.ValueBinding.Bind(AreaRotationBinding);
-
-            display.AreaRotationBinding.Bind(AreaRotationBinding);
+            var rotationBinding = AreaBinding.Child(c => c.Rotation);
+            rotation.ValueBinding.Bind(rotationBinding);
         }
 
         private MaskedTextBox<float> rotation;
@@ -40,10 +39,10 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     MenuText = "Handedness",
                     Action = () =>
                     {
-                        AreaRotation += 180;
-                        AreaRotation %= 360;
-                        AreaXOffset = FullAreaBounds.Width - AreaXOffset;
-                        AreaYOffset = FullAreaBounds.Height - AreaYOffset;
+                        Area.Rotation += 180;
+                        Area.Rotation %= 360;
+                        Area.X = FullAreaBounds.Width - Area.X;
+                        Area.Y = FullAreaBounds.Height - Area.Y;
                     }
                 }
             );

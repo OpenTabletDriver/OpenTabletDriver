@@ -3,46 +3,37 @@ using System.IO;
 using System.Threading;
 using HidSharp;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Devices
 {
     public class DeviceReader<T> : IDisposable where T : IDeviceReport
     {
-        public DeviceReader(HidDevice device, IReportParser<T> reportParser)
+        public DeviceReader(IDeviceEndpoint endpoint, IReportParser<T> reportParser)
         {
-            Device = device;
+            Endpoint = endpoint;
             Parser = reportParser;
             workerThread = new Thread(Main)
             {
                 Name = "OpenTabletDriver Device Reader",
                 IsBackground = true,
-                Priority = ThreadPriority.AboveNormal,
+                Priority = ThreadPriority.AboveNormal
             };
-
-            try
-            {
-                ReportStream = Device.Open();
-                workerThread.Start();
-            }
-            catch
-            {
-                throw new IOException("Failed to open stream");
-            }
         }
 
         private readonly Thread workerThread;
-        private bool _reading;
+        private bool initialized, connected;
 
         /// <summary>
-        /// The HID endpoint in which is reporting data in the <see cref="ReportStream"/>.
+        /// The device endpoint in which is reporting data in the <see cref="ReportStream"/>.
         /// </summary>
-        public HidDevice Device { protected set; get; }
+        public IDeviceEndpoint Endpoint { protected set; get; }
 
         /// <summary>
-        /// The raw HID report stream.
+        /// The raw device endpoint report stream.
         /// </summary>
-        public HidStream ReportStream { protected set; get; }
+        public IDeviceEndpointStream ReportStream { protected set; get; }
 
         /// <summary>
         /// The <see cref="IReportParser{T}"/> in which the device reports will be parsed with.
@@ -71,36 +62,58 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// Whether or not the device is actively emitting reports and being parsed.
         /// </summary>
-        public bool Reading
+        public bool Connected
         {
             protected set
             {
-                _reading = value;
-                ReadingChanged?.Invoke(this, Reading);
+                connected = value;
+                ConnectionStateChanged?.Invoke(this, Connected);
             }
-            get => _reading;
+            get => connected;
         }
 
         /// <summary>
-        /// Invoked when <see cref="Reading"/> is changed.
+        /// Invoked when <see cref="Connected"/> is changed.
         /// </summary>
-        public event EventHandler<bool> ReadingChanged;
+        public event EventHandler<bool> ConnectionStateChanged;
+
+        protected virtual bool Initialize()
+        {
+            try
+            {
+                ReportStream = Endpoint.Open();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+                return false;
+            }
+        }
+
+        protected virtual void Start()
+        {
+            if (!initialized)
+                initialized = Initialize();
+            
+            if (initialized)
+                workerThread.Start();
+        }
 
         protected void Main()
         {
             try
             {
-                Reading = true;
-                ReportStream.ReadTimeout = int.MaxValue;
-                while (Reading)
+                Connected = true;
+                while (Connected)
                 {
                     var data = ReportStream.Read();
                     if (Parser.Parse(data) is T report)
-                        Report?.Invoke(this, report);
+                        OnReport(report);
                     
                     // We create a clone of the report to avoid data being modified on the tablet debugger.
                     if (RawClone && RawReport != null && Parser.Parse(data) is T debugReport)
-                        RawReport?.Invoke(this, debugReport);
+                        OnRawReport(debugReport);
                 }
             }
             catch (ObjectDisposedException dex)
@@ -121,13 +134,16 @@ namespace OpenTabletDriver.Devices
             }
             finally
             {
-                Reading = false;
+                Connected = false;
             }
         }
 
+        protected virtual void OnReport(T report) => Report?.Invoke(this, report);
+        protected virtual void OnRawReport(T report) => RawReport?.Invoke(this, report);
+
         public void Dispose()
         {
-            Reading = false;
+            Connected = false;
             ReportStream?.Dispose();
         }
     }

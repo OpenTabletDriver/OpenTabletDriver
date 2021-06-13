@@ -4,7 +4,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
-    public interface IOutputMode
+    public interface IOutputMode : IPipelineElement<IDeviceReport>
     {
         /// <summary>
         /// Consume the <see cref="IDeviceReport"/> emitted by the device endpoints to be transformed by the pipeline, including <see cref="TransformationMatrix"/>.
@@ -26,6 +26,6 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The current tablet assigned to this <see cref="IOutputMode"/>
         /// </summary>
-        TabletState Tablet { set; get; }
+        TabletReference Tablet { set; get; }
     }
 }

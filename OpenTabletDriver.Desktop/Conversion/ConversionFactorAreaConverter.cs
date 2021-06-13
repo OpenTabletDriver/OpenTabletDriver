@@ -15,13 +15,13 @@ namespace OpenTabletDriver.Desktop.Conversion
         public string Bottom => "Bottom";
         public string Right => "Right";
 
-        protected double GetConversionFactor(TabletState tablet)
+        protected double GetConversionFactor(TabletReference tablet)
         {
             var digitizer = tablet.Properties.Specifications.Digitizer;
             return digitizer.MaxX / digitizer.Width;
         }
 
-        public Area Convert(TabletState tablet, double top, double left, double bottom, double right)
+        public Area Convert(TabletReference tablet, double top, double left, double bottom, double right)
         {
             double conversionFactor = GetConversionFactor(tablet);
             var width = (right - left) / conversionFactor;
