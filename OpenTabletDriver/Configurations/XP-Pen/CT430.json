@@ -1,11 +1,13 @@
 {
   "Name": "XP-Pen CT430",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 121.92,
       "Height": 76.2,
       "MaxX": 24384.0,
-      "MaxY": 15240.0,
+      "MaxY": 15240.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 80,
@@ -13,13 +15,28 @@
         "End": 96,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 10429,
       "ProductID": 2352,
       "InputReportLength": 12,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": "ArAE",
+      "FeatureInitReport": [
+        null
+      ],
+      "OutputInitReport": [
+        "ArAE"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }
