@@ -4,11 +4,11 @@
     "Digitizer": {
       "Width": 101.6,
       "Height": 76.2,
-      "MaxX": 20320.0,
-      "MaxY": 15240.0
+      "MaxX": 45720.0,
+      "MaxY": 29210.0
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 2047,
       "ActiveReportID": {
         "Start": 80,
         "StartInclusive": true,
@@ -35,7 +35,9 @@
       "OutputInitReport": [
         "ArAC"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "TABLET G3 4x3"
+      },
       "InitializationStrings": []
     }
   ],

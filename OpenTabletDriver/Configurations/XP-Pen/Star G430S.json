@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 101.6,
       "Height": 76.2,
-      "MaxX": 10160.0,
-      "MaxY": 7620.0
+      "MaxX": 20320.0,
+      "MaxY": 15240.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -27,15 +27,17 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 2323,
-      "InputReportLength": 12,
-      "OutputReportLength": 12,
+      "ProductID": 117,
+      "InputReportLength": 8,
+      "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "G430S"
+      },
       "InitializationStrings": []
     }
   ],
