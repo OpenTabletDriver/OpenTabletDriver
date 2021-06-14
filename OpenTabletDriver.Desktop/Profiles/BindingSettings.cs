@@ -7,8 +7,8 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class BindingSettings : ViewModel
     {
-        private const int PEN_BUTTON_MAX = 2;
-        private const int AUX_BUTTON_MAX = 8;
+        public const int PEN_BUTTON_MAX = 2;
+        public const int AUX_BUTTON_MAX = 8;
 
         private float tP, eP;
         private PluginSettingStore tipButton, eraserButton;
