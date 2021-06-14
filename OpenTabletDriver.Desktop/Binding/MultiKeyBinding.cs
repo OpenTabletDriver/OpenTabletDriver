@@ -10,7 +10,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginName(PLUGIN_NAME)]
-    public class MultiKeyBinding : IBinding
+    public class MultiKeyBinding : IStateBinding
     {
         private const string PLUGIN_NAME = "Multi-Key Binding";
         private const char KEYS_SPLITTER = '+';
@@ -32,13 +32,13 @@ namespace OpenTabletDriver.Desktop.Binding
             get => this.keysString;
         }
 
-        public void Press(IDeviceReport report)
+        public void Press(TabletReference tablet, IDeviceReport report)
         {
             if (keys.Count > 0)
                 Keyboard.Press(this.keys);
         }
 
-        public void Release(IDeviceReport report)
+        public void Release(TabletReference tablet, IDeviceReport report)
         {
             if (keys.Count > 0)
                 Keyboard.Release(this.keys);
