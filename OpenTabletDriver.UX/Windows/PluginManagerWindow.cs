@@ -67,10 +67,11 @@ namespace OpenTabletDriver.UX.Windows
             metadataViewer.RequestPluginUninstall += async (meta) => await Uninstall(pluginList.SelectedPlugin);
             metadataViewer.RequestPluginInstall += async (meta) => await DownloadAndInstall(meta);
 
-            _ = Refresh();
+            Refresh();
         }
 
-        private static PluginMetadataCollection Repository;
+        private static PluginMetadataCollection Repository { set; get; }
+
         private readonly PluginDropPanel dropPanel = new PluginDropPanel();
         private readonly PluginListBox pluginList = new PluginListBox();
         private readonly MetadataViewer metadataViewer = new MetadataViewer();
@@ -80,7 +81,7 @@ namespace OpenTabletDriver.UX.Windows
             VerticalAlignment = VerticalAlignment.Center
         };
 
-        public async Task Refresh()
+        public void Refresh() => Application.Instance.AsyncInvoke(async () =>
         {
             var repoFetch = PluginMetadataCollection.DownloadAsync();
             var timeoutTask = Task.Delay(TimeSpan.FromSeconds(5));
@@ -94,9 +95,13 @@ namespace OpenTabletDriver.UX.Windows
                 else
                     collection = await repoFetch;
             }
-            catch (HttpRequestException)
+            catch (HttpRequestException httpEx)
             {
-                MessageBox.Show("OTD cannot connect to Internet. Only local plugins will be shown.", MessageBoxType.Warning);
+                MessageBox.Show(
+                    "An error occurred when retrieving metadata. Only local plugins will be shown." + Environment.NewLine +
+                    $"(Status code {httpEx.StatusCode})",
+                    MessageBoxType.Warning
+                );
             }
             catch (Exception e)
             {
@@ -109,14 +114,13 @@ namespace OpenTabletDriver.UX.Windows
             }
 
             await Refresh(collection);
-        }
+        });
 
         public async Task Refresh(PluginMetadataCollection newRepository)
         {
             Repository = newRepository;
 
             await App.Driver.Instance.LoadPlugins();
-            AppInfo.PluginManager.Load();
 
             // Refresh settings
             App.Current.Settings = await App.Driver.Instance.GetSettings();
@@ -138,7 +142,7 @@ namespace OpenTabletDriver.UX.Windows
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
                     metadataViewer.OperationInProgress = false;
-                    await Refresh();
+                    Refresh();
                     pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
                 }
             }
@@ -172,7 +176,7 @@ namespace OpenTabletDriver.UX.Windows
             if (await App.Driver.Instance.InstallPlugin(path))
             {
                 AppInfo.PluginManager.Load();
-                await Refresh();
+                Refresh();
             }
             else
             {
@@ -192,7 +196,7 @@ namespace OpenTabletDriver.UX.Windows
 
             AppInfo.PluginManager.UnloadPlugin(context);
             metadataViewer.OperationInProgress = false;
-            await Refresh();
+            Refresh();
         }
 
         private MenuBar ConstructMenu()
@@ -204,7 +208,7 @@ namespace OpenTabletDriver.UX.Windows
             install.Executed += PromptInstallPlugin;
 
             var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
-            refresh.Executed += async (_, _) => await Refresh();
+            refresh.Executed += (_, _) => Refresh();
 
             var alternateSource = new Command { MenuText = "Use alternate source..." };
             alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
@@ -244,7 +248,7 @@ namespace OpenTabletDriver.UX.Windows
                     await Install(file);
                 }
 
-                await Refresh();
+                Refresh();
             }
         }
 

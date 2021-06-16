@@ -31,19 +31,13 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         Text = "Filters",
                         Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>
-                        {
-                            FriendlyTypeName = "Filter"
-                        }
+                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>()
                     },
                     new TabPage
                     {
                         Text = "Tools",
                         Padding = 5,
-                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>
-                        {
-                            FriendlyTypeName = "Tool"
-                        }
+                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>()
                     },
                     new TabPage
                     {

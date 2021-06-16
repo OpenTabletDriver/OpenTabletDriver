@@ -39,6 +39,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public IReadOnlyCollection<DesktopPluginContext> GetLoadedPlugins() => Plugins;
 
+        public event EventHandler AssembliesChanged;
+
         public void Clean()
         {
             try
@@ -70,6 +72,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 LoadPlugin(dir);
 
             AppInfo.PluginManager.ResetServices();
+            AssembliesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         protected void LoadPlugin(DirectoryInfo directory)
@@ -216,6 +219,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);
             Plugins.Remove(context);
+            AssembliesChanged?.Invoke(this, EventArgs.Empty);
             return context.Assemblies.All(p => RemoveAllTypesForAssembly(p));
         }
 
