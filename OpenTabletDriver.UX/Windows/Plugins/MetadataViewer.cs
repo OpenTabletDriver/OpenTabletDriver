@@ -221,24 +221,20 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         private async void InstallHandler(object sender, EventArgs e)
         {
-            installButton.Enabled = false;
-            uninstallButton.Enabled = false;
+            this.ParentWindow.Enabled = false;
 
-            var success = await RequestPluginInstall?.Invoke(Metadata);
+            await RequestPluginInstall?.Invoke(Metadata);
 
-            installButton.Enabled = !success;
-            uninstallButton.Enabled = success;
+            this.ParentWindow.Enabled = true;
         }
 
         private async void UninstallHandler(object sender, EventArgs e)
         {
-            installButton.Enabled = false;
-            uninstallButton.Enabled = false;
+            this.ParentWindow.Enabled = false;
+            
+            await RequestPluginUninstall?.Invoke(Metadata);
 
-            var success = await RequestPluginUninstall?.Invoke(Metadata);
-
-            installButton.Enabled = success;
-            uninstallButton.Enabled = !success;
+            this.ParentWindow.Enabled = true;
         }
 
         private class AlignedGroup : Group
