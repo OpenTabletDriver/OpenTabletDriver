@@ -37,40 +37,33 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             Repository = repository;
 
-            var selectedIndex = this.SelectedIndex;
+            var selected = this.SelectedItem;
 
-            var installed = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
-                orderby plugin.FriendlyName
-                select plugin;
+            var local = from ctx in AppInfo.PluginManager.GetLoadedPlugins()
+                orderby ctx.FriendlyName
+                select ctx.GetMetadata();
 
-            var installedMeta = from ctx in installed
-                let meta = ctx.GetMetadata()
-                where meta != null
-                select meta;
-
-            var fetched = from meta in Repository
+            var remote = from meta in Repository
                 where meta.SupportedDriverVersion <= AppVersion
-                where !installedMeta.Any(m => PluginMetadata.Match(m, meta))
+                where !local.Any(m => PluginMetadata.Match(m, meta))
                 select meta;
 
-            var versions = from meta in installedMeta.Concat(fetched)
+            var plugins = from meta in local.Concat(remote)
                 orderby meta.PluginVersion descending
                 group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
 
-            this.DataStore = from grp in versions
-                let meta = grp.FirstOrDefault()
+            this.DataStore = from plugin in plugins
+                let meta = plugin.FirstOrDefault()
                 orderby meta.Name
-                orderby installedMeta.Any(m => PluginMetadata.Match(m, meta)) descending
+                orderby local.Any(m => PluginMetadata.Match(m, meta)) descending
                 select meta;
 
-            this.SelectedIndex = selectedIndex;
+            SelectFirstOrDefault(p => PluginMetadata.Match(p, selected));
         });
 
         public void SelectFirstOrDefault(Func<PluginMetadata, bool> predicate)
         {
-            var list = this.DataStore as IList<PluginMetadata>;
-
-            if (list?.FirstOrDefault(m => predicate(m)) is PluginMetadata existingMeta)
+            if ((this.DataStore as IEnumerable<PluginMetadata>)?.FirstOrDefault(m => predicate(m)) is PluginMetadata existingMeta)
             {
                 this.SelectedValue = existingMeta;
             }
