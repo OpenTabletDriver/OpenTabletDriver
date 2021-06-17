@@ -30,7 +30,11 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         public void Refresh() => Application.Instance.AsyncInvoke(async () =>
         {
+            this.Enabled = false;
+
             SetRepository(await DownloadMetadataAsync());
+
+            this.Enabled = true;
         });
 
         public void SetRepository(PluginMetadataCollection repository) => Application.Instance.AsyncInvoke(() =>

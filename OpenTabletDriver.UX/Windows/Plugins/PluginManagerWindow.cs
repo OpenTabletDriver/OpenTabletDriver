@@ -143,7 +143,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             install.Executed += PromptInstallPlugin;
 
             var refresh = new Command { MenuText = "Refresh", Shortcut = Application.Instance.CommonModifier | Keys.R };
-            refresh.Executed += (_, _) => pluginList.Refresh();
+            refresh.Executed += RefreshHandler;
 
             var alternateSource = new Command { MenuText = "Use alternate source..." };
             alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
@@ -166,13 +166,16 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         private async void PromptInstallPlugin(object sender, EventArgs e)
         {
+            if (!this.ParentWindow.Enabled)
+                return;
+
             var dialog = new OpenFileDialog()
             {
                 Title = "Choose a plugin to install...",
                 MultiSelect = true,
                 Filters =
                 {
-                    new FileFilter("Plugin (.zip .dll)", ".zip", ".dll")
+                    new FileFilter("Plugin (.zip, .dll)", ".zip", ".dll")
                 }
             };
 
@@ -183,6 +186,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                     await Install(file);
                 }
             }
+        }
+
+        private void RefreshHandler(object sender, EventArgs e)
+        {
+            if (this.ParentWindow.Enabled)
+                pluginList.Refresh();
         }
     }
 }

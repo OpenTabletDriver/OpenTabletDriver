@@ -3,7 +3,7 @@ using Eto.Forms;
 using OpenTabletDriver.Plugin;
 using StreamJsonRpc.Protocol;
 
-namespace OpenTabletDriver.UX.Windows.Plugins
+namespace OpenTabletDriver.UX
 {
     public static class Extensions
     {
@@ -23,7 +23,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             string message = errorData.Message + Environment.NewLine + errorData.StackTrace;
             Log.Write(
                 errorData.TypeName,
-                message
+                message,
+                LogLevel.Error
             );
             MessageBox.Show(
                 message,
