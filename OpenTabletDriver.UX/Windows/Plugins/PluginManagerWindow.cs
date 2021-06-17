@@ -1,19 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
 using StreamJsonRpc.Protocol;
@@ -64,9 +57,9 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 }
             };
 
-            metadataViewer.MetadataBinding.Bind(pluginList.SelectedItemBinding);
+            metadataViewer.MetadataBinding.Bind(pluginList.SelectedItemBinding, DualBindingMode.OneWay);
 
-            dropPanel.RequestPluginInstall += async (sender, path) => await Install(path);
+            dropPanel.RequestPluginInstall += Install;
             metadataViewer.RequestPluginInstall += DownloadAndInstall;
             metadataViewer.RequestPluginUninstall += Uninstall;
         }
@@ -89,6 +82,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
                     pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
+                    AppInfo.PluginManager.Load();
                 }
                 return true;
             }
@@ -106,7 +100,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 }
                 else
                 {
-                    ex.ShowMessageBox();
+                    data.ShowMessageBox();
                 }
                 return false;
             }
@@ -126,11 +120,11 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task<bool> Uninstall(PluginMetadata metadata)
         {
-            var context = AppInfo.PluginManager.GetLoadedPlugins().FirstOrDefault(
+            var context = AppInfo.PluginManager.GetLoadedPlugins().First(
                 c => PluginMetadata.Match(c.GetMetadata(), metadata)
             );
 
-            if (context.Directory.Exists && !await App.Driver.Instance.UninstallPlugin(context.FriendlyName))
+            if (context.Directory.Exists && !await App.Driver.Instance.UninstallPlugin(context.Directory.FullName))
             {
                 MessageBox.Show(this, $"'{context.FriendlyName}' failed to uninstall", "Plugin Manager", MessageBoxType.Error);
                 return false;

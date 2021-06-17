@@ -37,6 +37,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             Repository = repository;
 
+            var selectedIndex = this.SelectedIndex;
+
             var installed = from plugin in AppInfo.PluginManager.GetLoadedPlugins()
                 orderby plugin.FriendlyName
                 select plugin;
@@ -60,6 +62,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 orderby meta.Name
                 orderby installedMeta.Any(m => PluginMetadata.Match(m, meta)) descending
                 select meta;
+
+            this.SelectedIndex = selectedIndex;
         });
 
         public void SelectFirstOrDefault(Func<PluginMetadata, bool> predicate)

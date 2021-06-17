@@ -1,6 +1,7 @@
 using System;
 using Eto.Forms;
 using OpenTabletDriver.Plugin;
+using StreamJsonRpc.Protocol;
 
 namespace OpenTabletDriver.UX.Windows.Plugins
 {
@@ -12,6 +13,21 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             MessageBox.Show(
                 exception.Message + Environment.NewLine + exception.StackTrace,
                 $"Error: {exception.GetType().Name}",
+                MessageBoxButtons.OK,
+                MessageBoxType.Error
+            );
+        }
+
+        public static void ShowMessageBox(this CommonErrorData errorData)
+        {
+            string message = errorData.Message + Environment.NewLine + errorData.StackTrace;
+            Log.Write(
+                errorData.TypeName,
+                message
+            );
+            MessageBox.Show(
+                message,
+                errorData.TypeName,
                 MessageBoxButtons.OK,
                 MessageBoxType.Error
             );

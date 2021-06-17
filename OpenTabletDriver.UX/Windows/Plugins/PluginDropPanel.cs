@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Windows.Plugins
@@ -29,7 +30,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private const string DRAG_DROP_SUPPORTED = "Drop plugin here...";
         private const string DRAG_DROP_UNSUPPORTED = "Drag and drop is not supported on this platform.";
 
-        public event EventHandler<string> RequestPluginInstall;
+        public event Func<string, Task> RequestPluginInstall;
 
         private Control content;
         public new Control Content
@@ -107,7 +108,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             base.Content = this.Content;
         }
 
-        protected override void OnDragDrop(DragEventArgs args)
+        protected override async void OnDragDrop(DragEventArgs args)
         {
             base.OnDragDrop(args);
             try
@@ -119,7 +120,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                     {
                         if (uri.IsFile && File.Exists(uri.LocalPath))
                         {
-                            RequestPluginInstall?.Invoke(this, uri.LocalPath);
+                            await RequestPluginInstall?.Invoke(uri.LocalPath);
                         }
                     }
                 }
