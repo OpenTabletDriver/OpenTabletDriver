@@ -33,7 +33,9 @@
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "TabletPF1209\u0014"
+      },
       "InitializationStrings": [
         109
       ]
