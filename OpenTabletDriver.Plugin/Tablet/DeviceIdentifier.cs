@@ -32,12 +32,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The feature report sent to initialize tablet functions.
         /// </summary>
-        public byte[] FeatureInitReport { set; get; }
+        public List<byte[]> FeatureInitReport { set; get; }
 
         /// <summary>
         /// The output report sent to initialize tablet functions.
         /// </summary>
-        public byte[] OutputInitReport { set; get; }
+        public List<byte[]> OutputInitReport { set; get; }
 
         /// <summary>
         /// Device strings to match against, used for identification.

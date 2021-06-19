@@ -1,11 +1,13 @@
 {
   "Name": "UC-Logic 1060N",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 254.0,
       "Height": 152.4,
       "MaxX": 50800.0,
-      "MaxY": 30480.0,
+      "MaxY": 30480.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
       "ActiveReportID": {
         "Start": 80,
@@ -13,14 +15,29 @@
         "End": 96,
         "EndInclusive": false
       },
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
-      "DeviceStrings": {},
+      "OutputInitReport": [
+        "ArAC"
+      ],
+      "DeviceStrings": {
+        "201": "F600_A60n_E\\d{4}$"
+      },
       "InitializationStrings": [
         100
       ]

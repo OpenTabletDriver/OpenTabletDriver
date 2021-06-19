@@ -23,13 +23,13 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Press(IDeviceReport report)
         {
-            if (string.IsNullOrWhiteSpace(Key))
+            if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard.Press(Key);
         }
 
         public void Release(IDeviceReport report)
         {
-            if (string.IsNullOrWhiteSpace(Key))
+            if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard.Release(Key);
         }
 

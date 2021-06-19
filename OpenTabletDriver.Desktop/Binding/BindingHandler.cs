@@ -1,39 +1,62 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
-    public static class BindingHandler
+    public class BindingHandler : IPipelineElement<IDeviceReport>
     {
-        public static float TipActivationPressure { set; get; }
-        public static IBinding TipBinding { set; get; } = null;
+        public BindingHandler(IOutputMode outputMode)
+        {
+            this.outputMode = outputMode;
 
-        public static float EraserActivationPressure { set; get; }
-        public static IBinding EraserBinding { set; get; } = null;
+            // Force consume all reports from the last element
+            var lastElement = this.outputMode.Elements?.LastOrDefault() ?? (IPipelineElement<IDeviceReport>)outputMode;
+            lastElement.Emit += Consume;
+        }
 
-        public static Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
-        public static Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
+        public float TipActivationPressure { set; get; }
+        public IBinding TipBinding { set; get; } = null;
 
-        private static bool TipState { set; get; } = false;
-        private static bool EraserState { set; get; } = false;
-        private static IList<bool> PenButtonStates { get; } = new bool[2];
-        private static IList<bool> AuxButtonStates { get; } = new bool[8];
+        public float EraserActivationPressure { set; get; }
+        public IBinding EraserBinding { set; get; } = null;
 
-        public static void HandleBinding(TabletState tablet, IDeviceReport report)
+        public Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
+        public Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
+
+        private bool TipState { set; get; } = false;
+        private bool EraserState { set; get; } = false;
+        private IList<bool> PenButtonStates { get; } = new bool[2];
+        private IList<bool> AuxButtonStates { get; } = new bool[8];
+
+        private IOutputMode outputMode;
+
+        public event Action<IDeviceReport> Emit;
+
+        public void Consume(IDeviceReport report)
+        {
+            Emit?.Invoke(report);
+            HandleBinding(outputMode.Tablet, report);
+        }
+
+        public void HandleBinding(TabletReference tablet, IDeviceReport report)
         {
             if (tablet == null)
                 return;
 
-            if (report is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
-                HandleTabletReport(tablet.Digitizer, tabletReport);
+            var pen = tablet.Properties.Specifications.Pen;
+            if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+                HandleTabletReport(pen, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(auxReport);
         }
 
-        private static void HandleTabletReport(DigitizerIdentifier identifier, ITabletReport report)
+        private void HandleTabletReport(PenSpecifications pen, ITabletReport report)
         {
-            float pressurePercent = (float)report.Pressure / (float)identifier.MaxPressure * 100f;
+            float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
             if (report is IEraserReport eraserReport && eraserReport.Eraser)
             {
                 bool threshold = pressurePercent > EraserActivationPressure;
@@ -50,12 +73,12 @@ namespace OpenTabletDriver.Desktop.Binding
             HandleBindingCollection(report, PenButtonStates, report.PenButtons, PenButtonBindings);
         }
 
-        private static void HandleAuxiliaryReport(IAuxReport report)
+        private void HandleAuxiliaryReport(IAuxReport report)
         {
             HandleBindingCollection(report, AuxButtonStates, report.AuxButtons, AuxButtonBindings);
         }
 
-        private static void HandleBindingCollection(IDeviceReport report, IList<bool> prevStates, IList<bool> newStates, IDictionary<int, IBinding> bindings)
+        private void HandleBindingCollection(IDeviceReport report, IList<bool> prevStates, IList<bool> newStates, IDictionary<int, IBinding> bindings)
         {
             for (int i = 0; i < newStates.Count; i++)
             {
@@ -65,7 +88,7 @@ namespace OpenTabletDriver.Desktop.Binding
             }
         }
 
-        private static void InvokeBinding(IDeviceReport report, IBinding binding, bool prevState, bool newState)
+        private void InvokeBinding(IDeviceReport report, IBinding binding, bool prevState, bool newState)
         {
             if (binding != null)
             {

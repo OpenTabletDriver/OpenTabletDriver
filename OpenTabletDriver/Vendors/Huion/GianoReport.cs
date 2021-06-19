@@ -1,6 +1,7 @@
-using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Huion
 {
@@ -13,19 +14,21 @@ namespace OpenTabletDriver.Vendors.Huion
             ReportID = (uint)report[1] >> 1;
             Position = new Vector2
             {
-                X = BitConverter.ToUInt16(report, 2) | ((report[8] & 1) << 16),
-                Y = BitConverter.ToUInt16(report, 4)
+                X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | ((report[8] & 1) << 16),
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
             Tilt = new Vector2
             {
                 X = (sbyte)report[10],
                 Y = (sbyte)report[11]
             };
-            Pressure = BitConverter.ToUInt16(report, 6);
+            Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
+
+            var penByte = report[1];
             PenButtons = new bool[]
             {
-                (report[1] & (1 << 1)) != 0,
-                (report[1] & (1 << 2)) != 0
+                penByte.IsBitSet(1),
+                penByte.IsBitSet(2)
             };
         }
 

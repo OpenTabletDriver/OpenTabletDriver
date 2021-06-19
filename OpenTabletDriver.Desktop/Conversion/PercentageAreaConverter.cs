@@ -15,9 +15,9 @@ namespace OpenTabletDriver.Desktop.Conversion
         public string Bottom => "Down";
         public string Right => "Right";
 
-        public Area Convert(TabletState tablet, double up, double left, double down, double right)
+        public Area Convert(TabletReference tablet, double up, double left, double down, double right)
         {
-            var digitizer = tablet.Digitizer;
+            var digitizer = tablet.Properties.Specifications.Digitizer;
 
             var width = (right - left) * digitizer.Width;
             var height = (down - up) * digitizer.Height;

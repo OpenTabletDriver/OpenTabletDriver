@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Timing;
@@ -25,6 +28,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 Spacing = 5,
                 Items =
                 {
+                    new StackLayoutItem
+                    {
+                        Control = deviceNameBox = new TextGroup("Device")
+                    },
                     new StackLayoutItem
                     {
                         Expand = true,
@@ -68,36 +75,41 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             base.OnLoadComplete(e);
 
-            App.Driver.Instance.DeviceReport += HandleReport;
+            App.Driver.AddConnectionHook(ConnectionHook);
             await App.Driver.Instance.SetTabletDebug(true);
 
-            var tablet = await App.Driver.Instance.GetTablet();
-            HandleTabletChanged(this, tablet);
-            App.Driver.Instance.TabletChanged += HandleTabletChanged;
+            var tablets = await App.Driver.Instance.GetTablets();
+            HandleTabletsChanged(this, tablets);
         }
 
         protected override async void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-
-            App.Driver.Instance.DeviceReport -= HandleReport;
             await App.Driver.Instance.SetTabletDebug(false);
-            App.Driver.Instance.TabletChanged -= HandleTabletChanged;
+            App.Driver.RemoveConnectionHook(ConnectionHook);
         }
 
-        private TextGroup rawTabletBox, tabletBox, reportRateBox;
+        private TextGroup deviceNameBox, rawTabletBox, tabletBox, reportRateBox;
         private TabletVisualizer tabletVisualizer;
         private double reportPeriod;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
 
-        private void HandleReport(object sender, RpcData rpcData)
+        private void ConnectionHook(IDriverDaemon daemon)
         {
-            var report = rpcData.GetData(AppInfo.PluginManager);
+            daemon.DeviceReport += HandleReport;
+            daemon.TabletsChanged += HandleTabletsChanged;
+            Plugin.Log.Debug(nameof(ConnectionHook), "Activated connection hook.");
+        }
 
-            tabletVisualizer.SetData(rpcData);
+        private void HandleReport(object sender, DebugReportData data)
+        {
+            tabletVisualizer.SetData(data);
+            var report = data.ToObject();
 
             if (report is IDeviceReport deviceReport)
             {
+                deviceNameBox.Update(data.Tablet.Properties.Name);
+
                 reportPeriod += (stopwatch.Restart().TotalMilliseconds - reportPeriod) / 10.0f;
                 reportRateBox.Update($"{(uint)(1000 / reportPeriod)}hz");
 
@@ -109,11 +121,17 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         }
 
-        private void HandleTabletChanged(object sender, TabletState tablet)
+        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
         {
-            tabletVisualizer.SetTablet(tablet);
-            this.Title = $"Tablet Debugger" + (tablet != null ? $" - {tablet.TabletProperties.Name}" : string.Empty);
-        }
+            StringBuilder sb = new StringBuilder("Tablet Debugger");
+            if (tablets != null && tablets.Any())
+            {
+                var numTablets = Math.Min(tablets.Count(), 3);
+                sb.Append(" - ");
+                sb.Append(string.Join(", ", tablets.Take(numTablets).Select(t => t.Properties.Name)));
+            }
+            this.Title = sb.ToString();
+        });
 
         private class DebuggerGroup : Group
         {
@@ -133,10 +151,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 Font = Fonts.Monospace(10)
             };
 
-            public void Update(string text)
-            {
-                Application.Instance.AsyncInvoke(() => label.Text = text);
-            }
+            public void Update(string text) => Application.Instance.AsyncInvoke(() => label.Text = text);
 
             protected override Color VerticalBackgroundColor => base.HorizontalBackgroundColor;
         }
@@ -145,11 +160,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             private static readonly Color AccentColor = SystemColors.Highlight;
 
-            private RpcData data;
-            private TabletState tablet;
+            private DebugReportData data;
+            private TabletReference tablet;
 
-            public void SetData(RpcData data) => this.data = data;
-            public void SetTablet(TabletState tablet) => this.tablet = tablet;
+            public void SetData(DebugReportData data)
+            {
+                this.data = data;
+                this.tablet = data.Tablet;
+            }
 
             protected override void OnNextFrame(PaintEventArgs e)
             {
@@ -160,8 +178,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     {
                         var pxToMM = (float)graphics.DPI / 25.4f;
 
+                        var digitizer = tablet.Properties.Specifications.Digitizer;
                         var clientCenter = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;
-                        var tabletCenter = new PointF(tablet.Digitizer.Width, tablet.Digitizer.Height) / 2 * pxToMM;
+                        var tabletCenter = new PointF(digitizer.Width, digitizer.Height) / 2 * pxToMM;
 
                         graphics.TranslateTransform(clientCenter - tabletCenter);
 
@@ -173,19 +192,22 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             protected void DrawBackground(Graphics graphics, float scale)
             {
-                var bg = new RectangleF(0, 0, tablet.Digitizer.Width, tablet.Digitizer.Height) * scale;
+                var digitizer = tablet.Properties.Specifications.Digitizer;
+                var bg = new RectangleF(0, 0, digitizer.Width, digitizer.Height) * scale;
                 graphics.FillRectangle(SystemColors.WindowBackground, bg);
                 graphics.DrawRectangle(AccentColor, bg);
             }
 
             protected void DrawPosition(Graphics graphics, float scale)
             {
-                var report = data?.GetData(AppInfo.PluginManager);
+                var report = data?.ToObject();
 
-                if (report is ITabletReport tabletReport && tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+                var digitizer = tablet.Properties.Specifications.Digitizer;
+                var pen = tablet.Properties.Specifications.Pen;
+                if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
                 {
-                    var tabletMm = new SizeF(tablet.Digitizer.Width, tablet.Digitizer.Height);
-                    var tabletPx = new SizeF(tablet.Digitizer.MaxX, tablet.Digitizer.MaxY);
+                    var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
+                    var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);
                     var tabletScale = tabletMm / tabletPx * scale;
                     var position = new PointF(tabletReport.Position.X, tabletReport.Position.Y) * tabletScale;
 

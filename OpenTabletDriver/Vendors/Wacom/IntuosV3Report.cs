@@ -11,7 +11,21 @@ namespace OpenTabletDriver.Vendors.Wacom
         {
             Raw = report;
 
-            ReportID = report[0];
+            if (report.Length < 10)
+            {
+                // Discard first tablet report or whenever report length is insufficient
+                ReportID = 0;
+                Position = Vector2.Zero;
+                Tilt = Vector2.Zero;
+                Pressure = 0;
+                Eraser = false;
+                PenButtons = new bool[] { false, false };
+                NearProximity = false;
+                HoverDistance = 0;
+                return;
+            }
+            ReportID = report[1] != 0 ? report[0] : 0u;
+
             Position = new Vector2
             {
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | (report[4] << 16),

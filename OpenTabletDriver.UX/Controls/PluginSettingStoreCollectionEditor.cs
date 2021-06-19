@@ -6,27 +6,53 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls.Generic;
-using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX.Controls
 {
     public class PluginSettingStoreCollectionEditor<TSource> : Panel
     {
-        public PluginSettingStoreCollectionEditor(
-            PluginSettingStoreCollection store,
-            string friendlyName = null
-        )
+        public PluginSettingStoreCollectionEditor()
         {
             this.baseControl.Panel1 = new Scrollable { Content = sourceSelector };
             this.baseControl.Panel2 = new Scrollable { Content = settingStoreEditor };
 
             sourceSelector.SelectedSourceChanged += (sender, reference) => UpdateSelectedStore(reference);
-            this.FriendlyTypeName = friendlyName;
-
-            UpdateStore(store);
         }
 
-        private readonly string FriendlyTypeName;
+        public string FriendlyTypeName { set; get; }
+
+        private PluginSettingStoreCollection storeCollection;
+        public PluginSettingStoreCollection StoreCollection
+        {
+            set
+            {
+                this.storeCollection = value;
+                this.OnStoreCollectionChanged();
+            }
+            get => this.storeCollection;
+        }
+        
+        public event EventHandler<EventArgs> StoreCollectionChanged;
+        
+        protected virtual void OnStoreCollectionChanged()
+        {
+            StoreCollectionChanged?.Invoke(this, new EventArgs());
+            UpdateStore(this.StoreCollection);
+        }
+        
+        public BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection> StoreCollectionBinding
+        {
+            get
+            {
+                return new BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection>(
+                    this,
+                    c => c.StoreCollection,
+                    (c, v) => c.StoreCollection = v,
+                    (c, h) => c.StoreCollectionChanged += h,
+                    (c, h) => c.StoreCollectionChanged -= h
+                );
+            }
+        }
 
         public WeakReference<PluginSettingStoreCollection> CollectionReference { protected set; get; }
 
@@ -103,9 +129,7 @@ namespace OpenTabletDriver.UX.Controls
                         Control = new Button
                         {
                             Text = "Open Plugin Manager",
-                            Command = new Command(
-                                (s, e) => (Application.Instance.MainForm as MainForm).ShowPluginManager()
-                            )
+                            Command = new Command((s, e) => App.Current.PluginManagerWindow.Show())
                         },
                         HorizontalAlignment = HorizontalAlignment.Center
                     }

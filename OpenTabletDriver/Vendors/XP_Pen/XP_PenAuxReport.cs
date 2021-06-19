@@ -1,5 +1,5 @@
-using System.Collections.Specialized;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.XP_Pen
 {
@@ -8,18 +8,18 @@ namespace OpenTabletDriver.Vendors.XP_Pen
         public XP_PenAuxReport(byte[] report)
         {
             Raw = report;
+            var auxByte = report[2];
 
-            var bitVector = new BitVector32(report[2]);
             AuxButtons = new bool[]
             {
-                bitVector[1 << 0],
-                bitVector[1 << 1],
-                bitVector[1 << 2],
-                bitVector[1 << 3],
-                bitVector[1 << 4],
-                bitVector[1 << 5],
-                bitVector[1 << 6],
-                bitVector[1 << 7]
+                auxByte.IsBitSet(0),
+                auxByte.IsBitSet(1),
+                auxByte.IsBitSet(2),
+                auxByte.IsBitSet(3),
+                auxByte.IsBitSet(4),
+                auxByte.IsBitSet(5),
+                auxByte.IsBitSet(6),
+                auxByte.IsBitSet(7),
             };
         }
 

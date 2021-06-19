@@ -9,16 +9,18 @@ namespace OpenTabletDriver.Desktop.Migration
     {
         public static Settings Migrate(Settings settings)
         {
+            // TODO: Fix migration
+
             // Output mode
-            settings.OutputMode = SafeMigrate(settings.OutputMode, Settings.Default.OutputMode);
+            // settings.OutputMode = SafeMigrate(settings.OutputMode, Settings.Default.OutputMode);
 
-            // Bindings
-            settings.TipButton = SafeMigrate(settings.TipButton, Settings.Default.TipButton);
+            // // Bindings
+            // settings.TipButton = SafeMigrate(settings.TipButton, Settings.Default.TipButton);
 
-            settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
-            settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
-            settings.PenButtons = SafeMigrateCollection(settings.PenButtons).SetExpectedCount(Settings.PenButtonCount);
-            settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons).SetExpectedCount(Settings.AuxButtonCount);
+            // settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
+            // settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
+            // settings.PenButtons = SafeMigrateCollection(settings.PenButtons).SetExpectedCount(Settings.PenButtonCount);
+            // settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons).SetExpectedCount(Settings.AuxButtonCount);
 
             return settings;
         }

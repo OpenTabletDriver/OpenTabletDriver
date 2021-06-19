@@ -8,37 +8,28 @@ using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
-    public class TypeDropDown<T> : DropDown where T : class
+    public class TypeDropDown<T> : DropDown<TypeInfo> where T : class
     {
         public TypeDropDown()
         {
             this.ItemTextBinding = Binding.Property<TypeInfo, string>(t => GetFriendlyName(t));
             this.ItemKeyBinding = Binding.Property<TypeInfo, string>(t => t.FullName);
-
-            Refresh();
         }
 
-        public IEnumerable<TypeInfo> Types { protected set; get; }
-
-        public void Refresh()
+        protected override IEnumerable<object> CreateDefaultDataStore()
         {
-            this.DataStore = Types = from type in AppInfo.PluginManager.GetChildTypes<T>()
+            var newTypes = from type in AppInfo.PluginManager.GetChildTypes<T>()
                 orderby GetFriendlyName(type)
                 select type;
-        }
-
-        public TypeInfo SelectedType
-        {
-            set => this.SelectedValue = value;
-            get => (TypeInfo)this.SelectedValue;
+            return newTypes.ToList();
         }
 
         public T ConstructSelectedType(params object[] args)
         {
-            if (SelectedType != null)
+            if (SelectedItem != null)
             {
                 args ??= Array.Empty<object>();
-                var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedType);
+                var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedItem);
                 return pluginRef.Construct<T>();
             }
             return null;
@@ -46,7 +37,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public void Select(Func<T, bool> predicate)
         {
-            foreach (TypeInfo type in Types)
+            foreach (TypeInfo type in DataStore)
             {
                 var obj = AppInfo.PluginManager.ConstructObject<T>(type.FullName);
                 if (predicate(obj))

@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Conversion
 
         private const float XP_PEN_AREA_CONSTANT = 3.937f;
 
-        public Area Convert(TabletState tablet, double w, double h, double x, double y)
+        public Area Convert(TabletReference tablet, double w, double h, double x, double y)
         {
             double conversionFactor = XP_PEN_AREA_CONSTANT;
             var width = w / conversionFactor;

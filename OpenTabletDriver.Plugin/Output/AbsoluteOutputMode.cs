@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -64,9 +65,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override Matrix3x2 CreateTransformationMatrix()
         {
-            if (Input != null && Output != null && Tablet?.Digitizer != null)
+            if (Input != null && Output != null && Tablet != null)
             {
-                var transform = CalculateTransformation(Input, Output, Tablet.Digitizer);
+                var transform = CalculateTransformation(Input, Output, Tablet.Properties.Specifications.Digitizer);
 
                 var halfDisplayWidth = Output?.Width / 2 ?? 0;
                 var halfDisplayHeight = Output?.Height / 2 ?? 0;
@@ -87,12 +88,12 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
-        protected static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
+        protected static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerSpecifications digitizer)
         {
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(
-                tablet.Width / tablet.MaxX,
-                tablet.Height / tablet.MaxY);
+                digitizer.Width / digitizer.MaxX,
+                digitizer.Height / digitizer.MaxY);
 
             // Translate to the center of input area
             res *= Matrix3x2.CreateTranslation(
@@ -137,11 +138,12 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport && Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
+            var pen = Tablet.Properties.Specifications.Pen;
+            if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
             {
                 if (Pointer is IVirtualTablet pressureHandler)
                 {
-                    float normalizedPressure = (float)tabletReport.Pressure / (float)Tablet.Digitizer.MaxPressure;
+                    float normalizedPressure = (float)tabletReport.Pressure / (float)pen.MaxPressure;
                     pressureHandler.SetPressure(normalizedPressure);
                 }
 
