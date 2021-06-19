@@ -10,20 +10,6 @@ namespace OpenTabletDriver.Vendors.Wacom
         public IntuosV3Report(byte[] report)
         {
             Raw = report;
-
-            if (report.Length < 10)
-            {
-                // Discard first tablet report or whenever report length is insufficient
-                ReportID = 0;
-                Position = Vector2.Zero;
-                Tilt = Vector2.Zero;
-                Pressure = 0;
-                Eraser = false;
-                PenButtons = new bool[] { false, false };
-                NearProximity = false;
-                HoverDistance = 0;
-                return;
-            }
             ReportID = report[1] != 0 ? report[0] : 0u;
 
             Position = new Vector2
