@@ -1,7 +1,7 @@
-using System.Collections.Specialized;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.XP_Pen
 {
@@ -11,7 +11,6 @@ namespace OpenTabletDriver.Vendors.XP_Pen
         {
             Raw = report;
 
-            var bitVector = new BitVector32(report[1]);
             ReportID = (uint)report[1] >> 1;
             Position = new Vector2
             {
@@ -24,11 +23,13 @@ namespace OpenTabletDriver.Vendors.XP_Pen
                 Y = (sbyte)report[9]
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
-            Eraser = bitVector[1 << 3];
+
+            var penByte = report[1];
+            Eraser = penByte.IsBitSet(3);
             PenButtons = new bool[]
             {
-                bitVector[1 << 1],
-                bitVector[1 << 2]
+                penByte.IsBitSet(1),
+                penByte.IsBitSet(2)
             };
         }
 
