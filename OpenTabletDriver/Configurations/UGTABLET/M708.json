@@ -1,0 +1,77 @@
+{
+  "Name": "UGTABLET M708",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 254.0,
+      "Height": 152.4,
+      "MaxX": 50800.0,
+      "MaxY": 30480.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 2311,
+      "InputReportLength": 12,
+      "OutputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {
+        "4": "UG902_BPG1006"
+      },
+      "InitializationStrings": []
+    },
+    {
+      "Width": 254.0,
+      "Height": 152.4,
+      "MaxX": 50800.0,
+      "MaxY": 30480.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": false,
+        "End": null,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 2311,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "Width": 254.0,
+      "Height": 152.4,
+      "MaxX": 50800.0,
+      "MaxY": 30480.0,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 2311,
+      "InputReportLength": 12,
+      "OutputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
