@@ -1,5 +1,5 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 
 namespace OpenTabletDriver.Vendors.Wacom
@@ -30,8 +30,8 @@ namespace OpenTabletDriver.Vendors.Wacom
                         TouchID = touchID,
                         Position = new Vector2
                         {
-                            X = BitConverter.ToUInt16(Raw, 2 + offset),
-                            Y = BitConverter.ToUInt16(Raw, 4 + offset),
+                            X = Unsafe.ReadUnaligned<ushort>(ref report[2 + offset]),
+                            Y = Unsafe.ReadUnaligned<ushort>(ref report[4 + offset]),
                         },
                     };
                 }

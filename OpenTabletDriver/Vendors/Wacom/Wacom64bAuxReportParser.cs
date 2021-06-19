@@ -1,5 +1,4 @@
 ﻿using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {

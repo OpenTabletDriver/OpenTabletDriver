@@ -1,4 +1,5 @@
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
@@ -8,16 +9,17 @@ namespace OpenTabletDriver.Vendors.Wacom
         {
             Raw = report;
 
+            var auxByte = report[4];
             AuxButtons = new bool[]
             {
-                (report[4] & (1 << 0)) != 0,
-                (report[4] & (1 << 1)) != 0,
-                (report[4] & (1 << 2)) != 0,
-                (report[4] & (1 << 3)) != 0,
-                (report[4] & (1 << 4)) != 0,
-                (report[4] & (1 << 5)) != 0,
-                (report[4] & (1 << 6)) != 0,
-                (report[4] & (1 << 7)) != 0
+                auxByte.IsBitSet(0),
+                auxByte.IsBitSet(1),
+                auxByte.IsBitSet(2),
+                auxByte.IsBitSet(3),
+                auxByte.IsBitSet(4),
+                auxByte.IsBitSet(5),
+                auxByte.IsBitSet(6),
+                auxByte.IsBitSet(7),
             };
         }
         

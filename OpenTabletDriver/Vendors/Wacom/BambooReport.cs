@@ -1,6 +1,7 @@
-using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Wacom
 {
@@ -13,23 +14,27 @@ namespace OpenTabletDriver.Vendors.Wacom
             ReportID = (uint)report[1] >> 1;
             Position = new Vector2
             {
-                X = BitConverter.ToUInt16(report, 2),
-                Y = BitConverter.ToUInt16(report, 4)
+                X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
-            Pressure = (uint)(report[6] | ((report[7] & 0x01) << 8));
-            Eraser = (report[1] & (1 << 5)) != 0;
 
+            Pressure = (uint)(report[6] | ((report[7] & 0x01) << 8));
+            Eraser = report[1].IsBitSet(5);
+
+            var penByte = report[1];
             PenButtons = new bool[]
             {
-                (report[1] & (1 << 1)) != 0,
-                (report[1] & (1 << 2)) != 0
+                penByte.IsBitSet(1),
+                penByte.IsBitSet(2)
             };
+
+            var auxByte = report[7];
             AuxButtons = new bool[]
             {
-                (report[7] & (1 << 3)) != 0,
-                (report[7] & (1 << 4)) != 0,
-                (report[7] & (1 << 5)) != 0,
-                (report[7] & (1 << 6)) != 0
+                auxByte.IsBitSet(3),
+                auxByte.IsBitSet(4),
+                auxByte.IsBitSet(5),
+                auxByte.IsBitSet(6),
             };
         }
 
