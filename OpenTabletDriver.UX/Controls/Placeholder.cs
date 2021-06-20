@@ -10,6 +10,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             this.Content = new StackLayout
             {
+                Spacing = 5,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 Items =
                 {
@@ -19,6 +20,10 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         Control = label = new Label()
                     },
+                    new StackLayoutItem
+                    {
+                        Control = extraPanel = new Panel()
+                    },
                     new StackLayoutItem(null, true)
                 }
             };
@@ -27,6 +32,7 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         private Label label;
+        private Panel extraPanel;
         
         private string text;
         public string Text
@@ -55,6 +61,17 @@ namespace OpenTabletDriver.UX.Controls
                     (c, h) => c.TextChanged -= h
                 );
             }
+        }
+
+        private Control extraContent;
+        public Control ExtraContent
+        {
+            set
+            {
+                this.extraContent = value;
+                extraPanel.Content = value;
+            }
+            get => this.extraContent;
         }
     }
 }

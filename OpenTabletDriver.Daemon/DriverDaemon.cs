@@ -127,11 +127,11 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.PluginManager.InstallPlugin(filePath));
         }
 
-        public Task<bool> UninstallPlugin(string friendlyName)
+        public Task<bool> UninstallPlugin(string directoryPath)
         {
             var plugins = AppInfo.PluginManager.GetLoadedPlugins();
-            var plugin = plugins.FirstOrDefault(ctx => ctx.FriendlyName == friendlyName);
-            return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(plugin));
+            var context = plugins.First(ctx => ctx.Directory.FullName == directoryPath);
+            return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(context));
         }
 
         public Task<bool> DownloadPlugin(PluginMetadata metadata)

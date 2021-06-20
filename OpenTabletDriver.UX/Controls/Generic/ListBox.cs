@@ -16,5 +16,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             set => base.DataStore = value;
             get => (IList<T>)base.DataStore;
         }
+
+        public DirectBinding<T> SelectedItemBinding => SelectedValueBinding.Cast<T>();
     }
 }

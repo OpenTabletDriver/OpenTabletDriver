@@ -11,7 +11,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginName(PLUGIN_NAME)]
-    public class KeyBinding : IBinding
+    public class KeyBinding : IStateBinding
     {
         private const string PLUGIN_NAME = "Key Binding";
 
@@ -21,13 +21,13 @@ namespace OpenTabletDriver.Desktop.Binding
         [Property("Key"), PropertyValidated(nameof(ValidKeys))]
         public string Key { set; get; }
 
-        public void Press(IDeviceReport report)
+        public void Press(TabletReference tablet, IDeviceReport report)
         {
             if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard.Press(Key);
         }
 
-        public void Release(IDeviceReport report)
+        public void Release(TabletReference tablet, IDeviceReport report)
         {
             if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard.Release(Key);

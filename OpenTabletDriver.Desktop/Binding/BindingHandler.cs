@@ -19,10 +19,10 @@ namespace OpenTabletDriver.Desktop.Binding
         }
 
         public float TipActivationPressure { set; get; }
-        public IBinding TipBinding { set; get; } = null;
+        public IBinding TipBinding { set; get; }
 
         public float EraserActivationPressure { set; get; }
-        public IBinding EraserBinding { set; get; } = null;
+        public IBinding EraserBinding { set; get; }
 
         public Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
         public Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
@@ -49,53 +49,58 @@ namespace OpenTabletDriver.Desktop.Binding
 
             var pen = tablet.Properties.Specifications.Pen;
             if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
-                HandleTabletReport(pen, tabletReport);
+                HandleTabletReport(tablet, pen, tabletReport);
             if (report is IAuxReport auxReport)
-                HandleAuxiliaryReport(auxReport);
+                HandleAuxiliaryReport(tablet, auxReport);
         }
 
-        private void HandleTabletReport(PenSpecifications pen, ITabletReport report)
+        private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
         {
             float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
             if (report is IEraserReport eraserReport && eraserReport.Eraser)
             {
                 bool threshold = pressurePercent > EraserActivationPressure;
-                InvokeBinding(report, EraserBinding, EraserState, threshold);
+                InvokeBinding(tablet, report, EraserBinding, EraserState, threshold);
                 EraserState = threshold;
             }
             else
             {
                 bool threshold = pressurePercent > TipActivationPressure;
-                InvokeBinding(report, TipBinding, TipState, threshold);
+                InvokeBinding(tablet, report, TipBinding, TipState, threshold);
                 TipState = threshold;
             }
 
-            HandleBindingCollection(report, PenButtonStates, report.PenButtons, PenButtonBindings);
+            HandleBindingCollection(tablet, report, PenButtonStates, report.PenButtons, PenButtonBindings);
         }
 
-        private void HandleAuxiliaryReport(IAuxReport report)
+        private void HandleAuxiliaryReport(TabletReference tablet, IAuxReport report)
         {
-            HandleBindingCollection(report, AuxButtonStates, report.AuxButtons, AuxButtonBindings);
+            HandleBindingCollection(tablet, report, AuxButtonStates, report.AuxButtons, AuxButtonBindings);
         }
 
-        private void HandleBindingCollection(IDeviceReport report, IList<bool> prevStates, IList<bool> newStates, IDictionary<int, IBinding> bindings)
+        private void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IList<bool> prevStates, IList<bool> newStates, IDictionary<int, IBinding> bindings)
         {
             for (int i = 0; i < newStates.Count; i++)
             {
                 if (bindings.TryGetValue(i, out IBinding binding))
-                    InvokeBinding(report, binding, prevStates[i], newStates[i]);
+                    InvokeBinding(tablet, report, binding, prevStates[i], newStates[i]);
                 prevStates[i] = newStates[i];
             }
         }
 
-        private void InvokeBinding(IDeviceReport report, IBinding binding, bool prevState, bool newState)
+        private void InvokeBinding(TabletReference tablet, IDeviceReport report, IBinding binding, bool prevState, bool newState)
         {
-            if (binding != null)
+            if (binding is IStateBinding stateBinding)
             {
                 if (newState && !prevState)
-                    binding.Press(report);
+                    stateBinding.Press(tablet, report);
                 else if (!newState && prevState)
-                    binding.Release(report);
+                    stateBinding.Release(tablet, report);
+            }
+
+            if (binding is IInterruptBinding interruptBinding)
+            {
+                interruptBinding.Invoke(tablet, report);
             }
         }
     }

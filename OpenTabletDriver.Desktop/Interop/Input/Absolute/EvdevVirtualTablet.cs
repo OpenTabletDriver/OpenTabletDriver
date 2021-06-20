@@ -74,20 +74,21 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Sync();
         }
 
-        public void SetPressure(float percentage)
+        public void SetPressure(float percentage, bool isEraser)
         {
-            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MaxPressure * percentage));
+            Device.Write(EventType.EV_KEY, isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, 1);
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, percentage > 0 ? 1 : 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_PEN, 1);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MaxPressure * percentage));
             Device.Sync();
         }
 
-        protected override EventCode? GetCode(MouseButton button) => button switch
+        public void SetTilt(Vector2 tilt)
         {
-            MouseButton.Middle  => EventCode.BTN_STYLUS,
-            MouseButton.Right   => EventCode.BTN_STYLUS2,
-            MouseButton.Forward => EventCode.BTN_STYLUS3,
-            _                   => null
-        };
+            Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_X, (int)tilt.X);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_Y, (int)tilt.Y);
+            Device.Sync();
+        }
+
+        protected override EventCode? GetCode(MouseButton button) => null;
     }
 }

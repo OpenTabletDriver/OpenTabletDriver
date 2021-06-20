@@ -4,24 +4,17 @@ using System.Linq;
 using System.Reflection;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Plugin.Attributes;
 
-namespace OpenTabletDriver.UX.Controls.Generic
+namespace OpenTabletDriver.UX.Controls.Generic.Reflection
 {
     public class TypeDropDown<T> : DropDown<TypeInfo> where T : class
     {
         public TypeDropDown()
         {
-            this.ItemTextBinding = Binding.Property<TypeInfo, string>(t => GetFriendlyName(t));
+            this.ItemTextBinding = Binding.Property<TypeInfo, string>(t => t.GetFriendlyName());
             this.ItemKeyBinding = Binding.Property<TypeInfo, string>(t => t.FullName);
-        }
 
-        protected override IEnumerable<object> CreateDefaultDataStore()
-        {
-            var newTypes = from type in AppInfo.PluginManager.GetChildTypes<T>()
-                orderby GetFriendlyName(type)
-                select type;
-            return newTypes.ToList();
+            AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
         public T ConstructSelectedType(params object[] args)
@@ -48,9 +41,17 @@ namespace OpenTabletDriver.UX.Controls.Generic
             }
         }
 
-        protected string GetFriendlyName(TypeInfo t)
+        protected override IEnumerable<object> CreateDefaultDataStore()
         {
-            return t.GetCustomAttribute<PluginNameAttribute>()?.Name ?? t.FullName;
+            var query = from type in AppInfo.PluginManager.GetChildTypes<T>()
+                orderby type.GetFriendlyName()
+                select type;
+            return query.ToList();
         }
+
+        private void HandleAssembliesChanged(object sender, EventArgs e) => Application.Instance.AsyncInvoke(() =>
+        {
+            this.DataStore = CreateDefaultDataStore();
+        });
     }
 }
