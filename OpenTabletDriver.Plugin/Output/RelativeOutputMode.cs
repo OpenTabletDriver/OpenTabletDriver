@@ -94,7 +94,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport && Tablet.Properties.Specifications.Pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+            if (report is ITabletReport tabletReport)
             {
                 Pointer.Translate(tabletReport.Position);
             }

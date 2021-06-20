@@ -35,12 +35,6 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                         Orientation = Orientation.Horizontal,
                         Content = maxPressure = new UnsignedIntegerNumberBox()
                     },
-                    new Group
-                    {
-                        Text = "Active Report ID",
-                        Orientation = Orientation.Horizontal,
-                        Content = activeReportId = new DetectionRangeBox()
-                    },
                     buttonSpecifications
                 }
             };
@@ -52,17 +46,14 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                 )
             );
             enable.CheckedBinding.Bind(maxPressure, c => c.Enabled);
-            enable.CheckedBinding.Bind(activeReportId, c => c.Enabled);
             enable.CheckedBinding.Bind(buttonSpecifications, c => c.Enabled);
-            
+
             maxPressure.ValueBinding.Bind(PenSpecificationsBinding.Child(c => c.MaxPressure));
-            activeReportId.ValueBinding.Bind(PenSpecificationsBinding.Child(c => c.ActiveReportID));
             buttonSpecifications.ButtonSpecificationsBinding.Bind(PenSpecificationsBinding.Child(c => c.Buttons));
         }
 
         private CheckBox enable;
         private MaskedTextBox<uint> maxPressure;
-        private MaskedTextBox<DetectionRange> activeReportId;
         private ButtonSpecificationsEditor buttonSpecifications;
 
         private PenSpecifications penSpecs;
@@ -75,11 +66,11 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
             }
             get => this.penSpecs;
         }
-        
+
         public event EventHandler<EventArgs> PenSpecificationsChanged;
-        
+
         protected virtual void OnPenSpecificationsChanged() => PenSpecificationsChanged?.Invoke(this, new EventArgs());
-        
+
         public BindableBinding<PenSpecificationsEditor, PenSpecifications> PenSpecificationsBinding
         {
             get
@@ -191,7 +182,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                     {
                         if (rightOperators.Contains(builder[builder.Length - 1]))
                             return false;
-                        
+
                         return rightOperators.Contains(character) ||
                             char.IsDigit(character) ||
                             allowedAlpha.Contains(character);

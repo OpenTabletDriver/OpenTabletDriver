@@ -8,11 +8,6 @@ namespace OpenTabletDriver.Plugin.Tablet
         public uint MaxPressure { set; get; }
 
         /// <summary>
-        /// The pen's active detection report ID.
-        /// </summary>
-        public DetectionRange ActiveReportID { set; get; }
-
-        /// <summary>
         /// Specifications for the pen buttons.
         /// </summary>
         public ButtonSpecifications Buttons { set; get; } = new ButtonSpecifications();

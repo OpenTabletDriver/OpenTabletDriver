@@ -48,7 +48,7 @@ namespace OpenTabletDriver.Desktop.Binding
                 return;
 
             var pen = tablet.Properties.Specifications.Pen;
-            if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+            if (report is ITabletReport tabletReport)
                 HandleTabletReport(tablet, pen, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(tablet, auxReport);

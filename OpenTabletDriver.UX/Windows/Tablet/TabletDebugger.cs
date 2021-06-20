@@ -204,7 +204,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                 var digitizer = tablet.Properties.Specifications.Digitizer;
                 var pen = tablet.Properties.Specifications.Pen;
-                if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
+                if (report is ITabletReport tabletReport)
                 {
                     var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
                     var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);

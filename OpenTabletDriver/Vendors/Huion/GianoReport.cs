@@ -11,7 +11,6 @@ namespace OpenTabletDriver.Vendors.Huion
         {
             Raw = report;
 
-            ReportID = (uint)report[1] >> 1;
             Position = new Vector2
             {
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | ((report[8] & 1) << 16),
@@ -33,7 +32,6 @@ namespace OpenTabletDriver.Vendors.Huion
         }
 
         public byte[] Raw { set; get; }
-        public uint ReportID { set; get; }
         public Vector2 Position { set; get; }
         public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }

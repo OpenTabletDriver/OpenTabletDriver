@@ -35,7 +35,6 @@ namespace OpenTabletDriver.UX.Tools
 
         private static IEnumerable<string> GetStringFormat(ITabletReport tabletReport)
         {
-            yield return $"ReportID:{tabletReport.ReportID}";
             yield return $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}]";
             yield return $"Pressure:{tabletReport.Pressure}";
             yield return $"PenButtons:[{string.Join(" ", tabletReport.PenButtons)}]";

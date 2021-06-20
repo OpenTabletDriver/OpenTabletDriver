@@ -10,7 +10,6 @@ namespace OpenTabletDriver.Vendors.Wacom
         public IntuosV3Report(byte[] report)
         {
             Raw = report;
-            ReportID = report[1] != 0 ? report[0] : 0u;
 
             Position = new Vector2
             {
@@ -36,7 +35,6 @@ namespace OpenTabletDriver.Vendors.Wacom
         }
 
         public byte[] Raw { set; get; }
-        public uint ReportID { set; get; }
         public Vector2 Position { set; get; }
         public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }
