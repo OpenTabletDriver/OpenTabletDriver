@@ -1,26 +1,62 @@
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using OpenTabletDriver.Desktop.Output;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Migration
 {
+    using V5 = LegacySettings.V5;
+
     public static class SettingsMigrator
     {
-        public static Settings Migrate(Settings settings)
+        public static void Migrate(AppInfo appInfo)
         {
-            // TODO: Fix migration
+            var file = new FileInfo(appInfo.SettingsFile);
+            if (Migrate(file) is Settings settings)
+            {
+                Log.Write("Settings", "Settings have been migrated.");
+                Serialization.Serialize(file, settings);
+            }
+        }
 
-            // Output mode
-            // settings.OutputMode = SafeMigrate(settings.OutputMode, Settings.Default.OutputMode);
+        private static Settings Migrate(FileInfo file)
+        {
+            var v5 = Serialization.Deserialize<V5::Settings>(file);
+            return v5.IsValid() ? Convert(v5) : null;
+        }
 
-            // // Bindings
-            // settings.TipButton = SafeMigrate(settings.TipButton, Settings.Default.TipButton);
+        private static Settings Convert(V5::Settings old)
+        {
+            var settings = Settings.GetDefaults();
 
-            // settings.Filters = SafeMigrateCollection(settings.Filters).Trim();
-            // settings.Interpolators = SafeMigrateCollection(settings.Interpolators).Trim();
-            // settings.PenButtons = SafeMigrateCollection(settings.PenButtons).SetExpectedCount(Settings.PenButtonCount);
-            // settings.AuxButtons = SafeMigrateCollection(settings.AuxButtons).SetExpectedCount(Settings.AuxButtonCount);
+            if (settings.Profiles.FirstOrDefault() is Profile profile)
+            {
+                profile.OutputMode = SafeMigrate(old.OutputMode, new PluginSettingStore(typeof(AbsoluteMode)));
+
+                profile.AbsoluteModeSettings.Display.Area = old.GetDisplayArea();
+                profile.AbsoluteModeSettings.Tablet.Area = old.GetTabletArea();
+                profile.AbsoluteModeSettings.EnableAreaLimiting = old.EnableAreaLimiting;
+                profile.AbsoluteModeSettings.EnableClipping = old.EnableClipping;
+                profile.AbsoluteModeSettings.LockAspectRatio = old.LockAspectRatio;
+
+                profile.RelativeModeSettings.XSensitivity = old.XSensitivity;
+                profile.RelativeModeSettings.YSensitivity = old.YSensitivity;
+                profile.RelativeModeSettings.RelativeRotation = old.RelativeRotation;
+                profile.RelativeModeSettings.ResetTime = old.ResetTime;
+
+                profile.Filters = SafeMigrateCollection(new PluginSettingStoreCollection(old.Filters.Concat(old.Interpolators)));
+
+                profile.BindingSettings.TipButton = SafeMigrate(old.TipButton, BindingSettings.GetDefaults().TipButton);
+                profile.BindingSettings.PenButtons = SafeMigrateCollection(old.PenButtons).SetExpectedCount(BindingSettings.PEN_BUTTON_MAX);
+                profile.BindingSettings.AuxButtons = SafeMigrateCollection(old.AuxButtons).SetExpectedCount(BindingSettings.AUX_BUTTON_MAX);
+            }
+
+            settings.LockUsableAreaDisplay = old.LockUsableAreaDisplay;
+            settings.LockUsableAreaTablet = old.LockUsableAreaTablet;
 
             return settings;
         }
