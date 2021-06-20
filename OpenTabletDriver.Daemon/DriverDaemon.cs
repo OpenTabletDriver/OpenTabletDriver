@@ -63,6 +63,7 @@ namespace OpenTabletDriver.Daemon
 
             if (settingsFile.Exists)
             {
+                SettingsMigrator.Migrate(AppInfo.Current);
                 var settings = Settings.Deserialize(settingsFile);
                 if (settings != null)
                 {
@@ -112,10 +113,6 @@ namespace OpenTabletDriver.Daemon
 
             AppInfo.PluginManager.Load();
 
-            // Migrate if settings is available to avoid invalid settings
-            if (Settings != null)
-                Settings = SettingsMigrator.Migrate(Settings);
-
             // Add services to inject on plugin construction
             AppInfo.PluginManager.AddService<IDriver>(() => this.Driver);
 
@@ -127,11 +124,11 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.PluginManager.InstallPlugin(filePath));
         }
 
-        public Task<bool> UninstallPlugin(string friendlyName)
+        public Task<bool> UninstallPlugin(string directoryPath)
         {
             var plugins = AppInfo.PluginManager.GetLoadedPlugins();
-            var plugin = plugins.FirstOrDefault(ctx => ctx.FriendlyName == friendlyName);
-            return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(plugin));
+            var context = plugins.First(ctx => ctx.Directory.FullName == directoryPath);
+            return Task.FromResult(AppInfo.PluginManager.UninstallPlugin(context));
         }
 
         public Task<bool> DownloadPlugin(PluginMetadata metadata)
@@ -170,17 +167,14 @@ namespace OpenTabletDriver.Daemon
             return null;
         }
 
-        public async Task SetSettings(Settings settings)
+        public Task SetSettings(Settings settings)
         {
             // Dispose filters that implement IDisposable interface
             foreach (var obj in Driver.Devices?.SelectMany(d => d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
                 if (obj is IDisposable disposable)
                     disposable.Dispose();
 
-            if (settings == null)
-                await ResetSettings();
-
-            Settings = SettingsMigrator.Migrate(settings);
+            Settings = settings ??= Settings.GetDefaults();
 
             foreach (var dev in Driver.Devices)
             {
@@ -209,6 +203,8 @@ namespace OpenTabletDriver.Daemon
             Log.Write("Settings", "Driver is enabled.");
 
             SetToolSettings();
+
+            return Task.CompletedTask;
         }
 
         public async Task ResetSettings()

@@ -120,8 +120,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             var name = this.GetPluginReference().Name;
             string settings = string.Join(", ", this.Settings.Select(s => $"({s.Property}: {s.Value})"));
-
-            return $"{name}: {settings}";
+            string suffix = Settings.Any() ? $": {settings}" : string.Empty;
+            return name + suffix;
         }
     }
 }

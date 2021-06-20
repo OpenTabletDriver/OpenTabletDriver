@@ -1,0 +1,46 @@
+{
+  "Name": "VEIKK S640 V2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 152.4,
+      "Height": 101.6,
+      "MaxX": 30480.0,
+      "MaxY": 20320.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 160,
+        "StartInclusive": true,
+        "End": 192,
+        "EndInclusive": false
+      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 12267,
+      "ProductID": 1,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Vendors.Veikk.VeikkReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "CQEE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

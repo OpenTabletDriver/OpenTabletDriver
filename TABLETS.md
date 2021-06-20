@@ -15,8 +15,10 @@
 | Huion WH1409 V2        |    Supported     |
 | UC-Logic 1060N         |    Supported     |
 | UC-Logic PF1209        |    Supported     |
+| UGTABLET M708          |    Supported     |
 | VEIKK A15              |    Supported     |
 | VEIKK S640             |    Supported     |
+| VEIKK S640 V2          |    Supported     |
 | Wacom CTE-430          |    Supported     |
 | Wacom CTE-460          |    Supported     |
 | Wacom CTE-640          |    Supported     |

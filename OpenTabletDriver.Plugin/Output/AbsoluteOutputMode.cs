@@ -140,15 +140,7 @@ namespace OpenTabletDriver.Plugin.Output
         {
             var pen = Tablet.Properties.Specifications.Pen;
             if (report is ITabletReport tabletReport && pen.ActiveReportID.IsInRange(tabletReport.ReportID))
-            {
-                if (Pointer is IVirtualTablet pressureHandler)
-                {
-                    float normalizedPressure = (float)tabletReport.Pressure / (float)pen.MaxPressure;
-                    pressureHandler.SetPressure(normalizedPressure);
-                }
-
                 Pointer.SetPosition(tabletReport.Position);
-            }
         }
     }
 }
