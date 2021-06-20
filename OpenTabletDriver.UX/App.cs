@@ -12,6 +12,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
+using OpenTabletDriver.UX.Windows.Plugins;
 using OpenTabletDriver.UX.Windows.Tablet;
 
 namespace OpenTabletDriver.UX

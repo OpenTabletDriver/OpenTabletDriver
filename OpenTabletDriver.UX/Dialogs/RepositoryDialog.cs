@@ -1,4 +1,6 @@
 using System;
+using System.Net;
+using System.Net.Http;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
@@ -82,8 +84,24 @@ namespace OpenTabletDriver.UX.Dialogs
 
         protected async void Return(TextBoxGroup owner, TextBoxGroup repo, TextBoxGroup gitRef)
         {
-            var collection = await PluginMetadataCollection.DownloadAsync(owner.InputText, repo.InputText, gitRef.InputText);
-            Close(collection);
+            try
+            {
+                var collection = await PluginMetadataCollection.DownloadAsync(owner.InputText, repo.InputText, gitRef.InputText);
+                Close(collection);
+            }
+            catch (HttpRequestException httpEx) when (httpEx.StatusCode == HttpStatusCode.NotFound)
+            {
+                MessageBox.Show(
+                    "Unable to find the repository source that was requested.",
+                    "Error switching repository",
+                    MessageBoxButtons.OK,
+                    MessageBoxType.Error
+                );
+            }
+            catch (Exception ex)
+            {
+                ex.ShowMessageBox();
+            }
         }
 
         protected class TextBoxGroup : Group

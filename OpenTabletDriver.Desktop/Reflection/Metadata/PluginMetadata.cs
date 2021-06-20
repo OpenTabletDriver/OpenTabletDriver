@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,13 +72,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             {
                 var hashData = sha256.ComputeHash(stream);
                 stream.Position = 0;
-                var sb = new StringBuilder();
-                foreach (var val in hashData)
-                {
-                    var hex = val.ToString("x2");
-                    sb.Append(hex);
-                }
-                return sb.ToString();
+                return string.Concat(hashData.Select(b => b.ToString("x2")));
             }
         }
 

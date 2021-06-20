@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -21,6 +23,17 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Add(null);
 
             return this;
+        }
+
+        public PluginSettingStore FromType(TypeInfo type)
+        {
+            if (type == null)
+                return null;
+
+            var store = this.FirstOrDefault(s => s.Path == type.FullName) ?? new PluginSettingStore(type, false);
+            if (!this.Contains(store))
+                this.Add(store);
+            return store;
         }
     }
 }
