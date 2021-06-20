@@ -16,6 +16,7 @@
 | UC-Logic 1060N         |    Supported     |
 | VEIKK A15              |    Supported     |
 | VEIKK S640             |    Supported     |
+| VEIKK S640 V2          |    Supported     |
 | Wacom CTE-430          |    Supported     |
 | Wacom CTE-460          |    Supported     |
 | Wacom CTE-640          |    Supported     |
