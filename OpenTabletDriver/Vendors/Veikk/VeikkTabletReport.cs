@@ -6,12 +6,10 @@ namespace OpenTabletDriver.Vendors.Veikk
 {
     public struct VeikkTabletReport : ITabletReport
     {
-        internal VeikkTabletReport(byte[] report)
+        public VeikkTabletReport(byte[] report)
         {
             Raw = report;
 
-            // In-Range Mask :     0b0010_0000
-            // Out-of-Range Mask : 0b0100_0000
             Position = new Vector2
             {
                 X = Unsafe.ReadUnaligned<ushort>(ref report[3]) | (report[5] << 16),

@@ -4,7 +4,7 @@ namespace OpenTabletDriver.Tablet
 {
     public struct DeviceReport : IDeviceReport
     {
-        internal DeviceReport(byte[] report)
+        public DeviceReport(byte[] report)
         {
             Raw = report;
         }

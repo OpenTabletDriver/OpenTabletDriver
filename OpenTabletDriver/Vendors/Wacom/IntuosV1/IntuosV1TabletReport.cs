@@ -1,44 +1,41 @@
 using System.Numerics;
-using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
 {
-    public struct IntuosV3Report : ITabletReport, IProximityReport, ITiltReport, IEraserReport
+    public struct IntuosV1TabletReport : ITabletReport, IProximityReport, ITiltReport
     {
-        public IntuosV3Report(byte[] report)
+        public IntuosV1TabletReport(byte[] report)
         {
             Raw = report;
 
             Position = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | (report[4] << 16),
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[5]) | (report[7] << 16)
+                X = (report[3] | report[2] << 8) << 1 | ((report[9] >> 1) & 1),
+                Y = (report[5] | report[4] << 8) << 1 | (report[9] & 1)
             };
             Tilt = new Vector2
             {
-                X = (sbyte)report[10],
-                Y = (sbyte)report[11]
+                X = (((report[7] << 1) & 0x7E) | (report[8] >> 7)) - 64,
+                Y = (report[8] & 0x7F) - 64
             };
-            Pressure = Unsafe.ReadUnaligned<ushort>(ref report[8]);
+            Pressure = (uint)((report[6] << 3) | ((report[7] & 0xC0) >> 5) | (report[1] & 1));
 
             var penByte = report[1];
-            Eraser = penByte.IsBitSet(4);
             PenButtons = new bool[]
             {
                 penByte.IsBitSet(1),
                 penByte.IsBitSet(2)
             };
-            NearProximity = report[1].IsBitSet(5);
-            HoverDistance = report[16];
+            NearProximity = report[1].IsBitSet(6);
+            HoverDistance = (uint)report[9] >> 2;
         }
 
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
         public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }
-        public bool Eraser { set; get; }
         public bool[] PenButtons { set; get; }
         public bool NearProximity { set; get; }
         public uint HoverDistance { set; get; }

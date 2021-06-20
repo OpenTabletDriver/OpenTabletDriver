@@ -8,18 +8,17 @@ namespace OpenTabletDriver.Vendors.UCLogic
         public UCLogicAuxReport(byte[] report)
         {
             Raw = report;
-            var auxByte = report[4];
 
             AuxButtons = new bool[]
             {
-                auxByte.IsBitSet(0),
-                auxByte.IsBitSet(1),
-                auxByte.IsBitSet(2),
-                auxByte.IsBitSet(3),
-                auxByte.IsBitSet(4),
-                auxByte.IsBitSet(5),
-                auxByte.IsBitSet(6),
-                auxByte.IsBitSet(7),
+                report[4].IsBitSet(0),
+                report[4].IsBitSet(1),
+                report[4].IsBitSet(2),
+                report[4].IsBitSet(3),
+                report[4].IsBitSet(4),
+                report[4].IsBitSet(5),
+                report[4].IsBitSet(6),
+                report[4].IsBitSet(7),
             };
         }
 

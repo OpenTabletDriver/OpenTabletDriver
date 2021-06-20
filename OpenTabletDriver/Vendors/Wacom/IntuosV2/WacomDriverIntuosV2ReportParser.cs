@@ -1,8 +1,8 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV2
 {
-    public class WacomDriverIntuosV3ReportParser : IntuosV3ReportParser
+    public class WacomDriverIntuosV2ReportParser : IntuosV2ReportParser
     {
         public override IDeviceReport Parse(byte[] data)
         {

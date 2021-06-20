@@ -7,7 +7,10 @@ namespace OpenTabletDriver.Vendors.UCLogic
     {
         public IDeviceReport Parse(byte[] data)
         {
-            return (data[1] & 0xc0) == 0xc0 ? new UCLogicAuxReport(data) : new TabletReport(data);
+            if (data[1].IsBitSet(6))
+                return new UCLogicAuxReport(data);
+            else
+                return new TabletReport(data);
         }
     }
 }

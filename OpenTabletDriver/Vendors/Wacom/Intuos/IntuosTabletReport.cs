@@ -3,11 +3,11 @@ using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.XP_Pen
+namespace OpenTabletDriver.Vendors.Wacom.Intuos
 {
-    public struct XP_PenTiltTabletReport : ITabletReport, ITiltReport, IEraserReport
+    public struct IntuosTabletReport : ITabletReport, IEraserReport, IProximityReport
     {
-        internal XP_PenTiltTabletReport(byte[] report)
+        public IntuosTabletReport(byte[] report)
         {
             Raw = report;
 
@@ -16,27 +16,24 @@ namespace OpenTabletDriver.Vendors.XP_Pen
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
-            Tilt = new Vector2
-            {
-                X = (sbyte)report[8],
-                Y = (sbyte)report[9]
-            };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
 
-            var penByte = report[1];
-            Eraser = penByte.IsBitSet(3);
             PenButtons = new bool[]
             {
-                penByte.IsBitSet(1),
-                penByte.IsBitSet(2)
+                report[1].IsBitSet(1),
+                report[1].IsBitSet(2)
             };
+            Eraser = report[1].IsBitSet(3);
+            NearProximity = report[1].IsBitSet(7);
+            HoverDistance = (uint)report[8] >> 2;
         }
 
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
-        public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }
-        public bool Eraser { set; get; }
         public bool[] PenButtons { set; get; }
+        public bool Eraser { set; get; }
+        public bool NearProximity { set; get; }
+        public uint HoverDistance { set; get; }
     }
 }

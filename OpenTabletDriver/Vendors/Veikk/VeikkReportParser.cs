@@ -1,4 +1,5 @@
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.Veikk
 {
@@ -6,7 +7,10 @@ namespace OpenTabletDriver.Vendors.Veikk
     {
         public IDeviceReport Parse(byte[] report)
         {
-            return new VeikkTabletReport(report);
+            if (report[2].IsBitSet(5))
+                return new VeikkTabletReport(report);
+
+            return new DeviceReport(report);
         }
     }
 }

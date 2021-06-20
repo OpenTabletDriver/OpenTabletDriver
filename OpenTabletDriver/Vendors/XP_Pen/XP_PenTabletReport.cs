@@ -3,11 +3,11 @@ using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.XP_Pen
 {
-    public struct BambooReport : ITabletReport, IAuxReport, IEraserReport
+    public struct XP_PenTabletReport : ITabletReport, ITiltReport, IEraserReport
     {
-        public BambooReport(byte[] report)
+        public XP_PenTabletReport(byte[] report)
         {
             Raw = report;
 
@@ -16,24 +16,19 @@ namespace OpenTabletDriver.Vendors.Wacom
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
+            Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
+            Eraser = report[1].IsBitSet(3);
 
-            Pressure = (uint)(report[6] | ((report[7] & 0x01) << 8));
-            Eraser = report[1].IsBitSet(5);
-
-            var penByte = report[1];
             PenButtons = new bool[]
             {
-                penByte.IsBitSet(1),
-                penByte.IsBitSet(2)
+                report[1].IsBitSet(1),
+                report[1].IsBitSet(2)
             };
 
-            var auxByte = report[7];
-            AuxButtons = new bool[]
+            Tilt = new Vector2
             {
-                auxByte.IsBitSet(3),
-                auxByte.IsBitSet(4),
-                auxByte.IsBitSet(5),
-                auxByte.IsBitSet(6),
+                X = (sbyte)report[8],
+                Y = (sbyte)report[9]
             };
         }
 
@@ -41,7 +36,7 @@ namespace OpenTabletDriver.Vendors.Wacom
         public Vector2 Position { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
-        public bool[] AuxButtons { set; get; }
+        public Vector2 Tilt { set; get; }
         public bool Eraser { set; get; }
     }
 }

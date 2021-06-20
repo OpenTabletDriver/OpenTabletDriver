@@ -8,18 +8,17 @@ namespace OpenTabletDriver.Vendors.XP_Pen
         public XP_PenAuxReport(byte[] report)
         {
             Raw = report;
-            var auxByte = report[2];
 
             AuxButtons = new bool[]
             {
-                auxByte.IsBitSet(0),
-                auxByte.IsBitSet(1),
-                auxByte.IsBitSet(2),
-                auxByte.IsBitSet(3),
-                auxByte.IsBitSet(4),
-                auxByte.IsBitSet(5),
-                auxByte.IsBitSet(6),
-                auxByte.IsBitSet(7),
+                report[2].IsBitSet(0),
+                report[2].IsBitSet(1),
+                report[2].IsBitSet(2),
+                report[2].IsBitSet(3),
+                report[2].IsBitSet(4),
+                report[2].IsBitSet(5),
+                report[2].IsBitSet(6),
+                report[2].IsBitSet(7),
             };
         }
 

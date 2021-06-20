@@ -1,15 +1,15 @@
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
 {
-    public struct IntuosV3AuxReport : IAuxReport
+    public struct IntuosV1AuxReport : IAuxReport
     {
-        public IntuosV3AuxReport(byte[] report)
+        public IntuosV1AuxReport(byte[] report)
         {
             Raw = report;
 
-            var auxByte = report[1];
+            var auxByte = report[4];
             AuxButtons = new bool[]
             {
                 auxByte.IsBitSet(0),

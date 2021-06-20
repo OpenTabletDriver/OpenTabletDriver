@@ -1,9 +1,9 @@
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV2
 {
-    public class IntuosV3ReportParser : IReportParser<IDeviceReport>
+    public class IntuosV2ReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
@@ -15,9 +15,9 @@ namespace OpenTabletDriver.Vendors.Wacom
             {
                 return data[0] switch
                 {
-                    0x10 => new IntuosV3Report(data),
-                    0x11 => new IntuosV3AuxReport(data),
-                    0xD2 => new IntuosV3TouchReport(data),
+                    0x10 => new IntuosV2Report(data),
+                    0x11 => new IntuosV2AuxReport(data),
+                    0xD2 => new IntuosV2TouchReport(data),
                     _ => new DeviceReport(data)
                 };
             }
