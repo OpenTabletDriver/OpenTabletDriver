@@ -14,6 +14,7 @@
 | Huion Q11K             |    Supported     |
 | Huion WH1409 V2        |    Supported     |
 | UC-Logic 1060N         |    Supported     |
+| UGTABLET M708          |    Supported     |
 | VEIKK A15              |    Supported     |
 | VEIKK S640             |    Supported     |
 | VEIKK S640 V2          |    Supported     |
