@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 80,
-        "StartInclusive": true,
-        "End": 96,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 2
       }
@@ -30,7 +24,7 @@
       "ProductID": 2352,
       "InputReportLength": 12,
       "OutputReportLength": 10,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": [
         null
       ],

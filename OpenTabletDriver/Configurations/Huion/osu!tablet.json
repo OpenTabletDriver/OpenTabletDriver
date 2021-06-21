@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 2047,
-      "ActiveReportID": {
-        "Start": 128,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
@@ -30,7 +24,7 @@
       "ProductID": 109,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {

@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 0,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
@@ -30,7 +24,7 @@
       "ProductID": 2328,
       "InputReportLength": 12,
       "OutputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenTiltReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"

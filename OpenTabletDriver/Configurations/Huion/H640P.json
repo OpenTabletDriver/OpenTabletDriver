@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": true,
-        "End": 128,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
