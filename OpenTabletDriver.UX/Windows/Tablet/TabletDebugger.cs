@@ -204,12 +204,12 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                 var digitizer = tablet.Properties.Specifications.Digitizer;
                 var pen = tablet.Properties.Specifications.Pen;
-                if (report is ITabletReport tabletReport)
+                if (report is IAbsolutePositionReport absReport)
                 {
                     var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
                     var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);
                     var tabletScale = tabletMm / tabletPx * scale;
-                    var position = new PointF(tabletReport.Position.X, tabletReport.Position.Y) * tabletScale;
+                    var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
 
                     var drawRect = RectangleF.FromCenter(position, new SizeF(5, 5));
                     graphics.FillEllipse(AccentColor, drawRect);

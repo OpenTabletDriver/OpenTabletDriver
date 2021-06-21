@@ -37,7 +37,7 @@
       "ProductID": 101,
       "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.BambooReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Bamboo.BambooReportParser",
       "FeatureInitReport": [
         "AgI="
       ],

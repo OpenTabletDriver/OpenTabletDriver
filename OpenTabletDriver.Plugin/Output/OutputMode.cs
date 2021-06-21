@@ -113,11 +113,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         public virtual void Consume(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport)
-            {
-                if (Transform(tabletReport) is ITabletReport transformedTabletReport)
-                    report = transformedTabletReport;
-            }
+            if (report is IAbsolutePositionReport tabletReport)
+                if (Transform(tabletReport) is IAbsolutePositionReport transformedReport)
+                    report = transformedReport;
 
             Emit?.Invoke(report);
         }
@@ -125,7 +123,7 @@ namespace OpenTabletDriver.Plugin.Output
         public virtual void Read(IDeviceReport deviceReport) => entryElement?.Consume(deviceReport);
 
         protected abstract Matrix3x2 CreateTransformationMatrix();
-        protected abstract ITabletReport Transform(ITabletReport tabletReport);
+        protected abstract IAbsolutePositionReport Transform(IAbsolutePositionReport tabletReport);
         protected abstract void OnOutput(IDeviceReport report);
     }
 }

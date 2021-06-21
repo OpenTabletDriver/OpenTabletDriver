@@ -3,9 +3,8 @@ using System.Numerics;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
-    public interface ITabletReport : IDeviceReport
+    public interface ITabletReport : IAbsolutePositionReport
     {
-        Vector2 Position { set; get; }
         uint Pressure { set; get; }
         bool[] PenButtons { set; get; }
     }
