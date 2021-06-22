@@ -71,8 +71,8 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             HandleBindingCollection(tablet, report, MouseButtons, report.MouseButtons);
 
-            MouseScrollDown.Invoke(tablet, report, report.Scroll.Y > 0);
-            MouseScrollUp.Invoke(tablet, report, report.Scroll.Y < 0);
+            MouseScrollDown.Invoke(tablet, report, report.Scroll.Y < 0);
+            MouseScrollUp.Invoke(tablet, report, report.Scroll.Y > 0);
         }
 
         private void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IDictionary<int, BindingState> bindings, IList<bool> newStates)
