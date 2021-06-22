@@ -6,49 +6,44 @@ using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
 {
-    public class ButtonSpecificationsEditor : Panel
+    public class ButtonSpecificationsEditor : SpecificationsEditor<ButtonSpecifications>
     {
         public ButtonSpecificationsEditor()
         {
-            this.Content = new Group
+            this.Content = new StackLayout
             {
-                Text = "Button Count",
-                Orientation = Orientation.Horizontal,
-                Content = buttonCount = new UnsignedIntegerNumberBox()
+                Spacing = 5,
+                Items =
+                {
+                    new StackLayoutItem
+                    {
+                        Control = enable = new CheckBox
+                        {
+                            Text = "Enable",
+                        }
+                    },
+                    new Group
+                    {
+                        Text = "Button Count",
+                        Orientation = Orientation.Horizontal,
+                        Content = buttonCount = new UnsignedIntegerNumberBox()
+                    }
+                } 
             };
 
-            buttonCount.ValueBinding.Bind(ButtonSpecificationsBinding.Child(b => b.ButtonCount));
+            enable.CheckedBinding.Cast<bool>().Bind(
+                SpecificationsBinding.Convert(
+                    c => c != null,
+                    v => v ? new ButtonSpecifications() : null
+                )
+            );
+
+            enable.CheckedBinding.Bind(buttonCount, b => b.Enabled);
+
+            buttonCount.ValueBinding.Bind(SpecificationsBinding.Child(b => b.ButtonCount));
         }
 
+        private CheckBox enable;
         private MaskedTextBox<uint> buttonCount;
-
-        private ButtonSpecifications buttonSpecs;
-        public ButtonSpecifications ButtonSpecifications
-        {
-            set
-            {
-                this.buttonSpecs = value;
-                this.OnButtonSpecificationsChanged();
-            }
-            get => this.buttonSpecs;
-        }
-        
-        public event EventHandler<EventArgs> ButtonSpecificationsChanged;
-        
-        protected virtual void OnButtonSpecificationsChanged() => ButtonSpecificationsChanged?.Invoke(this, new EventArgs());
-        
-        public BindableBinding<ButtonSpecificationsEditor, ButtonSpecifications> ButtonSpecificationsBinding
-        {
-            get
-            {
-                return new BindableBinding<ButtonSpecificationsEditor, ButtonSpecifications>(
-                    this,
-                    c => c.ButtonSpecifications,
-                    (c, v) => c.ButtonSpecifications = v,
-                    (c, h) => c.ButtonSpecificationsChanged += h,
-                    (c, h) => c.ButtonSpecificationsChanged -= h
-                );
-            }
-        }
     }
 }

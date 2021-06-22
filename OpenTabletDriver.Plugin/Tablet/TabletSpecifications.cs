@@ -15,12 +15,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// Specifications for the auxiliary buttons.
         /// </summary>
-        public ButtonSpecifications AuxiliaryButtons { set; get; } = new ButtonSpecifications();
+        public ButtonSpecifications AuxiliaryButtons { set; get; }
 
         /// <summary>
         /// Specifications for the mouse buttons.
         /// </summary>
-        public ButtonSpecifications MouseButtons { set; get; } = new ButtonSpecifications();
+        public ButtonSpecifications MouseButtons { set; get; }
 
         /// <summary>
         /// Specifications for the touch digitizer.

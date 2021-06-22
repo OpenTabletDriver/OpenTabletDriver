@@ -6,7 +6,7 @@ using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
 {
-    public class DigitizerSpecificationsEditor : Panel
+    public class DigitizerSpecificationsEditor : SpecificationsEditor<DigitizerSpecifications>
     {
         public DigitizerSpecificationsEditor()
         {
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
             };
 
             enable.CheckedBinding.Cast<bool>().Bind(
-                DigitizerSpecificationsBinding.Convert(
+                SpecificationsBinding.Convert(
                     c => c != null,
                     v => v ? new DigitizerSpecifications() : null
                 )
@@ -62,42 +62,13 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
             enable.CheckedBinding.Bind(maxX, c => c.Enabled);
             enable.CheckedBinding.Bind(maxY, c => c.Enabled);
 
-            width.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.Width));
-            height.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.Height));
-            maxX.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.MaxX));
-            maxY.ValueBinding.Bind(DigitizerSpecificationsBinding.Child<float>(c => c.MaxY));
+            width.ValueBinding.Bind(SpecificationsBinding.Child<float>(c => c.Width));
+            height.ValueBinding.Bind(SpecificationsBinding.Child<float>(c => c.Height));
+            maxX.ValueBinding.Bind(SpecificationsBinding.Child<float>(c => c.MaxX));
+            maxY.ValueBinding.Bind(SpecificationsBinding.Child<float>(c => c.MaxY));
         }
 
         private CheckBox enable;
         private MaskedTextBox<float> width, height, maxX, maxY;
-
-        private DigitizerSpecifications digitizerSpecs;
-        public DigitizerSpecifications DigitizerSpecifications
-        {
-            set
-            {
-                this.digitizerSpecs = value;
-                this.OnDigitizerSpecificationsChanged();
-            }
-            get => this.digitizerSpecs;
-        }
-        
-        public event EventHandler<EventArgs> DigitizerSpecificationsChanged;
-        
-        protected virtual void OnDigitizerSpecificationsChanged() => DigitizerSpecificationsChanged?.Invoke(this, new EventArgs());
-        
-        public BindableBinding<DigitizerSpecificationsEditor, DigitizerSpecifications> DigitizerSpecificationsBinding
-        {
-            get
-            {
-                return new BindableBinding<DigitizerSpecificationsEditor, DigitizerSpecifications>(
-                    this,
-                    c => c.DigitizerSpecifications,
-                    (c, v) => c.DigitizerSpecifications = v,
-                    (c, h) => c.DigitizerSpecificationsChanged += h,
-                    (c, h) => c.DigitizerSpecificationsChanged -= h
-                );
-            }
-        }
     }
 }
