@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Migration
 {
@@ -50,9 +52,9 @@ namespace OpenTabletDriver.Desktop.Migration
 
                 profile.Filters = SafeMigrateCollection(new PluginSettingStoreCollection(old.Filters.Concat(old.Interpolators)));
 
-                profile.BindingSettings.TipButton = SafeMigrate(old.TipButton, BindingSettings.GetDefaults().TipButton);
-                profile.BindingSettings.PenButtons = SafeMigrateCollection(old.PenButtons).SetExpectedCount(BindingSettings.PEN_BUTTON_MAX);
-                profile.BindingSettings.AuxButtons = SafeMigrateCollection(old.AuxButtons).SetExpectedCount(BindingSettings.AUX_BUTTON_MAX);
+                profile.BindingSettings.TipButton = SafeMigrate(old.TipButton, new PluginSettingStore(new MouseBinding { Button = nameof(MouseButton.Left) }));
+                profile.BindingSettings.PenButtons = SafeMigrateCollection(old.PenButtons);
+                profile.BindingSettings.AuxButtons = SafeMigrateCollection(old.AuxButtons);
             }
 
             settings.LockUsableAreaDisplay = old.LockUsableAreaDisplay;

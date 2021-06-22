@@ -275,44 +275,79 @@ namespace OpenTabletDriver.Daemon
             if (pointer is IVirtualMouse virtualMouse)
                 bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
 
-            var tipbinding = bindingHandler.TipBinding = settings.TipButton?.Construct<IBinding>();
-            bindingServiceProvider.Inject(tipbinding);
-            bindingHandler.TipActivationPressure = settings.TipActivationPressure;
-            Log.Write(group, $"Tip Binding: [{bindingHandler.TipBinding}]@{bindingHandler.TipActivationPressure}%");
-
-            var eraserBinding = bindingHandler.EraserBinding = settings.EraserButton?.Construct<IBinding>();
-            bindingServiceProvider.Inject(eraserBinding);
-            bindingHandler.EraserActivationPressure = settings.EraserActivationPressure;
-            Log.Write(group, $"Eraser Binding: [{bindingHandler.EraserBinding}]@{bindingHandler.EraserActivationPressure}%");
-
-            if (settings.PenButtons != null)
+            var tip = bindingHandler.Tip = new ThresholdBindingState
             {
-                for (int index = 0; index < settings.PenButtons.Count; index++)
-                {
-                    var bind = settings.PenButtons[index]?.Construct<IBinding>();
-                    if (!bindingHandler.PenButtonBindings.TryAdd(index, bind))
-                    {
-                        bindingHandler.PenButtonBindings[index] = bind;
-                        bindingServiceProvider.Inject(bind);
-                    }
-                }
+                Binding = settings.TipButton?.Construct<IBinding>(),
+                ActivationThreshold = settings.TipActivationPressure
+            };
+            bindingServiceProvider.Inject(tip.Binding);
 
-                Log.Write(group, $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtonBindings));
+            if (tip.Binding != null)
+            {
+                Log.Write(group, $"Tip Binding: [{tip.Binding}]@{tip.ActivationThreshold}%");
             }
 
-            if (settings.AuxButtons != null)
+            var eraser = bindingHandler.Eraser = new ThresholdBindingState
             {
-                for (int index = 0; index < settings.AuxButtons.Count; index++)
-                {
-                    var bind = settings.AuxButtons[index]?.Construct<IBinding>();
-                    if (!bindingHandler.AuxButtonBindings.TryAdd(index, bind))
-                    {
-                        bindingHandler.AuxButtonBindings[index] = bind;
-                        bindingServiceProvider.Inject(bind);
-                    }
-                }
+                Binding = settings.EraserButton?.Construct<IBinding>(),
+                ActivationThreshold = settings.EraserActivationPressure
+            };
+            bindingServiceProvider.Inject(eraser.Binding);
 
-                Log.Write(group, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtonBindings));
+            if (eraser.Binding != null)
+            {
+                Log.Write(group, $"Eraser Binding: [{eraser.Binding}]@{eraser.ActivationThreshold}%");
+            }
+
+            if (settings.PenButtons != null && settings.PenButtons.Any(b => b?.Path != null))
+            {
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.PenButtons, bindingHandler.PenButtons);
+                Log.Write(group, $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtons.Select(b => b.Value?.Binding)));
+            }
+
+            if (settings.AuxButtons != null && settings.AuxButtons.Any(b => b?.Path != null))
+            {
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.AuxButtons, bindingHandler.AuxButtons);
+                Log.Write(group, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtons.Select(b => b.Value?.Binding)));
+            }
+
+            if (settings.MouseButtons != null && settings.MouseButtons.Any(b => b?.Path != null))
+            {
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.MouseButtons, bindingHandler.MouseButtons);
+                Log.Write(group, $"Mouse Button Bindings: [" + string.Join("], [", bindingHandler.MouseButtons.Select(b => b.Value?.Binding)) + "]");
+            }
+
+            var scrollUp = bindingHandler.MouseScrollUp = new BindingState
+            {
+                Binding = settings.MouseScrollUp?.Construct<IBinding>()
+            };
+            bindingServiceProvider.Inject(scrollUp.Binding);
+
+            var scrollDown = bindingHandler.MouseScrollDown = new BindingState
+            {
+                Binding = settings.MouseScrollDown?.Construct<IBinding>()
+            };
+            bindingServiceProvider.Inject(scrollDown.Binding);
+
+            if (scrollUp.Binding != null || scrollDown.Binding != null)
+            {
+                Log.Write(group, $"Mouse Scroll: Up: [{scrollUp?.Binding}] Down: [{scrollDown?.Binding}]");
+            }
+        }
+
+        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState> targetDict)
+        {
+            for (int index = 0; index < collection.Count; index++)
+            {
+                IBinding binding = collection[index]?.Construct<IBinding>();
+                var state = binding == null ? null : new BindingState
+                {
+                    Binding = binding
+                };
+
+                if(!targetDict.TryAdd(index, state))
+                    targetDict[index] = state;
+                serviceManager.Inject(binding);
             }
         }
 
