@@ -18,19 +18,15 @@ namespace OpenTabletDriver.Desktop.Binding
             lastElement.Emit += Consume;
         }
 
-        public float TipActivationPressure { set; get; }
-        public IBinding TipBinding { set; get; }
+        public ThresholdBindingState Tip { set; get; }
+        public ThresholdBindingState Eraser { set; get; }
 
-        public float EraserActivationPressure { set; get; }
-        public IBinding EraserBinding { set; get; }
+        public Dictionary<int, BindingState> PenButtons { set; get; } = new Dictionary<int, BindingState>();
+        public Dictionary<int, BindingState> AuxButtons { set; get; } = new Dictionary<int, BindingState>();
+        public Dictionary<int, BindingState> MouseButtons { set; get; } = new Dictionary<int, BindingState>();
 
-        public Dictionary<int, IBinding> PenButtonBindings { set; get; } = new Dictionary<int, IBinding>();
-        public Dictionary<int, IBinding> AuxButtonBindings { set; get; } = new Dictionary<int, IBinding>();
-
-        private bool TipState { set; get; } = false;
-        private bool EraserState { set; get; } = false;
-        private IList<bool> PenButtonStates { get; } = new bool[2];
-        private IList<bool> AuxButtonStates { get; } = new bool[8];
+        public BindingState MouseScrollDown { set; get; }
+        public BindingState MouseScrollUp { set; get; }
 
         private IOutputMode outputMode;
 
@@ -47,60 +43,44 @@ namespace OpenTabletDriver.Desktop.Binding
             if (tablet == null)
                 return;
 
-            var pen = tablet.Properties.Specifications.Pen;
             if (report is ITabletReport tabletReport)
-                HandleTabletReport(tablet, pen, tabletReport);
+                HandleTabletReport(tablet, tablet.Properties.Specifications.Pen, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(tablet, auxReport);
+            if (report is IMouseReport mouseReport)
+                HandleMouseReport(tablet, mouseReport);
         }
 
         private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
         {
             float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
             if (report is IEraserReport eraserReport && eraserReport.Eraser)
-            {
-                bool threshold = pressurePercent > EraserActivationPressure;
-                InvokeBinding(tablet, report, EraserBinding, EraserState, threshold);
-                EraserState = threshold;
-            }
+                Eraser.Invoke(tablet, report, pressurePercent);
             else
-            {
-                bool threshold = pressurePercent > TipActivationPressure;
-                InvokeBinding(tablet, report, TipBinding, TipState, threshold);
-                TipState = threshold;
-            }
+                Tip.Invoke(tablet, report, pressurePercent);
 
-            HandleBindingCollection(tablet, report, PenButtonStates, report.PenButtons, PenButtonBindings);
+            HandleBindingCollection(tablet, report, PenButtons, report.PenButtons);
         }
 
         private void HandleAuxiliaryReport(TabletReference tablet, IAuxReport report)
         {
-            HandleBindingCollection(tablet, report, AuxButtonStates, report.AuxButtons, AuxButtonBindings);
+            HandleBindingCollection(tablet, report, AuxButtons, report.AuxButtons);
         }
 
-        private void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IList<bool> prevStates, IList<bool> newStates, IDictionary<int, IBinding> bindings)
+        private void HandleMouseReport(TabletReference tablet, IMouseReport report)
+        {
+            HandleBindingCollection(tablet, report, MouseButtons, report.MouseButtons);
+
+            MouseScrollDown.Invoke(tablet, report, report.Scroll.Y < 0);
+            MouseScrollUp.Invoke(tablet, report, report.Scroll.Y > 0);
+        }
+
+        private void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IDictionary<int, BindingState> bindings, IList<bool> newStates)
         {
             for (int i = 0; i < newStates.Count; i++)
             {
-                if (bindings.TryGetValue(i, out IBinding binding))
-                    InvokeBinding(tablet, report, binding, prevStates[i], newStates[i]);
-                prevStates[i] = newStates[i];
-            }
-        }
-
-        private void InvokeBinding(TabletReference tablet, IDeviceReport report, IBinding binding, bool prevState, bool newState)
-        {
-            if (binding is IStateBinding stateBinding)
-            {
-                if (newState && !prevState)
-                    stateBinding.Press(tablet, report);
-                else if (!newState && prevState)
-                    stateBinding.Release(tablet, report);
-            }
-
-            if (binding is IInterruptBinding interruptBinding)
-            {
-                interruptBinding.Invoke(tablet, report);
+                if (bindings.TryGetValue(i, out BindingState binding))
+                    binding?.Invoke(tablet, report, newStates[i]);
             }
         }
     }

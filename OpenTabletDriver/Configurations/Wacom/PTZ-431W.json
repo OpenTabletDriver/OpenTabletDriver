@@ -16,6 +16,9 @@
     "AuxiliaryButtons": {
       "ButtonCount": 0
     },
+    "MouseButtons": {
+      "ButtonCount": 5
+    },
     "Touch": null
   },
   "DigitizerIdentifiers": [
@@ -24,7 +27,7 @@
       "ProductID": 183,
       "InputReportLength": 10,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.IntuosV1ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos3.Intuos3ReportParser",
       "FeatureInitReport": [
         "AgI=",
         "CAIDAAA=",
@@ -39,7 +42,7 @@
       "ProductID": 183,
       "InputReportLength": 11,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos3.WacomDriverIntuos3ReportParser",
       "FeatureInitReport": [
         "AgI=",
         "CAIDAAA=",

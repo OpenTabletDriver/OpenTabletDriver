@@ -1,10 +1,14 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.UX.Controls.Bindings;
 using OpenTabletDriver.UX.Controls.Output;
 
 namespace OpenTabletDriver.UX.Controls
@@ -24,14 +28,24 @@ namespace OpenTabletDriver.UX.Controls
                     },
                     new TabPage
                     {
-                        Text = "Bindings",
-                        Content = bindingEditor = new BindingEditor()
-                    },
-                    new TabPage
-                    {
                         Text = "Filters",
                         Padding = 5,
                         Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>()
+                    },
+                    new TabPage
+                    {
+                        Text = "Pen Settings",
+                        Content = penBindingEditor = new PenBindingEditor()
+                    },
+                    new TabPage
+                    {
+                        Text = "Auxiliary Settings",
+                        Content = auxBindingEditor = new AuxiliaryBindingEditor()
+                    },
+                    new TabPage
+                    {
+                        Text = "Mouse Settings",
+                        Content = mouseBindingEditor = new MouseBindingEditor()
                     },
                     new TabPage
                     {
@@ -49,7 +63,9 @@ namespace OpenTabletDriver.UX.Controls
             };
 
             outputModeEditor.ProfileBinding.Bind(ProfileBinding);
-            bindingEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.BindingSettings));
+            penBindingEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.BindingSettings));
+            auxBindingEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.BindingSettings));
+            mouseBindingEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.BindingSettings));
             filterEditor.StoreCollectionBinding.Bind(ProfileBinding.Child(p => p.Filters));
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
@@ -60,10 +76,10 @@ namespace OpenTabletDriver.UX.Controls
 
         private TabControl tabControl;
         private OutputModeEditor outputModeEditor;
-        private BindingEditor bindingEditor;
+        private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
-        
+
         private Profile profile;
         public Profile Profile
         {
@@ -74,11 +90,11 @@ namespace OpenTabletDriver.UX.Controls
             }
             get => this.profile;
         }
-        
+
         public event EventHandler<EventArgs> ProfileChanged;
-        
+
         protected virtual void OnProfileChanged() => ProfileChanged?.Invoke(this, new EventArgs());
-        
+
         public BindableBinding<ControlPanel, Profile> ProfileBinding
         {
             get

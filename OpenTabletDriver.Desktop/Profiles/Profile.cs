@@ -66,7 +66,7 @@ namespace OpenTabletDriver.Desktop.Profiles
                 OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
                 AbsoluteModeSettings = AbsoluteModeSettings.GetDefaults(tablet.Properties.Specifications.Digitizer),
                 RelativeModeSettings = RelativeModeSettings.GetDefaults(),
-                BindingSettings = BindingSettings.GetDefaults()
+                BindingSettings = BindingSettings.GetDefaults(tablet.Properties.Specifications)
             };
         }
 

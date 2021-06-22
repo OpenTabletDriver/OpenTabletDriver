@@ -1,4 +1,5 @@
 using System;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Windows.Bindings;
@@ -12,6 +13,7 @@ namespace OpenTabletDriver.UX.Controls
             this.Content = new StackLayout
             {
                 Spacing = 5,
+                MinimumSize = new Size(300, 0),
                 Orientation = Orientation.Horizontal,
                 Items =
                 {

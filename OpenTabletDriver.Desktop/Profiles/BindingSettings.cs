@@ -2,30 +2,29 @@ using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Profiles
 {
     public class BindingSettings : ViewModel
     {
-        public const int PEN_BUTTON_MAX = 2;
-        public const int AUX_BUTTON_MAX = 8;
-
         private float tP, eP;
-        private PluginSettingStore tipButton, eraserButton;
+        private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown;
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
-            auxButtons = new PluginSettingStoreCollection();
+            auxButtons = new PluginSettingStoreCollection(),
+            mouseButtons = new PluginSettingStoreCollection();
 
         [JsonProperty("TipActivationPressure")]
         public float TipActivationPressure
         {
-            set => RaiseAndSetIfChanged(ref this.tP, value);
+            set => this.RaiseAndSetIfChanged(ref this.tP, value);
             get => this.tP;
         }
 
         [JsonProperty("TipButton")]
         public PluginSettingStore TipButton
         {
-            set => RaiseAndSetIfChanged(ref this.tipButton, value);
+            set => this.RaiseAndSetIfChanged(ref this.tipButton, value);
             get => this.tipButton;
         }
 
@@ -46,19 +45,44 @@ namespace OpenTabletDriver.Desktop.Profiles
         [JsonProperty("PenButtons")]
         public PluginSettingStoreCollection PenButtons
         {
-            set => RaiseAndSetIfChanged(ref this.penButtons, value);
+            set => this.RaiseAndSetIfChanged(ref this.penButtons, value);
             get => this.penButtons;
         }
 
         [JsonProperty("AuxButtons")]
         public PluginSettingStoreCollection AuxButtons
         {
-            set => RaiseAndSetIfChanged(ref this.auxButtons, value);
+            set => this.RaiseAndSetIfChanged(ref this.auxButtons, value);
             get => this.auxButtons;
         }
 
-        public static BindingSettings GetDefaults()
+        [JsonProperty("MouseButtons")]
+        public PluginSettingStoreCollection MouseButtons
         {
+            set => this.RaiseAndSetIfChanged(ref this.mouseButtons, value);
+            get => this.mouseButtons;
+        }
+
+        [JsonProperty("MouseScrollUp")]
+        public PluginSettingStore MouseScrollUp
+        {
+            set => this.RaiseAndSetIfChanged(ref this.mouseScrollUp, value);
+            get => this.mouseScrollUp;
+        }
+
+        [JsonProperty("MouseScrollDown")]
+        public PluginSettingStore MouseScrollDown
+        {
+            set => this.RaiseAndSetIfChanged(ref this.mouseScrollDown, value);
+            get => this.mouseScrollDown;
+        }
+
+        public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
+        {
+            int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
+            int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
+            int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
+
             return new BindingSettings
             {
                 TipButton = new PluginSettingStore(
@@ -67,8 +91,9 @@ namespace OpenTabletDriver.Desktop.Profiles
                         Button = nameof(MouseButton.Left)
                     }
                 ),
-                PenButtons = new PluginSettingStoreCollection().SetExpectedCount(PEN_BUTTON_MAX),
-                AuxButtons = new PluginSettingStoreCollection().SetExpectedCount(AUX_BUTTON_MAX)
+                PenButtons = new PluginSettingStoreCollection().SetExpectedCount(penButtonCount),
+                AuxButtons = new PluginSettingStoreCollection().SetExpectedCount(auxButtonCount),
+                MouseButtons = new PluginSettingStoreCollection().SetExpectedCount(mouseButtonCount)
             };
         }
     }

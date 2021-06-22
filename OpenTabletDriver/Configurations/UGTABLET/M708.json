@@ -16,6 +16,7 @@
     "AuxiliaryButtons": {
       "ButtonCount": 8
     },
+    "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
