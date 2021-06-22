@@ -36,6 +36,12 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                     {
                         Header = "Touch",
                         Content = touch = new DigitizerSpecificationsEditor()
+                    },
+                    new Expander
+                    {
+                        Header = "Mouse",
+                        Padding = 5,
+                        Content = mouseButtons = new ButtonSpecificationsEditor()
                     }
                 }
             };
@@ -44,11 +50,13 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
             pen.PenSpecificationsBinding.Bind(TabletSpecificationsBinding.Child(c => c.Pen));
             auxButtons.ButtonSpecificationsBinding.Bind(TabletSpecificationsBinding.Child(c => c.AuxiliaryButtons));
             touch.DigitizerSpecificationsBinding.Bind(TabletSpecificationsBinding.Child(c => c.Touch));
+            mouseButtons.ButtonSpecificationsBinding.Bind(TabletSpecificationsBinding.Child(c => c.MouseButtons));
         }
 
         private DigitizerSpecificationsEditor digitizer, touch;
         private PenSpecificationsEditor pen;
         private ButtonSpecificationsEditor auxButtons;
+        private ButtonSpecificationsEditor mouseButtons;
 
         private TabletSpecifications tabletSpecs;
         public TabletSpecifications TabletSpecifications

@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Bindings
 {
