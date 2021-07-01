@@ -6,5 +6,6 @@ namespace OpenTabletDriver.Plugin.Platform.Pointer
     {
         void SetPressure(float percentage, bool isEraser);
         void SetTilt(Vector2 tilt);
+        void SetButtonState(uint button, bool active);
     }
 }
