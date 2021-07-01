@@ -45,6 +45,7 @@
 | Wacom CTL-690          |    Supported     |
 | Wacom FT-0405-U        |    Supported     |
 | Wacom GD-0405-U        |    Supported     |
+| Wacom GD-0608-U        |    Supported     |
 | Wacom XD-0608-U        |    Supported     |
 | XP-Pen CT430           |    Supported     |
 | XP-Pen Deco 01         |    Supported     |
@@ -115,7 +116,6 @@
 | Huion G10T             |     Untested     |
 | Huion osu! Tablet      |     Untested     |
 | Wacom CTE-440          |     Untested     |
-| Wacom GD-0608-U        |     Untested     |
 | Wacom GD-0912-U        |     Untested     |
 | Wacom GD-1218-U        |     Untested     |
 | Wacom PTH-851          |     Untested     |
