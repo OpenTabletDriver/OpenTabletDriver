@@ -11,10 +11,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
     public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
     {
         private const int Max = 1 << 28;
-        private static readonly EventCode[] BUTTONS = { EventCode.BTN_STYLUS,
-                                              EventCode.BTN_STYLUS2,
-                                              EventCode.BTN_STYLUS3
-                                            };
+        private static readonly EventCode[] BUTTONS =
+        {
+            EventCode.BTN_STYLUS,
+            EventCode.BTN_STYLUS2,
+            EventCode.BTN_STYLUS3
+        };
 
         private Vector2 ScreenScale = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height);
 
