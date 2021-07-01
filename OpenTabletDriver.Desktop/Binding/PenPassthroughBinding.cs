@@ -19,8 +19,7 @@ namespace OpenTabletDriver.Desktop.Binding
             if (report is ITabletReport tabletReport)
             {
                 float pressure = (float)tabletReport.Pressure / (float)tablet.Properties.Specifications.Pen.MaxPressure;
-                bool isEraser = report is IEraserReport eraserReport ? eraserReport.Eraser : false;
-                Tablet.SetPressure(pressure, isEraser);
+                Tablet.SetPressure(pressure);
                 Tablet.SetButtonState(0, tabletReport.PenButtons[0]);
                 Tablet.SetButtonState(1, tabletReport.PenButtons[1]);
             }
