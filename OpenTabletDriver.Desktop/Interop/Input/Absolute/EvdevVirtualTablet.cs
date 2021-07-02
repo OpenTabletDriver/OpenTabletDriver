@@ -45,18 +45,18 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var xTilt = new input_absinfo
             {
-                minimum = -127,
-                maximum = 128,
-                resolution = 100
+                minimum = -64,
+                maximum = 63,
+                resolution = 57
             };
             input_absinfo* xTiltPtr = &xTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_X, (IntPtr)xTiltPtr);
 
             var yTilt = new input_absinfo
             {
-                minimum = -127,
-                maximum = 128,
-                resolution = 100
+                minimum = -64,
+                maximum = 63,
+                resolution = 57
             };
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
