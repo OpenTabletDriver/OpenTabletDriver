@@ -27,7 +27,8 @@ namespace OpenTabletDriver.Desktop.Output
             if (report is ITiltReport tiltReport)
                 VirtualTablet.SetTilt(tiltReport.Tilt);
 
-            VirtualTablet.SetEraser(report is IEraserReport); // FIXME: this is probably inefficient
+            if (report is IEraserReport eraserReport)
+                VirtualTablet.SetEraser(eraserReport.Eraser);
 
             if (report is IProximityReport proximityReport)
                 VirtualTablet.SetProximity(proximityReport.NearProximity, proximityReport.HoverDistance);
