@@ -26,28 +26,25 @@ namespace OpenTabletDriver.Desktop.RPC
             {
                 var stream = CreateStream();
                 await stream.WaitForConnectionAsync();
-                _ = Task.Run(async () =>
+                try
                 {
-                    try
-                    {
-                        ConnectionStateChanged?.Invoke(this, true);
-                        this.rpc = JsonRpc.Attach(stream, Instance);
-                        await this.rpc.Completion;
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                    }
-                    catch (IOException)
-                    {
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Exception(ex);
-                    }
-                    ConnectionStateChanged?.Invoke(this, false);
-                    this.rpc.Dispose();
-                    await stream.DisposeAsync();
-                });
+                    ConnectionStateChanged?.Invoke(this, true);
+                    this.rpc = JsonRpc.Attach(stream, Instance);
+                    await this.rpc.Completion;
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+                catch (IOException)
+                {
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception(ex);
+                }
+                ConnectionStateChanged?.Invoke(this, false);
+                this.rpc.Dispose();
+                await stream.DisposeAsync();
             }
         }
 

@@ -403,7 +403,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            IEnumerable<LogMessage> messages = LogMessages;
+            IEnumerable<LogMessage> messages = LogMessages.Take(50);
             return Task.FromResult(messages);
         }
 
