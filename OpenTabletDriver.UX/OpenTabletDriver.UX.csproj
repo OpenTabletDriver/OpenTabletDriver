@@ -2,7 +2,7 @@
 	
   <PropertyGroup Label="Project Properties">
     <TargetFrameworks>net5</TargetFrameworks>
-    <VersionPrefix>0.5.3.1</VersionPrefix>
+    <VersionPrefix>0.5.3.3</VersionPrefix>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
