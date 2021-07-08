@@ -10,6 +10,22 @@ namespace OpenTabletDriver.Desktop.Binding
         public void Invoke(TabletReference tablet, IDeviceReport report, float value)
         {
             bool newState = value > ActivationThreshold;
+
+            if (report is ITabletReport tabletReport)
+            {
+                if (!newState)
+                {
+                    tabletReport.Pressure = 0;
+                }
+                else // remap pressure when beyond threshold
+                {
+                    var maxPressure = tablet.Properties.Specifications.Pen.MaxPressure;
+                    tabletReport.Pressure = (uint)(maxPressure *
+                                        ((value - ActivationThreshold) /
+                                         ( 100f - ActivationThreshold)));
+                }
+            }
+
             base.Invoke(tablet, report, newState);
         }
     }
