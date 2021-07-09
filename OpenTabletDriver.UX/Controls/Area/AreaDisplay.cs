@@ -9,7 +9,7 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Area
 {
-    public class AreaDisplay : TimedDrawable, IViewModelRoot<AreaViewModel>
+    public class AreaDisplay : ScheduledDrawable, IViewModelRoot<AreaViewModel>
     {
         public AreaViewModel ViewModel
         {
