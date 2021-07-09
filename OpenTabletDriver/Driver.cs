@@ -306,7 +306,7 @@ namespace OpenTabletDriver
         private void OnReportRecieved(object _, IDeviceReport report)
         {
             this.ReportReceived?.Invoke(this, report);
-            if (EnableInput && OutputMode?.Tablet != null)
+            if (OutputMode?.Tablet != null)
                 if (Interpolators.Count == 0 || (Interpolators.Count > 0 && report is ISyntheticReport) || report is IAuxReport)
                     HandleReport(report);
         }
