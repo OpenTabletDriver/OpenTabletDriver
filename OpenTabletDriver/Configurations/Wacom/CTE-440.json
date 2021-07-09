@@ -13,7 +13,9 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 2
+    },
     "MouseButtons": null,
     "Touch": null
   },
