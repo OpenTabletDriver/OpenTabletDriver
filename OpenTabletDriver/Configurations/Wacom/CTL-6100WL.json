@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": null,
-        "StartInclusive": false,
-        "End": 19,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
@@ -22,6 +16,7 @@
     "AuxiliaryButtons": {
       "ButtonCount": 0
     },
+    "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
@@ -30,7 +25,7 @@
       "ProductID": 888,
       "InputReportLength": 192,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.IntuosV2ReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -41,7 +36,7 @@
       "ProductID": 885,
       "InputReportLength": 192,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},

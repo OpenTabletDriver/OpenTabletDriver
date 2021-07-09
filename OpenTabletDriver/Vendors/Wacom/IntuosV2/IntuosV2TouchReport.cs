@@ -2,11 +2,11 @@
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV2
 {
-    public struct IntuosV3TouchReport : ITouchReport
+    public struct IntuosV2TouchReport : ITouchReport
     {
-        public IntuosV3TouchReport(byte[] report)
+        public IntuosV2TouchReport(byte[] report)
         {
             Raw = report;
             Touches = prevTouches ?? new TouchPoint[MAX_POINTS];

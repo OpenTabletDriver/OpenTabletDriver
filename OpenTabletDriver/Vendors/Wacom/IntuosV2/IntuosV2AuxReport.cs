@@ -1,7 +1,7 @@
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV2
 {
     public struct IntuosV2AuxReport : IAuxReport
     {
@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Vendors.Wacom
         {
             Raw = report;
 
-            var auxByte = report[4];
+            var auxByte = report[1];
             AuxButtons = new bool[]
             {
                 auxByte.IsBitSet(0),

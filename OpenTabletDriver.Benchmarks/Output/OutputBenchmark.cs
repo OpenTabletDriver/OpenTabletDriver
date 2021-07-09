@@ -31,10 +31,7 @@ namespace OpenTabletDriver.Benchmarks.Output
                             Width = 20,
                             Height = 20,
                         },
-                        Pen = new PenSpecifications
-                        {
-                            ActiveReportID = new DetectionRange(null, null)
-                        }
+                        Pen = new PenSpecifications()
                     }
                 }
             };

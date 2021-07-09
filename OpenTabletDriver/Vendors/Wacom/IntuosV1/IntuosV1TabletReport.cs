@@ -2,20 +2,14 @@ using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
 {
-    public struct IntuosV2TabletReport : ITabletReport, IProximityReport, ITiltReport
+    public struct IntuosV1TabletReport : ITabletReport, IProximityReport, ITiltReport
     {
-        public IntuosV2TabletReport(byte[] report)
+        public IntuosV1TabletReport(byte[] report)
         {
             Raw = report;
-            ReportID = report[1] switch
-            {
-                0x80 => 0u, // 0x80 is pen out of range report,
-                0xC2 => 0u, // <- should fix the GD 0405 U,
-                0x20 => 1u, // this should be excluded from IntuosHT2
-                _ => 2u     // everything else should have position data.
-            };
+
             Position = new Vector2
             {
                 X = (report[3] | report[2] << 8) << 1 | ((report[9] >> 1) & 1),
@@ -34,12 +28,11 @@ namespace OpenTabletDriver.Vendors.Wacom
                 penByte.IsBitSet(1),
                 penByte.IsBitSet(2)
             };
-            NearProximity = (report[1] & (1 << 6)) != 0;
+            NearProximity = report[1].IsBitSet(6);
             HoverDistance = (uint)report[9] >> 2;
         }
 
         public byte[] Raw { set; get; }
-        public uint ReportID { set; get; }
         public Vector2 Position { set; get; }
         public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }

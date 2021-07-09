@@ -3,15 +3,14 @@ using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.Bamboo
 {
-    public struct BambooReport : ITabletReport, IAuxReport, IEraserReport
+    public struct BambooTabletReport : ITabletReport, IAuxReport, IEraserReport
     {
-        public BambooReport(byte[] report)
+        public BambooTabletReport(byte[] report)
         {
             Raw = report;
 
-            ReportID = (uint)report[1] >> 1;
             Position = new Vector2
             {
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
@@ -21,25 +20,22 @@ namespace OpenTabletDriver.Vendors.Wacom
             Pressure = (uint)(report[6] | ((report[7] & 0x01) << 8));
             Eraser = report[1].IsBitSet(5);
 
-            var penByte = report[1];
             PenButtons = new bool[]
             {
-                penByte.IsBitSet(1),
-                penByte.IsBitSet(2)
+                report[1].IsBitSet(1),
+                report[1].IsBitSet(2)
             };
 
-            var auxByte = report[7];
             AuxButtons = new bool[]
             {
-                auxByte.IsBitSet(3),
-                auxByte.IsBitSet(4),
-                auxByte.IsBitSet(5),
-                auxByte.IsBitSet(6),
+                report[7].IsBitSet(3),
+                report[7].IsBitSet(4),
+                report[7].IsBitSet(5),
+                report[7].IsBitSet(6),
             };
         }
 
         public byte[] Raw { set; get; }
-        public uint ReportID { set; get; }
         public Vector2 Position { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }

@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 79,
-        "StartInclusive": false,
-        "End": 95,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
@@ -22,6 +16,7 @@
     "AuxiliaryButtons": {
       "ButtonCount": 0
     },
+    "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
@@ -30,7 +25,7 @@
       "ProductID": 150,
       "InputReportLength": 8,
       "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"

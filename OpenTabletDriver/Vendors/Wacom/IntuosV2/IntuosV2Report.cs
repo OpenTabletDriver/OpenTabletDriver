@@ -3,14 +3,13 @@ using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.Wacom
+namespace OpenTabletDriver.Vendors.Wacom.IntuosV2
 {
-    public struct IntuosV3Report : ITabletReport, IProximityReport, ITiltReport, IEraserReport
+    public struct IntuosV2Report : ITabletReport, IProximityReport, ITiltReport, IEraserReport
     {
-        public IntuosV3Report(byte[] report)
+        public IntuosV2Report(byte[] report)
         {
             Raw = report;
-            ReportID = report[1] != 0 ? report[0] : 0u;
 
             Position = new Vector2
             {
@@ -36,7 +35,6 @@ namespace OpenTabletDriver.Vendors.Wacom
         }
 
         public byte[] Raw { set; get; }
-        public uint ReportID { set; get; }
         public Vector2 Position { set; get; }
         public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }

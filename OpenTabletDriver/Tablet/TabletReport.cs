@@ -6,11 +6,10 @@ namespace OpenTabletDriver.Tablet
 {
     public struct TabletReport : ITabletReport
     {
-        internal TabletReport(byte[] report)
+        public TabletReport(byte[] report)
         {
             Raw = report;
 
-            ReportID = (uint)report[1] >> 1;
             Position = new Vector2
             {
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
@@ -18,16 +17,14 @@ namespace OpenTabletDriver.Tablet
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
 
-            var penByte = report[1];
             PenButtons = new bool[]
             {
-                penByte.IsBitSet(1),
-                penByte.IsBitSet(2)
+                report[1].IsBitSet(1),
+                report[1].IsBitSet(2)
             };
         }
 
         public byte[] Raw { set; get; }
-        public uint ReportID { set; get; }
         public Vector2 Position { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }

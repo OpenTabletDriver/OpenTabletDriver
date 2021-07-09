@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 2047,
-      "ActiveReportID": {
-        "Start": 96,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
@@ -22,6 +16,7 @@
     "AuxiliaryButtons": {
       "ButtonCount": 0
     },
+    "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [

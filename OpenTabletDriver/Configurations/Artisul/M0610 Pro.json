@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
@@ -22,6 +16,7 @@
     "AuxiliaryButtons": {
       "ButtonCount": 0
     },
+    "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
@@ -37,7 +32,7 @@
         "201": "F610_M61P-T\\d{4}$"
       },
       "InitializationStrings": [
-        "100"
+        100
       ]
     }
   ],

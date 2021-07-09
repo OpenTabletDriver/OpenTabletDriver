@@ -17,6 +17,8 @@ namespace OpenTabletDriver.UX.Tools
         {
             StringBuilder sb = new StringBuilder();
 
+            if (report is IAbsolutePositionReport absolutePositionReport)
+                sb.AppendLines(GetStringFormat(absolutePositionReport));
             if (report is ITabletReport tabletReport)
                 sb.AppendLines(GetStringFormat(tabletReport));
             if (report is IAuxReport auxReport)
@@ -29,14 +31,19 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendLines(GetStringFormat(touchReport));
+            if (report is IMouseReport mouseReport)
+                sb.AppendLines(GetStringFormat(mouseReport));
 
             return sb.ToString();
         }
 
+        private static IEnumerable<string> GetStringFormat(IAbsolutePositionReport absolutePositionReport)
+        {
+            yield return $"Position:[{absolutePositionReport.Position.X},{absolutePositionReport.Position.Y}]";
+        }
+
         private static IEnumerable<string> GetStringFormat(ITabletReport tabletReport)
         {
-            yield return $"ReportID:{tabletReport.ReportID}";
-            yield return $"Position:[{tabletReport.Position.X},{tabletReport.Position.Y}]";
             yield return $"Pressure:{tabletReport.Pressure}";
             yield return $"PenButtons:[{string.Join(" ", tabletReport.PenButtons)}]";
         }
@@ -68,6 +75,12 @@ namespace OpenTabletDriver.UX.Tools
             foreach (var touch in touchReport.Touches)
                 if (touch != null)
                     yield return touch.ToString();
+        }
+
+        private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)
+        {
+            yield return $"MouseButtons:[{string.Join(" ", mouseReport.MouseButtons)}]";
+            yield return $"Scroll:[{mouseReport.Scroll.X},{mouseReport.Scroll.Y}]";
         }
 
         private static void AppendLines(this StringBuilder sb, IEnumerable<string> lines)

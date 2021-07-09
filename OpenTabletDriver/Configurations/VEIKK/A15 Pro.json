@@ -9,12 +9,6 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "Buttons": {
         "ButtonCount": 0
       }
@@ -22,6 +16,7 @@
     "AuxiliaryButtons": {
       "ButtonCount": 0
     },
+    "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
@@ -30,7 +25,7 @@
       "ProductID": 6,
       "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Veikk.VeikkReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "CQEE"

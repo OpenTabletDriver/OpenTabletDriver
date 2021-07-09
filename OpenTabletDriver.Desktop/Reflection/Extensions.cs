@@ -13,7 +13,6 @@ namespace OpenTabletDriver.Desktop.Reflection
                     + source.FullName);
             }
 
-
             // If the destination directory doesn't exist, create it.
             destination.Create();
 
