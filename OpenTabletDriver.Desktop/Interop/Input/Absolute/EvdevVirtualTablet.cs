@@ -57,6 +57,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 EventCode.BTN_TOUCH,
                 EventCode.BTN_STYLUS,
                 EventCode.BTN_TOOL_PEN,
+                EventCode.BTN_TOOL_RUBBER,
                 EventCode.BTN_STYLUS2,
                 EventCode.BTN_STYLUS3
             );
