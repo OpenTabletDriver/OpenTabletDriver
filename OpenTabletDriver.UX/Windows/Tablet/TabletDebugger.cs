@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Tablet;
@@ -23,7 +25,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             var debugger = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Height = 270,
+                Height = 400,
                 Padding = 5,
                 Spacing = 5,
                 Items =
@@ -52,7 +54,27 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                             }
                         }
                     },
-                    new StackLayoutItem(reportRateBox = new TextGroup("Report Rate"))
+                    new StackLayoutItem(reportRateBox = new TextGroup("Report Rate")),
+                    new StackLayoutItem
+                    {
+                        Control = new StackLayout
+                        {
+                            Orientation = Orientation.Horizontal,
+                            VerticalContentAlignment = VerticalAlignment.Bottom,
+                            Items =
+                            {
+                                new StackLayoutItem(numReportsRecordedBox = new TextGroup("Number of Reports Recorded"), true),
+                                new Group
+                                {
+                                    Text = "Toggles",
+                                    Content = enableDataRecording = new CheckBox
+                                    {
+                                        Text = "Enable Data Recording"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
@@ -60,7 +82,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 Orientation = Orientation.Vertical,
                 Width = 640,
-                Height = 640,
+                Height = 800,
                 FixedPanel = SplitterFixedPanel.Panel2,
                 Panel1 = new DebuggerGroup
                 {
@@ -80,6 +102,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             var tablets = await App.Driver.Instance.GetTablets();
             HandleTabletsChanged(this, tablets);
+
+            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
+            dataRecordingOutput = new StreamWriter(outputStream);
         }
 
         protected override async void OnClosing(CancelEventArgs e)
@@ -87,12 +112,18 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             base.OnClosing(e);
             await App.Driver.Instance.SetTabletDebug(false);
             App.Driver.RemoveConnectionHook(ConnectionHook);
+            dataRecordingOutput?.Close();
+            dataRecordingOutput = null;
         }
 
-        private TextGroup deviceNameBox, rawTabletBox, tabletBox, reportRateBox;
+        private TextGroup deviceNameBox, rawTabletBox, tabletBox, reportRateBox, numReportsRecordedBox;
         private TabletVisualizer tabletVisualizer;
+        private CheckBox enableDataRecording;
+
         private double reportPeriod;
+        private int numReportsRecorded;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
+        private TextWriter dataRecordingOutput;
 
         private void ConnectionHook(IDriverDaemon daemon)
         {
@@ -118,6 +149,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                 string raw = ReportFormatter.GetStringRaw(deviceReport);
                 rawTabletBox.Update(raw);
+                
+                if (enableDataRecording.Checked ?? false)
+                {
+                    var output = string.Join(' ', deviceReport.Raw.Select(d => d.ToString("X2")));
+                    dataRecordingOutput.WriteLine(output);
+                    numReportsRecorded++;
+                    numReportsRecordedBox.Update(numReportsRecorded.ToString());
+                }
             }
         }
 
