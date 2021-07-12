@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Desktop
             {
                 PluginPlatform.Windows => new AppInfo
                 {
-                    AppDataDirectory = GetDirectory(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver")
+                    AppDataDirectory = GetDirectoryIfExists(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver")
                 },
                 PluginPlatform.Linux => new AppInfo
                 {
@@ -96,7 +96,7 @@ namespace OpenTabletDriver.Desktop
                 if (Directory.Exists(dir))
                     return dir;
 
-            return null;
+            return directories.Last();
         }
 
         private string GetDefaultConfigurationDirectory() => GetDirectoryIfExists(

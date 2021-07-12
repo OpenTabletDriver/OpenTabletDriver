@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Tablet;
@@ -23,36 +25,94 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             var debugger = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Height = 270,
+                Height = 400,
                 Padding = 5,
                 Spacing = 5,
                 Items =
                 {
-                    new StackLayoutItem
+                    new DebuggerGroup
                     {
-                        Control = deviceNameBox = new TextGroup("Device")
+                        Text = "Device",
+                        Content = deviceName = new Label
+                        {
+                            Font = Fonts.Monospace(10)
+                        }
                     },
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new TableLayout
+                        Control = new StackLayout
                         {
-                            Spacing = new Size(5, 5),
-                            Rows =
+                            Orientation = Orientation.Horizontal,
+                            VerticalContentAlignment = VerticalAlignment.Stretch,
+                            Items =
                             {
-                                new TableRow
+                                new StackLayoutItem
                                 {
-                                    ScaleHeight = true,
-                                    Cells =
+                                    Expand = true,
+                                    Control = new DebuggerGroup
                                     {
-                                        new TableCell(rawTabletBox = new TextGroup("Raw Tablet Data"), true),
-                                        new TableCell(tabletBox = new TextGroup("Tablet Report"), true)
+                                        Text = "Raw Tablet Data",
+                                        Content = rawTablet = new Label
+                                        {
+                                            Font = Fonts.Monospace(10)
+                                        }
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Expand = true,
+                                    Control = new DebuggerGroup
+                                    {
+                                        Text = "Tablet Report",
+                                        Content = tablet = new Label
+                                        {
+                                            Font = Fonts.Monospace(10)
+                                        }
                                     }
                                 }
                             }
                         }
                     },
-                    new StackLayoutItem(reportRateBox = new TextGroup("Report Rate"))
+                    new DebuggerGroup
+                    {
+                        Text = "Report Rate",
+                        Content = reportRate = new Label
+                        {
+                            Font = Fonts.Monospace(10)
+                        }
+                    },
+                    new StackLayoutItem
+                    {
+                        Control = new StackLayout
+                        {
+                            Orientation = Orientation.Horizontal,
+                            VerticalContentAlignment = VerticalAlignment.Bottom,
+                            Items =
+                            {
+                                new StackLayoutItem
+                                {
+                                    Expand = true,
+                                    Control = new DebuggerGroup
+                                    {
+                                        Text = "Reports Recorded",
+                                        Content = reportsRecorded = new Label
+                                        {
+                                            Font = Fonts.Monospace(10)
+                                        }
+                                    }
+                                },
+                                new Group
+                                {
+                                    Text = "Options",
+                                    Content = enableDataRecording = new CheckBox
+                                    {
+                                        Text = "Enable Data Recording"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
@@ -60,7 +120,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 Orientation = Orientation.Vertical,
                 Width = 640,
-                Height = 640,
+                Height = 800,
                 FixedPanel = SplitterFixedPanel.Panel2,
                 Panel1 = new DebuggerGroup
                 {
@@ -69,57 +129,156 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 },
                 Panel2 = debugger
             };
-        }
 
-        protected override async void OnLoadComplete(EventArgs e)
-        {
-            base.OnLoadComplete(e);
+            var reportBinding = ReportDataBinding.Child(c => (c.ToObject() as IDeviceReport));
 
-            App.Driver.AddConnectionHook(ConnectionHook);
-            await App.Driver.Instance.SetTabletDebug(true);
+            deviceName.TextBinding.Bind(ReportDataBinding.Child(c => c.Tablet.Properties.Name));
+            rawTablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringRaw(c)));
+            tablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringFormat(c)));
+            reportRate.TextBinding.Bind(ReportPeriodBinding.Convert(c => Math.Round(1000.0 / c) + "hz"));
+            reportsRecorded.TextBinding.Bind(NumberOfReportsRecordedBinding.Convert(c => c.ToString()));
+            tabletVisualizer.ReportDataBinding.Bind(ReportDataBinding);
 
-            var tablets = await App.Driver.Instance.GetTablets();
-            HandleTabletsChanged(this, tablets);
+            Application.Instance.AsyncInvoke(async () =>
+            {
+                App.Driver.AddConnectionHook(ConnectionHook);
+                await App.Driver.Instance.SetTabletDebug(true);
+
+                var tablets = await App.Driver.Instance.GetTablets();
+                HandleTabletsChanged(this, tablets);
+
+                var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
+                dataRecordingOutput = new StreamWriter(outputStream);
+            });
         }
 
         protected override async void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
+
             await App.Driver.Instance.SetTabletDebug(false);
             App.Driver.RemoveConnectionHook(ConnectionHook);
+
+            dataRecordingOutput?.Close();
+            dataRecordingOutput = null;
         }
 
-        private TextGroup deviceNameBox, rawTabletBox, tabletBox, reportRateBox;
+        private Label deviceName, rawTablet, tablet, reportRate, reportsRecorded;
         private TabletVisualizer tabletVisualizer;
+        private CheckBox enableDataRecording;
+
+        private DebugReportData reportData;
         private double reportPeriod;
+        private int numReportsRecorded;
+
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
+        private TextWriter dataRecordingOutput;
+
+        public DebugReportData ReportData
+        {
+            set
+            {
+                this.reportData = value;
+                this.OnReportDataChanged();
+            }
+            get => this.reportData;
+        }
+
+        public double ReportPeriod
+        {
+            set
+            {
+                this.reportPeriod = value;
+                this.OnReportPeriodChanged();
+            }
+            get => this.reportPeriod;
+        }
+
+        public int NumberOfReportsRecorded
+        {
+            set
+            {
+                this.numReportsRecorded = value;
+                this.OnNumberOfReportsRecordedChanged();
+            }
+            get => this.numReportsRecorded;
+        }
+
+        public event EventHandler<EventArgs> ReportDataChanged;
+        public event EventHandler<EventArgs> ReportPeriodChanged;
+        public event EventHandler<EventArgs> NumberOfReportsRecordedChanged;
+
+        protected virtual void OnReportDataChanged()
+        {
+            ReportDataChanged?.Invoke(this, new EventArgs());
+            ReportPeriod += (stopwatch.Restart().TotalMilliseconds - ReportPeriod) / 10.0f;
+        }
+
+        protected virtual void OnReportPeriodChanged() => ReportPeriodChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnNumberOfReportsRecordedChanged() => NumberOfReportsRecordedChanged?.Invoke(this, new EventArgs());
+
+        public BindableBinding<TabletDebugger, DebugReportData> ReportDataBinding
+        {
+            get
+            {
+                return new BindableBinding<TabletDebugger, DebugReportData>(
+                    this,
+                    c => c.ReportData,
+                    (c, v) => c.ReportData = v,
+                    (c, h) => c.ReportDataChanged += h,
+                    (c, h) => c.ReportDataChanged -= h
+                );
+            }
+        }
+
+        public BindableBinding<TabletDebugger, double> ReportPeriodBinding
+        {
+            get
+            {
+                return new BindableBinding<TabletDebugger, double>(
+                    this,
+                    c => c.ReportPeriod,
+                    (c, v) => c.ReportPeriod = v,
+                    (c, h) => c.ReportPeriodChanged += h,
+                    (c, h) => c.ReportPeriodChanged -= h
+                );
+            }
+        }
+
+        public BindableBinding<TabletDebugger, int> NumberOfReportsRecordedBinding
+        {
+            get
+            {
+                return new BindableBinding<TabletDebugger, int>(
+                    this,
+                    c => c.NumberOfReportsRecorded,
+                    (c, v) => c.NumberOfReportsRecorded = v,
+                    (c, h) => c.NumberOfReportsRecordedChanged += h,
+                    (c, h) => c.NumberOfReportsRecordedChanged -= h
+                );
+            }
+        }
 
         private void ConnectionHook(IDriverDaemon daemon)
         {
             daemon.DeviceReport += HandleReport;
             daemon.TabletsChanged += HandleTabletsChanged;
-            Plugin.Log.Debug(nameof(ConnectionHook), "Activated connection hook.");
         }
 
-        private void HandleReport(object sender, DebugReportData data)
+        private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
-            tabletVisualizer.SetData(data);
-            var report = data.ToObject();
+            this.ReportData = data;
 
-            if (report is IDeviceReport deviceReport)
+            if (data.ToObject() is IDeviceReport deviceReport)
             {
-                deviceNameBox.Update(data.Tablet.Properties.Name);
-
-                reportPeriod += (stopwatch.Restart().TotalMilliseconds - reportPeriod) / 10.0f;
-                reportRateBox.Update($"{(uint)(1000 / reportPeriod)}hz");
-
-                string formatted = ReportFormatter.GetStringFormat(deviceReport);
-                tabletBox.Update(formatted);
-
-                string raw = ReportFormatter.GetStringRaw(deviceReport);
-                rawTabletBox.Update(raw);
+                if (enableDataRecording.Checked ?? false)
+                {
+                    var output = string.Join(' ', deviceReport.Raw.Select(d => d.ToString("X2")));
+                    dataRecordingOutput?.WriteLine(output);
+                    NumberOfReportsRecorded++;
+                }
             }
-        }
+        });
 
         private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
         {
@@ -138,40 +297,27 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             protected override Color VerticalBackgroundColor => base.HorizontalBackgroundColor;
         }
 
-        private class TextGroup : DebuggerGroup
-        {
-            public TextGroup(string title)
-            {
-                base.Text = title;
-                base.Content = label;
-            }
-
-            private Label label = new Label
-            {
-                Font = Fonts.Monospace(10)
-            };
-
-            public void Update(string text) => Application.Instance.AsyncInvoke(() => label.Text = text);
-
-            protected override Color VerticalBackgroundColor => base.HorizontalBackgroundColor;
-        }
-
         private class TabletVisualizer : TimedDrawable
         {
             private static readonly Color AccentColor = SystemColors.Highlight;
 
-            private DebugReportData data;
-            private TabletReference tablet;
+            public DebugReportData ReportData { set; get; }
 
-            public void SetData(DebugReportData data)
+            public BindableBinding<TabletVisualizer, DebugReportData> ReportDataBinding
             {
-                this.data = data;
-                this.tablet = data.Tablet;
+                get
+                {
+                    return new BindableBinding<TabletVisualizer, DebugReportData>(
+                        this,
+                        c => c.ReportData,
+                        (c, v) => c.ReportData = v
+                    );
+                }
             }
 
             protected override void OnNextFrame(PaintEventArgs e)
             {
-                if (tablet != null)
+                if (ReportData?.Tablet is TabletReference tablet)
                 {
                     var graphics = e.Graphics;
                     using (graphics.SaveTransformState())
@@ -184,26 +330,28 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                         graphics.TranslateTransform(clientCenter - tabletCenter);
 
-                        DrawBackground(graphics, pxToMM);
-                        DrawPosition(graphics, pxToMM);
+                        DrawBackground(graphics, pxToMM, tablet);
+                        DrawPosition(graphics, pxToMM, tablet);
                     }
                 }
             }
 
-            protected void DrawBackground(Graphics graphics, float scale)
+            protected void DrawBackground(Graphics graphics, float scale, TabletReference tablet)
             {
-                var digitizer = tablet.Properties.Specifications.Digitizer;
+                var digitizer = ReportData.Tablet.Properties.Specifications.Digitizer;
                 var bg = new RectangleF(0, 0, digitizer.Width, digitizer.Height) * scale;
+
                 graphics.FillRectangle(SystemColors.WindowBackground, bg);
                 graphics.DrawRectangle(AccentColor, bg);
             }
 
-            protected void DrawPosition(Graphics graphics, float scale)
+            protected void DrawPosition(Graphics graphics, float scale, TabletReference tablet)
             {
-                var report = data?.ToObject();
+                var report = ReportData?.ToObject();
+                var specifications = ReportData.Tablet.Properties.Specifications;
+                var digitizer = specifications.Digitizer;
+                var pen = specifications.Pen;
 
-                var digitizer = tablet.Properties.Specifications.Digitizer;
-                var pen = tablet.Properties.Specifications.Pen;
                 if (report is IAbsolutePositionReport absReport)
                 {
                     var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
