@@ -132,7 +132,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             Plugin.Log.Debug(nameof(ConnectionHook), "Activated connection hook.");
         }
 
-        private void HandleReport(object sender, DebugReportData data)
+        private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
             tabletVisualizer.SetData(data);
             var report = data.ToObject();
@@ -149,7 +149,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                 string raw = ReportFormatter.GetStringRaw(deviceReport);
                 rawTabletBox.Update(raw);
-                
+
                 if (enableDataRecording.Checked ?? false)
                 {
                     var output = string.Join(' ', deviceReport.Raw.Select(d => d.ToString("X2")));
@@ -158,7 +158,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     numReportsRecordedBox.Update(numReportsRecorded.ToString());
                 }
             }
-        }
+        });
 
         private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
         {
