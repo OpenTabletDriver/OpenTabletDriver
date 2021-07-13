@@ -1,6 +1,10 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Tablet;
 using StreamJsonRpc.Protocol;
 
 namespace OpenTabletDriver.UX
@@ -43,6 +47,12 @@ namespace OpenTabletDriver.UX
                 (c, e) => c.EnabledChanged += e,
                 (c, e) => c.EnabledChanged -= e
             );
+        }
+
+        public static async Task<TabletReference> GetTabletReference(this Profile profile)
+        {
+            var tablets = await App.Driver.Instance.GetTablets();
+            return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }
     }
 }

@@ -79,11 +79,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
         {
-            int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
-            int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
-            int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
-
-            return new BindingSettings
+            var bindingSettings = new BindingSettings
             {
                 TipButton = new PluginSettingStore(
                     new MouseBinding
@@ -91,10 +87,23 @@ namespace OpenTabletDriver.Desktop.Profiles
                         Button = nameof(MouseButton.Left)
                     }
                 ),
-                PenButtons = new PluginSettingStoreCollection().SetExpectedCount(penButtonCount),
-                AuxButtons = new PluginSettingStoreCollection().SetExpectedCount(auxButtonCount),
-                MouseButtons = new PluginSettingStoreCollection().SetExpectedCount(mouseButtonCount)
+                PenButtons = new PluginSettingStoreCollection(),
+                AuxButtons = new PluginSettingStoreCollection(),
+                MouseButtons = new PluginSettingStoreCollection()
             };
+            bindingSettings.MatchSpecifications(tabletSpecifications);
+            return bindingSettings;
+        }
+
+        public void MatchSpecifications(TabletSpecifications tabletSpecifications)
+        {
+            int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
+            int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
+            int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
+
+            PenButtons = PenButtons.SetExpectedCount(penButtonCount);
+            AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
+            MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
         }
     }
 }

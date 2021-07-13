@@ -6,31 +6,33 @@ namespace OpenTabletDriver.UX.Controls.Bindings
 {
     public abstract class BindingEditor : Panel
     {        
-        private BindingSettings settings;
-        public BindingSettings Settings
+        public DirectBinding<BindingSettings> SettingsBinding => ProfileBinding.Child(b => b.BindingSettings);
+
+        private Profile profile;
+        public Profile Profile
         {
             set
             {
-                this.settings = value;
-                this.OnSettingsChanged();
+                this.profile = value;
+                this.OnProfileChanged();
             }
-            get => this.settings;
+            get => this.profile;
         }
         
-        public event EventHandler<EventArgs> SettingsChanged;
+        public event EventHandler<EventArgs> ProfileChanged;
         
-        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnProfileChanged() => ProfileChanged?.Invoke(this, new EventArgs());
         
-        public BindableBinding<BindingEditor, BindingSettings> SettingsBinding
+        public BindableBinding<BindingEditor, Profile> ProfileBinding
         {
             get
             {
-                return new BindableBinding<BindingEditor, BindingSettings>(
+                return new BindableBinding<BindingEditor, Profile>(
                     this,
-                    c => c.Settings,
-                    (c, v) => c.Settings = v,
-                    (c, h) => c.SettingsChanged += h,
-                    (c, h) => c.SettingsChanged -= h
+                    c => c.Profile,
+                    (c, v) => c.Profile = v,
+                    (c, h) => c.ProfileChanged += h,
+                    (c, h) => c.ProfileChanged -= h
                 );
             }
         }
