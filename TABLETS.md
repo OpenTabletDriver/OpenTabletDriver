@@ -52,6 +52,7 @@
 | XP-Pen Star 03         |    Supported     |
 | XP-Pen Star G430       |    Supported     |
 | XP-Pen Star G430S      |    Supported     |
+| XP-Pen Star G540       |    Supported     |
 | XP-Pen Star G540 Pro   |    Supported     |
 | XP-Pen Star G640       |    Supported     |
 | XP-Pen Star G640 V2    |    Supported     |
@@ -112,7 +113,6 @@
 | Huion 420              |      Broken      | WinUSB implementation required.
 | Huion H420             |      Broken      | WinUSB implementation required.
 | Wacom ISD-V4           |      Broken      | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
-| XP-Pen Star G540       |      Broken      | [#698](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/698)
 | Huion G10T             |     Untested     |
 | Huion osu! Tablet      |     Untested     |
 | Wacom CTE-440          |     Untested     |
