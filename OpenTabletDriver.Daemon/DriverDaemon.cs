@@ -181,6 +181,8 @@ namespace OpenTabletDriver.Daemon
                 string group = dev.Properties.Name;
                 var profile = Settings.Profiles[dev];
 
+                profile.BindingSettings.MatchSpecifications(dev.Properties.Specifications);
+
                 var pluginRef = profile.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
                 dev.OutputMode = pluginRef.Construct<IOutputMode>();
 

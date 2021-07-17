@@ -1,8 +1,6 @@
-using System.Linq;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Profiles
@@ -68,11 +66,6 @@ namespace OpenTabletDriver.Desktop.Profiles
                 RelativeModeSettings = RelativeModeSettings.GetDefaults(),
                 BindingSettings = BindingSettings.GetDefaults(tablet.Properties.Specifications)
             };
-        }
-
-        public TabletReference GetTargetTablet(IDriver driver)
-        {
-            return driver.Tablets.FirstOrDefault(t => t.Properties.Name == Tablet);
         }
     }
 }

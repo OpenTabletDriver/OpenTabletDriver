@@ -63,9 +63,9 @@ namespace OpenTabletDriver.UX.Controls
             };
 
             outputModeEditor.ProfileBinding.Bind(ProfileBinding);
-            penBindingEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.BindingSettings));
-            auxBindingEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.BindingSettings));
-            mouseBindingEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.BindingSettings));
+            penBindingEditor.ProfileBinding.Bind(ProfileBinding);
+            auxBindingEditor.ProfileBinding.Bind(ProfileBinding);
+            mouseBindingEditor.ProfileBinding.Bind(ProfileBinding);
             filterEditor.StoreCollectionBinding.Bind(ProfileBinding.Child(p => p.Filters));
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
@@ -93,7 +93,19 @@ namespace OpenTabletDriver.UX.Controls
 
         public event EventHandler<EventArgs> ProfileChanged;
 
-        protected virtual void OnProfileChanged() => ProfileChanged?.Invoke(this, new EventArgs());
+        protected virtual async void OnProfileChanged()
+        {
+            ProfileChanged?.Invoke(this, new EventArgs());
+            if (Profile != null && await Profile.GetTabletReference() is TabletReference tablet)
+            {
+                Application.Instance.AsyncInvoke(() => 
+                {
+                    penBindingEditor.Parent.Visible = tablet.Properties.Specifications.Pen != null;
+                    auxBindingEditor.Parent.Visible = tablet.Properties.Specifications.AuxiliaryButtons != null;
+                    mouseBindingEditor.Parent.Visible = tablet.Properties.Specifications.MouseButtons != null;
+                });
+            }
+        }
 
         public BindableBinding<ControlPanel, Profile> ProfileBinding
         {
