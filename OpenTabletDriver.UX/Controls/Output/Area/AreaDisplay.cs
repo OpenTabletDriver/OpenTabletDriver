@@ -10,7 +10,7 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Output.Area
 {
-    public class AreaDisplay : TimedDrawable
+    public class AreaDisplay : ScheduledDrawable
     {
         private AreaSettings area;
         private bool lockToUsableArea;

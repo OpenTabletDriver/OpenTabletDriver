@@ -297,7 +297,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             protected override Color VerticalBackgroundColor => base.HorizontalBackgroundColor;
         }
 
-        private class TabletVisualizer : TimedDrawable
+        private class TabletVisualizer : ScheduledDrawable
         {
             private static readonly Color AccentColor = SystemColors.Highlight;
 
