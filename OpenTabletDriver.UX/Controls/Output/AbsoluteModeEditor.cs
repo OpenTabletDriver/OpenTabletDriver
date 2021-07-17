@@ -74,6 +74,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         internal TabletAreaEditor tabletAreaEditor;
 
         private bool handlingArLock;
+        private float? prevDisplayWidth;
+        private float? prevDisplayHeight;
         private DirectBinding<float> displayWidth;
         private DirectBinding<float> displayHeight;
         private DirectBinding<float> tabletWidth;
@@ -115,10 +117,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                 // Avoids looping
                 handlingArLock = true;
 
-                if (sender == displayWidth || sender == tabletWidth)
-                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
-                if (sender == displayHeight || sender == tabletHeight)
-                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                if ((sender == displayWidth || sender == tabletWidth) && prevDisplayWidth is float prevWidth)
+                    tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
+                else if ((sender == displayHeight || sender == tabletHeight) && prevDisplayHeight is float prevHeight)
+                    tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
+
+                prevDisplayWidth = displayWidth.DataValue;
+                prevDisplayHeight = displayHeight.DataValue;
 
                 handlingArLock = false;
             }
