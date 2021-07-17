@@ -24,24 +24,25 @@ namespace OpenTabletDriver.Plugin.Output
         {
             private set
             {
+                Action<IDeviceReport> output = this.OnOutput;
                 if (value && !passthrough)
                 {
                     this.entryElement = this;
-                    this.Emit += this.OnOutput;
+                    Link(this, output);
                     this.passthrough = true;
                 }
                 else if (!value && passthrough)
                 {
                     this.entryElement = null;
-                    this.Emit -= this.OnOutput;
+                    Unlink(this, output);
                     this.passthrough = false;
                 }
             }
             get => this.passthrough;
         }
 
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; }
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; }
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; } = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
 
         public Matrix3x2 TransformationMatrix { protected set; get; }
 
@@ -51,51 +52,43 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 this.elements = value;
 
+                Passthrough = false;
+                DestroyInternalLinks();
+
                 if (Elements != null && Elements.Count > 0)
                 {
-                    Passthrough = false;
                     PreTransformElements = GroupElements(Elements, PipelinePosition.PreTransform);
                     PostTransformElements = GroupElements(Elements, PipelinePosition.PostTransform);
-                    LinkElements(PreTransformElements);
-                    LinkElements(PostTransformElements);
+
+                    Action<IDeviceReport> output = this.OnOutput;
 
                     if (PreTransformElements.Any() && !PostTransformElements.Any())
                     {
                         entryElement = PreTransformElements.First();
 
-                        // Link PreTransformElements to TransformElement
-                        LinkElement(PreTransformElements.Last(), this);
-
-                        // Link TransformElement to output
-                        this.Emit += this.OnOutput;
+                        // PreTransform --> Transform --> Output
+                        LinkAll(PreTransformElements, this, output);
                     }
                     else if (PostTransformElements.Any() && !PreTransformElements.Any())
                     {
                         entryElement = this;
 
-                        // Link TransformElement to PostTransformElements
-                        this.Emit += PostTransformElements.Last().Consume;
-
-                        // Hook PostTransformElements to output
-                        PostTransformElements.Last().Emit += this.OnOutput;
+                        // Transform --> PostTransform --> Output
+                        LinkAll(this, PostTransformElements, output);
                     }
                     else if (PreTransformElements.Any() && PostTransformElements.Any())
                     {
                         entryElement = PreTransformElements.First();
 
-                        // Link PreTransformElements to TransformElement
-                        PreTransformElements.Last().Emit += this.Consume;
-
-                        // Link TransformElement to PostTransformElements
-                        this.Emit += PostTransformElements.First().Consume;
-
-                        // Link PostTransformElements to output
-                        PostTransformElements.Last().Emit += this.OnOutput;
+                        // PreTransform --> Transform --> PostTransform --> Output
+                        LinkAll(PreTransformElements, this, PostTransformElements, output);
                     }
                 }
                 else
                 {
                     Passthrough = true;
+                    PreTransformElements = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
+                    PostTransformElements = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
                 }
             }
             get => this.elements;
@@ -125,5 +118,23 @@ namespace OpenTabletDriver.Plugin.Output
         protected abstract Matrix3x2 CreateTransformationMatrix();
         protected abstract IAbsolutePositionReport Transform(IAbsolutePositionReport tabletReport);
         protected abstract void OnOutput(IDeviceReport report);
+
+        private void DestroyInternalLinks()
+        {
+            Action<IDeviceReport> output = this.OnOutput;
+
+            if (PreTransformElements.Any() && !PostTransformElements.Any())
+            {
+                UnlinkAll(PreTransformElements, this, output);
+            }
+            else if (PostTransformElements.Any() && !PreTransformElements.Any())
+            {
+                UnlinkAll(this, PostTransformElements, output);
+            }
+            else if (PreTransformElements.Any() && PostTransformElements.Any())
+            {
+                UnlinkAll(PreTransformElements, this, PostTransformElements, output);
+            }
+        }
     }
 }
