@@ -262,10 +262,9 @@ namespace OpenTabletDriver.Daemon
 
         private void SetBindingHandlerSettings(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings)
         {
-            string group = dev.Properties.Name;
             var bindingHandler = new BindingHandler(outputMode);
 
-            var bindingServiceProvider = new ServiceManager();
+            var serviceManager = new ServiceManager();
             object pointer = outputMode switch
             {
                 AbsoluteOutputMode absoluteOutputMode => absoluteOutputMode.Pointer,
@@ -274,63 +273,76 @@ namespace OpenTabletDriver.Daemon
             };
 
             if (pointer is IVirtualMouse virtualMouse)
-                bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
+                serviceManager.AddService<IVirtualMouse>(() => virtualMouse);
             if (pointer is IScrollablePointer scrollablePointer)
-                bindingServiceProvider.AddService<IScrollablePointer>(() => scrollablePointer);
+                serviceManager.AddService<IScrollablePointer>(() => scrollablePointer);
 
+            SetPenBindingSettings(dev, settings, bindingHandler, serviceManager);
+            SetAuxBindingSettings(dev, settings, bindingHandler, serviceManager);
+            SetMouseBindingSettings(dev, settings, bindingHandler, serviceManager);
+        }
+
+        private void SetPenBindingSettings(InputDeviceTree dev, BindingSettings settings, BindingHandler bindingHandler, IServiceManager serviceManager)
+        {
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
-                Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider),
+                Binding = settings.TipButton?.Construct<IBinding>(serviceManager),
                 ActivationThreshold = settings.TipActivationPressure
             };
 
             if (tip.Binding != null)
             {
-                Log.Write(group, $"Tip Binding: [{tip.Binding}]@{tip.ActivationThreshold}%");
+                Log.Write(dev.Properties.Name, $"Tip Binding: [{tip.Binding}]@{tip.ActivationThreshold}%");
             }
 
             var eraser = bindingHandler.Eraser = new ThresholdBindingState
             {
-                Binding = settings.EraserButton?.Construct<IBinding>(bindingServiceProvider),
+                Binding = settings.EraserButton?.Construct<IBinding>(serviceManager),
                 ActivationThreshold = settings.EraserActivationPressure
             };
 
             if (eraser.Binding != null)
             {
-                Log.Write(group, $"Eraser Binding: [{eraser.Binding}]@{eraser.ActivationThreshold}%");
+                Log.Write(dev.Properties.Name, $"Eraser Binding: [{eraser.Binding}]@{eraser.ActivationThreshold}%");
             }
 
             if (settings.PenButtons != null && settings.PenButtons.Any(b => b?.Path != null))
             {
-                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.PenButtons, bindingHandler.PenButtons);
-                Log.Write(group, $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtons.Select(b => b.Value?.Binding)));
+                SetBindingHandlerCollectionSettings(serviceManager, settings.PenButtons, bindingHandler.PenButtons);
+                Log.Write(dev.Properties.Name, $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtons.Select(b => b.Value?.Binding)));
             }
+        }
 
+        private void SetAuxBindingSettings(InputDeviceTree dev, BindingSettings settings, BindingHandler bindingHandler, IServiceManager serviceManager)
+        {
             if (settings.AuxButtons != null && settings.AuxButtons.Any(b => b?.Path != null))
             {
-                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.AuxButtons, bindingHandler.AuxButtons);
-                Log.Write(group, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtons.Select(b => b.Value?.Binding)));
+                SetBindingHandlerCollectionSettings(serviceManager, settings.AuxButtons, bindingHandler.AuxButtons);
+                Log.Write(dev.Properties.Name, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtons.Select(b => b.Value?.Binding)));
             }
+        }
 
+        private void SetMouseBindingSettings(InputDeviceTree dev, BindingSettings settings, BindingHandler bindingHandler, IServiceManager serviceManager)
+        {
             if (settings.MouseButtons != null && settings.MouseButtons.Any(b => b?.Path != null))
             {
-                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.MouseButtons, bindingHandler.MouseButtons);
-                Log.Write(group, $"Mouse Button Bindings: [" + string.Join("], [", bindingHandler.MouseButtons.Select(b => b.Value?.Binding)) + "]");
+                SetBindingHandlerCollectionSettings(serviceManager, settings.MouseButtons, bindingHandler.MouseButtons);
+                Log.Write(dev.Properties.Name, $"Mouse Button Bindings: [" + string.Join("], [", bindingHandler.MouseButtons.Select(b => b.Value?.Binding)) + "]");
             }
 
             var scrollUp = bindingHandler.MouseScrollUp = new BindingState
             {
-                Binding = settings.MouseScrollUp?.Construct<IBinding>(bindingServiceProvider)
+                Binding = settings.MouseScrollUp?.Construct<IBinding>(serviceManager)
             };
 
             var scrollDown = bindingHandler.MouseScrollDown = new BindingState
             {
-                Binding = settings.MouseScrollDown?.Construct<IBinding>(bindingServiceProvider)
+                Binding = settings.MouseScrollDown?.Construct<IBinding>(serviceManager)
             };
 
             if (scrollUp.Binding != null || scrollDown.Binding != null)
             {
-                Log.Write(group, $"Mouse Scroll: Up: [{scrollUp?.Binding}] Down: [{scrollDown?.Binding}]");
+                Log.Write(dev.Properties.Name, $"Mouse Scroll: Up: [{scrollUp?.Binding}] Down: [{scrollDown?.Binding}]");
             }
         }
 
