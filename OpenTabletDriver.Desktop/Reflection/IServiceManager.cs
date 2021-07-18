@@ -6,6 +6,5 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         bool AddService<T>(Func<T> value);
         void ResetServices();
-        void Inject(object obj);
     }
 }

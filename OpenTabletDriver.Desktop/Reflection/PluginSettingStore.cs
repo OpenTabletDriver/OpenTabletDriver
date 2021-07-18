@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -38,18 +39,24 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public string Path { set; get; }
 
+        [JsonIgnore]
+        public string Name => AppInfo.PluginManager.GetFriendlyName(Path);
+
         public ObservableCollection<PluginSetting> Settings { set; get; }
 
         public bool Enable { set; get; }
 
-        public PluginReference GetPluginReference() => new StoredPluginReference(AppInfo.PluginManager, this);
-
-        public T Construct<T>() where T : class => this.GetPluginReference().Construct<T>();
-        public T Construct<T>(params object[] args) where T : class => this.GetPluginReference().Construct<T>(args);
+        public T Construct<T>() where T : class => AppInfo.PluginManager.ConstructObject<T>(Path);
+        public T Construct<T>(IServiceManager provider) where T : class
+        {
+            var obj = Construct<T>();
+            PluginManager.Inject(provider, obj);
+            return obj;
+        }
 
         public static PluginSettingStore FromPath(string path)
         {
-            var pathType = AppInfo.PluginManager.GetPluginReference(path).GetTypeReference();
+            var pathType = AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path);
             return pathType != null ? new PluginSettingStore(pathType) : null;
         }
 
@@ -118,10 +125,20 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public string GetHumanReadableString()
         {
-            var name = this.GetPluginReference().Name;
+            var name = Name;
             string settings = string.Join(", ", this.Settings.Select(s => $"({s.Property}: {s.Value})"));
             string suffix = Settings.Any() ? $": {settings}" : string.Empty;
             return name + suffix;
+        }
+
+        public TypeInfo GetTypeInfo()
+        {
+            return AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == Path);
+        }
+
+        public TypeInfo GetTypeInfo<T>()
+        {
+            return AppInfo.PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == Path);
         }
     }
 }

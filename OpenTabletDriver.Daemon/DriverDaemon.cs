@@ -193,11 +193,10 @@ namespace OpenTabletDriver.Daemon
 
                 profile.BindingSettings.MatchSpecifications(dev.Properties.Specifications);
 
-                var pluginRef = profile.OutputMode?.GetPluginReference() ?? AppInfo.PluginManager.GetPluginReference(typeof(AbsoluteMode));
-                dev.OutputMode = pluginRef.Construct<IOutputMode>();
+                dev.OutputMode = profile.OutputMode.Construct<IOutputMode>();
 
                 if (dev.OutputMode != null)
-                    Log.Write(group, $"Output mode: {pluginRef.Name ?? pluginRef.Path}");
+                    Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
 
                 if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
                     SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
@@ -289,10 +288,9 @@ namespace OpenTabletDriver.Daemon
 
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
-                Binding = settings.TipButton?.Construct<IBinding>(),
+                Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider),
                 ActivationThreshold = settings.TipActivationPressure
             };
-            bindingServiceProvider.Inject(tip.Binding);
 
             if (tip.Binding != null)
             {
@@ -301,10 +299,9 @@ namespace OpenTabletDriver.Daemon
 
             var eraser = bindingHandler.Eraser = new ThresholdBindingState
             {
-                Binding = settings.EraserButton?.Construct<IBinding>(),
+                Binding = settings.EraserButton?.Construct<IBinding>(bindingServiceProvider),
                 ActivationThreshold = settings.EraserActivationPressure
             };
-            bindingServiceProvider.Inject(eraser.Binding);
 
             if (eraser.Binding != null)
             {
@@ -331,15 +328,13 @@ namespace OpenTabletDriver.Daemon
 
             var scrollUp = bindingHandler.MouseScrollUp = new BindingState
             {
-                Binding = settings.MouseScrollUp?.Construct<IBinding>()
+                Binding = settings.MouseScrollUp?.Construct<IBinding>(bindingServiceProvider)
             };
-            bindingServiceProvider.Inject(scrollUp.Binding);
 
             var scrollDown = bindingHandler.MouseScrollDown = new BindingState
             {
-                Binding = settings.MouseScrollDown?.Construct<IBinding>()
+                Binding = settings.MouseScrollDown?.Construct<IBinding>(bindingServiceProvider)
             };
-            bindingServiceProvider.Inject(scrollDown.Binding);
 
             if (scrollUp.Binding != null || scrollDown.Binding != null)
             {
@@ -351,7 +346,7 @@ namespace OpenTabletDriver.Daemon
         {
             for (int index = 0; index < collection.Count; index++)
             {
-                IBinding binding = collection[index]?.Construct<IBinding>();
+                IBinding binding = collection[index]?.Construct<IBinding>(serviceManager);
                 var state = binding == null ? null : new BindingState
                 {
                     Binding = binding
@@ -359,7 +354,6 @@ namespace OpenTabletDriver.Daemon
 
                 if(!targetDict.TryAdd(index, state))
                     targetDict[index] = state;
-                serviceManager.Inject(binding);
             }
         }
 
@@ -379,7 +373,7 @@ namespace OpenTabletDriver.Daemon
                 if (tool?.Initialize() ?? false)
                     Tools.Add(tool);
                 else
-                    Log.Write("Tool", $"Failed to initialize {store.GetPluginReference().Name} tool.", LogLevel.Error);
+                    Log.Write("Tool", $"Failed to initialize {store.Name} tool.", LogLevel.Error);
             }
         }
 

@@ -33,10 +33,6 @@ namespace OpenTabletDriver.Desktop.Reflection
                 where type.IsAbstract || type.IsInterface
                 select type;
 
-        public virtual PluginReference GetPluginReference(string path) => new PluginReference(this, path);
-        public virtual PluginReference GetPluginReference(Type type) => GetPluginReference(type.FullName);
-        public virtual PluginReference GetPluginReference(object obj) => GetPluginReference(obj.GetType());
-
         public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
         {
             args ??= new object[0];
@@ -57,7 +53,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                             T obj = (T)constructor.Invoke(args) ?? null;
 
                             if (obj != null)
-                                Inject(obj, type);
+                                Inject(this, obj, type);
                             return obj;
                         }
                         else
@@ -87,6 +83,52 @@ namespace OpenTabletDriver.Desktop.Reflection
                 select type;
 
             return children.ToArray();
+        }
+
+        public virtual string GetFriendlyName(string path)
+        {
+            if (AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
+            {
+                var attrs = plugin.GetCustomAttributes(true);
+                var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
+                if (nameattr is PluginNameAttribute attr)
+                    return attr.Name;
+            }
+            return null;
+        }
+
+        public static void Inject(IServiceProvider serviceProvider, object obj)
+        {
+            if (obj != null)
+                Inject(serviceProvider, obj, obj.GetType());
+        }
+
+        public static void Inject(IServiceProvider serviceProvider, object obj, Type type)
+        {
+            if (obj == null)
+                return;
+
+            var resolvedProperties = from property in type.GetProperties()
+                where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                select property;
+
+            foreach (var property in resolvedProperties)
+            {
+                var service = serviceProvider.GetService(property.PropertyType);
+                if (service != null)
+                    property.SetValue(obj, service);
+            }
+
+            var resolvedFields = from field in type.GetFields()
+                where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                select field;
+
+            foreach (var field in resolvedFields)
+            {
+                var service = serviceProvider.GetService(field.FieldType);
+                if (service != null)
+                    field.SetValue(obj, service);
+            }
         }
 
         protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
