@@ -24,6 +24,8 @@ namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
                 return new DeviceReport(report);
             if (report[1].IsBitSet(5))
                 return new IntuosV1TabletReport(report);
+            else if (report[1] == 0xC2)
+                return new IntuosV1ToolReport(report);
 
             return new DeviceReport(report);
         }
