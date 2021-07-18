@@ -276,6 +276,8 @@ namespace OpenTabletDriver.Daemon
 
             if (pointer is IVirtualMouse virtualMouse)
                 bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
+            if (pointer is IScrollablePointer scrollablePointer)
+                bindingServiceProvider.AddService<IScrollablePointer>(() => scrollablePointer);
 
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {

@@ -24,7 +24,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
                 EventCode.BTN_FORWARD,
-                EventCode.BTN_BACK);
+                EventCode.BTN_BACK
+            );
+
+            Device.EnableType(EventType.EV_REL);
+
+            Device.EnableTypeCodes(
+                EventType.EV_REL,
+                EventCode.REL_WHEEL,
+                EventCode.REL_HWHEEL
+            );
 
             var result = Device.Initialize();
             switch (result)
@@ -47,6 +56,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             
             Device.Write(EventType.EV_REL, EventCode.REL_X, (int)delta.X);
             Device.Write(EventType.EV_REL, EventCode.REL_Y, (int)delta.Y);
+            Device.Sync();
+        }
+
+        public override void Scroll(Vector2 delta)
+        {
+            Device.Write(EventType.EV_REL, EventCode.REL_HWHEEL, (int)delta.X);
+            Device.Write(EventType.EV_REL, EventCode.REL_WHEEL, (int)delta.Y);
             Device.Sync();
         }
     }

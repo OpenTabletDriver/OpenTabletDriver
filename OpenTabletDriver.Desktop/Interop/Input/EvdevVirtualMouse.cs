@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
@@ -6,7 +7,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Interop
 {
     [PluginIgnore]
-    public abstract class EvdevVirtualMouse : IVirtualMouse, IDisposable
+    public abstract class EvdevVirtualMouse : IVirtualMouse, IScrollablePointer, IDisposable
     {
         protected EvdevDevice Device { set; get; }
 
@@ -42,5 +43,7 @@ namespace OpenTabletDriver.Desktop.Interop
         {
             Device?.Dispose();
         }
+
+        public abstract void Scroll(Vector2 delta);
     }
 }
