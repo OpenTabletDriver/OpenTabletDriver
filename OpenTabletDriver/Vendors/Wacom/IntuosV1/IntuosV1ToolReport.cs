@@ -10,12 +10,12 @@ namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
         {
             Raw = report;
 
-            Serial = (ulong)(((report[3] & 0x0f) << 28) +
-                (report[4] << 20) + (report[5] << 12) +
-                (report[6] <<  4) + (report[7] >>  4));
+            Serial = (ulong)(((report[3] & 0x0f) << 0x1C) +
+                (report[4] << 0x14) + (report[5] << 0x0C) +
+                (report[6] << 0x04) + (report[7] >> 0x04));
 
-            RawToolID = (uint)((report[2]   <<  4) | ( report[3]         >> 4) |
-                       ((report[7] & 0x0f) << 16) | ((report[8] & 0xf0) << 8));
+            RawToolID = (uint)((report[2] << 4) | ( report[3] >> 4) |
+                ((report[7] & 0x0f) << 16) | ((report[8] & 0xf0) << 8));
 
             Tool = report[3].IsBitSet(7) ? ToolType.Eraser : ToolType.Pen;
 
