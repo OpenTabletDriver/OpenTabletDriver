@@ -1,4 +1,3 @@
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
@@ -20,9 +19,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 else // remap pressure when beyond threshold
                 {
                     var maxPressure = tablet.Properties.Specifications.Pen.MaxPressure;
-                    tabletReport.Pressure = (uint)(maxPressure *
-                                        ((value - ActivationThreshold) /
-                                         ( 100f - ActivationThreshold)));
+                    var remappedPressure = (value - ActivationThreshold) / (100f - ActivationThreshold);
+                    tabletReport.Pressure = (uint)(maxPressure * remappedPressure);
                 }
             }
 
