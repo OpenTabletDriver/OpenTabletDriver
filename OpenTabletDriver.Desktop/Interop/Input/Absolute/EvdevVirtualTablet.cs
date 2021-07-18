@@ -19,6 +19,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         };
 
         private Vector2 ScreenScale = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height);
+        private bool IsEraser = false;
+        private bool Proximity = true;
 
         public unsafe EvdevVirtualTablet()
         {
@@ -50,11 +52,30 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             input_absinfo* pressurePtr = &pressure;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_PRESSURE, (IntPtr)pressurePtr);
 
+            var xTilt = new input_absinfo
+            {
+                minimum = -64,
+                maximum = 63,
+                resolution = 57
+            };
+            input_absinfo* xTiltPtr = &xTilt;
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_X, (IntPtr)xTiltPtr);
+
+            var yTilt = new input_absinfo
+            {
+                minimum = -64,
+                maximum = 63,
+                resolution = 57
+            };
+            input_absinfo* yTiltPtr = &yTilt;
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
+
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
                 EventCode.BTN_TOUCH,
                 EventCode.BTN_STYLUS,
                 EventCode.BTN_TOOL_PEN,
+                EventCode.BTN_TOOL_RUBBER,
                 EventCode.BTN_STYLUS2,
                 EventCode.BTN_STYLUS3
             );
@@ -76,14 +97,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetPosition(Vector2 pos)
         {
             var newPos = pos / ScreenScale * Max;
+            Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)newPos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)newPos.Y);
             Device.Sync();
         }
 
-        public void SetPressure(float percentage, bool isEraser)
+        public void SetPressure(float percentage)
         {
-            Device.Write(EventType.EV_KEY, isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, 1);
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, percentage > 0 ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MaxPressure * percentage));
             Device.Sync();
@@ -99,6 +120,18 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetButtonState(uint button, bool active)
         {
             Device.Write(EventType.EV_KEY, BUTTONS[button], active ? 1 : 0);
+            Device.Sync();
+        }
+
+        public void SetEraser(bool isEraser)
+        {
+            IsEraser = isEraser;
+        }
+
+        public void SetProximity(bool proximity, uint distance)
+        {
+            Proximity = proximity;
+            Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
             Device.Sync();
         }
 

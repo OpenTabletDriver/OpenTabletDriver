@@ -10,11 +10,11 @@
     "Pen": {
       "MaxPressure": 1023,
       "Buttons": {
-        "ButtonCount": 0
+        "ButtonCount": 2
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 0
+      "ButtonCount": 4
     },
     "MouseButtons": null,
     "Touch": null
@@ -38,7 +38,7 @@
       "ProductID": 223,
       "InputReportLength": 10,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.WacomDriverIntuosReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
