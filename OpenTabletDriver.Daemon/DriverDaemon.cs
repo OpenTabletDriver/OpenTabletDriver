@@ -14,6 +14,7 @@ using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -42,6 +43,15 @@ namespace OpenTabletDriver.Daemon
                     await SetSettings(Settings);
                 }
             };
+
+            foreach (var driverInfo in DriverInfo.GetDriverInfos())
+            {
+                Log.Write("Detect", $"Another tablet driver found: {driverInfo.Name}", LogLevel.Warning);
+                if (driverInfo.IsBlockingDriver)
+                    Log.Write("Detect", $"Detection for {driverInfo.Name} tablets might be impaired", LogLevel.Warning);
+                else if (driverInfo.IsSendingInput)
+                    Log.Write("Detect", $"Detected input coming from {driverInfo.Name} driver", LogLevel.Error);
+            }
 
             LoadUserSettings();
         }
