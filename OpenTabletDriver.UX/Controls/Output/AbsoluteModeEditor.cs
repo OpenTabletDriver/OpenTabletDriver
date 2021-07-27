@@ -64,6 +64,8 @@ namespace OpenTabletDriver.UX.Controls.Output
             displayHeight = SettingsBinding.Child(c => c.Display.Height);
             tabletWidth = SettingsBinding.Child(c => c.Tablet.Width);
             tabletHeight = SettingsBinding.Child(c => c.Tablet.Height);
+            tabletWidth.DataValueChanged += (_, _) => ForceConstraintArea(tabletAreaEditor);
+            tabletHeight.DataValueChanged += (_, _) => ForceConstraintArea(tabletAreaEditor);
 
             tabletAreaEditor.LockAspectRatioChanged += HookAspectRatioLock;
             HookAspectRatioLock(tabletAreaEditor, EventArgs.Empty);
@@ -79,6 +81,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private bool handlingArLock;
         private bool handlingArConstraint;
+        private bool handlingForcedArConstraint;
         private float? prevDisplayWidth;
         private float? prevDisplayHeight;
         private DirectBinding<float> displayWidth;
@@ -174,11 +177,6 @@ namespace OpenTabletDriver.UX.Controls.Output
                 prevDisplayWidth = displayWidth.DataValue;
                 prevDisplayHeight = displayHeight.DataValue;
 
-                if (tabletAreaEditor.LockToUsableArea)
-                {
-                    ForceConstraintArea(tabletAreaEditor);
-                }
-
                 handlingArLock = false;
             }
         }
@@ -197,13 +195,15 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
         }
 
-        private static void ForceConstraintArea(AreaDisplay display)
+        private void ForceConstraintArea(AreaDisplay display)
         {
-            if (display.Area != null)
+            if (!handlingForcedArConstraint && display.LockToUsableArea && display.Area != null)
             {
+                handlingForcedArConstraint = true;
                 var correction = GetOutOfBoundsAmount(display, display.Area.X, display.Area.Y);
                 display.Area.X -= correction.X;
                 display.Area.Y -= correction.Y;
+                handlingForcedArConstraint = false;
             }
         }
 
