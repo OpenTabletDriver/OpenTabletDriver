@@ -62,15 +62,8 @@ namespace OpenTabletDriver.Interop
 
         public void Dispose()
         {
-            try
-            {
-                Stop();
-                GC.SuppressFinalize(this);
-            }
-            finally
-            {
-                // No-op
-            }
+            Stop();
+            GC.SuppressFinalize(this);
         }
     }
 }
