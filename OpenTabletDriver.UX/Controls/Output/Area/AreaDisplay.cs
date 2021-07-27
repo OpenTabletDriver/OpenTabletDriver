@@ -18,7 +18,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         protected IEnumerable<RectangleF> areaBounds;
         private RectangleF fullAreaBounds;
 
-        public event EventHandler<AreaChangingEventArgs> AreaChanging;
         public event EventHandler<EventArgs> AreaChanged;
         public event EventHandler<EventArgs> LockToUsableAreaChanged;
         public event EventHandler<EventArgs> UnitChanged;
@@ -27,7 +26,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public event EventHandler<EventArgs> InvalidForegroundErrorChanged;
         public event EventHandler<EventArgs> InvalidBackgroundErrorChanged;
 
-        protected virtual void OnAreaChanging(AreaChangingEventArgs eventArgs) => AreaChanging?.Invoke(this, eventArgs);
         protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, EventArgs.Empty);
         protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, EventArgs.Empty);
         protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, EventArgs.Empty);
@@ -266,11 +264,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     var newX = viewModelOffset.Value.X + (delta.X / PixelScale);
                     var newY = viewModelOffset.Value.Y + (delta.Y / PixelScale);
 
-                    var areaChangingEventArgs = new AreaChangingEventArgs(newX, newY);
-                    OnAreaChanging(areaChangingEventArgs);
-
-                    Area.X = areaChangingEventArgs.X;
-                    Area.Y = areaChangingEventArgs.Y;
+                    Area.X = newX;
+                    Area.Y = newY;
                     OnAreaChanged();
                 }
                 else
