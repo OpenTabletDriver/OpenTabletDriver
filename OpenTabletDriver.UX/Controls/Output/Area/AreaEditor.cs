@@ -105,6 +105,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             x.ValueBinding.Bind(xBinding);
             y.ValueBinding.Bind(yBinding);
 
+            display.AreaChanging += (sender, args) => AreaChanging?.Invoke(sender, args);
             display.AreaBinding.Bind(AreaBinding);
             display.LockToUsableAreaBinding.Bind(LockToUsableAreaBinding);
             display.UnitBinding.Bind(UnitBinding);
@@ -148,6 +149,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
             get => this.areaBounds;
         }
+
+        public event EventHandler<AreaChangingEventArgs> AreaChanging;
 
         public Vector2[] GetAreaCorners()
         {
@@ -287,6 +290,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     break;
                 }
             }
+        }
+
+        public static implicit operator AreaDisplay(AreaEditor areaEditor)
+        {
+            return areaEditor.display;
         }
     }
 }
