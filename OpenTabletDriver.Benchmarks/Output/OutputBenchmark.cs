@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
@@ -14,41 +16,28 @@ namespace OpenTabletDriver.Benchmarks.Output
         public AbsoluteOutputMode OutputMode { get; set; } = new NoopAbsoluteMode();
         public IDeviceReport Report { get; set; }
 
-        public void SetSettings(Settings settings)
+        public void SetProfile(Profile profile)
         {
-            var digitizer = new DigitizerIdentifier
+            OutputMode.Tablet = new TabletReference
             {
-                MaxX = 2000,
-                MaxY = 2000,
-                Width = 20,
-                Height = 20,
-                ActiveReportID = new DetectionRange(null, null)
-            };
-
-            OutputMode.Tablet = new TabletState(null, digitizer, null);
-
-            OutputMode.Output = new Area
-            {
-                Width = settings.DisplayWidth,
-                Height = settings.DisplayHeight,
-                Position = new Vector2
+                Properties = new TabletConfiguration
                 {
-                    X = settings.DisplayX,
-                    Y = settings.DisplayY
+                    Specifications = new TabletSpecifications
+                    {
+                        Digitizer = new DigitizerSpecifications
+                        {
+                            MaxX = 2000,
+                            MaxY = 2000,
+                            Width = 20,
+                            Height = 20,
+                        },
+                        Pen = new PenSpecifications()
+                    }
                 }
             };
 
-            OutputMode.Input = new Area
-            {
-                Width = settings.TabletWidth,
-                Height = settings.TabletHeight,
-                Position = new Vector2
-                {
-                    X = settings.TabletX,
-                    Y = settings.TabletY
-                },
-                Rotation = settings.TabletRotation
-            };
+            OutputMode.Output = profile.AbsoluteModeSettings.Display.Area;
+            OutputMode.Input = profile.AbsoluteModeSettings.Tablet.Area;
 
             var data = new byte[8];
             var randGen = new Random();
@@ -62,17 +51,26 @@ namespace OpenTabletDriver.Benchmarks.Output
         [GlobalSetup]
         public void Setup()
         {
-            var settings = new Settings()
+            var profile = new Profile
             {
-                DisplayWidth = 1366,
-                DisplayHeight = 768,
-                DisplayX = 0,
-                DisplayY = 0,
-                TabletWidth = 20,
-                TabletHeight = 20
+                AbsoluteModeSettings = new AbsoluteModeSettings
+                {
+                    Display = new AreaSettings
+                    {
+                        Width = 1366,
+                        Height = 768,
+                        X = 0,
+                        Y = 0,
+                    },
+                    Tablet = new AreaSettings
+                    {
+                        Width = 20,
+                        Height = 20
+                    }
+                }
             };
 
-            SetSettings(settings);
+            SetProfile(profile);
         }
 
         [Benchmark]

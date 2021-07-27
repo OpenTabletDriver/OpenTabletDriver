@@ -41,7 +41,7 @@ namespace OpenTabletDriver.Plugin
         /// <param name="group">The group in which the <see cref="LogMessage"/> belongs to.</param>
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
         /// <param name="level">The severity level of the <see cref="LogMessage"/>.</param>
-        public static void Write(string group, string text, LogLevel level = LogLevel.Info, bool createStackTrace  = false)
+        public static void Write(string group, string text, LogLevel level = LogLevel.Info, bool createStackTrace = false)
         {
             var message = new LogMessage
             {

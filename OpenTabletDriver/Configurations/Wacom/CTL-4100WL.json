@@ -1,89 +1,68 @@
 {
   "Name": "Wacom CTL-4100WL",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 152.0,
       "Height": 95.0,
       "MaxX": 15200.0,
-      "MaxY": 9500.0,
+      "MaxY": 9500.0
+    },
+    "Pen": {
       "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": 19,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 886,
       "InputReportLength": 192,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
-      "FeatureInitReport": "AgI=",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     },
     {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0,
-      "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": 19,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 886,
       "InputReportLength": 193,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
-      "FeatureInitReport": "AgI=",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     },
     {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0,
-      "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 887,
       "InputReportLength": 361,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV3ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.IntuosV2ReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     },
     {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0,
-      "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": 16,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 887,
       "InputReportLength": 193,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.WacomDriverIntuosV3ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},

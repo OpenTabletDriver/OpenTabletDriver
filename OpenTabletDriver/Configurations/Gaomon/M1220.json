@@ -1,18 +1,26 @@
 {
   "Name": "Gaomon M1220",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 258.5,
       "Height": 161.55,
       "MaxX": 51700.0,
-      "MaxY": 32310.0,
+      "MaxY": 32310.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,

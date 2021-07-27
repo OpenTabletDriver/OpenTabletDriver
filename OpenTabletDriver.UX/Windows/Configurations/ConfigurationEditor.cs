@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -12,7 +11,9 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Dictionary;
 using OpenTabletDriver.UX.Windows.Configurations.Controls;
+using OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications;
 
 namespace OpenTabletDriver.UX.Windows.Configurations
 {
@@ -88,7 +89,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 }
             };
 
-            this.configList.SelectedValueChanged += (sender, e) => configurationSettings.Update(SelectedConfiguration);
+            this.configList.SelectedValueChanged += (sender, e) => configurationSettings.Configuration = SelectedConfiguration;
 
             Refresh();
         }
@@ -125,7 +126,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
         private ConfigurationList configList = new ConfigurationList();
         private ConfigurationSettings configurationSettings = new ConfigurationSettings();
 
-        private static readonly Regex NameRegex = new Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
+        private static readonly System.Text.RegularExpressions.Regex NameRegex = new System.Text.RegularExpressions.Regex("(?<Manufacturer>.+?) (?<TabletName>.+?)$");
 
         private ObservableCollection<TabletConfiguration> ReadConfigurations(DirectoryInfo dir)
         {
@@ -247,7 +248,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                             Name = device.GetManufacturer() + " " + device.GetProductName(),
                             DigitizerIdentifiers =
                             {
-                                new DigitizerIdentifier
+                                new DeviceIdentifier
                                 {
                                     VendorID = device.VendorID,
                                     ProductID = device.ProductID,
@@ -268,35 +269,84 @@ namespace OpenTabletDriver.UX.Windows.Configurations
 
         private class ConfigurationSettings : Panel
         {
-            public void Update(TabletConfiguration config)
+            public ConfigurationSettings()
             {
-                base.Content = new StackLayout
+                this.Content = new StackLayout
                 {
                     HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    Spacing = 5,
                     Items =
                     {
-                        new InputBox(
-                            "Name",
-                            () => config.Name,
-                            (s) => config.Name = s
-                        ),
-                        new DigitizerIdentifierEditor(
-                            "Digitizer Identifiers",
-                            () => config.DigitizerIdentifiers,
-                            (o) => config.DigitizerIdentifiers = o
-                        ),
-                        new AuxiliaryIdentifierEditor(
-                            "Auxiliary Device Identifiers",
-                            () => config.AuxilaryDeviceIdentifiers,
-                            (o) => config.AuxilaryDeviceIdentifiers = o
-                        ),
-                        new DictionaryEditor(
-                            "Attributes",
-                            () => config.Attributes,
-                            (o) => config.Attributes = o
-                        )
+                        new Group
+                        {
+                            Text = "Name",
+                            Orientation = Orientation.Horizontal,
+                            Content = name = new TextBox()
+                        },
+                        new Expander
+                        {
+                            Header = "Specifications",
+                            Content = specificationEditor = new TabletSpecificationsEditor()
+                        },
+                        new Expander
+                        {
+                            Header = "Digitizer Identifiers",
+                            Content = digitizerIdentifierEditor = new DeviceIdentifierEditor()
+                        },
+                        new Expander
+                        {
+                            Header = "Auxiliary Identifiers",
+                            Content = auxiliaryIdentifierEditor = new DeviceIdentifierEditor()
+                        },
+                        new Expander
+                        {
+                            Header = "Attributes",
+                            Padding = new Padding(5, 5, 0, 5),
+                            Content = attributeEditor = new StringDictionaryEditor()
+                        }
                     }
                 };
+
+                name.TextBinding.Bind(ConfigurationBinding.Child(c => c.Name));
+                specificationEditor.SpecificationsBinding.Bind(ConfigurationBinding.Child(c => c.Specifications));
+                digitizerIdentifierEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IList<DeviceIdentifier>>(c => c.DigitizerIdentifiers));
+                auxiliaryIdentifierEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IList<DeviceIdentifier>>(c => c.AuxilaryDeviceIdentifiers));
+                attributeEditor.ItemSourceBinding.Bind(ConfigurationBinding.Child<IDictionary<string, string>>(c => c.Attributes));
+            }
+
+            private TextBox name;
+            private TabletSpecificationsEditor specificationEditor;
+            private DeviceIdentifierEditor digitizerIdentifierEditor;
+            private DeviceIdentifierEditor auxiliaryIdentifierEditor;
+            private StringDictionaryEditor attributeEditor;
+
+            private TabletConfiguration configuration;
+            public TabletConfiguration Configuration
+            {
+                set
+                {
+                    this.configuration = value;
+                    this.OnConfigurationChanged();
+                }
+                get => this.configuration;
+            }
+            
+            public event EventHandler<EventArgs> ConfigurationChanged;
+            
+            protected virtual void OnConfigurationChanged() => ConfigurationChanged?.Invoke(this, new EventArgs());
+            
+            public BindableBinding<ConfigurationSettings, TabletConfiguration> ConfigurationBinding
+            {
+                get
+                {
+                    return new BindableBinding<ConfigurationSettings, TabletConfiguration>(
+                        this,
+                        c => c.Configuration,
+                        (c, v) => c.Configuration = v,
+                        (c, h) => c.ConfigurationChanged += h,
+                        (c, h) => c.ConfigurationChanged -= h
+                    );
+                }
             }
         }
     }

@@ -1,25 +1,35 @@
 {
   "Name": "XP-Pen Deco 01",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 254.0,
       "Height": 158.75,
       "MaxX": 25400.0,
-      "MaxY": 15875.0,
+      "MaxY": 15875.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 128,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 10429,
       "ProductID": 66,
       "InputReportLength": 8,
       "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAC",
+      "OutputInitReport": [
+        "ArAC"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

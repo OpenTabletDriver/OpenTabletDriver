@@ -8,8 +8,7 @@ namespace OpenTabletDriver.Vendors.Huion
     {
         public IDeviceReport Parse(byte[] data)
         {
-            var isAuxReport = ((data[1] & (1 << 5)) != 0) & ((data[1] & (1 << 6)) != 0);
-            if (isAuxReport)
+            if (data[1].IsBitSet(5) && data[1].IsBitSet(6))
                 return new UCLogicAuxReport(data);
             else
                 return new GianoReport(data);

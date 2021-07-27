@@ -1,9 +1,10 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Attributes;
-using OpenTabletDriver.UX.Controls.Area;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Output.Area;
 
 namespace OpenTabletDriver.UX.Windows.Greeter.Pages
 {
@@ -20,21 +21,20 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                     Control = new Group
                     {
                         Text = "Demo Area Editor",
-                        Content = new AreaEditor
+                        Content = new RotationAreaEditor
                         {
-                            ViewModel = new AreaViewModel
+                            Area = new AreaSettings
                             {
                                 Width = 75,
                                 Height = 75,
                                 X = 75,
                                 Y = 75,
                                 Rotation = 15,
-                                Unit = "mm",
-                                EnableRotation = true,
-                                Background = new RectangleF[]
-                                {
-                                    new RectangleF(0, 0, 150, 150)
-                                }
+                            },
+                            Unit = "mm",
+                            AreaBounds = new RectangleF[]
+                            {
+                                new RectangleF(0, 0, 150, 150)
                             }
                         }
                     }

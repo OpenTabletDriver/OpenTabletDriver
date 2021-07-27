@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using OpenTabletDriver.Plugin.DependencyInjection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -30,5 +33,41 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             return services.ContainsKey(serviceType) ? services[serviceType].Invoke() : null;
         }
+
+        public void Inject(object obj)
+        {
+            if (obj != null)
+                Inject(obj, obj.GetType());
+        }
+
+        public void Inject(object obj, Type type)
+        {
+            if (obj == null)
+                return;
+
+            var resolvedProperties = from property in type.GetProperties()
+                where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                select property;
+
+            foreach (var property in resolvedProperties)
+            {
+                var service = GetService(property.PropertyType);
+                if (service != null)
+                    property.SetValue(obj, service);
+            }
+
+            var resolvedFields = from field in type.GetFields()
+                where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                select field;
+
+            foreach (var field in resolvedFields)
+            {
+                var service = GetService(field.FieldType);
+                if (service != null)
+                    field.SetValue(obj, service);
+            }
+        }
+        
+        public T GetService<T>() where T : class => GetService(typeof(T)) as T;
     }
 }

@@ -1,46 +1,47 @@
 {
   "Name": "Wacom CTH-480",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 152.0,
       "Height": 95.0,
       "MaxX": 15200.0,
-      "MaxY": 9500.0,
+      "MaxY": 9500.0
+    },
+    "Pen": {
       "MaxPressure": 1023,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 1386,
       "ProductID": 770,
       "InputReportLength": 10,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": "AgI=",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.IntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     },
     {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0,
-      "MaxPressure": 1023,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 1386,
       "ProductID": 770,
       "InputReportLength": 11,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
-      "FeatureInitReport": "AgI=",
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.WacomDriverIntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []

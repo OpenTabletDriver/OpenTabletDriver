@@ -2,6 +2,8 @@ using System;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -35,6 +37,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         [JsonProperty]
         public JToken Value { set; get; }
 
+        [JsonIgnore]
         public bool HasValue => Value != null && Value.Type != JTokenType.Null;
 
         public void SetValue(object value)
@@ -50,6 +53,30 @@ namespace OpenTabletDriver.Desktop.Reflection
         public object GetValue(Type asType)
         {
             return Value == null ? default : Value.Type != JTokenType.Null ? Value.ToObject(asType) : default;
+        }
+
+        public T GetValueOrDefault<T>(PropertyInfo property)
+        {
+            if (this.HasValue)
+            {
+                return GetValue<T>();
+            }
+            else
+            {
+                if (property.GetCustomAttribute<DefaultPropertyValueAttribute>() is DefaultPropertyValueAttribute defaults)
+                {
+                    try
+                    {
+                        SetValue(defaults.Value);
+                        return (T)defaults.Value;
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Write(nameof(PluginSetting), $"Failed to get custom default of {property.Name}: {e.Message}");
+                    }
+                }
+                return default;
+            }
         }
     }
 }

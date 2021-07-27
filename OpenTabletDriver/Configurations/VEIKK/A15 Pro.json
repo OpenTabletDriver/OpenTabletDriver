@@ -1,25 +1,35 @@
 {
   "Name": "VEIKK A15 Pro",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 254.0,
       "Height": 152.4,
       "MaxX": 50800.0,
-      "MaxY": 30480.0,
+      "MaxY": 30480.0
+    },
+    "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": false,
-        "End": null,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 12
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 12267,
       "ProductID": 6,
       "InputReportLength": 9,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "CQEE",
+      "OutputInitReport": [
+        "CQEE"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }

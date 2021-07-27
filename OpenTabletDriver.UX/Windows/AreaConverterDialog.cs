@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Reflection;
 using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows
@@ -10,42 +14,7 @@ namespace OpenTabletDriver.UX.Windows
     {
         public AreaConverterDialog()
         {
-            base.Title = "Area Converter";
-
-            App.Driver.Instance.TabletChanged += (sender, newState) => Application.Instance.AsyncInvoke(() => SelectConverterForTablet(newState));
-            converterList.SelectedIndexChanged += (sender, e) => OnSelectionChanged();
-        }
-
-        private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
-        private Group topGroup, leftGroup, bottomGroup, rightGroup;
-        private FloatNumberBox top, left, bottom, right;
-        private Button applyButton;
-        private TabletState tabletState;
-
-        protected void OnSelectionChanged()
-        {
-            var converter = converterList.ConstructSelectedType();
-            if (converter != null)
-            {
-                topGroup.Text = converter.Top;
-                leftGroup.Text = converter.Left;
-                bottomGroup.Text = converter.Bottom;
-                rightGroup.Text = converter.Right;
-                applyButton.Enabled = true;
-            }
-            else
-            {
-                topGroup.Text = string.Empty;
-                leftGroup.Text = string.Empty;
-                bottomGroup.Text = string.Empty;
-                rightGroup.Text = string.Empty;
-                applyButton.Enabled = false;
-            }
-        }
-
-        protected override async void OnLoadComplete(EventArgs e)
-        {
-            base.OnLoadComplete(e);
+            base.Title = "Convert Area...";
 
             topGroup = new Group
             {
@@ -142,43 +111,70 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var tablet = await App.Driver.Instance.GetTablet();
-            SelectConverterForTablet(tablet);
+            converterList.SelectedIndexChanged += (sender, e) => OnSelectionChanged();
+
+            Application.Instance.AsyncInvoke(async () =>
+            {
+                var tablets = await App.Driver.Instance.GetTablets();
+                var targetProfile = App.Current.Settings.Profiles.FirstOrDefault(p => p.AbsoluteModeSettings.Tablet == this.DataContext);
+                var tablet = tablets.FirstOrDefault(t => t.Properties.Name == targetProfile.Tablet);
+                Select(tablet);
+            });
+        }
+
+        private readonly TypeDropDown<IAreaConverter> converterList = new TypeDropDown<IAreaConverter>();
+        private Group topGroup, leftGroup, bottomGroup, rightGroup;
+        private FloatNumberBox top, left, bottom, right;
+        private Button applyButton;
+        private TabletReference selectedTablet;
+
+        protected void OnSelectionChanged()
+        {
+            // Simpler than binding with MVVM since .ctor() is being called.
+            if (converterList.ConstructSelectedType() is IAreaConverter converter)
+            {
+                topGroup.Text = converter.Top;
+                leftGroup.Text = converter.Left;
+                bottomGroup.Text = converter.Bottom;
+                rightGroup.Text = converter.Right;
+                applyButton.Enabled = true;
+            }
+            else
+            {
+                topGroup.Text = string.Empty;
+                leftGroup.Text = string.Empty;
+                bottomGroup.Text = string.Empty;
+                rightGroup.Text = string.Empty;
+                applyButton.Enabled = false;
+            }
         }
 
         protected void ConvertArea()
         {
-            var digitizer = tabletState?.Digitizer;
-            if (digitizer == null)
-            {
-                MessageBox.Show("No tablet detected. Unable to convert area.", MessageBoxType.Error);
-                return;
-            }
-
             var converter = this.converterList.ConstructSelectedType();
-            var convertedArea = converter.Convert(tabletState, top.Value, left.Value, bottom.Value, right.Value);
+            var convertedArea = converter.Convert(selectedTablet, top.Value, left.Value, bottom.Value, right.Value);
 
-            App.Settings.SetTabletArea(convertedArea);
-
-            (Application.Instance.MainForm as MainForm).Refresh();
+            (this.DataContext as AreaSettings).Area = convertedArea;
             this.Close();
         }
 
-        private void SelectConverterForTablet(TabletState tablet)
+        private void Select(TabletReference tablet)
         {
-            tabletState = tablet;
-
-            var vendorId = tabletState?.Digitizer?.VendorID;
-            if (vendorId != null)
+            if (tablet.Identifiers?.FirstOrDefault()?.VendorID is int vendorId)
             {
                 var vendor = (DeviceVendor)vendorId;
                 converterList.Select(t => t.Vendor.HasFlag(vendor));
                 applyButton.Enabled = true;
+                selectedTablet = tablet;
             }
             else
             {
                 // Deselect if no tablet is detected
                 converterList.SelectedIndex = -1;
+                selectedTablet = null;
+
+                MessageBox.Show("No tablet detected.", MessageBoxType.Error);
+                this.Close();
             }
         }
     }

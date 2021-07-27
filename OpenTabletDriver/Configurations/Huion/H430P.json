@@ -1,23 +1,31 @@
 {
   "Name": "Huion H430P",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 121.92,
       "Height": 76.2,
       "MaxX": 24384.0,
-      "MaxY": 15240.0,
+      "MaxY": 15240.0
+    },
+    "Pen": {
       "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -28,22 +36,11 @@
       ]
     },
     {
-      "Width": 121.92,
-      "Height": 76.2,
-      "MaxX": 24384.0,
-      "MaxY": 15240.0,
-      "MaxPressure": 4095,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {

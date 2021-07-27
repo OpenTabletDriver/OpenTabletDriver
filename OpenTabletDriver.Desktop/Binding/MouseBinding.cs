@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -10,30 +11,26 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginName(PLUGIN_NAME)]
-    public class MouseBinding : IBinding
+    public class MouseBinding : IStateBinding
     {
         private const string PLUGIN_NAME = "Mouse Button Binding";
 
-        private IVirtualMouse pointer => Info.Driver.OutputMode switch
-        {
-            IPointerProvider<IRelativePointer> outputMode => outputMode.Pointer as IVirtualMouse,
-            IPointerProvider<IAbsolutePointer> outputMode => outputMode.Pointer as IVirtualMouse,
-            _ => null
-        };
+        [Resolved]
+        public IVirtualMouse Pointer { set; get; }
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string Button { set; get; }
 
-        public void Press(IDeviceReport report)
+        public void Press(TabletReference tablet, IDeviceReport report)
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
-                pointer?.MouseDown(mouseButton);
+                Pointer?.MouseDown(mouseButton);
         }
 
-        public void Release(IDeviceReport report)
+        public void Release(TabletReference tablet, IDeviceReport report)
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
-                pointer?.MouseUp(mouseButton);
+                Pointer?.MouseUp(mouseButton);
         }
 
         private static IEnumerable<string> validButtons;

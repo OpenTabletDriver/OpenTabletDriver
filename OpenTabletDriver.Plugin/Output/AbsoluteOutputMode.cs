@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Linq;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -64,9 +65,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override Matrix3x2 CreateTransformationMatrix()
         {
-            if (Input != null && Output != null && Tablet?.Digitizer != null)
+            if (Input != null && Output != null && Tablet != null)
             {
-                var transform = CalculateTransformation(Input, Output, Tablet.Digitizer);
+                var transform = CalculateTransformation(Input, Output, Tablet.Properties.Specifications.Digitizer);
 
                 var halfDisplayWidth = Output?.Width / 2 ?? 0;
                 var halfDisplayHeight = Output?.Height / 2 ?? 0;
@@ -87,12 +88,12 @@ namespace OpenTabletDriver.Plugin.Output
             }
         }
 
-        protected static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerIdentifier tablet)
+        protected static Matrix3x2 CalculateTransformation(Area input, Area output, DigitizerSpecifications digitizer)
         {
             // Convert raw tablet data to millimeters
             var res = Matrix3x2.CreateScale(
-                tablet.Width / tablet.MaxX,
-                tablet.Height / tablet.MaxY);
+                digitizer.Width / digitizer.MaxX,
+                digitizer.Height / digitizer.MaxY);
 
             // Translate to the center of input area
             res *= Matrix3x2.CreateTranslation(
@@ -114,10 +115,10 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         /// <summary>
-        /// Transposes, transforms, and performs all absolute positioning calculations to a <see cref="ITabletReport"/>.
+        /// Transposes, transforms, and performs all absolute positioning calculations to a <see cref="IAbsolutePositionReport"/>.
         /// </summary>
-        /// <param name="report">The <see cref="ITabletReport"/> in which to transform.</param>
-        protected override ITabletReport Transform(ITabletReport report)
+        /// <param name="report">The <see cref="IAbsolutePositionReport"/> in which to transform.</param>
+        protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
         {
             // Apply transformation
             var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
@@ -137,16 +138,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            if (report is ITabletReport tabletReport && Tablet.Digitizer.ActiveReportID.IsInRange(tabletReport.ReportID))
-            {
-                if (Pointer is IVirtualTablet pressureHandler)
-                {
-                    float normalizedPressure = (float)tabletReport.Pressure / (float)Tablet.Digitizer.MaxPressure;
-                    pressureHandler.SetPressure(normalizedPressure);
-                }
-
-                Pointer.SetPosition(tabletReport.Position);
-            }
+            var pen = Tablet.Properties.Specifications.Pen;
+            if (report is IAbsolutePositionReport absReport)
+                Pointer.SetPosition(absReport.Position);
         }
     }
 }

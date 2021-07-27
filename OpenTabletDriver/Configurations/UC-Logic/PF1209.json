@@ -1,0 +1,41 @@
+{
+  "Name": "UC-Logic PF1209",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 305.0,
+      "Height": 229.0,
+      "MaxX": 47999.0,
+      "MaxY": 35999.0
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 66,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "2": "TabletPF1209\u0014"
+      },
+      "InitializationStrings": [
+        109
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

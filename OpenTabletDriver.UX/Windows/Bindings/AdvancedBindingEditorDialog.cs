@@ -3,6 +3,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Reflection;
 using IBinding = OpenTabletDriver.Plugin.IBinding;
 
 namespace OpenTabletDriver.UX.Windows.Bindings
@@ -69,10 +70,8 @@ namespace OpenTabletDriver.UX.Windows.Bindings
                 }
             };
 
-            bindingTypeDropDown.SelectedType = currentBinding?.GetPluginReference().GetTypeReference();
-            bindingTypeDropDown.SelectedValueChanged += (sender, e) => settingStoreEditor.Refresh(new PluginSettingStore(bindingTypeDropDown.SelectedType));
-
-            settingStoreEditor.Refresh(currentBinding);
+            bindingTypeDropDown.SelectedItemBinding.Convert(t => new PluginSettingStore(t)).Bind(settingStoreEditor.StoreBinding);
+            bindingTypeDropDown.SelectedItem = currentBinding?.GetPluginReference().GetTypeReference();
         }
 
         private TypeDropDown<IBinding> bindingTypeDropDown;
@@ -85,7 +84,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
 
         private void ApplyBinding(object sender, EventArgs e)
         {
-            if (bindingTypeDropDown.SelectedType == null)
+            if (bindingTypeDropDown.SelectedItem == null)
             {
                 Close(null);
                 return;

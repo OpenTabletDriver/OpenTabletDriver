@@ -1,18 +1,24 @@
 {
   "Name": "Gaomon S56K",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 160.0,
       "Height": 120.0,
       "MaxX": 32000.0,
-      "MaxY": 24000.0,
+      "MaxY": 24000.0
+    },
+    "Pen": {
       "MaxPressure": 2047,
-      "ActiveReportID": {
-        "Start": 96,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 8,
@@ -28,17 +34,6 @@
       ]
     },
     {
-      "Width": 160.0,
-      "Height": 120.0,
-      "MaxX": 32000.0,
-      "MaxY": 24000.0,
-      "MaxPressure": 2047,
-      "ActiveReportID": {
-        "Start": 96,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 8,

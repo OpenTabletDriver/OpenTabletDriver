@@ -1,18 +1,26 @@
 {
   "Name": "Gaomon M106K",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 200.0,
       "Height": 125.0,
       "MaxX": 40000.0,
-      "MaxY": 25000.0,
+      "MaxY": 25000.0
+    },
+    "Pen": {
       "MaxPressure": 2047,
-      "ActiveReportID": {
-        "Start": 64,
-        "StartInclusive": true,
-        "End": null,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 12
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
