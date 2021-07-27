@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
@@ -64,6 +63,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             tabletWidth = SettingsBinding.Child(c => c.Tablet.Width);
             tabletHeight = SettingsBinding.Child(c => c.Tablet.Height);
 
+            tabletAreaEditor.LockAspectRatioChanged += HandleAspectRatioLock;
             displayWidth.DataValueChanged += HandleAspectRatioLock;
             displayHeight.DataValueChanged += HandleAspectRatioLock;
             tabletWidth.DataValueChanged += HandleAspectRatioLock;
@@ -117,10 +117,14 @@ namespace OpenTabletDriver.UX.Controls.Output
                 // Avoids looping
                 handlingArLock = true;
 
-                if ((sender == displayWidth || sender == tabletWidth) && prevDisplayWidth is float prevWidth)
+                if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
                     tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
-                else if ((sender == displayHeight || sender == tabletHeight) && prevDisplayHeight is float prevHeight)
+                else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
                     tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
+                else if (sender == tabletAreaEditor || sender == tabletWidth)
+                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                else if (sender == tabletHeight)
+                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
 
                 prevDisplayWidth = displayWidth.DataValue;
                 prevDisplayHeight = displayHeight.DataValue;
