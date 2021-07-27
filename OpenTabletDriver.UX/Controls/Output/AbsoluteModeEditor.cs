@@ -117,14 +117,14 @@ namespace OpenTabletDriver.UX.Controls.Output
                 // Avoids looping
                 handlingArLock = true;
 
-                if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
-                    tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
-                else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
-                    tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
-                else if (sender == tabletAreaEditor || sender == tabletWidth)
+                if (sender == tabletWidth || sender == tabletAreaEditor)
                     tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
                 else if (sender == tabletHeight)
                     tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                else if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
+                    tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
+                else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
+                    tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
 
                 prevDisplayWidth = displayWidth.DataValue;
                 prevDisplayHeight = displayHeight.DataValue;
