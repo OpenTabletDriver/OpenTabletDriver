@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Tests
     [TestClass]
     public class TimerTests
     {
-        private const double TOLERANCE = 0.05;
+        private const double TOLERANCE = 0.075;
 
         [DataTestMethod]
         [DataRow(0.1f, 5f)]
@@ -37,20 +37,21 @@ namespace OpenTabletDriver.Tests
             Thread.Sleep(TimeSpan.FromSeconds(duration));
             timer.Stop();
 
+            // Windows timers are not guaranteed to stop immediately
+            Thread.Sleep(TimeSpan.FromMilliseconds(50));
+
             var average = list.Average();
             var intervalTolerance = interval * TOLERANCE;
             var minimum = interval - intervalTolerance;
             var maximum = interval + intervalTolerance;
 
-            Console.WriteLine($"Timer fired with an interval average of {average}");
-
             if ((average > minimum) && (average < maximum))
             {
-                Console.WriteLine($"{average} is within {interval} +- {intervalTolerance}");
+                Console.WriteLine($"Timer interval average {average} is within {interval} +- {intervalTolerance}");
             }
             else
             {
-                Console.WriteLine($"{average} is not within {interval} +- {intervalTolerance}");
+                Console.WriteLine($"{average} is NOT within {interval} +- {intervalTolerance}");
                 Assert.Fail();
             }
         }

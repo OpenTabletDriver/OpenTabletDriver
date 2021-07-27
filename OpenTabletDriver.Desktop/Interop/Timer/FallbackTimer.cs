@@ -53,7 +53,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                 while ((elapsedMilliseconds = (float)stopWatch.Elapsed.TotalMilliseconds)
                         < nextNotification)
                 {
-                    Thread.Sleep(0);
+                    Thread.Yield();
                 }
 
                 if (elapsedMilliseconds - nextNotification >= IgnoreEventIfLateBy)
