@@ -16,8 +16,8 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
         protected abstract string[] WinProcessNames { get; }
         protected abstract string[] Heuristics { get; }
 
-        private static string PnpUtil;
-        private static string LinuxModules;
+        private static string pnpUtil;
+        private static string linuxModules;
 
         public DriverInfo GetDriverInfo()
         {
@@ -32,7 +32,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
         protected virtual DriverInfo GetWinDriverInfo()
         {
             IEnumerable<Process> processes;
-            var match = Heuristics.Any(name => Regex.IsMatch(PnpUtil, name, RegexOptions.IgnoreCase));
+            var match = Heuristics.Any(name => Regex.IsMatch(pnpUtil, name, RegexOptions.IgnoreCase));
             if (match)
             {
                 processes = DriverInfo.SystemProcesses
@@ -53,7 +53,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 
         protected virtual DriverInfo GetLinuxDriverInfo()
         {
-            if (Regex.IsMatch(LinuxModules, LinuxModuleName))
+            if (Regex.IsMatch(linuxModules, LinuxModuleName))
             {
                 return new DriverInfo
                 {
@@ -86,12 +86,12 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     };
 
                     pnputilProc.Start();
-                    PnpUtil = pnputilProc.StandardOutput.ReadToEnd();
+                    pnpUtil = pnputilProc.StandardOutput.ReadToEnd();
                     break;
                 }
                 case PluginPlatform.Linux:
                 {
-                    LinuxModules = File.ReadAllText("/proc/modules");
+                    linuxModules = File.ReadAllText("/proc/modules");
                     break;
                 }
             }
