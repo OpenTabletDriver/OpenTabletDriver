@@ -11,8 +11,8 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         public PluginSettingStore(Type type, bool enable = true)
         {
-            Path = type.FullName;
-            Settings = GetSettingsForType(type);
+            Path = type?.FullName;
+            Settings = type != null ? GetSettingsForType(type) : new ObservableCollection<PluginSetting>();
             Enable = enable;
         }
 
