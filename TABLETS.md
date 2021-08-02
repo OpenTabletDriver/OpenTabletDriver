@@ -15,6 +15,7 @@
 | Huion WH1409 V2        |    Supported     |
 | UC-Logic 1060N         |    Supported     |
 | UC-Logic PF1209        |    Supported     |
+| UC-Logic WP5540U       |    Supported     |
 | UGTABLET M708          |    Supported     |
 | VEIKK A15              |    Supported     |
 | VEIKK S640             |    Supported     |
