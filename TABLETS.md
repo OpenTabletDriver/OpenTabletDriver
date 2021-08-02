@@ -15,7 +15,6 @@
 | Huion WH1409 V2        |    Supported     |
 | UC-Logic 1060N         |    Supported     |
 | UC-Logic PF1209        |    Supported     |
-| UC-Logic WP5540U       |    Supported     |
 | UGTABLET M708          |    Supported     |
 | VEIKK A15              |    Supported     |
 | VEIKK S640             |    Supported     |
@@ -112,6 +111,7 @@
 | XP-Pen Deco Pro Small  | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Star 06         | Missing Features | Wheel is unsupported.
 | XP-Pen Star 06C        | Missing Features | Wheel is unsupported.
+| UC-Logic WP5540U       | Missing Features | MacOS is supported. WinUSB implementation required.
 | Huion 420              |      Broken      | WinUSB implementation required.
 | Huion H420             |      Broken      | WinUSB implementation required.
 | Wacom ISD-V4           |      Broken      | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
