@@ -1,0 +1,31 @@
+{
+    "Name": "UC-Logic WP5540U",
+    "DigitizerIdentifiers": [
+      {
+        "Width": 139.7,
+        "Height": 101.6,
+        "MaxX": 10999,
+        "MaxY": 7999,
+        "MaxPressure": 1024,
+        "ActiveReportID": {
+          "Start": 64,
+          "StartInclusive": true,
+          "End": null,
+          "EndInclusive": false
+        },
+        "VendorID": 21827,
+        "ProductID": 4,
+        "InputReportLength": 8,
+        "OutputReportLength": null,
+        "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+        "FeatureInitReport": null,
+        "OutputInitReport": [],
+        "DeviceStrings": {},
+        "InitializationStrings": [
+          100
+        ]
+      }
+    ],
+    "AuxilaryDeviceIdentifiers": [],
+    "Attributes": {}
+  }
