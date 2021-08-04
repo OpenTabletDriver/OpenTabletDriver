@@ -149,7 +149,7 @@ namespace OpenTabletDriver
 
         private IEnumerable<IDeviceEndpoint> GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
         {
-            return from device in HidSharpDeviceRootHub.Current.GetDevices()
+            return from device in RootHub.Current.GetDevices()
                 where identifier.VendorID == device.VendorID
                 where identifier.ProductID == device.ProductID
                 where device.CanOpen

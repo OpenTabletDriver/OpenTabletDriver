@@ -1,7 +1,7 @@
 using OpenTabletDriver;
 using OpenTabletDriver.Plugin.Devices;
 
-namespace OpenTabletDriver.Devices
+namespace OpenTabletDriver.Devices.HidSharpBackend
 {
     public class HidSharpEndpoint : IDeviceEndpoint
     {

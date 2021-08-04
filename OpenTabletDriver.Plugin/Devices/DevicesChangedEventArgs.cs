@@ -18,13 +18,13 @@ namespace OpenTabletDriver.Plugin.Devices
         public IEnumerable<IDeviceEndpoint> Additions => Current.Except(Previous, comparer);
         public IEnumerable<IDeviceEndpoint> Removals => Previous.Except(Current, comparer);
         public IEnumerable<IDeviceEndpoint> Changes => Additions.Concat(Removals);
-        
+
         public static readonly IEqualityComparer<IDeviceEndpoint> comparer = new DeviceEndpointComparer();
 
         private class DeviceEndpointComparer : IEqualityComparer<IDeviceEndpoint>
         {
             public bool Equals(IDeviceEndpoint x, IDeviceEndpoint y) => x?.DevicePath == y?.DevicePath;
-            public int GetHashCode(IDeviceEndpoint obj) => (obj.DevicePath != null ? obj.DevicePath.GetHashCode() : 0);
+            public int GetHashCode(IDeviceEndpoint obj) => obj?.DevicePath?.GetHashCode() ?? 0;
         }
     }
 }

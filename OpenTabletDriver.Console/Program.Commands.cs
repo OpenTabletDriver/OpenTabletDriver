@@ -339,7 +339,7 @@ namespace OpenTabletDriver.Console
         private static async Task GetDiagnostics()
         {
             var log = await Driver.Instance.GetCurrentLog();
-            var diagnostics = new DiagnosticInfo(log);
+            var diagnostics = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
             await Out.WriteLineAsync(diagnostics.ToString());
         }
 

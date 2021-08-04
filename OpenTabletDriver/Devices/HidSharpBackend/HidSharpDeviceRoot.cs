@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using HidSharp;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Devices;
 
-namespace OpenTabletDriver.Devices
+namespace OpenTabletDriver.Devices.HidSharpBackend
 {
+    [RootHub]
     public class HidSharpDeviceRootHub : IRootHub
     {
-        private HidSharpDeviceRootHub()
+        public HidSharpDeviceRootHub()
         {
             DeviceList.Local.Changed += (sender, e) =>
             {
@@ -16,14 +18,11 @@ namespace OpenTabletDriver.Devices
                 var changes = new DevicesChangedEventArgs(hidDevices, newList);
                 if (changes.Changes.Any())
                 {
-                    Plugin.Log.Debug(nameof(HidSharpDeviceRootHub.Current.DevicesChanged), $"Changes: {changes.Changes.Count()}, Add: {changes.Additions.Count()}, Remove: {changes.Removals.Count()}");
                     DevicesChanged?.Invoke(this, changes);
                     hidDevices = newList;
                 }
             };
         }
-
-        public static IRootHub Current { get; } = new HidSharpDeviceRootHub();
 
         private IEnumerable<IDeviceEndpoint> hidDevices = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
 

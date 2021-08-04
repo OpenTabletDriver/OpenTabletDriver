@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
-using HidSharp;
+using OpenTabletDriver.Devices;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class DeviceListDialog : Dialog<HidDevice>
+    public class DeviceListDialog : Dialog<SerializedDeviceEndpoint>
     {
         public DeviceListDialog()
         {
@@ -17,18 +18,75 @@ namespace OpenTabletDriver.UX.Windows
             MinimumSize = new Size(960 - 100, 730 - 100);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
-            var devices = from device in DeviceList.Local.GetHidDevices()
-                where device.CanOpen
-                select device;
+            InitializeAsync();
+        }
+
+        private List<SerializedDeviceEndpoint> _devices;
+        private List<SerializedDeviceEndpoint> Devices
+        {
+            set 
+            {
+                _devices = value;
+                _deviceList.Items.Clear();
+                bool getDeviceFailed = false;
+                foreach (var device in _devices)
+                {
+                    try
+                    {
+                        _deviceList.Items.Add(device.FriendlyName);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!getDeviceFailed)
+                        {
+                            MessageBox.Show($"Failed to get a device, one or more HID devices may not be shown." + Environment.NewLine
+                                + $"{ex.GetType().Name}: {ex.Message}");
+                            getDeviceFailed = true;
+                        }
+                    }
+                }
+            }
+            get => _devices;
+        }
+
+        private SerializedDeviceEndpoint _selected;
+        private SerializedDeviceEndpoint SelectedDevice
+        {
+            set
+            {
+                _selected = value;
+                _devicePropertyList.Items.Clear();
+                foreach (var prop in GeneratePropertyControls())
+                {
+                    var item = new StackLayoutItem(prop, HorizontalAlignment.Stretch);
+                    _devicePropertyList.Items.Add(item);
+                }
+            }
+            get => _selected;
+        }
+
+        private ListBox _deviceList = new ListBox();
+        
+        private StackLayout _devicePropertyList = new StackLayout
+        {
+            Padding = new Padding(5),
+            Spacing = 5
+        };
+
+        private async void InitializeAsync()
+        {
+            var devices = from device in await App.Driver.Instance.GetDevices()
+                          where device.CanOpen
+                          select device;
 
             Devices = devices.ToList();
 
-            _deviceList.SelectedIndexChanged += (sender, e) => 
+            _deviceList.SelectedIndexChanged += (sender, e) =>
             {
                 if (_deviceList.SelectedIndex >= 0)
                     SelectedDevice = Devices[_deviceList.SelectedIndex];
             };
-            
+
             Content = new Splitter
             {
                 Orientation = Orientation.Horizontal,
@@ -52,69 +110,17 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private List<HidDevice> _devices;
-        private List<HidDevice> Devices
-        {
-            set 
-            {
-                _devices = value;
-                _deviceList.Items.Clear();
-                bool getDeviceFailed = false;
-                foreach (var device in _devices)
-                {
-                    try
-                    {
-                        _deviceList.Items.Add(device.GetFriendlyName());
-                    }
-                    catch (Exception ex)
-                    {
-                        if (!getDeviceFailed)
-                        {
-                            MessageBox.Show($"Failed to get a device, one or more HID devices may not be shown." + Environment.NewLine
-                                + $"{ex.GetType().Name}: {ex.Message}");
-                            getDeviceFailed = true;
-                        }
-                    }
-                }
-            }
-            get => _devices;
-        }
-
-        private HidDevice _selected;
-        private HidDevice SelectedDevice
-        {
-            set
-            {
-                _selected = value;
-                _devicePropertyList.Items.Clear();
-                foreach (var prop in GeneratePropertyControls())
-                {
-                    var item = new StackLayoutItem(prop, HorizontalAlignment.Stretch);
-                    _devicePropertyList.Items.Add(item);
-                }
-            }
-            get => _selected;
-        }
-
-        private ListBox _deviceList = new ListBox();
-        
-        private StackLayout _devicePropertyList = new StackLayout
-        {
-            Padding = new Padding(5),
-            Spacing = 5
-        };
-
         private IEnumerable<Control> GeneratePropertyControls() => new List<Control>
         {
             GetControl("Friendly Name",
-                SelectedDevice.GetFriendlyName
+                () => SelectedDevice.FriendlyName
             ),
             GetControl("Manufacturer",
                 () => 
                 {
                     try
                     {
-                        return SelectedDevice.GetManufacturer();
+                        return SelectedDevice.Manufacturer;
                     }
                     catch
                     {
@@ -133,7 +139,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     try
                     {
-                        return SelectedDevice.GetMaxFeatureReportLength().ToString();
+                        return SelectedDevice.FeatureReportLength.ToString();
                     }
                     catch
                     {
@@ -146,7 +152,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     try
                     {
-                        return SelectedDevice.GetMaxInputReportLength().ToString();
+                        return SelectedDevice.InputReportLength.ToString();
                     }
                     catch
                     {
@@ -159,7 +165,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     try
                     {
-                        return SelectedDevice.GetMaxOutputReportLength().ToString();
+                        return SelectedDevice.OutputReportLength.ToString();
                     }
                     catch
                     {
@@ -172,7 +178,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     try
                     {
-                        return SelectedDevice.GetProductName();
+                        return SelectedDevice.ProductName;
                     }
                     catch
                     {
@@ -185,7 +191,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     try
                     {
-                        return SelectedDevice.GetSerialNumber();
+                        return SelectedDevice.SerialNumber;
                     }
                     catch
                     {
