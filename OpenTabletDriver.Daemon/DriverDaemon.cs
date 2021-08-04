@@ -420,8 +420,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            IEnumerable<LogMessage> messages = LogMessages.Take(50);
-            return Task.FromResult(messages);
+            return Task.FromResult((IEnumerable<LogMessage>)LogMessages);
         }
 
         private void PostDebugReport(TabletReference tablet, IDeviceReport report)
