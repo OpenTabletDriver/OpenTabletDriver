@@ -51,7 +51,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         {
             WinUsb_ReadPipe(winUsbHandle, readPipe, readPtr, (uint)readBuffer.Length, out var bytesRead, null);
             return bytesRead < readBuffer.Length
-                ? readBuffer.AsSpan().Slice(0, (int)bytesRead).ToArray()
+                ? readBuffer.AsSpan(0, (int)bytesRead).ToArray()
                 : readBuffer;
         }
 
@@ -59,7 +59,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         {
             if (buffer.Length < writeBuffer.Length)
             {
-                writeBuffer.AsSpan().Fill(0);
+                writeBuffer.AsSpan().Clear();
                 buffer.AsSpan().CopyTo(writeBuffer);
                 WinUsb_WritePipe(winUsbHandle, writePipe, writePtr, (uint)writeBuffer.Length, out _, null);
             }
