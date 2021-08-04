@@ -68,14 +68,15 @@ namespace OpenTabletDriver.Devices.WinUSB
                 if (deviceInfoSet == (IntPtr)(-1))
                     throw new WindowsEnumerationException($"Failed to retrieve device info set for {guid}");
 
-                for (uint i = 0; ; i++)
+                uint i = 0;
+                while (true)
                 {
                     var deviceInterfaceData = SP_DEVICE_INTERFACE_DATA.Create();
                     var deviceInterfaceDetailData = SP_DEVICE_INTERFACE_DETAIL_DATA.Create();
 
-                    SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, in guid, i, ref deviceInterfaceData);
+                    SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, in guid, i++, ref deviceInterfaceData);
                     if (Marshal.GetLastWin32Error() == ERROR_NO_MORE_ITEMS)
-                            break;
+                        break;
 
                     var size = (uint)Marshal.SizeOf<SP_DEVICE_INTERFACE_DETAIL_DATA>();
                     if (!SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref deviceInterfaceData, ref deviceInterfaceDetailData, size, ref size, IntPtr.Zero))
