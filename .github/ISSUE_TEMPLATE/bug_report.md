@@ -13,6 +13,6 @@ assignees: ''
 <!-- Please fill out this information -->
 | Name             | Value |
 | ---------------- | ----- |
-| Operating System Version |
+| Operating System         |
 | OpenTabletDriver Version |
 | Tablet                   |
