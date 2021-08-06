@@ -27,6 +27,8 @@ namespace OpenTabletDriver.Devices
             {
                 HookDeviceNotification(hub);
             }
+
+            Log.Write(nameof(RootHub), $"Initialized internal child hubs: {string.Join(", ", hubs.Select(h => h.GetType().Name))}", LogLevel.Debug);
         }
 
         private readonly object syncObject = new();
@@ -79,17 +81,6 @@ namespace OpenTabletDriver.Devices
         public IEnumerable<IRootHub> GetHubs()
         {
             return hubs;
-        }
-
-        public void RegisterRootHubs(IEnumerable<IRootHub> rootHubs)
-        {
-            var pluginHubs = hubs.Except(internalHubs);
-
-            foreach (var removedHub in pluginHubs.Except(rootHubs))
-                UnregisterRootHub(removedHub);
-
-            foreach (var addedHub in rootHubs.Except(pluginHubs))
-                RegisterRootHub(addedHub);
         }
 
         public void RegisterRootHub(IRootHub rootHub)
