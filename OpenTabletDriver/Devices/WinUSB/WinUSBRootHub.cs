@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows.CM;
 using OpenTabletDriver.Native.Windows.SetupApiStructs;
 using OpenTabletDriver.Native.Windows.USB;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Devices;
 using static OpenTabletDriver.Native.Windows.CfgMgr32;
@@ -11,7 +12,7 @@ using static OpenTabletDriver.Native.Windows.SetupAPI;
 
 namespace OpenTabletDriver.Devices.WinUSB
 {
-    [RootHub]
+    [RootHub, SupportedPlatform(PluginPlatform.Windows)]
     public class WinUSBRootHub : IRootHub
     {
         private static readonly Guid[] _winUsbGuids = new Guid[]
@@ -27,7 +28,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         private readonly GCHandle _callbackPin;
         private List<WinUSBInterface> _oldDevices;
         private List<WinUSBInterface> _currentDevices;
-        private Dictionary<Guid, SafeCmNotificationHandle> _notificationHandles = new();
+        private readonly Dictionary<Guid, SafeCmNotificationHandle> _notificationHandles = new();
 
         public unsafe WinUSBRootHub()
         {
