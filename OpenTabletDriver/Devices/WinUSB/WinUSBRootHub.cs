@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows.CM;
 using OpenTabletDriver.Native.Windows.SetupApiStructs;
@@ -13,7 +14,7 @@ using static OpenTabletDriver.Native.Windows.SetupAPI;
 namespace OpenTabletDriver.Devices.WinUSB
 {
     [RootHub, SupportedPlatform(PluginPlatform.Windows)]
-    public class WinUSBRootHub : IRootHub
+    public class WinUSBRootHub : CriticalFinalizerObject, IRootHub
     {
         private static readonly Guid[] _winUsbGuids = new Guid[]
         {
