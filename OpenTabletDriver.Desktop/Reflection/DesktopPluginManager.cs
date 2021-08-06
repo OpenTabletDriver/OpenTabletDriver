@@ -8,7 +8,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Devices;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -41,6 +43,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public event EventHandler AssembliesChanged;
 
+        private HashSet<IRootHub> rootHubs = new();
+
         public void Clean()
         {
             try
@@ -71,6 +75,16 @@ namespace OpenTabletDriver.Desktop.Reflection
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
 
+            var rootHubTypes = GetChildTypes<IRootHub>();
+            var currentRootHubTypes = rootHubs.Select(r => r.GetType().GetTypeInfo()).ToArray();
+
+            foreach (var addedRootHubType in rootHubTypes.Except(currentRootHubTypes))
+                rootHubs.Add((IRootHub)Activator.CreateInstance(addedRootHubType));
+
+            foreach (var removedHubType in currentRootHubTypes.Except(rootHubTypes))
+                rootHubs.RemoveWhere(r => r.GetType().GetTypeInfo() == removedHubType);
+
+            RootHub.Current.RegisterRootHubs(rootHubs);
             AppInfo.PluginManager.ResetServices();
             AssembliesChanged?.Invoke(this, EventArgs.Empty);
         }

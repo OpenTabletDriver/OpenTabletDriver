@@ -16,29 +16,30 @@ namespace OpenTabletDriver.Devices
         {
             var rootHubs = from type in Assembly.GetExecutingAssembly().DefinedTypes
                            where type.GetCustomAttribute<RootHubAttribute>() != null
+                           where type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true
                            select type;
 
-            hubs = rootHubs.Select(t => (IRootHub)Activator.CreateInstance(t)).ToList();
+            internalHubs = rootHubs.Select(t => (IRootHub)Activator.CreateInstance(t)).ToHashSet();
+            hubs = new HashSet<IRootHub>(internalHubs);
             ForceEnumeration();
 
             foreach (var hub in hubs)
             {
-                hub.DevicesChanged += (sender, eventArgs) =>
-                {
-                    Log.Debug(sender.GetType().Name, $"Changes: {eventArgs.Changes.Count()}, Add: {eventArgs.Additions.Count()}, Remove: {eventArgs.Removals.Count()}");
-                    OnDevicesChanged(sender, eventArgs);
-                };
+                HookDeviceNotification(hub);
             }
         }
 
         private readonly object syncObject = new();
-        private List<IRootHub> hubs;
+        private readonly HashSet<IRootHub> internalHubs;
+        private readonly HashSet<IRootHub> hubs;
         private List<IDeviceEndpoint> oldEndpoints;
         private readonly List<IDeviceEndpoint> endpoints = new();
         private long version;
         private int currentlyDebouncing;
 
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
+
+        public static readonly RootHub Current = new RootHub();
 
         private async void OnDevicesChanged(object sender, DevicesChangedEventArgs eventArgs)
         {
@@ -75,35 +76,81 @@ namespace OpenTabletDriver.Devices
             return endpoints;
         }
 
-        private void ForceEnumeration()
-        {
-            endpoints.Clear();
-            endpoints.AddRange(hubs.SelectMany(h => h.GetDevices()));
-        }
-
         public IEnumerable<IRootHub> GetHubs()
         {
             return hubs;
         }
 
+        public void RegisterRootHubs(IEnumerable<IRootHub> rootHubs)
+        {
+            var pluginHubs = hubs.Except(internalHubs);
+
+            foreach (var removedHub in pluginHubs.Except(rootHubs))
+                UnregisterRootHub(removedHub);
+
+            foreach (var addedHub in rootHubs.Except(pluginHubs))
+                RegisterRootHub(addedHub);
+        }
+
         public void RegisterRootHub(IRootHub rootHub)
         {
-            hubs.Add(rootHub);
-            oldEndpoints = new List<IDeviceEndpoint>(endpoints);
-            ForceEnumeration();
-            DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(endpoints, oldEndpoints));
-            oldEndpoints = null;
+            Log.Write(nameof(RootHub), $"Registering hub: {rootHub.GetType().Name}", LogLevel.Debug);
+            if (hubs.Add(rootHub))
+            {
+                CommitHubChange();
+                HookDeviceNotification(rootHub);
+            }
+            else
+            {
+                Log.Write(nameof(RootHub), $"Registry failed, {rootHub.GetType().Name} is already registered", LogLevel.Debug);
+            }
         }
 
-        public void RemoveRootHub(IRootHub rootHub)
+        public void UnregisterRootHub(IRootHub rootHub)
         {
-            hubs.Remove(rootHub);
+            Log.Write(nameof(RootHub), $"Unregistering hub: {rootHub.GetType().Name}", LogLevel.Debug);
+            if (hubs.Remove(rootHub))
+            {
+                CommitHubChange();
+                UnhookDeviceNotification(rootHub);
+            }
+            else
+            {
+                Log.Write(nameof(RootHub), $"Unregistry failed, {rootHub.GetType().Name} is not a registered hub", LogLevel.Debug);
+            }
+        }
+
+        private void HookDeviceNotification(IRootHub rootHub)
+        {
+            rootHub.DevicesChanged += HandleHubDeviceNotification;
+        }
+
+        private void UnhookDeviceNotification(IRootHub rootHub)
+        {
+            rootHub.DevicesChanged -= HandleHubDeviceNotification;
+        }
+
+        private void HandleHubDeviceNotification(object sender, DevicesChangedEventArgs eventArgs)
+        {
+            if (eventArgs.Changes.Any())
+            {
+                Log.Debug(sender.GetType().Name, $"Changes: {eventArgs.Changes.Count()}, Add: {eventArgs.Additions.Count()}, Remove: {eventArgs.Removals.Count()}");
+                OnDevicesChanged(sender, eventArgs);
+            }
+        }
+
+        private void CommitHubChange()
+        {
             oldEndpoints = new List<IDeviceEndpoint>(endpoints);
             ForceEnumeration();
             DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(endpoints, oldEndpoints));
             oldEndpoints = null;
         }
 
-        public static readonly IRootHub Current = new RootHub();
+        private void ForceEnumeration()
+        {
+            endpoints.Clear();
+            endpoints.AddRange(hubs.SelectMany(h => h.GetDevices()));
+        }
     }
 }
