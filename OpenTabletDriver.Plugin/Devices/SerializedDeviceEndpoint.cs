@@ -27,19 +27,19 @@ namespace OpenTabletDriver.Plugin.Devices
 
         public string ProductName { get; set; }
 
+        public string SerialNumber { get; set; }
+
         public string FriendlyName { get; set; }
 
-        public int ProductID { get; set; }
-
         public int VendorID { get; set; }
+
+        public int ProductID { get; set; }
 
         public int InputReportLength { get; set; }
 
         public int OutputReportLength { get; set; }
 
         public int FeatureReportLength { get; set; }
-
-        public string SerialNumber { get; set; }
 
         public bool CanOpen { get; set; }
     }
