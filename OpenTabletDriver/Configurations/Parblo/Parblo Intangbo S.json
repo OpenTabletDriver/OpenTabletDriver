@@ -2,10 +2,10 @@
   "Name": "Parblo Intangbo S",
   "Specifications": {
     "Digitizer": {
-      "Width": 173.05,
-      "Height": 100.35,
-      "MaxX": 17305.0,
-      "MaxY": 10035.0
+      "Width": 177.50,
+      "Height": 103.50,
+      "MaxX": 17306.0,
+      "MaxY": 10045.0
     },
     "Pen": {
       "MaxPressure": 8191,
