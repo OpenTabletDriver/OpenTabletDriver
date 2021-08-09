@@ -15,11 +15,11 @@ namespace OpenTabletDriver.Plugin.Devices
         public IEnumerable<IDeviceEndpoint> Previous { get; }
         public IEnumerable<IDeviceEndpoint> Current { get; }
 
-        public IEnumerable<IDeviceEndpoint> Additions => Current.Except(Previous, comparer);
-        public IEnumerable<IDeviceEndpoint> Removals => Previous.Except(Current, comparer);
+        public IEnumerable<IDeviceEndpoint> Additions => Current.Except(Previous, Comparer);
+        public IEnumerable<IDeviceEndpoint> Removals => Previous.Except(Current, Comparer);
         public IEnumerable<IDeviceEndpoint> Changes => Additions.Concat(Removals);
 
-        public static readonly IEqualityComparer<IDeviceEndpoint> comparer = new DeviceEndpointComparer();
+        public static readonly IEqualityComparer<IDeviceEndpoint> Comparer = new DeviceEndpointComparer();
 
         private class DeviceEndpointComparer : IEqualityComparer<IDeviceEndpoint>
         {

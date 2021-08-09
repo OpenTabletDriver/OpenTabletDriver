@@ -54,7 +54,7 @@ namespace OpenTabletDriver.Devices
 
             lock (syncObject)
             {
-                endpoints.RemoveAll(e => eventArgs.Removals.Contains(e));
+                endpoints.RemoveAll(e => eventArgs.Removals.Contains(e, DevicesChangedEventArgs.Comparer));
                 endpoints.AddRange(eventArgs.Additions);
             }
 
