@@ -26,7 +26,9 @@
       "InputReportLength": 192,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.IntuosV2ReportParser",
-      "FeatureInitReport": null,
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
@@ -37,7 +39,9 @@
       "InputReportLength": 192,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser",
-      "FeatureInitReport": null,
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []

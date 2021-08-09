@@ -55,9 +55,9 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
             if (report is IEraserReport eraserReport && eraserReport.Eraser)
-                Eraser.Invoke(tablet, report, pressurePercent);
+                Eraser?.Invoke(tablet, report, pressurePercent);
             else
-                Tip.Invoke(tablet, report, pressurePercent);
+                Tip?.Invoke(tablet, report, pressurePercent);
 
             HandleBindingCollection(tablet, report, PenButtons, report.PenButtons);
         }
@@ -71,8 +71,8 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             HandleBindingCollection(tablet, report, MouseButtons, report.MouseButtons);
 
-            MouseScrollDown.Invoke(tablet, report, report.Scroll.Y < 0);
-            MouseScrollUp.Invoke(tablet, report, report.Scroll.Y > 0);
+            MouseScrollDown?.Invoke(tablet, report, report.Scroll.Y < 0);
+            MouseScrollUp?.Invoke(tablet, report, report.Scroll.Y > 0);
         }
 
         private void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IDictionary<int, BindingState> bindings, IList<bool> newStates)
