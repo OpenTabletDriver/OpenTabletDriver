@@ -2,10 +2,10 @@
   "Name": "Parblo Ninos S",
   "Specifications": {
     "Digitizer": {
-      "Width": 152.4,
-      "Height": 101.6,
-      "MaxX": 24742.0,
-      "MaxY": 16379.0
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 24743.0,
+      "MaxY": 16380.0
     },
     "Pen": {
       "MaxPressure": 8191,
