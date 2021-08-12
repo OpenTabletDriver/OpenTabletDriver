@@ -139,9 +139,7 @@ namespace OpenTabletDriver.Plugin.Output
         protected override void OnOutput(IDeviceReport report)
         {
             if (report is IAbsolutePositionReport absReport)
-            {
                 Pointer.SetPosition(absReport.Position);
-            }
         }
     }
 }
