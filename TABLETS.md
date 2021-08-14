@@ -76,6 +76,7 @@
 | Huion HS611            | Missing Features | Touch strip is unsupported.
 | Huion Kamvas 13        | Missing Features | Tilt is unsupported.
 | Huion Kamvas Pro 13    | Missing Features | Tilt is unsupported.
+| Huion Kamvas 22 Plus   | Missing Features | Tilt is unsupported.
 | Huion New 1060 Plus    | Missing Features | Tilt is unsupported.
 | Huion Q11K V2          | Missing Features | Tilt is unsupported.
 | Huion Q620M            | Missing Features | Wheel is unsupported.
