@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Vendors.Wacom.Bamboo
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
 
-            Pressure = (uint)(report[6] | ((report[7] & 0x01) << 8));
+            Pressure = report[1].IsBitSet(6) ? 0 : (uint)(report[6] | ((report[7] & 0x01) << 8));
             Eraser = report[1].IsBitSet(5);
 
             PenButtons = new bool[]
