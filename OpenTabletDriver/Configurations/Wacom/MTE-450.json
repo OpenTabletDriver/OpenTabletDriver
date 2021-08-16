@@ -21,6 +21,12 @@
   },
   "DigitizerIdentifiers": [
     {
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": 80,
+        "EndInclusive": false
+      },
       "VendorID": 1386,
       "ProductID": 101,
       "InputReportLength": 5,
@@ -34,6 +40,12 @@
       "InitializationStrings": []
     },
     {
+      "ActiveReportID": {
+        "Start": 64,
+        "StartInclusive": true,
+        "End": 80,
+        "EndInclusive": false
+      },
       "VendorID": 1386,
       "ProductID": 101,
       "InputReportLength": 9,
