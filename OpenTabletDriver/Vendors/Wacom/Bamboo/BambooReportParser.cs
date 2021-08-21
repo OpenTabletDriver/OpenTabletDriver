@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
@@ -16,7 +17,7 @@ namespace OpenTabletDriver.Vendors.Wacom.Bamboo
 
         private IDeviceReport GetToolReport(byte[] report)
         {
-            if (report[1].IsBitSet(4))
+            if (Unsafe.ReadUnaligned<ulong>(ref report[1])>0)
                 return new BambooTabletReport(report);
 
             return new BambooAuxReport(report);
