@@ -18,7 +18,9 @@ namespace OpenTabletDriver.Vendors.Wacom.Bamboo
         private static IDeviceReport GetToolReport(byte[] report)
         {
             // If position is available
-            if (report[1].IsBitSet(7) || Unsafe.ReadUnaligned<uint>(ref report[2]) != 0)
+            if (report[1].IsBitSet(7)
+                || Unsafe.ReadUnaligned<uint>(ref report[2]) != 0
+                || (report[6] | ((report[7] & 0x03) << 8)) != 0)
             {
                 if (report[1].IsBitSet(6))
                 {
