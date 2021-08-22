@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Vendors.Wacom.Bamboo
 
         private IDeviceReport GetToolReport(byte[] report)
         {
-            if (Unsafe.ReadUnaligned<ulong>(ref report[1])<<16>0)
+            if ( (Unsafe.ReadUnaligned<ulong>(ref report[1]) << 16) > 0 )
                 return new BambooTabletReport(report);
 
             return new BambooAuxReport(report);
