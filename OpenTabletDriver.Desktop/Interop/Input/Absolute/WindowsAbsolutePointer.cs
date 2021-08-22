@@ -23,17 +23,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             );
         }
 
-        private static System.Threading.Timer timer;
+        private readonly static System.Threading.Timer timer;
         private static Vector2 ScreenToVirtualDesktop = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height) / 65535;
 
-        public void SetPosition(Vector2 pos)
+        public unsafe void SetPosition(Vector2 pos)
         {
             var virtualDesktopCoords = pos / ScreenToVirtualDesktop;
 
-            inputs[0].U.mi.dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK;
-            inputs[0].U.mi.dx = (int)virtualDesktopCoords.X;
-            inputs[0].U.mi.dy = (int)virtualDesktopCoords.Y;
-            SendInput(1, inputs, INPUT.Size);
+            mouseInput->dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK;
+            mouseInput->dx = (int)virtualDesktopCoords.X;
+            mouseInput->dy = (int)virtualDesktopCoords.Y;
+            SendInput(1, input, INPUT.Size);
         }
     }
 }

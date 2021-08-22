@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.Windows.Input
@@ -11,6 +10,6 @@ namespace OpenTabletDriver.Native.Windows.Input
         public uint mouseData;
         public MOUSEEVENTF dwFlags;
         public uint time;
-        public UIntPtr dwExtraInfo;
+        public unsafe void* dwExtraInfo;
     }
 }

@@ -11,15 +11,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
     {
         private Vector2 error;
 
-        public void Translate(Vector2 delta)
+        public unsafe void Translate(Vector2 delta)
         {
             delta += error;
             error = new Vector2(delta.X % 1, delta.Y % 1);
 
-            inputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
-            inputs[0].U.mi.dx = (int)delta.X;
-            inputs[0].U.mi.dy = (int)delta.Y;
-            SendInput(1, inputs, INPUT.Size);
+            mouseInput->dwFlags = MOUSEEVENTF.MOVE;
+            mouseInput->dx = (int)delta.X;
+            mouseInput->dy = (int)delta.Y;
+            SendInput(1, input, INPUT.Size);
         }
     }
 }
