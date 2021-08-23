@@ -1,3 +1,5 @@
+using System;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Attributes;
@@ -15,15 +17,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         public unsafe WindowsVirtualMouse()
         {
-            *input = new INPUT() { type = INPUT_TYPE.MOUSE_INPUT };
-            mouseInput = INPUT.GetMouseInputPtr(input);
+            var pinnedBuffer = GC.AllocateArray<INPUT>(1, true);
+            input = (INPUT*)Unsafe.AsPointer(ref pinnedBuffer[0]);
+            input->type = INPUT_TYPE.MOUSE_INPUT;
+            mouseInput = input->MouseInputPtr;
         }
 
         protected unsafe void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
             mouseInput->dwFlags = arg;
             mouseInput->mouseData = dwData;
-            SendInput(1, input, INPUT.Size);
+            SendInput(1, input, sizeof(INPUT));
         }
 
         public void MouseDown(MouseButton button)

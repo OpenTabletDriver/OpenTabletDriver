@@ -7,27 +7,18 @@ namespace OpenTabletDriver.Native.Windows.Input
     public unsafe struct INPUT
     {
         public INPUT_TYPE type;
-        public fixed byte data[28];
-
-        public static MOUSEINPUT* GetMouseInputPtr(INPUT* input)
-        {
-            return (MOUSEINPUT*)input->data;
-        }
-
-        public static KEYBDINPUT* GetKeyboardInputPtr(INPUT* input)
-        {
-            return (KEYBDINPUT*)input->data;
-        }
-
-        public static HARDWAREINPUT* GetHardwareInputPtr(INPUT* input)
-        {
-            return (HARDWAREINPUT*)input->data;
-        }
-
-        public static int Size => Unsafe.SizeOf<INPUT>();
+#if OTDPLATFORM32
+        public fixed byte data[24];
+#else
+        private fixed byte padding[4];
+        public fixed byte data[32];
+#endif
+        public MOUSEINPUT* MouseInputPtr => (MOUSEINPUT*)Unsafe.AsPointer(ref data[0]);
+        public KEYBDINPUT* KeyboardInputPtr => (KEYBDINPUT*)Unsafe.AsPointer(ref data[0]);
+        public HARDWAREINPUT* HardwareInputPtr => (HARDWAREINPUT*)Unsafe.AsPointer(ref data[0]);
     }
 
-    public enum INPUT_TYPE
+    public enum INPUT_TYPE : uint
     {
         MOUSE_INPUT,
         KEYBD_INPUT,

@@ -50,10 +50,17 @@ namespace OpenTabletDriver.SystemDrivers
                 new VeikkDriverInfoDriver(),
                 new OpenTabletDriverInfoProvider(),
                 new TabletDriverInfoProvider()
-            };
+            }.AsEnumerable();
 
             SystemProcesses = Process.GetProcesses();
-            ProcessModuleQueryableDriverInfoProvider.Refresh();
+            try
+            {
+                ProcessModuleQueryableDriverInfoProvider.Refresh();
+            }
+            catch
+            {
+                providers = providers.Where(p => p is not ProcessModuleQueryableDriverInfoProvider);
+            }
 
             // Remove "UC Logic" duplicates
             return providers.Select(provider => provider.GetDriverInfo())

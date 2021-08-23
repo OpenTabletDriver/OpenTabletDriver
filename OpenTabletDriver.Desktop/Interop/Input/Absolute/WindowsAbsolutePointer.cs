@@ -33,7 +33,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             mouseInput->dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK;
             mouseInput->dx = (int)virtualDesktopCoords.X;
             mouseInput->dy = (int)virtualDesktopCoords.Y;
-            SendInput(1, input, INPUT.Size);
+            SendInput(1, input, sizeof(INPUT));
         }
     }
 }

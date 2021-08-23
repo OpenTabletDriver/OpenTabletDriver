@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static Windows;
 
-    public class WindowsRelativePointer : Input.WindowsVirtualMouse, IRelativePointer
+    public class WindowsRelativePointer : WindowsVirtualMouse, IRelativePointer
     {
         private Vector2 error;
 
@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             mouseInput->dwFlags = MOUSEEVENTF.MOVE;
             mouseInput->dx = (int)delta.X;
             mouseInput->dy = (int)delta.Y;
-            SendInput(1, input, INPUT.Size);
+            SendInput(1, input, sizeof(INPUT));
         }
     }
 }

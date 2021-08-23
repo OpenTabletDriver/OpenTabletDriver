@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Native.Windows
 
         #region Input
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", ExactSpelling = true)]
         public static extern unsafe uint SendInput(uint nInputs, INPUT* pInputs, int cbSize);
 
         #endregion
