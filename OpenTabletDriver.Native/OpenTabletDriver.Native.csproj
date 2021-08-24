@@ -6,4 +6,8 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup Label="32 bit compatibility">
+    <DefineConstants Condition="$(RuntimeIdentifier.Contains(x86)) Or $(Platform) == 'x86'">OTDPLATFORM32;$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
 </Project>
