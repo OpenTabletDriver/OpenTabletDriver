@@ -80,6 +80,7 @@
 | Huion New 1060 Plus    | Missing Features | Tilt is unsupported.
 | Huion Q11K V2          | Missing Features | Tilt is unsupported.
 | Huion Q620M            | Missing Features | Wheel is unsupported.
+| Parblo Intangbo M      | Missing Features | Wheel is unsupported.
 | Parblo Intangbo S      | Missing Features | Wheel is unsupported.
 | VEIKK A15 Pro          | Missing Features | Wheel is unsupported.
 | VEIKK A30              | Missing Features | Touchpad is unsupported.
