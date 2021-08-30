@@ -10,6 +10,7 @@
 | Huion H610 Pro         |    Supported     |
 | Huion H640P            |    Supported     |
 | Huion HS64             |    Supported     |
+| Huion HS64 V2          |    Supported     |
 | Huion Kamvas 16        |    Supported     |
 | Huion Q11K             |    Supported     |
 | Huion WH1409 V2        |    Supported     |
