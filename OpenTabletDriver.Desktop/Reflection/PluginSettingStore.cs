@@ -51,6 +51,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             var obj = Construct<T>();
             PluginManager.Inject(provider, obj);
+            ApplySettings(obj);
             return obj;
         }
 
