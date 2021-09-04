@@ -1,25 +1,35 @@
 {
   "Name": "XP-Pen Artist 15.6 Pro",
-  "DigitizerIdentifiers": [
-    {
+  "Specifications": {
+    "Digitizer": {
       "Width": 344.16,
       "Height": 193.59,
-      "MaxX": 34416,
-      "MaxY": 19359,
+      "MaxX": 34416.0,
+      "MaxY": 19359.0,
+    },
+    "Pen": {
       "MaxPressure": 8191,
-      "ActiveReportID": {
-        "Start": 80,
-        "StartInclusive": true,
-        "End": 96,
-        "EndInclusive": false
-      },
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
       "VendorID": 10429,
       "ProductID": 2317,
       "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": "ArAE",
+      "OutputInitReport": [
+        "ArAE"
+      ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }
