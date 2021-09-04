@@ -57,6 +57,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             var obj = Construct<T>();
             PluginManager.Inject(provider, obj);
+            TriggerEventMethods(obj);
             return obj;
         }
 
@@ -145,6 +146,17 @@ namespace OpenTabletDriver.Desktop.Reflection
         public TypeInfo GetTypeInfo<T>()
         {
             return AppInfo.PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == Path);
+        }
+
+        private static void TriggerEventMethods(object obj)
+        {
+            var methods = from method in obj.GetType().GetMethods()
+                let attr = obj.GetType().GetCustomAttributes<OnDependencyLoadAttribute>()
+                where attr != null
+                select method;
+
+            foreach (var method in methods)
+                method.Invoke(obj, Array.Empty<object>());
         }
     }
 }
