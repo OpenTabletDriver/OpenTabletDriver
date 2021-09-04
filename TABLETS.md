@@ -60,6 +60,8 @@
 | XP-Pen Star G640S      |    Supported     |
 | XP-Pen Star G960S      |    Supported     |
 | XP-Pen Star G960S Plus |    Supported     |
+| Parblo Ninos S         |   Has Quirks     | Aux buttons are not in order
+| Parblo Ninos M         |   Has Quirks     | Aux buttons are not in order
 | Artisul M0610 Pro      | Missing Features | Tablet buttons, tilt, and wheel are unsupported.
 | Gaomon M106K Pro       | Missing Features | Tilt is unsupported.
 | Gaomon M10K            | Missing Features | Wheel is unsupported.
@@ -78,6 +80,7 @@
 | Huion New 1060 Plus    | Missing Features | Tilt is unsupported.
 | Huion Q11K V2          | Missing Features | Tilt is unsupported.
 | Huion Q620M            | Missing Features | Wheel is unsupported.
+| Parblo Intangbo S      | Missing Features | Wheel is unsupported.
 | VEIKK A15 Pro          | Missing Features | Wheel is unsupported.
 | VEIKK A30              | Missing Features | Touchpad is unsupported.
 | VEIKK A50              | Missing Features | Touchpad is unsupported.

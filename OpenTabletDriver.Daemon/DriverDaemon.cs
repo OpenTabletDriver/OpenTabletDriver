@@ -16,6 +16,7 @@ using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Devices;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
@@ -54,44 +55,14 @@ namespace OpenTabletDriver.Daemon
             }
 
             LoadUserSettings();
-        }
 
-        private async void LoadUserSettings()
-        {
-            AppInfo.PluginManager.Clean();
-            await LoadPlugins();
-            await DetectTablets();
-
-            var appdataDir = new DirectoryInfo(AppInfo.Current.AppDataDirectory);
-            if (!appdataDir.Exists)
+            SleepDetection = new(async () =>
             {
-                appdataDir.Create();
-                Log.Write("Settings", $"Created OpenTabletDriver application data directory: {appdataDir.FullName}");
-            }
+                Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Debug);
+                await DetectTablets();
+            });
 
-            var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
-
-            if (settingsFile.Exists)
-            {
-                SettingsMigrator.Migrate(AppInfo.Current);
-                var settings = Settings.Deserialize(settingsFile);
-                if (settings != null)
-                {
-                    await SetSettings(settings);
-                }
-                else
-                {
-                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
-                    settings = Settings.GetDefaults();
-                    Settings.Recover(settingsFile, settings);
-                    Log.Write("Settings", "Recovery complete");
-                    await SetSettings(settings);
-                }
-            }
-            else
-            {
-                await ResetSettings();
-            }
+            SleepDetection.Start();
         }
 
         public event EventHandler<LogMessage> Message;
@@ -102,6 +73,7 @@ namespace OpenTabletDriver.Daemon
         private Settings Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+        private SleepDetectionThread SleepDetection;
 
         private bool debugging;
 
@@ -221,6 +193,44 @@ namespace OpenTabletDriver.Daemon
         public async Task ResetSettings()
         {
             await SetSettings(Settings.GetDefaults());
+        }
+
+        private async void LoadUserSettings()
+        {
+            AppInfo.PluginManager.Clean();
+            await LoadPlugins();
+            await DetectTablets();
+
+            var appdataDir = new DirectoryInfo(AppInfo.Current.AppDataDirectory);
+            if (!appdataDir.Exists)
+            {
+                appdataDir.Create();
+                Log.Write("Settings", $"Created OpenTabletDriver application data directory: {appdataDir.FullName}");
+            }
+
+            var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
+
+            if (settingsFile.Exists)
+            {
+                SettingsMigrator.Migrate(AppInfo.Current);
+                var settings = Settings.Deserialize(settingsFile);
+                if (settings != null)
+                {
+                    await SetSettings(settings);
+                }
+                else
+                {
+                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
+                    settings = Settings.GetDefaults();
+                    Settings.Recover(settingsFile, settings);
+                    Log.Write("Settings", "Recovery complete");
+                    await SetSettings(settings);
+                }
+            }
+            else
+            {
+                await ResetSettings();
+            }
         }
 
         private void SetOutputModeSettings(InputDeviceTree dev, IOutputMode outputMode, Profile profile)
