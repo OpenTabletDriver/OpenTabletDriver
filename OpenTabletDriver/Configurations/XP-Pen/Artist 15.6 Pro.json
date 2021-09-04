@@ -1,0 +1,31 @@
+{
+  "Name": "XP-Pen Artist 15.6 Pro",
+  "DigitizerIdentifiers": [
+    {
+      "Width": 344.16,
+      "Height": 193.59,
+      "MaxX": 34416,
+      "MaxY": 19359,
+      "MaxPressure": 8191,
+      "ActiveReportID": {
+        "Start": 80,
+        "StartInclusive": true,
+        "End": 96,
+        "EndInclusive": false
+      },
+      "VendorID": 10429,
+      "ProductID": 2317,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": "ArAE",
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
