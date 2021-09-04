@@ -11,7 +11,6 @@ namespace OpenTabletDriver.Interop
         private readonly Action action;
         private Task task;
         private CancellationTokenSource cancellationTokenSource;
-        private CancellationToken cancellationToken;
         private double prev;
 
         public SleepDetectionThread(Action action)
@@ -27,8 +26,7 @@ namespace OpenTabletDriver.Interop
             }
 
             cancellationTokenSource = new();
-            cancellationToken = cancellationTokenSource.Token;
-            task = DetectionLoop();
+            task = DetectionLoop(cancellationTokenSource.Token);
         }
 
         public void Stop()
@@ -44,7 +42,7 @@ namespace OpenTabletDriver.Interop
             }
         }
 
-        private async Task DetectionLoop()
+        private async Task DetectionLoop(CancellationToken cancellationToken)
         {
             stopwatch.Start();
             while (!cancellationToken.IsCancellationRequested)
