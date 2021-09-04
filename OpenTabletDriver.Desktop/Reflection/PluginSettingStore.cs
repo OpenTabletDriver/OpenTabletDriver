@@ -46,12 +46,17 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public bool Enable { set; get; }
 
-        public T Construct<T>() where T : class => AppInfo.PluginManager.ConstructObject<T>(Path);
+        public T Construct<T>() where T : class
+        {
+            var obj = AppInfo.PluginManager.ConstructObject<T>(Path);
+            ApplySettings(obj);
+            return obj;
+        }
+
         public T Construct<T>(IServiceManager provider) where T : class
         {
             var obj = Construct<T>();
             PluginManager.Inject(provider, obj);
-            ApplySettings(obj);
             return obj;
         }
 
