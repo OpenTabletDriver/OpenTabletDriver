@@ -45,11 +45,13 @@ namespace OpenTabletDriver.Daemon
             };
 
             LoadUserSettings();
+
             SleepDetection = new(async () =>
             {
-                Log.Write("Sleep", "Wakey wakey", LogLevel.Debug);
+                Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Debug);
                 await DetectTablets();
             });
+
             SleepDetection.Start();
         }
 
