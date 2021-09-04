@@ -2,6 +2,7 @@
 | ---------------------- | :--------------: | ----- |
 | Gaomon 1060 Pro        |    Supported     |
 | Gaomon PD1161          |    Supported     |
+| Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
 | Huion 1060 Plus        |    Supported     |
