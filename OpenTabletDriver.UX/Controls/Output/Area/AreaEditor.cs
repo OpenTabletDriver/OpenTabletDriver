@@ -124,7 +124,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         protected StackLayout settingsPanel;
 
-        public AreaDisplay Display { get; protected set; }
+        public AreaDisplay Display { get; }
 
         public override IEnumerable<RectangleF> AreaBounds
         {
