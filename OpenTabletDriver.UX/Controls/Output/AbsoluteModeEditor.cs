@@ -200,12 +200,12 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HandleTabletAreaConstraint(object sender, EventArgs args)
         {
-            ForceAreaConstraint((AreaDisplay)tabletAreaEditor, args);
+            ForceAreaConstraint(tabletAreaEditor.Display, args);
         }
 
         private void HandleDisplayAreaConstraint(object sender, EventArgs args)
         {
-            ForceAreaConstraint((AreaDisplay)displayAreaEditor, args);
+            ForceAreaConstraint(displayAreaEditor.Display, args);
         }
 
         private void ForceAreaConstraint(object sender, EventArgs args)

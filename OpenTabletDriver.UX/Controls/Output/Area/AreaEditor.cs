@@ -26,7 +26,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                         Control = new Panel
                         {
                             Padding = new Padding(5),
-                            Content = display = new AreaDisplay()
+                            Content = Display = new AreaDisplay()
                         }
                     },
                     new StackLayoutItem
@@ -105,13 +105,13 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             x.ValueBinding.Bind(xBinding);
             y.ValueBinding.Bind(yBinding);
 
-            display.AreaBinding.Bind(AreaBinding);
-            display.LockToUsableAreaBinding.Bind(LockToUsableAreaBinding);
-            display.UnitBinding.Bind(UnitBinding);
-            display.AreaBoundsBinding.Bind(AreaBoundsBinding);
-            display.FullAreaBoundsBinding.Bind(FullAreaBoundsBinding);
-            display.InvalidForegroundErrorBinding.Bind(InvalidForegroundErrorBinding);
-            display.InvalidBackgroundErrorBinding.Bind(InvalidBackgroundErrorBinding);
+            Display.AreaBinding.Bind(AreaBinding);
+            Display.LockToUsableAreaBinding.Bind(LockToUsableAreaBinding);
+            Display.UnitBinding.Bind(UnitBinding);
+            Display.AreaBoundsBinding.Bind(AreaBoundsBinding);
+            Display.FullAreaBoundsBinding.Bind(FullAreaBoundsBinding);
+            Display.InvalidForegroundErrorBinding.Bind(InvalidForegroundErrorBinding);
+            Display.InvalidBackgroundErrorBinding.Bind(InvalidBackgroundErrorBinding);
         }
 
         private BooleanCommand lockToUsableArea = new BooleanCommand
@@ -122,8 +122,9 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private UnitGroup widthGroup, heightGroup, xGroup, yGroup;
         private MaskedTextBox<float> width, height, x, y;
 
-        protected AreaDisplay display;
         protected StackLayout settingsPanel;
+
+        public AreaDisplay Display { get; protected set; }
 
         public override IEnumerable<RectangleF> AreaBounds
         {
@@ -287,11 +288,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     break;
                 }
             }
-        }
-
-        public static explicit operator AreaDisplay(AreaEditor areaEditor)
-        {
-            return areaEditor.display;
         }
     }
 }
