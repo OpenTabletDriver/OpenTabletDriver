@@ -151,7 +151,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         private static void TriggerEventMethods(object obj)
         {
             var methods = from method in obj.GetType().GetMethods()
-                let attr = obj.GetType().GetCustomAttributes<OnDependencyLoadAttribute>()
+                let attr = obj.GetType().GetCustomAttribute<OnDependencyLoadAttribute>()
                 where attr != null
                 select method;
 
