@@ -1,3 +1,4 @@
+using HidSharp;
 using OpenTabletDriver;
 using OpenTabletDriver.Plugin.Devices;
 
@@ -5,18 +6,18 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
 {
     public class HidSharpEndpoint : IDeviceEndpoint
     {
-        internal HidSharpEndpoint(HidSharp.HidDevice device)
+        internal HidSharpEndpoint(HidDevice device)
         {
             this.device = device;
         }
 
-        private HidSharp.HidDevice device;
+        private HidDevice device;
 
         public int ProductID => device.ProductID;
         public int VendorID => device.VendorID;
-        public int InputReportLength => device.GetMaxInputReportLength();
-        public int OutputReportLength => device.GetMaxOutputReportLength();
-        public int FeatureReportLength => device.GetMaxFeatureReportLength();
+        public int InputReportLength => device.SafeGet(d => d.GetMaxInputReportLength(), -1);
+        public int OutputReportLength => device.SafeGet(d => d.GetMaxOutputReportLength(), -1);
+        public int FeatureReportLength => device.SafeGet(d => d.GetMaxFeatureReportLength(), -1);
 
         public string Manufacturer => device.SafeGet(d => d.GetManufacturer(), "Unknown Manufacturer");
         public string ProductName => device.SafeGet(d => d.GetProductName(), "Unknown Product Name");
