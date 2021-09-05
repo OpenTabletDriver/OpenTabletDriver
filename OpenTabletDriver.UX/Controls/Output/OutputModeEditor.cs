@@ -35,7 +35,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
             outputModeSelector.SelectedItemBinding.Convert<PluginSettingStore>(
                 c => PluginSettingStore.FromPath(c?.FullName),
-                v => v?.GetPluginReference().GetTypeReference()
+                v => v?.GetTypeInfo()
             ).Bind(ProfileBinding.Child(c => c.OutputMode));
 
             outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
@@ -120,7 +120,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             bool showRelative = false;
             if (store != null)
             {
-                var outputMode = store.GetPluginReference().GetTypeReference<IOutputMode>();
+                var outputMode = store.GetTypeInfo<IOutputMode>();
                 showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
             }
