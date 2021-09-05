@@ -18,10 +18,11 @@ namespace OpenTabletDriver.Devices.WinUSB
             try
             {
                 var packet = SetupPacket.MakeGetDescriptor(
-                                 RequestInternalType.Standard,
-                                 RequestRecipient.Device,
-                                 DescriptorType.Device, 0,
-                                 (ushort)sizeof(DeviceDescriptor));
+                    RequestInternalType.Standard,
+                    RequestRecipient.Device,
+                    DescriptorType.Device, 0,
+                    (ushort)sizeof(DeviceDescriptor)
+                );
 
                 var deviceDescriptor = new DeviceDescriptor();
                 void* descriptorPtr = &deviceDescriptor;
@@ -179,7 +180,8 @@ namespace OpenTabletDriver.Devices.WinUSB
                 IntPtr.Zero,
                 FileMode.Open,
                 (FileAttributes)0x40000000,
-                IntPtr.Zero);
+                IntPtr.Zero
+            );
 
             if (activeFileHandle.IsInvalid)
                 throw new IOException("Failed to open file handle to WinUSB interface");

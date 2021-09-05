@@ -19,10 +19,10 @@ namespace OpenTabletDriver.Devices.WinUSB
         private static readonly Guid[] _winUsbGuids = new Guid[]
         {
             // Standard WinUSB (Zadig)
-            new("{dee824ef-729b-4a0e-9c14-b7117d33a817}"),
+            new Guid("{dee824ef-729b-4a0e-9c14-b7117d33a817}"),
 
             // Huion WinUSB
-            new("{62f12d4c-3431-4efd-8dd7-8e9aab18d30c}"),
+            new Guid("{62f12d4c-3431-4efd-8dd7-8e9aab18d30c}"),
         };
 
         private readonly CM_NOTIFY_CALLBACK _callback;

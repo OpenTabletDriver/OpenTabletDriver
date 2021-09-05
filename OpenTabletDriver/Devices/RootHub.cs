@@ -15,9 +15,9 @@ namespace OpenTabletDriver.Devices
         public RootHub()
         {
             var rootHubs = from type in Assembly.GetExecutingAssembly().DefinedTypes
-                           where type.GetCustomAttribute<RootHubAttribute>() != null
-                           where type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true
-                           select type;
+                where type.GetCustomAttribute<RootHubAttribute>() != null
+                where type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true
+                select type;
 
             internalHubs = rootHubs.Select(t => (IRootHub)Activator.CreateInstance(t)).ToHashSet();
             hubs = new HashSet<IRootHub>(internalHubs);
