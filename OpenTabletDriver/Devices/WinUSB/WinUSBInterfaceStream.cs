@@ -45,8 +45,6 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
-        public Stream Stream => throw new System.NotImplementedException();
-
         public byte[] Read()
         {
             WinUsb_ReadPipe(winUsbHandle, readPipe, readPtr, (uint)readBuffer.Length, out var bytesRead, null);

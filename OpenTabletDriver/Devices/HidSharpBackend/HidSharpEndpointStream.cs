@@ -13,7 +13,6 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         }
 
         private HidStream stream;
-        Stream IDeviceEndpointStream.Stream => stream;
 
         public byte[] Read() => stream.Read();
         public void Write(byte[] buffer) => stream.Write(buffer);
