@@ -338,9 +338,16 @@ namespace OpenTabletDriver.Console
 
         private static async Task GetDiagnostics()
         {
-            var log = await Driver.Instance.GetCurrentLog();
-            var diagnostics = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
-            await Out.WriteLineAsync(diagnostics.ToString());
+            try
+            {
+                var log = await Driver.Instance.GetCurrentLog();
+                var diagnostics = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
+                await Out.WriteLineAsync(diagnostics.ToString());
+            }
+            catch (Exception ex)
+            {
+                Log.Exception(ex);
+            }
         }
 
         private static async Task STDIO()

@@ -431,27 +431,35 @@ namespace OpenTabletDriver.UX
 
         private async Task ExportDiagnostics()
         {
-            var log = await Driver.Instance.GetCurrentLog();
-            var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
-            var fileDialog = new SaveFileDialog
+            try
             {
-                Title = "Exporting diagnostic information...",
-                Filters =
+                var log = await Driver.Instance.GetCurrentLog();
+                var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
+                var fileDialog = new SaveFileDialog
                 {
-                    new FileFilter("Diagnostic information", ".json")
+                    Title = "Exporting diagnostic information...",
+                    Filters =
+                    {
+                        new FileFilter("Diagnostic information", ".json")
+                    }
+                };
+                switch (fileDialog.ShowDialog(this))
+                {
+                    case DialogResult.Ok:
+                    case DialogResult.Yes:
+                        var file = new FileInfo(fileDialog.FileName);
+                        if (file.Exists)
+                            file.Delete();
+                        using (var fs = file.OpenWrite())
+                        using (var sw = new StreamWriter(fs))
+                            await sw.WriteLineAsync(diagnosticDump.ToString());
+                        break;
                 }
-            };
-            switch (fileDialog.ShowDialog(this))
+            }
+            catch (Exception ex)
             {
-                case DialogResult.Ok:
-                case DialogResult.Yes:
-                    var file = new FileInfo(fileDialog.FileName);
-                    if (file.Exists)
-                        file.Delete();
-                    using (var fs = file.OpenWrite())
-                    using (var sw = new StreamWriter(fs))
-                        await sw.WriteLineAsync(diagnosticDump.ToString());
-                    break;
+                Log.Exception(ex);
+                ex.ShowMessageBox();
             }
         }
     }
