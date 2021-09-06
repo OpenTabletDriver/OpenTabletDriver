@@ -2,7 +2,7 @@ using System.IO;
 using HidSharp;
 using OpenTabletDriver.Plugin.Devices;
 
-namespace OpenTabletDriver.Devices
+namespace OpenTabletDriver.Devices.HidSharpBackend
 {
     public class HidSharpEndpointStream : IDeviceEndpointStream
     {
@@ -13,7 +13,6 @@ namespace OpenTabletDriver.Devices
         }
 
         private HidStream stream;
-        Stream IDeviceEndpointStream.Stream => stream;
 
         public byte[] Read() => stream.Read();
         public void Write(byte[] buffer) => stream.Write(buffer);

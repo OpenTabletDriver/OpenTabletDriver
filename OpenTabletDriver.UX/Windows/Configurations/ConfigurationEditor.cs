@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using HidSharp;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Dictionary;
@@ -239,21 +239,21 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             public async Task GenerateConfiguration()
             {
                 var dialog = new DeviceListDialog();
-                if (await dialog.ShowModalAsync() is HidDevice device)
+                if (await dialog.ShowModalAsync() is IDeviceEndpoint device)
                 {
                     try
                     {
                         var generatedConfig = new TabletConfiguration
                         {
-                            Name = device.GetManufacturer() + " " + device.GetProductName(),
+                            Name = device.Manufacturer + " " + device.ProductName,
                             DigitizerIdentifiers =
                             {
                                 new DeviceIdentifier
                                 {
                                     VendorID = device.VendorID,
                                     ProductID = device.ProductID,
-                                    InputReportLength = (uint)device.GetMaxInputReportLength(),
-                                    OutputReportLength = (uint)device.GetMaxOutputReportLength()
+                                    InputReportLength = (uint)device.InputReportLength,
+                                    OutputReportLength = (uint)device.OutputReportLength
                                 }
                             }
                         };

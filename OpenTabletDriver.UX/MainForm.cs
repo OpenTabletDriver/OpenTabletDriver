@@ -432,7 +432,7 @@ namespace OpenTabletDriver.UX
         private async Task ExportDiagnostics()
         {
             var log = await Driver.Instance.GetCurrentLog();
-            var diagnosticDump = new DiagnosticInfo(log);
+            var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
             var fileDialog = new SaveFileDialog
             {
                 Title = "Exporting diagnostic information...",

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using HidSharp;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
@@ -14,14 +13,15 @@ using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
-using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.SystemDrivers;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Daemon
                 Message?.Invoke(sender, message);
             };
             Driver.TabletsChanged += (sender, e) => TabletsChanged?.Invoke(sender, e);
-            HidSharpDeviceRootHub.Current.DevicesChanged += async (sender, args) =>
+            RootHub.Current.DevicesChanged += async (sender, args) =>
             {
                 if (args.Additions.Any())
                 {
@@ -392,6 +392,11 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(Settings);
         }
 
+        public Task<IEnumerable<SerializedDeviceEndpoint>> GetDevices()
+        {
+            return Task.FromResult(RootHub.Current.GetDevices().Select(d => new SerializedDeviceEndpoint(d)));
+        }
+
         public Task<AppInfo> GetApplicationInfo()
         {
             return Task.FromResult(AppInfo.Current);
@@ -410,17 +415,16 @@ namespace OpenTabletDriver.Daemon
 
         public Task<string> RequestDeviceString(int vid, int pid, int index)
         {
-            var tablet = DeviceList.Local.GetHidDevices(vendorID: vid, productID: pid).FirstOrDefault();
+            var tablet = RootHub.Current.GetDevices().Where(d => d.VendorID == vid && d.ProductID == pid).FirstOrDefault();
             if (tablet == null)
                 throw new IOException("Device not found");
 
-            return Task.FromResult(tablet.GetDeviceString(index));
+            return Task.FromResult(tablet.GetDeviceString((byte)index));
         }
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            IEnumerable<LogMessage> messages = LogMessages.Take(50);
-            return Task.FromResult(messages);
+            return Task.FromResult((IEnumerable<LogMessage>)LogMessages);
         }
 
         private void PostDebugReport(TabletReference tablet, IDeviceReport report)
