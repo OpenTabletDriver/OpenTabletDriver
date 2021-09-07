@@ -1,39 +1,31 @@
 {
   "Name": "XP-Pen Deco Mini 4",
-  "Specifications": {
-    "Digitizer": {
+  "DigitizerIdentifiers": [
+    {
       "Width": 101.6,
       "Height": 76.2,
       "MaxX": 20320.0,
-      "MaxY": 15240.0
-    },
-    "Pen": {
-      "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
-    },
-    "AuxiliaryButtons": {
-      "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
-  },
-  "DigitizerIdentifiers": [
-    {
+      "MaxY": 15240.0,
+      "MaxPressure": 2048,
+      "ActiveReportID": {
+        "Start": null,
+        "StartInclusive": true,
+        "End": null,
+        "EndInclusive": false
+      },
       "VendorID": 10429,
       "ProductID": 2345,
       "InputReportLength": 12,
       "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": [
-        "ArAE"
-      ],
+      "OutputInitReport": "ArAEAAAAAAAAAAAA",
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
-  "Attributes": {}
+  "Attributes": {
+    "libinputoverride": "1"
+  }
 }
