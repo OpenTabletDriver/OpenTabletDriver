@@ -28,7 +28,8 @@
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAEAAAAAAAAAAAA"
+        "ArAE"
+
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
