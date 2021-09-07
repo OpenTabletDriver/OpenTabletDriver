@@ -109,6 +109,7 @@
 | XP-Pen Deco 02         | Missing Features | Wheel is unsupported.
 | XP-Pen Deco 03         | Missing Features | Wheel is unsupported.
 | XP-Pen Deco Mini7      | Missing Features |
+| XP-Pen Deco Mini 4     | Missing Features |
 | XP-Pen Deco Pro Medium | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Deco Pro Small  | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Star 06         | Missing Features | Wheel is unsupported.
