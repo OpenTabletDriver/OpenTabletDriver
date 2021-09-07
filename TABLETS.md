@@ -50,6 +50,7 @@
 | XP-Pen CT430           |    Supported     |
 | XP-Pen CT460           |    Supported     |
 | XP-Pen Deco 01         |    Supported     |
+| XP-Pen Deco Mini 4     |    Supported     |
 | XP-Pen Star 03         |    Supported     |
 | XP-Pen Star G430       |    Supported     |
 | XP-Pen Star G430S      |    Supported     |
@@ -109,7 +110,6 @@
 | XP-Pen Deco 02         | Missing Features | Wheel is unsupported.
 | XP-Pen Deco 03         | Missing Features | Wheel is unsupported.
 | XP-Pen Deco Mini7      | Missing Features |
-| XP-Pen Deco Mini 4     | Missing Features |
 | XP-Pen Deco Pro Medium | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Deco Pro Small  | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Star 06         | Missing Features | Wheel is unsupported.
