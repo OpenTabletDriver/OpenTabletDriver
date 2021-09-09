@@ -105,6 +105,7 @@
 | Wacom PTZ-630          | Missing Features | Tablet buttons and touch strips are unsupported.
 | Wacom PTZ-930          | Missing Features | Tablet buttons and touch strips are unsupported.
 | XP-Pen Artist Pro 12   | Missing Features | Tilt and wheel are unsupported.
+| XP-Pen Artist 12       | Missing Features | Touch bar is unsupported
 | XP-Pen Deco 01 V2      | Missing Features | Tilt is unsupported.
 | XP-Pen Deco 02         | Missing Features | Wheel is unsupported.
 | XP-Pen Deco 03         | Missing Features | Wheel is unsupported.
