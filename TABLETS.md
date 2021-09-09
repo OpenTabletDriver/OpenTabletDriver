@@ -5,6 +5,7 @@
 | Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
+| Huion 420              |    Supported     |
 | Huion 1060 Plus        |    Supported     |
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
@@ -119,7 +120,6 @@
 | XP-Pen Deco Pro Small  | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Star 06         | Missing Features | Wheel is unsupported.
 | XP-Pen Star 06C        | Missing Features | Wheel is unsupported.
-| Huion 420              |      Broken      | WinUSB implementation required.
 | Huion H420             |      Broken      | WinUSB implementation required.
 | Wacom ISD-V4           |      Broken      | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
 | Huion G10T             |     Untested     |
