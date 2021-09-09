@@ -6,6 +6,7 @@
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
 | Huion 420              |    Supported     |
+| Huion osu! Tablet      |    Supported     |
 | Huion 1060 Plus        |    Supported     |
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
@@ -123,7 +124,6 @@
 | Huion H420             |      Broken      | WinUSB implementation required.
 | Wacom ISD-V4           |      Broken      | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
 | Huion G10T             |     Untested     |
-| Huion osu! Tablet      |     Untested     |
 | Wacom CTE-440          |     Untested     |
 | Wacom GD-0912-U        |     Untested     |
 | Wacom GD-1218-U        |     Untested     |
