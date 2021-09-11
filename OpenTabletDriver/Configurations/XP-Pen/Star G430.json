@@ -18,11 +18,26 @@
     "Touch": null
   },
   "DigitizerIdentifiers": [
-    {
+  	{
       "VendorID": 10429,
       "ProductID": 117,
       "InputReportLength": 8,
       "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAC"
+      ],
+      "DeviceStrings": {
+        "2": "TABLET G3 4x3"
+      },
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 117,
+      "InputReportLength": 16,
+      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
