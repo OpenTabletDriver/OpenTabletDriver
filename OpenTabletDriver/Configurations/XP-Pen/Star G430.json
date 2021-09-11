@@ -18,7 +18,7 @@
     "Touch": null
   },
   "DigitizerIdentifiers": [
-  	{
+    {
       "VendorID": 10429,
       "ProductID": 117,
       "InputReportLength": 8,
