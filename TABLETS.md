@@ -5,9 +5,9 @@
 | Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
-| Huion 420              |    Supported     |
-| Huion osu! Tablet      |    Supported     |
 | Huion 1060 Plus        |    Supported     |
+| Huion osu! Tablet      |    Supported     |
+| Huion 420              |    Supported     | Zadig's WinUSB on interface 0 required
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
 | Huion H610 Pro         |    Supported     |
