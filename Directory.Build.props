@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <OTDVersion>0.6.0.0</OTDVersion>
+    <OTDFrameworkBase>net6.0</OTDFrameworkBase>
+    <LangVersion>preview</LangVersion>
+    <VersionPrefix>$(OTDVersion)</VersionPrefix>
+    <Version>$(OTDVersion)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package Information">
+    <Authors>InfinityGhost</Authors>
+    <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+  </PropertyGroup>
+</Project>
