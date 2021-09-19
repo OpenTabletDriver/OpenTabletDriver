@@ -2,8 +2,8 @@
   "Name": "Woodpad PF0730",
   "Specifications": {
     "Digitizer": {
-      "Width": 162.56,
-      "Height": 101.6,
+      "Width": 168.0,
+      "Height": 106.4,
       "MaxX": 16800.0,
       "MaxY": 10640.0
     },
