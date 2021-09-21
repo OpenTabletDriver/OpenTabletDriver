@@ -29,22 +29,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_M19f_\\d{6}$"
-      },
-      "InitializationStrings": [
-        200
-      ]
-    },
-    {
-      "VendorID": 9580,
-      "ProductID": 109,
-      "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {
-        "201": "HUION_M20h_\\d{6}$"
+        "201": "HUION_(?:M20h|M19f)_\\d{6}$"
       },
       "InitializationStrings": [
         200
