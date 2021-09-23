@@ -2,7 +2,7 @@
 
   <PropertyGroup Label="Project Properties">
     <OutputType>WinExe</OutputType>
-    <TargetFramework>$(OTDFrameworkBase)-windows</TargetFramework>
+    <TargetFramework>$(FrameworkBase)-windows</TargetFramework>
     <ApplicationIcon>../OpenTabletDriver.UX/Assets/otd.ico</ApplicationIcon>
   </PropertyGroup>
 

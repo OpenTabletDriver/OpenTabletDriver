@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(OTDFrameworkBase)</TargetFramework>
+    <TargetFramework>$(FrameworkBase)</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>

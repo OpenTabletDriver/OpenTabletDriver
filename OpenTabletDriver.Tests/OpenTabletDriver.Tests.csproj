@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFramework>$(OTDFrameworkBase)</TargetFramework>
+    <TargetFramework>$(FrameworkBase)</TargetFramework>
     <IsPackable>false</IsPackable>
     <NoWarn>VSTHRD200</NoWarn>
   </PropertyGroup>
