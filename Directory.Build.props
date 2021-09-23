@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
-    <OTDVersion>0.6.0.0</OTDVersion>
-    <OTDFrameworkBase>net6.0</OTDFrameworkBase>
+    <VersionBase>0.6.0.0</VersionBase>
+    <FrameworkBase>net6.0</FrameworkBase>
     <LangVersion>preview</LangVersion>
-    <VersionPrefix>$(OTDVersion)</VersionPrefix>
+    <VersionPrefix>$(VersionBase)</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup Label="Package Information">
