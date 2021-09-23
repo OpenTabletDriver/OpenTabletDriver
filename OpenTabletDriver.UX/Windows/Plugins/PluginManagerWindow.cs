@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
 using StreamJsonRpc.Protocol;
@@ -149,7 +149,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             alternateSource.Executed += async (sender, e) => await SwitchRepositorySource();
 
             var pluginsDirectory = new Command { MenuText = "Open plugins directory..." };
-            pluginsDirectory.Executed += (sender, e) => DesktopInterop.OpenFolder(AppInfo.Current.PluginDirectory);
+            pluginsDirectory.Executed += (sender, e) => SystemInterop.OpenFolder(AppInfo.Current.PluginDirectory);
 
             return new MenuBar()
             {

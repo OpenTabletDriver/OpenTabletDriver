@@ -1,6 +1,9 @@
 using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Interop;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
 namespace OpenTabletDriver.Tests.Interop
@@ -11,7 +14,8 @@ namespace OpenTabletDriver.Tests.Interop
         [TestInitialize]
         public void Initialize()
         {
-            Keyboard = DesktopInterop.VirtualKeyboard;
+            var serviceProvider = AppInfo.PluginManager.BuildServiceProvider();
+            Keyboard = serviceProvider.GetService<IVirtualKeyboard>();
         }
 
         public IVirtualKeyboard Keyboard { set; get; }
