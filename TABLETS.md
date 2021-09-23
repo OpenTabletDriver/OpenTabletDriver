@@ -5,6 +5,7 @@
 | Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
+| Gaomon S620            |    Supported     | Require Zadig's WinUSB to be installed on interface 0
 | Huion 1060 Plus        |    Supported     |
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
