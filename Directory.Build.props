@@ -4,7 +4,6 @@
     <OTDFrameworkBase>net6.0</OTDFrameworkBase>
     <LangVersion>preview</LangVersion>
     <VersionPrefix>$(OTDVersion)</VersionPrefix>
-    <Version>$(OTDVersion)</Version>
   </PropertyGroup>
 
   <PropertyGroup Label="Package Information">
