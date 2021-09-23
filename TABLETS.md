@@ -12,6 +12,8 @@
 | Huion HS64             |    Supported     |
 | Huion Q11K             |    Supported     |
 | Huion WH1409 V2        |    Supported     |
+| Huion Kamvas 16        |    Supported     |
+| Huion Kamvas Pro 16    |    Supported     |
 | UC-Logic 1060N         |    Supported     |
 | UC-Logic PF1209        |    Supported     |
 | UGTABLET M708          |    Supported     |
@@ -74,8 +76,6 @@
 | Huion HS611            | Missing Features | Touch strip is unsupported.
 | Huion Kamvas 13        | Missing Features | Tilt is unsupported.
 | Huion Kamvas Pro 13    | Missing Features | Tilt is unsupported.
-| Huion Kamvas 16        |    Supported     |
-| Huion Kamvas Pro 16    |    Supported     |
 | Huion New 1060 Plus    | Missing Features | Tilt is unsupported.
 | Huion Q11K V2          | Missing Features | Tilt is unsupported.
 | Huion Q620M            | Missing Features | Wheel is unsupported.
