@@ -2,6 +2,8 @@
 
 # OpenTabletDriver
 
+English | [한국어](README_KO.md)
+
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
 <p align="middle">
