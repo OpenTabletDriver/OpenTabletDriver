@@ -78,9 +78,9 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
   - 让您创建、修改、以及删除配置文件
   - 从可见的HID设备中生成配置文件
 - 插件
-  - Filters
-  - Output Modes
-  - Tools
+  - 过滤器
+  - 输出模式
+  - 工具
 
 # 向OpenTabletDriver贡献
 
