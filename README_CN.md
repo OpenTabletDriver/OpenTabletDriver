@@ -14,7 +14,7 @@ OpenTabletDriver是一个开源的，跨平台的数位板驱动。其目标是�
 
 # 支持的数位板
 
-所有已经被支持的、未测试的、以及计划被支持的数位板都可以在这里被找到。如果您的数位板无法正常工作的话可以在Wiki之中寻找一些解决方法
+所有已经被支持的、未测试的、以及计划被支持的数位板都可以在这里被找到。如果您的数位板在您的平台上无法正常工作的话可以在Wiki之中寻找一些解决方法
 
 - [数位板支持](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/TABLETS.md)
 
