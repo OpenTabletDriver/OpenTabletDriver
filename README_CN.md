@@ -73,7 +73,7 @@ OpenTabletDriver的要求在各个平台是一样的。而本软件在不同平�
   - 键盘按键自定义
   - 外接设备的自定义
 - 保存以及加载设置
-  - 通过`%localappdata%`或者`.config`里的`settings.json`自动加载用户的设置
+  - 自动加载当前用户的 `%localappdata%` 或者 `.config` 中 `settings.json` 保存的设置
 - 配置文件编辑器
   - 让您创建、修改、以及删除配置文件
   - 从可见的HID设备中生成配置文件
