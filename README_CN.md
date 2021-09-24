@@ -24,7 +24,7 @@ OpenTabletDriver是一个开源的，跨平台的数位板驱动。其目标是�
 
 # 运行OpenTabletDriver
 
-OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDriver.Daemon`会处理所有的数位板的数据，而GUI前端则是由`OpenTabletDriver.UX.*`负责（这里的`*`取决于您的平台<sup>1</sup>）。主进程必须被启动程序才能工作，可是GUI进程则是可选的。如果您已经配置好了，他们则会在主进程启动的时候自动生效。
+OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDriver.Daemon`会处理所有的数位板的数据，而GUI前端则是由`OpenTabletDriver.UX.*`负责（这里的`*`取决于您的平台<sup>1</sup>）。主进程必须被启动，程序才能工作，不过GUI进程则是可选的。如果您已经配置好了设置，他们将会在主进程启动的时候自动生效。
 
 > <sup>1</sup>Windows是`Wpf`，Linux是`Gtk`，而macOS则是`MacOS`。如果您不需要自己动手编译的话则可以忽略。
 
