@@ -86,4 +86,4 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
 
 如果您希望对本项目进行贡献，可以查看[issue tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues)。
 
-如果你有任何的问题和建议，欢迎在[Issue中提出](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)。
+如果你有任何的问题和建议，欢迎在[Issue](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)中提出。
