@@ -28,7 +28,7 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
 
 > <sup>1</sup>Windows是`Wpf`，Linux是`Gtk`，而macOS则是`MacOS`。如果您不需要自己动手编译的话则可以忽略。
 
-# 自己编译OpenTabletDriver
+# 从源码编译OpenTabletDriver
 
 OpenTabletDriver的要求在各个平台是一样的。而本软件在不同平台则是会有不同的依赖：
 
