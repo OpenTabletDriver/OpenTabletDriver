@@ -30,7 +30,7 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
 
 # 从源码编译OpenTabletDriver
 
-OpenTabletDriver的要求在各个平台是一样的。而本软件在不同平台则是会有不同的依赖：
+编译OpenTabletDriver的要求在各个平台是一样的，在不同的平台运行本软件需要有不同的依赖：
 
 ### 所有平台
 
