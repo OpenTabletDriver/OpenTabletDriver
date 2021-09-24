@@ -4,7 +4,7 @@
 
 [English](README.md) | 简体中文
 
-OpenTabletDriver是一个开源的，跨平台的数位板驱动。OpenTabletDriver的目标是在拥有直观的可自定义的界面的同时做到跨平台兼容经可能多的设备。
+OpenTabletDriver是一个开源的，跨平台的数位板驱动。其目标是在拥有直观的可自定义的界面的同时能跨平台地兼容尽可能多的设备。
 
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
@@ -14,15 +14,15 @@ OpenTabletDriver是一个开源的，跨平台的数位板驱动。OpenTabletDri
 
 # 支持的数位板
 
-所有已经被支持的、未测试的、以及计划被支持的数位板都可以在这里被找到。您可以在Wiki找到一些您的平台的解决方法。
+所有已经被支持的、未测试的、以及计划被支持的数位板都可以在这里被找到。如果您的数位板无法正常工作的话可以在Wiki之中寻找一些解决方法
 
-- [Supported Tablets](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/TABLETS.md)
+- [数位板支持](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/TABLETS.md)
 
 # 安装方法
 
 - [安装指导](https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Installation-Guide)
 
-# 运行OpenTabletDriver已编译的二进制程序
+# 运行OpenTabletDriver
 
 OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDriver.Daemon`会处理所有的数位板的数据，而GUI前端则是由`OpenTabletDriver.UX.*`负责（这里的`*`取决于您的平台<sup>1</sup>）。主进程必须被启动程序才能工作，可是GUI进程则是可选的。如果您已经配置好了，他们则会在主进程启动的时候自动生效。
 
@@ -53,11 +53,11 @@ OpenTabletDriver的要求在各个平台是一样的。而本软件在不同平�
 
 # 功能
 
-- 在各个平台都是完全原生的GUI
+- 各个平台的GUI都是原生开发
   - Windows：`Windows Presentation Foundation`
   - Linux: `GTK+3`
   - macOS: `MonoMac`
-- 齐全的控制台工具
+- 完善的命令行工具
   - 快速地获得、更改、加载、以及保存您的设置
   - 支持脚本（JSON Output）
 - 绝对准星定位
