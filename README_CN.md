@@ -32,7 +32,7 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
 
 OpenTabletDriver的要求在各个平台是一样的。而本软件在不同平台则是会有不同的依赖：
 
-### 全平台
+### 所有平台
 
 - .NET 5 SDK
 
