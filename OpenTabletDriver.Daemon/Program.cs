@@ -4,6 +4,7 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
@@ -62,8 +63,21 @@ namespace OpenTabletDriver.Daemon
                 var host = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
                 host.ConnectionStateChanged += (sender, state) => 
                     Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
-                await host.Main();
+
+                await host.Run(BuildDaemon());
             }
+        }
+
+        static DriverDaemon BuildDaemon()
+        {
+            return new DriverDaemon(new DriverBuilder()
+                .ConfigureServices(serviceCollection =>
+                {
+                    serviceCollection.AddSingleton<IDeviceConfigurationProvider, DesktopDeviceConfigurationProvider>();
+                    serviceCollection.AddSingleton<IReportParserProvider, DesktopReportParserProvider>();
+                })
+                .Build<Driver>(out _)
+            );
         }
     }
 }
