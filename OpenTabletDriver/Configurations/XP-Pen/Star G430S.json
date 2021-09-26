@@ -26,7 +26,7 @@
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAE"
+        "ArAC"
       ],
       "DeviceStrings": {
         "2": "G430S"
