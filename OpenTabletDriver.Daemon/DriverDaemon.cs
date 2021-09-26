@@ -129,28 +129,18 @@ namespace OpenTabletDriver.Daemon
 
         public async Task<IEnumerable<TabletReference>> DetectTablets()
         {
-            var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
-            if (configDir.Exists)
-            {
-                Driver.Detect();
+            Driver.Detect();
 
-                foreach (var tablet in Driver.InputDevices)
+            foreach (var tablet in Driver.InputDevices)
+            {
+                foreach (var dev in tablet.InputDevices)
                 {
-                    foreach (var dev in tablet.InputDevices)
-                    {
-                        dev.RawReport += (_, report) => PostDebugReport(tablet, report);
-                        dev.RawClone = debugging;
-                    }
+                    dev.RawReport += (_, report) => PostDebugReport(tablet, report);
+                    dev.RawClone = debugging;
                 }
+            }
 
-                return await GetTablets();
-            }
-            else
-            {
-                Log.Write("Detect", $"The configuration directory '{configDir.FullName}' does not exist.", LogLevel.Error);
-            }
-            Log.Write("Detect", "No tablet found.");
-            return Array.Empty<TabletReference>();
+            return await GetTablets();
         }
 
         public Task SetSettings(Settings? settings)
