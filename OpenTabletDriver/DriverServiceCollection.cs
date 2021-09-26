@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTabletDriver.ComponentProviders;
+using OpenTabletDriver.Configurations;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;

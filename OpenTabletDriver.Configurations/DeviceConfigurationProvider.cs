@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.ComponentProviders
+namespace OpenTabletDriver.Configurations
 {
     public class DeviceConfigurationProvider : IDeviceConfigurationProvider
     {
@@ -13,7 +13,7 @@ namespace OpenTabletDriver.ComponentProviders
 
         public DeviceConfigurationProvider()
         {
-            var asm = typeof(Driver).Assembly;
+            var asm = typeof(DeviceConfigurationProvider).Assembly;
             var jsonSerializer = new JsonSerializer();
 
             _configurations = asm.GetManifestResourceNames()

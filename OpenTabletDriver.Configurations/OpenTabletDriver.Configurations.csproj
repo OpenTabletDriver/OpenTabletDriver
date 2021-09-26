@@ -9,24 +9,20 @@
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package Information">
-    <PackageId>OpenTabletDriver</PackageId>
+    <PackageId>OpenTabletDriver.Configurations</PackageId>
     <Version>0.6.0.0</Version>
     <Authors>InfinityGhost</Authors>
-    <Description>OpenTabletDriver core library</Description>
+    <Description>OpenTabletDriver tablet configurations</Description>
     <PackageOutputPath>../nupkg</PackageOutputPath>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="HidSharpCore" Version="1.2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-rc.1.21451.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.Plugin\OpenTabletDriver.Plugin.csproj" />
-    <ProjectReference Include="..\OpenTabletDriver.Native\OpenTabletDriver.Native.csproj" />
-    <ProjectReference Include="..\OpenTabletDriver.Configurations\OpenTabletDriver.Configurations.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Configurations">
