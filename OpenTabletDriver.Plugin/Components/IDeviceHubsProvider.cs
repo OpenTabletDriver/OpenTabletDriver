@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Devices;
 
-namespace OpenTabletDriver.Plugin
+namespace OpenTabletDriver.Plugin.Components
 {
     public interface IDeviceHubsProvider
     {
-        IEnumerable<IDeviceHub> GetDeviceHubs();
+        IEnumerable<IDeviceHub> DeviceHubs { get; }
     }
 }

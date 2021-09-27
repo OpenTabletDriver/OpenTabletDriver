@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 
 #nullable enable
@@ -15,7 +16,7 @@ namespace OpenTabletDriver.Devices
     {
         public RootHub(IDeviceHubsProvider hubsProvider)
         {
-            internalHubs = hubsProvider.GetDeviceHubs().ToHashSet();
+            internalHubs = hubsProvider.DeviceHubs.ToHashSet();
             hubs = new HashSet<IDeviceHub>(internalHubs);
             ForceEnumeration();
 
@@ -38,6 +39,8 @@ namespace OpenTabletDriver.Devices
 
         public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
+        public IEnumerable<IDeviceHub> DeviceHubs => hubs;
+
         public static RootHub WithProvider(IServiceProvider provider)
         {
             return new RootHub(provider.GetRequiredService<IDeviceHubsProvider>())
@@ -47,11 +50,6 @@ namespace OpenTabletDriver.Devices
         public IEnumerable<IDeviceEndpoint> GetDevices()
         {
             return endpoints;
-        }
-
-        public IEnumerable<IDeviceHub> GetDeviceHubs()
-        {
-            return hubs;
         }
 
         public void ConnectDeviceHub<T>() where T : IDeviceHub
@@ -78,7 +76,7 @@ namespace OpenTabletDriver.Devices
 
         public void DisconnectDeviceHub<T>() where T : IDeviceHub
         {
-            foreach (var hub in GetDeviceHubs().Where(static t => t.GetType().IsAssignableTo(typeof(T))))
+            foreach (var hub in DeviceHubs.Where(static t => t.GetType().IsAssignableTo(typeof(T))))
             {
                 DisconnectDeviceHub(hub);
             }

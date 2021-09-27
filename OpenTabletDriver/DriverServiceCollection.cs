@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTabletDriver.ComponentProviders;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 
 #nullable enable

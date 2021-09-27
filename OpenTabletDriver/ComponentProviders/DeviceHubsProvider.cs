@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 
 namespace OpenTabletDriver.ComponentProviders
 {
     public class DeviceHubsProvider : IDeviceHubsProvider
     {
-        private readonly IDeviceHub[] _deviceHubs;
-
         public DeviceHubsProvider(IServiceProvider serviceProvider)
         {
-            _deviceHubs = Assembly.GetExecutingAssembly().DefinedTypes
+            DeviceHubs = Assembly.GetExecutingAssembly().DefinedTypes
                 .Where(type => type.IsAssignableTo(typeof(IDeviceHub))
                     && type.GetCustomAttribute<DeviceHubAttribute>() != null
                     && (type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true))
@@ -23,9 +21,6 @@ namespace OpenTabletDriver.ComponentProviders
                 .ToArray();
         }
 
-        public IEnumerable<IDeviceHub> GetDeviceHubs()
-        {
-            return _deviceHubs;
-        }
+        public IEnumerable<IDeviceHub> DeviceHubs { get; }
     }
 }

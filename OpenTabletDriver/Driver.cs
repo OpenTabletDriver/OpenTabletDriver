@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -40,7 +41,7 @@ namespace OpenTabletDriver
             bool success = false;
 
             InputDevices.Clear();
-            foreach (var config in _deviceConfigurationProvider.GetTabletConfigurations())
+            foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
             {
                 if (Match(config) is InputDeviceTree tree)
                 {

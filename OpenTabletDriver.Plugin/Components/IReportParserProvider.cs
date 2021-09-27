@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Plugin
+namespace OpenTabletDriver.Plugin.Components
 {
     public interface IReportParserProvider
     {

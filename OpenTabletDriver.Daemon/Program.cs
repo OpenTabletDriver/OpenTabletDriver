@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Components;
 
 namespace OpenTabletDriver.Daemon
 {

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 

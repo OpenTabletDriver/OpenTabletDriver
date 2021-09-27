@@ -2,30 +2,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.ComponentProviders
 {
     public class DeviceConfigurationProvider : IDeviceConfigurationProvider
     {
-        private readonly TabletConfiguration[] _configurations;
-
         public DeviceConfigurationProvider()
         {
             var asm = typeof(Driver).Assembly;
             var jsonSerializer = new JsonSerializer();
 
-            _configurations = asm.GetManifestResourceNames()
+            TabletConfigurations = asm.GetManifestResourceNames()
                 .Where(path => path.Contains(".json"))
                 .Select(path => Deserialize(jsonSerializer, asm.GetManifestResourceStream(path)))
                 .ToArray();
         }
 
-        public IEnumerable<TabletConfiguration> GetTabletConfigurations()
-        {
-            return _configurations;
-        }
+        public IEnumerable<TabletConfiguration> TabletConfigurations { get; }
 
         private static TabletConfiguration Deserialize(JsonSerializer jsonSerializer, Stream stream)
         {

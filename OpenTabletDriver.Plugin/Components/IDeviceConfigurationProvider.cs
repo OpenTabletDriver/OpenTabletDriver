@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Plugin
+namespace OpenTabletDriver.Plugin.Components
 {
     public interface IDeviceConfigurationProvider
     {
-        IEnumerable<TabletConfiguration> GetTabletConfigurations();
+        IEnumerable<TabletConfiguration> TabletConfigurations { get; }
     }
 }
