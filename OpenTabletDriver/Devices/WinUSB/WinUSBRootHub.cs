@@ -35,7 +35,16 @@ namespace OpenTabletDriver.Devices.WinUSB
         {
             _callback = NotificationCallback;
             _callbackPin = GCHandle.Alloc(_callback);
-            HookDeviceNotification();
+
+            if (OperatingSystem.IsWindowsVersionAtLeast(6, 2))
+            {
+                HookDeviceNotification();
+            }
+            else
+            {
+                Log.Write(nameof(WinUSBRootHub), $"{nameof(WinUSBRootHub)} does not support hotplug functionality for Windows 7 and below.", LogLevel.Warning);
+                Log.Write(nameof(WinUSBRootHub), $"WinUSB device connections or disconnections won't be detected automatically.", LogLevel.Warning);
+            }
 
             _currentDevices = new List<WinUSBInterface>();
 
