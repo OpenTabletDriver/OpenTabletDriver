@@ -1,7 +1,6 @@
 ﻿using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Vendors.Wacom.Intuos4;
-using OpenTabletDriver.Vendors.Wacom.Intuos3;
 
 namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
 {
