@@ -48,7 +48,7 @@
     },
     {
       "VendorID": 10429,
-      "ProductID": 2311
+      "ProductID": 2311,
       "InputReportLength": 12,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
