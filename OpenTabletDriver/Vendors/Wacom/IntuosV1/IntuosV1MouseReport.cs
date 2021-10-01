@@ -25,9 +25,10 @@ namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
                 report[8].IsBitSet(4), // backward
             };
 
+            var scrollAmount = (report[6] << 2) | ((report[7] >> 6) & 0b11);
             Scroll = new Vector2
             {
-                    Y = report[8].IsBitSet(3) && report[6] > 0 ? 1 : report[6] > 0 ? -1 : 0 // ignores analogue mouse wheel info and simply reports whether the mouse wheel is spun upwards or downwards. should eventually be replaced.
+                    Y = report[8].IsBitSet(3) ? scrollAmount : -scrollAmount
             };
         }
 
