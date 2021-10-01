@@ -10,13 +10,6 @@ namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
         {
             Raw = report;
 
-            ReportID = report[1] switch
-            {
-                0x80 => 0u, // 0x80 is pen out of range report,
-                0xC2 => 0u, // <- should fix the GD 0405 U,
-                0x20 => 1u, // this should be excluded from IntuosHT2
-                _ => 2u     // everything else should have position data.
-            };
             Position = new Vector2
             {
                 X = (report[3] | report[2] << 8) << 1 | report[9] >> 1 & 1,
