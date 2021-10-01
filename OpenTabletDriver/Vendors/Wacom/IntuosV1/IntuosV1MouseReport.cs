@@ -32,7 +32,6 @@ namespace OpenTabletDriver.Vendors.Wacom.IntuosV1
         }
 
         public byte[] Raw { set; get; }
-        public uint ReportID { set; get; }
         public Vector2 Position { set; get; }
         public bool[] MouseButtons { set; get; }
         public Vector2 Scroll { set; get; }
