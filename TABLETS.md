@@ -52,6 +52,7 @@
 | Wacom XD-0608-U        |    Supported     |
 | XP-Pen CT430           |    Supported     |
 | XP-Pen CT460           |    Supported     |
+| XP-Pen Deco Fun L (CT1060) | Supported    |
 | XP-Pen Deco 01         |    Supported     |
 | XP-Pen Star 03         |    Supported     |
 | XP-Pen Star G430       |    Supported     |
