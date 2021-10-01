@@ -2,17 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using HidSharp;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
+using OpenTabletDriver.Devices;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
     public class DiagnosticInfo
     {
-        public DiagnosticInfo(IEnumerable<LogMessage> log)
+        public DiagnosticInfo(IEnumerable<LogMessage> log, IEnumerable<SerializedDeviceEndpoint> devices)
         {
             ConsoleLog = log;
+            Devices = devices;
         }
 
         [JsonProperty("App Version")]
@@ -25,7 +28,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public IDictionary EnvironmentVariables { private set; get; } = Environment.GetEnvironmentVariables();
 
         [JsonProperty("HID Devices")]
-        public IEnumerable<HidDevice> Devices { private set; get; } = DeviceList.Local.GetHidDevices();
+        public IEnumerable<SerializedDeviceEndpoint> Devices { private set; get; }
 
         [JsonProperty("Console Log")]
         public IEnumerable<LogMessage> ConsoleLog { private set; get; }

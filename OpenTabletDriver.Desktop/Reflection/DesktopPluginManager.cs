@@ -166,7 +166,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
                 Directory.Delete(TemporaryDirectory.FullName, true);
-            
+
             if (result)
                 LoadPlugin(pluginDir);
             return result;

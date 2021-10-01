@@ -9,8 +9,7 @@ namespace OpenTabletDriver.Desktop
     {
         public override IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
-            var pluginRef = AppInfo.PluginManager.GetPluginReference(identifier.ReportParser);
-            return pluginRef.Construct<IReportParser<IDeviceReport>>();
+            return AppInfo.PluginManager.ConstructObject<IReportParser<IDeviceReport>>(identifier.ReportParser);
         }
 
         protected override IEnumerable<TabletConfiguration> GetTabletConfigurations()

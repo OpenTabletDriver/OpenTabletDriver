@@ -1,0 +1,50 @@
+{
+  "Name": "Wacom CTE-630",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 208.8,
+      "Height": 150.8,
+      "MaxX": 16704.0,
+      "MaxY": 12064.0
+    },
+    "Pen": {
+      "MaxPressure": 511,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 20,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.IntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 20,
+      "InputReportLength": 9,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.WacomDriverIntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
