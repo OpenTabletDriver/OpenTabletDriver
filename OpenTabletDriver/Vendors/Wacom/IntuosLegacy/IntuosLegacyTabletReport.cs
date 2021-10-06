@@ -2,11 +2,10 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Vendors.Wacom.IntuosLegacy
 {
-    public struct IntuosLegacyTabletReport : ITabletReport, IEraserReport, IProximityReport
+    public struct IntuosLegacyTabletReport : ITabletReport, IEraserReport
     {
         public IntuosLegacyTabletReport(byte[] report)
         {
@@ -25,8 +24,6 @@ namespace OpenTabletDriver.Vendors.Wacom.IntuosLegacy
                 report[1].IsBitSet(2)
             };
             Eraser = report[1].IsBitSet(5);
-            NearProximity = report[1].IsBitSet(7);
-            HoverDistance = NearProximity ? (uint)10 : (uint)100;
         }
 
         public byte[] Raw { set; get; }
@@ -34,7 +31,5 @@ namespace OpenTabletDriver.Vendors.Wacom.IntuosLegacy
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
         public bool Eraser { set; get; }
-        public bool NearProximity { set; get; }
-        public uint HoverDistance { set; get; }
     }
 }
