@@ -1,6 +1,5 @@
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftWindowsWPF;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
