@@ -7,8 +7,8 @@ using OpenTabletDriver.Plugin.Devices;
 
 namespace OpenTabletDriver.Devices.HidSharpBackend
 {
-    [RootHub]
-    public class HidSharpDeviceRootHub : IRootHub
+    [DeviceHub]
+    public class HidSharpDeviceRootHub : IDeviceHub
     {
         public HidSharpDeviceRootHub()
         {
