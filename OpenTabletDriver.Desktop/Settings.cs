@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
@@ -58,7 +59,7 @@ namespace OpenTabletDriver.Desktop
 
         private static ProfileCollection GetDefaultProfiles()
         {
-            return new ProfileCollection(AppInfo.PluginManager.GetService<IDriver>().Tablets);
+            return new ProfileCollection(AppInfo.PluginManager.BuildServiceProvider().GetService<IDriver>().Tablets);
         }
 
         #region Custom Serialization

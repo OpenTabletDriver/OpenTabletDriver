@@ -52,7 +52,16 @@ namespace OpenTabletDriver.Desktop.Migration
 
                 profile.Filters = SafeMigrateCollection(new PluginSettingStoreCollection(old.Filters.Concat(old.Interpolators)));
 
-                profile.BindingSettings.TipButton = SafeMigrate(old.TipButton, new PluginSettingStore(new MouseBinding { Button = nameof(MouseButton.Left) }));
+                profile.BindingSettings.TipButton = SafeMigrate(
+                    old.TipButton,
+                    new PluginSettingStore(
+                        typeof(MouseBinding),
+                        new
+                        {
+                            Button = nameof(MouseButton.Left)
+                        }
+                    )
+                );
                 profile.BindingSettings.PenButtons = SafeMigrateCollection(old.PenButtons);
                 profile.BindingSettings.AuxButtons = SafeMigrateCollection(old.AuxButtons);
             }

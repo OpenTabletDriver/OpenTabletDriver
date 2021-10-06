@@ -8,7 +8,7 @@ using Eto.Forms;
 using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
@@ -58,14 +58,14 @@ namespace OpenTabletDriver.UX
         {
             base.OnInitializePlatform(e);
 
-            switch (DesktopInterop.CurrentPlatform)
+            switch (SystemInterop.CurrentPlatform)
             {
                 case PluginPlatform.MacOS:
                     this.Padding = 10;
                     break;
             }
 
-            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
+            if (SystemInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 var bounds = Screen.PrimaryScreen.Bounds;
                 var minWidth = Math.Min(970, bounds.Width * 0.9);
@@ -177,7 +177,7 @@ namespace OpenTabletDriver.UX
             pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
 
             var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => DesktopInterop.Open(FaqUrl);
+            faqUrl.Executed += (sender, e) => SystemInterop.Open(FaqUrl);
 
             var showGuide = new Command { MenuText = "Show guide..." };
             showGuide.Executed += (sender, e) => App.Current.StartupGreeterWindow.Show();
