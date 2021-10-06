@@ -23,7 +23,6 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
         {
             if (SelectedItem != null)
             {
-
                 return AppInfo.PluginManager.ConstructObject<T>(SelectedItem.FullName);
             }
             return null;
