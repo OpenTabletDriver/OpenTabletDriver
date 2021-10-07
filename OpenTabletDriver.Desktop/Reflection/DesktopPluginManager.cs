@@ -1,14 +1,27 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using OpenTabletDriver.Desktop.Interop;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using OpenTabletDriver.Desktop.Interop.Display;
+using OpenTabletDriver.Desktop.Interop.Input;
+using OpenTabletDriver.Desktop.Interop.Input.Absolute;
+using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
+using OpenTabletDriver.Desktop.Interop.Input.Relative;
+using OpenTabletDriver.Desktop.Interop.Timer;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Plugin.Platform.Keyboard;
+using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -29,6 +42,58 @@ namespace OpenTabletDriver.Desktop.Reflection
             PluginDirectory = pluginDirectory;
             TrashDirectory = trashDirectory;
             TemporaryDirectory = tempDirectory;
+
+            // These services will always be provided on the desktop
+            switch (SystemInterop.CurrentPlatform)
+            {
+                case PluginPlatform.Windows:
+                {
+                    this.AddTransient<ITimer, WindowsTimer>();
+                    this.AddTransient<IAbsolutePointer, WindowsAbsolutePointer>();
+                    this.AddTransient<IRelativePointer, WindowsRelativePointer>();
+                    this.AddTransient<IVirtualKeyboard, WindowsVirtualKeyboard>();
+                    this.AddTransient<IVirtualScreen, WindowsDisplay>();
+                    break;
+                }
+                case PluginPlatform.Linux:
+                {
+                    this.AddTransient<ITimer, LinuxTimer>();
+                    this.AddSingleton<IAbsolutePointer, EvdevAbsolutePointer>();
+                    this.AddSingleton<IRelativePointer, EvdevRelativePointer>();
+                    this.AddSingleton<IVirtualTablet, EvdevVirtualTablet>();
+                    this.AddSingleton<IVirtualKeyboard, EvdevVirtualKeyboard>();
+
+                    if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
+                    {
+                        this.AddSingleton<IVirtualScreen, WaylandDisplay>();
+                    }
+                    else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
+                    {
+                        this.AddSingleton<IVirtualScreen, XScreen>();
+                    }
+                    else
+                    {
+                        Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
+                        this.AddSingleton<IVirtualScreen, XScreen>();
+                    }
+
+                    break;
+                }
+                case PluginPlatform.MacOS:
+                {
+                    this.AddTransient<IAbsolutePointer, MacOSAbsolutePointer>();
+                    this.AddTransient<IRelativePointer, MacOSRelativePointer>();
+                    this.AddTransient<IVirtualKeyboard, MacOSVirtualKeyboard>();
+                    this.AddTransient<IVirtualScreen, MacOSDisplay>();
+
+                    goto default;
+                }
+                default:
+                {
+                    this.AddTransient<FallbackTimer>();
+                    break;
+                }
+            }
         }
 
         public DirectoryInfo PluginDirectory { get; }
@@ -71,7 +136,6 @@ namespace OpenTabletDriver.Desktop.Reflection
             foreach (var dir in PluginDirectory.GetDirectories())
                 LoadPlugin(dir);
 
-            AppInfo.PluginManager.ResetServices();
             AssembliesChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -114,17 +178,21 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (!IsPlatformSupported(type))
                 {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {DesktopInterop.CurrentPlatform}", LogLevel.Info);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
+
                 if (IsPluginIgnored(type))
+                {
                     return;
+                }
 
                 try
                 {
-                    var pluginTypeInfo = type.GetTypeInfo();
-                    if (!pluginTypes.Contains(pluginTypeInfo))
-                        pluginTypes.Add(pluginTypeInfo);
+                    if (!Types.Contains(type))
+                    {
+                        this.AddTransient(type);
+                    }
                 }
                 catch
                 {
@@ -239,10 +307,13 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             try
             {
-                var types = pluginTypes.Where(t => t.Assembly == asm)
-                    .Select(t => t.GetTypeInfo());
+                var descriptors = from descriptor in this
+                    where descriptor.ServiceType.Assembly == asm
+                    select descriptor;
 
-                pluginTypes = new ConcurrentBag<TypeInfo>(pluginTypes.Except(types));
+                foreach (var descriptor in descriptors)
+                    this.Remove(descriptor);
+
                 return true;
             }
             catch (Exception ex)
@@ -250,20 +321,6 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Log.Exception(ex);
                 return false;
             }
-        }
-
-        public override void ResetServices()
-        {
-            base.ResetServices();
-
-            // These services will always be provided on the desktop
-            AddService<IServiceProvider>(() => this);
-            AddService(() => DesktopInterop.Timer);
-            AddService(() => DesktopInterop.AbsolutePointer);
-            AddService(() => DesktopInterop.RelativePointer);
-            AddService(() => DesktopInterop.VirtualTablet);
-            AddService(() => DesktopInterop.VirtualScreen);
-            AddService(() => DesktopInterop.VirtualKeyboard);
         }
     }
 }

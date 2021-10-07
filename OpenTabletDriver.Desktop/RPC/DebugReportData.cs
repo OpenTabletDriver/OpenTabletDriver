@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Desktop.RPC
         
         public object ToObject()
         {
-            var type = AppInfo.PluginManager.PluginTypes.First(t => t.FullName == Path);
+            var type = AppInfo.PluginManager.Types.First(t => t.FullName == Path);
             return Data.ToObject(type);
         } 
     }
