@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.DependencyInjection;
 using OpenTabletDriver.Plugin;
 
 #nullable enable
