@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Components;
 
 #nullable enable
 
-namespace OpenTabletDriver.DependencyInjection
+namespace OpenTabletDriver
 {
     public class DriverServiceCollection : ServiceCollection
     {
