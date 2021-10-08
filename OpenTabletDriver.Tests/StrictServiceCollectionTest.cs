@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using OpenTabletDriver.DependencyInjection;
 using OpenTabletDriver.Plugin.Components;
 using Xunit;
 
