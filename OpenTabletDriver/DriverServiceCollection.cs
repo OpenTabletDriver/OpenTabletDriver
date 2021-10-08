@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using OpenTabletDriver.ComponentProviders;
+using OpenTabletDriver.Configurations;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin.Components;
 
 #nullable enable
 
-namespace OpenTabletDriver.DependencyInjection
+namespace OpenTabletDriver
 {
     public class DriverServiceCollection : ServiceCollection
     {

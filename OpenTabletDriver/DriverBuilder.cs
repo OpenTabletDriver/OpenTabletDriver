@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.DependencyInjection;
 using OpenTabletDriver.Plugin;
 
 #nullable enable
@@ -58,21 +57,6 @@ namespace OpenTabletDriver
                 throw new InvalidOperationException();
 
             return driver;
-        }
-    }
-
-    public class DriverAlreadyBuiltException : Exception
-    {
-        public DriverAlreadyBuiltException() : this("A driver instance has already been built")
-        {
-        }
-
-        public DriverAlreadyBuiltException(string? message) : base(message)
-        {
-        }
-
-        public DriverAlreadyBuiltException(string? message, Exception? innerException) : base(message, innerException)
-        {
         }
     }
 }
