@@ -1,26 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
+
+#nullable enable
 
 namespace OpenTabletDriver.Devices
 {
-    public class RootHub : IRootHub
+    public class RootHub : ICompositeDeviceHub, IDeviceHub
     {
-        public RootHub()
+        public RootHub(IDeviceHubsProvider hubsProvider)
         {
-            var rootHubs = from type in Assembly.GetExecutingAssembly().DefinedTypes
-                where type.GetCustomAttribute<RootHubAttribute>() != null
-                where type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true
-                select type;
-
-            internalHubs = rootHubs.Select(t => (IRootHub)Activator.CreateInstance(t)).ToHashSet();
-            hubs = new HashSet<IRootHub>(internalHubs);
+            internalHubs = hubsProvider.DeviceHubs.ToHashSet();
+            hubs = new HashSet<IDeviceHub>(internalHubs);
             ForceEnumeration();
 
             foreach (var hub in hubs)
@@ -32,18 +29,74 @@ namespace OpenTabletDriver.Devices
         }
 
         private readonly object syncObject = new();
-        private readonly HashSet<IRootHub> internalHubs;
-        private readonly HashSet<IRootHub> hubs;
-        private List<IDeviceEndpoint> oldEndpoints;
+        private readonly HashSet<IDeviceHub> internalHubs;
+        private readonly HashSet<IDeviceHub> hubs;
+        private List<IDeviceEndpoint>? oldEndpoints;
         private readonly List<IDeviceEndpoint> endpoints = new();
         private long version;
         private int currentlyDebouncing;
+        private IServiceProvider? serviceProvider;
 
-        public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
+        public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
-        public static readonly RootHub Current = new RootHub();
+        public IEnumerable<IDeviceHub> DeviceHubs => hubs;
 
-        private async void OnDevicesChanged(object sender, DevicesChangedEventArgs eventArgs)
+        public static RootHub WithProvider(IServiceProvider provider)
+        {
+            return new RootHub(provider.GetRequiredService<IDeviceHubsProvider>())
+                .RegisterServiceProvider(provider);
+        }
+
+        public IEnumerable<IDeviceEndpoint> GetDevices()
+        {
+            return endpoints;
+        }
+
+        public void ConnectDeviceHub<T>() where T : IDeviceHub
+        {
+            if (serviceProvider == null)
+                throw new InvalidOperationException("Cannot instantiate device hubs without a service provider");
+
+            ConnectDeviceHub(ActivatorUtilities.CreateInstance<T>(serviceProvider!));
+        }
+
+        public void ConnectDeviceHub(IDeviceHub rootHub)
+        {
+            Log.Write(nameof(RootHub), $"Connecting hub: {rootHub.GetType().Name}", LogLevel.Debug);
+            if (hubs.Add(rootHub))
+            {
+                CommitHubChange();
+                HookDeviceNotification(rootHub);
+            }
+            else
+            {
+                Log.Write(nameof(RootHub), $"Connection failed, {rootHub.GetType().Name} is already connected", LogLevel.Debug);
+            }
+        }
+
+        public void DisconnectDeviceHub<T>() where T : IDeviceHub
+        {
+            foreach (var hub in DeviceHubs.Where(static t => t.GetType().IsAssignableTo(typeof(T))))
+            {
+                DisconnectDeviceHub(hub);
+            }
+        }
+
+        public void DisconnectDeviceHub(IDeviceHub rootHub)
+        {
+            Log.Write(nameof(RootHub), $"Disconnecting hub: {rootHub.GetType().Name}", LogLevel.Debug);
+            if (hubs.Remove(rootHub))
+            {
+                CommitHubChange();
+                UnhookDeviceNotification(rootHub);
+            }
+            else
+            {
+                Log.Write(nameof(RootHub), $"Disconnection failed, {rootHub.GetType().Name} is not a connected hub", LogLevel.Debug);
+            }
+        }
+
+        private async void OnDevicesChanged(object? sender, DevicesChangedEventArgs eventArgs)
         {
             var lastVersion = Interlocked.Increment(ref version);
             if (Interlocked.Increment(ref currentlyDebouncing) == 1)
@@ -67,65 +120,27 @@ namespace OpenTabletDriver.Devices
             }
             else
             {
-                Log.Write(nameof(RootHub), $"Debounced {sender.GetType().Name}'s DevicesChanged event");
+                Log.Write(nameof(RootHub), $"Debounced {sender?.GetType().Name}'s DevicesChanged event");
             }
 
             Interlocked.Decrement(ref currentlyDebouncing);
         }
 
-        public IEnumerable<IDeviceEndpoint> GetDevices()
-        {
-            return endpoints;
-        }
-
-        public IEnumerable<IRootHub> GetHubs()
-        {
-            return hubs;
-        }
-
-        public void RegisterRootHub(IRootHub rootHub)
-        {
-            Log.Write(nameof(RootHub), $"Registering hub: {rootHub.GetType().Name}", LogLevel.Debug);
-            if (hubs.Add(rootHub))
-            {
-                CommitHubChange();
-                HookDeviceNotification(rootHub);
-            }
-            else
-            {
-                Log.Write(nameof(RootHub), $"Registry failed, {rootHub.GetType().Name} is already registered", LogLevel.Debug);
-            }
-        }
-
-        public void UnregisterRootHub(IRootHub rootHub)
-        {
-            Log.Write(nameof(RootHub), $"Unregistering hub: {rootHub.GetType().Name}", LogLevel.Debug);
-            if (hubs.Remove(rootHub))
-            {
-                CommitHubChange();
-                UnhookDeviceNotification(rootHub);
-            }
-            else
-            {
-                Log.Write(nameof(RootHub), $"Unregistry failed, {rootHub.GetType().Name} is not a registered hub", LogLevel.Debug);
-            }
-        }
-
-        private void HookDeviceNotification(IRootHub rootHub)
+        private void HookDeviceNotification(IDeviceHub rootHub)
         {
             rootHub.DevicesChanged += HandleHubDeviceNotification;
         }
 
-        private void UnhookDeviceNotification(IRootHub rootHub)
+        private void UnhookDeviceNotification(IDeviceHub rootHub)
         {
             rootHub.DevicesChanged -= HandleHubDeviceNotification;
         }
 
-        private void HandleHubDeviceNotification(object sender, DevicesChangedEventArgs eventArgs)
+        private void HandleHubDeviceNotification(object? sender, DevicesChangedEventArgs eventArgs)
         {
             if (eventArgs.Changes.Any())
             {
-                Log.Debug(sender.GetType().Name, $"Changes: {eventArgs.Changes.Count()}, Add: {eventArgs.Additions.Count()}, Remove: {eventArgs.Removals.Count()}");
+                Log.Debug(sender?.GetType().Name, $"Changes: {eventArgs.Changes.Count()}, Add: {eventArgs.Additions.Count()}, Remove: {eventArgs.Removals.Count()}");
                 OnDevicesChanged(sender, eventArgs);
             }
         }
@@ -142,6 +157,12 @@ namespace OpenTabletDriver.Devices
         {
             endpoints.Clear();
             endpoints.AddRange(hubs.SelectMany(h => h.GetDevices()));
+        }
+
+        private RootHub RegisterServiceProvider(IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
+            return this;
         }
     }
 }

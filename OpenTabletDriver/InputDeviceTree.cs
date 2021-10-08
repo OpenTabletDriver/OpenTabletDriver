@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
+
+#nullable enable
 
 namespace OpenTabletDriver
 {
@@ -30,11 +33,12 @@ namespace OpenTabletDriver
         private bool connected = true;
         private IList<InputDevice> inputDevices;
 
-        public event EventHandler<EventArgs> Disconnected;
+        public event EventHandler<EventArgs>? Disconnected;
 
         public TabletConfiguration Properties { protected set; get; }
         public IList<InputDevice> InputDevices
         {
+            [MemberNotNull(nameof(inputDevices))]
             protected set
             {
                 this.inputDevices = value;
@@ -47,11 +51,11 @@ namespace OpenTabletDriver
         /// <summary>
         /// The active output mode at the end of the data pipeline for all data to be processed.
         /// </summary>
-        public IOutputMode OutputMode { set; get; }
+        public IOutputMode? OutputMode { set; get; }
 
         public TabletReference CreateReference() => new TabletReference(Properties, InputDevices.Select(c => c.Identifier));
 
-        private void HandleReport(object sender, IDeviceReport report)
+        private void HandleReport(object? sender, IDeviceReport report)
         {
             OutputMode?.Read(report);
         }

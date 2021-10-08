@@ -2,9 +2,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -32,6 +32,13 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
+        public PluginSettingStore(Type type, object settings, bool enable = true)
+        {
+            Path = type.FullName;
+            Settings = GetSettingsFromObject(settings);
+            Enable = enable;
+        }
+
         [JsonConstructor]
         private PluginSettingStore()
         {
@@ -46,24 +53,16 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public bool Enable { set; get; }
 
-        public T Construct<T>() where T : class
+        public T Construct<T>(IServiceProvider provider) where T : class
         {
-            var obj = AppInfo.PluginManager.ConstructObject<T>(Path);
+            var obj = provider.GetRequiredService<T>(Path);
             ApplySettings(obj);
-            return obj;
-        }
-
-        public T Construct<T>(IServiceManager provider) where T : class
-        {
-            var obj = Construct<T>();
-            PluginManager.Inject(provider, obj);
-            TriggerEventMethods(obj);
             return obj;
         }
 
         public static PluginSettingStore FromPath(string path)
         {
-            var pathType = AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path);
+            var pathType = AppInfo.PluginManager.Types.FirstOrDefault(t => t.FullName == path);
             return pathType != null ? new PluginSettingStore(pathType) : null;
         }
 
@@ -94,6 +93,13 @@ namespace OpenTabletDriver.Desktop.Reflection
             var settings = from property in targetType.GetProperties()
                 where property.GetCustomAttribute<PropertyAttribute>() is PropertyAttribute
                 select new PluginSetting(property, source == null ? null : property.GetValue(source));
+            return new ObservableCollection<PluginSetting>(settings);
+        }
+
+        private static ObservableCollection<PluginSetting> GetSettingsFromObject(object obj)
+        {
+            var settings = from property in obj.GetType().GetProperties()
+                select new PluginSetting(property.Name, property.GetValue(obj));
             return new ObservableCollection<PluginSetting>(settings);
         }
 
@@ -140,23 +146,12 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public TypeInfo GetTypeInfo()
         {
-            return AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == Path);
+            return AppInfo.PluginManager.Types.FirstOrDefault(t => t.FullName == Path).GetTypeInfo();
         }
 
         public TypeInfo GetTypeInfo<T>()
         {
-            return AppInfo.PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == Path);
-        }
-
-        private static void TriggerEventMethods(object obj)
-        {
-            var methods = from method in obj.GetType().GetMethods()
-                let attr = obj.GetType().GetCustomAttribute<OnDependencyLoadAttribute>()
-                where attr != null
-                select method;
-
-            foreach (var method in methods)
-                method.Invoke(obj, Array.Empty<object>());
+            return AppInfo.PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == Path).GetTypeInfo();
         }
     }
 }

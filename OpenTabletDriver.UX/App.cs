@@ -6,8 +6,8 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
@@ -92,8 +92,8 @@ namespace OpenTabletDriver.UX
             Logo = Logo.WithSize(256, 256)
         };
 
-        public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
-        public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
+        public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
+        public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
 
         public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();
         public WindowSingleton<ConfigurationEditor> ConfigEditorWindow { get; } = new WindowSingleton<ConfigurationEditor>();
