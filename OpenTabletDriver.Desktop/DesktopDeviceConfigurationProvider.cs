@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Desktop
             }
             else
             {
-                Log.Write("Detect", $"The configuration directory '{AppInfo.Current.ConfigurationDirectory}' does not exist.", LogLevel.Warning);
+                Log.Write("Detect", $"The configuration overrides directory '{AppInfo.Current.ConfigurationDirectory}' exist.", LogLevel.Debug);
             }
 
             return _inAssemblyConfigurationProvider.TabletConfigurations
