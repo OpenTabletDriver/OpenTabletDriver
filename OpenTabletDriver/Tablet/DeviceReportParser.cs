@@ -2,7 +2,7 @@
 
 namespace OpenTabletDriver.Tablet
 {
-    public class DeviceReportParser : IReportParser<IDeviceReport>
+    public class PassthroughReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
