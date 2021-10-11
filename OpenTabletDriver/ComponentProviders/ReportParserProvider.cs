@@ -11,7 +11,7 @@ namespace OpenTabletDriver.ComponentProviders
         private static readonly Dictionary<string, Func<IReportParser<IDeviceReport>>> _reportParsers = new()
         {
             { typeof(AuxReportParser).FullName, () => new AuxReportParser() },
-            { typeof(DeviceReportParser).FullName, () => new DeviceReportParser() },
+            { typeof(PassthroughReportParser).FullName, () => new PassthroughReportParser() },
             { typeof(TabletReportParser).FullName, () => new TabletReportParser() },
             { typeof(TiltTabletReportParser).FullName, () => new TiltTabletReportParser() },
             { typeof(Vendors.Huion.GianoReportParser).FullName, () => new Vendors.Huion.GianoReportParser() },
