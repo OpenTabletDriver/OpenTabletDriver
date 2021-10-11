@@ -82,7 +82,8 @@ namespace OpenTabletDriver.Desktop.Profiles
             var bindingSettings = new BindingSettings
             {
                 TipButton = new PluginSettingStore(
-                    new MouseBinding
+                    typeof(MouseBinding),
+                    new
                     {
                         Button = nameof(MouseButton.Left)
                     }
