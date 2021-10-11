@@ -239,6 +239,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             public async Task GenerateConfiguration()
             {
                 var dialog = new DeviceListDialog();
+                await dialog.InitializeAsync();
                 if (await dialog.ShowModalAsync() is IDeviceEndpoint device)
                 {
                     try

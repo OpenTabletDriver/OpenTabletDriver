@@ -1,7 +1,7 @@
 using System;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
@@ -50,7 +50,7 @@ namespace OpenTabletDriver.UX
                 this.ClientSize = new Size(width, height);
             }
 
-            switch (DesktopInterop.CurrentPlatform)
+            switch (SystemInterop.CurrentPlatform)
             {
                 case PluginPlatform.Windows:
                 case PluginPlatform.MacOS:
