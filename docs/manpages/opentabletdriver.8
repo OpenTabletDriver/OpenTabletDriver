@@ -1,4 +1,4 @@
-.TH OpenTabletDriver (8)
+.TH OpenTabletDriver 8
 
 .Sh NAME
 
@@ -47,3 +47,98 @@ Show help and usage information
 The daemon log is created in the application data directory, at
 
 ~/.config/OpenTabletDriver/daemon.log
+
+by default.
+
+
+.SH FREQUENT ISSUES AND QUESTIONS
+
+.SS Failed to open device streams
+
+This occurs due to a lack of permissions to open a device stream. It
+is resolved by creating udev rules that give these permissions. If you
+installed OpenTabletDriver via your package manager, you may need to
+run the following command then replug your tablet.
+
+.EX
+sudo udevadm control --reload-rules
+.EE
+
+.SS Poor performance with NVIDIA
+
+Disable "Force full composition pipeline" in the NVIDIA settings panel.
+
+
+.SS X11/Wayland Session not detected
+
+Your .xinitrc is likely configured improperly and the DISPLAY
+environment variable isn't set for systemd. Proper configuration for
+the .xinitrc file can be found at:
+
+.UR https://wiki.archlinux.org/index.php/Xinit#Configuration
+.UE
+
+.B For X11:
+
+1. Create an override file
+
+.EX
+# Opens with whatever program is set to $EDITOR
+systemctl --user edit opentabletdriver.service
+.EE
+
+2. Add this block below the first 2 lines of the file, then save and exit
+
+.EX
+[Service]
+Environment=DISPLAY=:0
+.EE
+
+3. Finally, run the following commands to reload the system user
+daemon and start the OTD daemon service, or restart it if it's already
+running:
+
+.EX
+systemctl --user daemon-reload
+systemctl --user restart opentabletdriver.service
+.EE
+
+.B For Wayland:
+
+1. Create an override file:
+
+.EX
+systemctl --user edit opentabletdriver.service
+.EE
+
+2. Add this block below the first 2 lines of the file, then save and exit
+
+.EX
+[Service]
+Environment=WAYLAND_DISPLAY=:0
+.EE
+
+3. Finally, run the following commands to reload the system user
+daemon and start the OTD daemon service, or restart it if it's already
+running:
+
+.EX
+systemctl --user daemon-reload
+systemctl --user restart opentabletdriver.service
+.EE
+
+.SS Failed to initialize virtual device
+
+.B EACCESS
+
+Run the following command:
+
+.EX
+sudo chmod 0666 /dev/uinput
+.EE
+
+.B ENODEV
+
+Rebooting is the only option here. Your kernel was very likely
+updated, or some component of uinput was modified which requires a
+reboot to resolve.
