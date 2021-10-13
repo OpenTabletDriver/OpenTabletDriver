@@ -43,10 +43,10 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                                     },
                                                     new Group
                                                     {
-                                                        Text = "Tip Pressure",
+                                                        Text = "Tip Deadzone",
                                                         ToolTip = "The minimum threshold in order for the assigned binding to activate.",
                                                         Orientation = Orientation.Horizontal,
-                                                        Content = tipPressure = new FloatSlider()
+                                                        Content = tipDeadzone = new FloatSlider()
                                                     }
                                                 }
                                             }
@@ -69,10 +69,10 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                                     },
                                                     new Group
                                                     {
-                                                        Text = "Eraser Pressure",
+                                                        Text = "Eraser Deadzone",
                                                         ToolTip = "The minimum threshold in order for the assigned binding to activate.",
                                                         Orientation = Orientation.Horizontal,
-                                                        Content = eraserPressure = new FloatSlider()
+                                                        Content = eraserDeadzone = new FloatSlider()
                                                     }
                                                 }
                                             }
@@ -95,13 +95,13 @@ namespace OpenTabletDriver.UX.Controls.Bindings
 
             tipButton.StoreBinding.Bind(SettingsBinding.Child(c => c.TipButton));
             eraserButton.StoreBinding.Bind(SettingsBinding.Child(c => c.EraserButton));
-            tipPressure.ValueBinding.Bind(SettingsBinding.Child(c => c.TipActivationPressure));
-            eraserPressure.ValueBinding.Bind(SettingsBinding.Child(c => c.EraserActivationPressure));
+            tipDeadzone.ValueBinding.Bind(SettingsBinding.Child(c => c.TipActivationDeadzone));
+            eraserDeadzone.ValueBinding.Bind(SettingsBinding.Child(c => c.EraserActivationDeadzone));
             penButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.PenButtons));
         }
 
         private BindingDisplay tipButton, eraserButton;
-        private FloatSlider tipPressure, eraserPressure;
+        private FloatSlider tipDeadzone eraserDeadzone;
         private BindingDisplayList penButtons;
     }
 }

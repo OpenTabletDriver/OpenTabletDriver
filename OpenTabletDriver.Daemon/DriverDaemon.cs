@@ -302,7 +302,7 @@ namespace OpenTabletDriver.Daemon
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
                 Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider),
-                ActivationThreshold = settings.TipActivationPressure
+                ActivationThreshold = settings.TipActivationDeadzone
             };
 
             if (tip.Binding != null)
@@ -313,7 +313,7 @@ namespace OpenTabletDriver.Daemon
             var eraser = bindingHandler.Eraser = new ThresholdBindingState
             {
                 Binding = settings.EraserButton?.Construct<IBinding>(bindingServiceProvider),
-                ActivationThreshold = settings.EraserActivationPressure
+                ActivationThreshold = settings.EraserActivationDeadzone
             };
 
             if (eraser.Binding != null)
