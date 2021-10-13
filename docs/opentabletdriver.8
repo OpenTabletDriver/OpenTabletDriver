@@ -22,4 +22,27 @@ interface.
 
 .SH OPTIONS
 
+
+.OP "-a, --appdata <directory>"
+
+Manually specify application data directory, defaults to
+~/.config/OpenTabletDriver/
+
+.OP "-c, --config <directory>"
+
+Manually specify configuration directory (location of JSON files used
+to recognize tablets)
+
+.OP "--version"
+
+Show version information
+
+.OP "-?, -h, --help"
+
+Show help and usage information
+
+
 .SH DIAGNOSTICS
+
+The daemon log is created in the application data directory, at
+~/.config/OpenTabletDriver/daemon.log
