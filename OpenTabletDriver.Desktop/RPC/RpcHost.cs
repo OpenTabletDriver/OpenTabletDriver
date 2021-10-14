@@ -7,20 +7,19 @@ using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
-    public class RpcHost<T> where T : new()
+    public class RpcHost<T> where T : class
     {
         private JsonRpc rpc;
         private readonly string pipeName;
 
         public event EventHandler<bool> ConnectionStateChanged;
-        public T Instance { protected set; get; } = new T();
 
         public RpcHost(string pipeName)
         {
             this.pipeName = pipeName;
         }
 
-        public async Task Main()
+        public async Task Run(T host)
         {
             while (true)
             {
@@ -31,7 +30,7 @@ namespace OpenTabletDriver.Desktop.RPC
                     try
                     {
                         ConnectionStateChanged?.Invoke(this, true);
-                        this.rpc = JsonRpc.Attach(stream, Instance);
+                        this.rpc = JsonRpc.Attach(stream, host);
                         await this.rpc.Completion;
                     }
                     catch (ObjectDisposedException)

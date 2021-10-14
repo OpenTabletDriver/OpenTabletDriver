@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Artist 15.6 Pro",
+  "Name": "XP-Pen Star G430S",
   "Specifications": {
     "Digitizer": {
-      "Width": 344.16,
-      "Height": 193.59,
-      "MaxX": 34416.0,
-      "MaxY": 19359.0,
+      "Width": 101.6,
+      "Height": 76.2,
+      "MaxX": 20320.0,
+      "MaxY": 15240.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -13,24 +13,24 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 8
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 2317,
-      "InputReportLength": 10,
+      "ProductID": 117,
+      "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAE"
+        "ArAC"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "G430S"
+      },
       "InitializationStrings": []
     }
   ],
