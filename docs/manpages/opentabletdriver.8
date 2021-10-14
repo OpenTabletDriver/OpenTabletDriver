@@ -23,6 +23,11 @@ interface.
 .SH OPTIONS
 
 
+.SS Daemon Options
+
+(Relevant to the portable tarball installation - OTD daemon when
+installed via package manager is launched by systemd or equivalent)
+
 .OP "-a, --appdata <directory>"
 
 Manually specify application data directory, defaults to
@@ -40,6 +45,23 @@ Show version information
 .OP "-?, -h, --help"
 
 Show help and usage information
+
+.SS Graphical Front-end Options
+
+(Relevant to the package manager installation, opentabletdriver
+command will take these arguments for manipulating the GUI)
+
+.OP "-m, --minimized"
+
+Start OpenTabletDriver minimized, if possible in the desktop environment installed
+
+.OP "--version"
+
+Show version information
+
+.OP "-?, -h, --help"
+
+Show help and usage information for the GUI
 
 
 .SH DIAGNOSTICS
