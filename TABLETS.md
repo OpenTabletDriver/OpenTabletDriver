@@ -5,6 +5,7 @@
 | Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
+| Genius i608x           |    Supported     | Require Zadig's WinUSB
 | Huion 1060 Plus        |    Supported     |
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
