@@ -9,14 +9,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using OpenTabletDriver.Desktop.Interop.Display;
-using OpenTabletDriver.Desktop.Interop.Input;
-using OpenTabletDriver.Desktop.Interop.Input.Absolute;
-using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
-using OpenTabletDriver.Desktop.Interop.Input.Relative;
-using OpenTabletDriver.Desktop.Interop.Timer;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
@@ -44,56 +38,12 @@ namespace OpenTabletDriver.Desktop.Reflection
             TemporaryDirectory = tempDirectory;
 
             // These services will always be provided on the desktop
-            switch (SystemInterop.CurrentPlatform)
-            {
-                case PluginPlatform.Windows:
-                {
-                    this.AddTransient<ITimer, WindowsTimer>();
-                    this.AddTransient<IAbsolutePointer, WindowsAbsolutePointer>();
-                    this.AddTransient<IRelativePointer, WindowsRelativePointer>();
-                    this.AddTransient<IVirtualKeyboard, WindowsVirtualKeyboard>();
-                    this.AddTransient<IVirtualScreen, WindowsDisplay>();
-                    break;
-                }
-                case PluginPlatform.Linux:
-                {
-                    this.AddTransient<ITimer, LinuxTimer>();
-                    this.AddSingleton<IAbsolutePointer, EvdevAbsolutePointer>();
-                    this.AddSingleton<IRelativePointer, EvdevRelativePointer>();
-                    this.AddSingleton<IVirtualTablet, EvdevVirtualTablet>();
-                    this.AddSingleton<IVirtualKeyboard, EvdevVirtualKeyboard>();
-
-                    if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)
-                    {
-                        this.AddSingleton<IVirtualScreen, WaylandDisplay>();
-                    }
-                    else if (Environment.GetEnvironmentVariable("DISPLAY") != null)
-                    {
-                        this.AddSingleton<IVirtualScreen, XScreen>();
-                    }
-                    else
-                    {
-                        Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
-                        this.AddSingleton<IVirtualScreen, XScreen>();
-                    }
-
-                    break;
-                }
-                case PluginPlatform.MacOS:
-                {
-                    this.AddTransient<IAbsolutePointer, MacOSAbsolutePointer>();
-                    this.AddTransient<IRelativePointer, MacOSRelativePointer>();
-                    this.AddTransient<IVirtualKeyboard, MacOSVirtualKeyboard>();
-                    this.AddTransient<IVirtualScreen, MacOSDisplay>();
-
-                    goto default;
-                }
-                default:
-                {
-                    this.AddTransient<FallbackTimer>();
-                    break;
-                }
-            }
+            this.AddSingleton(DesktopInterop.Timer);
+            this.AddSingleton(DesktopInterop.AbsolutePointer);
+            this.AddSingleton(DesktopInterop.RelativePointer);
+            this.AddSingleton(DesktopInterop.VirtualTablet);
+            this.AddSingleton(DesktopInterop.VirtualScreen);
+            this.AddSingleton(DesktopInterop.VirtualKeyboard);
         }
 
         public DirectoryInfo PluginDirectory { get; }
@@ -178,7 +128,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (!IsPlatformSupported(type))
                 {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {DesktopInterop.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
 

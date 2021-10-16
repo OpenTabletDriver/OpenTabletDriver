@@ -3,10 +3,8 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output.Area;
@@ -277,11 +275,8 @@ namespace OpenTabletDriver.UX.Controls.Output
             {
                 base.CreateMenu();
 
-                var serviceProvider = AppInfo.PluginManager.BuildServiceProvider();
-                var virtualScreen = serviceProvider.GetService<IVirtualScreen>();
-
                 var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
-                foreach (var display in virtualScreen.Displays)
+                foreach (var display in DesktopInterop.VirtualScreen.Displays)
                 {
                     subMenu.Items.Add(
                         new ActionCommand
@@ -291,13 +286,14 @@ namespace OpenTabletDriver.UX.Controls.Output
                             {
                                 this.Area.Width = display.Width;
                                 this.Area.Height = display.Height;
-                                if (display is IVirtualScreen root)
+                                if (display is IVirtualScreen virtualScreen)
                                 {
-                                    this.Area.X = root.Width / 2;
-                                    this.Area.Y = root.Height / 2;
+                                    this.Area.X = virtualScreen.Width / 2;
+                                    this.Area.Y = virtualScreen.Height / 2;
                                 }
                                 else
                                 {
+                                    virtualScreen = DesktopInterop.VirtualScreen;
                                     this.Area.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                                     this.Area.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                                 }
@@ -311,6 +307,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         public class TabletAreaEditor : RotationAreaEditor
         {
             public TabletAreaEditor()
+                : base()
             {
                 this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
             }
