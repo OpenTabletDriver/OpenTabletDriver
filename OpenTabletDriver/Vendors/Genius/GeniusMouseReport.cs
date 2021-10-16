@@ -18,11 +18,9 @@ namespace OpenTabletDriver.Vendors.Genius
             };
             MouseButtons = new bool[]
             {
-                report[1].IsBitSet(1), // primary
-                report[1].IsBitSet(2), // secondary
-                report[1].IsBitSet(3), // middle
-                report[6] == 0x01, // forward
-                report[6] == 0xFF, // backward
+                report[1].IsBitSet(0), // primary
+                report[1].IsBitSet(1), // secondary
+                report[1].IsBitSet(2), // middle
             };
             Scroll = new Vector2
             {
