@@ -279,7 +279,7 @@ namespace OpenTabletDriver.Daemon
             var bindingHandler = new BindingHandler(outputMode);
 
             var bindingServiceProvider = new ServiceManager();
-            object pointer = outputMode switch
+            object? pointer = outputMode switch
             {
                 AbsoluteOutputMode absoluteOutputMode => absoluteOutputMode.Pointer,
                 RelativeOutputMode relativeOutputMode => relativeOutputMode.Pointer,
@@ -345,11 +345,11 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState> targetDict)
+        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict)
         {
             for (int index = 0; index < collection.Count; index++)
             {
-                IBinding binding = collection[index]?.Construct<IBinding>(serviceManager);
+                var binding = collection[index]?.Construct<IBinding>(serviceManager);
                 var state = binding == null ? null : new BindingState
                 {
                     Binding = binding
