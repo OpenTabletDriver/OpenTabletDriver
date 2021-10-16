@@ -1,5 +1,6 @@
 using System;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Timers;
 using OpenTabletDriver.Plugin.Timing;
 
@@ -7,11 +8,6 @@ namespace OpenTabletDriver.Plugin.Output
 {
     public abstract class AsyncPositionedPipelineElement<T> : IPositionedPipelineElement<T>, IDisposable
     {
-        protected AsyncPositionedPipelineElement(ITimer scheduler)
-        {
-            this.scheduler = scheduler;
-        }
-
         private readonly object synchronizationObject = new object();
         private HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch();
         private ITimer scheduler;
@@ -27,6 +23,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         public abstract PipelinePosition Position { get; }
 
+        [Resolved]
         public ITimer Scheduler
         {
             set

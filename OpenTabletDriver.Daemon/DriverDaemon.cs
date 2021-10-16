@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
@@ -100,7 +99,7 @@ namespace OpenTabletDriver.Daemon
             AppInfo.PluginManager.Load();
 
             // Add services to inject on plugin construction
-            AppInfo.PluginManager.AddSingleton<IDriver>(this.Driver);
+            AppInfo.PluginManager.AddService<IDriver>(() => this.Driver);
 
             return Task.CompletedTask;
         }
@@ -150,7 +149,7 @@ namespace OpenTabletDriver.Daemon
                 if (obj is IDisposable disposable)
                     disposable.Dispose();
 
-            Settings = settings ?? Settings.GetDefaults();
+            Settings = settings ??= Settings.GetDefaults();
 
             foreach (var dev in Driver.InputDevices)
             {
@@ -159,12 +158,7 @@ namespace OpenTabletDriver.Daemon
 
                 profile.BindingSettings.MatchSpecifications(dev.Properties.Specifications);
 
-                var serviceCollection = AppInfo.PluginManager.Clone();
-                serviceCollection.AddSingleton(dev.Properties);
-
-                var serviceProvider = serviceCollection.BuildServiceProvider();
-
-                dev.OutputMode = profile.OutputMode.Construct<IOutputMode>(serviceProvider);
+                dev.OutputMode = profile.OutputMode.Construct<IOutputMode>();
 
                 if (dev.OutputMode != null)
                     Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
@@ -177,14 +171,14 @@ namespace OpenTabletDriver.Daemon
 
                 if (dev.OutputMode is IOutputMode outputMode)
                 {
-                    SetOutputModeSettings(serviceCollection, dev, outputMode, profile);
-                    SetBindingHandlerSettings(serviceCollection, dev, outputMode, profile.BindingSettings);
+                    SetOutputModeSettings(dev, outputMode, profile);
+                    SetBindingHandlerSettings(dev, outputMode, profile.BindingSettings);
                 }
             }
 
             Log.Write("Settings", "Driver is enabled.");
 
-            SetToolSettings(AppInfo.PluginManager);
+            SetToolSettings();
 
             return Task.CompletedTask;
         }
@@ -232,16 +226,14 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetOutputModeSettings(IServiceCollection serviceCollection, InputDeviceTree dev, IOutputMode outputMode, Profile profile)
+        private void SetOutputModeSettings(InputDeviceTree dev, IOutputMode outputMode, Profile profile)
         {
-            var provider = serviceCollection.BuildServiceProvider();
-
             string group = dev.Properties.Name;
             outputMode.Tablet = dev;
 
             var elements = from store in profile.Filters
-                where store.Enable
-                let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(provider)
+                where store.Enable == true
+                let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>()
                 where filter != null
                 select filter;
             outputMode.Elements = elements.ToList();
@@ -281,13 +273,13 @@ namespace OpenTabletDriver.Daemon
             Log.Write(group, $"Reset time: {relativeMode.ResetTime}");
         }
 
-        private void SetBindingHandlerSettings(IServiceCollection serviceCollection, InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings)
+        private void SetBindingHandlerSettings(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings)
         {
             string group = dev.Properties.Name;
             var bindingHandler = new BindingHandler(outputMode);
 
-            var bindingServices = serviceCollection.Clone();
-            object? pointer = outputMode switch
+            var bindingServiceProvider = new ServiceManager();
+            object pointer = outputMode switch
             {
                 AbsoluteOutputMode absoluteOutputMode => absoluteOutputMode.Pointer,
                 RelativeOutputMode relativeOutputMode => relativeOutputMode.Pointer,
@@ -295,9 +287,7 @@ namespace OpenTabletDriver.Daemon
             };
 
             if (pointer is IVirtualMouse virtualMouse)
-                bindingServices.AddSingleton(virtualMouse);
-
-            var bindingServiceProvider = bindingServices.BuildServiceProvider();
+                bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
 
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
@@ -355,11 +345,11 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetBindingHandlerCollectionSettings(IServiceProvider serviceProvider, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict)
+        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState> targetDict)
         {
             for (int index = 0; index < collection.Count; index++)
             {
-                IBinding? binding = collection[index]?.Construct<IBinding>(serviceProvider);
+                IBinding binding = collection[index]?.Construct<IBinding>(serviceManager);
                 var state = binding == null ? null : new BindingState
                 {
                     Binding = binding
@@ -370,10 +360,8 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetToolSettings(IServiceCollection serviceCollection)
+        private void SetToolSettings()
         {
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
             foreach (var runningTool in Tools)
                 runningTool.Dispose();
             Tools.Clear();
@@ -385,7 +373,7 @@ namespace OpenTabletDriver.Daemon
                     if (store.Enable == false)
                         continue;
 
-                    var tool = store.Construct<ITool>(serviceProvider);
+                    var tool = store.Construct<ITool>();
 
                     if (tool?.Initialize() ?? false)
                         Tools.Add(tool);
