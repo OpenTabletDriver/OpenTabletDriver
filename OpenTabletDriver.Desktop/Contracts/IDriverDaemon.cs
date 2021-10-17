@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -20,6 +21,8 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<bool> InstallPlugin(string filePath);
         Task<bool> UninstallPlugin(string friendlyName);
         Task<bool> DownloadPlugin(PluginMetadata metadata);
+
+        Task<IEnumerable<SerializedDeviceEndpoint>> GetDevices();
 
         Task<IEnumerable<TabletReference>> GetTablets();
         Task<IEnumerable<TabletReference>> DetectTablets();

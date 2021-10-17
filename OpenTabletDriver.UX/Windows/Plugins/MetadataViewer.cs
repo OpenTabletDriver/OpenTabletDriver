@@ -5,8 +5,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -152,10 +152,10 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             license.TextBinding.Bind(MetadataBinding.Child(c => c.LicenseIdentifier));
             
             sourceCode.GetEnabledBinding().Bind(MetadataBinding.Child(c => c.RepositoryUrl).Convert(c => c != null));
-            sourceCode.Click += (sender, e) => DesktopInterop.Open(Metadata.RepositoryUrl);
+            sourceCode.Click += (sender, e) => SystemInterop.Open(Metadata.RepositoryUrl);
 
             wiki.GetEnabledBinding().Bind(MetadataBinding.Child(c => c.WikiUrl).Convert(c => c != null));
-            wiki.Click += (sender, e) => DesktopInterop.Open(Metadata.WikiUrl);
+            wiki.Click += (sender, e) => SystemInterop.Open(Metadata.WikiUrl);
 
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
@@ -276,7 +276,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                     Width = 175,
                     Enabled = !string.IsNullOrEmpty(link)
                 };
-                linkButton.Click += (sender, e) => DesktopInterop.Open(link);
+                linkButton.Click += (sender, e) => SystemInterop.Open(link);
 
                 this.Text = header;
                 this.Content = new StackLayout

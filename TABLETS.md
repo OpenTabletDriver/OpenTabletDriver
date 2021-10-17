@@ -2,8 +2,10 @@
 | ---------------------- | :--------------: | ----- |
 | Gaomon 1060 Pro        |    Supported     |
 | Gaomon PD1161          |    Supported     |
+| Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
+| Genius i608x           |    Supported     | Require Zadig's WinUSB
 | Huion 1060 Plus        |    Supported     |
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
@@ -21,6 +23,7 @@
 | VEIKK S640             |    Supported     |
 | VEIKK S640 V2          |    Supported     |
 | Wacom CTE-430          |    Supported     |
+| Wacom CTE-630          |    Supported     |
 | Wacom CTE-460          |    Supported     |
 | Wacom CTE-640          |    Supported     |
 | Wacom CTF-430          |    Supported     |
@@ -44,6 +47,7 @@
 | Wacom CTL-672          |    Supported     |
 | Wacom CTL-680          |    Supported     |
 | Wacom CTL-690          |    Supported     |
+| Wacom ET-0405A-U       |    Supported     |
 | Wacom FT-0405-U        |    Supported     |
 | Wacom GD-0405-U        |    Supported     |
 | Wacom GD-0608-U        |    Supported     |
@@ -62,6 +66,7 @@
 | XP-Pen Star G960S      |    Supported     |
 | XP-Pen Star G960S Plus |    Supported     |
 | Parblo Ninos S         |   Has Quirks     | Aux buttons are not in order
+| Parblo Ninos M         |   Has Quirks     | Aux buttons are not in order
 | Artisul M0610 Pro      | Missing Features | Tablet buttons, tilt, and wheel are unsupported.
 | Gaomon M106K Pro       | Missing Features | Tilt is unsupported.
 | Gaomon M10K            | Missing Features | Wheel is unsupported.
@@ -80,12 +85,15 @@
 | Huion New 1060 Plus    | Missing Features | Tilt is unsupported.
 | Huion Q11K V2          | Missing Features | Tilt is unsupported.
 | Huion Q620M            | Missing Features | Wheel is unsupported.
+| Parblo Intangbo M      | Missing Features | Wheel is unsupported.
 | Parblo Intangbo S      | Missing Features | Wheel is unsupported.
 | VEIKK A15 Pro          | Missing Features | Wheel is unsupported.
 | VEIKK A30              | Missing Features | Touchpad is unsupported.
 | VEIKK A50              | Missing Features | Touchpad is unsupported.
+| VEIKK VK640            | Missing Features | Aux buttons are unsupported.
 | Wacom CTE-450          | Missing Features | Wheel is unsupported.
 | Wacom CTE-650          | Missing Features | Wheel is unsupported.
+| Wacom CTH-461          | Missing Features | Tablet buttons and touch are unsupported.
 | Wacom CTL-6100WL       | Missing Features | Wireless is unsupported.
 | Wacom MTE-450          | Missing Features | Wheel is unsupported.
 | Wacom PTH-450          | Missing Features | Wheel is unsupported.
@@ -106,6 +114,7 @@
 | Wacom PTZ-630          | Missing Features | Tablet buttons and touch strips are unsupported.
 | Wacom PTZ-930          | Missing Features | Tablet buttons and touch strips are unsupported.
 | XP-Pen Artist Pro 12   | Missing Features | Tilt and wheel are unsupported.
+| XP-Pen Artist Pro 15.6 | Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Deco 01 V2      | Missing Features | Tilt is unsupported.
 | XP-Pen Deco 02         | Missing Features | Wheel is unsupported.
 | XP-Pen Deco 03         | Missing Features | Wheel is unsupported.

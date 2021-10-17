@@ -1,16 +1,15 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class PluginManager : ServiceManager
+    public class PluginManager : ServiceCollection
     {
         public PluginManager()
         {
@@ -22,71 +21,42 @@ namespace OpenTabletDriver.Desktop.Reflection
                 where IsPlatformSupported(type)
                 select type;
 
-            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
+            foreach (var type in internalTypes)
+            {
+                this.AddTransient(type);
+            }
         }
 
-        public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
-        protected ConcurrentBag<TypeInfo> pluginTypes;
+        public IEnumerable<Type> Types => from descriptor in this
+            where descriptor.ServiceType != null
+            select descriptor.ServiceType;
 
         protected readonly static IEnumerable<Type> libTypes =
             from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
                 where type.IsAbstract || type.IsInterface
                 select type;
 
-        public virtual PluginReference GetPluginReference(string path) => new PluginReference(this, path);
-        public virtual PluginReference GetPluginReference(Type type) => GetPluginReference(type.FullName);
-        public virtual PluginReference GetPluginReference(object obj) => GetPluginReference(obj.GetType());
-
-        public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
+        public virtual IReadOnlyCollection<Type> GetChildTypes<T>()
         {
-            args ??= new object[0];
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                try
-                {
-                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
-                    {
-                        var matchingConstructors = from ctor in type.GetConstructors()
-                            let parameters = ctor.GetParameters()
-                            where parameters.Length == args.Length
-                            where IsValidParameterFor(args, parameters)
-                            select ctor;
-
-                        if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
-                        {
-                            T obj = (T)constructor.Invoke(args) ?? null;
-
-                            if (obj != null)
-                                Inject(obj, type);
-                            return obj;
-                        }
-                        else
-                        {
-                            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
-                        }
-                    }
-                }
-                catch (TargetInvocationException e) when (e.Message == "Exception has been thrown by the target of an invocation.")
-                {
-                    Log.Write("Plugin", "Object construction has thrown an error", LogLevel.Error);
-                    Log.Exception(e.InnerException);
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
-                    Log.Exception(e);
-                }
-            }
-            return null;
-        }
-
-        public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
-        {
-            var children = from type in PluginTypes
+            var children = from type in Types
                 where typeof(T).IsAssignableFrom(type)
                 select type;
 
             return children.ToArray();
+        }
+
+        public virtual Type GetTypeFromPath(string path)
+        {
+            return Types.FirstOrDefault(t => t.FullName == path);
+        }
+
+        public virtual string GetFriendlyName(string path)
+        {
+            if (GetTypeFromPath(path) is TypeInfo plugin)
+            {
+                return plugin.GetFriendlyName();
+            }
+            return null;
         }
 
         protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
@@ -105,7 +75,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             return !type.IsAbstract && !type.IsInterface &&
                 libTypes.Any(t => t.IsAssignableFrom(type) ||
-                    type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
+                type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
         }
 
         protected virtual bool IsPlatformSupported(Type type)

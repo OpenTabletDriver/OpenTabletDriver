@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Reflection
 {
@@ -24,8 +25,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
             if (SelectedItem != null)
             {
                 args ??= Array.Empty<object>();
-                var pluginRef = AppInfo.PluginManager.GetPluginReference(SelectedItem);
-                return pluginRef.Construct<T>();
+                return AppInfo.PluginManager.ConstructObject<T>(SelectedItem.FullName);
             }
             return null;
         }
