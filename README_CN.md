@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](README.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | 简体中文
+[English](README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | 简体中文
 
 OpenTabletDriver是一个开源的，跨平台的数位板驱动。其目标是在拥有直观的可自定义的界面的同时能跨平台并兼容尽可能多的设备。
 
