@@ -92,6 +92,7 @@
 | VEIKK VK640            | Missing Features | Aux buttons are unsupported.
 | Wacom CTE-450          | Missing Features | Wheel is unsupported.
 | Wacom CTE-650          | Missing Features | Wheel is unsupported.
+| Wacom CTH-461          | Missing Features | Tablet buttons and touch are unsupported.
 | Wacom CTL-6100WL       | Missing Features | Wireless is unsupported.
 | Wacom MTE-450          | Missing Features | Wheel is unsupported.
 | Wacom PTH-450          | Missing Features | Wheel is unsupported.
