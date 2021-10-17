@@ -34,6 +34,21 @@
         "4": "UG901_BPU1002"
       },
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2306,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {
+        "4": "UG901_BPU1002"
+      },
+      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
