@@ -139,17 +139,13 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             reportsRecorded.TextBinding.Bind(NumberOfReportsRecordedBinding.Convert(c => c.ToString()));
             tabletVisualizer.ReportDataBinding.Bind(ReportDataBinding);
 
-            Application.Instance.AsyncInvoke(async () =>
+            Application.Instance.AsyncInvoke(() =>
             {
                 App.Driver.AddConnectionHook(ConnectionHook);
-                await App.Driver.Instance.SetTabletDebug(true);
-
-                var tablets = await App.Driver.Instance.GetTablets();
-                HandleTabletsChanged(this, tablets);
-
-                var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
-                dataRecordingOutput = new StreamWriter(outputStream);
             });
+
+            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
+            dataRecordingOutput = new StreamWriter(outputStream);
         }
 
         protected override async void OnClosing(CancelEventArgs e)
@@ -263,6 +259,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             daemon.DeviceReport += HandleReport;
             daemon.TabletsChanged += HandleTabletsChanged;
+            App.Driver.Instance.SetTabletDebug(true);
         }
 
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>

@@ -93,7 +93,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 var enableButton = new CheckBox
                 {
-                    Text = $"Enable {store.GetPluginReference().Name ?? store.Path}",
+                    Text = $"Enable {store.Name?? store.Path}",
                     Checked = store.Enable
                 };
                 enableButton.CheckedChanged += (sender, e) => store.Enable = enableButton.Checked ?? false;

@@ -1,9 +1,12 @@
 using System;
-using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
+using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Output.Area;
@@ -63,17 +66,18 @@ namespace OpenTabletDriver.UX.Controls.Output
             displayHeight = SettingsBinding.Child(c => c.Display.Height);
             tabletWidth = SettingsBinding.Child(c => c.Tablet.Width);
             tabletHeight = SettingsBinding.Child(c => c.Tablet.Height);
+            tabletWidth.DataValueChanged += HandleTabletAreaConstraint;
+            tabletHeight.DataValueChanged += HandleTabletAreaConstraint;
 
-            displayWidth.DataValueChanged += HandleAspectRatioLock;
-            displayHeight.DataValueChanged += HandleAspectRatioLock;
-            tabletWidth.DataValueChanged += HandleAspectRatioLock;
-            tabletHeight.DataValueChanged += HandleAspectRatioLock;
+            tabletAreaEditor.LockAspectRatioChanged += HookAspectRatioLock;
+            HookAspectRatioLock(tabletAreaEditor, EventArgs.Empty);
         }
 
         internal DisplayAreaEditor displayAreaEditor;
         internal TabletAreaEditor tabletAreaEditor;
 
         private bool handlingArLock;
+        private bool handlingForcedArConstraint;
         private float? prevDisplayWidth;
         private float? prevDisplayHeight;
         private DirectBinding<float> displayWidth;
@@ -110,16 +114,83 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
         }
 
+        private void HookAspectRatioLock(object sender, EventArgs args)
+        {
+            if (Settings?.LockAspectRatio ?? false)
+            {
+                lock (this)
+                {
+                    HandleAspectRatioLock(tabletAreaEditor, EventArgs.Empty);
+
+                    displayWidth.DataValueChanged += HandleAspectRatioLock;
+                    displayHeight.DataValueChanged += HandleAspectRatioLock;
+                    tabletWidth.DataValueChanged += HandleAspectRatioLock;
+                    tabletHeight.DataValueChanged += HandleAspectRatioLock;
+                }
+            }
+            else
+            {
+                lock (this)
+                {
+                    displayWidth.DataValueChanged -= HandleAspectRatioLock;
+                    displayHeight.DataValueChanged -= HandleAspectRatioLock;
+                    tabletWidth.DataValueChanged -= HandleAspectRatioLock;
+                    tabletHeight.DataValueChanged -= HandleAspectRatioLock;
+                }
+            }
+        }
+
+        private void HookAreaConstraint(object sender, EventArgs args)
+        {
+            var areaEditor = (AreaEditor)sender;
+            if (areaEditor.LockToUsableArea)
+            {
+                lock (this)
+                {
+                    if (sender == tabletAreaEditor)
+                    {
+                        tabletWidth.DataValueChanged += HandleTabletAreaConstraint;
+                        tabletHeight.DataValueChanged += HandleTabletAreaConstraint;
+                    }
+                    else if (sender == displayAreaEditor)
+                    {
+                        displayWidth.DataValueChanged += HandleDisplayAreaConstraint;
+                        displayHeight.DataValueChanged += HandleDisplayAreaConstraint;
+                    }
+                }
+            }
+            else
+            {
+                lock (this)
+                {
+                    if (sender == tabletAreaEditor)
+                    {
+                        tabletWidth.DataValueChanged -= HandleTabletAreaConstraint;
+                        tabletHeight.DataValueChanged -= HandleTabletAreaConstraint;
+                    }
+                    else if (sender == displayAreaEditor)
+                    {
+                        displayWidth.DataValueChanged -= HandleDisplayAreaConstraint;
+                        displayHeight.DataValueChanged -= HandleDisplayAreaConstraint;
+                    }
+                }
+            }
+        }
+
         private void HandleAspectRatioLock(object sender, EventArgs e)
         {
-            if (!handlingArLock && (Settings?.LockAspectRatio ?? false))
+            if (!handlingArLock)
             {
                 // Avoids looping
                 handlingArLock = true;
 
-                if ((sender == displayWidth || sender == tabletWidth) && prevDisplayWidth is float prevWidth)
+                if (sender == tabletWidth || sender == tabletAreaEditor)
+                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                else if (sender == tabletHeight)
+                    tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                else if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
                     tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
-                else if ((sender == displayHeight || sender == tabletHeight) && prevDisplayHeight is float prevHeight)
+                else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
                     tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
 
                 prevDisplayWidth = displayWidth.DataValue;
@@ -127,6 +198,71 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 handlingArLock = false;
             }
+        }
+
+        private void HandleTabletAreaConstraint(object sender, EventArgs args)
+        {
+            ForceAreaConstraint(tabletAreaEditor.Display, args);
+        }
+
+        private void HandleDisplayAreaConstraint(object sender, EventArgs args)
+        {
+            ForceAreaConstraint(displayAreaEditor.Display, args);
+        }
+
+        private void ForceAreaConstraint(object sender, EventArgs args)
+        {
+            var display = (AreaDisplay)sender;
+            if (!handlingForcedArConstraint && display.LockToUsableArea && display.Area != null)
+            {
+                handlingForcedArConstraint = true;
+                var fullBounds = display.FullAreaBounds;
+
+                if (fullBounds.Width != 0 && fullBounds.Height != 0)
+                {
+                    if (display.Area.Width > fullBounds.Width)
+                        display.Area.Width = fullBounds.Width;
+                    if (display.Area.Height > fullBounds.Height)
+                        display.Area.Height = fullBounds.Height;
+
+                    var correction = GetOutOfBoundsAmount(display, display.Area.X, display.Area.Y);
+                    display.Area.X -= correction.X;
+                    display.Area.Y -= correction.Y;
+                }
+
+                handlingForcedArConstraint = false;
+            }
+        }
+
+        private static Vector2 GetOutOfBoundsAmount(AreaDisplay display, float X, float Y)
+        {
+            var bounds = display.FullAreaBounds;
+            bounds.X = 0;
+            bounds.Y = 0;
+
+            var area = display.Area;
+            var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(area.Width, area.Height));
+
+            var corners = new PointF[]
+            {
+                    PointF.Rotate(rect.TopLeft, area.Rotation),
+                    PointF.Rotate(rect.TopRight, area.Rotation),
+                    PointF.Rotate(rect.BottomRight, area.Rotation),
+                    PointF.Rotate(rect.BottomLeft, area.Rotation)
+            };
+
+            var pseudoArea = new RectangleF(
+                PointF.Min(corners[0], PointF.Min(corners[1], PointF.Min(corners[2], corners[3]))),
+                PointF.Max(corners[0], PointF.Max(corners[1], PointF.Max(corners[2], corners[3])))
+            );
+
+            pseudoArea.Center += new PointF(X, Y);
+
+            return new Vector2
+            {
+                X = Math.Max(pseudoArea.Right - bounds.Right - 1, 0) + Math.Min(pseudoArea.Left - bounds.Left, 0),
+                Y = Math.Max(pseudoArea.Bottom - bounds.Bottom - 1, 0) + Math.Min(pseudoArea.Top - bounds.Top, 0)
+            };
         }
 
         public class DisplayAreaEditor : AreaEditor
@@ -141,8 +277,11 @@ namespace OpenTabletDriver.UX.Controls.Output
             {
                 base.CreateMenu();
 
+                var serviceProvider = AppInfo.PluginManager.BuildServiceProvider();
+                var virtualScreen = serviceProvider.GetService<IVirtualScreen>();
+
                 var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
-                foreach (var display in DesktopInterop.VirtualScreen.Displays)
+                foreach (var display in virtualScreen.Displays)
                 {
                     subMenu.Items.Add(
                         new ActionCommand
@@ -152,14 +291,13 @@ namespace OpenTabletDriver.UX.Controls.Output
                             {
                                 this.Area.Width = display.Width;
                                 this.Area.Height = display.Height;
-                                if (display is IVirtualScreen virtualScreen)
+                                if (display is IVirtualScreen root)
                                 {
-                                    this.Area.X = virtualScreen.Width / 2;
-                                    this.Area.Y = virtualScreen.Height / 2;
+                                    this.Area.X = root.Width / 2;
+                                    this.Area.Y = root.Height / 2;
                                 }
                                 else
                                 {
-                                    virtualScreen = DesktopInterop.VirtualScreen;
                                     this.Area.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
                                     this.Area.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
                                 }
@@ -173,7 +311,6 @@ namespace OpenTabletDriver.UX.Controls.Output
         public class TabletAreaEditor : RotationAreaEditor
         {
             public TabletAreaEditor()
-                : base()
             {
                 this.ToolTip = "You can right click the area editor to enable aspect ratio locking, adjust alignment, or resize the area.";
             }

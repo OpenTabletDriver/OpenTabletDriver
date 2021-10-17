@@ -1,5 +1,7 @@
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
 
@@ -7,8 +9,15 @@ namespace OpenTabletDriver.Benchmarks.Output
 {
     public class LinuxInteropBenchmark
     {
-        EvdevAbsolutePointer absolutePointer = new EvdevAbsolutePointer();
-        EvdevRelativePointer relativePointer = new EvdevRelativePointer();
+        public LinuxInteropBenchmark()
+        {
+            var serviceProvider = AppInfo.PluginManager.BuildServiceProvider();
+            absolutePointer = serviceProvider.GetRequiredService<EvdevAbsolutePointer>();
+            relativePointer = serviceProvider.GetRequiredService<EvdevRelativePointer>();
+        }
+
+        private EvdevAbsolutePointer absolutePointer;
+        private EvdevRelativePointer relativePointer;
 
         [Benchmark]
         public void EvdevAbsolute()

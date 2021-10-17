@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Attributes;
 
@@ -31,6 +32,13 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
         }
 
+        public PluginSettingStore(Type type, object settings, bool enable = true)
+        {
+            Path = type.FullName;
+            Settings = GetSettingsFromObject(settings);
+            Enable = enable;
+        }
+
         [JsonConstructor]
         private PluginSettingStore()
         {
@@ -38,18 +46,23 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public string Path { set; get; }
 
+        [JsonIgnore]
+        public string Name => AppInfo.PluginManager.GetFriendlyName(Path);
+
         public ObservableCollection<PluginSetting> Settings { set; get; }
 
         public bool Enable { set; get; }
 
-        public PluginReference GetPluginReference() => new StoredPluginReference(AppInfo.PluginManager, this);
-
-        public T Construct<T>() where T : class => this.GetPluginReference().Construct<T>();
-        public T Construct<T>(params object[] args) where T : class => this.GetPluginReference().Construct<T>(args);
+        public T Construct<T>(IServiceProvider provider) where T : class
+        {
+            var obj = provider.GetRequiredService<T>(Path);
+            ApplySettings(obj);
+            return obj;
+        }
 
         public static PluginSettingStore FromPath(string path)
         {
-            var pathType = AppInfo.PluginManager.GetPluginReference(path).GetTypeReference();
+            var pathType = AppInfo.PluginManager.Types.FirstOrDefault(t => t.FullName == path);
             return pathType != null ? new PluginSettingStore(pathType) : null;
         }
 
@@ -80,6 +93,13 @@ namespace OpenTabletDriver.Desktop.Reflection
             var settings = from property in targetType.GetProperties()
                 where property.GetCustomAttribute<PropertyAttribute>() is PropertyAttribute
                 select new PluginSetting(property, source == null ? null : property.GetValue(source));
+            return new ObservableCollection<PluginSetting>(settings);
+        }
+
+        private static ObservableCollection<PluginSetting> GetSettingsFromObject(object obj)
+        {
+            var settings = from property in obj.GetType().GetProperties()
+                select new PluginSetting(property.Name, property.GetValue(obj));
             return new ObservableCollection<PluginSetting>(settings);
         }
 
@@ -118,10 +138,20 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public string GetHumanReadableString()
         {
-            var name = this.GetPluginReference().Name;
+            var name = Name;
             string settings = string.Join(", ", this.Settings.Select(s => $"({s.Property}: {s.Value})"));
             string suffix = Settings.Any() ? $": {settings}" : string.Empty;
             return name + suffix;
+        }
+
+        public TypeInfo GetTypeInfo()
+        {
+            return AppInfo.PluginManager.Types.FirstOrDefault(t => t.FullName == Path).GetTypeInfo();
+        }
+
+        public TypeInfo GetTypeInfo<T>()
+        {
+            return AppInfo.PluginManager.GetChildTypes<T>().FirstOrDefault(t => t.FullName == Path).GetTypeInfo();
         }
     }
 }

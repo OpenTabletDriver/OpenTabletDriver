@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -12,13 +11,17 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName(PLUGIN_NAME)]
     public class MultiKeyBinding : IStateBinding
     {
+        public MultiKeyBinding(IVirtualKeyboard keyboard)
+        {
+            Keyboard = keyboard;
+        }
+
         private const string PLUGIN_NAME = "Multi-Key Binding";
         private const char KEYS_SPLITTER = '+';
 
         private IList<string> keys;
         private string keysString;
 
-        [Resolved]
         public IVirtualKeyboard Keyboard { set; get; }
 
         [Property("Keys")]

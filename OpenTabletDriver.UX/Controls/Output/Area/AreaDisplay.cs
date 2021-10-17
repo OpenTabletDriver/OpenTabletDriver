@@ -26,13 +26,13 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         public event EventHandler<EventArgs> InvalidForegroundErrorChanged;
         public event EventHandler<EventArgs> InvalidBackgroundErrorChanged;
 
-        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnFullAreaBoundsChanged() => FullAreaBoundsChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnInvalidBackgroundErrorChanged() => InvalidBackgroundErrorChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnAreaChanged() => AreaChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnLockToUsableAreaChanged() => LockToUsableAreaChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnAreaBoundsChanged() => AreaBoundsChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnFullAreaBoundsChanged() => FullAreaBoundsChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnInvalidForegroundErrorChanged() => InvalidForegroundErrorChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnInvalidBackgroundErrorChanged() => InvalidBackgroundErrorChanged?.Invoke(this, EventArgs.Empty);
 
         public AreaSettings Area
         {
@@ -264,34 +264,9 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     var newX = viewModelOffset.Value.X + (delta.X / PixelScale);
                     var newY = viewModelOffset.Value.Y + (delta.Y / PixelScale);
 
-                    if (LockToUsableArea)
-                    {
-                        var bounds = FullAreaBounds;
-                        bounds.X = 0;
-                        bounds.Y = 0;
-
-                        var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(Area.Width, Area.Height));
-
-                        var corners = new PointF[]
-                        {
-                            PointF.Rotate(rect.TopLeft, Area.Rotation),
-                            PointF.Rotate(rect.TopRight, Area.Rotation),
-                            PointF.Rotate(rect.BottomRight, Area.Rotation),
-                            PointF.Rotate(rect.BottomLeft, Area.Rotation)
-                        };
-                        var pseudoArea = new RectangleF(
-                            PointF.Min(corners[0], PointF.Min(corners[1], PointF.Min(corners[2], corners[3]))),
-                            PointF.Max(corners[0], PointF.Max(corners[1], PointF.Max(corners[2], corners[3])))
-                        );
-                        pseudoArea.Center += new PointF(newX, newY);
-
-                        var correction = OutOfBoundsAmount(bounds, pseudoArea);
-                        newX -= correction.X;
-                        newY -= correction.Y;
-                    }
-
                     Area.X = newX;
                     Area.Y = newY;
+                    OnAreaChanged();
                 }
                 else
                 {
@@ -441,15 +416,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private static bool IsValid(RectangleF rect)
         {
             return rect.Width > 0 && rect.Height > 0;
-        }
-
-        private static Vector2 OutOfBoundsAmount(RectangleF bounds, RectangleF rect)
-        {
-            return new Vector2
-            {
-                X = Math.Max(rect.Right - bounds.Right - 1, 0) + Math.Min(rect.Left - bounds.Left, 0),
-                Y = Math.Max(rect.Bottom - bounds.Bottom - 1, 0) + Math.Min(rect.Top - bounds.Top, 0)
-            };
         }
     }
 }
