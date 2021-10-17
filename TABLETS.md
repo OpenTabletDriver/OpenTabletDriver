@@ -5,6 +5,7 @@
 | Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
+| Genius i608x           |    Supported     | Require Zadig's WinUSB
 | Huion 1060 Plus        |    Supported     |
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
@@ -88,8 +89,10 @@
 | VEIKK A15 Pro          | Missing Features | Wheel is unsupported.
 | VEIKK A30              | Missing Features | Touchpad is unsupported.
 | VEIKK A50              | Missing Features | Touchpad is unsupported.
+| VEIKK VK640            | Missing Features | Aux buttons are unsupported.
 | Wacom CTE-450          | Missing Features | Wheel is unsupported.
 | Wacom CTE-650          | Missing Features | Wheel is unsupported.
+| Wacom CTH-461          | Missing Features | Tablet buttons and touch are unsupported.
 | Wacom CTL-6100WL       | Missing Features | Wireless is unsupported.
 | Wacom MTE-450          | Missing Features | Wheel is unsupported.
 | Wacom PTH-450          | Missing Features | Wheel is unsupported.

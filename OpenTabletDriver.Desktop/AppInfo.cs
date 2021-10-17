@@ -3,8 +3,8 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Text;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop
         public static AppInfo Current
         {
             set => _current = value;
-            get => _current ??= DesktopInterop.CurrentPlatform switch
+            get => _current ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => new AppInfo
                 {

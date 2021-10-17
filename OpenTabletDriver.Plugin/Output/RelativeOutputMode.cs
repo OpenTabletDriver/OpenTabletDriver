@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Plugin.Output
     /// A relatively positioned output mode.
     /// </summary>
     [PluginIgnore]
-    public abstract class RelativeOutputMode : OutputMode
+    public abstract class RelativeOutputMode : OutputMode, IPointerProvider<IRelativePointer>
     {
         private Vector2? lastPos;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
