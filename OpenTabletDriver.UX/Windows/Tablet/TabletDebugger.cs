@@ -116,7 +116,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 }
             };
 
-            this.Content = new Splitter
+            var splitter = new Splitter
             {
                 Orientation = Orientation.Vertical,
                 Width = 640,
@@ -128,6 +128,11 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     Content = tabletVisualizer = new TabletVisualizer()
                 },
                 Panel2 = debugger
+            };
+
+            this.Content = new Scrollable
+            {
+                Content = splitter
             };
 
             var reportBinding = ReportDataBinding.Child(c => (c.ToObject() as IDeviceReport));
