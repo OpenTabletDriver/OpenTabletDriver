@@ -2,9 +2,9 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Vendors.XP_Pen;
 
-namespace OpenTabletDriver.Vendors.XenceLab
+namespace OpenTabletDriver.Vendors.XenceLabs
 {
-    public class XenceLabReportParser : IReportParser<IDeviceReport>
+    public class XenceLabsReportParser : IReportParser<IDeviceReport>
     {
         public IDeviceReport Parse(byte[] report)
         {
@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Vendors.XenceLab
             if ((reportByte & 0xf0) == 0xf0)
                 return new XP_PenAuxReport(report);
             else if (reportByte.IsBitSet(5))
-                return new XenceLabTabletReport(report);
+                return new XenceLabsTabletReport(report);
 
             return new DeviceReport(report);
         }

@@ -51,6 +51,7 @@
 | Wacom GD-0405-U        |    Supported     |
 | Wacom GD-0608-U        |    Supported     |
 | Wacom XD-0608-U        |    Supported     |
+| XenceLabs Pen Tablet Medium |  Supported  |
 | XP-Pen CT430           |    Supported     |
 | XP-Pen CT460           |    Supported     |
 | XP-Pen Deco 01         |    Supported     |

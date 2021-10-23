@@ -3,11 +3,11 @@ using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Vendors.XenceLab
+namespace OpenTabletDriver.Vendors.XenceLabs
 {
-    public struct XenceLabTabletReport : ITabletReport, IEraserReport, ITiltReport
+    public struct XenceLabsTabletReport : ITabletReport, IEraserReport, ITiltReport
     {
-        public XenceLabTabletReport(byte[] report)
+        public XenceLabsTabletReport(byte[] report)
         {
             Raw = report;
 
