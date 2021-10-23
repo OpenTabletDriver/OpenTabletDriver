@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
 
@@ -14,10 +15,20 @@ namespace OpenTabletDriver.Vendors.Wacom.Bamboo
             };
         }
 
-        private IDeviceReport GetToolReport(byte[] report)
+        private static IDeviceReport GetToolReport(byte[] report)
         {
-            if (report[1].IsBitSet(4))
+            // If position is available
+            if (report[1].IsBitSet(7)
+                || Unsafe.ReadUnaligned<uint>(ref report[2]) != 0
+                || (report[6] | ((report[7] & 0x03) << 8)) != 0)
+            {
+                if (report[1].IsBitSet(6))
+                {
+                    return new BambooMouseReport(report);
+                }
+
                 return new BambooTabletReport(report);
+            }
 
             return new BambooAuxReport(report);
         }
