@@ -1,0 +1,41 @@
+{
+  "Name": "Huion GT-220 V2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 476.64,
+      "Height": 268.11,
+      "MaxX": 37540.0,
+      "MaxY": 21116.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_M165_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
