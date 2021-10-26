@@ -68,6 +68,15 @@ To build on ARM linux, run the provided 'build.sh' file with the
 appropriate runtime provided as an argument. For arm64, this is
 'linux-arm64'.
 
+Note: If building for the first time, run the included
+generate-rules.sh script. This will generate a set of udev rules in
+OpenTabletDriver/bin, called '99-opentabletdriver.rules'. This file
+should then be moved to `/etc/udev/rules.d/`:
+
+```
+sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
+```
+
 #### MacOS [Experimental]
 
 No other dependencies.
