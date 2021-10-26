@@ -5,14 +5,14 @@
 # package.
 
 echo "Building OpenTabletDriver..."
-mkdir ./out
+mkdir ./bin
 
 dotnet publish OpenTabletDriver.Daemon     \
   --configuration   Release                \
   --framework       net5                   \
   --runtime         linux-x64              \
   --self-contained  false                  \
-  --output          "./out"                \
+  --output          "./bin"                \
   /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
@@ -21,7 +21,7 @@ dotnet publish OpenTabletDriver.Console    \
   --framework       net5                   \
   --runtime         linux-x64              \
   --self-contained  false                  \
-  --output          "./out"                \
+  --output          "./bin"                \
   /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
@@ -30,7 +30,7 @@ dotnet publish OpenTabletDriver.UX.Gtk     \
   --framework       net5                   \
   --runtime         linux-x64              \
   --self-contained  false                  \
-  --output          "./out"                \
+  --output          "./bin"                \
   /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
