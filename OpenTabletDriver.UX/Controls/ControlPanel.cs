@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eto.Forms;
-using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Bindings;
 using OpenTabletDriver.UX.Controls.Output;
@@ -71,8 +69,7 @@ namespace OpenTabletDriver.UX.Controls
             filterEditor.StoreCollectionBinding.Bind(ProfileBinding.Child(p => p.Filters));
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
-            var virtualScreen = AppInfo.PluginManager.BuildServiceProvider().GetService<IVirtualScreen>();
-            outputModeEditor.SetDisplaySize(virtualScreen.Displays);
+            outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
             this.Content = tabControl;
         }

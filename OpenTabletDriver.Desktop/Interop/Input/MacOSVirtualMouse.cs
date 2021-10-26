@@ -1,11 +1,9 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Native.OSX.Input;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
@@ -14,9 +12,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
     public abstract class MacOSVirtualMouse : IVirtualMouse
     {
-        protected MacOSVirtualMouse(IVirtualScreen virtualScreen)
+        protected MacOSVirtualMouse()
         {
-            var primary = virtualScreen.Displays.FirstOrDefault();
+            var primary = DesktopInterop.VirtualScreen.Displays.FirstOrDefault();
             offset = new CGPoint(primary.Position.X, primary.Position.Y);
         }
 
