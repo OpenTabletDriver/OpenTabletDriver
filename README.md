@@ -34,7 +34,7 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 ### All platforms
 
-- .NET 5 SDK
+- .NET 5 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/5.0) - You want the SDK for your platform, Linux users should install via package manager where possible, ensure package provides .NET 5)
 
 #### Windows
 
@@ -42,10 +42,14 @@ No other dependencies.
 
 #### Linux
 
+Required packages (some packages may be pre-installed for your distribution)
+
 - libx11
 - libxrandr
-- libevdev2
+- libevdev2 (on Fedora or some other systems, this library is present but may require a symlink as the name of the binary is different)
 - GTK+3
+
+To build on Linux, run the provided 'build.sh' file. This will run the same 'dotnet publish' commands used for building the AUR package.
 
 #### MacOS [Experimental]
 
