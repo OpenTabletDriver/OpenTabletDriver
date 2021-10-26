@@ -46,10 +46,23 @@ Required packages (some packages may be pre-installed for your distribution)
 
 - libx11
 - libxrandr
-- libevdev2 (on Fedora or some other systems, this library is present but may require a symlink as the name of the binary is different)
+- libevdev2
+
+On Fedora or some other distributions, libevdev2 may be present but may
+require a symlink as the name of the binary is different from what
+.NET expects.
+
+Symlink command used on Fedora 34:
+
+```
+sudo ln -s /lib64/libevdev.so.2 /lib64/libevdev.so
+```
+
 - GTK+3
 
-To build on Linux, run the provided 'build.sh' file. This will run the same 'dotnet publish' commands used for building the AUR package.
+To build on Linux, run the provided 'build.sh' file. This will run the
+same 'dotnet publish' commands used for building the AUR package, and
+will produce usable binaries in 'OpenTabletDriver/bin'.
 
 #### MacOS [Experimental]
 
