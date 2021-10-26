@@ -4,9 +4,10 @@
 # Uses the same commands as those found in the PKGBUILD for the AUR
 # package.
 
-echo "Building OpenTabletDriver..."
+echo "Building OpenTabletDriver. Projects may need restoration..."
 mkdir ./bin
 
+echo "\nBuilding Daemon...\n"
 dotnet publish OpenTabletDriver.Daemon     \
   --configuration   Release                \
   --framework       net5                   \
@@ -16,6 +17,7 @@ dotnet publish OpenTabletDriver.Daemon     \
   /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
+echo "\nBuilding Console...\n"
 dotnet publish OpenTabletDriver.Console    \
   --configuration   Release                \
   --framework       net5                   \
@@ -25,6 +27,7 @@ dotnet publish OpenTabletDriver.Console    \
   /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
+echo "\nBuilding GTK UX...\n"
 dotnet publish OpenTabletDriver.UX.Gtk     \
   --configuration   Release                \
   --framework       net5                   \
@@ -34,4 +37,4 @@ dotnet publish OpenTabletDriver.UX.Gtk     \
   /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
-echo "Build finished. Binaries created in ./out"
+echo "Build finished. Binaries created in './bin'"
