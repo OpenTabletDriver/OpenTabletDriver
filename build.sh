@@ -5,30 +5,33 @@
 # package.
 
 echo "Building OpenTabletDriver..."
+mkdir ./out
 
-dotnet publish OpenTabletDriver.Daemon        \
-  --configuration   Release                   \
-  --framework       net5                      \
-  --runtime         linux-x64                 \
-  --self-contained  false                     \
-  --output          "./$_pkgname/out"         \
-  /p:SuppressNETCoreSdkPreviewMessage=true    \
+dotnet publish OpenTabletDriver.Daemon     \
+  --configuration   Release                \
+  --framework       net5                   \
+  --runtime         linux-x64              \
+  --self-contained  false                  \
+  --output          "./out"                \
+  /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
-dotnet publish OpenTabletDriver.Console       \
-  --configuration   Release                   \
-  --framework       net5                      \
-  --runtime         linux-x64                 \
-  --self-contained  false                     \
-  --output          "./$_pkgname/out"         \
-  /p:SuppressNETCoreSdkPreviewMessage=true    \
+dotnet publish OpenTabletDriver.Console    \
+  --configuration   Release                \
+  --framework       net5                   \
+  --runtime         linux-x64              \
+  --self-contained  false                  \
+  --output          "./out"                \
+  /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
 
-dotnet publish OpenTabletDriver.UX.Gtk        \
-  --configuration   Release                   \
-  --framework       net5                      \
-  --runtime         linux-x64                 \
-  --self-contained  false                     \
-  --output          "./$_pkgname/out"         \
-  /p:SuppressNETCoreSdkPreviewMessage=true    \
+dotnet publish OpenTabletDriver.UX.Gtk     \
+  --configuration   Release                \
+  --framework       net5                   \
+  --runtime         linux-x64              \
+  --self-contained  false                  \
+  --output          "./out"                \
+  /p:SuppressNETCoreSdkPreviewMessage=true \
   /p:PublishTrimmed=false
+
+echo "Build finished. Binaries created in ./out"
