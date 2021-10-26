@@ -64,6 +64,10 @@ To build on Linux, run the provided 'build.sh' file. This will run the
 same 'dotnet publish' commands used for building the AUR package, and
 will produce usable binaries in 'OpenTabletDriver/bin'.
 
+To build on ARM linux, run the provided 'build.sh' file with the
+appropriate runtime provided as an argument. For arm64, this is
+'linux-arm64'.
+
 #### MacOS [Experimental]
 
 No other dependencies.
