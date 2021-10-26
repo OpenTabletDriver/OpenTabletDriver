@@ -9,7 +9,7 @@ runtime=${1:-linux-x64}
 options=(--configuration='Release' --framework='net5' --self-contained='false' --output='./bin' /p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false --runtime=$runtime)
 
 echo "Building OpenTabletDriver with runtime $runtime."
-mkdir ./bin
+mkdir -p ./bin
 
 echo -e "\nBuilding Daemon...\n"
 dotnet publish OpenTabletDriver.Daemon ${options[@]}
