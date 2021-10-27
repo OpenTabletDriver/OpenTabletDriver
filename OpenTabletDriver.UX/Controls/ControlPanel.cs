@@ -75,6 +75,14 @@ namespace OpenTabletDriver.UX.Controls
             outputModeEditor.SetDisplaySize(virtualScreen.Displays);
 
             this.Content = tabControl;
+
+            Log.Output += (_, message) =>
+            {
+                if(message.Level > LogLevel.Info)
+                {
+                    tabControl.SelectedPage = tabControl.Pages.Last();  
+                }
+            };
         }
 
         private TabControl tabControl;
