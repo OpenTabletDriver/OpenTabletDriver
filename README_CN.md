@@ -16,11 +16,13 @@ OpenTabletDriver是一个开源的，跨平台的数位板驱动。其目标是�
 
 所有已经被支持的、未测试的、以及计划被支持的数位板都可以在这里被找到。如果您的数位板在您的平台上无法正常工作的话可以在Wiki之中寻找一些解决方法
 
-- [数位板支持](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/TABLETS.md)
+- [数位板支持](https://opentabletdriver.net/Tablets)
 
 # 安装方法
 
-- [安装指导](https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Installation-Guide)
+- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
 
 # 运行OpenTabletDriver
 
