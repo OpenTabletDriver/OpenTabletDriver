@@ -47,13 +47,14 @@
 | Wacom CTL-672          |    Supported     |
 | Wacom CTL-680          |    Supported     |
 | Wacom CTL-690          |    Supported     |
+| Wacom ET-0405-U        |    Supported     |
 | Wacom ET-0405A-U       |    Supported     |
 | Wacom FT-0405-U        |    Supported     |
 | Wacom GD-0405-U        |    Supported     |
 | Wacom GD-0608-U        |    Supported     |
 | Wacom XD-0608-U        |    Supported     |
 | XP-Pen CT430           |    Supported     |
-| XP-Pen CT460           |    Supported     |
+| XP-Pen CT640           |    Supported     |
 | XP-Pen Deco 01         |    Supported     |
 | XP-Pen Star 03         |    Supported     |
 | XP-Pen Star G430       |    Supported     |

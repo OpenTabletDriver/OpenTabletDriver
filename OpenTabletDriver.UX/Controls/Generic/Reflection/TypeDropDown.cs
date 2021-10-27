@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Eto.Forms;
-using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Reflection
@@ -19,10 +17,11 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
             AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
-        public T ConstructSelectedType()
+        public T ConstructSelectedType(params object[] args)
         {
             if (SelectedItem != null)
             {
+                args ??= Array.Empty<object>();
                 return AppInfo.PluginManager.ConstructObject<T>(SelectedItem.FullName);
             }
             return null;

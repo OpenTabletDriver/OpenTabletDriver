@@ -1,14 +1,14 @@
 {
-  "Name": "Wacom XD-0912-U",
+  "Name": "Wacom ET-0405-U",
   "Specifications": {
     "Digitizer": {
-      "Width": 304.8,
-      "Height": 240.6,
-      "MaxX": 60960.0,
-      "MaxY": 48120.0
+      "Width": 127.6,
+      "Height": 92.8,
+      "MaxX": 10208.0,
+      "MaxY": 7424.0
     },
     "Pen": {
-      "MaxPressure": 1023,
+      "MaxPressure": 511,
       "Buttons": {
         "ButtonCount": 2
       }
@@ -20,13 +20,12 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
-      "ProductID": 67,
-      "InputReportLength": 10,
+      "ProductID": 16,
+      "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.IntuosV1ReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": [
-        "AgI=",
-        "BAA="
+        "AgI="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -34,13 +33,12 @@
     },
     {
       "VendorID": 1386,
-      "ProductID": 67,
-      "InputReportLength": 11,
+      "ProductID": 16,
+      "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.SkipByteTabletReportParser",
       "FeatureInitReport": [
-        "AgI=",
-        "BAA="
+        "AgI="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},

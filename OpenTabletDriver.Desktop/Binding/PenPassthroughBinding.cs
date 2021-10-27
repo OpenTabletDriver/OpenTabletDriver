@@ -1,5 +1,6 @@
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -8,13 +9,9 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginName(PLUGIN_NAME), SupportedPlatform(PluginPlatform.Linux)]
     public class PenPassthroughBinding : IInterruptBinding
     {
-        public PenPassthroughBinding(IVirtualTablet tablet)
-        {
-            Tablet = tablet;
-        }
-
         private const string PLUGIN_NAME = "Pen Passthrough";
 
+        [Resolved]
         public IVirtualTablet Tablet { set; get; }
 
         public void Invoke(TabletReference tablet, IDeviceReport report)

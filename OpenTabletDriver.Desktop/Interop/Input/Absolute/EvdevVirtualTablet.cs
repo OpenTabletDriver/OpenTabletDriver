@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Numerics;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
@@ -20,18 +18,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             EventCode.BTN_STYLUS3
         };
 
-        private Vector2 screenScale;
+        private Vector2 ScreenScale = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height);
         private bool IsEraser = false;
         private bool Proximity = true;
 
-        public unsafe EvdevVirtualTablet(IVirtualScreen virtualScreen)
+        public unsafe EvdevVirtualTablet()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 
             Device.EnableType(EventType.INPUT_PROP_DIRECT);
             Device.EnableType(EventType.EV_ABS);
-
-            screenScale = new Vector2(virtualScreen.Width, virtualScreen.Height);
 
             var xAbs = new input_absinfo
             {
@@ -100,7 +96,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            var newPos = pos / screenScale * Max;
+            var newPos = pos / ScreenScale * Max;
             Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)newPos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)newPos.Y);
