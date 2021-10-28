@@ -78,13 +78,13 @@ namespace OpenTabletDriver.UX.Controls
 
             this.Content = tabControl;
 
-            Log.Output += (_, message) =>
+            Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {
-                if(message.Level > LogLevel.Info)
+                if (message.Level > LogLevel.Info)
                 {
                     tabControl.SelectedPage = consoleTabPage;
                 }
-            };
+            });
         }
 
         private TabControl tabControl;
