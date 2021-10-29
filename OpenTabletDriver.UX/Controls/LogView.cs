@@ -76,6 +76,35 @@ namespace OpenTabletDriver.UX.Controls
                 });
             };
 
+            messageList.CellFormatting += (_, entry) =>
+			{
+                var entryLogMessage = entry.Item as LogMessage;
+
+                switch (entryLogMessage.Level)
+                {
+                    case LogLevel.Debug:
+                        entry.ForegroundColor = Colors.Black;
+                        entry.BackgroundColor = Colors.LightBlue;
+                        break;
+                    case LogLevel.Warning:
+                        entry.ForegroundColor = Colors.Black;
+                        entry.BackgroundColor = Colors.Yellow;
+                        break;
+                    case LogLevel.Error:
+                        entry.ForegroundColor = Colors.Black;
+                        entry.BackgroundColor = Colors.Pink;
+                        break;
+                    case LogLevel.Fatal:
+                        entry.ForegroundColor = Colors.White;
+                        entry.BackgroundColor = Colors.DarkRed;
+                        break;
+                    default:
+                        entry.ForegroundColor = Colors.Black;
+                        entry.BackgroundColor = Colors.White;
+                        break;
+                }
+			};
+
             this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
             this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
 
