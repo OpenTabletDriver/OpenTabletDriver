@@ -1,0 +1,41 @@
+{
+  "Name": "Genius G-Pen 560",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 152.0,
+      "Height": 114.0,
+      "MaxX": 10000.0,
+      "MaxY": 10000.0
+    },
+    "Pen": {
+      "MaxPressure": 1024,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1112,
+      "ProductID": 20483,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Genius.GeniusReportParserV2",
+      "FeatureInitReport": [
+        "AgQA",
+        "AgIA",
+        "AhAB"
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
