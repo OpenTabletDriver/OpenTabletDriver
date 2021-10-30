@@ -99,8 +99,8 @@ namespace OpenTabletDriver.UX.Controls
                         entry.BackgroundColor = Colors.DarkRed;
                         break;
                     default:
-                        entry.ForegroundColor = Colors.Black;
-                        entry.BackgroundColor = Colors.White;
+                        entry.ForegroundColor = SystemColors.ControlText;
+                        entry.BackgroundColor = SystemColors.ControlBackground;
                         break;
                 }
 			};
