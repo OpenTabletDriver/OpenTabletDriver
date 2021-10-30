@@ -77,7 +77,7 @@ namespace OpenTabletDriver.UX.Controls
             };
 
             //Console coloring causes non-accelerated drawing on MacOS, cannot be done without performance hit
-            if (OpenTabletDriver.Interop.SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
+            if (Interop.SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
             {
                 messageList.CellFormatting += (_, entry) =>
                 {
