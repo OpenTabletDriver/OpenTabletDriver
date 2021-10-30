@@ -76,34 +76,38 @@ namespace OpenTabletDriver.UX.Controls
                 });
             };
 
-            messageList.CellFormatting += (_, entry) =>
-			{
-                var entryLogMessage = entry.Item as LogMessage;
-
-                switch (entryLogMessage.Level)
+            //Console coloring causes non-accelerated drawing on MacOS, cannot be done without performance hit
+            if (OpenTabletDriver.Interop.SystemInterop.CurrentPlatform != PluginPlatform.MacOS)
+            {
+                messageList.CellFormatting += (_, entry) =>
                 {
-                    case LogLevel.Debug:
-                        entry.ForegroundColor = Colors.Black;
-                        entry.BackgroundColor = Colors.LightBlue;
-                        break;
-                    case LogLevel.Warning:
-                        entry.ForegroundColor = Colors.Black;
-                        entry.BackgroundColor = Colors.Yellow;
-                        break;
-                    case LogLevel.Error:
-                        entry.ForegroundColor = Colors.Black;
-                        entry.BackgroundColor = Colors.Pink;
-                        break;
-                    case LogLevel.Fatal:
-                        entry.ForegroundColor = Colors.White;
-                        entry.BackgroundColor = Colors.DarkRed;
-                        break;
-                    default:
-                        entry.ForegroundColor = SystemColors.ControlText;
-                        entry.BackgroundColor = SystemColors.ControlBackground;
-                        break;
-                }
-			};
+                    var entryLogMessage = entry.Item as LogMessage;
+
+                    switch (entryLogMessage.Level)
+                    {
+                        case LogLevel.Debug:
+                            entry.ForegroundColor = Colors.Black;
+                            entry.BackgroundColor = Colors.LightBlue;
+                            break;
+                        case LogLevel.Warning:
+                            entry.ForegroundColor = Colors.Black;
+                            entry.BackgroundColor = Colors.Yellow;
+                            break;
+                        case LogLevel.Error:
+                            entry.ForegroundColor = Colors.Black;
+                            entry.BackgroundColor = Colors.Pink;
+                            break;
+                        case LogLevel.Fatal:
+                            entry.ForegroundColor = Colors.White;
+                            entry.BackgroundColor = Colors.DarkRed;
+                            break;
+                        default:
+                            entry.ForegroundColor = SystemColors.ControlText;
+                            entry.BackgroundColor = SystemColors.ControlBackground;
+                            break;
+                    }
+                };
+            }
 
             this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
             this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
