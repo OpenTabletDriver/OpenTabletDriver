@@ -2,10 +2,10 @@
   "Name": "Genius G-Pen 560",
   "Specifications": {
     "Digitizer": {
-      "Width": 152.0,
-      "Height": 114.0,
-      "MaxX": 10000.0,
-      "MaxY": 10000.0
+      "Width": 152.3873,
+      "Height": 114.2873,
+      "MaxX": 11999.0,
+      "MaxY": 8999.0
     },
     "Pen": {
       "MaxPressure": 1024,
@@ -13,7 +13,9 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 12
+    },
     "MouseButtons": null,
     "Touch": null
   },
