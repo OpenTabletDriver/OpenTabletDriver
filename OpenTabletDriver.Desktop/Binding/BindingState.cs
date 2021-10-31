@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
             if (Binding is IInterruptBinding interruptBinding)
             {
-                if ((newState && !PreviousState) || (!newState && PreviousState))
+                if (newState != PreviousState)
                     interruptBinding.Invoke(tablet, report);
             }
 
