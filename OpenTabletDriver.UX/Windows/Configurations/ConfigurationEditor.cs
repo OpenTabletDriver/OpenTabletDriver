@@ -153,9 +153,14 @@ namespace OpenTabletDriver.UX.Windows.Configurations
 
                 var path = Path.Join(dir.FullName, manufacturer, string.Format("{0}.json", tabletName));
                 var file = new FileInfo(path);
-                if (!file.Directory.Exists)
-                    file.Directory.Create();
-                Serialization.Serialize(file, config);
+                try
+                {
+                    if (!file.Directory.Exists)
+                        file.Directory.Create();
+                    Serialization.Serialize(file, config);
+                } catch (System.UnauthorizedAccessException) {
+                    Log.Write("Configuration", "OpenTabletDriver doesn't have permission to save persistent tablet configs.", LogLevel.Error);
+                }
             }
         }
 
