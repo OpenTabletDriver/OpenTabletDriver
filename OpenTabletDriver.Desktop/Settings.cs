@@ -154,7 +154,7 @@ namespace OpenTabletDriver.Desktop
             }
             catch (System.UnauthorizedAccessException)
             {
-                Log.Write("Settings", "OpenTabletDriver doesn't have permission to save persistent settings.", LogLevel.Error);
+                Log.Write("Settings", $"OpenTabletDriver doesn't have permission to save persistent settings to {file.DirectoryName}", LogLevel.Error);
             }
         }
 
