@@ -62,6 +62,11 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
+            placeholder = new Placeholder
+            {
+                Text = "No tablets detected."
+            };
+
             outputModeEditor.ProfileBinding.Bind(ProfileBinding);
             penBindingEditor.ProfileBinding.Bind(ProfileBinding);
             auxBindingEditor.ProfileBinding.Bind(ProfileBinding);
@@ -75,6 +80,7 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         private TabControl tabControl;
+        private readonly Placeholder placeholder;
         private OutputModeEditor outputModeEditor;
         private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
@@ -100,9 +106,21 @@ namespace OpenTabletDriver.UX.Controls
             {
                 Application.Instance.AsyncInvoke(() => 
                 {
+                    tabControl.Pages.Single(p => p.Text == "Output").Content = outputModeEditor;
                     penBindingEditor.Parent.Visible = tablet.Properties.Specifications.Pen != null;
                     auxBindingEditor.Parent.Visible = tablet.Properties.Specifications.AuxiliaryButtons != null;
                     mouseBindingEditor.Parent.Visible = tablet.Properties.Specifications.MouseButtons != null;
+                });
+            }
+            else //no tablets connected, or Profile otherwise null
+            {
+                Application.Instance.AsyncInvoke(() =>
+                {
+                    tabControl.Pages.Single(p => p.Text == "Output").Content = placeholder;
+                    //hide the 3 tabs related to having a tablet connected
+                    penBindingEditor.Parent.Visible   = false;
+                    auxBindingEditor.Parent.Visible   = false;
+                    mouseBindingEditor.Parent.Visible = false;
                 });
             }
         }
