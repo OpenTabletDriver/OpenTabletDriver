@@ -5,7 +5,6 @@ using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.UX.Controls
@@ -14,7 +13,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         public TabletSwitcherPanel()
         {
-            base.Content = layout = new StackLayout
+            base.Content = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
@@ -56,8 +55,6 @@ namespace OpenTabletDriver.UX.Controls
             Application.Instance.AsyncInvoke(async () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
         }
 
-        private StackLayout layout;
-        private Placeholder placeholder;
         private TabletSwitcher tabletSwitcher;
         private ControlPanel controlPanel;
         private Panel commandsPanel;
@@ -70,10 +67,6 @@ namespace OpenTabletDriver.UX.Controls
 
         private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
         {
-            this.Content = tablets.Any() ? layout : placeholder ??= new Placeholder
-            {
-                Text = "No tablets are detected."
-            };
             tabletSwitcher.HandleTabletsChanged(sender, tablets);
         });
 
