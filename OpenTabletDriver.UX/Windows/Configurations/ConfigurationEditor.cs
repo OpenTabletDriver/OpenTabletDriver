@@ -158,7 +158,9 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                     if (!file.Directory.Exists)
                         file.Directory.Create();
                     Serialization.Serialize(file, config);
-                } catch (System.UnauthorizedAccessException) {
+                } 
+                catch (UnauthorizedAccessException)
+                {
                     Log.Write("Configuration", $"OpenTabletDriver doesn't have permission to save persistent tablet config to {path}.", LogLevel.Error);
                 }
             }

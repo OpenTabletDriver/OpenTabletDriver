@@ -1,9 +1,7 @@
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
+using System;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
@@ -152,7 +150,7 @@ namespace OpenTabletDriver.Desktop
                 using (var jw = new JsonTextWriter(sw))
                     serializer.Serialize(jw, this);
             }
-            catch (System.UnauthorizedAccessException)
+            catch (UnauthorizedAccessException)
             {
                 Log.Write("Settings", $"OpenTabletDriver doesn't have permission to save persistent settings to {file.DirectoryName}", LogLevel.Error);
             }
