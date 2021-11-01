@@ -62,11 +62,6 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            placeholder = new Placeholder
-            {
-                Text = "No tablets detected."
-            };
-
             outputModeEditor.ProfileBinding.Bind(ProfileBinding);
             penBindingEditor.ProfileBinding.Bind(ProfileBinding);
             auxBindingEditor.ProfileBinding.Bind(ProfileBinding);
@@ -80,7 +75,10 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         private TabControl tabControl;
-        private readonly Placeholder placeholder;
+        private readonly Placeholder placeholder = new Placeholder
+        {
+            Text = "No tablets detected. Ensure a supported tablet is connected properly, and check the Console tab for any errors."
+        };
         private OutputModeEditor outputModeEditor;
         private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
