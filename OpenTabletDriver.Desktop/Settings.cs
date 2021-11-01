@@ -143,12 +143,19 @@ namespace OpenTabletDriver.Desktop
 
         public void Serialize(FileInfo file)
         {
-            if (file.Exists)
-                file.Delete();
+            try
+            {
+                if (file.Exists)
+                    file.Delete();
 
-            using (var sw = file.CreateText())
-            using (var jw = new JsonTextWriter(sw))
-                serializer.Serialize(jw, this);
+                using (var sw = file.CreateText())
+                using (var jw = new JsonTextWriter(sw))
+                    serializer.Serialize(jw, this);
+            }
+            catch (System.UnauthorizedAccessException)
+            {
+                Log.Write("Settings", "OpenTabletDriver doesn't have permission to save persistent settings.", LogLevel.Error);
+            }
         }
 
         #endregion
