@@ -32,7 +32,7 @@ Le fonctionnement d'OpenTabletDriver est basé sur l'utilisation de deux process
 > <sup>1</sup>Windows utilise `Wpf`, Linux utilise `Gtk`, et MacOS utilise `MacOS` respectivement. Celà peut-être ignoré dans la plupart des cas si vous ne tentez pas de build à partir de la source, car seule la bonne version sera fournie.
 ## Build OpenTabletDriver à partir de la source
 
-Les exigences pour build OpenTabletDriver sont cohérentes sur toutes les plateformes. L'éxécution d'OpenTabletDriver requière des dépendances différentes.
+Les exigences pour build OpenTabletDriver sont cohérentes sur toutes les plateformes. L'exécution d'OpenTabletDriver requière des dépendances différentes.
 
 ### Toutes les plateformes
 
