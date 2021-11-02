@@ -24,7 +24,7 @@ Tous les modèles de tablettes supportés, non testées, et prévus pour être s
 - [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
 - [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
 
-# Exécuter un binaire OpenTabletDriver
+# Executer OpenTabletDriver
 
 Le fonctionnement d'OpenTabletDriver est basé sur l'utilisation de deux processus séparés qui interagissent parfaitement entre eux. Le programme actif qui permet le traitement des données est `OpenTabletDriver.Daemon`, tandis que l'interface graphique est `OpenTabletDriver.UX.*`, où `*` dépend de votre plateforme<sup>1</sup>. Pour que tout fonctionne correctement, Le programme actif daemon doit être exécuté. Si vous avez des paramètres existants, ils vont s'appliquer lors de son exécution.
 
@@ -64,7 +64,7 @@ Pour pouvoir build sur Linux, exécutez le 'build.sh' fourni. Ceci va également
 la command 'dotnet publish' utilisée pour build le paquet AUR, 
 cela va également produire des binaires utilisables dans 'OpenTabletDriver/bin'.
 
-Pour build un ARM Linux, exécutez le 'build.sh' fourni 
+Pour build sur ARM Linux, exécutez le 'build.sh' fourni 
 avec les arguments d'exécution appropriés. Pour arm64, c'est 
 'linux-arm64'.
 
@@ -99,7 +99,7 @@ Aucune autre dépendance.
   - Sensibilité horizontal et vertical (px/mm)
 - Raccourcis du stylet
   - Raccourcis de pression de la pointe
-  - Raccourcis express
+  - Raccourcis touches express
   - Raccourcis boutons stylet
   - Raccourcis boutons souris
   - Raccourcis clavier
