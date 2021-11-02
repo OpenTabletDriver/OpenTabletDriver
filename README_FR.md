@@ -34,7 +34,7 @@ Les exigences pour build OpenTabletDriver sont cohérentes sur toutes les platef
 
 ### Toutes les plateformes
 
-- .NET 5 SDK
+- .NET 5 SDK (peut-être obtenu [Ici](https://dotnet.microsoft.com/download/dotnet/5.0) - Prendre le SDK pour votre plateforme, les utilisateurs Linux doivent installer via un gestionnaire de paquets qui fournit le paquet .NET 5)
 
 #### Windows
 
@@ -42,10 +42,30 @@ Aucune autre dépendance.
 
 #### Linux
 
+Paquets requis (certains paquets peuvent-être pré-installés pour votre distribution)
+
 - libx11
 - libxrandr
 - libevdev2
 - GTK+3
+
+Pour pouvoir build sur Linux, exécutez le 'build.sh' fourni. Ceci va également exécuter
+la command 'dotnet publish' utilisée pour build le paquet AUR, 
+cela va également produire des binaires utilisables dans 'OpenTabletDriver/bin'.
+
+Pour build un ARM Linux, exécutez le 'build.sh' fourni 
+avec les arguments d'exécution appropriés. Pour arm64, c'est 
+'linux-arm64'.
+
+Note: Si vous buildez pour la première fois, 
+exécutez le script generate-rules.sh inclu.
+Cela va générer plusieurs règles udev 
+dans OpenTabletDriver/bin appelées '99-opentabletdriver.rules'. 
+Ce fichier doit-être déplacé dans `/etc/udev/rules.d/`:
+
+```
+sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
+```
 
 #### MacOS [Expérimental]
 
