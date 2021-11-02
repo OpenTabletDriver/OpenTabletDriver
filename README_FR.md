@@ -20,7 +20,9 @@ Tous les modèles de tablettes supportés, non testées, et prévus pour être s
 
 # Installation
 
-- [Guide d'installation](https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Installation-Guide)
+- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
 
 # Exécuter un binaire OpenTabletDriver
 
