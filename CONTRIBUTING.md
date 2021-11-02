@@ -9,7 +9,7 @@ Our goal with this document is to describe how contributions to OpenTabletDriver
 Tablet configurations are the core at what defines a tablet within OpenTabletDriver.
 It provides specifications, functions, and initialization data which are all used to make a tablet device functional.
 
-The following rule(s) are applicable to all configuration contributions, whether it be updating a configuration or adding a new one. 
+The following rule(s) are applicable to all configuration contributions, whether it be updating a configuration or adding a new one.
 
 - The git branch must be based on and targeting the `configs` branch.
 
@@ -24,12 +24,22 @@ When adding a new tablet configuration file to the `OpenTabletDriver.Configurati
 - All trailing whitespace must be trimmed before committing.
   > When using the configuration editor within the OpenTabletDriver UI, this will be performed automatically.
 - The current formatting of the `TABLETS.md` document must be strictly followed as below:
-  
+
   | Column | Contents                                                                                          |
   | ------ | ------------------------------------------------------------------------------------------------- |
   | Tablet | The name of the tablet, directly from the configuration.                                          |
   | Status | The state of the configuration (Supported, Missing Features, Has Quirks, Broken, Untested)        |
   | Notes  | Any information relating to the status. This can be left empty when marked Supported or Untested. |
+
+  - These support statuses include the following:
+
+    | Status           | Requirements                                                                                                            |
+    | ---------------- | ----------------------------------------------------------------------------------------------------------------------- |
+    | Supported        | All tablet functions are fully supported without issue.                                                                 |
+    | Missing Features | Some tablet functions are unsupported as the driver doesn't support it.                                                 |
+    | Has Quirks       | Some tablet functions work, but with undesired behavior or requiring workarounds to get functioning.                    |
+    | Broken           | Tested but does not work. This is here for historical purposes, no new configuration will be accepted with this status. |
+    | Untested         | Entirely untested, potentially ported from other drivers or from documentation.                                         |
 
 - Include sources to help with verification of the tablet's specifications.
   > This could be the manufacturer's specification sheet of the tablet, the HID report descriptor, or an educated guess by taking MaxX and MaxY and converting it into millimeter units.
@@ -58,7 +68,11 @@ The following rule(s) are applicable to all code contributions:
 - All trailing whitespace must be trimmed before committing.
 - Follow the language's documented formatting guidelines.
 - Use spaces for indentation, do not use the tab character.
+- Split up individual bug fixes or feature additions into separate pull requests.
+  > This makes it easier to pinpoint why changes were made along with the ease of reverting in the case that it is needed.
+- If the pull request closes an issue, link that issue with [closing keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) referring to that issue.
 
 ## C# Specific Rules
 
+- Follow the [C# Coding Conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions), unless otherwise specified.
 - Use 4 spaces for indentation. This can usually be configured in your IDE.
