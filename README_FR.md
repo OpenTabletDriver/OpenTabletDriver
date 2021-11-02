@@ -67,13 +67,8 @@ Aucune autre dépendance.
 - Positionnement relatif du curseur
   - Sensibilité horizontal et vertical (px/mm)
 - Raccourcis du stylet
-
-
-  - Tip by pressure bindings // A TRAD
-  - Express key bindings // A TRAD
-
-
-
+  - Raccourcis de pression de la pointe
+  - Raccourcis express
   - Raccourcis boutons stylet
   - Raccourcis boutons souris
   - Raccourcis clavier
