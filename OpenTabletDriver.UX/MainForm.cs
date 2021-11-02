@@ -61,8 +61,8 @@ namespace OpenTabletDriver.UX
             if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 var bounds = Screen.PrimaryScreen.Bounds;
-                var minWidth = Math.Min(970, bounds.Width * 0.9);
-                var minHeight = Math.Min(770, bounds.Height * 0.9);
+                var minWidth = Math.Min(DEFAULT_CLIENT_WIDTH + 10, bounds.Width * 0.9);
+                var minHeight = Math.Min(DEFAULT_CLIENT_HEIGHT + 10, bounds.Height * 0.9);
                 this.ClientSize = new Size((int)minWidth, (int)minHeight);
                 this.Padding = 10;
             }
