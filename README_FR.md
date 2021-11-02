@@ -24,7 +24,7 @@ Tous les modèles de tablettes supportés, non testées, et prévus pour être s
 - [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
 - [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
 
-# Executer OpenTabletDriver
+# Exécuter OpenTabletDriver
 
 Le fonctionnement d'OpenTabletDriver est basé sur l'utilisation de deux processus séparés qui interagissent parfaitement entre eux. Le programme actif qui permet le traitement des données est `OpenTabletDriver.Daemon`, tandis que l'interface graphique est `OpenTabletDriver.UX.*`, où `*` dépend de votre plateforme<sup>1</sup>. Pour que tout fonctionne correctement, Le programme actif daemon doit être exécuté. Si vous avez des paramètres existants, ils vont s'appliquer lors de son exécution.
 
