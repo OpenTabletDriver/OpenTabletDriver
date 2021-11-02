@@ -58,19 +58,13 @@ namespace OpenTabletDriver.UX
         {
             base.OnInitializePlatform(e);
 
-            switch (DesktopInterop.CurrentPlatform)
-            {
-                case PluginPlatform.MacOS:
-                    this.Padding = 10;
-                    break;
-            }
-
             if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
             {
                 var bounds = Screen.PrimaryScreen.Bounds;
                 var minWidth = Math.Min(970, bounds.Width * 0.9);
                 var minHeight = Math.Min(770, bounds.Height * 0.9);
                 this.ClientSize = new Size((int)minWidth, (int)minHeight);
+                this.Padding = 10;
             }
 
             if (App.EnableTrayIcon)
@@ -266,7 +260,7 @@ namespace OpenTabletDriver.UX
 
             // Load the application information from the daemon
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
-            
+
             // Load any new plugins
             AppInfo.PluginManager.Load();
 
@@ -392,13 +386,8 @@ namespace OpenTabletDriver.UX
                         MessageBoxButtons.YesNo,
                         MessageBoxType.Warning
                     );
-                    switch (result)
-                    {
-                        case DialogResult.Yes:
-                            break;
-                        default:
-                            return;
-                    }
+                    if (result != DialogResult.Yes)
+                        return;
                 }
 
                 var appInfo = await Driver.Instance.GetApplicationInfo();
