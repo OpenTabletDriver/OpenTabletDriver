@@ -128,7 +128,8 @@ namespace OpenTabletDriver.Daemon
 
         public async Task<IEnumerable<TabletReference>> DetectTablets()
         {
-            Driver.Detect();
+            if (!Driver.Detect())
+                Log.Write("Detect", "No tablets found.");
 
             foreach (var tablet in Driver.InputDevices)
             {
