@@ -39,10 +39,18 @@ namespace OpenTabletDriver
         public virtual bool Detect()
         {
             bool success = false;
+            string lastManufacturer = "";
 
             InputDevices.Clear();
             foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
             {
+                string currentManufacturer = config.Name.Substring(0, config.Name.IndexOf(' '));
+                if (lastManufacturer != currentManufacturer)
+                {
+                    lastManufacturer = currentManufacturer;
+                    Log.Write("Detect", $"Searching for {currentManufacturer} tablets...");
+                }
+
                 if (Match(config) is InputDeviceTree tree)
                 {
                     success = true;
@@ -63,7 +71,6 @@ namespace OpenTabletDriver
 
         protected virtual InputDeviceTree? Match(TabletConfiguration config)
         {
-            Log.Write("Detect", $"Searching for tablet '{config.Name}'");
             try
             {
                 var devices = new List<InputDevice>();
