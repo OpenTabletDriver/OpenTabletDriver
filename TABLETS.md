@@ -10,12 +10,14 @@
 | Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons
 | Genius i608x                  |     Supported     | Require Zadig's WinUSB
 | Huion 1060 Plus               |     Supported     |
+| Huion 420                     |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion H420X                   |     Supported     |
 | Huion H430P                   |     Supported     |
 | Huion H610 Pro                |     Supported     |
 | Huion H640P                   |     Supported     |
 | Huion HS64                    |     Supported     |
 | Huion Kamvas 16               |     Supported     |
+| Huion osu! Tablet             |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion Q11K                    |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
@@ -131,11 +133,9 @@
 | XP-Pen Innovator 16           |  Missing Features | Wheel is unsupported.
 | XP-Pen Star 06                |  Missing Features | Wheel is unsupported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is unsupported.
-| Huion 420                     |      Broken       | WinUSB implementation required.
 | Huion H420                    |      Broken       | WinUSB implementation required.
 | Wacom ISD-V4                  |      Broken       | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
 | Huion G10T                    |     Untested      |
-| Huion osu! Tablet             |     Untested      |
 | Wacom CTE-440                 |     Untested      |
 | Wacom GD-0912-U               |     Untested      |
 | Wacom GD-1218-U               |     Untested      |
