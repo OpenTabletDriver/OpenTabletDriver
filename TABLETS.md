@@ -5,6 +5,8 @@
 | Gaomon PD1560          |    Supported     |
 | Gaomon S56K            |    Supported     |
 | Gaomon S620            |    Supported     |
+| Genius G-Pen 560       |    Supported     | Soft-buttons are bindable as aux buttons
+| Genius i608x           |    Supported     | Require Zadig's WinUSB
 | Huion 1060 Plus        |    Supported     |
 | Huion H420X            |    Supported     |
 | Huion H430P            |    Supported     |
@@ -13,6 +15,7 @@
 | Huion HS64             |    Supported     |
 | Huion Kamvas 16        |    Supported     |
 | Huion Q11K             |    Supported     |
+| Huion WH1409           |    Supported     |
 | Huion WH1409 V2        |    Supported     |
 | UC-Logic 1060N         |    Supported     |
 | UC-Logic PF1209        |    Supported     |
@@ -45,11 +48,13 @@
 | Wacom CTL-672          |    Supported     |
 | Wacom CTL-680          |    Supported     |
 | Wacom CTL-690          |    Supported     |
+| Wacom ET-0405-U        |    Supported     |
 | Wacom ET-0405A-U       |    Supported     |
 | Wacom FT-0405-U        |    Supported     |
 | Wacom GD-0405-U        |    Supported     |
 | Wacom GD-0608-U        |    Supported     |
 | Wacom XD-0608-U        |    Supported     |
+| XenceLabs Pen Tablet Medium |  Supported  |
 | XP-Pen CT430           |    Supported     |
 | XP-Pen CT460           |    Supported     |
 | XP-Pen Deco Fun L (CT1060) | Supported    |
@@ -89,8 +94,10 @@
 | VEIKK A15 Pro          | Missing Features | Wheel is unsupported.
 | VEIKK A30              | Missing Features | Touchpad is unsupported.
 | VEIKK A50              | Missing Features | Touchpad is unsupported.
+| VEIKK VK640            | Missing Features | Aux buttons are unsupported.
 | Wacom CTE-450          | Missing Features | Wheel is unsupported.
 | Wacom CTE-650          | Missing Features | Wheel is unsupported.
+| Wacom CTH-461          | Missing Features | Tablet buttons and touch are unsupported.
 | Wacom CTL-6100WL       | Missing Features | Wireless is unsupported.
 | Wacom MTE-450          | Missing Features | Wheel is unsupported.
 | Wacom PTH-450          | Missing Features | Wheel is unsupported.

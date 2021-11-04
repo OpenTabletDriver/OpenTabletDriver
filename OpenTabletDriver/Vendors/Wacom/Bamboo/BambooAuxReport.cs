@@ -9,16 +9,19 @@ namespace OpenTabletDriver.Vendors.Wacom.Bamboo
         {
             Raw = report;
 
+            var auxByte = report[7];
             AuxButtons = new bool[]
             {
-                report[7].IsBitSet(3),
-                report[7].IsBitSet(4),
-                report[7].IsBitSet(5),
-                report[7].IsBitSet(6),
+                auxByte.IsBitSet(3),
+                auxByte.IsBitSet(4),
+                auxByte.IsBitSet(5),
+                auxByte.IsBitSet(6),
             };
+
+            // wheel = report[8] & 0x7f
         }
 
         public byte[] Raw { set; get; }
-        public bool[] AuxButtons { set; get;  }
+        public bool[] AuxButtons { set; get; }
     }
 }

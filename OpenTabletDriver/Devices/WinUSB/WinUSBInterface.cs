@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.IO;
+using System.Threading;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.USB;
 using OpenTabletDriver.Plugin.Devices;
@@ -14,8 +15,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         public unsafe WinUSBInterface(string devicePath)
         {
             DevicePath = devicePath;
-            var winUsbHandle = BorrowHandle();
-            try
+            WithHandle(winUsbHandle =>
             {
                 var packet = SetupPacket.MakeGetDescriptor(
                     RequestInternalType.Standard,
@@ -77,11 +77,7 @@ namespace OpenTabletDriver.Devices.WinUSB
                 SerialNumber = deviceDescriptor.iSerialNumber != 0
                     ? GetDeviceString(deviceDescriptor.iSerialNumber)
                     : "Unknown Serial Number";
-            }
-            finally
-            {
-                ReturnHandle(winUsbHandle);
-            }
+            });
         }
 
         private int referenceCount;
@@ -168,28 +164,24 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         internal SafeWinUsbInterfaceHandle BorrowHandle()
         {
-            if (activeWinUsbHandle != null)
+            if (Interlocked.Increment(ref referenceCount) == 1)
             {
-                referenceCount++;
-                return activeWinUsbHandle;
+                activeFileHandle = CreateFile(DevicePath,
+                    FileAccess.ReadWrite,
+                    FileShare.ReadWrite,
+                    IntPtr.Zero,
+                    FileMode.Open,
+                    (FileAttributes)0x40000000,
+                    IntPtr.Zero
+                );
+
+                if (activeFileHandle.IsInvalid)
+                    throw new IOException("Failed to open file handle to WinUSB interface");
+
+                if (!WinUsb_Initialize(activeFileHandle, out activeWinUsbHandle))
+                    throw new IOException("Failed to initialize WinUSB interface");
             }
 
-            activeFileHandle = CreateFile(DevicePath,
-                FileAccess.ReadWrite,
-                FileShare.ReadWrite,
-                IntPtr.Zero,
-                FileMode.Open,
-                (FileAttributes)0x40000000,
-                IntPtr.Zero
-            );
-
-            if (activeFileHandle.IsInvalid)
-                throw new IOException("Failed to open file handle to WinUSB interface");
-
-            if (!WinUsb_Initialize(activeFileHandle, out activeWinUsbHandle))
-                throw new IOException("Failed to initialize WinUSB interface");
-
-            referenceCount++;
             return activeWinUsbHandle;
         }
 
@@ -199,9 +191,7 @@ namespace OpenTabletDriver.Devices.WinUSB
             if (activeWinUsbHandle != handle)
                 throw new InvalidOperationException("Returning handle is not equal to active handle");
 
-            referenceCount--;
-
-            if (referenceCount == 0)
+            if (Interlocked.Decrement(ref referenceCount) == 0)
             {
                 activeWinUsbHandle.Dispose();
                 activeFileHandle.Dispose();
