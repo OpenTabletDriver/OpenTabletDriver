@@ -1,0 +1,52 @@
+{
+  "Name": "Wacom XD-1218-U",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 457.2,
+      "Height": 316.8,
+      "MaxX": 91440.0,
+      "MaxY": 63360.0
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 69,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.IntuosV1ReportParser",
+      "FeatureInitReport": [
+        "AgI=",
+        "BAA="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 69,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser",
+      "FeatureInitReport": [
+        "AgI=",
+        "BAA="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}

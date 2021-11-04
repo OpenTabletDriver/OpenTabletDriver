@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Native.Windows.Timers;
 
@@ -56,5 +58,18 @@ namespace OpenTabletDriver.Native.Windows
         public static extern uint timeKillEvent(uint timerEventId);
 
         #endregion
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern SafeFileHandle CreateFile(
+            [MarshalAs(UnmanagedType.LPWStr)] string filename,
+            FileAccess access,
+            FileShare share,
+            IntPtr securityAttributes,
+            FileMode creationDisposition,
+            FileAttributes flagsAndAttributes,
+            IntPtr templateFile);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool CloseHandle(IntPtr hHandle);
     }
 }

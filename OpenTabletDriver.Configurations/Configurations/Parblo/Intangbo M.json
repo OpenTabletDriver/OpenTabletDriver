@@ -1,0 +1,54 @@
+{
+  "Name": "Parblo Intangbo M",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 260.5,
+      "Height": 160.0,
+      "MaxX": 26050.0,
+      "MaxY": 16000.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1155,
+      "ProductID": 40979,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 1155,
+      "ProductID": 40979,
+      "InputReportLength": 1101,
+      "OutputReportLength": 1101,
+      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
