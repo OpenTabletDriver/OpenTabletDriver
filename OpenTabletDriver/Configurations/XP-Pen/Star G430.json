@@ -40,7 +40,7 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": [],
+      "OutputInitReport": null,
       "DeviceStrings": {
         "2": "TABLET G3 4x3"
       },
