@@ -3,59 +3,54 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using OpenTabletDriver.Devices;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Tablet;
+
+#nullable enable
 
 namespace OpenTabletDriver
 {
-    public abstract class Driver : IDriver, IDisposable
+    public class Driver : IDriver, IDisposable
     {
-        public event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
-
-        private static readonly Dictionary<string, Func<IReportParser<IDeviceReport>>> reportParserDict = new Dictionary<string, Func<IReportParser<IDeviceReport>>>
+        public Driver(ICompositeDeviceHub deviceHub, IReportParserProvider reportParserProvider, IDeviceConfigurationProvider configurationProvider)
         {
-            { typeof(AuxReportParser).FullName, () => new AuxReportParser() },
-            { typeof(DeviceReportParser).FullName, () => new DeviceReportParser() },
-            { typeof(TabletReportParser).FullName, () => new TabletReportParser() },
-            { typeof(TiltTabletReportParser).FullName, () => new TiltTabletReportParser() },
-            { typeof(Vendors.Huion.GianoReportParser).FullName, () => new Vendors.Huion.GianoReportParser() },
-            { typeof(Vendors.SkipByteTabletReportParser).FullName, () => new Vendors.SkipByteTabletReportParser() },
-            { typeof(Vendors.UCLogic.UCLogicReportParser).FullName, () => new Vendors.UCLogic.UCLogicReportParser() },
-            { typeof(Vendors.Veikk.VeikkReportParser).FullName, () => new Vendors.Veikk.VeikkReportParser() },
-            { typeof(Vendors.Wacom.Bamboo.BambooReportParser).FullName, () => new Vendors.Wacom.Bamboo.BambooReportParser() },
-            { typeof(Vendors.Wacom.Intuos.IntuosReportParser).FullName, () => new Vendors.Wacom.Intuos.IntuosReportParser() },
-            { typeof(Vendors.Wacom.Intuos.WacomDriverIntuosReportParser).FullName, () => new Vendors.Wacom.Intuos.WacomDriverIntuosReportParser() },
-            { typeof(Vendors.Wacom.Intuos3.Intuos3ReportParser).FullName, () => new Vendors.Wacom.Intuos3.Intuos3ReportParser() },
-            { typeof(Vendors.Wacom.IntuosV1.IntuosV1ReportParser).FullName, () => new Vendors.Wacom.IntuosV1.IntuosV1ReportParser() },
-            { typeof(Vendors.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser).FullName, () => new Vendors.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser() },
-            { typeof(Vendors.Wacom.IntuosV2.IntuosV2ReportParser).FullName, () => new Vendors.Wacom.IntuosV2.IntuosV2ReportParser() },
-            { typeof(Vendors.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser).FullName, () => new Vendors.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser() },
-            { typeof(Vendors.Wacom.Wacom64bAuxReportParser).FullName, () => new Vendors.Wacom.Wacom64bAuxReportParser() },
-            { typeof(Vendors.XP_Pen.XP_PenReportParser).FullName, () => new Vendors.XP_Pen.XP_PenReportParser() }
-        };
+            CompositeDeviceHub = deviceHub;
+            _reportParserProvider = reportParserProvider;
+            _deviceConfigurationProvider = configurationProvider;
+        }
 
-        public IEnumerable<TabletReference> Tablets => Devices.Select(c => c.CreateReference());
-        public IList<InputDeviceTree> Devices { private set; get; } = new List<InputDeviceTree>();
+        private readonly IReportParserProvider _reportParserProvider;
+        private readonly IDeviceConfigurationProvider _deviceConfigurationProvider;
+
+        public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
+
+        public ICompositeDeviceHub CompositeDeviceHub { get; }
+        public IList<InputDeviceTree> InputDevices { get; } = new List<InputDeviceTree>();
+        public IEnumerable<TabletReference> Tablets => InputDevices.Select(c => c.CreateReference());
+
+        public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
+        {
+            return _reportParserProvider.GetReportParser(identifier.ReportParser);
+        }
 
         public virtual bool Detect()
         {
             bool success = false;
 
-            Devices.Clear();
-            foreach (var config in GetTabletConfigurations())
+            InputDevices.Clear();
+            foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
             {
                 if (Match(config) is InputDeviceTree tree)
                 {
                     success = true;
-                    Devices.Add(tree);
+                    InputDevices.Add(tree);
 
                     tree.Disconnected += (sender, e) =>
                     {
-                        Devices.Remove(tree);
+                        InputDevices.Remove(tree);
                         TabletsChanged?.Invoke(this, Tablets);
                     };
                 }
@@ -66,14 +61,7 @@ namespace OpenTabletDriver
             return success;
         }
 
-        public virtual IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
-        {
-            return reportParserDict[identifier.ReportParser].Invoke();
-        }
-
-        protected abstract IEnumerable<TabletConfiguration> GetTabletConfigurations();
-
-        protected virtual InputDeviceTree Match(TabletConfiguration config)
+        protected virtual InputDeviceTree? Match(TabletConfiguration config)
         {
             Log.Write("Detect", $"Searching for tablet '{config.Name}'");
             try
@@ -122,7 +110,7 @@ namespace OpenTabletDriver
             return null;
         }
 
-        private InputDevice MatchDevice(TabletConfiguration config, IList<DeviceIdentifier> identifiers)
+        private InputDevice? MatchDevice(TabletConfiguration config, IList<DeviceIdentifier> identifiers)
         {
             foreach (var identifier in identifiers)
             {
@@ -149,7 +137,7 @@ namespace OpenTabletDriver
 
         private IEnumerable<IDeviceEndpoint> GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
         {
-            return from device in RootHub.Current.GetDevices()
+            return from device in CompositeDeviceHub.GetDevices()
                 where identifier.VendorID == device.VendorID
                 where identifier.ProductID == device.ProductID
                 where device.CanOpen
@@ -206,11 +194,9 @@ namespace OpenTabletDriver
 
         public void Dispose()
         {
-            foreach (InputDeviceTree tree in Devices)
+            foreach (InputDeviceTree tree in InputDevices)
                 foreach (InputDevice dev in tree.InputDevices)
                     dev.Dispose();
-
-            Devices = null;
         }
     }
 }
