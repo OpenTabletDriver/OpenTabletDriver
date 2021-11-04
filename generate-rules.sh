@@ -6,7 +6,7 @@ SRC_ROOT=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 PROJECT="${SRC_ROOT}/OpenTabletDriver.Tools.udev"
 FRAMEWORK="net6.0"
 
-TABLET_CONFIGURATIONS="${SRC_ROOT}/OpenTabletDriver/Configurations"
+TABLET_CONFIGURATIONS="${SRC_ROOT}/OpenTabletDriver.Configurations/Configurations"
 RULES_FILE="${SRC_ROOT}/bin/99-opentabletdriver.rules"
 
 if [ "$#" -gt 0 ]; then

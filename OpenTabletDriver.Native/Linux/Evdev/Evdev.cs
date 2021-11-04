@@ -5,7 +5,7 @@ namespace OpenTabletDriver.Native.Linux.Evdev
 {
     public static partial class Evdev
     {
-        private const string libevdev = "libevdev.so";
+        private const string libevdev = "libevdev.so.2";
 
         [DllImport(libevdev)]
         public extern static IntPtr libevdev_new();

@@ -2,6 +2,8 @@
 
 # OpenTabletDriver
 
+English | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md)
+
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
 <p align="middle">
@@ -14,11 +16,13 @@ OpenTabletDriver is an open source, cross platform, user mode tablet driver. The
 
 All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
 
-- [Supported Tablets](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/TABLETS.md)
+- [Supported Tablets](https://opentabletdriver.net/Tablets)
 
 # Installation
 
-- [Installation guide](https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Installation-Guide)
+- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
 
 # Running OpenTabletDriver binaries
 
@@ -32,7 +36,7 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 ### All platforms
 
-- .NET 5 SDK
+- .NET 5 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/5.0) - You want the SDK for your platform, Linux users should install via package manager where possible, ensure package provides .NET 5)
 
 #### Windows
 
@@ -40,10 +44,29 @@ No other dependencies.
 
 #### Linux
 
+Required packages (some packages may be pre-installed for your distribution)
+
 - libx11
 - libxrandr
 - libevdev2
 - GTK+3
+
+To build on Linux, run the provided 'build.sh' file. This will run the
+same 'dotnet publish' commands used for building the AUR package, and
+will produce usable binaries in 'OpenTabletDriver/bin'.
+
+To build on ARM linux, run the provided 'build.sh' file with the
+appropriate runtime provided as an argument. For arm64, this is
+'linux-arm64'.
+
+Note: If building for the first time, run the included
+generate-rules.sh script. This will generate a set of udev rules in
+OpenTabletDriver/bin, called '99-opentabletdriver.rules'. This file
+should then be moved to `/etc/udev/rules.d/`:
+
+```
+sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
+```
 
 #### MacOS [Experimental]
 

@@ -24,9 +24,6 @@ jobs:
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.UX.Gtk $options --runtime $runtime -o build/$runtime
-      - name: Copy Configurations
-        run: |
-          cp -vr ./OpenTabletDriver/Configurations/ build/linux-x64
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@master
         with:
@@ -59,9 +56,6 @@ jobs:
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.UX.MacOS $options --runtime $runtime -o build/$runtime
-      - name: Copy Configurations
-        run: |
-          cp -vr ./OpenTabletDriver/Configurations/ build/osx-x64
       - name: Upload MacOS artifacts
         uses: actions/upload-artifact@master
         with:
@@ -86,8 +80,6 @@ jobs:
           dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
-      - name: Copy Configurations
-        run: Copy-Item -Path "./OpenTabletDriver/Configurations/" -Destination "build/win-x64/Configurations/" -Recurse
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
