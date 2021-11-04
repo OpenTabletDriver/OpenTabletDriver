@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen CT460",
+  "Name": "XP-Pen CT1060",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 101.6,
-      "MaxX": 32000.0,
-      "MaxY": 20320.0
+      "Width": 254.505,
+      "Height": 159.305,
+      "MaxX": 50901.0,
+      "MaxY": 31861.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -20,9 +20,9 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 2353,
+      "ProductID": 2354,
       "InputReportLength": 12,
-      "OutputReportLength": 12,
+      "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [

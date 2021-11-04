@@ -16,11 +16,13 @@ OpenTabletDriver는 관리자 권한 없이 여러 플랫폼에서 작동하는 
 
 OpenTabletDriver에서 지원하거나, 아직 테스트가 부족하거나, 아니면 지원 예정인 타블렛들의 목록은 여기서 확인하실 수 있습니다. 각 플랫폼에 대해 자주 발생하는 문제에 대한 해결책은 위키를 찾아보세요.
 
-- [지원하는 타블렛](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/TABLETS.md)
+- [지원하는 타블렛](https://opentabletdriver.net/Tablets)
 
 # 설치
 
-- [설치 가이드](https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Installation-Guide)
+- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
 
 # OpenTabletDriver 실행하기
 

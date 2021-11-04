@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
@@ -47,7 +46,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public static AbsoluteModeSettings GetDefaults(DigitizerSpecifications digitizer)
         {
-            var display = AppInfo.PluginManager.BuildServiceProvider().GetService<IVirtualScreen>();
+            var display = AppInfo.PluginManager.GetService<IVirtualScreen>();
 
             return new AbsoluteModeSettings
             {

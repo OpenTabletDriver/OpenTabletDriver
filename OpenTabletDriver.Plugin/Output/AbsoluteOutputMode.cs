@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Plugin.Output
     /// An absolutely positioned output mode.
     /// </summary>
     [PluginIgnore]
-    public abstract class AbsoluteOutputMode : OutputMode, IPointerProvider<IAbsolutePointer>
+    public abstract class AbsoluteOutputMode : OutputMode
     {
         private Vector2 min, max;
         private Area outputArea, inputArea;

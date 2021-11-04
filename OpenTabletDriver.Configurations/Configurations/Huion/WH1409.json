@@ -1,11 +1,11 @@
 {
-  "Name": "Gaomon PD1661",
+  "Name": "Huion WH1409",
   "Specifications": {
     "Digitizer": {
-      "Width": 256.32,
-      "Height": 144.18,
-      "MaxX": 51264.0,
-      "MaxY": 28836.0
+      "Width": 350.0,
+      "Height": 218.0,
+      "MaxX": 70000.0,
+      "MaxY": 43600.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -14,7 +14,7 @@
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 8
+      "ButtonCount": 12
     },
     "MouseButtons": null,
     "Touch": null
@@ -22,14 +22,14 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
+      "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Vendors.Huion.GianoReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "OEM02_M191_\\d{6}$"
+        "201": "HUION_T153_\\d{6}$"
       },
       "InitializationStrings": [
         200
