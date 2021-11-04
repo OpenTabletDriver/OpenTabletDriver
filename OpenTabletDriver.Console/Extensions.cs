@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Console
             foreach (var setting in store.Settings)
                 storeSettings.Add(setting.Format());
 
-            string prefix = store.GetPluginReference().Name ?? store.Path;
+            string prefix = store.Name ?? store.Path;
             string suffix = storeSettings.Count == 0 ? null : string.Join(", ", storeSettings);
 
             return string.IsNullOrEmpty(suffix) ? $"'{prefix}'" : $"'{prefix}: {suffix}'";
