@@ -93,12 +93,25 @@ namespace OpenTabletDriver.Devices.WinUSB
                     if (!SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref deviceInterfaceData, ref deviceInterfaceDetailData, size, ref size, IntPtr.Zero))
                         throw new WindowsEnumerationException($"Failed to get device data");
 
-                    list.Add(new WinUSBInterface(deviceInterfaceDetailData.DevicePath));
+                    TryAdd(list, deviceInterfaceDetailData.DevicePath);
                 }
             }
             finally
             {
                 SetupDiDestroyDeviceInfoList(deviceInfoSet);
+            }
+        }
+
+        private static void TryAdd(List<WinUSBInterface> list, string devicePath)
+        {
+            try
+            {
+                var winUsbInterface = new WinUSBInterface(devicePath);
+                list.Add(winUsbInterface);
+            }
+            catch
+            {
+                Log.Write("WinUSB", $"Cannot create device for '{devicePath}'");
             }
         }
 
