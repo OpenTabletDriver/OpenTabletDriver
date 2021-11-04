@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Devices;
@@ -23,7 +24,7 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Orientation = Orientation.Horizontal,
                 Panel1MinimumSize = 200,
-                Panel1 = deviceList = new ListBox<IDeviceEndpoint>(),
+                Panel1 = deviceList = new ListBox<SerializedDeviceEndpoint>(),
                 Panel2 = new Scrollable
                 {
                     Content = new StackLayout
@@ -112,12 +113,8 @@ namespace OpenTabletDriver.UX.Windows
             this.outputReportLength.ValueBinding.Bind(selectedItemBinding.Child(c => c.OutputReportLength));
             this.featureReportLength.ValueBinding.Bind(selectedItemBinding.Child(c => c.FeatureReportLength));
 
-            deviceList.Source = RootHub.Current.GetDevices()
-                .Where(d => d.CanOpen)
-                .ToList();
-
             var select = new Command { ToolBarText = "Select" };
-            select.Executed += (sender, e) => Close(new SerializedDeviceEndpoint(deviceList.SelectedItem));
+            select.Executed += (sender, e) => Close(deviceList.SelectedItem);
 
             ToolBar = new ToolBar
             {
@@ -128,7 +125,14 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private ListBox<IDeviceEndpoint> deviceList;
+        public async Task InitializeAsync()
+        {
+            deviceList.Source = (await App.Driver.Instance.GetDevices())
+                .Where(d => d.CanOpen)
+                .ToList();
+        }
+
+        private ListBox<SerializedDeviceEndpoint> deviceList;
         private TextBox friendlyName, manufacturer, productName, serialNumber, devicePath;
         private MaskedTextBox<int> vendorId, productId, inputReportLength, outputReportLength, featureReportLength;
     }
