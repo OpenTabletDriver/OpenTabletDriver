@@ -1,5 +1,5 @@
-using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Vendors.XP_Pen
 {
@@ -9,8 +9,10 @@ namespace OpenTabletDriver.Vendors.XP_Pen
         {
             if (report[1].IsBitSet(4))
                 return new XP_PenAuxReport(report);
-            
-            if (report.Length >= 10)
+
+            if (report.Length >= 12)
+                return new XP_PenTabletOverflowReport(report);
+            else if (report.Length >= 10)
                 return new XP_PenTabletReport(report);
             else
                 return new TabletReport(report);

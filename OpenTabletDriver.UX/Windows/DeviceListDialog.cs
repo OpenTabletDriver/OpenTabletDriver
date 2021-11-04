@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using HidSharp;
+using OpenTabletDriver.Devices;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.UX.Controls.Generic;
+using OpenTabletDriver.UX.Controls.Generic.Text;
 
 namespace OpenTabletDriver.UX.Windows
 {
-    public class DeviceListDialog : Dialog<HidDevice>
+    public class DeviceListDialog : Dialog<SerializedDeviceEndpoint>
     {
         public DeviceListDialog()
         {
@@ -17,205 +20,120 @@ namespace OpenTabletDriver.UX.Windows
             MinimumSize = new Size(960 - 100, 730 - 100);
             Icon = App.Logo.WithSize(App.Logo.Size);
 
-            var devices = from device in DeviceList.Local.GetHidDevices()
-                where device.CanOpen
-                select device;
-
-            Devices = devices.ToList();
-
-            _deviceList.SelectedIndexChanged += (sender, e) => 
-            {
-                if (_deviceList.SelectedIndex >= 0)
-                    SelectedDevice = Devices[_deviceList.SelectedIndex];
-            };
-            
             Content = new Splitter
             {
                 Orientation = Orientation.Horizontal,
                 Panel1MinimumSize = 200,
-                Panel1 = _deviceList,
+                Panel1 = deviceList = new ListBox<SerializedDeviceEndpoint>(),
                 Panel2 = new Scrollable
                 {
-                    Content = _devicePropertyList
+                    Content = new StackLayout
+                    {
+                        Padding = new Padding(5),
+                        Spacing = 5,
+                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                        Items =
+                        {
+                            new Group
+                            {
+                                Text = "Friendly Name",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.friendlyName = new TextBox()
+                            },
+                            new Group
+                            {
+                                Text = "Manufacturer",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.manufacturer = new TextBox()
+                            },
+                            new Group
+                            {
+                                Text = "Product Name",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.productName = new TextBox()
+                            },
+                            new Group
+                            {
+                                Text = "Serial Number",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.serialNumber = new TextBox()
+                            },
+                            new Group
+                            {
+                                Text = "Vendor ID",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.vendorId = new HexNumberBox()
+                            },
+                            new Group
+                            {
+                                Text = "Product ID",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.productId = new HexNumberBox()
+                            },
+                            new Group
+                            {
+                                Text = "Input Report Length",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.inputReportLength = new IntegerNumberBox()
+                            },
+                            new Group
+                            {
+                                Text = "Output Report Length",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.outputReportLength = new IntegerNumberBox()
+                            },
+                            new Group
+                            {
+                                Text = "Feature Report Length",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.featureReportLength = new IntegerNumberBox()
+                            },
+                            new Group
+                            {
+                                Text = "Device Path",
+                                Orientation = Orientation.Horizontal,
+                                Content = this.devicePath = new TextBox()
+                            }
+                        }
+                    }
                 }
             };
 
-            var selectDevice = new Command { ToolBarText = "Select" };
-            selectDevice.Executed += (sender, e) => Return();
+            deviceList.ItemTextBinding = Binding.Property<IDeviceEndpoint, string>(d => d.FriendlyName);
+
+            var selectedItemBinding = deviceList.SelectedItemBinding;
+            this.friendlyName.TextBinding.Bind(selectedItemBinding.Child(c => c.FriendlyName));
+            this.manufacturer.TextBinding.Bind(selectedItemBinding.Child(c => c.Manufacturer));
+            this.productName.TextBinding.Bind(selectedItemBinding.Child(c => c.ProductName));
+            this.serialNumber.TextBinding.Bind(selectedItemBinding.Child(c => c.SerialNumber));
+            this.devicePath.TextBinding.Bind(selectedItemBinding.Child(c => c.DevicePath));
+            this.vendorId.ValueBinding.Bind(selectedItemBinding.Child(c => c.VendorID));
+            this.productId.ValueBinding.Bind(selectedItemBinding.Child(c => c.ProductID));
+            this.inputReportLength.ValueBinding.Bind(selectedItemBinding.Child(c => c.InputReportLength));
+            this.outputReportLength.ValueBinding.Bind(selectedItemBinding.Child(c => c.OutputReportLength));
+            this.featureReportLength.ValueBinding.Bind(selectedItemBinding.Child(c => c.FeatureReportLength));
+
+            var select = new Command { ToolBarText = "Select" };
+            select.Executed += (sender, e) => Close(deviceList.SelectedItem);
 
             ToolBar = new ToolBar
             {
                 Items =
                 {
-                    selectDevice
+                    select
                 }
             };
         }
 
-        private List<HidDevice> _devices;
-        private List<HidDevice> Devices
+        public async Task InitializeAsync()
         {
-            set 
-            {
-                _devices = value;
-                _deviceList.Items.Clear();
-                bool getDeviceFailed = false;
-                foreach (var device in _devices)
-                {
-                    try
-                    {
-                        _deviceList.Items.Add(device.GetFriendlyName());
-                    }
-                    catch (Exception ex)
-                    {
-                        if (!getDeviceFailed)
-                        {
-                            MessageBox.Show($"Failed to get a device, one or more HID devices may not be shown." + Environment.NewLine
-                                + $"{ex.GetType().Name}: {ex.Message}");
-                            getDeviceFailed = true;
-                        }
-                    }
-                }
-            }
-            get => _devices;
+            deviceList.Source = (await App.Driver.Instance.GetDevices())
+                .Where(d => d.CanOpen)
+                .ToList();
         }
 
-        private HidDevice _selected;
-        private HidDevice SelectedDevice
-        {
-            set
-            {
-                _selected = value;
-                _devicePropertyList.Items.Clear();
-                foreach (var prop in GeneratePropertyControls())
-                {
-                    var item = new StackLayoutItem(prop, HorizontalAlignment.Stretch);
-                    _devicePropertyList.Items.Add(item);
-                }
-            }
-            get => _selected;
-        }
-
-        private ListBox _deviceList = new ListBox();
-        
-        private StackLayout _devicePropertyList = new StackLayout
-        {
-            Padding = new Padding(5),
-            Spacing = 5
-        };
-
-        private IEnumerable<Control> GeneratePropertyControls() => new List<Control>
-        {
-            GetControl("Friendly Name",
-                SelectedDevice.GetFriendlyName
-            ),
-            GetControl("Manufacturer",
-                () => 
-                {
-                    try
-                    {
-                        return SelectedDevice.GetManufacturer();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-                }
-            ),
-            GetControl("Vendor ID",
-                () => SelectedDevice.VendorID.ToString()
-            ),
-            GetControl("Product ID",
-                () => SelectedDevice.ProductID.ToString()
-            ),
-            GetControl("Max Feature Report Length",
-                () => 
-                {
-                    try
-                    {
-                        return SelectedDevice.GetMaxFeatureReportLength().ToString();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-                }
-            ),
-            GetControl("Max Input Report Length",
-                () =>
-                {
-                    try
-                    {
-                        return SelectedDevice.GetMaxInputReportLength().ToString();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-                }
-            ),
-            GetControl("Max Output Report Length",
-                () => 
-                {
-                    try
-                    {
-                        return SelectedDevice.GetMaxOutputReportLength().ToString();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-                }
-            ),
-            GetControl("Product Name",
-                () => 
-                {
-                    try
-                    {
-                        return SelectedDevice.GetProductName();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-                }
-            ),
-            GetControl("Serial Number",
-                () => 
-                {
-                    try
-                    {
-                        return SelectedDevice.GetSerialNumber();
-                    }
-                    catch
-                    {
-                        return string.Empty;
-                    }
-                }
-            )
-        };
-
-        private Control GetControl(string groupName, Func<string> getValue)
-        {
-            var textBox = new TextBox
-            {
-                Width = 400
-            };
-            try
-            {
-                textBox.TextBinding.Bind(getValue);
-            }
-            catch
-            {
-                textBox.Text = $"Failed to obtain '{groupName.ToLower()}'.";
-                textBox.TextColor = Colors.Red;
-            }
-            return new Group(groupName, textBox, Orientation.Horizontal, false);
-        }
-
-        private void Return()
-        {
-            this.Close(SelectedDevice);
-        }
+        private ListBox<SerializedDeviceEndpoint> deviceList;
+        private TextBox friendlyName, manufacturer, productName, serialNumber, devicePath;
+        private MaskedTextBox<int> vendorId, productId, inputReportLength, outputReportLength, featureReportLength;
     }
 }
