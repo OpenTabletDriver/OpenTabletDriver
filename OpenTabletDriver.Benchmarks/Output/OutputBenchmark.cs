@@ -1,10 +1,6 @@
 using System;
-using System.Linq;
-using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tablet;
