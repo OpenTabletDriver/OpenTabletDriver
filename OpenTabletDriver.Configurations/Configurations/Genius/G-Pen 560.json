@@ -25,7 +25,7 @@
       "ProductID": 20483,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Genius.GeniusReportParserV2",
+      "ReportParser": "OpenTabletDriver.Parsers.Genius.GeniusReportParserV2",
       "FeatureInitReport": [
         "AgQA",
         "AgIA",

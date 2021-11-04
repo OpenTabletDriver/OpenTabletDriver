@@ -23,7 +23,7 @@
       "ProductID": 58983,
       "InputReportLength": 14,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.ViewSonic.WoodPadReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.ViewSonic.WoodPadReportParser",
       "FeatureInitReport": [
         "AhABAAA="
       ],

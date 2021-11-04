@@ -25,7 +25,7 @@
       "ProductID": 214,
       "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.Wacom.Intuos.IntuosReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
@@ -38,7 +38,7 @@
       "ProductID": 214,
       "InputReportLength": 11,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.WacomDriverIntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.Wacom.Intuos.WacomDriverIntuosReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
@@ -51,7 +51,7 @@
       "ProductID": 209,
       "InputReportLength": 20,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.Wacom.Intuos.IntuosReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
@@ -66,7 +66,7 @@
       "ProductID": 214,
       "InputReportLength": 64,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.Wacom.Wacom64bAuxReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -77,7 +77,7 @@
       "ProductID": 209,
       "InputReportLength": 64,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Wacom64bAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.Wacom.Wacom64bAuxReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},

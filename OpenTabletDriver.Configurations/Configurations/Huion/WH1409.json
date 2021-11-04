@@ -25,7 +25,7 @@
       "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.Huion.GianoReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.Huion.GianoReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {

@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Plugin.Components;
-using OpenTabletDriver.Tablet;
-using OpenTabletDriver.Vendors.XP_Pen;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Parsers.XP_Pen;
 using Xunit;
 
 namespace OpenTabletDriver.Tests
@@ -11,7 +11,9 @@ namespace OpenTabletDriver.Tests
     {
         public static TheoryData<string, Type> ReportParserProvider_CanGet_ReportParsers_Data => new()
         {
+            // Built-in
             { typeof(TabletReportParser).FullName!, typeof(TabletReportParser) },
+            // OTD.Configurations
             { typeof(XP_PenReportParser).FullName!, typeof(XP_PenReportParser) }
         };
 

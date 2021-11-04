@@ -23,7 +23,7 @@
       "ProductID": 105,
       "InputReportLength": 8,
       "OutputReportLength": 0,
-      "ReportParser": "OpenTabletDriver.Vendors.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Parsers.Wacom.Intuos.IntuosReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
