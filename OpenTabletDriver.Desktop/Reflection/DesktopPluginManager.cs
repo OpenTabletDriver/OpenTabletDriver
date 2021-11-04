@@ -98,7 +98,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
             else
             {
-                Log.Write("Plugin", $"Attempted to load the plugin {directory.Name} when it is already loaded.", LogLevel.Warning);
+                Log.Write("Plugin", $"Attempted to load the plugin {directory.Name} when it is already loaded.", LogLevel.Debug);
             }
         }
 

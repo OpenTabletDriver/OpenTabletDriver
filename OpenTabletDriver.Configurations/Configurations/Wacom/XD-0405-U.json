@@ -1,0 +1,52 @@
+{
+  "Name": "Wacom XD-0405-U",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 127.0,
+      "Height": 106.0,
+      "MaxX": 25400.0,
+      "MaxY": 21200.0
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 65,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.IntuosV1ReportParser",
+      "FeatureInitReport": [
+        "AgI=",
+        "BAA="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 65,
+      "InputReportLength": 11,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Vendors.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser",
+      "FeatureInitReport": [
+        "AgI=",
+        "BAA="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
