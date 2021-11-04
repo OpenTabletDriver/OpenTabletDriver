@@ -49,15 +49,6 @@ Paquets requis (certains paquets peuvent-être pré-installés pour votre distri
 - libx11
 - libxrandr
 - libevdev2
-
-Sur Fedora ou d'autres distributions, libevdev2 peut-être présentes,
-mais requière un symlink car le nom du binaire est différent de ce que .NET attend.
-
-Commande symlink utilisée sur Fedora 34:
-
-```
-sudo ln -s /lib64/libevdev.so.2 /lib64/libevdev.so
-```
 - GTK+3
 
 Pour pouvoir build sur Linux, exécutez le 'build.sh' fourni. Ceci va également exécuter
