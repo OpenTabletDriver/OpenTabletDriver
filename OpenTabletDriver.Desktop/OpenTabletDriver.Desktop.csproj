@@ -17,6 +17,7 @@
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.Native\OpenTabletDriver.Native.csproj" />
     <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Configurations\OpenTabletDriver.Configurations.csproj" />
   </ItemGroup>
 
 </Project>

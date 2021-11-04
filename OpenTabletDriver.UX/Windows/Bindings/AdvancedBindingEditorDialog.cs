@@ -71,7 +71,7 @@ namespace OpenTabletDriver.UX.Windows.Bindings
             };
 
             bindingTypeDropDown.SelectedItemBinding.Convert(t => new PluginSettingStore(t)).Bind(settingStoreEditor.StoreBinding);
-            bindingTypeDropDown.SelectedItem = currentBinding?.GetPluginReference().GetTypeReference();
+            bindingTypeDropDown.SelectedItem = currentBinding?.GetTypeInfo();
         }
 
         private TypeDropDown<IBinding> bindingTypeDropDown;

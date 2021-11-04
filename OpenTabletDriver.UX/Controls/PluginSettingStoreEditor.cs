@@ -70,7 +70,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             if (store != null)
             {
-                var type = store.GetPluginReference().GetTypeReference<TSource>();
+                var type = store.GetTypeInfo<TSource>();
                 return GetControlsForType(store, type);
             }
             else
