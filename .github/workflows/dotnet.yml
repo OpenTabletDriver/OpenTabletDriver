@@ -54,7 +54,6 @@ jobs:
       - name: MacOS Publish
         env:
           runtime: osx-x64
-          framework: net5
           options: --configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained
         run: |
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
@@ -82,7 +81,6 @@ jobs:
       - name: Windows Publish
         env:
           runtime: win-x64
-          framework: net5
         run: |
           $options= @('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '--no-self-contained')
           dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
