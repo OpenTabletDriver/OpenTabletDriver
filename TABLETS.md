@@ -128,6 +128,7 @@
 | XP-Pen Deco Mini7             |  Missing Features |
 | XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Deco Pro Small         |  Missing Features | Tilt and wheel are unsupported.
+| XP-Pen Innovator 16           |  Missing Features | Wheel is unsupported.
 | XP-Pen Star 06                |  Missing Features | Wheel is unsupported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is unsupported.
 | Huion 420                     |      Broken       | WinUSB implementation required.
