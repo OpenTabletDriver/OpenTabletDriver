@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Tests
 {
     public class ConfigurationTest
     {
-        public static IEnumerable<object[]> Configurations_HaveCorrect_Parsers_Data
+        public static IEnumerable<object[]> Configurations_Have_ExistentParsers_Data
         {
             get
             {
@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Tests
         }
 
         [Theory]
-        [MemberData(nameof(Configurations_HaveCorrect_Parsers_Data))]
+        [MemberData(nameof(Configurations_Have_ExistentParsers_Data))]
         public void Configurations_Have_ExistentParsers(string reportParserName)
         {
             var parserProvider = new DriverServiceCollection()
