@@ -48,7 +48,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 select ctx.GetMetadata();
 
             var remote = from meta in Repository
-                where meta.SupportedDriverVersion <= AppVersion
+                where meta.IsSupportedBy(AppVersion)
                 where !local.Any(m => PluginMetadata.Match(m, meta))
                 select meta;
 
