@@ -99,6 +99,7 @@
 | Huion Q620M                   |  Missing Features | Wheel is unsupported.
 | Parblo Intangbo M             |  Missing Features | Wheel is unsupported.
 | Parblo Intangbo S             |  Missing Features | Wheel is unsupported.
+| Parblo A610 Pro               |  Missing Features | Wheel is unsupported.
 | VEIKK A15 Pro                 |  Missing Features | Wheel is unsupported.
 | VEIKK A30                     |  Missing Features | Touchpad is unsupported.
 | VEIKK A50                     |  Missing Features | Touchpad is unsupported.
