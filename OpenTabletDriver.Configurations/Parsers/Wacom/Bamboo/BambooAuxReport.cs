@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom.Bamboo
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo
 {
     public struct BambooAuxReport : IAuxReport
     {

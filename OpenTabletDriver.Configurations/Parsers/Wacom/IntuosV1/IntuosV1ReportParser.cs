@@ -1,7 +1,7 @@
 ﻿using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Parsers.Wacom.Intuos4;
+using OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4;
 
-namespace OpenTabletDriver.Parsers.Wacom.IntuosV1
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
     public class IntuosV1ReportParser : IReportParser<IDeviceReport>
     {

@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Veikk
+namespace OpenTabletDriver.Configurations.Parsers.Veikk
 {
     public struct VeikkTabletReport : ITabletReport
     {

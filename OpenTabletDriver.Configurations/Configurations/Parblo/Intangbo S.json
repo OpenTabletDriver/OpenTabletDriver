@@ -25,7 +25,7 @@
       "ProductID": 40980,
       "InputReportLength": 10,
       "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Parsers.XP_Pen.XP_PenReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
@@ -38,7 +38,7 @@
       "ProductID": 40980,
       "InputReportLength": 1101,
       "OutputReportLength": 1101,
-      "ReportParser": "OpenTabletDriver.Parsers.XP_Pen.XP_PenReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"

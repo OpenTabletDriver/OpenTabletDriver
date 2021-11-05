@@ -25,7 +25,7 @@
       "ProductID": 130,
       "InputReportLength": 11,
       "OutputReportLength": 9,
-      "ReportParser": "OpenTabletDriver.Parsers.Acepen.AcepenReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Acepen.AcepenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "CQrhSgAAbD0A",

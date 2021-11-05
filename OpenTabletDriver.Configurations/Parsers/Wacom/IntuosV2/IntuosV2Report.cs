@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom.IntuosV2
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
 {
     public struct IntuosV2Report : ITabletReport, IProximityReport, ITiltReport, IEraserReport
     {

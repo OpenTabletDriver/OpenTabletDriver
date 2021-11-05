@@ -2,7 +2,7 @@ using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 using System.Runtime.CompilerServices;
 
-namespace OpenTabletDriver.Parsers.Genius
+namespace OpenTabletDriver.Configurations.Parsers.Genius
 {
     public struct GeniusMouseReport : IMouseReport
     {

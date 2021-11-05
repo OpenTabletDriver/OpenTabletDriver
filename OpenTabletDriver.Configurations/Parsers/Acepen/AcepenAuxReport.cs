@@ -1,7 +1,7 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Acepen
+namespace OpenTabletDriver.Configurations.Parsers.Acepen
 {
     public struct AcepenAuxReport : IAuxReport
     {

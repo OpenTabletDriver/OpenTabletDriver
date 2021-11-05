@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom.IntuosV1
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
     public struct IntuosV1ToolReport : IToolReport, IEraserReport, IProximityReport
     {

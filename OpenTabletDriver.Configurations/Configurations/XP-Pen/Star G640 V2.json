@@ -23,7 +23,7 @@
       "ProductID": 2324,
       "InputReportLength": 12,
       "OutputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Parsers.XP_Pen.XP_PenReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"

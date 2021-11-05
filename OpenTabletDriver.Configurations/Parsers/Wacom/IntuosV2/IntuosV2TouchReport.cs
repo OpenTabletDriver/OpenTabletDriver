@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 
-namespace OpenTabletDriver.Parsers.Wacom.IntuosV2
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
 {
     public struct IntuosV2TouchReport : ITouchReport
     {

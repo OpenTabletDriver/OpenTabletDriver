@@ -1,7 +1,7 @@
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Parsers.UCLogic;
+using OpenTabletDriver.Configurations.Parsers.UCLogic;
 
-namespace OpenTabletDriver.Parsers.Huion
+namespace OpenTabletDriver.Configurations.Parsers.Huion
 {
     public class GianoReportParser : IReportParser<IDeviceReport>
     {

@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom.Intuos3
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 {
     public class WacomDriverIntuos3ReportParser : Intuos3ReportParser
     {

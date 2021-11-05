@@ -3,7 +3,7 @@ using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 
-namespace OpenTabletDriver.Parsers.Wacom
+namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
     public struct WacomTouchReport : ITouchReport, IAuxReport
     {

@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Huion
+namespace OpenTabletDriver.Configurations.Parsers.Huion
 {
     public struct GianoReport : ITabletReport, ITiltReport
     {

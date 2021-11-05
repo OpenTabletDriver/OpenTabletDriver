@@ -1,7 +1,7 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom.IntuosV1
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
     public struct IntuosV1TabletReport : ITabletReport, IProximityReport, ITiltReport
     {

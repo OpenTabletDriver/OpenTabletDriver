@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Genius
+namespace OpenTabletDriver.Configurations.Parsers.Genius
 {
     public struct GeniusTabletReport : ITabletReport
     {

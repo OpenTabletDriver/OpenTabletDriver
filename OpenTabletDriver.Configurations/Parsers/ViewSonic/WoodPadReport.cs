@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.ViewSonic
+namespace OpenTabletDriver.Configurations.Parsers.ViewSonic
 {
     public struct WoodPadReport : ITabletReport, ITiltReport
     {

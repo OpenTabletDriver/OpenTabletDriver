@@ -1,7 +1,7 @@
 using System;
 using BenchmarkDotNet.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Parsers;
+using OpenTabletDriver.Configurations.Parsers;
 
 namespace OpenTabletDriver.Benchmarks.Parser
 {

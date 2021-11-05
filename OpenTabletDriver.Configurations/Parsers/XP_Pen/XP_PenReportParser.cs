@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.XP_Pen
+namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 {
     public class XP_PenReportParser : IReportParser<IDeviceReport>
     {

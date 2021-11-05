@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Genius
+namespace OpenTabletDriver.Configurations.Parsers.Genius
 {
     public class GeniusReportParser : IReportParser<IDeviceReport>
     {

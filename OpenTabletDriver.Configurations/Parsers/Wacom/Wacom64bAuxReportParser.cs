@@ -1,6 +1,6 @@
 ﻿using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom
+namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
     public class Wacom64bAuxReportParser : IReportParser<IDeviceReport>
     {

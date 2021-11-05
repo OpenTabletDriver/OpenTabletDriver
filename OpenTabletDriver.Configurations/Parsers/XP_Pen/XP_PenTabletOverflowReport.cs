@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.XP_Pen
+namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 {
     public struct XP_PenTabletOverflowReport : ITabletReport, ITiltReport, IEraserReport
     {

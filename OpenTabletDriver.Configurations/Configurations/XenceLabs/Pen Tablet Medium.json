@@ -25,7 +25,7 @@
       "ProductID": 20993,
       "InputReportLength": 10,
       "OutputReportLength": 32,
-      "ReportParser": "OpenTabletDriver.Parsers.XenceLabs.XenceLabsReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XenceLabs.XenceLabsReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"

@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.UCLogic
+namespace OpenTabletDriver.Configurations.Parsers.UCLogic
 {
     public class UCLogicReportParser : IReportParser<IDeviceReport>
     {

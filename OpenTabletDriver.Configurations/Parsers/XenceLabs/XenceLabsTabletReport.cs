@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.XenceLabs
+namespace OpenTabletDriver.Configurations.Parsers.XenceLabs
 {
     public struct XenceLabsTabletReport : ITabletReport, IEraserReport, ITiltReport
     {

@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom.Bamboo
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo
 {
     public class BambooReportParser : IReportParser<IDeviceReport>
     {

@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Veikk
+namespace OpenTabletDriver.Configurations.Parsers.Veikk
 {
     public class VeikkReportParser : IReportParser<IDeviceReport>
     {

@@ -36,7 +36,7 @@
       "ProductID": 16,
       "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Parsers.SkipByteTabletReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.SkipByteTabletReportParser",
       "FeatureInitReport": [
         "AgI="
       ],

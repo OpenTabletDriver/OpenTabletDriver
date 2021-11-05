@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers.Wacom.Intuos3
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 {
     public struct Intuos3AuxReport : IAuxReport
     {

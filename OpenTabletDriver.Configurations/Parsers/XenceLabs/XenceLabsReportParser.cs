@@ -1,7 +1,7 @@
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Parsers.XP_Pen;
+using OpenTabletDriver.Configurations.Parsers.XP_Pen;
 
-namespace OpenTabletDriver.Parsers.XenceLabs
+namespace OpenTabletDriver.Configurations.Parsers.XenceLabs
 {
     public class XenceLabsReportParser : IReportParser<IDeviceReport>
     {

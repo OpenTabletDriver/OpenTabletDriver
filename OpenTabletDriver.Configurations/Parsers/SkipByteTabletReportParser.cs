@@ -1,6 +1,6 @@
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Parsers
+namespace OpenTabletDriver.Configurations.Parsers
 {
     public class SkipByteTabletReportParser : TabletReportParser
     {

@@ -25,7 +25,7 @@
       "ProductID": 888,
       "InputReportLength": 192,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
@@ -38,7 +38,7 @@
       "ProductID": 885,
       "InputReportLength": 192,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Parsers.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
