@@ -106,6 +106,14 @@ No other dependencies.
 
 # Contributing to OpenTabletDriver
 
-If you wish to contribute to OpenTabletDriver, check out the [issue tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
+If you wish to contribute to OpenTabletDriver, check out the [issue
+tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). When
+creating pull requests, follow the guidelines outlined in our [contribution
+guidelines](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
-If you have any issues or suggestions, [open an issue ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose).
+If you have any issues or suggestions, [open an issue
+ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
+and fill out the template with relevant information. We welcome both bug
+reports, as well as new tablets to add support for. In many cases adding support
+for a new tablet is quite easy, especially if it's for a tablet with a
+manufacturer who's other tablets we already support.
