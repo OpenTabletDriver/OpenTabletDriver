@@ -4,7 +4,7 @@
 
 [English](README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | Français
 
-OpenTabletDriver est un driver de tablette en mode utilisateur, open source et multiplateforme. Le but d'OpenTabletDriver est d'être compatible avec le plus de plateforme possibles, et ce avec une interface graphique utilisateur facilement configurable.
+OpenTabletDriver est un driver de tablette en mode utilisateur, open source et multiplateforme. Le but d'OpenTabletDriver est d'être compatible avec le plus de plateforme possibles, et ce grâce à une interface graphique utilisateur facilement configurable.
 
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
@@ -53,7 +53,7 @@ Paquets requis (certains paquets peuvent-être pré-installés pour votre distri
 
 Pour pouvoir build sur Linux, exécutez le 'build.sh' fourni. Ceci va également exécuter
 la command 'dotnet publish' utilisée pour build le paquet AUR, 
-cela va également produire des binaires utilisables dans 'OpenTabletDriver/bin'.
+cela va également produire des exécutables utilisables dans 'OpenTabletDriver/bin'.
 
 Pour build sur ARM Linux, exécutez le 'build.sh' fourni 
 avec les arguments d'exécution appropriés. Pour arm64, c'est 
