@@ -115,5 +115,22 @@ If you have any issues or suggestions, [open an issue
 ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
 and fill out the template with relevant information. We welcome both bug
 reports, as well as new tablets to add support for. In many cases adding support
-for a new tablet is quite easy, especially if it's for a tablet with a
-manufacturer who's other tablets we already support.
+for a new tablet is quite easy.
+
+### Supporting a new tablet
+
+If you'd like us to add support for a new tablet, open an issue or join our
+[discord](https://discord.gg/9bcMaPkVAR) asking for support. *We generally
+prefer that adding tablet support be done through discord, due to the
+back-and-forth involved*.
+
+We'll have you do a few things like making a recording of the data sent by your
+tablet using our built-in tablet debugging tool, testing features of the tablet
+(on-tablet buttons, pen buttons, pen pressure, etc) with different configs we'll
+send you to try.
+
+You're also of course welcome to open a PR adding support for it yourself, if
+you have a good grasp on what's involved.
+
+Generally this process is relatively easy, especially if it's for a tablet
+manufacturer we already have support for on other tablets.
