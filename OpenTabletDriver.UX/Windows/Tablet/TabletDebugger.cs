@@ -119,8 +119,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             this.Content = new Splitter
             {
                 Orientation = Orientation.Vertical,
-                Width = 640,
-                Height = 800,
+                Width = 700,
+                Height = 875,
                 FixedPanel = SplitterFixedPanel.Panel2,
                 Panel1 = new DebuggerGroup
                 {

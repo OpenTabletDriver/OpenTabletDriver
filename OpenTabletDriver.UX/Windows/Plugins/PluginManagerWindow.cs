@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         public PluginManagerWindow()
         {
             this.Title = "Plugin Manager";
-            this.ClientSize = new Size(900, 720);
+            this.ClientSize = new Size(1000, 800);
             this.AllowDrop = true;
 
             this.Menu = ConstructMenu();
@@ -35,7 +35,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                             Expand = true,
                             Control = new Splitter
                             {
-                                Panel1MinimumSize = 250,
+                                Panel1MinimumSize = 300,
                                 Panel1 = pluginList = new PluginMetadataList(),
                                 Panel2 = metadataViewer = new MetadataViewer()
                             }
