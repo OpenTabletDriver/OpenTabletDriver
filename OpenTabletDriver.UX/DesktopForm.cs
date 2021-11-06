@@ -19,14 +19,17 @@ namespace OpenTabletDriver.UX
         }
 
         private bool initialized;
+        private bool lateCenter; // Workaround Eto bug, first found with Gtk platforms
 
         protected virtual void InitializeForm()
         {
-            var x = Owner.Location.X + (Owner.Size.Width / 2);
-            var y = Owner.Location.Y + (Owner.Size.Height / 2);
-            var center = new PointF(x, y);
+            if (ClientSize.Width == 0 && ClientSize.Height == 0)
+            {
+                lateCenter = true;
+                return;
+            }
 
-            Location = new Point((int)(center.X - (ClientSize.Width / 2)), (int)(center.Y - (ClientSize.Height / 2)));
+            ToCenter();
         }
 
         public new void Show()
@@ -36,7 +39,22 @@ namespace OpenTabletDriver.UX
                 InitializeForm();
                 initialized = true;
             }
+
             base.Show();
+
+            if (lateCenter)
+                ToCenter();
+        }
+
+        private void ToCenter()
+        {
+            var x = Owner.Location.X + (Owner.Size.Width / 2);
+            var y = Owner.Location.Y + (Owner.Size.Height / 2);
+            var center = new PointF(x, y);
+
+            Location = new Point((int)(center.X - (ClientSize.Width / 2)), (int)(center.Y - (ClientSize.Height / 2)));
+
+            lateCenter = false;
         }
     }
 }
