@@ -1,8 +1,5 @@
-using System;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
@@ -10,57 +7,36 @@ namespace OpenTabletDriver.UX
 
     public abstract class DesktopForm : Form
     {
-        protected DesktopForm()
+        public DesktopForm()
         {
             Icon = Logo.WithSize(Logo.Size);
         }
-        
-        protected DesktopForm(Window parent)
+
+        public DesktopForm(Window parentWindow)
             : this()
         {
-            Owner = parent;
+            Owner = parentWindow;
         }
 
-        private bool platformInit;
-        public const int DEFAULT_CLIENT_WIDTH = 960;
-        public const int DEFAULT_CLIENT_HEIGHT = 760;
+        private bool initialized;
 
-        public event EventHandler<EventArgs> InitializePlatform;
-
-        protected override void OnShown(EventArgs e)
+        protected virtual void InitializeForm()
         {
-            base.OnShown(e);
+            var x = Owner.Location.X + (Owner.Size.Width / 2);
+            var y = Owner.Location.Y + (Owner.Size.Height / 2);
+            var center = new PointF(x, y);
 
-            if (!this.platformInit)
-            {
-                // Adjust to any platform quirks
-                OnInitializePlatform(e);
-            }
+            Location = new Point((int)(center.X - (ClientSize.Width / 2)), (int)(center.Y - (ClientSize.Height / 2)));
         }
 
-        protected virtual void OnInitializePlatform(EventArgs e)
+        public new void Show()
         {
-            this.platformInit = true;
-            InitializePlatform?.Invoke(this, e);
-
-            if (this.ClientSize.Width > Screen.WorkingArea.Width || this.ClientSize.Height > Screen.WorkingArea.Height)
+            if (!initialized)
             {
-                int width = (int)Math.Min(Screen.WorkingArea.Width * 0.9, DEFAULT_CLIENT_WIDTH);
-                int height = (int)Math.Min(Screen.WorkingArea.Height * 0.9, DEFAULT_CLIENT_HEIGHT);
-                this.ClientSize = new Size(width, height);
+                InitializeForm();
+                initialized = true;
             }
-
-            switch (DesktopInterop.CurrentPlatform)
-            {
-                case PluginPlatform.Windows:
-                case PluginPlatform.MacOS:
-                {
-                    var x = Screen.WorkingArea.Center.X - (this.Width / 2);
-                    var y = Screen.WorkingArea.Center.Y - (this.Height / 2);
-                    this.Location = new Point((int)x, (int)y);
-                    break;
-                }
-            }
+            base.Show();
         }
     }
 }

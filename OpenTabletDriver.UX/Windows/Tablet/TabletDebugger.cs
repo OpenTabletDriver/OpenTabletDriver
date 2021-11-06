@@ -19,8 +19,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
     public class TabletDebugger : DesktopForm
     {
         public TabletDebugger()
+            : base(Application.Instance.MainForm)
         {
             Title = "Tablet Debugger";
+            this.ClientSize = new Size(640, 640);
 
             var debugger = new StackLayout
             {
@@ -119,8 +121,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             this.Content = new Splitter
             {
                 Orientation = Orientation.Vertical,
-                Width = 640,
-                Height = 800,
                 FixedPanel = SplitterFixedPanel.Panel2,
                 Panel1 = new DebuggerGroup
                 {
