@@ -22,7 +22,7 @@ namespace OpenTabletDriver.UX
         }
 
         private bool platformInit;
-        public const int DEFAULT_CLIENT_WIDTH = 1024;
+        public const int DEFAULT_CLIENT_WIDTH = 980;
         public const int DEFAULT_CLIENT_HEIGHT = 760;
 
         public event EventHandler<EventArgs> InitializePlatform;
