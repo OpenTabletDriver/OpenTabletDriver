@@ -7,47 +7,27 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     internal class FallbackTimer : ITimer, IDisposable
     {
-        public event Action Elapsed;
-
         private Thread threadTimer;
-        private float ignoreEventIfLateBy = float.MaxValue;
-        private float timerInterval;
         private bool runTimer = true;
 
-        public FallbackTimer()
-        {
-        }
-
-        public float Interval
-        {
-            get => Interlocked.Exchange(
-                    ref this.timerInterval, this.timerInterval);
-            set => Interlocked.Exchange(
-                    ref this.timerInterval, value);
-        }
-
-        public float IgnoreEventIfLateBy
-        {
-            get => Interlocked.Exchange(
-                    ref this.ignoreEventIfLateBy, this.ignoreEventIfLateBy);
-            set => Interlocked.Exchange(
-                    ref this.ignoreEventIfLateBy, value <= 0 ? float.MaxValue : value);
-        }
-
+        public float Interval { get; set; }
+        public float IgnoreEventIfLateBy { get; set; } = float.MaxValue;
         public bool Enabled => this.threadTimer != null && this.threadTimer.IsAlive;
+
+        public event Action Elapsed;
 
         public void Start()
         {
             if (Enabled || Interval <= 0)
-            {
                 return;
-            }
 
             this.runTimer = true;
 
+            this.IgnoreEventIfLateBy = Interval * 2;
+
             this.threadTimer = new Thread(ThreadMain)
             {
-                Priority = ThreadPriority.Highest
+                Priority = ThreadPriority.AboveNormal
             };
             this.threadTimer.Start();
         }
@@ -55,6 +35,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         public void Stop()
         {
             this.runTimer = false;
+            this.threadTimer.Join();
         }
 
         private void ThreadMain()
@@ -72,16 +53,11 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                 while ((elapsedMilliseconds = (float)stopWatch.Elapsed.TotalMilliseconds)
                         < nextNotification)
                 {
-                    Thread.Sleep(0);
+                    Thread.Yield();
                 }
 
-                float timerLateBy = elapsedMilliseconds - nextNotification;
-
-                if (timerLateBy >= IgnoreEventIfLateBy)
-                {
+                if (elapsedMilliseconds - nextNotification >= IgnoreEventIfLateBy)
                     continue;
-                }
-
                 Elapsed?.Invoke();
             }
 
