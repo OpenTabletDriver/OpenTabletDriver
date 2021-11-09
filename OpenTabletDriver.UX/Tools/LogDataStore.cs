@@ -10,7 +10,7 @@ namespace OpenTabletDriver.UX.Tools
 {
     public class LogDataStore : INotifyCollectionChanged, IEnumerable<LogMessage>
     {
-        private readonly BlockingCollection<LogMessage> messages = new BlockingCollection<LogMessage>(500);
+        private readonly ConcurrentQueue<LogMessage> messages = new ConcurrentQueue<LogMessage>();
 
         private IEnumerable<LogMessage> filteredMessages =>
             from message in this.messages
@@ -36,7 +36,7 @@ namespace OpenTabletDriver.UX.Tools
 
         public void Add(LogMessage message)
         {
-            this.messages.Add(message);
+            this.messages.Enqueue(message);
             if (message.Level >= this.Filter)
                 OnCollectionChanged(NotifyCollectionChangedAction.Add, message);
         }
@@ -55,7 +55,7 @@ namespace OpenTabletDriver.UX.Tools
 
         public IEnumerator<LogMessage> GetEnumerator()
         {
-            return (this.filteredMessages as IEnumerable<LogMessage>).GetEnumerator();
+            return this.filteredMessages.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

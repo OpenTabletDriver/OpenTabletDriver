@@ -88,7 +88,7 @@ namespace OpenTabletDriver.UX.Controls
                 where message is LogMessage
                 select message;
 
-            foreach (var message in currentMessages)
+            foreach (var message in currentMessages.Take(150))
                 AddMessage(message);
 
             App.Driver.AddConnectionHook(i => i.Message += (sender, message) => AddMessage(message));
@@ -104,7 +104,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Time",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
+                        Binding = Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
                     }
                 },
                 new GridColumn
@@ -112,7 +112,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Level",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Level.GetName())
+                        Binding = Binding.Property<LogMessage, string>(m => m.Level.GetName())
                     }
                 },
                 new GridColumn
@@ -120,7 +120,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Group",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Group)
+                        Binding = Binding.Property<LogMessage, string>(m => m.Group)
                     }
                 },
                 new GridColumn
@@ -128,7 +128,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Message",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Message)
+                        Binding = Binding.Property<LogMessage, string>(m => m.Message)
                     }
                 }
             }
@@ -160,7 +160,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             public FilterDropDown(LogLevel activeFilter = LogLevel.Info)
             {
-                base.SelectedValue = activeFilter;
+                SelectedValue = activeFilter;
             }
         }
     }
