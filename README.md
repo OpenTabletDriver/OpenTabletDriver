@@ -121,7 +121,7 @@ for a new tablet is quite easy.
 
 If you'd like us to add support for a new tablet, open an issue or join our
 [discord](https://discord.gg/9bcMaPkVAR) asking for support. *We generally
-prefer that adding tablet support be done through discord, due to the
+prefer that adding support for a tablet be done through discord, due to the
 back-and-forth involved*.
 
 We'll have you do a few things like making a recording of the data sent by your
