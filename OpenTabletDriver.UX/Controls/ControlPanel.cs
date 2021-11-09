@@ -15,6 +15,13 @@ namespace OpenTabletDriver.UX.Controls
 {
     public class ControlPanel : Panel
     {
+        private TabPage consoleTabPage = new TabPage
+        {
+            Text = "Console",
+            Padding = 5,
+            Content = new LogView()
+        };
+
         public ControlPanel()
         {
             tabControl = new TabControl
@@ -53,12 +60,7 @@ namespace OpenTabletDriver.UX.Controls
                         Padding = 5,
                         Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>()
                     },
-                    new TabPage
-                    {
-                        Text = "Console",
-                        Padding = 5,
-                        Content = new LogView()
-                    }
+                    consoleTabPage
                 }
             };
 
@@ -72,6 +74,14 @@ namespace OpenTabletDriver.UX.Controls
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
             this.Content = tabControl;
+
+            Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
+            {
+                if (message.Level > LogLevel.Info)
+                {
+                    tabControl.SelectedPage = consoleTabPage;
+                }
+            });
         }
 
         private TabControl tabControl;
