@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Desktop
 
             if (Directory.Exists(AppInfo.Current.ConfigurationDirectory))
             {
-                Log.Write("Detect", $"The configuration overrides directory '{AppInfo.Current.ConfigurationDirectory}' exist.", LogLevel.Debug);
+                Log.Write("Detect", $"Configuration overrides exist in '{AppInfo.Current.ConfigurationDirectory}', overriding built-in configurations.", LogLevel.Debug);
                 var files = Directory.EnumerateFiles(AppInfo.Current.ConfigurationDirectory, "*.json", SearchOption.AllDirectories);
 
                 jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path)))
