@@ -12,21 +12,9 @@ namespace OpenTabletDriver.Desktop.Updater
 
         protected string CurrentVersion => "v" + typeof(Updater).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
-        public virtual async Task<Release> GetLatest()
+        public virtual async Task<Release> GetLatestRelease()
         {
             return await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
-        }
-
-        public virtual async Task<bool> CheckForUpdate()
-        {
-            var release = await GetLatest();
-            return release.TagName == CurrentVersion;
-        }
-
-        public virtual async Task Update()
-        {
-            var release = await GetLatest();
-            await Install(release);
         }
 
         public virtual async Task Install(Release release)

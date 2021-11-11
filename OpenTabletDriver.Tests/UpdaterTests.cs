@@ -15,16 +15,22 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public async Task TestWindowsInstall()
         {
-            await TestInstall(new WindowsUpdater());
+            var binDir = await TestInstall(new WindowsUpdater());
+
+            var wpfUX = Path.Join(binDir, "OpenTabletDriver.UX.Wpf.exe");
+            Assert.True(File.Exists(wpfUX));
         }
 
         [Fact]
         public async Task TestMacOSInstall()
         {
-            await TestInstall(new MacOSUpdater());
+            var binDir = await TestInstall(new MacOSUpdater());
+
+            var macOSUX = Path.Join(binDir, "OpenTabletDriver.UX.MacOS");
+            Assert.True(File.Exists(macOSUX));
         }
 
-        public async Task TestInstall(IUpdater updater)
+        public async Task<string> TestInstall(IUpdater updater)
         {
             string testDir = Path.Join(
                 Environment.GetEnvironmentVariable("HOME"),
@@ -42,8 +48,9 @@ namespace OpenTabletDriver.Tests
 
             CleanDirectory(tempDir);
 
-            var latest = await updater.GetLatest();
+            var latest = await updater.GetLatestRelease();
             await updater.Install(latest, binDir);
+            return binDir;
         }
 
         private static void CleanDirectory(string directory)
