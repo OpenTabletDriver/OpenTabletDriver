@@ -130,6 +130,7 @@ namespace OpenTabletDriver.UX.Controls
         private readonly GridView<LogMessage> messageList = new GridView<LogMessage>
         {
             AllowMultipleSelection = true,
+            GridLines = GridLines.None,
             Columns =
             {
                 new GridColumn
