@@ -31,6 +31,7 @@ namespace OpenTabletDriver.Console
             root.AddRange(DebugCommands);
             root.AddRange(ModifyCommands);
             root.AddRange(RequestCommands);
+            root.AddRange(UpdateCommands);
             root.AddRange(ListCommands);
             root.AddRange(ScriptingCommands);
 
@@ -83,7 +84,13 @@ namespace OpenTabletDriver.Console
             CreateCommand(GetTools, "Gets the currently enabled tools")
         };
 
-        private static IEnumerable<Command> ListCommands = new Command[]
+        private static readonly IEnumerable<Command> UpdateCommands = new Command[]
+        {
+            CreateCommand(HasUpdate, "Check for any updates"),
+            CreateCommand(InstallUpdate, "Install update")
+        };
+
+        private static readonly IEnumerable<Command> ListCommands = new Command[]
         {
             CreateCommand(ListOutputModes, "Lists all available output modes"),
             CreateCommand(ListFilters, "Lists all available filters"),
