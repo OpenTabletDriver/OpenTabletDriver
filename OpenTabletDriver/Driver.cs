@@ -63,7 +63,7 @@ namespace OpenTabletDriver
 
         protected virtual InputDeviceTree? Match(TabletConfiguration config)
         {
-            Log.Write("Detect", $"Searching for tablet '{config.Name}'");
+            Log.Debug("Detect", $"Searching for tablet '{config.Name}'");
             try
             {
                 var devices = new List<InputDevice>();
