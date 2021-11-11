@@ -9,21 +9,37 @@ namespace OpenTabletDriver.Desktop.Updater
     public abstract class Updater : IUpdater
     {
         private GitHubClient github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
+        private Release latestRelease;
 
-        protected string CurrentVersion => "v" + typeof(Updater).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+        protected static readonly Version CurrentVersion = new Version(typeof(IUpdater).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion);
 
-        public virtual async Task<Release> GetLatestRelease()
+        public Task<bool> HasUpdate => CheckForUpdates();
+
+        public async Task InstallUpdate(string targetDir)
         {
-            return await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
+            await Install(latestRelease ?? await GetLatestRelease(), targetDir);
         }
 
-        public virtual async Task Install(Release release)
+        private async Task<bool> CheckForUpdates()
+        {
+            var latestRelease = await GetLatestRelease();
+            var latestVersion = new Version(latestRelease.TagName[1..]); // remove `v` from `vW.X.Y.Z
+            return latestVersion > CurrentVersion;
+        }
+
+        private async Task<Release> GetLatestRelease()
+        {
+            latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
+            return latestRelease;
+        }
+
+        protected async Task Install(Release release)
         {
             var targetDir = AppDomain.CurrentDomain.BaseDirectory;
             await Install(release, targetDir);
         }
 
-        public virtual async Task Install(Release release, string targetDir)
+        protected virtual async Task Install(Release release, string targetDir)
         {
             var binaryDir = await Download(release);
             var oldDir = Path.Join(AppInfo.Current.TemporaryDirectory, CurrentVersion + "-old");
@@ -34,7 +50,7 @@ namespace OpenTabletDriver.Desktop.Updater
             Directory.Move(binaryDir, targetDir);
         }
 
-        public abstract Task<string> Download(Release release);
-        public abstract ReleaseAsset GetAsset(Release release);
+        protected abstract Task<string> Download(Release release);
+        protected abstract ReleaseAsset GetAsset(Release release);
     }
 }

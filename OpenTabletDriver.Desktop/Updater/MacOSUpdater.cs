@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public class MacOSUpdater : Updater
     {
-        public override async Task<string> Download(Release release)
+        protected override async Task<string> Download(Release release)
         {
             var binaryDir = Path.Join(AppInfo.Current.TemporaryDirectory, release.TagName);
             var asset = GetAsset(release);
@@ -28,12 +28,12 @@ namespace OpenTabletDriver.Desktop.Updater
             return binaryDir;
         }
 
-        public override ReleaseAsset GetAsset(Release release)
+        protected override ReleaseAsset GetAsset(Release release)
         {
             return release.Assets.FirstOrDefault(r => r.Name.Contains("osx-x64"));
         }
 
-        public override async Task Install(Release release, string targetDir)
+        protected override async Task Install(Release release, string targetDir)
         {
             var binaryDir = await Download(release);
             var oldDir = Path.Join(AppInfo.Current.TemporaryDirectory, CurrentVersion + "-old");
