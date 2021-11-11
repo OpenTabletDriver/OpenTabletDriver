@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
@@ -76,6 +78,7 @@ namespace OpenTabletDriver.Daemon
         private Settings? Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+        private IUpdater Updater = DesktopInterop.Updater;
         private readonly SleepDetectionThread SleepDetection;
 
         private bool debugging;
@@ -427,6 +430,17 @@ namespace OpenTabletDriver.Daemon
         {
             if (report != null && tablet != null)
                 DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
+        }
+
+        public Task<bool> HasUpdate()
+        {
+            return Updater?.HasUpdate ?? Task.FromResult(false);
+        }
+
+        public Task InstallUpdate()
+        {
+            var targetDir = AppDomain.CurrentDomain.BaseDirectory;
+            return Updater?.InstallUpdate(targetDir) ?? Task.CompletedTask;
         }
     }
 }
