@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Plugin.Logging
 
         public LogMessage(Exception exception)
         {
-            Group = exception.GetType().Name; 
+            Group = exception.GetType().Name;
             Message = exception.Message;
             Level = LogLevel.Error;
             StackTrace = exception.StackTrace;
@@ -41,6 +41,11 @@ namespace OpenTabletDriver.Plugin.Logging
         /// The severity level of the log message.
         /// </summary>
         public LogLevel Level { set; get; }
+
+        /// <summary>
+        /// True if the log message should create a notification in the user's desktop environment.
+        /// </summary>
+        public bool Notification { set; get; } = false;
 
         public override string ToString()
         {
