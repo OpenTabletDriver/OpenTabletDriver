@@ -61,8 +61,8 @@ namespace OpenTabletDriver.Plugin
         /// </summary>
         /// <param name="group">The group in which the <see cref="LogMessage"/> belongs to.</param>
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
-        /// <param name="level">Level of severity for the message, see <see cref="LogLevel"/>.</param>
-        public static void WriteNotify(string group, string text, LogLevel level)
+        /// <param name="level">Level of severity for the message, see <see cref="LogLevel"/>. Defaults to Info.</param>
+        public static void WriteNotify(string group, string text, LogLevel level = LogLevel.Info)
         {
             Write(group, text, level, false, true);
         }

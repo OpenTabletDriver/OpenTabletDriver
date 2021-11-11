@@ -137,17 +137,9 @@ namespace OpenTabletDriver.UX.Controls
 
             if (message.Notification)
             {
-                string prettyLevelTitle = message.Level switch
-                {
-                    LogLevel.Debug => "OpenTabletDriver - Debug",
-                    LogLevel.Error => "OpenTabletDriver - Error",
-                    LogLevel.Warning => "OpenTabletDriver - Warning",
-                    LogLevel.Fatal => "OpenTabletDriver - Fatal",
-                    _ => "OpenTabletDriver - Info",
-                };
                 var notify = new Notification
                 {
-                    Title = prettyLevelTitle,
+                    Title = "OpenTabletDriver - " + message.Level.ToString(),
                     Message = message.Message,
                     ContentImage = App.Logo,
                     ID = "log-message-notification"
