@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -12,10 +13,16 @@ namespace OpenTabletDriver.UX.Tools
     {
         public LogDataStore(IEnumerable<LogMessage> currentMessages)
         {
-            messages = new ConcurrentQueue<LogMessage>(currentMessages.Take(MAX_NUM_MESSAGES));
+            var messageList = currentMessages.ToArray();
+            if (messageList.Length > MAX_NUM_MESSAGES)
+            {
+                var startIndex = messageList.Length - MAX_NUM_MESSAGES;
+                messageList = messageList[startIndex..^0];
+            }
+            messages = new ConcurrentQueue<LogMessage>(messageList);
         }
 
-        private const int MAX_NUM_MESSAGES = 10;
+        private const int MAX_NUM_MESSAGES = 250;
 
         private readonly ConcurrentQueue<LogMessage> messages;
 
@@ -45,7 +52,7 @@ namespace OpenTabletDriver.UX.Tools
         {
             this.messages.Enqueue(message);
 
-            while (this.messages.Count > MAX_NUM_MESSAGES)
+            if (this.messages.Count > MAX_NUM_MESSAGES)
                 this.messages.TryDequeue(out _);
 
             if (message.Level >= this.Filter)
