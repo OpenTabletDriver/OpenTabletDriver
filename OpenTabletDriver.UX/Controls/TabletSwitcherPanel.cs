@@ -57,7 +57,6 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         private StackLayout layout;
-        private Placeholder placeholder;
         private TabletSwitcher tabletSwitcher;
         private ControlPanel controlPanel;
         private Panel commandsPanel;
@@ -68,14 +67,10 @@ namespace OpenTabletDriver.UX.Controls
             get => commandsPanel.Content;
         }
 
-        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
+        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
         {
-            this.Content = tablets.Any() ? layout : placeholder ??= new Placeholder
-            {
-                Text = "No tablets are detected."
-            };
             tabletSwitcher.HandleTabletsChanged(sender, tablets);
-        });
+        }
 
         private class TabletSwitcher : DropDown
         {
