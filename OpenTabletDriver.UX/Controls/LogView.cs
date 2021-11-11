@@ -61,7 +61,17 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            messageList.DataStore = this.messageStore;
+            this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
+            this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
+
+            _ = InitializeAsync();
+        }
+
+        private async Task InitializeAsync()
+        {
+            var currentMessages = await App.Driver.Instance.GetCurrentLog();
+            messageList.DataStore = messageStore = new LogDataStore(currentMessages);
+
             this.messageStore.CollectionChanged += (sender, e) =>
             {
                 Application.Instance.AsyncInvoke(() =>
@@ -75,21 +85,6 @@ namespace OpenTabletDriver.UX.Controls
                     }
                 });
             };
-
-            this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
-            this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
-
-            _ = InitializeAsync();
-        }
-
-        private async Task InitializeAsync()
-        {
-            var currentMessages = from message in await App.Driver.Instance.GetCurrentLog()
-                where message is LogMessage
-                select message;
-
-            foreach (var message in currentMessages.Take(150))
-                AddMessage(message);
 
             App.Driver.AddConnectionHook(i => i.Message += (sender, message) => AddMessage(message));
         }
@@ -134,7 +129,7 @@ namespace OpenTabletDriver.UX.Controls
             }
         };
 
-        private readonly LogDataStore messageStore = new LogDataStore();
+        private LogDataStore messageStore;
 
         private void AddMessage(LogMessage message)
         {
