@@ -13,13 +13,7 @@ namespace OpenTabletDriver.UX.Tools
     {
         public LogDataStore(IEnumerable<LogMessage> currentMessages)
         {
-            var messageList = currentMessages.ToArray();
-            if (messageList.Length > MAX_NUM_MESSAGES)
-            {
-                var startIndex = messageList.Length - MAX_NUM_MESSAGES;
-                messageList = messageList[startIndex..^0];
-            }
-            messages = new ConcurrentQueue<LogMessage>(messageList);
+            messages = new ConcurrentQueue<LogMessage>(currentMessages.TakeLast(MAX_NUM_MESSAGES));
         }
 
         private const int MAX_NUM_MESSAGES = 250;
