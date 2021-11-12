@@ -26,7 +26,29 @@ namespace OpenTabletDriver.Tests
             Assert.True(File.Exists(binaryPath));
         }
 
-        public async Task<string> TestInstall(IUpdater updater)
+        public static TheoryData<IUpdater, bool> Updater_ProperlyChecks_Version_Data => new TheoryData<IUpdater, bool>()
+        {
+            // Outdated
+            { new WindowsUpdater(new Version("0.1.0.0")), true },
+            { new MacOSUpdater(new Version("0.1.0.0")), true },
+            // Updated
+            { new WindowsUpdater(), false },
+            { new MacOSUpdater(), false },
+            // From the future
+            { new WindowsUpdater(new Version("99.0.0.0")), false },
+            { new MacOSUpdater(new Version("99.0.0.0")), false }
+        };
+
+        [Theory]
+        [MemberData(nameof(Updater_ProperlyChecks_Version_Data))]
+        public async Task Updater_ProperlyChecks_Version(IUpdater updater, bool expectedUpdateStatus)
+        {
+            var hasUpdate = await updater.HasUpdate;
+
+            Assert.Equal(expectedUpdateStatus, hasUpdate);
+        }
+
+        private async Task<string> TestInstall(IUpdater updater)
         {
             string testDir = Path.Join(
                 Environment.GetEnvironmentVariable("HOME"),

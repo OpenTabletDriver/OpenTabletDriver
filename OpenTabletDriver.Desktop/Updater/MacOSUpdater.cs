@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,6 +12,14 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public class MacOSUpdater : Updater
     {
+        public MacOSUpdater() : this(AssemblyVersion)
+        {
+        }
+
+        public MacOSUpdater(Version currentVersion) : base(currentVersion)
+        {
+        }
+
         protected override async Task<string> Download(Release release)
         {
             var binaryDir = Path.Join(AppInfo.Current.TemporaryDirectory, release.TagName);
