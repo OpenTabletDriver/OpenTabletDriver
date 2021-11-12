@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using Moq.Protected;
@@ -100,7 +101,7 @@ namespace OpenTabletDriver.Tests
                 mockUpdater.Protected()
                     .Setup<Task>("Install", ItExpr.IsAny<Release>())
                     .Returns(Task.CompletedTask)
-                    .Callback(() => callCount++);
+                    .Callback(() => Interlocked.Increment(ref callCount));
 
                 var mockUpdaterObject = mockUpdater.Object;
                 var parallelTasks = new Task[]
