@@ -1,80 +1,187 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using OpenTabletDriver.Desktop;
+using Moq;
+using Moq.Protected;
+using Octokit;
 using OpenTabletDriver.Desktop.Updater;
 using Xunit;
+
+#nullable enable
 
 namespace OpenTabletDriver.Tests
 {
     public class UpdaterTests
     {
-        public static TheoryData<IUpdater, string> Updater_TestInstall_Data => new TheoryData<IUpdater, string>()
+        public static TheoryData<Type, string> Updater_InstallsBinary_InCorrectDirectory_Async_Data => new TheoryData<Type, string>()
         {
-            { new WindowsUpdater(), "OpenTabletDriver.UX.Wpf.exe" },
-            { new MacOSUpdater(), "OpenTabletDriver.UX.MacOS" }
+            { typeof(WindowsUpdater), "OpenTabletDriver.UX.Wpf.exe" },
+            { typeof(MacOSUpdater), "OpenTabletDriver.UX.MacOS" }
         };
 
         [Theory]
-        [MemberData(nameof(Updater_TestInstall_Data))]
-        public async Task Updater_TestInstall(IUpdater updater, string expectedBinary)
+        [MemberData(nameof(Updater_InstallsBinary_InCorrectDirectory_Async_Data))]
+        public Task Updater_InstallsBinary_InCorrectDirectory_Async(Type updaterType, string expectedUiBinaryName)
         {
-            var binDir = await TestInstall(updater);
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                var updater = CreateUpdater(updaterType, updaterEnv);
 
-            var binaryPath = Path.Join(binDir, expectedBinary);
+                await updater.InstallUpdate();
+                var uiBinaryExists = File.Exists(Path.Join(updaterEnv.BinaryDir, expectedUiBinaryName));
+                var daemonBinaryExists = Directory.EnumerateFiles(updaterEnv.BinaryDir!)
+                    .FirstOrDefault(f => Path.GetFileName(f).StartsWith("OpenTabletDriver.Daemon")) != null;
 
-            Assert.True(File.Exists(binaryPath));
+                Assert.True(uiBinaryExists, $"UI binary not found in {updaterEnv.BinaryDir}");
+                Assert.True(daemonBinaryExists, $"Daemon binary not found in {updaterEnv.BinaryDir}");
+            });
         }
 
-        public static TheoryData<IUpdater, bool> Updater_ProperlyChecks_Version_Data => new TheoryData<IUpdater, bool>()
+        public static TheoryData<Version?, bool> UpdaterBase_ProperlyChecks_Version_Async_Data => new TheoryData<Version?, bool>()
         {
             // Outdated
-            { new WindowsUpdater(new Version("0.1.0.0")), true },
-            { new MacOSUpdater(new Version("0.1.0.0")), true },
-            // Updated
-            { new WindowsUpdater(), false },
-            { new MacOSUpdater(), false },
+            { new Version("0.1.0.0"), true },
+            // Same version
+            { null, false },
             // From the future
-            { new WindowsUpdater(new Version("99.0.0.0")), false },
-            { new MacOSUpdater(new Version("99.0.0.0")), false }
+            { new Version("99.0.0.0"), false },
         };
 
         [Theory]
-        [MemberData(nameof(Updater_ProperlyChecks_Version_Data))]
-        public async Task Updater_ProperlyChecks_Version(IUpdater updater, bool expectedUpdateStatus)
+        [MemberData(nameof(UpdaterBase_ProperlyChecks_Version_Async_Data))]
+        public Task UpdaterBase_ProperlyChecks_Version_Async(Version version, bool expectedUpdateStatus)
         {
-            var hasUpdate = await updater.HasUpdate;
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                updaterEnv.Version = version;
+                var mockUpdater = CreateMockUpdater<Updater>(updaterEnv).Object;
 
-            Assert.Equal(expectedUpdateStatus, hasUpdate);
+                var hasUpdate = await mockUpdater.HasUpdate;
+
+                Assert.Equal(expectedUpdateStatus, hasUpdate);
+            });
         }
 
-        private async Task<string> TestInstall(IUpdater updater)
+        [Theory]
+        [MemberData(nameof(UpdaterBase_ProperlyChecks_Version_Async_Data))]
+        public Task Updater_PreventsUpdate_WhenAlreadyUpToDate_Async(Version version, bool expectedUpdateStatus)
         {
-            string testDir = Path.Join(
-                Environment.GetEnvironmentVariable("HOME"),
-                "OpenTabletDriver.Tests",
-                nameof(UpdaterTests),
-                updater.GetType().Name
-            );
-            string tempDir = Path.Join(testDir, "temp");
-            string binDir = Path.Join(testDir, "bin");
-
-            AppInfo.Current = new AppInfo()
+            return MockEnvironmentAsync(async (updaterEnv) =>
             {
-                TemporaryDirectory = tempDir
-            };
+                updaterEnv.Version = version;
+                var mockUpdater = CreateMockUpdater<Updater>(updaterEnv);
 
-            CleanDirectory(tempDir);
+                // Track calls to Updater.Install
+                mockUpdater.Protected()
+                    .Setup<Task>("Install", ItExpr.IsAny<Release>())
+                    .Returns(Task.CompletedTask)
+                    .Verifiable();
 
-            await updater.InstallUpdate(binDir);
-            return binDir;
+                var mockUpdaterObject = mockUpdater.Object;
+
+                await mockUpdaterObject.InstallUpdate();
+
+                // Verify if Updater.Install is called, non-null exception means it wasn't
+                var hasInstalledUpdate = Record.Exception(() => mockUpdater.Verify()) == null;
+                Assert.Equal(expectedUpdateStatus, hasInstalledUpdate);
+            });
+        }
+
+        [Fact]
+        public Task Updater_Prevents_ConcurrentAndConsecutive_Updates_Async()
+        {
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                var mockUpdater = CreateMockUpdater<Updater>(updaterEnv);
+                var callCount = 0;
+
+                // Track call count of Updater.Install
+                mockUpdater.Protected()
+                    .Setup<Task>("Install", ItExpr.IsAny<Release>())
+                    .Returns(Task.CompletedTask)
+                    .Callback(() => callCount++);
+
+                var mockUpdaterObject = mockUpdater.Object;
+                var parallelTasks = new Task[]
+                {
+                    Task.Run(() => mockUpdaterObject.InstallUpdate()),
+                    Task.Run(() => mockUpdaterObject.InstallUpdate()),
+                    Task.Run(() => mockUpdaterObject.InstallUpdate()),
+                    Task.Run(() => mockUpdaterObject.InstallUpdate())
+                };
+
+                await Task.WhenAll(parallelTasks);
+
+                Assert.Equal(1, callCount);
+            });
+        }
+
+        private static void InitializeDirectory(string directory)
+        {
+            CleanDirectory(directory);
+            Directory.CreateDirectory(directory);
         }
 
         private static void CleanDirectory(string directory)
         {
             if (Directory.Exists(directory))
                 Directory.Delete(directory, true);
-            Directory.CreateDirectory(directory);
+        }
+
+        private static async Task MockEnvironmentAsync(Func<UpdaterEnvironment, Task> asyncAction)
+        {
+            var mockUpdaterEnv = new UpdaterEnvironment()
+            {
+                Version = new Version("0.1.0.0"),
+                BinaryDir = Path.Join(Path.GetTempPath(), Path.GetRandomFileName()),
+                AppDataDir = Path.Join(Path.GetTempPath(), Path.GetRandomFileName())
+            };
+
+            mockUpdaterEnv.RollBackDir = Path.Join(mockUpdaterEnv.AppDataDir, "Temp");
+
+            InitializeDirectory(mockUpdaterEnv.BinaryDir);
+            InitializeDirectory(mockUpdaterEnv.AppDataDir);
+            InitializeDirectory(mockUpdaterEnv.RollBackDir);
+
+            try
+            {
+                await asyncAction(mockUpdaterEnv);
+            }
+            finally
+            {
+                CleanDirectory(mockUpdaterEnv.BinaryDir);
+                CleanDirectory(mockUpdaterEnv.AppDataDir);
+                CleanDirectory(mockUpdaterEnv.RollBackDir);
+            }
+        }
+
+        private static Mock<T> CreateMockUpdater<T>(UpdaterEnvironment updaterEnv) where T : class, IUpdater
+        {
+            var mockUpdater = new Mock<T>(updaterEnv.Version, updaterEnv.BinaryDir, updaterEnv.AppDataDir, updaterEnv.RollBackDir) { CallBase = true };
+            return mockUpdater;
+        }
+
+        private static IUpdater CreateUpdater(Type updaterType, UpdaterEnvironment updaterEnvironment)
+        {
+            if (updaterEnvironment.Version == null)
+                return (IUpdater)Activator.CreateInstance(updaterType)!;
+
+            return (IUpdater)Activator.CreateInstance(
+                updaterType,
+                updaterEnvironment.Version,
+                updaterEnvironment.BinaryDir,
+                updaterEnvironment.AppDataDir,
+                updaterEnvironment.RollBackDir
+            )!;
+        }
+
+        private struct UpdaterEnvironment
+        {
+            public Version? Version;
+            public string? BinaryDir;
+            public string? AppDataDir;
+            public string? RollBackDir;
         }
     }
 }

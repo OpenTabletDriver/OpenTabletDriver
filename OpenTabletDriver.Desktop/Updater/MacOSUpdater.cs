@@ -6,24 +6,41 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Tar;
 using Octokit;
+
 #pragma warning disable 618
+#nullable enable
 
 namespace OpenTabletDriver.Desktop.Updater
 {
     public class MacOSUpdater : Updater
     {
-        public MacOSUpdater() : this(AssemblyVersion)
+        public MacOSUpdater() 
+            : this(AssemblyVersion,
+                AppDomain.CurrentDomain.BaseDirectory,
+                AppInfo.Current.AppDataDirectory,
+                AppInfo.Current.TemporaryDirectory)
         {
         }
 
-        public MacOSUpdater(Version currentVersion) : base(currentVersion)
+        public MacOSUpdater(Version currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
+            : base(currentVersion,
+                binDirectory,
+                appDataDirectory,
+                rollBackDirectory)
         {
         }
 
-        protected override async Task<string> Download(Release release)
+        protected override async Task Install(Release release)
         {
-            var binaryDir = Path.Join(AppInfo.Current.TemporaryDirectory, release.TagName);
-            var asset = GetAsset(release);
+            await Download(release);
+
+            var subPath = Path.Join(DownloadDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
+            Move(subPath, BinaryDirectory);
+        }
+
+        private async Task Download(Release release)
+        {
+            var asset = release.Assets.First(r => r.Name.Contains("osx-x64"));
 
             // Download and extract tar gzip
             using (var httpClient = new HttpClient())
@@ -31,27 +48,8 @@ namespace OpenTabletDriver.Desktop.Updater
             using (var decompressionStream = new GZipStream(httpStream, CompressionMode.Decompress))
             using (var tar = TarArchive.CreateInputTarArchive(decompressionStream))
             {
-                tar.ExtractContents(binaryDir);
+                tar.ExtractContents(DownloadDirectory);
             }
-
-            return binaryDir;
-        }
-
-        protected override ReleaseAsset GetAsset(Release release)
-        {
-            return release.Assets.FirstOrDefault(r => r.Name.Contains("osx-x64"));
-        }
-
-        protected override async Task Install(Release release, string targetDir)
-        {
-            var binaryDir = await Download(release);
-            var oldDir = Path.Join(AppInfo.Current.TemporaryDirectory, CurrentVersion + "-old");
-
-            if (Directory.Exists(targetDir))
-                Directory.Move(targetDir, oldDir);
-
-            var subPath = Path.Join(binaryDir, "OpenTabletDriver.app", "Contents", "MacOS");
-            Directory.Move(subPath, targetDir);
         }
     }
 }
