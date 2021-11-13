@@ -88,7 +88,7 @@ namespace OpenTabletDriver.Desktop.Updater
             }
         }
 
-        protected static void Move(string source, string targetDir, bool root = true)
+        protected static void Move(string source, string targetDir)
         {
             if (File.Exists(source))
             {
@@ -96,10 +96,19 @@ namespace OpenTabletDriver.Desktop.Updater
             }
             else if (Directory.Exists(source))
             {
+                if (!Directory.Exists(targetDir))
+                    Directory.CreateDirectory(targetDir);
+
                 foreach (var childEntry in Directory.EnumerateFileSystemEntries(source))
                 {
-                    targetDir = root ? targetDir : Path.Join(targetDir, Path.GetFileName(Path.GetDirectoryName(childEntry)));
-                    Move(childEntry, targetDir, false);
+                    if (File.Exists(childEntry))
+                    {
+                        File.Move(childEntry, Path.Join(targetDir, Path.GetFileName(childEntry)));
+                    }
+                    else if (Directory.Exists(childEntry))
+                    {
+                        Directory.Move(childEntry, Path.Join(targetDir, Path.GetFileName(childEntry)));
+                    }
                 }
             }
             else
