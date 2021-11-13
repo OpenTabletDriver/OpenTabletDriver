@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Castle.Core.Internal;
 using Moq;
 using Moq.Protected;
 using Octokit;
@@ -118,6 +121,35 @@ namespace OpenTabletDriver.Tests
             });
         }
 
+        [Fact]
+        public Task Updater_ProperlyBackups_BinAndAppDataDirectory_Async()
+        {
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                var mockUpdaterObject = CreateMockUpdater<Updater>(updaterEnv).Object;
+                var wpfFile = Encoding.UTF8.GetBytes("OpenTabletDriver.UX.Wpf");
+                var daemonFile = Encoding.UTF8.GetBytes("OpenTabletDriver.Daemon");
+                var settingsFile = Encoding.UTF8.GetBytes("settings.json");
+                var pluginFile = Encoding.UTF8.GetBytes("Plugin.dll");
+
+                var fakeBinaryFiles = new Dictionary<string, byte[]>()
+                {
+                    ["OpenTabletDriver.UX.Wpf"] = wpfFile,
+                    ["OpenTabletDriver.Daemon"] = daemonFile
+                };
+                var fakeAppDataFiles = new Dictionary<string, byte[]>()
+                {
+                    ["settings.json"] = settingsFile,
+                    ["Plugins/SomePlugin/Plugin.dll"] = pluginFile
+                };
+                await SetupFakeBinaryFilesAsync(updaterEnv, fakeBinaryFiles, fakeAppDataFiles);
+
+                await mockUpdaterObject.InstallUpdate();
+
+                await VerifyFakeBinaryFilesAsync(updaterEnv, fakeBinaryFiles, fakeAppDataFiles);
+            });
+        }
+
         private static void InitializeDirectory(string directory)
         {
             CleanDirectory(directory);
@@ -175,6 +207,62 @@ namespace OpenTabletDriver.Tests
                 updaterEnvironment.AppDataDir,
                 updaterEnvironment.RollBackDir
             )!;
+        }
+
+        private static async Task SetupFakeBinaryFilesAsync(UpdaterEnvironment updaterEnv,
+            Dictionary<string, byte[]>? fakeBinaryFiles = null,
+            Dictionary<string, byte[]>? fakeAppDataFiles = null)
+        {
+            await SetupFakeFilesAsync(updaterEnv.BinaryDir, fakeBinaryFiles);
+            await SetupFakeFilesAsync(updaterEnv.AppDataDir, fakeAppDataFiles);
+        }
+
+        private static async Task SetupFakeFilesAsync(string? rootDir, Dictionary<string, byte[]>? fakeFiles)
+        {
+            if (rootDir == null || fakeFiles == null)
+                return;
+
+            foreach (var kv in fakeFiles)
+            {
+                var splits = kv.Key.Split('/');
+                var directory = Path.Join(splits[..^1]);
+                var file = splits[^1];
+
+                var targetDirectory = Path.Join(rootDir, directory);
+
+                if (!directory.IsNullOrEmpty() && !Directory.Exists(targetDirectory))
+                    Directory.CreateDirectory(targetDirectory);
+
+                await File.WriteAllBytesAsync(Path.Join(targetDirectory, file), kv.Value);
+            }
+        }
+
+        private static async Task VerifyFakeBinaryFilesAsync(UpdaterEnvironment updaterEnv,
+            Dictionary<string, byte[]>? fakeBinaryFiles = null,
+            Dictionary<string, byte[]>? fakeAppDataFiles = null)
+        {
+            var rollbackDir = Path.Join(updaterEnv.RollBackDir, updaterEnv.Version + "-old");
+            await VerifyFakeFilesAsync(updaterEnv.BinaryDir, Path.Join(rollbackDir, "bin"), fakeBinaryFiles);
+            await VerifyFakeFilesAsync(updaterEnv.AppDataDir, Path.Join(rollbackDir, "appdata"), fakeAppDataFiles);
+        }
+
+        private static async Task VerifyFakeFilesAsync(string? rootDir, string? rollBackDir, Dictionary<string, byte[]>? fakeFiles)
+        {
+            if (rootDir == null || rollBackDir == null || fakeFiles == null)
+                return;
+
+            foreach (var kv in fakeFiles)
+            {
+                var splits = kv.Key.Split('/');
+                var directory = Path.Join(splits[..^1]);
+                var file = splits[^1];
+
+                var targetFile = Path.Join(rollBackDir,  directory, file);
+                Assert.True(File.Exists(targetFile), $"{kv.Key} does not exist in rollback store");
+
+                var fileContent = await File.ReadAllBytesAsync(targetFile);
+                Assert.Equal(kv.Value, fileContent);
+            }
         }
 
         private struct UpdaterEnvironment
