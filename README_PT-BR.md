@@ -73,18 +73,26 @@ Nenhuma outra depedência
   - Mouse button bindings
   - Keyboard bindings
   - External plugin bindings
-- Saving and loading settings
+- Configuração da caneta
+  - Ponta por ligações de pressão
+  - Configuração dos atalhos de teclado expressos
+  - Configurações dos botões da caneta
+  - Configuração do botão do mouse
+  - Configuração do teclado
+  - Configuração de plug-ins externos
+- Salvando e carregando configurações
   - Auto-loads user settings via `settings.json` in the active user `%localappdata%` or `.config` settings root directory.
-- Configuration Editor
-  - Allows you to create, modify, and delete configurations.
-  - Generate configurations from visible HID devices
+  - Automaticamente carrega as configurações do usuário usando `settings.json` no usuário ativo `%localappdata%` ou `.config` no diretório raiz.
+- Editor de configurações
+  - Permite você á criar, modificar, e deletar configurações.
+  - Gerar configurações de dispositivos HID visíveis
 - Plugins
-  - Filters
-  - Output modes
-  - Tools
+  - Filtros
+  - Modos de saída (*Output*)
+  - Ferramentas
 
-# Contributing to OpenTabletDriver
+# Contribuindo ao OpenTabletDriver
 
-If you wish to contribute to OpenTabletDriver, check out the [issue tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
+Se você deseja contribuir ao OpenTabletDriver, Confira o [Rastreador de Problemas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
 
-If you have any issues or suggestions, [open an issue ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose).
+Se você tiver algum problema ou sugestão, [abra um tíquete de problema](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose).
