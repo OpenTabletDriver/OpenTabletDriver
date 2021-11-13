@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-English | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Português] (README_PT-BR.md)
+English (README.md)| [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Português] 
 
 O OpenTabletDriver é um driver em modo de usuário, código-aberto e multi plataforma. O objetivo de OpenTabletDriver é ser multi-plataforma com a maior compatibilidade em uma interface gráfica configurável fácil de usar. 
 <p align="middle">
