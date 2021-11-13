@@ -30,15 +30,15 @@ O OpenTabletDriver funciona como dois processos separados que se interagem entre
 
 ## Compilando o OpenTabletDriver do código fonte
 
-The requirements to build OpenTabletDriver are consistent across all platforms. Running OpenTabletDriver on each platform requires different dependencies.
+Os requerimentos para compilar o OpenTabletDriver é consistente entre todas as plataformas, A execução do OpenTabletDriver em cada plataforma requer dependências diferentes.
 
-### All platforms
+### Todas as plataformas
 
 - .NET 5 SDK
 
 #### Windows
 
-No other dependencies.
+Nenhuma outra dependência.
 
 #### Linux
 
@@ -49,23 +49,23 @@ No other dependencies.
 
 #### MacOS [Experimental]
 
-No other dependencies.
+Nenhuma outra depedência
 
 # Features
 
-- Fully platform-native GUI
+- Interface Totalmente nativa á sua plataforma
   - Windows: `Windows Presentation Foundation`
   - Linux: `GTK+3`
   - MacOS: `MonoMac`
-- Fully fledged console tool
-  - Quickly acquire, change, load, or save settings
-  - Scripting support (json output)
-- Absolute cursor positioning
-  - Screen area and tablet area
-  - Center-anchored offsets
-  - Precise area rotation
-- Relative cursor positioning
-  - px/mm horizontal and vertical sensitivity
+- Ferramenta de console totalmente desenvolvida
+  - Adquira, altere, carregue ou salve configurações rapidamente
+  - Suporte a scripts (arquivo/saída json)
+- Posicionamento absoluto do cursor
+  - Área da tela e área da mesa
+  - *Offsets* ancorados no centro
+  - Precisa rotação de área
+- Posicionamento relativo do cursor
+  - Sensibilidade horizontal e vertical de px / mm
 - Pen bindings
   - Tip by pressure bindings
   - Express key bindings
