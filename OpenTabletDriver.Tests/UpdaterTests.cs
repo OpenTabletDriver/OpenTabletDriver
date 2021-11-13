@@ -93,6 +93,39 @@ namespace OpenTabletDriver.Tests
         }
 
         [Fact]
+        public Task Updater_HasUpdateReturnsFalse_During_UpdateInstall()
+        {
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                var mockUpdaterObject = CreateMockUpdater<Updater>(updaterEnv).Object;
+                var beforeUpdate = await mockUpdaterObject.HasUpdate;
+
+                var updateTask = mockUpdaterObject.InstallUpdate();
+                var duringUpdate = await mockUpdaterObject.HasUpdate;
+
+                await updateTask;
+                Assert.True(beforeUpdate, "Updater.HasUpdate has returned false before update was installed.");
+                Assert.False(duringUpdate, "Updater.HasUpdate has returned true during update process.");
+            });
+        }
+
+        [Fact]
+        public Task Updater_HasUpdateReturnsFalse_After_UpdateInstall()
+        {
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                var mockUpdaterObject = CreateMockUpdater<Updater>(updaterEnv).Object;
+                var beforeUpdate = await mockUpdaterObject.HasUpdate;
+
+                await mockUpdaterObject.InstallUpdate();
+                var afterUpdate = await mockUpdaterObject.HasUpdate;
+
+                Assert.True(beforeUpdate, "Updater.HasUpdate has returned false before update was installed.");
+                Assert.False(afterUpdate, "Updater.HasUpdate has returned true after update is installed.");
+            });
+        }
+
+        [Fact]
         public Task Updater_Prevents_ConcurrentAndConsecutive_Updates_Async()
         {
             return MockEnvironmentAsync(async (updaterEnv) =>

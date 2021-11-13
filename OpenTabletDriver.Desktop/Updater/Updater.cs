@@ -55,6 +55,9 @@ namespace OpenTabletDriver.Desktop.Updater
 
         private async Task<bool> CheckForUpdates(bool forced)
         {
+            if (updateSentinel == 0)
+                return false;
+
             if (forced || latestRelease == null)
                 latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver"); ;
 
