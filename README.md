@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-English | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md)
+English | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md)
 
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
@@ -106,6 +106,31 @@ No other dependencies.
 
 # Contributing to OpenTabletDriver
 
-If you wish to contribute to OpenTabletDriver, check out the [issue tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
+If you wish to contribute to OpenTabletDriver, check out the [issue
+tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). When
+creating pull requests, follow the guidelines outlined in our [contribution
+guidelines](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
-If you have any issues or suggestions, [open an issue ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose).
+If you have any issues or suggestions, [open an issue
+ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
+and fill out the template with relevant information. We welcome both bug
+reports, as well as new tablets to add support for. In many cases adding support
+for a new tablet is quite easy.
+
+### Supporting a new tablet
+
+If you'd like us to add support for a new tablet, open an issue or join our
+[discord](https://discord.gg/9bcMaPkVAR) asking for support. *We generally
+prefer that adding support for a tablet be done through discord, due to the
+back-and-forth involved*.
+
+We'll have you do a few things like making a recording of the data sent by your
+tablet using our built-in tablet debugging tool, testing features of the tablet
+(on-tablet buttons, pen buttons, pen pressure, etc) with different configs we'll
+send you to try.
+
+You're also of course welcome to open a PR adding support for it yourself, if
+you have a good grasp on what's involved.
+
+Generally this process is relatively easy, especially if it's for a tablet
+manufacturer we already have support for on other tablets.

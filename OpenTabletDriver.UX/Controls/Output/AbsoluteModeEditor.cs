@@ -408,7 +408,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 areaClippingCmd = new BooleanCommand
                 {
-                    MenuText = "Area clipping"
+                    MenuText = "Clamp input outside area"
                 };
 
                 ignoreOutsideAreaCmd = new BooleanCommand

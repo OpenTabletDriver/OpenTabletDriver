@@ -55,9 +55,19 @@ namespace OpenTabletDriver.UX.Controls
                     },
                     new TabPage
                     {
+                        Text = "Info",
+                        Padding = 5,
+                        Visible = false,
+                        Content = placeholder = new Placeholder
+                        {
+                            Text = "No tablets are detected."
+                        }
+                    },
+                    new TabPage
+                    {
                         Text = "Console",
                         Padding = 5,
-                        Content = new LogView()
+                        Content = logView = new LogView()
                     }
                 }
             };
@@ -72,9 +82,19 @@ namespace OpenTabletDriver.UX.Controls
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
             this.Content = tabControl;
+
+            Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
+            {
+                if (message.Level > LogLevel.Info)
+                {
+                    tabControl.SelectedPage = logView.Parent as TabPage;
+                }
+            });
         }
 
         private TabControl tabControl;
+        private Placeholder placeholder;
+        private LogView logView;
         private OutputModeEditor outputModeEditor;
         private BindingEditor penBindingEditor, auxBindingEditor, mouseBindingEditor;
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
@@ -93,19 +113,37 @@ namespace OpenTabletDriver.UX.Controls
 
         public event EventHandler<EventArgs> ProfileChanged;
 
-        protected virtual async void OnProfileChanged()
+        protected virtual void OnProfileChanged() => Application.Instance.AsyncInvoke(async () =>
         {
             ProfileChanged?.Invoke(this, new EventArgs());
             if (Profile != null && await Profile.GetTabletReference() is TabletReference tablet)
             {
-                Application.Instance.AsyncInvoke(() => 
+                var placeholderFocused = tabControl.SelectedPage == placeholder.Parent;
+
+                placeholder.Parent.Visible = false;
+                outputModeEditor.Parent.Visible = true;
+                filterEditor.Parent.Visible = true;
+                toolEditor.Parent.Visible = true;
+                penBindingEditor.Parent.Visible = tablet.Properties.Specifications.Pen != null;
+                auxBindingEditor.Parent.Visible = tablet.Properties.Specifications.AuxiliaryButtons != null;
+                mouseBindingEditor.Parent.Visible = tablet.Properties.Specifications.MouseButtons != null;
+
+                if (placeholderFocused)
                 {
-                    penBindingEditor.Parent.Visible = tablet.Properties.Specifications.Pen != null;
-                    auxBindingEditor.Parent.Visible = tablet.Properties.Specifications.AuxiliaryButtons != null;
-                    mouseBindingEditor.Parent.Visible = tablet.Properties.Specifications.MouseButtons != null;
-                });
+                    tabControl.SelectedIndex = 0;
+                }
             }
-        }
+            else
+            {
+                placeholder.Parent.Visible = true;
+                outputModeEditor.Parent.Visible = false;
+                filterEditor.Parent.Visible = false;
+                toolEditor.Parent.Visible = false;
+                penBindingEditor.Parent.Visible = false;
+                auxBindingEditor.Parent.Visible = false;
+                mouseBindingEditor.Parent.Visible = false;
+            }
+        });
 
         public BindableBinding<ControlPanel, Profile> ProfileBinding
         {

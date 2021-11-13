@@ -19,7 +19,5 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                 new PaddingSpacerItem(),
             };
         }
-
-        public const string FAQ_URL = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki#frequently-asked-questions";
     }
 }

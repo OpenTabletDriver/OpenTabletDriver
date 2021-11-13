@@ -61,7 +61,17 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            messageList.DataStore = this.messageStore;
+            this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
+            this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
+
+            _ = InitializeAsync();
+        }
+
+        private async Task InitializeAsync()
+        {
+            var currentMessages = await App.Driver.Instance.GetCurrentLog();
+            messageList.DataStore = messageStore = new LogDataStore(currentMessages);
+
             this.messageStore.CollectionChanged += (sender, e) =>
             {
                 Application.Instance.AsyncInvoke(() =>
@@ -76,21 +86,6 @@ namespace OpenTabletDriver.UX.Controls
                 });
             };
 
-            this.Items.Add(new StackLayoutItem(messageList, HorizontalAlignment.Stretch, true));
-            this.Items.Add(new StackLayoutItem(toolbar, HorizontalAlignment.Stretch));
-
-            _ = InitializeAsync();
-        }
-
-        private async Task InitializeAsync()
-        {
-            var currentMessages = from message in await App.Driver.Instance.GetCurrentLog()
-                where message is LogMessage
-                select message;
-
-            foreach (var message in currentMessages)
-                AddMessage(message);
-
             App.Driver.AddConnectionHook(i => i.Message += (sender, message) => AddMessage(message));
         }
 
@@ -104,7 +99,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Time",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
+                        Binding = Binding.Property<LogMessage, string>(m => m.Time.ToLongTimeString())
                     }
                 },
                 new GridColumn
@@ -112,7 +107,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Level",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Level.GetName())
+                        Binding = Binding.Property<LogMessage, string>(m => m.Level.GetName())
                     }
                 },
                 new GridColumn
@@ -120,7 +115,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Group",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Group)
+                        Binding = Binding.Property<LogMessage, string>(m => m.Group)
                     }
                 },
                 new GridColumn
@@ -128,13 +123,13 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Message",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Eto.Forms.Binding.Property<LogMessage, string>(m => m.Message)
+                        Binding = Binding.Property<LogMessage, string>(m => m.Message)
                     }
                 }
             }
         };
 
-        private readonly LogDataStore messageStore = new LogDataStore();
+        private LogDataStore messageStore;
 
         private void AddMessage(LogMessage message)
         {
@@ -160,7 +155,7 @@ namespace OpenTabletDriver.UX.Controls
         {
             public FilterDropDown(LogLevel activeFilter = LogLevel.Info)
             {
-                base.SelectedValue = activeFilter;
+                SelectedValue = activeFilter;
             }
         }
     }

@@ -25,7 +25,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             var debugger = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Height = 400,
+                Height = 370,
                 Padding = 5,
                 Spacing = 5,
                 Items =
@@ -119,7 +119,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             this.Content = new Splitter
             {
                 Orientation = Orientation.Vertical,
-                Width = 640,
+                Width = 660,
                 Height = 800,
                 FixedPanel = SplitterFixedPanel.Panel2,
                 Panel1 = new DebuggerGroup
