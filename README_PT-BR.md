@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-English(README.md)| [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Português] 
+[English](README.md)| [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | Português 
 
 O OpenTabletDriver é um driver em modo de usuário, código-aberto e multi plataforma. O objetivo de OpenTabletDriver é ser multi-plataforma com a maior compatibilidade em uma interface gráfica configurável fácil de usar. 
 <p align="middle">
@@ -13,8 +13,7 @@ O OpenTabletDriver é um driver em modo de usuário, código-aberto e multi plat
 
 # Mesas [Tablets] Suportadas
 
-All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
-
+Todos os estados das mesas serão suportado, não testado, e planejado á ter suporte podem ser encontrados aqui. Soluções para problemas comuns podem ser encontrados na wiki para sua plataforma. 
 - [Mesas Suportadas](https://opentabletdriver.net/Tablets)
 
 # Instalação
@@ -27,9 +26,9 @@ All statuses of tablets that are supported, untested, and planned to be supporte
 
 OpenTabletDriver functions as two separate processes that interact with each other seamlessly. The active program that does all of the tablet data handling is `OpenTabletDriver.Daemon`, while the GUI frontend is `OpenTabletDriver.UX.*`, where `*` depends on your platform<sup>1</sup>. The daemon must be started in order for anything to work, however the GUI is unnecessary. If you have existing settings, they should apply when the daemon starts.
 
-> <sup>1</sup>Windows uses `Wpf`, Linux uses `Gtk`, and MacOS uses `MacOS` respectively. This for the most part can be ignored if you don't build it from source as only the correct version will be provided.
+> <sup>1</sup>Windows usa o `Wpf`, Linux usa o `Gtk`, e MacOS usa  `MacOS` respectivamente. Isso por maior parte pode ser ignorada se você não o compilar do código fonte, como a versão correta será fornecida.
 
-## Building OpenTabletDriver from source
+## Compilando o OpenTabletDriver do código fonte
 
 The requirements to build OpenTabletDriver are consistent across all platforms. Running OpenTabletDriver on each platform requires different dependencies.
 
