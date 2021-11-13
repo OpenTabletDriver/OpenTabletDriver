@@ -13,12 +13,12 @@ echo "Building OpenTabletDriver with runtime $runtime."
 mkdir -p ./bin
 
 echo -e "\nBuilding Daemon...\n"
-dotnet publish OpenTabletDriver.Daemon ${options[@]} $@
+dotnet publish OpenTabletDriver.Daemon ${options[@]} $@ || echo "Error building Daemon" && exit 1
 
 echo -e "\nBuilding Console...\n"
-dotnet publish OpenTabletDriver.Console ${options[@]} $@
+dotnet publish OpenTabletDriver.Console ${options[@]} $@ || echo "Error building Console" && exit 1
 
 echo -e "\nBuilding GTK UX...\n"
-dotnet publish OpenTabletDriver.UX.Gtk ${options[@]} $@
+dotnet publish OpenTabletDriver.UX.Gtk ${options[@]} $@ || echo "Error building GTK UX" && exit 1
 
 echo "Build finished. Binaries created in ./bin"
