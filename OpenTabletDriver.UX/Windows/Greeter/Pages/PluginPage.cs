@@ -16,8 +16,8 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                 new StylizedText("Plugins", SystemFonts.Bold(12), new Padding(0, 0, 0, 8)),
                 "Plugins can be downloaded from the plugin manager at your own risk.",
                 "The plugin manager can be found in the Plugins menu in the main window.",
-                "Filters change the way output is handled on the tablet, an example of this is smoothing.",
-                "Tools don't directly interact with the way output is handled but control other parts of the driver.",
+                "Filters modify the output of the tablet, an example of this is smoothing.",
+                "Tools don't directly interfere with or modify the output, but mostly adds new functionality to the driver.",
                 new PaddingSpacerItem()
             };
         }
