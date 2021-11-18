@@ -19,7 +19,7 @@ jobs:
       - name: Linux Publish
         env:
           runtime: linux-x64
-          options: --configuration Release -p:DebugType=embedded --self-contained /p:PublishTrimmed=true
+          options: --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded -P:PublishTrimmed=false --self-contained
         run: |
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
@@ -51,7 +51,7 @@ jobs:
       - name: MacOS Publish
         env:
           runtime: osx-x64
-          options: --configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --self-contained /p:PublishTrimmed=true
+          options: --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded -p:PublishTrimmed=false --self-contained
         run: |
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
@@ -76,7 +76,7 @@ jobs:
         env:
           runtime: win-x64
         run: |
-          $options= @('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '--self-contained', '/p:PublishTrimmed=true')
+          $options= @('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '-p:PublishTrimmed=false', '--self-contained')
           dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
