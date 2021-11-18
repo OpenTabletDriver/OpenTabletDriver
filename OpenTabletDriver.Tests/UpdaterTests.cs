@@ -93,7 +93,7 @@ namespace OpenTabletDriver.Tests
         }
 
         [Fact]
-        public Task Updater_HasUpdateReturnsFalse_During_UpdateInstall()
+        public Task Updater_HasUpdateReturnsFalse_During_UpdateInstall_Async()
         {
             return MockEnvironmentAsync(async (updaterEnv) =>
             {
@@ -110,7 +110,7 @@ namespace OpenTabletDriver.Tests
         }
 
         [Fact]
-        public Task Updater_HasUpdateReturnsFalse_After_UpdateInstall()
+        public Task Updater_HasUpdateReturnsFalse_After_UpdateInstall_Async()
         {
             return MockEnvironmentAsync(async (updaterEnv) =>
             {
