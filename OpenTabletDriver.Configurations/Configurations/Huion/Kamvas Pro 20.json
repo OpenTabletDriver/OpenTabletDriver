@@ -2,8 +2,8 @@
   "Name": "Huion Kamvas Pro 20",
   "Specifications": {
     "Digitizer": {
-      "Width": 435.37,
-      "Height": 238.35,
+      "Width": 435.375,
+      "Height": 238.355,
       "MaxX": 87075.0,
       "MaxY": 47671.0
     },
