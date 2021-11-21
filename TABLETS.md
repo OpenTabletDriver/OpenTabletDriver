@@ -20,6 +20,7 @@
 | Huion Kamvas Pro 16           |     Supported     |
 | Huion Kamvas Pro 20           |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
+| Huion New 1060 Plus (2048)    |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet             |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion Q11K                    |     Supported     |
 | Huion WH1409                  |     Supported     |
