@@ -30,7 +30,7 @@ O OpenTabletDriver funciona como dois processos separados que se interagem entre
 
 ## Compilando o OpenTabletDriver do código fonte
 
-Os requerimentos para compilar o OpenTabletDriver é consistente entre todas as plataformas, A execução do OpenTabletDriver em cada plataforma requer dependências diferentes.
+Os requerimentos para compilar o OpenTabletDriver são consistente entre todas as plataformas, A execução do OpenTabletDriver em cada plataforma requer dependências diferentes.
 
 ### Todas as plataformas
 
