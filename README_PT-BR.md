@@ -13,7 +13,7 @@ O OpenTabletDriver é um driver em modo de usuário, código-aberto e multi plat
 
 # Mesas [Tablets] Suportadas
 
-Todos os estados das mesas serão suportado, não testado, e planejado á ter suporte podem ser encontrados aqui. Soluções para problemas comuns podem ser encontrados na wiki para sua plataforma. 
+Todos os estados das mesas que estão suportadas, não testado, e planejado a ter suporte podem ser encontrados aqui. Soluções para problemas comuns podem ser encontrados na wiki para sua plataforma. 
 - [Mesas Suportadas](https://opentabletdriver.net/Tablets)
 
 # Instalação
