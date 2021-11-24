@@ -49,7 +49,7 @@ Nenhuma outra dependência.
 
 #### MacOS [Experimental]
 
-Nenhuma outra depedência
+Nenhuma outra depedência.
 
 # Features
 
