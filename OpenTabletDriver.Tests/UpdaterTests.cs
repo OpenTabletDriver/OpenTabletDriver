@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using HidSharp.Reports.Units;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Updater;
 using Xunit;
@@ -12,22 +9,21 @@ namespace OpenTabletDriver.Tests
 {
     public class UpdaterTests
     {
-        [Fact]
-        public async Task TestWindowsInstall()
+        public static TheoryData<IUpdater, string> Updater_TestInstall_Data => new TheoryData<IUpdater, string>()
         {
-            var binDir = await TestInstall(new WindowsUpdater());
+            { new WindowsUpdater(), "OpenTabletDriver.UX.Wpf.exe" },
+            { new MacOSUpdater(), "OpenTabletDriver.UX.MacOS" }
+        };
 
-            var wpfUX = Path.Join(binDir, "OpenTabletDriver.UX.Wpf.exe");
-            Assert.True(File.Exists(wpfUX));
-        }
-
-        [Fact]
-        public async Task TestMacOSInstall()
+        [Theory]
+        [MemberData(nameof(Updater_TestInstall_Data))]
+        public async Task Updater_TestInstall(IUpdater updater, string expectedBinary)
         {
-            var binDir = await TestInstall(new MacOSUpdater());
+            var binDir = await TestInstall(updater);
 
-            var macOSUX = Path.Join(binDir, "OpenTabletDriver.UX.MacOS");
-            Assert.True(File.Exists(macOSUX));
+            var binaryPath = Path.Join(binDir, expectedBinary);
+
+            Assert.True(File.Exists(binaryPath));
         }
 
         public async Task<string> TestInstall(IUpdater updater)
