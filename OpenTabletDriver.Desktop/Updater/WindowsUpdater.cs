@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -10,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public class WindowsUpdater : Updater
     {
-        public override async Task<string> Download(Release release)
+        protected override async Task<string> Download(Release release)
         {
             var binaryDir = Path.Join(AppInfo.Current.TemporaryDirectory, release.TagName);
             var tempZipPath = Path.Join(AppInfo.Current.TemporaryDirectory, Path.GetRandomFileName() + ".zip");
@@ -30,7 +29,7 @@ namespace OpenTabletDriver.Desktop.Updater
             return binaryDir;
         }
 
-        public override ReleaseAsset GetAsset(Release release)
+        protected override ReleaseAsset GetAsset(Release release)
         {
             return release.Assets.FirstOrDefault(r => r.Name.Contains("win-x64"));
         }

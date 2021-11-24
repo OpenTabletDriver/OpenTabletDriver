@@ -44,8 +44,7 @@ namespace OpenTabletDriver.Tests
 
             CleanDirectory(tempDir);
 
-            var latest = await updater.GetLatestRelease();
-            await updater.Install(latest, binDir);
+            await updater.InstallUpdate(binDir);
             return binDir;
         }
 
