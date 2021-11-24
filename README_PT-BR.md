@@ -81,7 +81,6 @@ Nenhuma outra depedência
   - Configuração do teclado
   - Configuração de plug-ins externos
 - Salvando e carregando configurações
-  - Auto-loads user settings via `settings.json` in the active user `%localappdata%` or `.config` settings root directory.
   - Automaticamente carrega as configurações do usuário usando `settings.json` no usuário ativo `%localappdata%` ou `.config` no diretório raiz.
 - Editor de configurações
   - Permite você á criar, modificar, e deletar configurações.
