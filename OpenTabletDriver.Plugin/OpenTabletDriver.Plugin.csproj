@@ -1,17 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFrameworks>net5</TargetFrameworks>
-    <LangVersion>preview</LangVersion>
+    <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package Information">
     <PackageId>OpenTabletDriver.Plugin</PackageId>
-    <Version>0.6.0.0</Version>
-    <Authors>InfinityGhost</Authors>
     <Description>Library used to create OpenTabletDriver plugins.</Description>
     <PackageOutputPath>../nupkg</PackageOutputPath>
-    <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
 </Project>

@@ -2,10 +2,8 @@
 
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net5</TargetFrameworks>
-    <VersionPrefix>0.6.0.0</VersionPrefix>
+    <TargetFramework>$(FrameworkBase)</TargetFramework>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Pack">

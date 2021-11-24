@@ -2,10 +2,8 @@
 
   <PropertyGroup Label="Project Properties">
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net5-windows</TargetFrameworks>
-    <VersionPrefix>0.6.0.0</VersionPrefix>
+    <TargetFramework>$(FrameworkBase)-windows</TargetFramework>
     <ApplicationIcon>../OpenTabletDriver.UX/Assets/otd.ico</ApplicationIcon>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
