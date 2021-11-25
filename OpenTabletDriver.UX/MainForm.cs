@@ -41,6 +41,7 @@ namespace OpenTabletDriver.UX
                 try
                 {
                     await Driver.Connect();
+                    await CheckForUpdates();
                 }
                 catch (TimeoutException)
                 {
@@ -53,6 +54,7 @@ namespace OpenTabletDriver.UX
         private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
+        private TrayIcon trayIcon;
 
         protected override void OnInitializePlatform(EventArgs e)
         {
@@ -69,7 +71,7 @@ namespace OpenTabletDriver.UX
 
             if (App.EnableTrayIcon)
             {
-                var trayIcon = new TrayIcon(this);
+                this.trayIcon = new TrayIcon(this);
                 if (WindowState == WindowState.Minimized)
                 {
                     this.Visible = false;
@@ -449,6 +451,24 @@ namespace OpenTabletDriver.UX
             {
                 Log.Exception(ex);
                 ex.ShowMessageBox();
+            }
+        }
+
+        private async Task CheckForUpdates()
+        {
+            if (await App.Driver.Instance.HasUpdate())
+            {
+                var id = "update-prompt";
+                var notification = new Notification
+                {
+                    ContentImage = App.Logo,
+                    Title = "OpenTabletDriver",
+                    Message = "An update to OpenTabletDriver is available.",
+                    ID = id
+                };
+                notification.Show(trayIcon?.Indicator);
+
+                App.Current.AddNotificationHandler(id, App.Current.UpdaterWindow.Show);
             }
         }
     }

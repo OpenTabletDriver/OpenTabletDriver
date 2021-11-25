@@ -23,8 +23,6 @@ namespace OpenTabletDriver.Desktop.Updater
         protected string RollbackDirectory;
         protected string DownloadDirectory = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
 
-        public Task<bool> HasUpdate => CheckForUpdates(true);
-
         protected Updater(Version? currentVersion, string binaryDir, string appDataDir, string rollbackDir)
         {
             CurrentVersion = currentVersion ?? AssemblyVersion;
@@ -36,6 +34,28 @@ namespace OpenTabletDriver.Desktop.Updater
                 Directory.CreateDirectory(RollbackDirectory);
             if (!Directory.Exists(DownloadDirectory))
                 Directory.CreateDirectory(DownloadDirectory);
+        }
+
+        public async Task<bool> CheckForUpdates(bool forced = true)
+        {
+            if (updateSentinel == 0)
+                return false;
+
+            if (forced || latestRelease == null)
+                latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
+
+            var latestVersion = new Version(latestRelease.TagName[1..]); // remove `v` from `vW.X.Y.Z
+            return latestVersion > CurrentVersion;
+        }
+
+        public async Task<Release?> GetRelease()
+        {
+            if (latestRelease == null)
+            {
+                await CheckForUpdates();
+            }
+
+            return latestRelease;
         }
 
         public async Task InstallUpdate()
@@ -53,18 +73,6 @@ namespace OpenTabletDriver.Desktop.Updater
 
         protected abstract Task Install(Release release);
 
-        private async Task<bool> CheckForUpdates(bool forced)
-        {
-            if (updateSentinel == 0)
-                return false;
-
-            if (forced || latestRelease == null)
-                latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver"); ;
-
-            var latestVersion = new Version(latestRelease.TagName[1..]); // remove `v` from `vW.X.Y.Z
-            return latestVersion > CurrentVersion;
-        }
-
         private void SetupRollback()
         {
             var versionRollbackDir = Path.Join(RollbackDirectory, CurrentVersion + "-old");
@@ -76,7 +84,8 @@ namespace OpenTabletDriver.Desktop.Updater
         }
 
         // Avoid moving/copying the rollback directory if under source directory
-        private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target, Action<string, string> fileOp)
+        private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target,
+            Action<string, string> fileOp)
         {
             var rollbackTarget = Path.Join(versionRollbackDir, target);
 

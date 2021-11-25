@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX
             };
             close.Click += (sender, e) => window.Close();
 
-            indicator = new TrayIndicator
+            Indicator = new TrayIndicator
             {
                 Title = "OpenTabletDriver",
                 Image = App.Logo,
@@ -36,20 +36,20 @@ namespace OpenTabletDriver.UX
                     }
                 }
             };
-			indicator.Activated += (object sender, System.EventArgs e) =>
+			Indicator.Activated += (object sender, System.EventArgs e) =>
             {
                 window.Show();
                 window.BringToFront();
             };
-            indicator.Show();
+            Indicator.Show();
         }
 
-        private TrayIndicator indicator;
+        public TrayIndicator Indicator { get; }
 
         public void Dispose()
         {
-            indicator.Hide();
-            indicator.Dispose();
+            Indicator.Hide();
+            Indicator.Dispose();
         }
     }
 }

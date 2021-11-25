@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Reflection;
@@ -14,6 +16,7 @@ using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
 using OpenTabletDriver.UX.Windows.Plugins;
 using OpenTabletDriver.UX.Windows.Tablet;
+using OpenTabletDriver.UX.Windows.Updater;
 
 namespace OpenTabletDriver.UX
 {
@@ -58,6 +61,9 @@ namespace OpenTabletDriver.UX
                 }
             }
 
+            // Add notification handler
+            app.NotificationActivated += Current.HandleNotification;
+
             app.Run(mainForm);
         }
 
@@ -65,6 +71,8 @@ namespace OpenTabletDriver.UX
 
         public const string FaqUrl = "https://opentabletdriver.net/Wiki";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+
+        public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
 
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
@@ -100,5 +108,17 @@ namespace OpenTabletDriver.UX
         public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
         public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
         public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
+        public WindowSingleton<UpdaterWindow> UpdaterWindow { get; } = new WindowSingleton<UpdaterWindow>();
+
+        public void AddNotificationHandler(string identifier, Action handler)
+        {
+            NotificationHandlers.Add(identifier, handler);
+        }
+
+        private void HandleNotification(object sender, NotificationEventArgs e)
+        {
+            if (NotificationHandlers.ContainsKey(e.ID))
+                NotificationHandlers[e.ID].Invoke();
+        }
     }
 }
