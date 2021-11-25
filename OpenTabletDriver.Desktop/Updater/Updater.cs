@@ -11,9 +11,15 @@ namespace OpenTabletDriver.Desktop.Updater
         private GitHubClient github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
         private Release latestRelease;
 
-        protected static readonly Version CurrentVersion = new Version(typeof(IUpdater).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion);
+        protected readonly Version CurrentVersion;
+        protected static readonly Version AssemblyVersion = new Version(typeof(IUpdater).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion);
 
         public Task<bool> HasUpdate => CheckForUpdates();
+
+        protected Updater(Version currentVersion)
+        {
+            this.CurrentVersion = currentVersion;
+        }
 
         public async Task InstallUpdate(string targetDir)
         {
