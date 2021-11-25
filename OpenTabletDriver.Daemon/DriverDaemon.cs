@@ -439,8 +439,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task InstallUpdate()
         {
-            var targetDir = AppDomain.CurrentDomain.BaseDirectory;
-            return Updater?.InstallUpdate(targetDir) ?? Task.CompletedTask;
+            return Updater?.InstallUpdate() ?? Task.CompletedTask;
         }
     }
 }
