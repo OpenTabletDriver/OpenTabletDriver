@@ -37,5 +37,8 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<string> RequestDeviceString(int vendorID, int productID, int index);
 
         Task<IEnumerable<LogMessage>> GetCurrentLog();
+
+        Task<bool> HasUpdate();
+        Task InstallUpdate();
     }
 }
