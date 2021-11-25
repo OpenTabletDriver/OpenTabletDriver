@@ -55,6 +55,9 @@ namespace OpenTabletDriver.Desktop.Updater
 
         private async Task<bool> CheckForUpdates(bool forced)
         {
+            if (updateSentinel == 0)
+                return false;
+
             if (forced || latestRelease == null)
                 latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver"); ;
 
@@ -66,54 +69,84 @@ namespace OpenTabletDriver.Desktop.Updater
         {
             var versionRollbackDir = Path.Join(RollbackDirectory, CurrentVersion + "-old");
 
-            ExclusiveMove(BinaryDirectory, versionRollbackDir, "bin");
-            // ExclusiveMove(AppDataDirectory, versionRollbackDir, "data");
+            ExclusiveFileOp(BinaryDirectory, RollbackDirectory, versionRollbackDir, "bin",
+                static (source, target) => Move(source, target));
+            ExclusiveFileOp(AppDataDirectory, RollbackDirectory, versionRollbackDir, "appdata",
+                static (source, target) => Copy(source, target));
         }
 
-        // Avoid moving the rollback directory if under source directory
-        private static void ExclusiveMove(string source, string versionRollbackDir, string target)
+        // Avoid moving/copying the rollback directory if under source directory
+        private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target, Action<string, string> fileOp)
         {
             var rollbackTarget = Path.Join(versionRollbackDir, target);
 
             var childEntries = Directory
                 .EnumerateFileSystemEntries(source)
-                .Except(new[] { versionRollbackDir });
+                .Except(new[] { rollbackDir, versionRollbackDir });
 
             if (!Directory.Exists(rollbackTarget))
                 Directory.CreateDirectory(rollbackTarget);
 
             foreach (var childEntry in childEntries)
             {
-                Move(childEntry, rollbackTarget);
+                fileOp(childEntry, Path.Join(rollbackTarget, Path.GetFileName(childEntry)));
             }
         }
 
-        protected static void Move(string source, string targetDir)
+        protected static void Move(string source, string target)
         {
             if (File.Exists(source))
             {
-                File.Move(source, Path.Join(targetDir, Path.GetFileName(source)));
+                var sourceFile = new FileInfo(source);
+                sourceFile.MoveTo(target);
+                return;
             }
-            else if (Directory.Exists(source))
-            {
-                if (!Directory.Exists(targetDir))
-                    Directory.CreateDirectory(targetDir);
 
-                foreach (var childEntry in Directory.EnumerateFileSystemEntries(source))
+            var sourceDir = new DirectoryInfo(source);
+            var targetDir = new DirectoryInfo(target);
+            if (targetDir.Exists)
+            {
+                foreach (var childEntry in sourceDir.EnumerateFileSystemInfos())
                 {
-                    if (File.Exists(childEntry))
+                    if (childEntry is FileInfo file)
                     {
-                        File.Move(childEntry, Path.Join(targetDir, Path.GetFileName(childEntry)));
+                        file.MoveTo(Path.Join(target, file.Name));
                     }
-                    else if (Directory.Exists(childEntry))
+                    else if (childEntry is DirectoryInfo directory)
                     {
-                        Directory.Move(childEntry, Path.Join(targetDir, Path.GetFileName(childEntry)));
+                        directory.MoveTo(Path.Join(target, directory.Name));
                     }
                 }
             }
             else
             {
-                throw new ArgumentException("Provided source path is not a file or directory", nameof(source));
+                Directory.Move(source, target);
+            }
+        }
+
+        protected static void Copy(string source, string target)
+        {
+            if (File.Exists(source))
+            {
+                var sourceFile = new FileInfo(source);
+                sourceFile.CopyTo(target);
+                return;
+            }
+
+            if (!Directory.Exists(target))
+                Directory.CreateDirectory(target);
+
+            var sourceDir = new DirectoryInfo(source);
+            foreach (var fileInfo in sourceDir.EnumerateFileSystemInfos())
+            {
+                if (fileInfo is FileInfo file)
+                {
+                    file.CopyTo(Path.Join(target, file.Name));
+                }
+                else if (fileInfo is DirectoryInfo directory)
+                {
+                    Copy(directory.FullName, Path.Join(target, directory.Name));
+                }
             }
         }
     }
