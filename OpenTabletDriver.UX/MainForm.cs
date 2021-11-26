@@ -239,7 +239,7 @@ namespace OpenTabletDriver.UX
 
         private void SetTitle(IEnumerable<TabletReference> tablets = null)
         {
-            string prefix = $"OpenTabletDriver v{App.Version} - ";
+            string prefix = $"OpenTabletDriver v{App.ShortVersion} - ";
             if (tablets?.Any() ?? false)
             {
                 // Limit to 3 tablets in the title

@@ -1,9 +1,9 @@
 <Project>
   <PropertyGroup>
-    <VersionBase>0.6.0.0</VersionBase>
+    <VersionPrefix>0.6.0.0</VersionPrefix>
+    <VersionSuffix>dev</VersionSuffix>
+    <SourceRevisionId>Built on $([System.DateTime]::UtcNow.ToString("d"))</SourceRevisionId>
     <FrameworkBase>net6.0</FrameworkBase>
-    <LangVersion>preview</LangVersion>
-    <VersionPrefix>$(VersionBase)</VersionPrefix>
   </PropertyGroup>
 
   <PropertyGroup Label="Package Information">

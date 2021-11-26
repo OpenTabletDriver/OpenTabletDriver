@@ -64,7 +64,8 @@ namespace OpenTabletDriver.UX
         public static App Current { get; } = new App();
 
         public const string FaqUrl = "https://opentabletdriver.net/Wiki";
-        public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        public static readonly string FullVersion = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        public static readonly string ShortVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
@@ -83,7 +84,7 @@ namespace OpenTabletDriver.UX
             ProgramDescription = "Open source, cross-platform tablet configurator",
             WebsiteLabel = "OpenTabletDriver GitHub Repository",
             Website = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver"),
-            Version = $"v{Version}",
+            Version = $"v{FullVersion}",
             Developers = new string[] { "InfinityGhost" },
             Designers = new string[] { "InfinityGhost" },
             Documenters = new string[] { "InfinityGhost" },
