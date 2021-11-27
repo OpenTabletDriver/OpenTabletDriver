@@ -1,4 +1,5 @@
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
 {
@@ -16,10 +17,12 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
                 {
                     0x10 => new IntuosV2Report(data),
                     0x11 => new IntuosV2AuxReport(data),
-                    0xD2 => new IntuosV2TouchReport(data),
+                    0xD2 => new IntuosV2TouchReport(data, ref prevTouches),
                     _ => new DeviceReport(data)
                 };
             }
         }
+
+        private TouchPoint[] prevTouches;
     }
 }
