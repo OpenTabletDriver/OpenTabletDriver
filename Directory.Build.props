@@ -4,14 +4,7 @@
     <FrameworkBase>net6.0</FrameworkBase>
     <LangVersion>preview</LangVersion>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
-    <BuildDate>$([System.DateTime]::UtcNow.ToString("d"))</BuildDate>
   </PropertyGroup>
-
-  <ItemGroup>
-    <AssemblyAttribute Include="BuildDateAttribute">
-      <_Parameter1>$(BuildDate)</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
 
   <PropertyGroup Label="Package Information">
     <Authors>InfinityGhost</Authors>
