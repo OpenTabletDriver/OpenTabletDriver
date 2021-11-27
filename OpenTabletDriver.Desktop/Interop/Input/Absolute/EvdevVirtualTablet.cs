@@ -100,27 +100,23 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)newPos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)newPos.Y);
-            Device.Sync();
         }
 
         public void SetPressure(float percentage)
         {
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, percentage > 0 ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MaxPressure * percentage));
-            Device.Sync();
         }
 
         public void SetTilt(Vector2 tilt)
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_X, (int)tilt.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_Y, (int)tilt.Y);
-            Device.Sync();
         }
 
         public void SetButtonState(uint button, bool active)
         {
             Device.Write(EventType.EV_KEY, BUTTONS[button], active ? 1 : 0);
-            Device.Sync();
         }
 
         public void SetEraser(bool isEraser)
@@ -132,6 +128,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Proximity = proximity;
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
+        }
+
+        public void Finish()
+        {
             Device.Sync();
         }
 
