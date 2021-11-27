@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
@@ -35,7 +36,9 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         private static string GetAppVersion()
         {
-            return "OpenTabletDriver v" + Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            string buildDate = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
+            return $"OpenTabletDriver v{version}, built on {buildDate}";
         }
 
         public override string ToString()
