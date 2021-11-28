@@ -33,7 +33,7 @@ namespace OpenTabletDriver.Desktop.Output
             if (report is IProximityReport proximityReport)
                 VirtualTablet.SetProximity(proximityReport.NearProximity, proximityReport.HoverDistance);
 
-            VirtualTablet.Finish();
+            VirtualTablet.Sync();
         }
     }
 }

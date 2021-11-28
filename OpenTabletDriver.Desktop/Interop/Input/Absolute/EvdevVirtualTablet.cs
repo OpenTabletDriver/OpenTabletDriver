@@ -129,10 +129,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
-        public void Finish()
-        {
-            Device.Sync();
-        }
+        public void Sync() => Device.Sync();
 
         protected override EventCode? GetCode(MouseButton button) => null;
     }
