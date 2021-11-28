@@ -22,6 +22,9 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         [JsonProperty("App Version")]
         public string AppVersion { private set; get; } = GetAppVersion();
 
+        [JsonProperty("Build Date")]
+        public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
+
         [JsonProperty("Operating System")]
         public OperatingSystem OperatingSystem { private set; get; } = Environment.OSVersion;
 
@@ -37,8 +40,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         private static string GetAppVersion()
         {
             string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-            string buildDate = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
-            return $"OpenTabletDriver v{version}, built on {buildDate}";
+            return $"OpenTabletDriver v{version}";
         }
 
         public override string ToString()
