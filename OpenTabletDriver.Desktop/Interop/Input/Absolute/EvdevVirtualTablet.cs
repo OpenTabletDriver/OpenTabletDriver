@@ -17,8 +17,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             EventCode.BTN_STYLUS3
         };
 
-        private Vector2 ScreenScale = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height);
-        private int Resolution = 1000; // subpixels per screen pixel
+        private const int RESOLUTION = 1000; // subpixels per screen pixel
+
         private bool IsEraser = false;
         private bool Proximity = true;
 
@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var xAbs = new input_absinfo
             {
-                maximum = (int)(DesktopInterop.VirtualScreen.Width * Resolution),
+                maximum = (int)(DesktopInterop.VirtualScreen.Width * RESOLUTION),
                 resolution = 100000
             };
             input_absinfo* xPtr = &xAbs;
@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var yAbs = new input_absinfo
             {
-                maximum = (int)(DesktopInterop.VirtualScreen.Height * Resolution),
+                maximum = (int)(DesktopInterop.VirtualScreen.Height * RESOLUTION),
                 resolution = 100000
             };
             input_absinfo* yPtr = &yAbs;
@@ -97,8 +97,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetPosition(Vector2 pos)
         {
             Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * Resolution));
-            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * Resolution));
+            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
+            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
 
         public void SetPressure(float percentage)
