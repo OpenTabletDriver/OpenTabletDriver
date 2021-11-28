@@ -10,7 +10,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
     {
-        private const int Max = 1 << 28;
         private static readonly EventCode[] BUTTONS =
         {
             EventCode.BTN_STYLUS,
@@ -19,6 +18,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         };
 
         private Vector2 ScreenScale = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height);
+        private int Resolution = 1000; // subpixels per screen pixel
         private bool IsEraser = false;
         private bool Proximity = true;
 
@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var xAbs = new input_absinfo
             {
-                maximum = Max,
+                maximum = (int)(DesktopInterop.VirtualScreen.Width * Resolution),
                 resolution = 100000
             };
             input_absinfo* xPtr = &xAbs;
@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var yAbs = new input_absinfo
             {
-                maximum = Max,
+                maximum = (int)(DesktopInterop.VirtualScreen.Height * Resolution),
                 resolution = 100000
             };
             input_absinfo* yPtr = &yAbs;
@@ -96,10 +96,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            var newPos = pos / ScreenScale * Max;
             Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)newPos.X);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)newPos.Y);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * Resolution));
+            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * Resolution));
         }
 
         public void SetPressure(float percentage)
