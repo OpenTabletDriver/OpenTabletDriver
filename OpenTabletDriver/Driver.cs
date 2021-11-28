@@ -62,7 +62,7 @@ namespace OpenTabletDriver
 
             if (!success)
             {
-                Log.Write("Detect", "No tablets were detected.", LogLevel.Error);
+                Log.Write("Detect", "No tablets were detected.");
             }
 
             return success;
