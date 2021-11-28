@@ -134,6 +134,18 @@ namespace OpenTabletDriver.UX.Controls
         private void AddMessage(LogMessage message)
         {
             Application.Instance.AsyncInvoke(() => this.messageStore.Add(message));
+
+            if (message.Notification)
+            {
+                var notify = new Notification
+                {
+                    Title = "OpenTabletDriver - " + message.Level.ToString(),
+                    Message = message.Message,
+                    ContentImage = App.Logo,
+                    ID = "log-message-notification"
+                };
+                notify.Show();
+            }
         }
 
         private static void Copy(IEnumerable<LogMessage> messages)
