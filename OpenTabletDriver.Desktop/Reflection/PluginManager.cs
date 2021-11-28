@@ -168,10 +168,13 @@ namespace OpenTabletDriver.Desktop.Reflection
                 _ = asm.DefinedTypes;
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 var asmName = asm.GetName();
-                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
+                var hResultHex = ex.HResult.ToString("X");
+                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date. (HResult: 0x{hResultHex})", LogLevel.Warning);
+                Log.Write("Plugin", $"Plugin '{asmName.Name}' Exception message: {ex.Message}", LogLevel.Debug);
+                Log.Write("Plugin", $"Plugin '{asmName.Name}' Exception stack trace: {ex.StackTrace}", LogLevel.Debug);
                 return false;
             }
         }
