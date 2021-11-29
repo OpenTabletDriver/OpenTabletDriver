@@ -82,7 +82,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task WriteMessage(LogMessage message)
         {
-            Log.OnOutput(message);
+            Log.Write(message);
             return Task.CompletedTask;
         }
 

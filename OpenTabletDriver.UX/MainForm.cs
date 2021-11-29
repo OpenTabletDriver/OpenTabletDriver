@@ -414,7 +414,7 @@ namespace OpenTabletDriver.UX
                     Message = message,
                     StackTrace = stack
                 };
-                Log.OnOutput(logMessage);
+                Log.Write(logMessage);
             }
         }
 

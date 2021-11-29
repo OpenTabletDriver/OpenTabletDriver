@@ -180,7 +180,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     Message = $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date. (HResult: 0x{hResultHex})",
                     StackTrace = ex.Message + Environment.NewLine + ex.StackTrace
                 };
-                Log.OnOutput(message);
+                Log.Write(message);
                 return false;
             }
         }

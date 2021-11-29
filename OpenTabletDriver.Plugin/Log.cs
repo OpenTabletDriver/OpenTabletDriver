@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Plugin
         /// Invoke sending a log message.
         /// </summary>
         /// <param name="message">The message to be passed to the <see cref="Output"/> event.</param>
-        public static void OnOutput(LogMessage message)
+        public static void Write(LogMessage message)
         {
             Output?.Invoke(null, message);
         }
@@ -50,7 +50,7 @@ namespace OpenTabletDriver.Plugin
                 Level = level,
                 StackTrace = createStackTrace ? Environment.StackTrace : null
             };
-            OnOutput(message);
+            Write(message);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace OpenTabletDriver.Plugin
                 return;
 
             var message = new LogMessage(ex);
-            OnOutput(message);
+            Write(message);
         }
     }
 }
