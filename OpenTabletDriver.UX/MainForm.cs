@@ -256,7 +256,7 @@ namespace OpenTabletDriver.UX
         {
             // Hook events after the instance is (re)instantiated
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
-            Driver.Instance.TabletsChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => SetTitle(tablet));
+            Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
 
             // Load the application information from the daemon
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
