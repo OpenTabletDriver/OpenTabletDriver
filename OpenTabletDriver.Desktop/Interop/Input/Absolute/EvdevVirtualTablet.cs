@@ -129,6 +129,21 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
+        public void ResetButtons()
+        {
+            // Zero out everything except position and tilt
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_PEN, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, 0);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS2, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
+
+            IsEraser = false;
+            Proximity = true; // we counterintuitively set this to true since its the initial state
+        }
+
         public void Sync() => Device.Sync();
 
         protected override EventCode? GetCode(MouseButton button) => null;
