@@ -100,7 +100,6 @@ namespace OpenTabletDriver.UX.Controls
             protected virtual async void OnProfilesChanged()
             {
                 ProfilesChanged?.Invoke(this, new EventArgs());
-                visibleProfiles.Clear();
                 var tablets = await App.Driver.Instance.GetTablets();
                 HandleTabletsChanged(this, tablets.ToImmutableArray());
             }
@@ -121,24 +120,29 @@ namespace OpenTabletDriver.UX.Controls
 
             public void HandleTabletsChanged(object sender, IList<TabletReference> tablets)
             {
-                if (Profiles is ProfileCollection profiles)
+                visibleProfiles.Clear();
+                if (tablets.Any())
                 {
-                    visibleProfiles.Clear();
-                    if (tablets.Any())
+                    var tabletsWithoutProfile = from tablet in tablets
+                        where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
+                        select tablet;
+
+                    foreach (var tablet in tabletsWithoutProfile)
+                        profiles.Generate(tablet);
+
+                    foreach (var tablet in tablets)
+                        visibleProfiles.Add(Profiles.FirstOrDefault(p => p.Tablet == tablet.Properties.Name));
+
+                    if (this.SelectedIndex < 0)
                     {
-                        var tabletsWithoutProfile = from tablet in tablets
-                            where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
-                            select tablet;
-
-                        foreach (var tablet in tabletsWithoutProfile)
-                            profiles.Generate(tablet);
-
-                        foreach (var tablet in tablets)
-                            visibleProfiles.Add(Profiles.FirstOrDefault(p => p.Tablet == tablet.Properties.Name));
-
-                        if (this.SelectedIndex < 0)
-                            this.SelectedIndex = 0;
+                        this.SelectedIndex = 0;
+                        this.OnSelectedValueChanged(EventArgs.Empty);
                     }
+                }
+                else
+                {
+                    this.SelectedValue = null;
+                    this.OnSelectedValueChanged(EventArgs.Empty);
                 }
             }
         }
