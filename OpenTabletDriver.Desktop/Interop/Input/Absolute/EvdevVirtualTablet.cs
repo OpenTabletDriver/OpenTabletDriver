@@ -19,8 +19,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
+        // Per-tool states
         private bool IsEraser = false;
         private bool Proximity = true;
+        private int ToolID, ToolSerial;
 
         public unsafe EvdevVirtualTablet()
         {
@@ -69,6 +71,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             };
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
+
+            Device.EnableType(EventType.EV_MSC);
+
+            Device.EnableCode(EventType.EV_ABS, EventCode.ABS_MISC); // tool ID
+            Device.EnableCode(EventType.EV_MSC, EventCode.MSC_SERIAL); // tool serial
 
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
@@ -129,7 +136,21 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
-        public void Sync() => Device.Sync();
+        public void RegisterTool(uint toolID, ulong toolSerial)
+        {
+            ToolID = Convert.ToInt32(toolID);
+            ToolSerial = Convert.ToInt32(toolSerial);
+        }
+
+        public void Sync()
+        {
+            if (ToolID >= 0)
+                Device.Write(EventType.EV_ABS, EventCode.ABS_MISC, ToolID);
+            if (ToolSerial >= 0)
+                Device.Write(EventType.EV_MSC, EventCode.MSC_SERIAL, ToolSerial);
+
+            Device.Sync();
+        }
 
         protected override EventCode? GetCode(MouseButton button) => null;
     }
