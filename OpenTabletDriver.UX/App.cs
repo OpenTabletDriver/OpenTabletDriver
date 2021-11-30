@@ -9,7 +9,6 @@ using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
@@ -66,6 +65,7 @@ namespace OpenTabletDriver.UX
 
         public const string FaqUrl = "https://opentabletdriver.net/Wiki";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+
         public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
 

@@ -8,7 +8,7 @@ runtime=${1:-linux-x64}
 shift
 
 options=(--configuration='Release' --framework='net6.0' --self-contained='false' --output='./bin' \
-/p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false --runtime=$runtime -p:SourceRevisionId=$(git rev-parse --short HEAD))
+    /p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false --runtime=$runtime -p:SourceRevisionId=$(git rev-parse --short HEAD))
 
 echo "Building OpenTabletDriver with runtime $runtime."
 mkdir -p ./bin
