@@ -73,8 +73,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
 
             Device.EnableType(EventType.EV_MSC);
-
-            Device.EnableCode(EventType.EV_ABS, EventCode.ABS_MISC); // tool ID
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_MISC, (IntPtr)yTiltPtr); // tool ID
             Device.EnableCode(EventType.EV_MSC, EventCode.MSC_SERIAL); // tool serial
 
             Device.EnableTypeCodes(
