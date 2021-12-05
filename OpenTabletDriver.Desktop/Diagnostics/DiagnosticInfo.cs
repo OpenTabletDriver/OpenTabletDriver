@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
 
@@ -25,7 +22,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public OperatingSystem OperatingSystem { private set; get; } = Environment.OSVersion;
 
         [JsonProperty("Environment Variables")]
-        public IDictionary EnvironmentVariables { private set; get; } = Environment.GetEnvironmentVariables();
+        public IDictionary<string, string> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
 
         [JsonProperty("HID Devices")]
         public IEnumerable<SerializedDeviceEndpoint> Devices { private set; get; }
