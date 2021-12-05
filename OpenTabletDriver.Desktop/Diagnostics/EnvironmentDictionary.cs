@@ -9,22 +9,22 @@ namespace OpenTabletDriver.Desktop.Diagnostics
     {
         public EnvironmentDictionary()
         {
-            AddVariable("USER");
-            AddVariable("TEMP");
-            AddVariable("TMP");
-            AddVariable("TMPDIR");
+            AddVariables("USER", "TEMP", "TMP", "TMPDIR");
             switch (DesktopInterop.CurrentPlatform)
             {
                 case PluginPlatform.Linux:
-                    AddVariable("DISPLAY");
-                    AddVariable("WAYLAND_DISPLAY");
-                    AddVariable("PWD");
-                    AddVariable("PATH");
+                    AddVariables("DISPLAY", "WAYLAND_DISPLAY", "PWD", "PATH");
                     break;
                 case PluginPlatform.Windows:
                     AddVariable("USERPROFILE");
                     break;
             }
+        }
+
+        private void AddVariables(params string[] variables)
+        {
+            foreach (var variable in variables)
+                AddVariable(variable);
         }
 
         private void AddVariable(string variable)
