@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,19 +10,21 @@ using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.UX.Tools
 {
-    public class LogDataStore : INotifyCollectionChanged, IEnumerable<LogMessage>
+    public class LogDataStore : INotifyCollectionChanged, IEnumerable<LogMessage>, IList<LogMessage>
     {
         public LogDataStore(IEnumerable<LogMessage> currentMessages)
         {
-            messages = new ConcurrentQueue<LogMessage>(currentMessages.TakeLast(MAX_NUM_MESSAGES));
+            messages = new Queue<LogMessage>(currentMessages.TakeLast(MAX_NUM_MESSAGES));
+            filteredMessages = new Queue<LogMessage>(GetFilteredMessages());
         }
 
         private const int MAX_NUM_MESSAGES = 250;
 
-        private readonly ConcurrentQueue<LogMessage> messages;
+        private readonly Queue<LogMessage> messages;
+        private Queue<LogMessage> filteredMessages;
 
-        private IEnumerable<LogMessage> filteredMessages =>
-            from message in this.messages
+        private IEnumerable<LogMessage> GetFilteredMessages() =>
+            from message in this.messages ?? (IEnumerable<LogMessage>)Array.Empty<LogMessage>()
                 where message.Level >= Filter
                 select message;
 
@@ -31,12 +34,13 @@ namespace OpenTabletDriver.UX.Tools
             set
             {
                 this.filter = value;
+                filteredMessages = new Queue<LogMessage>(GetFilteredMessages());
                 OnCollectionChanged();
             }
             get => this.filter;
         }
 
-        public int Count => Filter > LogLevel.Debug ? filteredMessages.Count() : messages.Count;
+        public int Count => filteredMessages.Count;
 
         public bool IsReadOnly => false;
 
@@ -45,12 +49,17 @@ namespace OpenTabletDriver.UX.Tools
         public void Add(LogMessage message)
         {
             this.messages.Enqueue(message);
-
-            if (this.messages.Count > MAX_NUM_MESSAGES)
-                this.messages.TryDequeue(out _);
+            while (messages.Count > MAX_NUM_MESSAGES)
+                messages.TryDequeue(out _);
 
             if (message.Level >= this.Filter)
+            {
+                this.filteredMessages.Enqueue(message);
+                while (this.filteredMessages.Count > MAX_NUM_MESSAGES)
+                    this.filteredMessages.TryDequeue(out _);
+
                 OnCollectionChanged(NotifyCollectionChangedAction.Add, message);
+            }
         }
 
         protected virtual void OnCollectionChanged(NotifyCollectionChangedAction action = NotifyCollectionChangedAction.Reset)
@@ -73,6 +82,48 @@ namespace OpenTabletDriver.UX.Tools
         IEnumerator IEnumerable.GetEnumerator()
         {
             return (this.filteredMessages as IEnumerable).GetEnumerator();
+        }
+
+        public void Clear()
+        {
+            this.messages.Clear();
+            this.filteredMessages.Clear();
+        }
+
+        public bool Contains(LogMessage item)
+        {
+            return this.messages.Contains(item);
+        }
+
+        public void CopyTo(LogMessage[] array, int arrayIndex)
+        {
+            messages.CopyTo(array, arrayIndex);
+        }
+
+        public int IndexOf(LogMessage item)
+        {
+            return (filteredMessages as IList<LogMessage>).IndexOf(item);
+        }
+
+        public void Insert(int index, LogMessage item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public bool Remove(LogMessage item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void RemoveAt(int index)
+        {
+            throw new NotSupportedException();
+        }
+
+        public LogMessage this[int index]
+        {
+            get => (filteredMessages as IList<LogMessage>)[index];
+            set => (filteredMessages as IList<LogMessage>)[index] = value;
         }
     }
 }
