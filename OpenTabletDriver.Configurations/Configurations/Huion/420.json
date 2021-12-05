@@ -3,7 +3,7 @@
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
-      "Height": 57.01294964,
+      "Height": 57.01295,
       "MaxX": 8340.0,
       "MaxY": 4680.0
     },
@@ -30,7 +30,7 @@
         "121": "H850_F\\d{3}"
       },
       "InitializationStrings": [
-        "100"
+        100
       ]
     }
   ],

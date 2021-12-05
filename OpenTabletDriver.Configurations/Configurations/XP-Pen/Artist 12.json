@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen Artist 12 Pro",
+  "Name": "XP-Pen Artist 12",
   "Specifications": {
     "Digitizer": {
       "Width": 256.32,
@@ -38,4 +38,4 @@
   "Attributes": {
     "libinputoverride": "1"
   }
-} 
+}

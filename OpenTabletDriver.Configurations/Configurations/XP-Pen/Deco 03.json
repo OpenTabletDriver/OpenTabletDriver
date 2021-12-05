@@ -43,7 +43,7 @@
       "OutputInitReport": [
         "ArAE"
       ],
-      "DeviceString": {},
+      "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],

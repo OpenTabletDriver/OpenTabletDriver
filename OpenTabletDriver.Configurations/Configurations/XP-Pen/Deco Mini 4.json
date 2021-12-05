@@ -29,7 +29,6 @@
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
@@ -37,4 +36,4 @@
   ],
   "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
-} 
+}
