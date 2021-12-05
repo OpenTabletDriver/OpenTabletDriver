@@ -64,17 +64,23 @@ namespace OpenTabletDriver.UX.Controls.Output
             displayHeight = SettingsBinding.Child(c => c.Display.Height);
             tabletWidth = SettingsBinding.Child(c => c.Tablet.Width);
             tabletHeight = SettingsBinding.Child(c => c.Tablet.Height);
-            tabletWidth.DataValueChanged += HandleTabletAreaConstraint;
-            tabletHeight.DataValueChanged += HandleTabletAreaConstraint;
+            tabletWidth.DataValueChanged += (_, _) => ForceConstraintArea(tabletAreaEditor);
+            tabletHeight.DataValueChanged += (_, _) => ForceConstraintArea(tabletAreaEditor);
 
             tabletAreaEditor.LockAspectRatioChanged += HookAspectRatioLock;
             HookAspectRatioLock(tabletAreaEditor, EventArgs.Empty);
+
+            displayAreaEditor.LockToUsableAreaChanged += HookAreaConstraint;
+            HookAreaConstraint(displayAreaEditor, EventArgs.Empty);
+            tabletAreaEditor.LockToUsableAreaChanged += HookAreaConstraint;
+            HookAreaConstraint(tabletAreaEditor, EventArgs.Empty);
         }
 
         internal DisplayAreaEditor displayAreaEditor;
         internal TabletAreaEditor tabletAreaEditor;
 
         private bool handlingArLock;
+        private bool handlingArConstraint;
         private bool handlingForcedArConstraint;
         private float? prevDisplayWidth;
         private float? prevDisplayHeight;
@@ -143,35 +149,12 @@ namespace OpenTabletDriver.UX.Controls.Output
             var areaEditor = (AreaEditor)sender;
             if (areaEditor.LockToUsableArea)
             {
-                lock (this)
-                {
-                    if (sender == tabletAreaEditor)
-                    {
-                        tabletWidth.DataValueChanged += HandleTabletAreaConstraint;
-                        tabletHeight.DataValueChanged += HandleTabletAreaConstraint;
-                    }
-                    else if (sender == displayAreaEditor)
-                    {
-                        displayWidth.DataValueChanged += HandleDisplayAreaConstraint;
-                        displayHeight.DataValueChanged += HandleDisplayAreaConstraint;
-                    }
-                }
+                ForceConstraintArea(areaEditor);
+                areaEditor.AreaChanging += HandleAreaConstraint;
             }
             else
             {
-                lock (this)
-                {
-                    if (sender == tabletAreaEditor)
-                    {
-                        tabletWidth.DataValueChanged -= HandleTabletAreaConstraint;
-                        tabletHeight.DataValueChanged -= HandleTabletAreaConstraint;
-                    }
-                    else if (sender == displayAreaEditor)
-                    {
-                        displayWidth.DataValueChanged -= HandleDisplayAreaConstraint;
-                        displayHeight.DataValueChanged -= HandleDisplayAreaConstraint;
-                    }
-                }
+                areaEditor.AreaChanging -= HandleAreaConstraint;
             }
         }
 
@@ -198,36 +181,28 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
         }
 
-        private void HandleTabletAreaConstraint(object sender, EventArgs args)
+        private void HandleAreaConstraint(object sender, AreaChangingEventArgs eventArgs)
         {
-            ForceAreaConstraint(tabletAreaEditor.Display, args);
+            if (!handlingArConstraint)
+            {
+                handlingArConstraint = true;
+
+                var correction = GetOutOfBoundsAmount((AreaDisplay)sender, eventArgs.X, eventArgs.Y);
+                eventArgs.X -= correction.X;
+                eventArgs.Y -= correction.Y;
+
+                handlingArConstraint = false;
+            }
         }
 
-        private void HandleDisplayAreaConstraint(object sender, EventArgs args)
+        private void ForceConstraintArea(AreaDisplay display)
         {
-            ForceAreaConstraint(displayAreaEditor.Display, args);
-        }
-
-        private void ForceAreaConstraint(object sender, EventArgs args)
-        {
-            var display = (AreaDisplay)sender;
             if (!handlingForcedArConstraint && display.LockToUsableArea && display.Area != null)
             {
                 handlingForcedArConstraint = true;
-                var fullBounds = display.FullAreaBounds;
-
-                if (fullBounds.Width != 0 && fullBounds.Height != 0)
-                {
-                    if (display.Area.Width > fullBounds.Width)
-                        display.Area.Width = fullBounds.Width;
-                    if (display.Area.Height > fullBounds.Height)
-                        display.Area.Height = fullBounds.Height;
-
-                    var correction = GetOutOfBoundsAmount(display, display.Area.X, display.Area.Y);
-                    display.Area.X -= correction.X;
-                    display.Area.Y -= correction.Y;
-                }
-
+                var correction = GetOutOfBoundsAmount(display, display.Area.X, display.Area.Y);
+                display.Area.X -= correction.X;
+                display.Area.Y -= correction.Y;
                 handlingForcedArConstraint = false;
             }
         }
