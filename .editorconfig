@@ -1,0 +1,11 @@
+root = true
+
+[*]
+trim_trailing_whitespace = true
+indent_style = space
+
+[*.{cs,csproj,json,yml}]
+tab_width = 4
+
+[*.{sh,md}]
+tab_width = 2
