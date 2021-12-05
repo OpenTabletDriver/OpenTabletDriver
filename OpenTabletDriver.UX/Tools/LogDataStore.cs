@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -22,11 +20,6 @@ namespace OpenTabletDriver.UX.Tools
 
         private readonly Queue<LogMessage> messages;
         private Queue<LogMessage> filteredMessages;
-
-        private IEnumerable<LogMessage> GetFilteredMessages() =>
-            from message in this.messages ?? (IEnumerable<LogMessage>)Array.Empty<LogMessage>()
-                where message.Level >= Filter
-                select message;
 
         private LogLevel filter = LogLevel.Info;
         public LogLevel Filter
@@ -74,7 +67,14 @@ namespace OpenTabletDriver.UX.Tools
             CollectionChanged?.Invoke(this, args);
         }
 
-        public IEnumerator<LogMessage> GetEnumerator()
+        private IEnumerable<LogMessage> GetFilteredMessages()
+        {
+            return from message in this.messages
+                where message.Level >= Filter
+                select message;
+        }
+
+        IEnumerator<LogMessage> IEnumerable<LogMessage>.GetEnumerator()
         {
             return this.filteredMessages.GetEnumerator();
         }
@@ -84,43 +84,43 @@ namespace OpenTabletDriver.UX.Tools
             return (this.filteredMessages as IEnumerable).GetEnumerator();
         }
 
-        public void Clear()
+        void ICollection<LogMessage>.Clear()
         {
             this.messages.Clear();
             this.filteredMessages.Clear();
         }
 
-        public bool Contains(LogMessage item)
+        bool ICollection<LogMessage>.Contains(LogMessage item)
         {
             return this.messages.Contains(item);
         }
 
-        public void CopyTo(LogMessage[] array, int arrayIndex)
+        void ICollection<LogMessage>.CopyTo(LogMessage[] array, int arrayIndex)
         {
             messages.CopyTo(array, arrayIndex);
         }
 
-        public int IndexOf(LogMessage item)
+        int IList<LogMessage>.IndexOf(LogMessage item)
         {
             return (filteredMessages as IList<LogMessage>).IndexOf(item);
         }
 
-        public void Insert(int index, LogMessage item)
+        void IList<LogMessage>.Insert(int index, LogMessage item)
         {
             throw new NotSupportedException();
         }
 
-        public bool Remove(LogMessage item)
+        bool ICollection<LogMessage>.Remove(LogMessage item)
         {
             throw new NotSupportedException();
         }
 
-        public void RemoveAt(int index)
+        void IList<LogMessage>.RemoveAt(int index)
         {
             throw new NotSupportedException();
         }
 
-        public LogMessage this[int index]
+        LogMessage IList<LogMessage>.this[int index]
         {
             get => (filteredMessages as IList<LogMessage>)[index];
             set => (filteredMessages as IList<LogMessage>)[index] = value;
