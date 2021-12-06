@@ -82,6 +82,7 @@ namespace OpenTabletDriver.Desktop.Updater
                     catch
                     {
                         updateSentinel = 0;
+                        throw;
                     }
                 }
                 updateSentinel = 0;
