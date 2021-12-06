@@ -36,7 +36,9 @@ namespace OpenTabletDriver.Desktop.Updater
                 Directory.CreateDirectory(DownloadDirectory);
         }
 
-        public async Task<bool> CheckForUpdates(bool forced = true)
+        public Task<bool> CheckForUpdates() => CheckForUpdates(true);
+
+        public async Task<bool> CheckForUpdates(bool forced)
         {
             if (updateSentinel == 0)
                 return false;
