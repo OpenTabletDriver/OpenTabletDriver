@@ -289,5 +289,13 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 }
             }
         }
+
+        protected override void OnLockToUsableAreaChanged()
+        {
+            base.OnLockToUsableAreaChanged();
+
+            if (LockToUsableArea)
+                OnAreaChanged();
+        }
     }
 }

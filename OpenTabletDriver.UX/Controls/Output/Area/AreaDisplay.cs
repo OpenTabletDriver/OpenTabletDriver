@@ -231,10 +231,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             switch (e.Buttons)
             {
                 case MouseButtons.Primary:
-                {
                     mouseDragging = true;
                     break;
-                }
+                default:
+                    mouseDragging = false;
+                    break;
             }
         }
 

@@ -40,6 +40,8 @@ namespace OpenTabletDriver
         {
             bool success = false;
 
+            Log.Write("Detect", "Searching for tablets...");
+
             InputDevices.Clear();
             foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
             {
@@ -58,12 +60,17 @@ namespace OpenTabletDriver
 
             TabletsChanged?.Invoke(this, Tablets);
 
+            if (!success)
+            {
+                Log.Write("Detect", "No tablets were detected.");
+            }
+
             return success;
         }
 
         protected virtual InputDeviceTree? Match(TabletConfiguration config)
         {
-            Log.Write("Detect", $"Searching for tablet '{config.Name}'");
+            Log.Debug("Detect", $"Searching for tablet '{config.Name}'");
             try
             {
                 var devices = new List<InputDevice>();

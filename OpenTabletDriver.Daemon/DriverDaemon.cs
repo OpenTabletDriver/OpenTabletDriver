@@ -293,6 +293,7 @@ namespace OpenTabletDriver.Daemon
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
                 Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
+
                 ActivationThreshold = settings.TipActivationThreshold
             };
 

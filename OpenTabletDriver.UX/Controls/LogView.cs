@@ -86,7 +86,7 @@ namespace OpenTabletDriver.UX.Controls
                 });
             };
 
-            App.Driver.AddConnectionHook(i => i.Message += (sender, message) => AddMessage(message));
+            App.Driver.Message += (sender, message) => AddMessage(message);
         }
 
         private readonly GridView<LogMessage> messageList = new GridView<LogMessage>
