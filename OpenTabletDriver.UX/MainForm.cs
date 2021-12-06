@@ -330,6 +330,7 @@ namespace OpenTabletDriver.UX
             var fileDialog = new OpenFileDialog
             {
                 Title = "Load OpenTabletDriver settings...",
+                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                 Filters =
                 {
                     new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
@@ -354,7 +355,7 @@ namespace OpenTabletDriver.UX
             var fileDialog = new SaveFileDialog
             {
                 Title = "Save OpenTabletDriver settings...",
-                Directory = new Uri(AppInfo.Current.AppDataDirectory),
+                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                 Filters =
                 {
                     new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
@@ -427,6 +428,7 @@ namespace OpenTabletDriver.UX
                 var fileDialog = new SaveFileDialog
                 {
                     Title = "Exporting diagnostic information...",
+                    Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                     Filters =
                     {
                         new FileFilter("Diagnostic information", ".json")
