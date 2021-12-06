@@ -13,8 +13,8 @@ namespace OpenTabletDriver.Desktop.Updater
     public abstract class Updater : IUpdater
     {
         /// <summary>
-        /// <para>0 disallows update install and check.</para>
-        /// <para>1 allows update install and check.</para>
+        /// <para>0 allows update install and check.</para>
+        /// <para>1 disallows update install and check.</para>
         /// <para>2 means update was installed and check will return false.</para>
         /// </summary>
         private int updateSentinel = 0;
