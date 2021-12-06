@@ -93,6 +93,26 @@ namespace OpenTabletDriver.Tests
         }
 
         [Fact]
+        public Task Updater_AllowsReupdate_WhenInstallFailed_Async()
+        {
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                var mockUpdater = CreateMockUpdater<Updater>(updaterEnv);
+                mockUpdater.Protected()
+                    .Setup<Task>("Install", ItExpr.IsAny<Release>())
+                    .Returns(() => throw new InvalidOperationException());
+                var mockUpdaterObject = mockUpdater.Object;
+                var beforeUpdate = await mockUpdaterObject.CheckForUpdates();
+
+                await Assert.ThrowsAsync<InvalidOperationException>(mockUpdaterObject.InstallUpdate);
+                var afterUpdate = await mockUpdaterObject.CheckForUpdates();
+
+                Assert.True(beforeUpdate, "Updater.HasUpdate has returned false before update was installed.");
+                Assert.True(afterUpdate, "Updater.HasUpdate has returned false after unsuccessful update process.");
+            });
+        }
+
+        [Fact]
         public Task Updater_HasUpdateReturnsFalse_During_UpdateInstall_Async()
         {
             return MockEnvironmentAsync(async (updaterEnv) =>
