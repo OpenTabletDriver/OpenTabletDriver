@@ -12,7 +12,12 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract class Updater : IUpdater
     {
-        private int updateSentinel = 1;
+        /// <summary>
+        /// <para>0 disallows update install and check.</para>
+        /// <para>1 allows update install and check.</para>
+        /// <para>2 means update was installed and check will return false.</para>
+        /// </summary>
+        private int updateSentinel = 0;
         private readonly GitHubClient github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
         private Release? latestRelease;
 
@@ -40,13 +45,13 @@ namespace OpenTabletDriver.Desktop.Updater
 
         public async Task<bool> CheckForUpdates(bool forced)
         {
-            if (updateSentinel == 0)
+            if (updateSentinel == 2)
                 return false;
 
             if (forced || latestRelease == null)
                 latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
 
-            var latestVersion = new Version(latestRelease.TagName[1..]); // remove `v` from `vW.X.Y.Z
+            var latestVersion = new Version(latestRelease!.TagName[1..]); // remove `v` from `vW.X.Y.Z
             return latestVersion > CurrentVersion;
         }
 
@@ -63,13 +68,23 @@ namespace OpenTabletDriver.Desktop.Updater
         public async Task InstallUpdate()
         {
             // Skip if update is already installed, or in the process of installing
-            if (Interlocked.CompareExchange(ref updateSentinel, 0, 1) == 1)
+            if (Interlocked.CompareExchange(ref updateSentinel, 1, 0) == 0)
             {
                 if (await CheckForUpdates(false))
                 {
-                    SetupRollback();
-                    await Install(latestRelease!);
+                    try
+                    {
+                        SetupRollback();
+                        await Install(latestRelease!);
+                        updateSentinel = 2;
+                        return;
+                    }
+                    catch
+                    {
+                        updateSentinel = 0;
+                    }
                 }
+                updateSentinel = 0;
             }
         }
 
