@@ -29,7 +29,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T176_\\d{6}$"
+        "201": "HUION_T(176|18a)_\\d{6}$"
       },
       "InitializationStrings": [
         200
@@ -44,7 +44,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T176_\\d{6}$"
+        "201": "HUION_T(176|18a)_\\d{6}$"
       },
       "InitializationStrings": [
         200
