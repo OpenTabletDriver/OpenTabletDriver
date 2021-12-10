@@ -7,7 +7,6 @@ namespace OpenTabletDriver.Desktop
 {
     public class PresetManager
     {
-
         public PresetManager()
         {
             PresetDirectory = new DirectoryInfo(AppInfo.Current.PresetDirectory);
