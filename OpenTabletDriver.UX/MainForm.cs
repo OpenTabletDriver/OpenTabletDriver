@@ -53,6 +53,7 @@ namespace OpenTabletDriver.UX
         private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
+        private TrayIcon trayIcon;
 
         protected override void OnInitializePlatform(EventArgs e)
         {
@@ -69,7 +70,7 @@ namespace OpenTabletDriver.UX
 
             if (App.EnableTrayIcon)
             {
-                var trayIcon = new TrayIcon(this);
+                trayIcon = new TrayIcon(this);
                 if (WindowState == WindowState.Minimized)
                 {
                     this.Visible = false;
@@ -155,6 +156,9 @@ namespace OpenTabletDriver.UX
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
+            var refreshPresets = new Command { MenuText = "Refresh presets" };
+            refreshPresets.Executed += async (sender, e) => await UpdateTrayPresets();
+
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
 
@@ -193,7 +197,9 @@ namespace OpenTabletDriver.UX
                             saveSettings,
                             saveSettingsAs,
                             resetSettings,
-                            applySettings
+                            applySettings,
+                            new SeparatorMenuItem(),
+                            refreshPresets
                         }
                     },
                     // Tablets submenu
@@ -270,6 +276,9 @@ namespace OpenTabletDriver.UX
 
             // Synchronize settings
             await SyncSettings();
+
+            // Update preset items on tray context menu
+            await UpdateTrayPresets();
 
             // Set window content
             base.Menu = menu ??= ConstructMenu();
@@ -416,6 +425,27 @@ namespace OpenTabletDriver.UX
                 };
                 Log.Write(logMessage);
             }
+        }
+
+        public Task LoadPresets()
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+            {
+                presetDir.Create();
+                Log.Write("Settings", $"The preset directory '{presetDir.FullName}' has been created");
+            }
+
+            AppInfo.PresetManager.Refresh();
+            return Task.CompletedTask;
+        }
+
+        private Task UpdateTrayPresets()
+        {
+            LoadPresets();
+            trayIcon.RefreshMenuItems();
+            return Task.CompletedTask;
         }
 
         private async Task ExportDiagnostics()
