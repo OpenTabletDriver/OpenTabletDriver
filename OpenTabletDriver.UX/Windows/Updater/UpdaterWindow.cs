@@ -8,6 +8,7 @@ using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Windows.Updater
 {
@@ -16,7 +17,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
         public UpdaterWindow()
         {
             this.Title = "OpenTabletDriver Updater";
-            this.ClientSize = new Size(930, 730);
+            this.ClientSize = new Size(400, 380);
 
             this.Content = new Placeholder
             {
@@ -45,12 +46,15 @@ namespace OpenTabletDriver.UX.Windows.Updater
                     HorizontalContentAlignment = HorizontalAlignment.Center,
                     Items =
                     {
+                        new PaddingSpacerItem(),
+                        new Bitmap(App.Logo.WithSize(256, 256)),
                         "An update is available to install",
                         release.TagName,
                         new Button(Update)
                         {
                             Text = "Install"
-                        }
+                        },
+                        new PaddingSpacerItem(),
                     }
                 };
             }
