@@ -142,13 +142,6 @@ namespace OpenTabletDriver.Daemon
             return await GetTablets();
         }
 
-        public async Task ApplyPreset(string presetName)
-        {
-            var preset = AppInfo.PresetManager.FindPreset(presetName);
-            await SetSettings(preset.GetSettings());
-            Log.Write("Settings", $"Applied preset {preset.Name}");
-        }
-
         public Task SetSettings(Settings? settings)
         {
             // Dispose filters that implement IDisposable interface
