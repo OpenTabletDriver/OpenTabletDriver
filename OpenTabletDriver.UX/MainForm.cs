@@ -157,7 +157,7 @@ namespace OpenTabletDriver.UX
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
             var refreshPresets = new Command { MenuText = "Refresh presets" };
-            refreshPresets.Executed += async (sender, e) => await UpdatePresetMenu();
+            refreshPresets.Executed += async (sender, e) => await RefreshPresets();
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
@@ -291,7 +291,6 @@ namespace OpenTabletDriver.UX
 
             // Set window content
             base.Menu = menu ??= ConstructMenu();
-            await UpdatePresetMenu();
             base.Content = mainPanel ??= new TabletSwitcherPanel
             {
                 CommandsControl = new StackLayout
@@ -312,6 +311,9 @@ namespace OpenTabletDriver.UX
                     }
                 }
             };
+
+            // Update preset options in File menu and tray icon
+            await RefreshPresets();
 
             // Update title to new instance
             if (await Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
@@ -451,9 +453,15 @@ namespace OpenTabletDriver.UX
             return Task.CompletedTask;
         }
 
-        private Task UpdatePresetMenu()
+        private Task RefreshPresets()
         {
             LoadPresets();
+
+            if (trayIcon != null) // Check non-Linux
+                trayIcon.RefreshMenuItems();
+
+            // Update File submenu
+
             var presets = AppInfo.PresetManager.GetPresets();
             var presetsMenu = menu.Items.GetSubmenu("&File").Items.First(item => item.Text == "Presets") as ButtonMenuItem;
             presetsMenu.Items.Clear();
@@ -466,14 +474,7 @@ namespace OpenTabletDriver.UX
                     {
                         Text = preset.Name
                     };
-                    presetItem.Click += (sender, e) =>
-                    {
-                        var presetName = (sender as ButtonMenuItem).Text;
-                        var preset = AppInfo.PresetManager.FindPreset(presetName);
-                        App.Current.Settings = preset.GetSettings();
-                        App.Driver.Instance.SetSettings(App.Current.Settings);
-                        Log.Write("Settings", $"Applied preset '{preset.Name}'");
-                    };
+                    presetItem.Click += PresetButtonHandler;
 
                     presetsMenu.Items.Add(presetItem);
                 }
@@ -490,6 +491,15 @@ namespace OpenTabletDriver.UX
             }
 
             return Task.CompletedTask;
+        }
+
+        public static void PresetButtonHandler(object sender, EventArgs e)
+        {
+            var presetName = (sender as ButtonMenuItem).Text;
+            var preset = AppInfo.PresetManager.FindPreset(presetName);
+            App.Current.Settings = preset.GetSettings();
+            App.Driver.Instance.SetSettings(App.Current.Settings);
+            Log.Write("Settings", $"Applied preset '{preset.Name}'");
         }
 
         private async Task ExportDiagnostics()

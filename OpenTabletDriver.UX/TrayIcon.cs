@@ -65,14 +65,7 @@ namespace OpenTabletDriver.UX
                     {
                         Text = preset.Name
                     };
-                    presetItem.Click += (sender, e) =>
-                    {
-                        var presetName = (sender as ButtonMenuItem).Text;
-                        var preset = AppInfo.PresetManager.FindPreset(presetName);
-                        App.Current.Settings = preset.GetSettings();
-                        App.Driver.Instance.SetSettings(App.Current.Settings);
-                        Log.Write("Settings", $"Applied preset '{preset.Name}'");
-                    };
+                    presetItem.Click += MainForm.PresetButtonHandler;
 
                     items.Add(presetItem);
                 }
