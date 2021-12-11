@@ -157,7 +157,7 @@ namespace OpenTabletDriver.UX
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
             var refreshPresets = new Command { MenuText = "Refresh presets" };
-            refreshPresets.Executed += async (sender, e) => await UpdateTrayPresets();
+            refreshPresets.Executed += async (sender, e) => await UpdatePresetMenu();
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
@@ -199,7 +199,19 @@ namespace OpenTabletDriver.UX
                             resetSettings,
                             applySettings,
                             new SeparatorMenuItem(),
-                            refreshPresets
+                            refreshPresets,
+                            new ButtonMenuItem
+                            {
+                                Text = "Presets",
+                                Items =
+                                {
+                                    new ButtonMenuItem
+                                    {
+                                        Text = "No presets loaded",
+                                        Enabled = false
+                                    }
+                                }
+                            }
                         }
                     },
                     // Tablets submenu
@@ -277,11 +289,9 @@ namespace OpenTabletDriver.UX
             // Synchronize settings
             await SyncSettings();
 
-            // Update preset items on tray context menu
-            await UpdateTrayPresets();
-
             // Set window content
             base.Menu = menu ??= ConstructMenu();
+            await UpdatePresetMenu();
             base.Content = mainPanel ??= new TabletSwitcherPanel
             {
                 CommandsControl = new StackLayout
@@ -441,10 +451,44 @@ namespace OpenTabletDriver.UX
             return Task.CompletedTask;
         }
 
-        private Task UpdateTrayPresets()
+        private Task UpdatePresetMenu()
         {
             LoadPresets();
-            trayIcon.RefreshMenuItems();
+            var presets = AppInfo.PresetManager.GetPresets();
+            var presetsMenu = menu.Items.GetSubmenu("&File").Items.First(item => item.Text == "Presets") as ButtonMenuItem;
+            presetsMenu.Items.Clear();
+
+            if (presets.Count != 0)
+            {
+                foreach (var preset in presets)
+                {
+                    var presetItem = new ButtonMenuItem
+                    {
+                        Text = preset.Name
+                    };
+                    presetItem.Click += (sender, e) =>
+                    {
+                        var presetName = (sender as ButtonMenuItem).Text;
+                        var preset = AppInfo.PresetManager.FindPreset(presetName);
+                        App.Current.Settings = preset.GetSettings();
+                        App.Driver.Instance.SetSettings(App.Current.Settings);
+                        Log.Write("Settings", $"Applied preset '{preset.Name}'");
+                    };
+
+                    presetsMenu.Items.Add(presetItem);
+                }
+            }
+            else
+            {
+                var emptyPresetsItem = new ButtonMenuItem
+                {
+                    Text = "No presets loaded",
+                    Enabled = false
+                };
+
+                presetsMenu.Items.Add(emptyPresetsItem);
+            }
+
             return Task.CompletedTask;
         }
 
