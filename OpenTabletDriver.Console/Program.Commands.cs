@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Console
             settings.Serialize(file);
         }
 
-        private static async Task ApplyPreset(FileInfo file)
+        private static async Task ApplyPreset(string presetName)
         {
             var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
 
@@ -42,7 +42,7 @@ namespace OpenTabletDriver.Console
                 presetDir.Create();
             AppInfo.PresetManager.Refresh();
 
-            var preset = AppInfo.PresetManager.FindPreset(file.Name);
+            var preset = AppInfo.PresetManager.FindPreset(presetName);
             await ApplySettings(preset.GetSettings());
         }
 
