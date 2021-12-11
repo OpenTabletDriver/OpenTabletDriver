@@ -34,6 +34,18 @@ namespace OpenTabletDriver.Console
             settings.Serialize(file);
         }
 
+        private static async Task ApplyPreset(FileInfo file)
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+                presetDir.Create();
+            AppInfo.PresetManager.Refresh();
+
+            var preset = AppInfo.PresetManager.FindPreset(file.Name);
+            await ApplySettings(preset.GetSettings());
+        }
+
         #endregion
 
         #region Modify Settings
