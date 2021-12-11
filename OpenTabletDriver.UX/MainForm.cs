@@ -463,7 +463,7 @@ namespace OpenTabletDriver.UX
             // Update File submenu
 
             var presets = AppInfo.PresetManager.GetPresets();
-            var presetsMenu = menu.Items.GetSubmenu("&File").Items.First(item => item.Text == "Presets") as ButtonMenuItem;
+            var presetsMenu = menu.Items.GetSubmenu("&File").Items.GetSubmenu("Presets") as ButtonMenuItem;
             presetsMenu.Items.Clear();
 
             if (presets.Count != 0)
