@@ -11,12 +11,18 @@ config=(--configuration='Release')
 
 options=(${config} --framework='net6.0' --self-contained='false' --output='./bin' /p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false --runtime=$runtime)
 
+# change dir to script root, in case people run the script outside of the folder
+cd "$(dirname "$0")"
+
+# sanity check
+if [ ! -d OpenTabletDriver ]; then
+    echo "Could not find OpenTabletDriver folder! Chickening out..."
+    exit 1
+fi
+
 echo "Cleaning old build dirs"
 if [ -d ./bin ]; then
-    if [ -d ./bin_ ]; then
-        rm -r ./bin_
-    fi
-    mv ./bin ./bin_
+    rm -r ./bin
 fi
 dotnet clean ${config[@]}
 
