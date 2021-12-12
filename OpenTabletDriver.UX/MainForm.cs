@@ -461,7 +461,6 @@ namespace OpenTabletDriver.UX
                 trayIcon.RefreshMenuItems();
 
             // Update File submenu
-
             var presets = AppInfo.PresetManager.GetPresets();
             var presetsMenu = menu.Items.GetSubmenu("&File").Items.GetSubmenu("Presets") as ButtonMenuItem;
             presetsMenu.Items.Clear();
