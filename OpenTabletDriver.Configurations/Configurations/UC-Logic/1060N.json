@@ -24,7 +24,7 @@
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
-      "OutputReportLength": 8,
+      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
