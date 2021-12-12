@@ -7,7 +7,18 @@
 runtime=${1:-linux-x64}
 shift
 
-options=(--configuration='Release' --framework='net6.0' --self-contained='false' --output='./bin' /p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false --runtime=$runtime)
+config=(--configuration='Release')
+
+options=(${config} --framework='net6.0' --self-contained='false' --output='./bin' /p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false --runtime=$runtime)
+
+echo "Cleaning old build dirs"
+if [ -d ./bin ]; then
+    if [ -d ./bin_ ]; then
+        rm -r ./bin_
+    fi
+    mv ./bin ./bin_
+fi
+dotnet clean ${config[@]}
 
 echo "Building OpenTabletDriver with runtime $runtime."
 mkdir -p ./bin

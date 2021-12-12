@@ -6,6 +6,7 @@
 # Build Artifacts
 obj/
 bin/
+bin_/
 nupkg/
 [Bb]uild/
 
