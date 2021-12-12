@@ -1,7 +1,6 @@
 using System.IO;
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin;
-using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Desktop
 {
@@ -45,23 +44,6 @@ namespace OpenTabletDriver.Desktop
             Presets.Clear();
             Load();
             Log.Write("Settings", $"Presets have been refreshed. Loaded {Presets.Count} presets.", LogLevel.Info);
-        }
-
-        public class Preset
-        {
-            public Preset(string name, Settings settings)
-            {
-                Name = name;
-                Settings = settings;
-            }
-
-            public string Name { get; }
-            private Settings Settings;
-
-            public Settings GetSettings()
-            {
-                return JsonConvert.DeserializeObject<Settings>(JsonConvert.SerializeObject(Settings));
-            }
         }
     }
 }
