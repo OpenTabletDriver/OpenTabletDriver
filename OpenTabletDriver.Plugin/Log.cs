@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Plugin
         /// Invoke sending a log message.
         /// </summary>
         /// <param name="message">The message to be passed to the <see cref="Output"/> event.</param>
-        public static void OnOutput(LogMessage message)
+        public static void Write(LogMessage message)
         {
             Output?.Invoke(null, message);
         }
@@ -41,16 +41,30 @@ namespace OpenTabletDriver.Plugin
         /// <param name="group">The group in which the <see cref="LogMessage"/> belongs to.</param>
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
         /// <param name="level">The severity level of the <see cref="LogMessage"/>.</param>
-        public static void Write(string group, string text, LogLevel level = LogLevel.Info, bool createStackTrace = false)
+        /// <param name="notify">Whether or not the log message should create a notification in the user's desktop environment.</param>
+        public static void Write(string group, string text, LogLevel level = LogLevel.Info, bool createStackTrace = false, bool notify = false)
         {
             var message = new LogMessage
             {
                 Group = group,
                 Message = text,
                 Level = level,
-                StackTrace = createStackTrace ? Environment.StackTrace : null
+                StackTrace = createStackTrace ? Environment.StackTrace : null,
+                Notification = notify
             };
-            OnOutput(message);
+            Write(message);
+        }
+
+        /// <summary>
+        /// Writes to the log event with a group, text and severity level, creating a notification in the user's
+        /// desktop environment.
+        /// </summary>
+        /// <param name="group">The group in which the <see cref="LogMessage"/> belongs to.</param>
+        /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
+        /// <param name="level">Level of severity for the message, see <see cref="LogLevel"/>. Defaults to Info.</param>
+        public static void WriteNotify(string group, string text, LogLevel level = LogLevel.Info)
+        {
+            Write(group, text, level, false, true);
         }
 
         /// <summary>
@@ -73,7 +87,7 @@ namespace OpenTabletDriver.Plugin
                 return;
 
             var message = new LogMessage(ex);
-            OnOutput(message);
+            Write(message);
         }
     }
 }

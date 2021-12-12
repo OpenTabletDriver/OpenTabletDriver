@@ -42,31 +42,12 @@ namespace OpenTabletDriver.Desktop.RPC
             OnConnected();
         }
 
-        /// <summary>
-        /// Adds a hook to invoke when the client connects and the instance is changed.
-        /// </summary>
-        /// <param name="action">The action to invoke</param>
-        /// <param name="executeNow"></param>
-        public void AddConnectionHook(Action<T> action, bool executeNow = true)
-        {
-            this.reconnectHooks.Add(action);
-            if (executeNow)
-                action(Instance);
-        }
-
-        public void RemoveConnectionHook(Action<T> action)
-        {
-            this.reconnectHooks.Remove(action);
-        }
-
-        protected void OnConnected()
+        protected virtual void OnConnected()
         {
             this.Connected?.Invoke(this, EventArgs.Empty);
-            foreach (var hook in reconnectHooks)
-                hook(Instance);
         }
 
-        protected void OnDisconnected()
+        protected virtual void OnDisconnected()
         {
             this.Disconnected?.Invoke(this, EventArgs.Empty);
         }
