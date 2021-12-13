@@ -27,14 +27,7 @@ namespace OpenTabletDriver.Desktop.Updater
         {
         }
 
-        protected override async Task Install(Release release)
-        {
-            await Download(release);
-
-            Move(DownloadDirectory, BinaryDirectory);
-        }
-
-        private async Task Download(Release release)
+        protected override async Task Download(Release release)
         {
             var asset = release.Assets.First(r => r.Name.Contains("win-x64"));
 

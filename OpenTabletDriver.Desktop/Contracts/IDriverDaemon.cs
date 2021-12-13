@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Octokit;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Devices;
@@ -39,6 +40,7 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<IEnumerable<LogMessage>> GetCurrentLog();
 
         Task<bool> HasUpdate();
+        Task<Release> GetUpdateInfo();
         Task InstallUpdate();
     }
 }

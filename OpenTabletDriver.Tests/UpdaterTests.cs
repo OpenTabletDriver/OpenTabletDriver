@@ -61,7 +61,7 @@ namespace OpenTabletDriver.Tests
                 updaterEnv.Version = version;
                 var mockUpdater = CreateMockUpdater<Updater>(updaterEnv).Object;
 
-                var hasUpdate = await mockUpdater.HasUpdate;
+                var hasUpdate = await mockUpdater.CheckForUpdates();
 
                 Assert.Equal(expectedUpdateStatus, hasUpdate);
             });
@@ -93,15 +93,35 @@ namespace OpenTabletDriver.Tests
         }
 
         [Fact]
+        public Task Updater_AllowsReupdate_WhenInstallFailed_Async()
+        {
+            return MockEnvironmentAsync(async (updaterEnv) =>
+            {
+                var mockUpdater = CreateMockUpdater<Updater>(updaterEnv);
+                mockUpdater.Protected()
+                    .Setup<Task>("Install", ItExpr.IsAny<Release>())
+                    .Returns(() => throw new InvalidOperationException());
+                var mockUpdaterObject = mockUpdater.Object;
+                var beforeUpdate = await mockUpdaterObject.CheckForUpdates();
+
+                await Assert.ThrowsAsync<InvalidOperationException>(mockUpdaterObject.InstallUpdate);
+                var afterUpdate = await mockUpdaterObject.CheckForUpdates();
+
+                Assert.True(beforeUpdate, "Updater.HasUpdate has returned false before update was installed.");
+                Assert.True(afterUpdate, "Updater.HasUpdate has returned false after unsuccessful update process.");
+            });
+        }
+
+        [Fact]
         public Task Updater_HasUpdateReturnsFalse_During_UpdateInstall_Async()
         {
             return MockEnvironmentAsync(async (updaterEnv) =>
             {
                 var mockUpdaterObject = CreateMockUpdater<Updater>(updaterEnv).Object;
-                var beforeUpdate = await mockUpdaterObject.HasUpdate;
+                var beforeUpdate = await mockUpdaterObject.CheckForUpdates();
 
                 var updateTask = mockUpdaterObject.InstallUpdate();
-                var duringUpdate = await mockUpdaterObject.HasUpdate;
+                var duringUpdate = await mockUpdaterObject.CheckForUpdates();
 
                 await updateTask;
                 Assert.True(beforeUpdate, "Updater.HasUpdate has returned false before update was installed.");
@@ -115,10 +135,10 @@ namespace OpenTabletDriver.Tests
             return MockEnvironmentAsync(async (updaterEnv) =>
             {
                 var mockUpdaterObject = CreateMockUpdater<Updater>(updaterEnv).Object;
-                var beforeUpdate = await mockUpdaterObject.HasUpdate;
+                var beforeUpdate = await mockUpdaterObject.CheckForUpdates();
 
                 await mockUpdaterObject.InstallUpdate();
-                var afterUpdate = await mockUpdaterObject.HasUpdate;
+                var afterUpdate = await mockUpdaterObject.CheckForUpdates();
 
                 Assert.True(beforeUpdate, "Updater.HasUpdate has returned false before update was installed.");
                 Assert.False(afterUpdate, "Updater.HasUpdate has returned true after update is installed.");

@@ -12,7 +12,12 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract class Updater : IUpdater
     {
-        private int updateSentinel = 1;
+        /// <summary>
+        /// <para>0 allows update install and check.</para>
+        /// <para>1 disallows update install and check.</para>
+        /// <para>2 means update was installed and check will return false.</para>
+        /// </summary>
+        private int updateSentinel = 0;
         private readonly GitHubClient github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
         private Release? latestRelease;
 
@@ -22,8 +27,6 @@ namespace OpenTabletDriver.Desktop.Updater
         protected string AppDataDirectory;
         protected string RollbackDirectory;
         protected string DownloadDirectory = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
-
-        public Task<bool> HasUpdate => CheckForUpdates(true);
 
         protected Updater(Version? currentVersion, string binaryDir, string appDataDir, string rollbackDir)
         {
@@ -38,34 +41,54 @@ namespace OpenTabletDriver.Desktop.Updater
                 Directory.CreateDirectory(DownloadDirectory);
         }
 
-        public async Task InstallUpdate()
-        {
-            // Skip if update is already installed, or in the process of installing
-            if (Interlocked.CompareExchange(ref updateSentinel, 0, 1) == 1)
-            {
-                if (await CheckForUpdates(false))
-                {
-                    SetupRollback();
-                    await Install(latestRelease!);
-                }
-            }
-        }
+        public Task<bool> CheckForUpdates() => CheckForUpdates(true);
 
-        protected abstract Task Install(Release release);
-
-        private async Task<bool> CheckForUpdates(bool forced)
+        public async Task<bool> CheckForUpdates(bool forced)
         {
-            if (updateSentinel == 0)
+            if (updateSentinel == 2)
                 return false;
 
             if (forced || latestRelease == null)
-                latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver"); ;
+                latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
 
-            var latestVersion = new Version(latestRelease.TagName[1..]); // remove `v` from `vW.X.Y.Z
+            var latestVersion = new Version(latestRelease!.TagName[1..]); // remove `v` from `vW.X.Y.Z
             return latestVersion > CurrentVersion;
         }
 
-        private void SetupRollback()
+        public async Task<Release?> GetRelease()
+        {
+            if (latestRelease == null)
+            {
+                await CheckForUpdates();
+            }
+
+            return latestRelease;
+        }
+
+        public async Task InstallUpdate()
+        {
+            // Skip if update is already installed, or in the process of installing
+            if (Interlocked.CompareExchange(ref updateSentinel, 1, 0) == 0)
+            {
+                if (await CheckForUpdates(false))
+                {
+                    try
+                    {
+                        await Install(latestRelease!);
+                        updateSentinel = 2;
+                        return;
+                    }
+                    catch
+                    {
+                        updateSentinel = 0;
+                        throw;
+                    }
+                }
+                updateSentinel = 0;
+            }
+        }
+
+        protected void SetupRollback()
         {
             var versionRollbackDir = Path.Join(RollbackDirectory, CurrentVersion + "-old");
 
@@ -75,8 +98,19 @@ namespace OpenTabletDriver.Desktop.Updater
                 static (source, target) => Copy(source, target));
         }
 
+        protected virtual async Task Install(Release release)
+        {
+            await Download(release);
+            SetupRollback();
+
+            Move(DownloadDirectory, BinaryDirectory);
+        }
+
+        protected abstract Task Download(Release release);
+
         // Avoid moving/copying the rollback directory if under source directory
-        private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target, Action<string, string> fileOp)
+        private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target,
+            Action<string, string> fileOp)
         {
             var rollbackTarget = Path.Join(versionRollbackDir, target);
 
