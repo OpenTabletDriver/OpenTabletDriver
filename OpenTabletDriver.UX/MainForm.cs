@@ -53,6 +53,7 @@ namespace OpenTabletDriver.UX
         private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
+        private TrayIcon trayIcon;
 
         protected override void OnInitializePlatform(EventArgs e)
         {
@@ -69,7 +70,7 @@ namespace OpenTabletDriver.UX
 
             if (App.EnableTrayIcon)
             {
-                var trayIcon = new TrayIcon(this);
+                trayIcon = new TrayIcon(this);
                 if (WindowState == WindowState.Minimized)
                 {
                     this.Visible = false;
@@ -155,6 +156,9 @@ namespace OpenTabletDriver.UX
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
+            var refreshPresets = new Command { MenuText = "Refresh presets" };
+            refreshPresets.Executed += async (sender, e) => await RefreshPresets();
+
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
 
@@ -193,7 +197,21 @@ namespace OpenTabletDriver.UX
                             saveSettings,
                             saveSettingsAs,
                             resetSettings,
-                            applySettings
+                            applySettings,
+                            new SeparatorMenuItem(),
+                            refreshPresets,
+                            new ButtonMenuItem
+                            {
+                                Text = "Presets",
+                                Items =
+                                {
+                                    new ButtonMenuItem
+                                    {
+                                        Text = "No presets loaded",
+                                        Enabled = false
+                                    }
+                                }
+                            }
                         }
                     },
                     // Tablets submenu
@@ -293,6 +311,9 @@ namespace OpenTabletDriver.UX
                     }
                 }
             };
+
+            // Update preset options in File menu and tray icon
+            await RefreshPresets();
 
             // Update title to new instance
             if (await Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
@@ -417,6 +438,68 @@ namespace OpenTabletDriver.UX
                 };
                 Log.Write(logMessage);
             }
+        }
+
+        public Task LoadPresets()
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+            {
+                presetDir.Create();
+                Log.Write("Settings", $"The preset directory '{presetDir.FullName}' has been created");
+            }
+
+            AppInfo.PresetManager.Refresh();
+            return Task.CompletedTask;
+        }
+
+        private Task RefreshPresets()
+        {
+            LoadPresets();
+
+            if (trayIcon != null) // Check non-Linux
+                trayIcon.RefreshMenuItems();
+
+            // Update File submenu
+            var presets = AppInfo.PresetManager.GetPresets();
+            var presetsMenu = menu.Items.GetSubmenu("&File").Items.GetSubmenu("Presets") as ButtonMenuItem;
+            presetsMenu.Items.Clear();
+
+            if (presets.Count != 0)
+            {
+                foreach (var preset in presets)
+                {
+                    var presetItem = new ButtonMenuItem
+                    {
+                        Text = preset.Name
+                    };
+                    presetItem.Click += PresetButtonHandler;
+
+                    presetsMenu.Items.Add(presetItem);
+                }
+            }
+            else
+            {
+                var emptyPresetsItem = new ButtonMenuItem
+                {
+                    Text = "No presets loaded",
+                    Enabled = false
+                };
+
+                presetsMenu.Items.Add(emptyPresetsItem);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public static void PresetButtonHandler(object sender, EventArgs e)
+        {
+            var presetName = (sender as ButtonMenuItem).Text;
+            var preset = AppInfo.PresetManager.FindPreset(presetName);
+            App.Current.Settings = preset.GetSettings();
+            App.Driver.Instance.SetSettings(App.Current.Settings);
+            Log.Write("Settings", $"Applied preset '{preset.Name}'");
         }
 
         private async Task ExportDiagnostics()
