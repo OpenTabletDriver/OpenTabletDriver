@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.ComponentProviders
+namespace OpenTabletDriver.Configurations
 {
     public class ReportParserProvider : IReportParserProvider
     {
