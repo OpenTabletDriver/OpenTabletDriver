@@ -14,16 +14,16 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: '6.0'
+          include-prerelease: True
       - name: Linux Publish
         env:
           runtime: linux-x64
-          framework: net5
-          options: --configuration Release -p:DebugType=embedded --self-contained false
+          options: --configuration Release -p:DebugType=embedded --no-self-contained
         run: |
-          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.Console $options --runtime $runtime --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.UX.Gtk $options --runtime $runtime --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.Gtk $options --runtime $runtime -o build/$runtime
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@master
         with:
@@ -46,16 +46,16 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: '6.0'
+          include-prerelease: True
       - name: MacOS Publish
         env:
           runtime: osx-x64
-          framework: net5
-          options: --configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --self-contained false
+          options: --configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained
         run: |
-          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.Console $options --runtime $runtime --framework $framework -o build/$runtime
-          dotnet publish OpenTabletDriver.UX.MacOS $options --runtime $runtime --framework $framework -o build/$runtime
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
+          dotnet publish OpenTabletDriver.UX.MacOS $options --runtime $runtime -o build/$runtime
       - name: Upload MacOS artifacts
         uses: actions/upload-artifact@master
         with:
@@ -70,16 +70,16 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: '6.0'
+          include-prerelease: True
       - name: Windows Publish
         env:
           runtime: win-x64
-          framework: net5
         run: |
-          $options= @('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '--self-contained', 'false')
-          dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
-          dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime --framework $ENV:framework -o build/$ENV:runtime
-          dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime --framework $ENV:framework-windows -o build/$ENV:runtime
+          $options= @('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '--no-self-contained')
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:

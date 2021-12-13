@@ -11,6 +11,7 @@ using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.UX.RPC;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
@@ -74,7 +75,8 @@ namespace OpenTabletDriver.UX
 
         public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
 
-        public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
+        public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
+
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
 
         private Settings settings;

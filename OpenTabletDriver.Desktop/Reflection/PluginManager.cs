@@ -7,6 +7,7 @@ using System.Runtime.Loader;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
+using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -168,10 +169,18 @@ namespace OpenTabletDriver.Desktop.Reflection
                 _ = asm.DefinedTypes;
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 var asmName = asm.GetName();
-                Log.Write("Plugin", $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date.", LogLevel.Warning);
+                var hResultHex = ex.HResult.ToString("X");
+                var message = new LogMessage
+                {
+                    Group = "Plugin",
+                    Level = LogLevel.Warning,
+                    Message = $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date. (HResult: 0x{hResultHex})",
+                    StackTrace = ex.Message + Environment.NewLine + ex.StackTrace
+                };
+                Log.Write(message);
                 return false;
             }
         }

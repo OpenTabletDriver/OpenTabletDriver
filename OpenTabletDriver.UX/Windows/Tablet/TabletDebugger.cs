@@ -116,7 +116,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 }
             };
 
-            this.Content = new Splitter
+            var splitter = new Splitter
             {
                 Orientation = Orientation.Vertical,
                 Width = 660,
@@ -130,6 +130,11 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 Panel2 = debugger
             };
 
+            this.Content = new Scrollable
+            {
+                Content = splitter
+            };
+
             var reportBinding = ReportDataBinding.Child(c => (c.ToObject() as IDeviceReport));
 
             deviceName.TextBinding.Bind(ReportDataBinding.Child(c => c.Tablet.Properties.Name));
@@ -139,10 +144,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             reportsRecorded.TextBinding.Bind(NumberOfReportsRecordedBinding.Convert(c => c.ToString()));
             tabletVisualizer.ReportDataBinding.Bind(ReportDataBinding);
 
-            Application.Instance.AsyncInvoke(() =>
-            {
-                App.Driver.AddConnectionHook(ConnectionHook);
-            });
+            App.Driver.DeviceReport += HandleReport;
+            App.Driver.TabletsChanged += HandleTabletsChanged;
+            App.Driver.Instance.SetTabletDebug(true);
 
             var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
             dataRecordingOutput = new StreamWriter(outputStream);
@@ -153,7 +157,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             base.OnClosing(e);
 
             await App.Driver.Instance.SetTabletDebug(false);
-            App.Driver.RemoveConnectionHook(ConnectionHook);
 
             dataRecordingOutput?.Close();
             dataRecordingOutput = null;
@@ -253,13 +256,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     (c, h) => c.NumberOfReportsRecordedChanged -= h
                 );
             }
-        }
-
-        private void ConnectionHook(IDriverDaemon daemon)
-        {
-            daemon.DeviceReport += HandleReport;
-            daemon.TabletsChanged += HandleTabletsChanged;
-            App.Driver.Instance.SetTabletDebug(true);
         }
 
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>

@@ -86,7 +86,7 @@ namespace OpenTabletDriver.UX.Controls
                 });
             };
 
-            App.Driver.AddConnectionHook(i => i.Message += (sender, message) => AddMessage(message));
+            App.Driver.Message += (sender, message) => AddMessage(message);
         }
 
         private readonly GridView<LogMessage> messageList = new GridView<LogMessage>
@@ -134,6 +134,18 @@ namespace OpenTabletDriver.UX.Controls
         private void AddMessage(LogMessage message)
         {
             Application.Instance.AsyncInvoke(() => this.messageStore.Add(message));
+
+            if (message.Notification)
+            {
+                var notify = new Notification
+                {
+                    Title = "OpenTabletDriver - " + message.Level.ToString(),
+                    Message = message.Message,
+                    ContentImage = App.Logo,
+                    ID = "log-message-notification"
+                };
+                notify.Show();
+            }
         }
 
         private static void Copy(IEnumerable<LogMessage> messages)

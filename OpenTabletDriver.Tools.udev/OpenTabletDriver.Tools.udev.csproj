@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFramework>$(FrameworkBase)</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>

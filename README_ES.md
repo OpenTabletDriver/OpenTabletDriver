@@ -36,7 +36,7 @@ Los requisitos para compilar OpenTabletDriver son consistentes en todas las plat
 
 ### Todas las plataformas
 
-- .NET 5 SDK
+- .NET 6 SDK
 
 #### Windows
 

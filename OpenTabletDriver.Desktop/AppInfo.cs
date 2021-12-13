@@ -100,6 +100,7 @@ namespace OpenTabletDriver.Desktop
         }
 
         private string GetDefaultConfigurationDirectory() => GetDirectoryIfExists(
+            Path.Join(AppDataDirectory, "Configurations"),
             Path.Join(ProgramDirectory, "Configurations"),
             Path.Join(Environment.CurrentDirectory, "Configurations")
         );

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Eto.Drawing;
@@ -52,7 +53,7 @@ namespace OpenTabletDriver.UX.Controls
 
             tabletSwitcher.ProfilesBinding.BindDataContext<App>(a => a.Settings.Profiles);
 
-            App.Driver.AddConnectionHook(i => i.TabletsChanged += HandleTabletsChanged);
+            App.Driver.TabletsChanged += HandleTabletsChanged;
             Application.Instance.AsyncInvoke(async () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
         }
 
@@ -69,7 +70,7 @@ namespace OpenTabletDriver.UX.Controls
 
         private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
         {
-            tabletSwitcher.HandleTabletsChanged(sender, tablets);
+            tabletSwitcher.HandleTabletsChanged(sender, tablets.ToImmutableArray());
         }
 
         private class TabletSwitcher : DropDown
@@ -99,8 +100,8 @@ namespace OpenTabletDriver.UX.Controls
             protected virtual async void OnProfilesChanged()
             {
                 ProfilesChanged?.Invoke(this, new EventArgs());
-                visibleProfiles.Clear();
-                HandleTabletsChanged(this, await App.Driver.Instance.GetTablets());
+                var tablets = await App.Driver.Instance.GetTablets();
+                HandleTabletsChanged(this, tablets.ToImmutableArray());
             }
 
             public BindableBinding<TabletSwitcher, ProfileCollection> ProfilesBinding
@@ -117,30 +118,33 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            public void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
+            public void HandleTabletsChanged(object sender, IList<TabletReference> tablets)
             {
-                if (Profiles is ProfileCollection profiles)
+                visibleProfiles.Clear();
+                if (tablets.Any())
                 {
-                    foreach (var profile in profiles)
-                        visibleProfiles.Remove(profile);
+                    var tabletsWithoutProfile = from tablet in tablets
+                        where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
+                        select tablet;
+
+                    foreach (var tablet in tabletsWithoutProfile)
+                        profiles.Generate(tablet);
 
                     foreach (var tablet in tablets)
                         visibleProfiles.Add(Profiles.FirstOrDefault(p => p.Tablet == tablet.Properties.Name));
 
-                    if (tablets.Any())
+                    if (this.SelectedIndex < 0)
                     {
-                        var tabletsWithoutProfile = from tablet in tablets
-                            where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
-                            select tablet;
-
-                        foreach (var tablet in tabletsWithoutProfile)
-                            profiles.Generate(tablet);
-
-                        if (this.SelectedIndex < 0)
-                            this.SelectedIndex = 0;
+                        this.SelectedIndex = 0;
+                        this.OnSelectedValueChanged(EventArgs.Empty);
                     }
                 }
-            });
+                else
+                {
+                    this.SelectedValue = null;
+                    this.OnSelectedValueChanged(EventArgs.Empty);
+                }
+            }
         }
     }
 }
