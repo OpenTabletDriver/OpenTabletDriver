@@ -24,8 +24,6 @@ namespace OpenTabletDriver.UX
 
         public static void Run(string platform, string[] args)
         {
-            Application.Instance.UnhandledException += ShowUnhandledException;
-
             var root = new RootCommand("OpenTabletDriver UX")
             {
                 new Option<bool>(new string[] { "-m", "--minimized" }, "Start the application minimized")
@@ -58,6 +56,8 @@ namespace OpenTabletDriver.UX
                     mainForm.Visible = false;
                 }
             }
+
+            Application.Instance.UnhandledException += ShowUnhandledException;
 
             app.Run(mainForm);
         }
