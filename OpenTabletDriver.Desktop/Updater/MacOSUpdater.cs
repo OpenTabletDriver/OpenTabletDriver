@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -33,12 +34,16 @@ namespace OpenTabletDriver.Desktop.Updater
         protected override async Task Install(Release release)
         {
             await Download(release);
+            SetupRollback();
 
+            // Mark the binaries executable, SharpZipLib doesn't do this.
             var subPath = Path.Join(DownloadDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
+            Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.UX.MacOS");
+            Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.Daemon");
             Move(subPath, BinaryDirectory);
         }
 
-        private async Task Download(Release release)
+        protected override async Task Download(Release release)
         {
             var asset = release.Assets.First(r => r.Name.Contains("osx-x64"));
 

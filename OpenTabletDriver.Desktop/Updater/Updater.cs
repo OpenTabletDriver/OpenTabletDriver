@@ -74,7 +74,6 @@ namespace OpenTabletDriver.Desktop.Updater
                 {
                     try
                     {
-                        SetupRollback();
                         await Install(latestRelease!);
                         updateSentinel = 2;
                         return;
@@ -89,9 +88,7 @@ namespace OpenTabletDriver.Desktop.Updater
             }
         }
 
-        protected abstract Task Install(Release release);
-
-        private void SetupRollback()
+        protected void SetupRollback()
         {
             var versionRollbackDir = Path.Join(RollbackDirectory, CurrentVersion + "-old");
 
@@ -100,6 +97,16 @@ namespace OpenTabletDriver.Desktop.Updater
             ExclusiveFileOp(AppDataDirectory, RollbackDirectory, versionRollbackDir, "appdata",
                 static (source, target) => Copy(source, target));
         }
+
+        protected virtual async Task Install(Release release)
+        {
+            await Download(release);
+            SetupRollback();
+
+            Move(DownloadDirectory, BinaryDirectory);
+        }
+
+        protected abstract Task Download(Release release);
 
         // Avoid moving/copying the rollback directory if under source directory
         private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target,
