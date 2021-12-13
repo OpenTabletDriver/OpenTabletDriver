@@ -5,9 +5,7 @@ using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.RPC;
 using OpenTabletDriver.UX.Windows;
@@ -26,6 +24,8 @@ namespace OpenTabletDriver.UX
 
         public static void Run(string platform, string[] args)
         {
+            Application.Instance.UnhandledException += ShowUnhandledException;
+
             var root = new RootCommand("OpenTabletDriver UX")
             {
                 new Option<bool>(new string[] { "-m", "--minimized" }, "Start the application minimized")
@@ -101,5 +101,12 @@ namespace OpenTabletDriver.UX
         public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
         public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
         public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
+
+        private static void ShowUnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+            Log.Exception(exception);
+            exception.ShowMessageBox();
+        }
     }
 }
