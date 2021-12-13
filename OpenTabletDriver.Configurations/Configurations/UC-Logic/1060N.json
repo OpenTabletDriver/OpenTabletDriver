@@ -24,8 +24,8 @@
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
-      "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Vendors.XP_Pen.XP_PenReportParser",
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"
