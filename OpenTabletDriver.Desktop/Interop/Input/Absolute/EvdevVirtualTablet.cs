@@ -72,8 +72,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
 
+            var toolId = new input_absinfo();
             Device.EnableType(EventType.EV_MSC);
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_MISC, (IntPtr)yTiltPtr); // tool ID
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_MISC, (IntPtr)((input_absinfo*)&toolId)); // tool ID
             Device.EnableCode(EventType.EV_MSC, EventCode.MSC_SERIAL); // tool serial
 
             Device.EnableTypeCodes(
