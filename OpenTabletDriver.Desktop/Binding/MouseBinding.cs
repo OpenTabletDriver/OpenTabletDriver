@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Mouse Button Binding";
 
         [Resolved]
-        public IVirtualMouse Pointer { set; get; }
+        public IMouseButtonHandler Pointer { set; get; }
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string Button { set; get; }

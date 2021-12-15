@@ -7,10 +7,10 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static OSX;
-    
+
     public class MacOSRelativePointer : Input.MacOSVirtualMouse, IRelativePointer
     {
-        public void Translate(Vector2 delta)
+        public void SetPosition(Vector2 delta)
         {
             var lastPos = base.GetPosition();
             var newPos = lastPos + delta;

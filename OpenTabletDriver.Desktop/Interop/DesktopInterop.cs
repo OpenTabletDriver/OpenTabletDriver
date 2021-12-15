@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Desktop.Interop
         private static IVirtualScreen virtualScreen;
         private static IAbsolutePointer absolutePointer;
         private static IRelativePointer relativePointer;
-        private static IVirtualTablet virtualTablet;
+        private static IPressureHandler virtualTablet;
         private static IVirtualKeyboard virtualKeyboard;
 
         public static void Open(string path)
@@ -83,7 +83,7 @@ namespace OpenTabletDriver.Desktop.Interop
             _                      => null
         };
 
-        public static IVirtualTablet VirtualTablet => CurrentPlatform switch
+        public static IPressureHandler VirtualTablet => CurrentPlatform switch
         {
             PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
             _ => null
