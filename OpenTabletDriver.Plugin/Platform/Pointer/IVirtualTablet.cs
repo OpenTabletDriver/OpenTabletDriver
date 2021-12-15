@@ -9,6 +9,7 @@ namespace OpenTabletDriver.Plugin.Platform.Pointer
         void SetButtonState(uint button, bool active);
         void SetEraser(bool isEraser);
         void SetProximity(bool proximity, uint distance);
+        void ResetButtons();
         void Sync();
     }
 }
