@@ -40,6 +40,7 @@
   ],
   "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
-    "libinputoverride": "1"
+    "libinputoverride": "1",
+    "MacInterface": "0"
   }
 }
