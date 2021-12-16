@@ -160,7 +160,7 @@ namespace OpenTabletDriver.UX
             refreshPresets.Executed += async (sender, e) => await RefreshPresets();
 
             var savePreset = new Command { MenuText = "Save as preset..." };
-            savePreset.Executed += (sender, e) => SavePresetDialog();
+            savePreset.Executed += async (sender, e) => await SavePresetDialog();
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
@@ -497,7 +497,7 @@ namespace OpenTabletDriver.UX
             return Task.CompletedTask;
         }
 
-        private void SavePresetDialog()
+        private async Task SavePresetDialog()
         {
             var fileDialog = new SaveFileDialog
             {
@@ -515,6 +515,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (App.Current.Settings is Settings settings)
                         settings.Serialize(file);
+                        await RefreshPresets();
                     break;
             }
         }
