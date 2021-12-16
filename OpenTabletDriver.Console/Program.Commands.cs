@@ -95,7 +95,7 @@ namespace OpenTabletDriver.Console
                 var tipBinding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
 
                 p.BindingSettings.TipButton = new PluginSettingStore(tipBinding);
-                p.BindingSettings.TipActivationPressure = threshold;
+                p.BindingSettings.TipActivationThreshold = threshold;
             });
         }
 
@@ -213,7 +213,7 @@ namespace OpenTabletDriver.Console
         private static async Task GetBindings(string tablet)
         {
             var profile = await GetProfile(tablet);
-            await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format() ?? "None"}@{profile.BindingSettings.TipActivationPressure}%");
+            await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format() ?? "None"}@{profile.BindingSettings.TipActivationThreshold}%");
             await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", profile.BindingSettings.PenButtons.Format())}");
             await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", profile.BindingSettings.AuxButtons.Format())}");
         }
