@@ -201,8 +201,8 @@ namespace OpenTabletDriver
 
         public void Dispose()
         {
-            foreach (InputDeviceTree tree in InputDevices)
-                foreach (InputDevice dev in tree.InputDevices)
+            foreach (InputDeviceTree tree in InputDevices.ToList())
+                foreach (InputDevice dev in tree.InputDevices.ToList())
                     dev.Dispose();
         }
     }
