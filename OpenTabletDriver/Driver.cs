@@ -28,7 +28,7 @@ namespace OpenTabletDriver
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
 
         public ICompositeDeviceHub CompositeDeviceHub { get; }
-        public IList<InputDeviceTree> InputDevices { get; } = new List<InputDeviceTree>();
+        public InputDeviceTreeList InputDevices { get; } = new();
         public IEnumerable<TabletReference> Tablets => InputDevices.Select(c => c.CreateReference());
 
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
@@ -42,7 +42,6 @@ namespace OpenTabletDriver
 
             Log.Write("Detect", "Searching for tablets...");
 
-            Dispose();
             InputDevices.Clear();
             foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
             {
