@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Assembly.Load("OpenTabletDriver.Configurations")
             };
 
-            libTypes = (from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
+            libTypes = (from type in typeof(IDriver).Assembly.GetExportedTypes()
                 where type.IsAbstract || type.IsInterface
                 select type).ToArray();
 
