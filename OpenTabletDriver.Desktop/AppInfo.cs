@@ -1,39 +1,45 @@
 using System;
-using System.Collections;
 using System.IO;
-using System.Linq;
-using System.Text;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {
+    using static FileUtilities;
+
     public class AppInfo
     {
-        private string configurationDirectory, settingsFile, pluginDirectory, presetDirectory, temporaryDirectory, cacheDirectory, trashDirectory;
-        private static AppInfo _current;
+        private string configurationDirectory,
+            settingsFile,
+            pluginDirectory,
+            presetDirectory,
+            temporaryDirectory,
+            cacheDirectory,
+            trashDirectory;
 
+        private static AppInfo current;
         public static AppInfo Current
         {
-            set => _current = value;
-            get => _current ??= DesktopInterop.CurrentPlatform switch
+            set => current = value;
+            get => current ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => new AppInfo
                 {
-                    AppDataDirectory = GetDirectoryIfExists(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver")
+                    AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver")
                 },
                 PluginPlatform.Linux => new AppInfo
                 {
-                    AppDataDirectory = GetDirectory("$XDG_CONFIG_HOME/OpenTabletDriver", "$HOME/.config/OpenTabletDriver"),
-                    TemporaryDirectory = GetDirectory("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver"),
-                    CacheDirectory = GetDirectory("$XDG_CACHE_HOME/OpenTabletDriver", "$HOME/.cache/OpenTabletDriver")
+                    ConfigurationDirectory = GetExistingPath("$XDG_DATA_HOME/OpenTabletDriver/Configurations", "~/.local/share/OpenTabletDriver/Configurations"),
+                    AppDataDirectory = GetPath("$XDG_CONFIG_HOME/OpenTabletDriver", "~/.config/OpenTabletDriver"),
+                    TemporaryDirectory = GetPath("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver"),
+                    CacheDirectory = GetPath("$XDG_CACHE_HOME/OpenTabletDriver", "~/.cache/OpenTabletDriver"),
                 },
                 PluginPlatform.MacOS => new AppInfo()
                 {
-                    AppDataDirectory = GetDirectory("$HOME/Library/Application Support/OpenTabletDriver"),
-                    TemporaryDirectory = GetDirectory("$TMPDIR/OpenTabletDriver"),
-                    CacheDirectory = GetDirectory("$HOME/Library/Caches/OpenTabletDriver")
+                    AppDataDirectory = GetPath("~/Library/Application Support/OpenTabletDriver"),
+                    TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
+                    CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")
                 },
                 _ => null
             };
@@ -43,7 +49,7 @@ namespace OpenTabletDriver.Desktop
 
         public static PresetManager PresetManager { get; } = new PresetManager();
 
-        public virtual string AppDataDirectory { set; get; }
+        public string AppDataDirectory { set; get; }
 
         public string ConfigurationDirectory
         {
@@ -78,7 +84,7 @@ namespace OpenTabletDriver.Desktop
         public string CacheDirectory
         {
             set => this.cacheDirectory = value;
-            get => this.temporaryDirectory ?? GetDefaultCacheDirectory();
+            get => this.cacheDirectory ?? GetDefaultCacheDirectory();
         }
 
         public string TrashDirectory
@@ -87,27 +93,9 @@ namespace OpenTabletDriver.Desktop
             get => this.trashDirectory ?? GetDefaultTrashDirectory();
         }
 
-        protected static string ProgramDirectory => AppContext.BaseDirectory;
+        private static string ProgramDirectory => AppContext.BaseDirectory;
 
-        private static string GetDirectory(params string[] directories)
-        {
-            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
-                if (Path.IsPathRooted(dir))
-                    return dir;
-
-            return null;
-        }
-
-        private static string GetDirectoryIfExists(params string[] directories)
-        {
-            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
-                if (Directory.Exists(dir))
-                    return dir;
-
-            return directories.Last();
-        }
-
-        private string GetDefaultConfigurationDirectory() => GetDirectoryIfExists(
+        private string GetDefaultConfigurationDirectory() => GetExistingPathOrLast(
             Path.Join(AppDataDirectory, "Configurations"),
             Path.Join(ProgramDirectory, "Configurations"),
             Path.Join(Environment.CurrentDirectory, "Configurations")
@@ -119,21 +107,5 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultTemporaryDirectory() => Path.Join(AppDataDirectory, "Temp");
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
-
-        private static string InjectVariablesIntoPath(string str)
-        {
-            StringBuilder sb = new StringBuilder(str);
-            sb.Replace("~", Environment.GetEnvironmentVariable("HOME"));
-
-            foreach (DictionaryEntry envVar in Environment.GetEnvironmentVariables())
-            {
-                string key = envVar.Key as string;
-                string value = envVar.Value as string;
-                sb.Replace($"${key}", value); // $KEY
-                sb.Replace($"${{{key}}}", value); // ${KEY}
-            }
-
-            return sb.ToString();
-        }
     }
 }
