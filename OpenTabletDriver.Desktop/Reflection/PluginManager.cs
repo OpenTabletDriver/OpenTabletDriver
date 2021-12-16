@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
@@ -15,7 +16,15 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         public PluginManager()
         {
-            var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
+            // FIXME: Forced assembly load by class references
+            var forcedAssemblies = new Assembly[]
+            {
+                typeof(Configurations.DeviceConfigurationProvider).Assembly,
+                typeof(Native.Linux.ERRNO).Assembly
+            };
+            var assemblies = AssemblyLoadContext.Default.Assemblies.Concat(forcedAssemblies);
+
+            var internalTypes = from asm in assemblies
                 where IsLoadable(asm)
                 from type in asm.DefinedTypes
                 where type.IsPublic && !(type.IsInterface || type.IsAbstract)
