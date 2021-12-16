@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.Help;
+using System.CommandLine.IO;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -366,6 +368,17 @@ namespace OpenTabletDriver.Console
         {
             while (await System.Console.In.ReadLineAsync() is string cmd)
                 await Root.InvokeAsync(cmd);
+        }
+
+        #endregion
+
+        #region Miscellaneous
+
+        private static Task Help()
+        {
+            var helpBuilder = new HelpBuilder(new SystemConsole());
+            helpBuilder.Write(Root);
+            return Task.CompletedTask;
         }
 
         #endregion

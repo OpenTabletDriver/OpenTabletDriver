@@ -33,6 +33,7 @@ namespace OpenTabletDriver.Console
             root.AddRange(RequestCommands);
             root.AddRange(ListCommands);
             root.AddRange(ScriptingCommands);
+            root.AddRange(MiscellaneousCommands);
 
             return root;
         }
@@ -97,6 +98,11 @@ namespace OpenTabletDriver.Console
             CreateCommand(GetDiagnostics, "Gets diagnostic information"),
             CreateCommand(STDIO, "Open with standard input and output", "stdio"),
             CreateCommand(EditSettings, "Opens the settings file with the editor defined in the EDITOR environment variable.", "edit")
+        };
+
+        private static readonly IEnumerable<Command> MiscellaneousCommands = new Command[]
+        {
+            CreateCommand(Help, "Shows this help page")
         };
     }
 }
