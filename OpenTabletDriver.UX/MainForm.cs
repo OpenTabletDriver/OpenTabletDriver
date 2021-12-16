@@ -159,6 +159,9 @@ namespace OpenTabletDriver.UX
             var refreshPresets = new Command { MenuText = "Refresh presets" };
             refreshPresets.Executed += async (sender, e) => await RefreshPresets();
 
+            var savePreset = new Command { MenuText = "Save as preset..." };
+            savePreset.Executed += async (sender, e) => await SavePresetDialog();
+
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
             detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
 
@@ -200,6 +203,7 @@ namespace OpenTabletDriver.UX
                             applySettings,
                             new SeparatorMenuItem(),
                             refreshPresets,
+                            savePreset,
                             new ButtonMenuItem
                             {
                                 Text = "Presets",
@@ -440,7 +444,7 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        public Task LoadPresets()
+        private Task LoadPresets()
         {
             var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
 
@@ -491,6 +495,29 @@ namespace OpenTabletDriver.UX
             }
 
             return Task.CompletedTask;
+        }
+
+        private async Task SavePresetDialog()
+        {
+            var fileDialog = new SaveFileDialog
+            {
+                Title = "Save OpenTabletDriver settings as preset...",
+                Directory = new Uri(AppInfo.Current.PresetDirectory),
+                Filters =
+                {
+                    new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
+                }
+            };
+            switch (fileDialog.ShowDialog(this))
+            {
+                case DialogResult.Ok:
+                case DialogResult.Yes:
+                    var file = new FileInfo(fileDialog.FileName);
+                    if (App.Current.Settings is Settings settings)
+                        settings.Serialize(file);
+                        await RefreshPresets();
+                    break;
+            }
         }
 
         public static void PresetButtonHandler(object sender, EventArgs e)

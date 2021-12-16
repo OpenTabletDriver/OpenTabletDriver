@@ -46,6 +46,19 @@ namespace OpenTabletDriver.Console
             await ApplySettings(preset.GetSettings());
         }
 
+        private static async Task SavePreset(string name)
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+                presetDir.Create();
+
+            var settings = await GetSettings();
+            var file = new FileInfo(Path.Combine(presetDir.FullName, name + ".json"));
+
+            settings.Serialize(file);
+        }
+
         #endregion
 
         #region Modify Settings
