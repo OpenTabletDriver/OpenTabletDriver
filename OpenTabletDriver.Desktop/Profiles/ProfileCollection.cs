@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         public Profile this[TabletReference tablet]
         {
             set => SetProfile(tablet, value);
-            get => GetProfile(tablet);
+            get => GetProfileOrGenerate(tablet);
         }
 
         public void SetProfile(TabletReference tablet, Profile profile)
@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             this.Add(profile);
         }
 
-        public Profile GetProfile(TabletReference tablet)
+        public Profile GetProfileOrGenerate(TabletReference tablet)
         {
             return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
         }

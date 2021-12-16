@@ -124,7 +124,7 @@ namespace OpenTabletDriver.UX.Controls
                 if (tablets.Any())
                 {
                     foreach (var tablet in tablets)
-                        visibleProfiles.Add(profiles.GetProfile(tablet));
+                        visibleProfiles.Add(profiles.GetProfileOrGenerate(tablet));
 
                     if (this.SelectedIndex < 0)
                     {
