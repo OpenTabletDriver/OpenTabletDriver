@@ -17,60 +17,53 @@ namespace OpenTabletDriver.UX.Controls
     {
         public ControlPanel()
         {
-            tabPages = new(new TabPage[]
+            new TabPage
+            {
+                Text = "Output",
+                Content = outputModeEditor = new()
+            };
+            new TabPage
+            {
+                Text = "Filters",
+                Padding = 5,
+                Content = filterEditor = new()
+            };
+            new TabPage
+            {
+                Text = "Pen Settings",
+                Content = penBindingEditor = new PenBindingEditor()
+            };
+            new TabPage
+            {
+                Text = "Auxiliary Settings",
+                Content = auxBindingEditor = new AuxiliaryBindingEditor()
+            };
+            new TabPage
+            {
+                Text = "Mouse Settings",
+                Content = mouseBindingEditor = new MouseBindingEditor()
+            };
+            new TabPage
+            {
+                Text = "Tools",
+                Padding = 5,
+                Content = toolEditor = new()
+            };
+            new TabPage
+            {
+                Text = "Info",
+                Padding = 5,
+                Content = placeholder = new Placeholder
                 {
-                    new TabPage
-                    {
-                        Text = "Output",
-                        Content = outputModeEditor = new()
-                    },
-                    new TabPage
-                    {
-                        Text = "Filters",
-                        Padding = 5,
-                        Content = filterEditor = new()
-                    },
-                    new TabPage
-                    {
-                        Text = "Pen Settings",
-                        Content = penBindingEditor = new PenBindingEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Auxiliary Settings",
-                        Content = auxBindingEditor = new AuxiliaryBindingEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Mouse Settings",
-                        Content = mouseBindingEditor = new MouseBindingEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Tools",
-                        Padding = 5,
-                        Content = toolEditor = new()
-                    },
-                    new TabPage
-                    {
-                        Text = "Info",
-                        Padding = 5,
-                        Content = placeholder = new Placeholder
-                        {
-                            Text = "No tablets are detected."
-                        }
-                    },
-                    new TabPage
-                    {
-                        Text = "Console",
-                        Padding = 5,
-                        Content = logView = new()
-                    }
+                    Text = "No tablets are detected."
                 }
-            );
-
-            tabControl = new TabControl();
-            tabControl.Pages.Concat(tabPages);
+            };
+            new TabPage
+            {
+                Text = "Console",
+                Padding = 5,
+                Content = logView = new()
+            };
 
             outputModeEditor.ProfileBinding.Bind(ProfileBinding);
             penBindingEditor.ProfileBinding.Bind(ProfileBinding);
@@ -81,7 +74,7 @@ namespace OpenTabletDriver.UX.Controls
 
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
-            this.Content = tabControl;
+            this.Content = tabControl = new TabControl();
 
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {
@@ -93,7 +86,6 @@ namespace OpenTabletDriver.UX.Controls
         }
 
         private TabControl tabControl;
-        private List<TabPage> tabPages;
         private Placeholder placeholder;
         private LogView logView;
         private OutputModeEditor outputModeEditor;
