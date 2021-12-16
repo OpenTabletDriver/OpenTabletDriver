@@ -444,7 +444,7 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        public Task LoadPresets()
+        private Task LoadPresets()
         {
             var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
 
