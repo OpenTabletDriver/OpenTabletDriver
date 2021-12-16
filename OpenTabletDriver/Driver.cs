@@ -42,6 +42,7 @@ namespace OpenTabletDriver
 
             Log.Write("Detect", "Searching for tablets...");
 
+            Dispose();
             InputDevices.Clear();
             foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
             {
