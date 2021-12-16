@@ -41,7 +41,8 @@ namespace OpenTabletDriver.Console
         {
             CreateCommand<FileInfo>(LoadSettings, "Load settings from a file", "load"),
             CreateCommand<FileInfo>(SaveSettings, "Save settings to a file", "save"),
-            CreateCommand<string>(ApplyPreset, "Apply a preset from the Presets directory", "preset")
+            CreateCommand<string>(ApplyPreset, "Apply a preset from the Presets directory", "preset"),
+            CreateCommand<string>(SavePreset, "Save the current settings to the Presets directory")
         };
 
         private static readonly IEnumerable<Command> ActionCommands = new Command[]
