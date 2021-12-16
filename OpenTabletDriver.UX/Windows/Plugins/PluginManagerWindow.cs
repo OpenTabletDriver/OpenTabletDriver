@@ -172,6 +172,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             var dialog = new OpenFileDialog()
             {
                 Title = "Choose a plugin to install...",
+                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                 MultiSelect = true,
                 Filters =
                 {
