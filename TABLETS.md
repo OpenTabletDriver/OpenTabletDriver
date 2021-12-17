@@ -103,7 +103,7 @@
 | Parblo A610 Pro               |  Missing Features | Wheel is unsupported.
 | Parblo Intangbo M             |  Missing Features | Wheel is unsupported.
 | Parblo Intangbo S             |  Missing Features | Wheel is unsupported.
-| UGEE EX08                     |  Missing Features | Tilt is unsupported. Uses the same Config as the XP-Pen Deco 01 V2.
+| UGEE EX08                     |  Missing Features | Tilt is unsupported. Uses the same configuration as the XP-Pen Deco 01 V2.
 | VEIKK A15 Pro                 |  Missing Features | Wheel is unsupported.
 | VEIKK A30                     |  Missing Features | Touchpad is unsupported.
 | VEIKK A50                     |  Missing Features | Touchpad is unsupported.
