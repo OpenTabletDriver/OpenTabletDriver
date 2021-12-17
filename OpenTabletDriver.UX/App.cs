@@ -7,9 +7,7 @@ using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.RPC;
 using OpenTabletDriver.UX.Windows;
@@ -62,8 +60,8 @@ namespace OpenTabletDriver.UX
                 }
             }
 
-            // Add notification handler
             app.NotificationActivated += Current.HandleNotification;
+            app.UnhandledException += ShowUnhandledException;
 
             app.Run(mainForm);
         }
@@ -76,7 +74,6 @@ namespace OpenTabletDriver.UX
         public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
 
         public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
-
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
 
         private Settings settings;
@@ -121,6 +118,13 @@ namespace OpenTabletDriver.UX
         {
             if (NotificationHandlers.ContainsKey(e.ID))
                 NotificationHandlers[e.ID].Invoke();
+        }
+
+        private static void ShowUnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+            Log.Exception(exception);
+            exception.ShowMessageBox();
         }
     }
 }

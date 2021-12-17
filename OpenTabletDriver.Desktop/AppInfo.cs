@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop
 {
     public class AppInfo
     {
-        private string configurationDirectory, settingsFile, pluginDirectory, temporaryDirectory, cacheDirectory, trashDirectory;
+        private string configurationDirectory, settingsFile, pluginDirectory, presetDirectory, temporaryDirectory, cacheDirectory, trashDirectory;
         private static AppInfo _current;
 
         public static AppInfo Current
@@ -41,6 +41,8 @@ namespace OpenTabletDriver.Desktop
 
         public static DesktopPluginManager PluginManager { get; } = new DesktopPluginManager();
 
+        public static PresetManager PresetManager { get; } = new PresetManager();
+
         public virtual string AppDataDirectory { set; get; }
 
         public string ConfigurationDirectory
@@ -59,6 +61,12 @@ namespace OpenTabletDriver.Desktop
         {
             set => this.pluginDirectory = value;
             get => this.pluginDirectory ?? GetDefaultPluginDirectory();
+        }
+
+        public string PresetDirectory
+        {
+            set => this.presetDirectory = value;
+            get => this.presetDirectory ?? GetDefaultPresetDirectory();
         }
 
         public string TemporaryDirectory
@@ -107,6 +115,7 @@ namespace OpenTabletDriver.Desktop
 
         private string GetDefaultSettingsFile() => Path.Join(AppDataDirectory, "settings.json");
         private string GetDefaultPluginDirectory() => Path.Join(AppDataDirectory, "Plugins");
+        private string GetDefaultPresetDirectory() => Path.Join(AppDataDirectory, "Presets");
         private string GetDefaultTemporaryDirectory() => Path.Join(AppDataDirectory, "Temp");
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
