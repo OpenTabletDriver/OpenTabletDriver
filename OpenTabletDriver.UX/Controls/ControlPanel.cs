@@ -111,7 +111,8 @@ namespace OpenTabletDriver.UX.Controls
             ProfileChanged?.Invoke(this, new EventArgs());
             if (Profile != null && await Profile.GetTabletReference() is TabletReference tablet)
             {
-                var placeholderFocused = tabControl.SelectedPage == placeholder.Parent;
+                if (tabControl.SelectedPage == placeholder.Parent)
+                    tabControl.SelectedIndex = 0;
 
                 tabControl.Pages.Clear();
 
@@ -125,11 +126,6 @@ namespace OpenTabletDriver.UX.Controls
                     tabControl.Pages.Add(mouseBindingEditor.Parent as TabPage);
                 tabControl.Pages.Add(toolEditor.Parent as TabPage);
                 tabControl.Pages.Add(logView.Parent as TabPage);
-
-                if (placeholderFocused)
-                {
-                    tabControl.SelectedIndex = 0;
-                }
             }
             else
             {
