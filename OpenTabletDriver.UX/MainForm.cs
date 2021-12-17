@@ -164,7 +164,7 @@ namespace OpenTabletDriver.UX
             savePreset.Executed += async (sender, e) => await SavePresetDialog();
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
-            detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
+            detectTablet.Executed += async (sender, e) => await DetectTablet();
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             showTabletDebugger.Executed += (sender, e) => App.Current.DebuggerWindow.Show();
@@ -528,6 +528,12 @@ namespace OpenTabletDriver.UX
             App.Current.Settings = preset.GetSettings();
             App.Driver.Instance.SetSettings(App.Current.Settings);
             Log.Write("Settings", $"Applied preset '{preset.Name}'");
+        }
+
+        private async Task DetectTablet()
+        {
+            await Driver.Instance.DetectTablets();
+            await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
         }
 
         private async Task ExportDiagnostics()
