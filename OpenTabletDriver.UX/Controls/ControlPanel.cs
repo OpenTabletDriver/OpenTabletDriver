@@ -132,6 +132,8 @@ namespace OpenTabletDriver.UX.Controls
                 tabControl.Pages.Clear();
                 tabControl.Pages.Add(placeholder.Parent as TabPage);
                 tabControl.Pages.Add(logView.Parent as TabPage);
+
+                tabControl.SelectedIndex = 0;
             }
         });
 
