@@ -104,7 +104,7 @@ namespace OpenTabletDriver.Desktop
                 if (Directory.Exists(dir))
                     return dir;
 
-            return directories.Last();
+            return InjectVariablesIntoPath(directories.Last());
         }
 
         private string GetDefaultConfigurationDirectory() => GetDirectoryIfExists(

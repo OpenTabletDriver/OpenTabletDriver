@@ -12,28 +12,29 @@ namespace OpenTabletDriver.UX
         {
             this.window = window;
 
-            indicator = new TrayIndicator
+            Indicator = new TrayIndicator
             {
                 Title = "OpenTabletDriver",
                 Image = App.Logo
             };
+			Indicator.Activated += (object sender, System.EventArgs e) =>
             RefreshMenuItems();
 
-            indicator.Activated += (object sender, System.EventArgs e) =>
+            Indicator.Activated += (object sender, System.EventArgs e) =>
             {
                 window.Show();
                 window.BringToFront();
             };
-            indicator.Show();
+            Indicator.Show();
         }
 
-        private TrayIndicator indicator;
+        public TrayIndicator Indicator { get; }
         private MainForm window;
 
         public void Dispose()
         {
-            indicator.Hide();
-            indicator.Dispose();
+            Indicator.Hide();
+            Indicator.Dispose();
         }
 
         public void RefreshMenuItems()
@@ -76,7 +77,7 @@ namespace OpenTabletDriver.UX
             items.Add(showWindow);
             items.Add(close);
 
-            indicator.Menu = new ContextMenu(items);
+            Indicator.Menu = new ContextMenu(items);
         }
     }
 }
