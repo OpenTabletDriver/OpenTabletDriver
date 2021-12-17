@@ -5,7 +5,7 @@ namespace OpenTabletDriver
 {
     public class InputDeviceTreeList : Collection<InputDeviceTree>
     {
-        public new void Clear()
+        protected override void ClearItems()
         {
             var outdatedDevices = new List<InputDevice>();
             foreach (var tree in base.Items)
@@ -15,7 +15,7 @@ namespace OpenTabletDriver
             foreach (var dev in outdatedDevices)
                 dev.Dispose();
             
-            base.Clear();
+            base.ClearItems();
         }
     }
 }
