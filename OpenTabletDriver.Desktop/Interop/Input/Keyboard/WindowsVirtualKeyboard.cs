@@ -173,6 +173,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "Alt", VirtualKey.VK_MENU },
             { "Control", VirtualKey.VK_CONTROL },
             { "Application", VirtualKey.VK_LWIN },
+            { "Mute", VirtualKey.VK_VOLUME_MUTE },
+            { "VolumeDown", VirtualKey.VK_VOLUME_DOWN },
+            { "VolumeUp", VirtualKey.VK_VOLUME_UP },
+            { "Play/Pause", VirtualKey.VK_MEDIA_PLAY_PAUSE },
+            { "Stop", VirtualKey.VK_MEDIA_STOP },
+            { "PreviousTrack", VirtualKey.VK_MEDIA_PREV_TRACK },
+            { "NextTrack", VirtualKey.VK_MEDIA_NEXT_TRACK },
         };
     }
 }
