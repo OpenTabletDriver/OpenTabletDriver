@@ -1,0 +1,41 @@
+{
+    "Name": "Huion H420",
+    "Specifications": {
+      "Digitizer": {
+        "Width": 101.6,
+        "Height": 57.01294964,
+        "MaxX": 8340.0,
+        "MaxY": 4680.0
+      },
+      "Pen": {
+        "MaxPressure": 2047,
+        "Buttons": {
+          "ButtonCount": 2
+        }
+      },
+      "AuxiliaryButtons": 3,
+      "MouseButtons": null,
+      "Touch": null
+    },
+    "DigitizerIdentifiers": [
+      {
+        "VendorID": 9580,
+        "ProductID": 110,
+        "InputReportLength": 8,
+        "OutputReportLength": null,
+        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+        "FeatureInitReport": null,
+        "OutputInitReport": null,
+        "DeviceStrings": {
+          "121": "H850_F\\d{3}"
+        },
+        "InitializationStrings": [
+          "200"
+        ]
+      }
+    ],
+    "AuxilaryDeviceIdentifiers": [],
+    "Attributes": {
+      "libinputoverride": "1"
+    }
+  } 
