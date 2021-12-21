@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English] (README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | Deutsch
+[English](README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | Deutsch
 
 OpenTabletDriver ist ein open source, platformübergreifender, Benutzermodus Tablet Driver. Das Ziel von OpenTabletDriver ist es so cross platform wie möglich zu sein mit der höchsten Kompatibilität und einer einfach konfigurierbaren grafsichen Benutzeroberfläche.
 
@@ -16,7 +16,7 @@ OpenTabletDriver ist ein open source, platformübergreifender, Benutzermodus Tab
 
 Der Status aller unterstützten, ungestesteten und zur Ünterstützung geplanten Tablets kann hier eingesehen werden. Häufige Fehler und deren Lösungen sind auf den wikis der jeweiligen Platform zu finden.
 
-- [Supported Tablets](https://opentabletdriver.net/Tablets)
+- [Unterstützte Tablets](https://opentabletdriver.net/Tablets)
 
 # Installation
 
@@ -68,7 +68,7 @@ Diese Datei sollte dann in `/etc/udev/rules.d/` verschoben werden:
 sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
 ```
 
-#### MacOS [Experimental]
+#### MacOS [Experimentell]
 
 Keine weiteren Abhängigkeiten.
 
@@ -108,8 +108,7 @@ Keine weiteren Abhängigkeiten.
 
 Wenn Sie zu OpenTabletDriver beitragen wollen, besuchen Sie den [issue
 tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Wenn Sie 
-ein pull request erstellen wollen, folgen Sie den Richtlinien unter [Beitragsrichtlinien]
-(https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
+ein pull request erstellen wollen, folgen Sie den Richtlinien unter [Beitragsrichtlinien](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
 Wenn Sie Probleme oder Vorschläge haben, [Erstellen Sie ein issue
 ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
