@@ -18,7 +18,8 @@ namespace OpenTabletDriver.Desktop.Reflection
             var assemblies = new[]
             {
                 Assembly.Load("OpenTabletDriver.Desktop"),
-                Assembly.Load("OpenTabletDriver.Configurations")
+                Assembly.Load("OpenTabletDriver.Configurations"),
+                Assembly.Load("OpenTabletDriver.Plugin")
             };
 
             libTypes = (from type in typeof(IDriver).Assembly.GetExportedTypes()
