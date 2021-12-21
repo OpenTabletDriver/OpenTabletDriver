@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Attributes;
@@ -11,27 +12,22 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     [PluginIgnore]
     public abstract class WindowsVirtualMouse : IVirtualMouse
     {
-        protected INPUT[] inputs = new INPUT[]
-        {
-            new INPUT
-            {
-                type = INPUT_TYPE.MOUSE_INPUT,
-                U = new InputUnion
-                {
-                    mi = new MOUSEINPUT
-                    {
-                        time = 0,
-                        dwExtraInfo = UIntPtr.Zero
-                    }
-                }
-            }
-        };
+        protected readonly unsafe INPUT* input;
+        protected readonly unsafe MOUSEINPUT* mouseInput;
 
-        protected void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
+        public unsafe WindowsVirtualMouse()
         {
-            inputs[0].U.mi.dwFlags = arg;
-            inputs[0].U.mi.mouseData = dwData;
-            SendInput(1, inputs, INPUT.Size);
+            var pinnedBuffer = GC.AllocateArray<INPUT>(1, true);
+            input = (INPUT*)Unsafe.AsPointer(ref pinnedBuffer[0]);
+            input->type = INPUT_TYPE.MOUSE_INPUT;
+            mouseInput = input->MouseInputPtr;
+        }
+
+        protected unsafe void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
+        {
+            mouseInput->dwFlags = arg;
+            mouseInput->mouseData = dwData;
+            SendInput(1, input, sizeof(INPUT));
         }
 
         public void MouseDown(MouseButton button)

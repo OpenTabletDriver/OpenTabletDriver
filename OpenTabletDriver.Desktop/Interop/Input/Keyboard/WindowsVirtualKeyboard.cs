@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
@@ -10,27 +11,30 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
     public class WindowsVirtualKeyboard : IVirtualKeyboard
     {
-        private void KeyEvent(string key, bool isPress)
+        private readonly unsafe INPUT* input;
+        private readonly unsafe KEYBDINPUT* keyboardInput;
+
+        public unsafe WindowsVirtualKeyboard()
+        {
+            var pinnedBuffer = GC.AllocateArray<INPUT>(1, true);
+            input = (INPUT*)Unsafe.AsPointer(ref pinnedBuffer[0]);
+            input->type = INPUT_TYPE.KEYBD_INPUT;
+            keyboardInput = input->KeyboardInputPtr;
+        }
+
+        private unsafe void KeyEvent(string key, bool isPress)
         {
             var vk = EtoKeysymToVK[key];
-            var input = new INPUT
+
+            *keyboardInput = new KEYBDINPUT
             {
-                type = INPUT_TYPE.KEYBD_INPUT,
-                U = new InputUnion
-                {
-                    ki = new KEYBDINPUT
-                    {
-                        wVk = (short)vk,
-                        wScan = 0,
-                        dwFlags = isPress ? KEYEVENTF.KEYDOWN : KEYEVENTF.KEYUP,
-                        time = 0,
-                        dwExtraInfo = UIntPtr.Zero
-                    }
-                }
+                wVk = (short)vk,
+                wScan = 0,
+                dwFlags = isPress ? KEYEVENTF.KEYDOWN : KEYEVENTF.KEYUP,
+                time = 0
             };
 
-            var inputs = new INPUT[] { input };
-            SendInput((uint)inputs.Length, inputs, INPUT.Size);
+            SendInput(1, input, sizeof(INPUT));
         }
 
         public void Press(string key)
