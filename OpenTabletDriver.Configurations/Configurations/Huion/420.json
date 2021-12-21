@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "121": "H850_F\\d{3}"
+        "6": "420"
       },
       "InitializationStrings": [
         100
