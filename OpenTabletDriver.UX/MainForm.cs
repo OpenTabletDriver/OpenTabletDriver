@@ -544,7 +544,7 @@ namespace OpenTabletDriver.UX
                 var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
                 var fileDialog = new SaveFileDialog
                 {
-                    Title = "Exporting diagnostic information...",
+                    Title = "Save diagnostic information to...",
                     Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                     Filters =
                     {
