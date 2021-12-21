@@ -17,7 +17,7 @@ namespace OpenTabletDriver.UX
                 Title = "OpenTabletDriver",
                 Image = App.Logo
             };
-			Indicator.Activated += (object sender, System.EventArgs e) =>
+
             RefreshMenuItems();
 
             Indicator.Activated += (object sender, System.EventArgs e) =>
