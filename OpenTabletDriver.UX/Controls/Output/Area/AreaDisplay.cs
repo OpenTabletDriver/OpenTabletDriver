@@ -34,7 +34,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private string unit, invalidForegroundError, invalidBackgroundError;
         protected IEnumerable<RectangleF> areaBounds;
         private RectangleF fullAreaBounds;
-        private readonly TextDrawer textDrawer = new ();
+        private readonly TextDrawer textDrawer = new();
 
         public event EventHandler<EventArgs> AreaChanged;
         public event EventHandler<EventArgs> LockToUsableAreaChanged;
