@@ -17,59 +17,52 @@ namespace OpenTabletDriver.UX.Controls
     {
         public ControlPanel()
         {
-            tabControl = new TabControl
+            new TabPage
             {
-                Pages =
+                Text = "Output",
+                Content = outputModeEditor = new()
+            };
+            new TabPage
+            {
+                Text = "Filters",
+                Padding = 5,
+                Content = filterEditor = new()
+            };
+            new TabPage
+            {
+                Text = "Pen Settings",
+                Content = penBindingEditor = new PenBindingEditor()
+            };
+            new TabPage
+            {
+                Text = "Auxiliary Settings",
+                Content = auxBindingEditor = new AuxiliaryBindingEditor()
+            };
+            new TabPage
+            {
+                Text = "Mouse Settings",
+                Content = mouseBindingEditor = new MouseBindingEditor()
+            };
+            new TabPage
+            {
+                Text = "Tools",
+                Padding = 5,
+                Content = toolEditor = new()
+            };
+            new TabPage
+            {
+                Text = "Info",
+                Padding = 5,
+                Content = placeholder = new Placeholder
                 {
-                    new TabPage
-                    {
-                        Text = "Output",
-                        Content = outputModeEditor = new OutputModeEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Filters",
-                        Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>()
-                    },
-                    new TabPage
-                    {
-                        Text = "Pen Settings",
-                        Content = penBindingEditor = new PenBindingEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Auxiliary Settings",
-                        Content = auxBindingEditor = new AuxiliaryBindingEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Mouse Settings",
-                        Content = mouseBindingEditor = new MouseBindingEditor()
-                    },
-                    new TabPage
-                    {
-                        Text = "Tools",
-                        Padding = 5,
-                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>()
-                    },
-                    new TabPage
-                    {
-                        Text = "Info",
-                        Padding = 5,
-                        Visible = false,
-                        Content = placeholder = new Placeholder
-                        {
-                            Text = "No tablets are detected."
-                        }
-                    },
-                    new TabPage
-                    {
-                        Text = "Console",
-                        Padding = 5,
-                        Content = logView = new LogView()
-                    }
+                    Text = "No tablets are detected."
                 }
+            };
+            new TabPage
+            {
+                Text = "Console",
+                Padding = 5,
+                Content = logView = new()
             };
 
             outputModeEditor.ProfileBinding.Bind(ProfileBinding);
@@ -81,7 +74,7 @@ namespace OpenTabletDriver.UX.Controls
 
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
-            this.Content = tabControl;
+            this.Content = tabControl = new TabControl();
 
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {
@@ -118,30 +111,29 @@ namespace OpenTabletDriver.UX.Controls
             ProfileChanged?.Invoke(this, new EventArgs());
             if (Profile != null && await Profile.GetTabletReference() is TabletReference tablet)
             {
-                var placeholderFocused = tabControl.SelectedPage == placeholder.Parent;
-
-                placeholder.Parent.Visible = false;
-                outputModeEditor.Parent.Visible = true;
-                filterEditor.Parent.Visible = true;
-                toolEditor.Parent.Visible = true;
-                penBindingEditor.Parent.Visible = tablet.Properties.Specifications.Pen != null;
-                auxBindingEditor.Parent.Visible = tablet.Properties.Specifications.AuxiliaryButtons != null;
-                mouseBindingEditor.Parent.Visible = tablet.Properties.Specifications.MouseButtons != null;
-
-                if (placeholderFocused)
-                {
+                if (tabControl.SelectedPage == placeholder.Parent)
                     tabControl.SelectedIndex = 0;
-                }
+
+                tabControl.Pages.Clear();
+
+                tabControl.Pages.Add(outputModeEditor.Parent as TabPage);
+                tabControl.Pages.Add(filterEditor.Parent as TabPage);
+                if (tablet.Properties.Specifications.Pen != null)
+                    tabControl.Pages.Add(penBindingEditor.Parent as TabPage);
+                if (tablet.Properties.Specifications.AuxiliaryButtons != null)
+                    tabControl.Pages.Add(auxBindingEditor.Parent as TabPage);
+                if (tablet.Properties.Specifications.MouseButtons != null)
+                    tabControl.Pages.Add(mouseBindingEditor.Parent as TabPage);
+                tabControl.Pages.Add(toolEditor.Parent as TabPage);
+                tabControl.Pages.Add(logView.Parent as TabPage);
             }
             else
             {
-                placeholder.Parent.Visible = true;
-                outputModeEditor.Parent.Visible = false;
-                filterEditor.Parent.Visible = false;
-                toolEditor.Parent.Visible = false;
-                penBindingEditor.Parent.Visible = false;
-                auxBindingEditor.Parent.Visible = false;
-                mouseBindingEditor.Parent.Visible = false;
+                tabControl.Pages.Clear();
+                tabControl.Pages.Add(placeholder.Parent as TabPage);
+                tabControl.Pages.Add(logView.Parent as TabPage);
+
+                tabControl.SelectedIndex = 0;
             }
         });
 
