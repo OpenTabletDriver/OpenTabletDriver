@@ -5,6 +5,7 @@ using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -20,6 +21,7 @@ namespace OpenTabletDriver.Desktop.Interop
         {
         }
 
+        private static IUpdater updater;
         private static IVirtualScreen virtualScreen;
         private static IAbsolutePointer absolutePointer;
         private static IRelativePointer relativePointer;
@@ -59,6 +61,13 @@ namespace OpenTabletDriver.Desktop.Interop
                     break;
             }
         }
+
+        public static IUpdater Updater => CurrentPlatform switch
+        {
+            PluginPlatform.Windows => updater ??= new WindowsUpdater(),
+            PluginPlatform.MacOS   => updater ??= new MacOSUpdater(),
+            _                      => null
+        };
 
         public static ITimer Timer => CurrentPlatform switch
         {

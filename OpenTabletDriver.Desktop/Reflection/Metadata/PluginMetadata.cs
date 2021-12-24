@@ -68,7 +68,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public static string GetSHA256(Stream stream)
         {
-            using (var sha256 = SHA256Managed.Create())
+            using (var sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 var hashData = sha256.ComputeHash(stream);
                 stream.Position = 0;

@@ -32,6 +32,11 @@ namespace OpenTabletDriver.Desktop.Output
 
             if (report is IProximityReport proximityReport)
                 VirtualTablet.SetProximity(proximityReport.NearProximity, proximityReport.HoverDistance);
+
+            if (report is OutOfRangeReport)
+                VirtualTablet.ResetButtons();
+
+            VirtualTablet.Sync();
         }
     }
 }

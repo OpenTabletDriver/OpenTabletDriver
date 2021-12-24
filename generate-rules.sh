@@ -4,7 +4,7 @@ SRC_ROOT=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
 [ ! -d "${SRC_ROOT}" ] && exit 100;
 
 PROJECT="${SRC_ROOT}/OpenTabletDriver.Tools.udev"
-FRAMEWORK="net5.0"
+FRAMEWORK="net6.0"
 
 TABLET_CONFIGURATIONS="${SRC_ROOT}/OpenTabletDriver.Configurations/Configurations"
 RULES_FILE="${SRC_ROOT}/bin/99-opentabletdriver.rules"

@@ -28,7 +28,7 @@ namespace OpenTabletDriver
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
 
         public ICompositeDeviceHub CompositeDeviceHub { get; }
-        public IList<InputDeviceTree> InputDevices { get; } = new List<InputDeviceTree>();
+        public InputDeviceTreeList InputDevices { get; } = new();
         public IEnumerable<TabletReference> Tablets => InputDevices.Select(c => c.CreateReference());
 
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
@@ -39,6 +39,8 @@ namespace OpenTabletDriver
         public virtual bool Detect()
         {
             bool success = false;
+
+            Log.Write("Detect", "Searching for tablets...");
 
             InputDevices.Clear();
             foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
@@ -58,12 +60,17 @@ namespace OpenTabletDriver
 
             TabletsChanged?.Invoke(this, Tablets);
 
+            if (!success)
+            {
+                Log.Write("Detect", "No tablets were detected.");
+            }
+
             return success;
         }
 
         protected virtual InputDeviceTree? Match(TabletConfiguration config)
         {
-            Log.Write("Detect", $"Searching for tablet '{config.Name}'");
+            Log.Debug("Detect", $"Searching for tablet '{config.Name}'");
             try
             {
                 var devices = new List<InputDevice>();
@@ -89,7 +96,7 @@ namespace OpenTabletDriver
                 Log.Write(
                     "Driver",
                     "The current user does not have the permissions to open the device stream. " +
-                    "Follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#the-driver-fails-to-open-the-tablet-deviceioexception to resolve this issue.",
+                    "Follow the instructions from https://opentabletdriver.net/Wiki/FAQ/Linux#fail-device-streams to resolve this issue.",
                     LogLevel.Error
                 );
             }
@@ -99,7 +106,7 @@ namespace OpenTabletDriver
                 Log.Write(
                     "Driver",
                     "Device is currently in use by another kernel module. " +
-                    "Follow the instructions from https://github.com/OpenTabletDriver/OpenTabletDriver/wiki/Linux-FAQ#argumentoutofrangeexception-value-0-15 to resolve this issue.",
+                    "Follow the instructions from https://opentabletdriver.net/Wiki/FAQ/Linux#argumentoutofrangeexception to resolve this issue.",
                     LogLevel.Error
                 );
             }
@@ -194,8 +201,8 @@ namespace OpenTabletDriver
 
         public void Dispose()
         {
-            foreach (InputDeviceTree tree in InputDevices)
-                foreach (InputDevice dev in tree.InputDevices)
+            foreach (InputDeviceTree tree in InputDevices.ToList())
+                foreach (InputDevice dev in tree.InputDevices.ToList())
                     dev.Dispose();
         }
     }

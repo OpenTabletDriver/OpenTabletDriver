@@ -1,0 +1,41 @@
+{
+  "Name": "XP-Pen Innovator 16",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 343.915,
+      "Height": 193.545,
+      "MaxX": 68783.0,
+      "MaxY": 38709.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2348,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArEE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

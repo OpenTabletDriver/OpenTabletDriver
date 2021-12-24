@@ -10,7 +10,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
     {
-        private const int Max = 1 << 28;
         private static readonly EventCode[] BUTTONS =
         {
             EventCode.BTN_STYLUS,
@@ -18,7 +17,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             EventCode.BTN_STYLUS3
         };
 
-        private Vector2 ScreenScale = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height);
+        private const int RESOLUTION = 1000; // subpixels per screen pixel
+
         private bool IsEraser = false;
         private bool Proximity = true;
 
@@ -31,16 +31,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var xAbs = new input_absinfo
             {
-                maximum = Max,
-                resolution = 100
+                maximum = (int)(DesktopInterop.VirtualScreen.Width * RESOLUTION),
+                resolution = 100000
             };
             input_absinfo* xPtr = &xAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_X, (IntPtr)xPtr);
 
             var yAbs = new input_absinfo
             {
-                maximum = Max,
-                resolution = 100
+                maximum = (int)(DesktopInterop.VirtualScreen.Height * RESOLUTION),
+                resolution = 100000
             };
             input_absinfo* yPtr = &yAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
@@ -96,31 +96,26 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            var newPos = pos / ScreenScale * Max;
             Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)newPos.X);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)newPos.Y);
-            Device.Sync();
+            Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
+            Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
 
         public void SetPressure(float percentage)
         {
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, percentage > 0 ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MaxPressure * percentage));
-            Device.Sync();
         }
 
         public void SetTilt(Vector2 tilt)
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_X, (int)tilt.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_Y, (int)tilt.Y);
-            Device.Sync();
         }
 
         public void SetButtonState(uint button, bool active)
         {
             Device.Write(EventType.EV_KEY, BUTTONS[button], active ? 1 : 0);
-            Device.Sync();
         }
 
         public void SetEraser(bool isEraser)
@@ -132,8 +127,24 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Proximity = proximity;
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
-            Device.Sync();
         }
+
+        public void ResetButtons()
+        {
+            // Zero out everything except position and tilt
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_PEN, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, 0);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS2, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
+
+            IsEraser = false;
+            Proximity = true; // we counterintuitively set this to true since its the initial state
+        }
+
+        public void Sync() => Device.Sync();
 
         protected override EventCode? GetCode(MouseButton button) => null;
     }

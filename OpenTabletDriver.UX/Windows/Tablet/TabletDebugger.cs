@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             var debugger = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Height = 400,
+                Height = 370,
                 Padding = 5,
                 Spacing = 5,
                 Items =
@@ -118,9 +118,11 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 }
             };
 
-            this.Content = new Splitter
+            var splitter = new Splitter
             {
                 Orientation = Orientation.Vertical,
+                Width = 660,
+                Height = 800,
                 FixedPanel = SplitterFixedPanel.Panel2,
                 Panel1 = new DebuggerGroup
                 {
@@ -128,6 +130,11 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     Content = tabletVisualizer = new TabletVisualizer()
                 },
                 Panel2 = debugger
+            };
+
+            this.Content = new Scrollable
+            {
+                Content = splitter
             };
 
             var reportBinding = ReportDataBinding.Child(c => (c.ToObject() as IDeviceReport));
@@ -139,10 +146,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             reportsRecorded.TextBinding.Bind(NumberOfReportsRecordedBinding.Convert(c => c.ToString()));
             tabletVisualizer.ReportDataBinding.Bind(ReportDataBinding);
 
-            Application.Instance.AsyncInvoke(() =>
-            {
-                App.Driver.AddConnectionHook(ConnectionHook);
-            });
+            App.Driver.DeviceReport += HandleReport;
+            App.Driver.TabletsChanged += HandleTabletsChanged;
+            App.Driver.Instance.SetTabletDebug(true);
 
             var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
             dataRecordingOutput = new StreamWriter(outputStream);
@@ -153,7 +159,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             base.OnClosing(e);
 
             await App.Driver.Instance.SetTabletDebug(false);
-            App.Driver.RemoveConnectionHook(ConnectionHook);
 
             dataRecordingOutput?.Close();
             dataRecordingOutput = null;
@@ -253,13 +258,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     (c, h) => c.NumberOfReportsRecordedChanged -= h
                 );
             }
-        }
-
-        private void ConnectionHook(IDriverDaemon daemon)
-        {
-            daemon.DeviceReport += HandleReport;
-            daemon.TabletsChanged += HandleTabletsChanged;
-            App.Driver.Instance.SetTabletDebug(true);
         }
 
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>

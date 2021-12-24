@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFrameworks>net5</TargetFrameworks>
+    <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
 </Project>

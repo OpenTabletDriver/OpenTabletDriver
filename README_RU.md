@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | Русский | [简体中文](README_CN.md)
+[English](README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | Русский | [简体中文](README_CN.md) | [Français](README_FR.md)
 
 OpenTabletDriver — кроссплатформенный драйвер с открытым исходным кодом для графических планшетов. Целью проекта является поддержка максимального числа устройств и платформ, а также создание простого и удобного интерфейса для настройки драйвера.
 
@@ -44,7 +44,7 @@ OpenTabletDriver работает в двух процессах, взаимод
 
 ### Все платформы
 
-- .NET 5 SDK
+- .NET 6 SDK
 
 #### Windows
 

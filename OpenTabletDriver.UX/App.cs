@@ -1,19 +1,21 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.UX.RPC;
 using OpenTabletDriver.UX.Windows;
 using OpenTabletDriver.UX.Windows.Configurations;
 using OpenTabletDriver.UX.Windows.Greeter;
 using OpenTabletDriver.UX.Windows.Plugins;
 using OpenTabletDriver.UX.Windows.Tablet;
+using OpenTabletDriver.UX.Windows.Updater;
 
 namespace OpenTabletDriver.UX
 {
@@ -58,15 +60,20 @@ namespace OpenTabletDriver.UX
                 }
             }
 
+            app.NotificationActivated += Current.HandleNotification;
+            app.UnhandledException += ShowUnhandledException;
+
             app.Run(mainForm);
         }
 
         public static App Current { get; } = new App();
 
-        public const string FaqUrl = "https://github.com/OpenTabletDriver/OpenTabletDriver/wiki#frequently-asked-questions";
+        public const string FaqUrl = "https://opentabletdriver.net/Wiki";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
-        public static RpcClient<IDriverDaemon> Driver { get; } = new RpcClient<IDriverDaemon>("OpenTabletDriver.Daemon");
+        public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
+
+        public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
 
         private Settings settings;
@@ -100,5 +107,24 @@ namespace OpenTabletDriver.UX
         public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
         public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
         public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
+        public WindowSingleton<UpdaterWindow> UpdaterWindow { get; } = new WindowSingleton<UpdaterWindow>();
+
+        public void AddNotificationHandler(string identifier, Action handler)
+        {
+            NotificationHandlers.Add(identifier, handler);
+        }
+
+        private void HandleNotification(object sender, NotificationEventArgs e)
+        {
+            if (NotificationHandlers.ContainsKey(e.ID))
+                NotificationHandlers[e.ID].Invoke();
+        }
+
+        private static void ShowUnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
+        {
+            var exception = e.ExceptionObject as Exception;
+            Log.Exception(exception);
+            exception.ShowMessageBox();
+        }
     }
 }

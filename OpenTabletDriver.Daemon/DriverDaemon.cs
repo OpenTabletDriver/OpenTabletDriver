@@ -4,14 +4,17 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Octokit;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
@@ -76,13 +79,14 @@ namespace OpenTabletDriver.Daemon
         private Settings? Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+        private IUpdater Updater = DesktopInterop.Updater;
         private readonly SleepDetectionThread SleepDetection;
 
         private bool debugging;
 
         public Task WriteMessage(LogMessage message)
         {
-            Log.OnOutput(message);
+            Log.Write(message);
             return Task.CompletedTask;
         }
 
@@ -151,14 +155,15 @@ namespace OpenTabletDriver.Daemon
 
             Settings = settings ??= Settings.GetDefaults();
 
-            foreach (var dev in Driver.InputDevices)
+            foreach (InputDeviceTree? dev in Driver.InputDevices)
             {
+                var tabletReference = dev.CreateReference();
                 string group = dev.Properties.Name;
                 var profile = Settings.Profiles[dev];
 
                 profile.BindingSettings.MatchSpecifications(dev.Properties.Specifications);
 
-                dev.OutputMode = profile.OutputMode.Construct<IOutputMode>();
+                dev.OutputMode = profile.OutputMode.Construct<IOutputMode>(tabletReference);
 
                 if (dev.OutputMode != null)
                     Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
@@ -171,8 +176,8 @@ namespace OpenTabletDriver.Daemon
 
                 if (dev.OutputMode is IOutputMode outputMode)
                 {
-                    SetOutputModeSettings(dev, outputMode, profile);
-                    SetBindingHandlerSettings(dev, outputMode, profile.BindingSettings);
+                    SetOutputModeSettings(dev, outputMode, profile, tabletReference);
+                    SetBindingHandlerSettings(dev, outputMode, profile.BindingSettings, tabletReference);
                 }
             }
 
@@ -226,19 +231,19 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetOutputModeSettings(InputDeviceTree dev, IOutputMode outputMode, Profile profile)
+    private void SetOutputModeSettings(InputDeviceTree dev, IOutputMode outputMode, Profile profile, TabletReference tabletReference)
         {
             string group = dev.Properties.Name;
             outputMode.Tablet = dev;
 
             var elements = from store in profile.Filters
                 where store.Enable == true
-                let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>()
+                let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(tabletReference)
                 where filter != null
                 select filter;
             outputMode.Elements = elements.ToList();
 
-            if (outputMode.Elements != null && outputMode.Elements.Count() > 0)
+            if (outputMode.Elements != null && outputMode.Elements.Count > 0)
                 Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
         }
 
@@ -273,7 +278,7 @@ namespace OpenTabletDriver.Daemon
             Log.Write(group, $"Reset time: {relativeMode.ResetTime}");
         }
 
-        private void SetBindingHandlerSettings(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings)
+        private void SetBindingHandlerSettings(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings, TabletReference tabletReference)
         {
             string group = dev.Properties.Name;
             var bindingHandler = new BindingHandler(outputMode);
@@ -291,8 +296,9 @@ namespace OpenTabletDriver.Daemon
 
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
-                Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider),
-                ActivationThreshold = settings.TipActivationPressure
+                Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
+
+                ActivationThreshold = settings.TipActivationThreshold
             };
 
             if (tip.Binding != null)
@@ -302,8 +308,8 @@ namespace OpenTabletDriver.Daemon
 
             var eraser = bindingHandler.Eraser = new ThresholdBindingState
             {
-                Binding = settings.EraserButton?.Construct<IBinding>(bindingServiceProvider),
-                ActivationThreshold = settings.EraserActivationPressure
+                Binding = settings.EraserButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
+                ActivationThreshold = settings.EraserActivationThreshold
             };
 
             if (eraser.Binding != null)
@@ -313,30 +319,30 @@ namespace OpenTabletDriver.Daemon
 
             if (settings.PenButtons != null && settings.PenButtons.Any(b => b?.Path != null))
             {
-                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.PenButtons, bindingHandler.PenButtons);
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.PenButtons, bindingHandler.PenButtons, tabletReference);
                 Log.Write(group, $"Pen Bindings: " + string.Join(", ", bindingHandler.PenButtons.Select(b => b.Value?.Binding)));
             }
 
             if (settings.AuxButtons != null && settings.AuxButtons.Any(b => b?.Path != null))
             {
-                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.AuxButtons, bindingHandler.AuxButtons);
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.AuxButtons, bindingHandler.AuxButtons, tabletReference);
                 Log.Write(group, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtons.Select(b => b.Value?.Binding)));
             }
 
             if (settings.MouseButtons != null && settings.MouseButtons.Any(b => b?.Path != null))
             {
-                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.MouseButtons, bindingHandler.MouseButtons);
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.MouseButtons, bindingHandler.MouseButtons, tabletReference);
                 Log.Write(group, $"Mouse Button Bindings: [" + string.Join("], [", bindingHandler.MouseButtons.Select(b => b.Value?.Binding)) + "]");
             }
 
             var scrollUp = bindingHandler.MouseScrollUp = new BindingState
             {
-                Binding = settings.MouseScrollUp?.Construct<IBinding>(bindingServiceProvider)
+                Binding = settings.MouseScrollUp?.Construct<IBinding>(bindingServiceProvider, tabletReference)
             };
 
             var scrollDown = bindingHandler.MouseScrollDown = new BindingState
             {
-                Binding = settings.MouseScrollDown?.Construct<IBinding>(bindingServiceProvider)
+                Binding = settings.MouseScrollDown?.Construct<IBinding>(bindingServiceProvider, tabletReference)
             };
 
             if (scrollUp.Binding != null || scrollDown.Binding != null)
@@ -345,11 +351,11 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict)
+        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict, TabletReference tabletReference)
         {
             for (int index = 0; index < collection.Count; index++)
             {
-                var binding = collection[index]?.Construct<IBinding>(serviceManager);
+                var binding = collection[index]?.Construct<IBinding>(serviceManager, tabletReference);
                 var state = binding == null ? null : new BindingState
                 {
                     Binding = binding
@@ -427,6 +433,21 @@ namespace OpenTabletDriver.Daemon
         {
             if (report != null && tablet != null)
                 DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
+        }
+
+        public Task<bool> HasUpdate()
+        {
+            return Updater?.CheckForUpdates() ?? Task.FromResult(false);
+        }
+
+        public async Task<Release> GetUpdateInfo()
+        {
+            return await Updater.GetRelease()!;
+        }
+
+        public Task InstallUpdate()
+        {
+            return Updater?.InstallUpdate() ?? Task.CompletedTask;
         }
     }
 }

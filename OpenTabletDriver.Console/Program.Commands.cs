@@ -20,6 +20,24 @@ namespace OpenTabletDriver.Console
 {
     partial class Program
     {
+        #region Update
+
+        private static async Task HasUpdate()
+        {
+            var hasUpdate = await Driver.Instance.HasUpdate();
+            await Out.WriteLineAsync(hasUpdate.ToString().ToLowerInvariant());
+        }
+
+        private static async Task InstallUpdate()
+        {            
+            if (await Driver.Instance.HasUpdate())
+            {
+                await Driver.Instance.InstallUpdate();
+            }
+        }
+
+        #endregion
+
         #region I/O
 
         private static async Task LoadSettings(FileInfo file)
@@ -31,6 +49,31 @@ namespace OpenTabletDriver.Console
         private static async Task SaveSettings(FileInfo file)
         {
             var settings = await GetSettings();
+            settings.Serialize(file);
+        }
+
+        private static async Task ApplyPreset(string name)
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+                presetDir.Create();
+            AppInfo.PresetManager.Refresh();
+
+            var preset = AppInfo.PresetManager.FindPreset(name);
+            await ApplySettings(preset.GetSettings());
+        }
+
+        private static async Task SavePreset(string name)
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+                presetDir.Create();
+
+            var settings = await GetSettings();
+            var file = new FileInfo(Path.Combine(presetDir.FullName, name + ".json"));
+
             settings.Serialize(file);
         }
 
@@ -83,7 +126,7 @@ namespace OpenTabletDriver.Console
                 var tipBinding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
 
                 p.BindingSettings.TipButton = new PluginSettingStore(tipBinding);
-                p.BindingSettings.TipActivationPressure = threshold;
+                p.BindingSettings.TipActivationThreshold = threshold;
             });
         }
 
@@ -201,7 +244,7 @@ namespace OpenTabletDriver.Console
         private static async Task GetBindings(string tablet)
         {
             var profile = await GetProfile(tablet);
-            await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format() ?? "None"}@{profile.BindingSettings.TipActivationPressure}%");
+            await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format() ?? "None"}@{profile.BindingSettings.TipActivationThreshold}%");
             await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", profile.BindingSettings.PenButtons.Format())}");
             await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", profile.BindingSettings.AuxButtons.Format())}");
         }

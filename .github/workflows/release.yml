@@ -30,7 +30,8 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: '6.0'
+          include-prerelease: True
       - name: Debian Build
         run: ./Debian/package build
       - name: Generic Linux Build
@@ -63,7 +64,8 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: '6.0'
+          include-prerelease: True
       - name: Package
         run: ./Windows/package.ps1 build
       - name: Upload assets for tag

@@ -45,6 +45,7 @@ namespace OpenTabletDriver.UX
                 try
                 {
                     await Driver.Connect();
+                    await CheckForUpdates();
                 }
                 catch (TimeoutException)
                 {
@@ -60,6 +61,7 @@ namespace OpenTabletDriver.UX
         private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
+        private TrayIcon trayIcon;
 
         protected override void InitializeForm()
         {
@@ -99,7 +101,7 @@ namespace OpenTabletDriver.UX
 
             if (App.EnableTrayIcon)
             {
-                var trayIcon = new TrayIcon(this);
+                trayIcon = new TrayIcon(this);
                 if (WindowState == WindowState.Minimized)
                 {
                     this.Visible = false;
@@ -185,8 +187,14 @@ namespace OpenTabletDriver.UX
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
             applySettings.Executed += async (sender, e) => await ApplySettings();
 
+            var refreshPresets = new Command { MenuText = "Refresh presets" };
+            refreshPresets.Executed += async (sender, e) => await RefreshPresets();
+
+            var savePreset = new Command { MenuText = "Save as preset..." };
+            savePreset.Executed += async (sender, e) => await SavePresetDialog();
+
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
-            detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
+            detectTablet.Executed += async (sender, e) => await DetectTablet();
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             showTabletDebugger.Executed += (sender, e) => App.Current.DebuggerWindow.Show();
@@ -223,7 +231,22 @@ namespace OpenTabletDriver.UX
                             saveSettings,
                             saveSettingsAs,
                             resetSettings,
-                            applySettings
+                            applySettings,
+                            new SeparatorMenuItem(),
+                            refreshPresets,
+                            savePreset,
+                            new ButtonMenuItem
+                            {
+                                Text = "Presets",
+                                Items =
+                                {
+                                    new ButtonMenuItem
+                                    {
+                                        Text = "No presets loaded",
+                                        Enabled = false
+                                    }
+                                }
+                            }
                         }
                     },
                     // Tablets submenu
@@ -286,7 +309,7 @@ namespace OpenTabletDriver.UX
         {
             // Hook events after the instance is (re)instantiated
             Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
-            Driver.Instance.TabletsChanged += (sender, tablet) => Application.Instance.AsyncInvoke(() => SetTitle(tablet));
+            Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
 
             // Load the application information from the daemon
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
@@ -324,6 +347,9 @@ namespace OpenTabletDriver.UX
                 }
             };
 
+            // Update preset options in File menu and tray icon
+            await RefreshPresets();
+
             // Update title to new instance
             if (await Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
                 SetTitle(tablets);
@@ -360,6 +386,7 @@ namespace OpenTabletDriver.UX
             var fileDialog = new OpenFileDialog
             {
                 Title = "Load OpenTabletDriver settings...",
+                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                 Filters =
                 {
                     new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
@@ -384,7 +411,7 @@ namespace OpenTabletDriver.UX
             var fileDialog = new SaveFileDialog
             {
                 Title = "Save OpenTabletDriver settings...",
-                Directory = new Uri(AppInfo.Current.AppDataDirectory),
+                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                 Filters =
                 {
                     new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
@@ -444,8 +471,99 @@ namespace OpenTabletDriver.UX
                     Message = message,
                     StackTrace = stack
                 };
-                Log.OnOutput(logMessage);
+                Log.Write(logMessage);
             }
+        }
+
+        private Task LoadPresets()
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+            {
+                presetDir.Create();
+                Log.Write("Settings", $"The preset directory '{presetDir.FullName}' has been created");
+            }
+
+            AppInfo.PresetManager.Refresh();
+            return Task.CompletedTask;
+        }
+
+        private Task RefreshPresets()
+        {
+            LoadPresets();
+
+            if (trayIcon != null) // Check non-Linux
+                trayIcon.RefreshMenuItems();
+
+            // Update File submenu
+            var presets = AppInfo.PresetManager.GetPresets();
+            var presetsMenu = menu.Items.GetSubmenu("&File").Items.GetSubmenu("Presets") as ButtonMenuItem;
+            presetsMenu.Items.Clear();
+
+            if (presets.Count != 0)
+            {
+                foreach (var preset in presets)
+                {
+                    var presetItem = new ButtonMenuItem
+                    {
+                        Text = preset.Name
+                    };
+                    presetItem.Click += PresetButtonHandler;
+
+                    presetsMenu.Items.Add(presetItem);
+                }
+            }
+            else
+            {
+                var emptyPresetsItem = new ButtonMenuItem
+                {
+                    Text = "No presets loaded",
+                    Enabled = false
+                };
+
+                presetsMenu.Items.Add(emptyPresetsItem);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private async Task SavePresetDialog()
+        {
+            var fileDialog = new SaveFileDialog
+            {
+                Title = "Save OpenTabletDriver settings as preset...",
+                Directory = new Uri(AppInfo.Current.PresetDirectory),
+                Filters =
+                {
+                    new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
+                }
+            };
+            switch (fileDialog.ShowDialog(this))
+            {
+                case DialogResult.Ok:
+                case DialogResult.Yes:
+                    var file = new FileInfo(fileDialog.FileName);
+                    if (App.Current.Settings is Settings settings)
+                        settings.Serialize(file);
+                        await RefreshPresets();
+                    break;
+            }
+        }
+
+        public static void PresetButtonHandler(object sender, EventArgs e)
+        {
+            var presetName = (sender as ButtonMenuItem).Text;
+            var preset = AppInfo.PresetManager.FindPreset(presetName);
+            App.Current.Settings = preset.GetSettings();
+            App.Driver.Instance.SetSettings(App.Current.Settings);
+            Log.Write("Settings", $"Applied preset '{preset.Name}'");
+        }
+
+        private async Task DetectTablet()
+        {
+            await Driver.Instance.DetectTablets();
+            await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
         }
 
         private async Task ExportDiagnostics()
@@ -456,7 +574,8 @@ namespace OpenTabletDriver.UX
                 var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
                 var fileDialog = new SaveFileDialog
                 {
-                    Title = "Exporting diagnostic information...",
+                    Title = "Save diagnostic information to...",
+                    Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                     Filters =
                     {
                         new FileFilter("Diagnostic information", ".json")
@@ -479,6 +598,24 @@ namespace OpenTabletDriver.UX
             {
                 Log.Exception(ex);
                 ex.ShowMessageBox();
+            }
+        }
+
+        private async Task CheckForUpdates()
+        {
+            if (await App.Driver.Instance.HasUpdate())
+            {
+                var id = "update-prompt";
+                var notification = new Notification
+                {
+                    ContentImage = App.Logo,
+                    Title = "OpenTabletDriver",
+                    Message = "An update to OpenTabletDriver is available.",
+                    ID = id
+                };
+                notification.Show(trayIcon?.Indicator);
+
+                App.Current.AddNotificationHandler(id, App.Current.UpdaterWindow.Show);
             }
         }
     }

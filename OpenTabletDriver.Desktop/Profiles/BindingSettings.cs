@@ -14,8 +14,8 @@ namespace OpenTabletDriver.Desktop.Profiles
             auxButtons = new PluginSettingStoreCollection(),
             mouseButtons = new PluginSettingStoreCollection();
 
-        [JsonProperty("TipActivationPressure")]
-        public float TipActivationPressure
+        [JsonProperty("TipActivationThreshold")]
+        public float TipActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.tP, value);
             get => this.tP;
@@ -28,8 +28,8 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.tipButton;
         }
 
-        [JsonProperty("EraserActivationPressure")]
-        public float EraserActivationPressure
+        [JsonProperty("EraserActivationThreshold")]
+        public float EraserActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.eP, value);
             get => this.eP;

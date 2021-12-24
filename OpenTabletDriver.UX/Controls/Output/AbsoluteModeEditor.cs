@@ -66,6 +66,8 @@ namespace OpenTabletDriver.UX.Controls.Output
             tabletHeight = SettingsBinding.Child(c => c.Tablet.Height);
             tabletWidth.DataValueChanged += HandleTabletAreaConstraint;
             tabletHeight.DataValueChanged += HandleTabletAreaConstraint;
+            displayWidth.DataValueChanged += HandleDisplayAreaConstraint;
+            displayHeight.DataValueChanged += HandleDisplayAreaConstraint;
 
             tabletAreaEditor.LockAspectRatioChanged += HookAspectRatioLock;
             HookAspectRatioLock(tabletAreaEditor, EventArgs.Empty);
@@ -408,7 +410,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 areaClippingCmd = new BooleanCommand
                 {
-                    MenuText = "Area clipping"
+                    MenuText = "Clamp input outside area"
                 };
 
                 ignoreOutsideAreaCmd = new BooleanCommand

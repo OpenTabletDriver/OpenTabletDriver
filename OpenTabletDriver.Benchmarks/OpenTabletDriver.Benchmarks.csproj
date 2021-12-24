@@ -2,7 +2,7 @@
 
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net5</TargetFrameworks>
+    <TargetFramework>$(FrameworkBase)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
