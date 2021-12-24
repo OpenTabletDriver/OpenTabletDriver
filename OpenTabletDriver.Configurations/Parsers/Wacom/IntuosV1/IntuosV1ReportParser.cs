@@ -12,7 +12,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
                 0x02 => GetToolReport(report),
                 0x10 => GetToolReport(report),
                 0x03 => new IntuosV1AuxReport(report),
-                0x0C => new Intuos4AuxReport(report),
                 _ => new DeviceReport(report)
             };
         }
