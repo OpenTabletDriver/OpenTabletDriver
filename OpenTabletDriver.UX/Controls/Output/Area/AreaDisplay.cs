@@ -12,11 +12,29 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 {
     public class AreaDisplay : ScheduledDrawable
     {
+        /// <summary>
+        /// Workaround for memeory leaks on macos.
+        /// Use shared FormattedText to draw text.
+        /// </summary>
+        private class TextDrawer
+        {
+            private readonly FormattedText sharedFormattedText = new();
+
+            public void DrawText(Graphics graphics, Font font, Brush brush, PointF location, String text)
+            {
+                sharedFormattedText.Text = text;
+                sharedFormattedText.Font = font;
+                sharedFormattedText.ForegroundBrush = brush;
+                graphics.DrawText(sharedFormattedText, location);
+            }
+        }
+
         private AreaSettings area;
         private bool lockToUsableArea;
         private string unit, invalidForegroundError, invalidBackgroundError;
         protected IEnumerable<RectangleF> areaBounds;
         private RectangleF fullAreaBounds;
+        private readonly TextDrawer textDrawer = new();
 
         public event EventHandler<EventArgs> AreaChanged;
         public event EventHandler<EventArgs> LockToUsableAreaChanged;
@@ -366,7 +384,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 area.Center.X - (ratioMeasure.Width / 2),
                 offsetY
             );
-            graphics.DrawText(Font, TextBrush, ratioPos, ratio);
+            textDrawer.DrawText(graphics, Font, TextBrush, ratioPos, ratio);
         }
 
         private void DrawWidthText(Graphics graphics, RectangleF area)
@@ -378,7 +396,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 area.MiddleTop.X - (widthTextSize.Width / 2),
                 Math.Min(area.MiddleTop.Y, minDist)
             );
-            graphics.DrawText(Font, TextBrush, widthTextPos, widthText);
+            textDrawer.DrawText(graphics, Font, TextBrush, widthTextPos, widthText);
         }
 
         private void DrawHeightText(Graphics graphics, RectangleF area)
@@ -393,7 +411,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     Math.Min(area.MiddleLeft.X, minDist)
                 );
                 graphics.RotateTransform(-90);
-                graphics.DrawText(Font, TextBrush, heightPos, heightText);
+                textDrawer.DrawText(graphics, Font, TextBrush, heightPos, heightText);
             }
         }
 
@@ -404,7 +422,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             var clientOffset = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;
             var offset = clientOffset - errorOffset;
 
-            graphics.DrawText(Font, TextBrush, offset, errorText);
+            textDrawer.DrawText(graphics, Font, TextBrush, offset, errorText);
         }
 
         private float CalculateScale(RectangleF rect)
