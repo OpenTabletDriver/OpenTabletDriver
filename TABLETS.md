@@ -26,6 +26,7 @@
 | Huion Q11K                    |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
+| Parblo A640 V2                |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
 | UGTABLET M708                 |     Supported     |
