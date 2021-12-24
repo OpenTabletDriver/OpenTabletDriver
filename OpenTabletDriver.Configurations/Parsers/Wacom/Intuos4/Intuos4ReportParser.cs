@@ -22,6 +22,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
             {
                 0xE0 => new IntuosV1TabletReport(data),
                 0xEC => new Intuos4MouseReport(data),
+                0xAC => new Intuos4MouseReport(data),
                 _ => new DeviceReport(data)
             };
         }
