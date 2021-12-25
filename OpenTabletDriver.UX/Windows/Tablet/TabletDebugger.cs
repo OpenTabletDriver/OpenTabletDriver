@@ -22,7 +22,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             : base(Application.Instance.MainForm)
         {
             Title = "Tablet Debugger";
-            this.ClientSize = new Size(640, 640);
 
             var debugger = new StackLayout
             {
