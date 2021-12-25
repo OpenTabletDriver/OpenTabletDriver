@@ -92,6 +92,12 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                             Header = "Initialization String Indexes",
                             Padding = 5,
                             Content = initializationStrings = new ByteListEditor()
+                        },
+                        new Expander
+                        {
+                            Header = "Attributes",
+                            Padding = new Padding(5, 5, 0, 5),
+                            Content = attributes = new StringDictionaryEditor()
                         }
                     }
                 };
@@ -119,6 +125,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
                 outputInitReport.ItemSourceBinding.Bind(EntryBinding.Child<IList<byte[]>>(e => e.OutputInitReport));
                 deviceStrings.ItemSourceBinding.Bind(EntryBinding.Child<IDictionary<byte, string>>(e => e.DeviceStrings));
                 initializationStrings.ItemSourceBinding.Bind(EntryBinding.Child<IList<byte>>(e => e.InitializationStrings));
+                attributes.ItemSourceBinding.Bind(EntryBinding.Child<IDictionary<string, string>>(c => c.Attributes));
             }
 
             protected StackLayout layout;
@@ -129,6 +136,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls
             private TypeDropDown<IReportParser<IDeviceReport>> reportParser;
             private DeviceStringEditor deviceStrings;
             private ByteListEditor initializationStrings;
+            private StringDictionaryEditor attributes;
 
             private T entry;
             public T Entry
