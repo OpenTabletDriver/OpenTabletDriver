@@ -27,7 +27,7 @@
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
 | Parblo A640 V2                |     Supported     |
-| UC-Logic 1060N                |     Supported     |
+| UC-Logic 1060N                |     Supported     | Windows: Some variants might requires Zadig's WinUSB to be installed on interface 0
 | UC-Logic PF1209               |     Supported     |
 | UGTABLET M708                 |     Supported     |
 | VEIKK A15                     |     Supported     |

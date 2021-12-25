@@ -8,7 +8,7 @@
       "MaxY": 30480.0
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 2047,
       "Buttons": {
         "ButtonCount": 2
       }
@@ -24,7 +24,7 @@
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
-      "OutputReportLength": null,
+      "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
@@ -36,11 +36,27 @@
       "InitializationStrings": [
         100
       ]
+    },
+    {
+      "VendorID": 21827,
+      "ProductID": 129,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "DeviceStrings": {
+        "201": "F600_A60n_E\\d{4}$"
+      },
+      "InitializationStrings": [
+        100
+      ],
+      "Attributes": {
+        "MacInterface": "0"
+      }
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
-    "libinputoverride": "1",
-    "MacInterface": "0"
+    "libinputoverride": "1"
   }
 }
