@@ -1,5 +1,7 @@
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
@@ -19,16 +21,9 @@ namespace OpenTabletDriver.UX
         }
 
         private bool initialized;
-        private bool lateCenter; // Workaround Eto bug, first found with Gtk platforms
 
         protected virtual void InitializeForm()
         {
-            if (ClientSize.Width == 0 && ClientSize.Height == 0)
-            {
-                lateCenter = true;
-                return;
-            }
-
             ToCenter();
         }
 
@@ -36,25 +31,30 @@ namespace OpenTabletDriver.UX
         {
             if (!initialized)
             {
-                InitializeForm();
                 initialized = true;
+                if (ClientSize.Width == 0 && ClientSize.Height == 0)
+                {
+                    base.Show();
+                    InitializeForm();
+                }
+                else
+                {
+                    InitializeForm();
+                    base.Show();
+                }
             }
-
-            base.Show();
-
-            if (lateCenter)
-                ToCenter();
         }
 
         private void ToCenter()
         {
-            var x = Owner.Location.X + (Owner.Size.Width / 2);
-            var y = Owner.Location.Y + (Owner.Size.Height / 2);
-            var center = new PointF(x, y);
+            if (DesktopInterop.CurrentPlatform == PluginPlatform.Windows)
+            {
+                var x = Owner.Location.X + (Owner.Size.Width / 2);
+                var y = Owner.Location.Y + (Owner.Size.Height / 2);
+                var center = new PointF(x, y);
 
-            Location = new Point((int)(center.X - (ClientSize.Width / 2)), (int)(center.Y - (ClientSize.Height / 2)));
-
-            lateCenter = false;
+                Location = new Point((int)(center.X - (ClientSize.Width / 2)), (int)(center.Y - (ClientSize.Height / 2)));
+            }
         }
     }
 }
