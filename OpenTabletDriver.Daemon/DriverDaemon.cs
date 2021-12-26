@@ -291,8 +291,8 @@ namespace OpenTabletDriver.Daemon
                 _ => null
             };
 
-            if (pointer is IVirtualMouse virtualMouse)
-                bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
+            if (pointer is IMouseButtonHandler mouseButtonHandler)
+                bindingServiceProvider.AddService(() => mouseButtonHandler);
 
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {

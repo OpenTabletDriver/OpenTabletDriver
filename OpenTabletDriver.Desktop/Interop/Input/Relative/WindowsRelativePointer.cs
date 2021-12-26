@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
     {
         private Vector2 error;
 
-        public void Translate(Vector2 delta)
+        public void SetPosition(Vector2 delta)
         {
             delta += error;
             error = new Vector2(delta.X % 1, delta.Y % 1);

@@ -21,11 +21,6 @@ namespace OpenTabletDriver.Desktop.Binding
                     stateBinding.Release(tablet, report);
             }
 
-            if (Binding is IInterruptBinding interruptBinding)
-            {
-                interruptBinding.Invoke(tablet, report);
-            }
-
             PreviousState = newState;
         }
     }
