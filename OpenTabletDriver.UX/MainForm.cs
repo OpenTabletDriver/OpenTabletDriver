@@ -513,7 +513,7 @@ namespace OpenTabletDriver.UX
             {
                 case DialogResult.Ok:
                 case DialogResult.Yes:
-                    var file = new FileInfo(fileDialog.FileName);
+                    var file = new FileInfo(fileDialog.FileName + (fileDialog.FileName.EndsWith(".json") ? "" : ".json"));
                     if (App.Current.Settings is Settings settings)
                         settings.Serialize(file);
                         await RefreshPresets();
