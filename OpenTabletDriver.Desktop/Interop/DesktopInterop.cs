@@ -72,7 +72,6 @@ namespace OpenTabletDriver.Desktop.Interop
         public static ITimer Timer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsTimer(),
-            PluginPlatform.Linux   => new LinuxTimer(),
             _                      => new FallbackTimer()
         };
 
