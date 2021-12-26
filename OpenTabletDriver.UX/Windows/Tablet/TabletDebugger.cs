@@ -23,6 +23,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         const int SPACING = 5;
 
         public TabletDebugger()
+            : base(Application.Instance.MainForm)
         {
             Title = "Tablet Debugger";
 

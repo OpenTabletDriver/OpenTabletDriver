@@ -16,6 +16,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     public class PluginManagerWindow : DesktopForm
     {
         public PluginManagerWindow()
+            : base(Application.Instance.MainForm)
         {
             this.Title = "Plugin Manager";
             this.ClientSize = new Size(1000, 750);

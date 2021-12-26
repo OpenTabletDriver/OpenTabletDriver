@@ -25,8 +25,12 @@ namespace OpenTabletDriver.UX
         {
             this.DataContext = App.Current;
 
+            // Call InitializeForm on ctor since DesktopForm.Show() won't be called on binary launch
+            InitializeForm();
+            InitializePlatform();
+
             SetTitle();
-            ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
+            Menu = ConstructMenu();
 
             base.Content = placeholder = new Placeholder
             {
@@ -51,23 +55,49 @@ namespace OpenTabletDriver.UX
             });
         }
 
+        private const int DEFAULT_CLIENT_WIDTH = 960;
+        private const int DEFAULT_CLIENT_HEIGHT = 760;
+
         private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
         private TrayIcon trayIcon;
 
-        protected override void OnInitializePlatform(EventArgs e)
+        protected override void InitializeForm()
         {
-            base.OnInitializePlatform(e);
+            var bounds = Screen.FromPoint(Mouse.Position).Bounds;
 
-            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
+            if (this.WindowState != WindowState.Maximized)
             {
-                var bounds = Screen.PrimaryScreen.Bounds;
-                var minWidth = Math.Min(DEFAULT_CLIENT_WIDTH + 10, bounds.Width * 0.9);
-                var minHeight = Math.Min(DEFAULT_CLIENT_HEIGHT + 10, bounds.Height * 0.9);
-                this.ClientSize = new Size((int)minWidth, (int)minHeight);
-                this.Padding = 10;
+                var minWidth = Math.Min(DEFAULT_CLIENT_WIDTH, bounds.Width * 0.95);
+                var minHeight = Math.Min(DEFAULT_CLIENT_HEIGHT, bounds.Height * 0.95);
+
+                this.Size = new Size((int)minWidth, (int)minHeight);
+
+                if (DesktopInterop.CurrentPlatform == PluginPlatform.Windows)
+                {
+                    var x = Screen.WorkingArea.Center.X - (minWidth / 2);
+                    var y = Screen.WorkingArea.Center.Y - (minHeight / 2);
+                    this.Location = new Point((int)x, (int)y);
+                }
             }
+        }
+
+        protected void InitializePlatform()
+        {
+            switch (DesktopInterop.CurrentPlatform)
+            {
+                case PluginPlatform.MacOS:
+                    this.Padding = 10;
+                    break;
+            }
+
+            bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
+            {
+                PluginPlatform.Windows => true,
+                PluginPlatform.MacOS   => true,
+                _                      => false,
+            };
 
             if (App.EnableTrayIcon)
             {
