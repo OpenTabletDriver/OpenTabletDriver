@@ -1,4 +1,4 @@
-name: .NET Core
+name: .NET CI
 
 on:
   push:
@@ -10,12 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Linux Publish
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0'
           include-prerelease: True
+
       - name: Linux Publish
         env:
           runtime: linux-x64
@@ -24,14 +27,16 @@ jobs:
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.UX.Gtk $options --runtime $runtime -o build/$runtime
+
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@master
         with:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
+
       - name: Generate udev Rules
-        run: |
-          ./generate-rules.sh
+        run: ./generate-rules.sh
+
       - name: Upload udev Rules
         uses: actions/upload-artifact@master
         with:
@@ -42,12 +47,15 @@ jobs:
     runs-on: ubuntu-latest
     name: MacOS Publish
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0'
           include-prerelease: True
+
       - name: MacOS Publish
         env:
           runtime: osx-x64
@@ -56,6 +64,7 @@ jobs:
           dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
           dotnet publish OpenTabletDriver.UX.MacOS $options --runtime $runtime -o build/$runtime
+
       - name: Upload MacOS artifacts
         uses: actions/upload-artifact@master
         with:
@@ -66,12 +75,15 @@ jobs:
     runs-on: windows-latest
     name: Windows Publish
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0'
           include-prerelease: True
+
       - name: Windows Publish
         env:
           runtime: win-x64
@@ -80,8 +92,27 @@ jobs:
           dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
+
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@master
         with:
           name: OpenTabletDriver win-x64
           path: build/win-x64
+
+  linter:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          # Full git history is needed to get a proper list of changed files within `super-linter`
+          fetch-depth: 0
+
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
