@@ -8,19 +8,12 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
     {
-        private static readonly EventCode[] BUTTONS =
-        {
-            EventCode.BTN_STYLUS,
-            EventCode.BTN_STYLUS2,
-            EventCode.BTN_STYLUS3
-        };
-
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
-        private bool IsEraser = false;
-        private bool Proximity = true;
+        private bool isEraser;
+        private bool proximity = true;
 
         public unsafe EvdevVirtualTablet()
         {
@@ -96,7 +89,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
+            Device.Write(EventType.EV_KEY, isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, proximity ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
@@ -113,23 +106,27 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_Y, (int)tilt.Y);
         }
 
-        public void SetButtonState(uint button, bool active)
-        {
-            Device.Write(EventType.EV_KEY, BUTTONS[button], active ? 1 : 0);
-        }
-
         public void SetEraser(bool isEraser)
         {
-            IsEraser = isEraser;
+            this.isEraser = isEraser;
         }
 
-        public void SetProximity(bool proximity, uint distance)
+        public void SetProximity(bool proximity)
         {
-            Proximity = proximity;
+            this.proximity = proximity;
+        }
+
+        public void SetHoverDistance(uint distance)
+        {
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
-        public void ResetButtons()
+        public void SetKeyState(EventCode eventCode, bool state)
+        {
+            Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
+        }
+
+        public void Reset()
         {
             // Zero out everything except position and tilt
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
@@ -140,11 +137,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS2, 0);
             Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
 
-            IsEraser = false;
-            Proximity = true; // we counterintuitively set this to true since its the initial state
+            isEraser = false;
+            proximity = true; // we counterintuitively set this to true since its the initial state
         }
 
-        public void Sync() => Device.Sync();
+        public void Flush()
+        {
+            Device.Sync();
+        }
 
         protected override EventCode? GetCode(MouseButton button) => null;
     }

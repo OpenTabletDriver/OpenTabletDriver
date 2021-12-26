@@ -35,6 +35,8 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
                 sb.AppendLines(GetStringFormat(toolReport));
+            if (report is OutOfRangeReport oorReport)
+                sb.AppendLines(GetStringFormat(oorReport));
 
             return sb.ToString();
         }
@@ -90,6 +92,11 @@ namespace OpenTabletDriver.UX.Tools
             yield return $"Tool:{Enum.GetName(typeof(ToolType), toolReport.Tool)}";
             yield return $"RawToolID:{toolReport.RawToolID}";
             yield return $"Serial:{toolReport.Serial}";
+        }
+
+        private static IEnumerable<string> GetStringFormat(OutOfRangeReport oorReport)
+        {
+            yield return $"Pen is out of Range";
         }
 
         private static void AppendLines(this StringBuilder sb, IEnumerable<string> lines)

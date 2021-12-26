@@ -25,8 +25,12 @@ namespace OpenTabletDriver.UX
         {
             this.DataContext = App.Current;
 
+            // Call InitializeForm on ctor since DesktopForm.Show() won't be called on binary launch
+            InitializeForm();
+            InitializePlatform();
+
             SetTitle();
-            ClientSize = new Size(DEFAULT_CLIENT_WIDTH, DEFAULT_CLIENT_HEIGHT);
+            Menu = ConstructMenu();
 
             base.Content = placeholder = new Placeholder
             {
@@ -41,6 +45,7 @@ namespace OpenTabletDriver.UX
                 try
                 {
                     await Driver.Connect();
+                    await CheckForUpdates();
                 }
                 catch (TimeoutException)
                 {
@@ -50,23 +55,49 @@ namespace OpenTabletDriver.UX
             });
         }
 
+        private const int DEFAULT_CLIENT_WIDTH = 960;
+        private const int DEFAULT_CLIENT_HEIGHT = 760;
+
         private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
         private TrayIcon trayIcon;
 
-        protected override void OnInitializePlatform(EventArgs e)
+        protected override void InitializeForm()
         {
-            base.OnInitializePlatform(e);
+            var bounds = Screen.FromPoint(Mouse.Position).Bounds;
 
-            if (DesktopInterop.CurrentPlatform == PluginPlatform.MacOS)
+            if (this.WindowState != WindowState.Maximized)
             {
-                var bounds = Screen.PrimaryScreen.Bounds;
-                var minWidth = Math.Min(DEFAULT_CLIENT_WIDTH + 10, bounds.Width * 0.9);
-                var minHeight = Math.Min(DEFAULT_CLIENT_HEIGHT + 10, bounds.Height * 0.9);
-                this.ClientSize = new Size((int)minWidth, (int)minHeight);
-                this.Padding = 10;
+                var minWidth = Math.Min(DEFAULT_CLIENT_WIDTH, bounds.Width * 0.95);
+                var minHeight = Math.Min(DEFAULT_CLIENT_HEIGHT, bounds.Height * 0.95);
+
+                this.Size = new Size((int)minWidth, (int)minHeight);
+
+                if (DesktopInterop.CurrentPlatform == PluginPlatform.Windows)
+                {
+                    var x = Screen.WorkingArea.Center.X - (minWidth / 2);
+                    var y = Screen.WorkingArea.Center.Y - (minHeight / 2);
+                    this.Location = new Point((int)x, (int)y);
+                }
             }
+        }
+
+        protected void InitializePlatform()
+        {
+            switch (DesktopInterop.CurrentPlatform)
+            {
+                case PluginPlatform.MacOS:
+                    this.Padding = 10;
+                    break;
+            }
+
+            bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
+            {
+                PluginPlatform.Windows => true,
+                PluginPlatform.MacOS   => true,
+                _                      => false,
+            };
 
             if (App.EnableTrayIcon)
             {
@@ -163,7 +194,7 @@ namespace OpenTabletDriver.UX
             savePreset.Executed += async (sender, e) => await SavePresetDialog();
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
-            detectTablet.Executed += async (sender, e) => await Driver.Instance.DetectTablets();
+            detectTablet.Executed += async (sender, e) => await DetectTablet();
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
             showTabletDebugger.Executed += (sender, e) => App.Current.DebuggerWindow.Show();
@@ -512,7 +543,7 @@ namespace OpenTabletDriver.UX
             {
                 case DialogResult.Ok:
                 case DialogResult.Yes:
-                    var file = new FileInfo(fileDialog.FileName);
+                    var file = new FileInfo(fileDialog.FileName + (fileDialog.FileName.EndsWith(".json") ? "" : ".json"));
                     if (App.Current.Settings is Settings settings)
                         settings.Serialize(file);
                         await RefreshPresets();
@@ -529,6 +560,12 @@ namespace OpenTabletDriver.UX
             Log.Write("Settings", $"Applied preset '{preset.Name}'");
         }
 
+        private async Task DetectTablet()
+        {
+            await Driver.Instance.DetectTablets();
+            await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
+        }
+
         private async Task ExportDiagnostics()
         {
             try
@@ -537,7 +574,7 @@ namespace OpenTabletDriver.UX
                 var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
                 var fileDialog = new SaveFileDialog
                 {
-                    Title = "Exporting diagnostic information...",
+                    Title = "Save diagnostic information to...",
                     Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                     Filters =
                     {
@@ -561,6 +598,24 @@ namespace OpenTabletDriver.UX
             {
                 Log.Exception(ex);
                 ex.ShowMessageBox();
+            }
+        }
+
+        private async Task CheckForUpdates()
+        {
+            if (await App.Driver.Instance.HasUpdate())
+            {
+                var id = "update-prompt";
+                var notification = new Notification
+                {
+                    ContentImage = App.Logo,
+                    Title = "OpenTabletDriver",
+                    Message = "An update to OpenTabletDriver is available.",
+                    ID = id
+                };
+                notification.Show(trayIcon?.Indicator);
+
+                App.Current.AddNotificationHandler(id, App.Current.UpdaterWindow.Show);
             }
         }
     }

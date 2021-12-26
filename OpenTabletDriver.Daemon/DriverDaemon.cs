@@ -4,14 +4,17 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Octokit;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
@@ -76,6 +79,7 @@ namespace OpenTabletDriver.Daemon
         private Settings? Settings { set; get; }
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
+        private IUpdater Updater = DesktopInterop.Updater;
         private readonly SleepDetectionThread SleepDetection;
 
         private bool debugging;
@@ -287,8 +291,8 @@ namespace OpenTabletDriver.Daemon
                 _ => null
             };
 
-            if (pointer is IVirtualMouse virtualMouse)
-                bindingServiceProvider.AddService<IVirtualMouse>(() => virtualMouse);
+            if (pointer is IMouseButtonHandler mouseButtonHandler)
+                bindingServiceProvider.AddService(() => mouseButtonHandler);
 
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
@@ -429,6 +433,21 @@ namespace OpenTabletDriver.Daemon
         {
             if (report != null && tablet != null)
                 DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
+        }
+
+        public Task<bool> HasUpdate()
+        {
+            return Updater?.CheckForUpdates() ?? Task.FromResult(false);
+        }
+
+        public async Task<Release> GetUpdateInfo()
+        {
+            return await Updater.GetRelease()!;
+        }
+
+        public Task InstallUpdate()
+        {
+            return Updater?.InstallUpdate() ?? Task.CompletedTask;
         }
     }
 }

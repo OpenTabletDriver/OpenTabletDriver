@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
@@ -17,6 +21,9 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         [JsonProperty("App Version")]
         public string AppVersion { private set; get; } = GetAppVersion();
+
+        [JsonProperty("Build Date")]
+        public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
 
         [JsonProperty("Operating System")]
         public OperatingSystem OperatingSystem { private set; get; } = Environment.OSVersion;
@@ -32,7 +39,16 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         private static string GetAppVersion()
         {
-            return "OpenTabletDriver v" + Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            return $"OpenTabletDriver v{version}";
+        }
+
+        [OnError]
+        internal void OnError(StreamingContext _, ErrorContext errorContext)
+        {
+            errorContext.Handled = true;
+            Log.Write("Diagnostics", $"Handled diagnostics serialization error", LogLevel.Error);
+            Log.Exception(errorContext.Error);
         }
 
         public override string ToString()

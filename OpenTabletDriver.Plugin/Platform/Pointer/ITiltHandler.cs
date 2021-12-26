@@ -2,8 +2,8 @@ using System.Numerics;
 
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
-    public interface IRelativePointer
+    public interface ITiltHandler
     {
-        void SetPosition(Vector2 delta);
+        void SetTilt(Vector2 tilt);
     }
 }

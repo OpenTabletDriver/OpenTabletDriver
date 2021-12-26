@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
@@ -15,8 +15,18 @@ namespace OpenTabletDriver.Desktop.Reflection
     {
         public PluginManager()
         {
-            var internalTypes = from asm in AssemblyLoadContext.Default.Assemblies
-                where IsLoadable(asm)
+            var assemblies = new[]
+            {
+                Assembly.Load("OpenTabletDriver.Desktop"),
+                Assembly.Load("OpenTabletDriver.Configurations"),
+                Assembly.Load("OpenTabletDriver.Plugin")
+            };
+
+            libTypes = (from type in typeof(IDriver).Assembly.GetExportedTypes()
+                where type.IsAbstract || type.IsInterface
+                select type).ToArray();
+
+            var internalTypes = from asm in assemblies
                 from type in asm.DefinedTypes
                 where type.IsPublic && !(type.IsInterface || type.IsAbstract)
                 where IsPluginType(type)
@@ -29,10 +39,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
         protected ConcurrentBag<TypeInfo> pluginTypes;
 
-        protected readonly static IEnumerable<Type> libTypes =
-            from type in Assembly.GetAssembly(typeof(IDriver)).GetExportedTypes()
-                where type.IsAbstract || type.IsInterface
-                select type;
+        protected readonly Type[] libTypes;
 
         public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
         {

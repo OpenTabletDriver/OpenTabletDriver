@@ -20,6 +20,24 @@ namespace OpenTabletDriver.Console
 {
     partial class Program
     {
+        #region Update
+
+        private static async Task HasUpdate()
+        {
+            var hasUpdate = await Driver.Instance.HasUpdate();
+            await Out.WriteLineAsync(hasUpdate.ToString().ToLowerInvariant());
+        }
+
+        private static async Task InstallUpdate()
+        {            
+            if (await Driver.Instance.HasUpdate())
+            {
+                await Driver.Instance.InstallUpdate();
+            }
+        }
+
+        #endregion
+
         #region I/O
 
         private static async Task LoadSettings(FileInfo file)

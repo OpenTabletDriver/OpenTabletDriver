@@ -93,7 +93,25 @@ namespace OpenTabletDriver.Desktop
             get => this.trashDirectory ?? GetDefaultTrashDirectory();
         }
 
-        private static string ProgramDirectory => AppContext.BaseDirectory;
+        public static string ProgramDirectory => AppContext.BaseDirectory;
+
+        private static string GetDirectory(params string[] directories)
+        {
+            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
+                if (Path.IsPathRooted(dir))
+                    return dir;
+
+            return null;
+        }
+
+        private static string GetDirectoryIfExists(params string[] directories)
+        {
+            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
+                if (Directory.Exists(dir))
+                    return dir;
+
+            return InjectVariablesIntoPath(directories.Last());
+        }
 
         private string GetDefaultConfigurationDirectory() => GetExistingPathOrLast(
             Path.Join(AppDataDirectory, "Configurations"),
