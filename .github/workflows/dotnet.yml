@@ -23,10 +23,10 @@ jobs:
         env:
           runtime: linux-x64
         run: |
-          options="--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
-          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
-          dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
-          dotnet publish OpenTabletDriver.UX.Gtk $options --runtime $runtime -o build/$runtime
+          read -ra options <<< "--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
+          dotnet publish OpenTabletDriver.Daemon "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.Console "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.UX.Gtk "${options[@]}" --runtime "$runtime" -o "build/$runtime"
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@master
@@ -60,10 +60,10 @@ jobs:
         env:
           runtime: osx-x64
         run: |
-          options="--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
-          dotnet publish OpenTabletDriver.Daemon $options --runtime $runtime -o build/$runtime
-          dotnet publish OpenTabletDriver.Console $options --runtime $runtime -o build/$runtime
-          dotnet publish OpenTabletDriver.UX.MacOS $options --runtime $runtime -o build/$runtime
+          read -ra options <<< "--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
+          dotnet publish OpenTabletDriver.Daemon "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.Console "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.UX.MacOS "${options[@]}" --runtime "$runtime" -o "build/$runtime"
 
       - name: Upload MacOS artifacts
         uses: actions/upload-artifact@master
