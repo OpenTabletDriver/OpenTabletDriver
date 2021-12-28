@@ -70,11 +70,6 @@ namespace OpenTabletDriver.Daemon
             });
 
             SleepDetection.Start();
-
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows && Process.GetProcessesByName("vanguard").Length > 0)
-            {
-                Log.Write("Detect", "Valorant's anti-cheat program Vanguard is detected. Tablet function may be impaired.", LogLevel.Warning);
-            }
         }
 
         public event EventHandler<LogMessage>? Message;
@@ -89,6 +84,20 @@ namespace OpenTabletDriver.Daemon
         private readonly SleepDetectionThread SleepDetection;
 
         private bool debugging;
+
+        /// <summary>
+        /// Checks for any problematic processes running on the user's computer that may
+        /// impair function or detection of tablets.
+        /// </summary>
+        private Task CheckForProblematicProcesses()
+        {
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+            {
+                if (Process.GetProcessesByName("vgc").Length > 0)
+                    Log.Write("Detect", "Valorant's anti-cheat program Vanguard is detected. Tablet function may be impaired.", LogLevel.Warning);
+            }
+            return Task.CompletedTask;
+        }
 
         public Task WriteMessage(LogMessage message)
         {
@@ -139,6 +148,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<IEnumerable<TabletReference>> DetectTablets()
         {
             Driver.Detect();
+            await CheckForProblematicProcesses();
 
             foreach (var tablet in Driver.InputDevices)
             {
