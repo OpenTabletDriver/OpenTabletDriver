@@ -11,7 +11,6 @@ namespace OpenTabletDriver.Configurations.Parsers.TenMoon
     {
         public TenMoonTabletReport(byte[] report)
         {
-
             Raw = report;
 
             Position = new Vector2
@@ -23,7 +22,7 @@ namespace OpenTabletDriver.Configurations.Parsers.TenMoon
             var buttonPressed = (report[9] & 6) != 0;
             var prePressure = report[5] << 8 | report[6];
             Pressure = (uint)(0x0672 - (prePressure - (buttonPressed ? 50 : 0)));
-            
+
             PenButtons = new bool[]
             {
                 report[9].IsBitSet(2),
