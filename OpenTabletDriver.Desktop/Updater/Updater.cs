@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Octokit;
@@ -22,7 +21,7 @@ namespace OpenTabletDriver.Desktop.Updater
         private Release? latestRelease;
 
         protected readonly Version CurrentVersion;
-        protected static readonly Version AssemblyVersion = new Version(typeof(IUpdater).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion);
+        protected static readonly Version AssemblyVersion = typeof(IUpdater).Assembly.GetName().Version!;
         protected string BinaryDirectory;
         protected string AppDataDirectory;
         protected string RollbackDirectory;
