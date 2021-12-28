@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Octokit;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
@@ -69,6 +70,11 @@ namespace OpenTabletDriver.Daemon
             });
 
             SleepDetection.Start();
+
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows && Process.GetProcessesByName("vanguard").Length > 0)
+            {
+                Log.Write("Detect", "Valorant's anti-cheat program Vanguard is detected. Tablet function may be impaired.", LogLevel.Warning);
+            }
         }
 
         public event EventHandler<LogMessage>? Message;
