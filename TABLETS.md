@@ -18,6 +18,7 @@
 | Huion H640P                   |     Supported     |
 | Huion HS64                    |     Supported     |
 | Huion Kamvas 16               |     Supported     |
+| Huion Kamvas 20               |     Supported     |
 | Huion Kamvas Pro 16           |     Supported     |
 | Huion Kamvas Pro 20           |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
