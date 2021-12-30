@@ -152,7 +152,6 @@
 | Wacom CTE-440                 |     Untested      |
 | Wacom GD-0912-U               |     Untested      |
 | Wacom GD-1218-U               |     Untested      |
-| Wacom PTH-851                 |     Untested      |
 | Wacom PTK-450                 |     Untested      |
 | Wacom PTK-650                 |     Untested      |
 | Wacom PTZ-1231W               |     Untested      |
