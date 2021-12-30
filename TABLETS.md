@@ -71,7 +71,7 @@
 | XP-Pen CT460                  |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
-| XP-Pen Deco Mini4             |     Supported     |
+| XP-Pen Deco mini4             |     Supported     |
 | XP-Pen Star 03                |     Supported     |
 | XP-Pen Star G430              |     Supported     | Windows: Zadig's WinUSB on interface 1 required for older variations
 | XP-Pen Star G430S             |     Supported     |
