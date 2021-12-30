@@ -121,6 +121,7 @@
 | Wacom PTH-460                 |  Missing Features | Wheel is unsupported.
 | Wacom PTH-650                 |  Missing Features | Wheel is unsupported.
 | Wacom PTH-651                 |  Missing Features | Wheel is unsupported.
+| Wacom PTH-851                 |  Missing Features | Wheel is unsupported.
 | Wacom PTH-660                 |  Missing Features | Wheel is unsupported.
 | Wacom PTH-850                 |  Missing Features | Wheel is unsupported.
 | Wacom PTH-860                 |  Missing Features | Wheel is unsupported.
