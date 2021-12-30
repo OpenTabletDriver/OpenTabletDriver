@@ -5,7 +5,7 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public struct TiltTabletReport : ITabletReport, ITiltReport
     {
-        internal TiltTabletReport(byte[] report)
+        public TiltTabletReport(byte[] report)
         {
             Raw = report;
 
