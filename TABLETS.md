@@ -11,6 +11,7 @@
 | Genius i608x                  |     Supported     | Require Zadig's WinUSB
 | Huion 1060 Plus               |     Supported     |
 | Huion 420                     |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion GT-220 V2               |     Supported     |
 | Huion H420                    |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion H420X                   |     Supported     |
 | Huion H430P                   |     Supported     |
