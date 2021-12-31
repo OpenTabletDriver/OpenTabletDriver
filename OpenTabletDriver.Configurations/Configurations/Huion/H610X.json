@@ -1,0 +1,43 @@
+{
+  "Name": "Huion H610X",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254.0,
+      "Height": 158.8,
+      "MaxX": 50800.0,
+      "MaxY": 31760.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T212_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
