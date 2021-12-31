@@ -5,7 +5,7 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public struct TiltTabletReport : ITabletReport, ITiltReport
     {
-        public TiltTabletReport(byte[] report)
+        public TiltTabletReport(byte[] report, bool invertTiltX, bool invertTiltY)
         {
             Raw = report;
 
@@ -16,8 +16,8 @@ namespace OpenTabletDriver.Plugin.Tablet
             };
             Tilt = new Vector2
             {
-                X = (sbyte)report[10],
-                Y = (sbyte)report[11]
+                X = (sbyte)(invertTiltX ? -1 : 1) * (sbyte)report[10],
+                Y = (sbyte)(invertTiltY ? -1 : 1) * (sbyte)report[11]
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
 
@@ -28,6 +28,8 @@ namespace OpenTabletDriver.Plugin.Tablet
                 penByte.IsBitSet(2)
             };
         }
+
+        public TiltTabletReport(byte[] report) : this(report, false, false) { }
 
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
