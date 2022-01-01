@@ -178,8 +178,8 @@ namespace OpenTabletDriver.UX
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
             pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
 
-            var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => DesktopInterop.Open(FaqUrl);
+            var wikiUrl = new Command { MenuText = "Open wiki..." };
+            wikiUrl.Executed += (sender, e) => DesktopInterop.Open(WikiUrl);
 
             var showGuide = new Command { MenuText = "Show guide..." };
             showGuide.Executed += (sender, e) => App.Current.StartupGreeterWindow.Show();
@@ -245,7 +245,7 @@ namespace OpenTabletDriver.UX
                         Text = "&Help",
                         Items =
                         {
-                            faqUrl,
+                            wikiUrl,
                             exportDiagnostics,
                             showGuide
                         }
