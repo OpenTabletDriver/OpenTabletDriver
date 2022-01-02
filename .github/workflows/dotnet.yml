@@ -88,7 +88,7 @@ jobs:
         env:
           runtime: win-x64
         run: |
-          $options=@('--configuration', 'Release', '-p:PublishSingleFile=true', '-p:DebugType=embedded', '--no-self-contained', '-p:SourceRevisionId=$(git rev-parse --short HEAD)')
+          $options=@("--configuration", "Release", "-p:PublishSingleFile=true", "-p:DebugType=embedded", "--no-self-contained", "-p:SourceRevisionId=$(git rev-parse --short HEAD)")
           dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime -o build/$ENV:runtime
           dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
