@@ -11,7 +11,7 @@ namespace OpenTabletDriver.UX.Windows
     public class DeviceStringReader : DesktopForm
     {
         public DeviceStringReader()
-            : base()
+            : base(Application.Instance.MainForm)
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);

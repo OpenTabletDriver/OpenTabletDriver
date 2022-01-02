@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Benchmarks.Output
         [Benchmark]
         public void SendInputRelative()
         {
-            relativePointer.Translate(Vector2.Zero);
+            relativePointer.SetPosition(Vector2.Zero);
         }
     }
 }

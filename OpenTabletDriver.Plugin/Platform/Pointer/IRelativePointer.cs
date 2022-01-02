@@ -4,6 +4,6 @@ namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
     public interface IRelativePointer
     {
-        void Translate(Vector2 delta);
+        void SetPosition(Vector2 delta);
     }
 }

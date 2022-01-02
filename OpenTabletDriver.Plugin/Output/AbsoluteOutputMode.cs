@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Numerics;
+﻿using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -14,6 +13,9 @@ namespace OpenTabletDriver.Plugin.Output
     {
         private Vector2 min, max;
         private Area outputArea, inputArea;
+
+        [TabletReference]
+        public TabletReference TabletReference { get; set; }
 
         /// <summary>
         /// The area in which the tablet's input is transformed to.
@@ -138,8 +140,27 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
+            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
+                eraserHandler.SetEraser(eraserReport.Eraser);
             if (report is IAbsolutePositionReport absReport)
                 Pointer.SetPosition(absReport.Position);
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)TabletReference.Properties.Specifications.Pen.MaxPressure);
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+                tiltHandler.SetTilt(tiltReport.Tilt);
+            if (report is IProximityReport proximityReport)
+            {
+                if (Pointer is IProximityHandler proximityHandler)
+                    proximityHandler.SetProximity(proximityReport.NearProximity);
+                if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
+                    hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            }
+            if (Pointer is ISynchronousPointer synchronousPointer)
+            {
+                if (report is OutOfRangeReport)
+                    synchronousPointer.Reset();
+                synchronousPointer.Flush();
+            }
         }
     }
 }

@@ -28,7 +28,7 @@ namespace OpenTabletDriver
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
 
         public ICompositeDeviceHub CompositeDeviceHub { get; }
-        public IList<InputDeviceTree> InputDevices { get; } = new List<InputDeviceTree>();
+        public InputDeviceTreeList InputDevices { get; } = new();
         public IEnumerable<TabletReference> Tablets => InputDevices.Select(c => c.CreateReference());
 
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
@@ -207,8 +207,8 @@ namespace OpenTabletDriver
 
         public void Dispose()
         {
-            foreach (InputDeviceTree tree in InputDevices)
-                foreach (InputDevice dev in tree.InputDevices)
+            foreach (InputDeviceTree tree in InputDevices.ToList())
+                foreach (InputDevice dev in tree.InputDevices.ToList())
                     dev.Dispose();
         }
     }

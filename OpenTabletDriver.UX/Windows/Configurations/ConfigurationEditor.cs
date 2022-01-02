@@ -20,7 +20,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
     public class ConfigurationEditor : DesktopForm
     {
         public ConfigurationEditor()
-            : base()
+            : base(Application.Instance.MainForm)
         {
             base.Title = "Configuration Editor";
             base.ClientSize = new Size(910, 680);
@@ -247,7 +247,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             {
                 var dialog = new DeviceListDialog();
                 await dialog.InitializeAsync();
-                if (await dialog.ShowModalAsync() is IDeviceEndpoint device)
+                if (await dialog.ShowModalAsync(this) is IDeviceEndpoint device)
                 {
                     try
                     {

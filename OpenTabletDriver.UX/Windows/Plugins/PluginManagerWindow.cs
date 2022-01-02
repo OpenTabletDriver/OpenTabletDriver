@@ -16,6 +16,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     public class PluginManagerWindow : DesktopForm
     {
         public PluginManagerWindow()
+            : base(Application.Instance.MainForm)
         {
             this.Title = "Plugin Manager";
             this.ClientSize = new Size(1000, 750);
@@ -172,6 +173,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             var dialog = new OpenFileDialog()
             {
                 Title = "Choose a plugin to install...",
+                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
                 MultiSelect = true,
                 Filters =
                 {

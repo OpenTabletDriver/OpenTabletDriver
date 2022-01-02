@@ -17,6 +17,9 @@ namespace OpenTabletDriver.Plugin.Output
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
         private bool skipReport;
 
+        [TabletReference]
+        public TabletReference TabletReference { get; set; }
+
         /// <summary>
         /// The class in which the final relative positioned output is handled.
         /// </summary>
@@ -94,9 +97,26 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
+            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
+                eraserHandler.SetEraser(eraserReport.Eraser);
             if (report is IAbsolutePositionReport absReport)
+                Pointer.SetPosition(absReport.Position);
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)TabletReference.Properties.Specifications.Pen.MaxPressure);
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+                tiltHandler.SetTilt(tiltReport.Tilt);
+            if (report is IProximityReport proximityReport)
             {
-                Pointer.Translate(absReport.Position);
+                if (Pointer is IProximityHandler proximityHandler)
+                    proximityHandler.SetProximity(proximityReport.NearProximity);
+                if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
+                    hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            }
+            if (Pointer is ISynchronousPointer synchronousPointer)
+            {
+                if (report is OutOfRangeReport)
+                    synchronousPointer.Reset();
+                synchronousPointer.Flush();
             }
         }
     }

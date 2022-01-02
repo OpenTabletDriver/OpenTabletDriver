@@ -31,6 +31,7 @@ namespace OpenTabletDriver.Console
             root.AddRange(DebugCommands);
             root.AddRange(ModifyCommands);
             root.AddRange(RequestCommands);
+            root.AddRange(UpdateCommands);
             root.AddRange(ListCommands);
             root.AddRange(ScriptingCommands);
 
@@ -40,7 +41,9 @@ namespace OpenTabletDriver.Console
         private static readonly IEnumerable<Command> IOCommands = new Command[]
         {
             CreateCommand<FileInfo>(LoadSettings, "Load settings from a file", "load"),
-            CreateCommand<FileInfo>(SaveSettings, "Save settings to a file", "save")
+            CreateCommand<FileInfo>(SaveSettings, "Save settings to a file", "save"),
+            CreateCommand<string>(ApplyPreset, "Apply a preset from the Presets directory", "preset"),
+            CreateCommand<string>(SavePreset, "Save the current settings to the Presets directory")
         };
 
         private static readonly IEnumerable<Command> ActionCommands = new Command[]
@@ -83,7 +86,13 @@ namespace OpenTabletDriver.Console
             CreateCommand(GetTools, "Gets the currently enabled tools")
         };
 
-        private static IEnumerable<Command> ListCommands = new Command[]
+        private static readonly IEnumerable<Command> UpdateCommands = new Command[]
+        {
+            CreateCommand(HasUpdate, "Check for any updates"),
+            CreateCommand(InstallUpdate, "Install update")
+        };
+
+        private static readonly IEnumerable<Command> ListCommands = new Command[]
         {
             CreateCommand(ListOutputModes, "Lists all available output modes"),
             CreateCommand(ListFilters, "Lists all available filters"),
