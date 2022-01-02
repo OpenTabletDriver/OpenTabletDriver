@@ -47,6 +47,8 @@ namespace OpenTabletDriver.UX.Controls
 
             if (!Platform.IsMac) // Don't do this on macOS, causes poor UI performance.
                 settingStoreEditor.BackgroundColor = SystemColors.WindowBackground;
+
+            AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
         private Placeholder placeholder;
@@ -70,7 +72,14 @@ namespace OpenTabletDriver.UX.Controls
         protected virtual void OnStoreCollectionChanged()
         {
             StoreCollectionChanged?.Invoke(this, new EventArgs());
-            this.Content = sourceSelector.DataStore?.Any() ?? false ? mainContent : placeholder;
+            RefreshContent();
+        }
+
+        private void HandleAssembliesChanged(object sender, EventArgs e) => Application.Instance.AsyncInvoke(RefreshContent);
+
+        private void RefreshContent()
+        {
+            this.Content = AppInfo.PluginManager.GetChildTypes<TSource>().Any() ? mainContent : placeholder;
         }
 
         public BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection> StoreCollectionBinding
