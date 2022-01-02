@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
@@ -97,7 +98,7 @@ namespace OpenTabletDriver.Desktop
 
         private static string GetDirectory(params string[] directories)
         {
-            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
+            foreach (var dir in directories.Select(InjectEnvironmentVariables))
                 if (Path.IsPathRooted(dir))
                     return dir;
 
@@ -106,11 +107,11 @@ namespace OpenTabletDriver.Desktop
 
         private static string GetDirectoryIfExists(params string[] directories)
         {
-            foreach (var dir in directories.Select(d => InjectVariablesIntoPath(d)))
+            foreach (var dir in directories.Select(InjectEnvironmentVariables))
                 if (Directory.Exists(dir))
                     return dir;
 
-            return InjectVariablesIntoPath(directories.Last());
+            return InjectEnvironmentVariables(directories.Last());
         }
 
         private string GetDefaultConfigurationDirectory() => GetExistingPathOrLast(
