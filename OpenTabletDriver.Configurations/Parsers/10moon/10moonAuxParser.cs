@@ -8,8 +8,6 @@ namespace OpenTabletDriver.Configurations.Parsers.TenMoon
     {
         public TenMoonAuxReport(byte[] report)
         {
-            Log.Debug("10moon Parser", $"{BitConverter.ToString(report)}");
-
             Raw = report;
 
             AuxButtons = new bool[]
