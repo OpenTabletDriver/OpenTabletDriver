@@ -76,11 +76,11 @@ namespace OpenTabletDriver.UX.Windows.Updater
                 PluginPlatform.MacOS => Path.Join(basePath, "OpenTabletDriver.UX.MacOS"),
                 _ => throw new NotSupportedException("Current platform does not support updating.")
             };
-            
+
             await App.Driver.Instance.InstallUpdate();
-            
+
             Process.Start(path);
-            
+
             if (Application.Instance.QuitIsSupported)
                 Application.Instance.Quit();
             else

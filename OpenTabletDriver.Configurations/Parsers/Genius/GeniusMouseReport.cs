@@ -1,6 +1,6 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Tablet;
 using System.Runtime.CompilerServices;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Genius
 {

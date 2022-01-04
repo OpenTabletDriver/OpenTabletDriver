@@ -163,7 +163,7 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private class FilterDropDown  : EnumDropDown<LogLevel>
+        private class FilterDropDown : EnumDropDown<LogLevel>
         {
             public FilterDropDown(LogLevel activeFilter = LogLevel.Info)
             {

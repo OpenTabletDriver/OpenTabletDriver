@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                                     Content = new StackLayout
                                     {
                                         Orientation = Orientation.Horizontal,
-                                        Items = 
+                                        Items =
                                         {
                                             new Panel
                                             {

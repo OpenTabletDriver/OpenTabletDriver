@@ -28,7 +28,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                         Orientation = Orientation.Horizontal,
                         Content = buttonCount = new UnsignedIntegerNumberBox()
                     }
-                } 
+                }
             };
 
             enable.CheckedBinding.Cast<bool>().Bind(

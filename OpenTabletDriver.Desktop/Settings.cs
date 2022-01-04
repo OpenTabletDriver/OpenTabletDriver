@@ -1,7 +1,7 @@
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
-using System;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;

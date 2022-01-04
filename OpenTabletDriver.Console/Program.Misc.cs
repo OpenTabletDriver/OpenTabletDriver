@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Console
 
         static async Task ModifyProfile(string profileName, Action<Profile> func)
         {
-            await ModifySettings(async s => 
+            await ModifySettings(async s =>
             {
                 var profile = await GetProfile(profileName, s);
                 if (profile != null)

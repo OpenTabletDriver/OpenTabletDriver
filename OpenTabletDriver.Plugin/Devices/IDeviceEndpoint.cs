@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Plugin.Devices
         bool CanOpen { get; }
 
         IDeviceEndpointStream Open();
-        
+
         string GetDeviceString(byte index);
     }
 }

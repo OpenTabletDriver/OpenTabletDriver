@@ -70,8 +70,8 @@ namespace OpenTabletDriver.UX.Tools
         private IEnumerable<LogMessage> GetFilteredMessages()
         {
             return from message in this.messages
-                where message.Level >= Filter
-                select message;
+                   where message.Level >= Filter
+                   select message;
         }
 
         IEnumerator<LogMessage> IEnumerable<LogMessage>.GetEnumerator()

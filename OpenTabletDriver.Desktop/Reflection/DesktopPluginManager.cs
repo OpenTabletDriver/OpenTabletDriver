@@ -105,10 +105,10 @@ namespace OpenTabletDriver.Desktop.Reflection
         protected void ImportTypes(PluginContext context)
         {
             var types = from asm in context.Assemblies
-                where IsLoadable(asm)
-                from type in asm.GetExportedTypes()
-                where IsPluginType(type)
-                select type;
+                        where IsLoadable(asm)
+                        from type in asm.GetExportedTypes()
+                        where IsPluginType(type)
+                        select type;
 
             types.AsParallel().ForAll(type =>
             {

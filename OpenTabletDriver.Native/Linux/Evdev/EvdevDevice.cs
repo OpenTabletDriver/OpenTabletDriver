@@ -54,7 +54,7 @@ namespace OpenTabletDriver.Native.Linux.Evdev
 
         public int Write(EventType type, EventCode code, int value)
         {
-            return CanWrite ? libevdev_uinput_write_event(this.uidev, (uint)type, (uint)code, value) : int.MinValue; 
+            return CanWrite ? libevdev_uinput_write_event(this.uidev, (uint)type, (uint)code, value) : int.MinValue;
         }
 
         public bool Sync()

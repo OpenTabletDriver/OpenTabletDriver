@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// </summary>
         /// <value></value>
         Matrix3x2 TransformationMatrix { get; }
-        
+
         /// <summary>
         /// The current tablet assigned to this <see cref="IOutputMode"/>
         /// </summary>

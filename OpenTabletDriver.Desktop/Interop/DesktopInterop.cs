@@ -65,30 +65,30 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IUpdater Updater => CurrentPlatform switch
         {
             PluginPlatform.Windows => updater ??= new WindowsUpdater(),
-            PluginPlatform.MacOS   => updater ??= new MacOSUpdater(),
-            _                      => null
+            PluginPlatform.MacOS => updater ??= new MacOSUpdater(),
+            _ => null
         };
 
         public static ITimer Timer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsTimer(),
-            _                      => new FallbackTimer()
+            _ => new FallbackTimer()
         };
 
         public static IAbsolutePointer AbsolutePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsAbsolutePointer(),
-            PluginPlatform.Linux   => absolutePointer ??= new EvdevAbsolutePointer(),
-            PluginPlatform.MacOS   => new MacOSAbsolutePointer(),
-            _                      => null
+            PluginPlatform.Linux => absolutePointer ??= new EvdevAbsolutePointer(),
+            PluginPlatform.MacOS => new MacOSAbsolutePointer(),
+            _ => null
         };
 
         public static IRelativePointer RelativePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsRelativePointer(),
-            PluginPlatform.Linux   => relativePointer ??= new EvdevRelativePointer(),
-            PluginPlatform.MacOS   => new MacOSRelativePointer(),
-            _                      => null
+            PluginPlatform.Linux => relativePointer ??= new EvdevRelativePointer(),
+            PluginPlatform.MacOS => new MacOSRelativePointer(),
+            _ => null
         };
 
         public static IPressureHandler VirtualTablet => CurrentPlatform switch
@@ -100,9 +100,9 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IVirtualKeyboard VirtualKeyboard => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-            PluginPlatform.Linux   => virtualKeyboard ??= new EvdevVirtualKeyboard(),
-            PluginPlatform.MacOS   => new MacOSVirtualKeyboard(),
-            _                      => null
+            PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
+            PluginPlatform.MacOS => new MacOSVirtualKeyboard(),
+            _ => null
         };
 
         public static IVirtualScreen VirtualScreen => virtualScreen ??= CurrentPlatform switch

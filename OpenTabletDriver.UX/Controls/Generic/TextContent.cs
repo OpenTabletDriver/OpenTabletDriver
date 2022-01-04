@@ -15,7 +15,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         public TextContent(params string[] lines)
             : this()
         {
-            foreach (var line in lines) 
+            foreach (var line in lines)
                 Add(line);
         }
 

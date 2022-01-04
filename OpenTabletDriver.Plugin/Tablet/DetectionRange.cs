@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         public bool StartInclusive { set; get; } = false;
 
         public uint? End { set; get; }
-        public bool EndInclusive {set; get; } = false;
+        public bool EndInclusive { set; get; } = false;
 
         public const char LeftInclusiveOperator = '[';
         public const char LeftExclusiveOperator = '(';
@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         public const char RightExclusiveOperator = ')';
 
         public bool IsInRange(float value) =>
-            (Start.HasValue ? (StartInclusive ? value >= Start : value > Start) : true) & 
+            (Start.HasValue ? (StartInclusive ? value >= Start : value > Start) : true) &
             (End.HasValue ? (EndInclusive ? value <= End : value < End) : true);
 
         public override string ToString()
@@ -47,7 +47,7 @@ namespace OpenTabletDriver.Plugin.Tablet
             {
                 string left = tokens[0][1..^0];
                 char leftOp = tokens[0][0];
-                
+
                 string right = tokens[1][0..^1];
                 char rightOp = tokens[1][^1];
 

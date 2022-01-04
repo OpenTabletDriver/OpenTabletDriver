@@ -137,7 +137,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         private MenuBar ConstructMenu()
         {
-            var quitCommand = new Command { MenuText = "Exit", Shortcut = Keys.Escape  };
+            var quitCommand = new Command { MenuText = "Exit", Shortcut = Keys.Escape };
             quitCommand.Executed += (_, _) => this.Close();
 
             var install = new Command { MenuText = "Install plugin...", Shortcut = Application.Instance.CommonModifier | Keys.O };
@@ -183,7 +183,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
-                foreach(var file in dialog.Filenames)
+                foreach (var file in dialog.Filenames)
                 {
                     await Install(file);
                 }

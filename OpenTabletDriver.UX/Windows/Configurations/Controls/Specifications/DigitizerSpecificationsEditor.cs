@@ -15,7 +15,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Spacing = 5,
                 Padding = 5,
-                Items = 
+                Items =
                 {
                     new StackLayoutItem
                     {

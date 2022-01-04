@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Daemon
                     return;
                 }
 
-                AppDomain.CurrentDomain.UnhandledException += (sender, e) => 
+                AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
                 {
                     var exception = (Exception)e.ExceptionObject;
                     File.WriteAllLines(Path.Join(AppInfo.Current.AppDataDirectory, "daemon.log"),
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.Daemon
                         Argument = new Argument<DirectoryInfo> ("config")
                     }
                 };
-                rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((appdata, config) => 
+                rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((appdata, config) =>
                 {
                     if (!string.IsNullOrWhiteSpace(appdata?.FullName))
                         AppInfo.Current.AppDataDirectory = appdata.FullName;
@@ -62,7 +62,7 @@ namespace OpenTabletDriver.Daemon
                 rootCommand.Invoke(args);
 
                 var host = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
-                host.ConnectionStateChanged += (sender, state) => 
+                host.ConnectionStateChanged += (sender, state) =>
                     Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
 
                 await host.Run(BuildDaemon());

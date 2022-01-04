@@ -231,16 +231,16 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-    private void SetOutputModeSettings(InputDeviceTree dev, IOutputMode outputMode, Profile profile, TabletReference tabletReference)
+        private void SetOutputModeSettings(InputDeviceTree dev, IOutputMode outputMode, Profile profile, TabletReference tabletReference)
         {
             string group = dev.Properties.Name;
             outputMode.Tablet = dev;
 
             var elements = from store in profile.Filters
-                where store.Enable == true
-                let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(tabletReference)
-                where filter != null
-                select filter;
+                           where store.Enable == true
+                           let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(tabletReference)
+                           where filter != null
+                           select filter;
             outputMode.Elements = elements.ToList();
 
             if (outputMode.Elements != null && outputMode.Elements.Count > 0)
@@ -361,7 +361,7 @@ namespace OpenTabletDriver.Daemon
                     Binding = binding
                 };
 
-                if(!targetDict.TryAdd(index, state))
+                if (!targetDict.TryAdd(index, state))
                     targetDict[index] = state;
             }
         }

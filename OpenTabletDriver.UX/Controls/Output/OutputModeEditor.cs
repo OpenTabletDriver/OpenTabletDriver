@@ -109,8 +109,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         public void SetDisplaySize(IEnumerable<IDisplay> displays)
         {
             var bgs = from disp in displays
-                where !(disp is IVirtualScreen)
-                select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
+                      where !(disp is IVirtualScreen)
+                      select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
             absoluteModeEditor.displayAreaEditor.AreaBounds = bgs;
         }
 

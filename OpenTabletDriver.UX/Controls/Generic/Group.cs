@@ -52,7 +52,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         public Orientation Orientation { set; get; } = DEFAULT_ORIENTATION;
         public bool ExpandContent { set; get; } = true;
-        public HorizontalAlignment TitleHorizontalAlignment { set; get; } = HorizontalAlignment.Left;        
+        public HorizontalAlignment TitleHorizontalAlignment { set; get; } = HorizontalAlignment.Left;
         public VerticalAlignment TitleVerticalAlignment { set; get; } = VerticalAlignment.Center;
 
         protected void UpdateControlLayout()

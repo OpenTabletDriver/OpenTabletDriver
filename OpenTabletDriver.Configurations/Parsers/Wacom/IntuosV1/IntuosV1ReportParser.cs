@@ -1,5 +1,5 @@
-﻿using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4;
+﻿using OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
