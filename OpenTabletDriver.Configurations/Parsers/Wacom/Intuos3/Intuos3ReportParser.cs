@@ -22,6 +22,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
             return data[1] switch
             {
                 0xE0 => new IntuosV1TabletReport(data),
+                0xA0 => new IntuosV1TabletReport(data),
                 0xF0 => new Intuos3MouseReport(data),
                 0xB0 => new Intuos3MouseReport(data),
                 _ => new DeviceReport(data)
