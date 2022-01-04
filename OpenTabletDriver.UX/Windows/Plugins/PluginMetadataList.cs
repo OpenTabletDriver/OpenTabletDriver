@@ -56,11 +56,13 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 orderby meta.PluginVersion descending
                 group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
 
-            this.DataStore = from plugin in plugins
+            var query = from plugin in plugins
                 let meta = plugin.FirstOrDefault()
                 orderby meta.Name
                 orderby local.Any(m => PluginMetadata.Match(m, meta)) descending
                 select meta;
+
+            this.DataStore = query.ToList();
 
             SelectFirstOrDefault(p => PluginMetadata.Match(p, selected));
         });
