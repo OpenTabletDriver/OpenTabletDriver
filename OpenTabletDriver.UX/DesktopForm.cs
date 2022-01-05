@@ -43,6 +43,10 @@ namespace OpenTabletDriver.UX
                     base.Show();
                 }
             }
+            else
+            {
+                base.Show();
+            }
         }
 
         private void ToCenter()
