@@ -155,6 +155,14 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static void TriggerEventMethods(object obj, TabletReference tabletReference)
         {
+            var properties = from property in obj.GetType().GetProperties()
+                let attr = property.GetCustomAttribute<TabletReferenceAttribute>()
+                where attr != null && property.PropertyType == _tabletRefType
+                select property;
+
+            foreach (var property in properties)
+                property.SetValue(obj, tabletReference);
+
             var methods = from method in obj.GetType().GetMethods()
                 let attr = obj.GetType().GetCustomAttribute<OnDependencyLoadAttribute>()
                 where attr != null
@@ -162,14 +170,6 @@ namespace OpenTabletDriver.Desktop.Reflection
 
             foreach (var method in methods)
                 method.Invoke(obj, Array.Empty<object>());
-            
-            var properties = from property in obj.GetType().GetProperties()
-                let attr = property.GetCustomAttribute<TabletReferenceAttribute>()
-                where attr != null && property.PropertyType == _tabletRefType
-                select property;
-            
-            foreach (var property in properties)
-                property.SetValue(obj, tabletReference);
         }
     }
 }
