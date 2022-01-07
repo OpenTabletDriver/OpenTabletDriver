@@ -29,9 +29,7 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ReportParser",
       "FeatureInitReport": [
-        "AgI=",
-        "CAIDAAA=",
-        "BAA="
+        "AgI="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -44,9 +42,7 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.WacomDriverIntuos3ReportParser",
       "FeatureInitReport": [
-        "AgI=",
-        "CAIDAAA=",
-        "BAA="
+        "AgI="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
