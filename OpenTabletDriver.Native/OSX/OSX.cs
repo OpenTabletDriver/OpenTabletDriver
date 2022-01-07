@@ -5,10 +5,10 @@ using OpenTabletDriver.Native.OSX.Input;
 
 namespace OpenTabletDriver.Native.OSX
 {
-    using CGEventRef = IntPtr;
     using CGDirectDisplayID = UInt32;
-    using CGEventSourceRef = IntPtr;
     using CGError = Int32;
+    using CGEventRef = IntPtr;
+    using CGEventSourceRef = IntPtr;
 
     public static class OSX
     {

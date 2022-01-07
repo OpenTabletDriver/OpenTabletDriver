@@ -228,7 +228,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private readonly Color AreaBoundsBorderColor = SystemInterop.CurrentPlatform switch
         {
             PluginPlatform.Windows => new Color(64, 64, 64),
-            _                      => SystemColors.Control
+            _ => SystemColors.Control
         };
 
         private bool mouseDragging;

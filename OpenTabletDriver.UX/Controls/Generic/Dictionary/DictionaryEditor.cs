@@ -174,7 +174,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
             {
                 var pair = ItemSource.First(t => t.Key.Equals(key));
                 if (!(ItemSource is INotifyCollectionChanged))
-                    HandleCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pair));   
+                    HandleCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, pair));
             }
         }
 
@@ -187,7 +187,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Dictionary
                 ItemSource = null;
 
             if (!(ItemSource is INotifyCollectionChanged))
-                HandleCollectionChanged(this , new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldObj));
+                HandleCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldObj));
         }
     }
 }

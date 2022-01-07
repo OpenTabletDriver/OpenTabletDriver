@@ -38,7 +38,7 @@ namespace OpenTabletDriver.UX.Tools
             if (!running)
             {
                 running = true;
-                scheduler.Change(0, 1000 /MAX_FRAMES_PER_SEC);
+                scheduler.Change(0, 1000 / MAX_FRAMES_PER_SEC);
             }
         }
 

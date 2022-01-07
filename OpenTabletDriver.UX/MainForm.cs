@@ -95,8 +95,8 @@ namespace OpenTabletDriver.UX
             bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => true,
-                PluginPlatform.MacOS   => true,
-                _                      => false,
+                PluginPlatform.MacOS => true,
+                _ => false,
             };
 
             if (App.EnableTrayIcon)
@@ -546,7 +546,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName + (fileDialog.FileName.EndsWith(".json") ? "" : ".json"));
                     if (App.Current.Settings is Settings settings)
                         settings.Serialize(file);
-                        await RefreshPresets();
+                    await RefreshPresets();
                     break;
             }
         }

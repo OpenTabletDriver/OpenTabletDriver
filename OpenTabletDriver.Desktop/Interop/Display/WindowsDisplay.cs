@@ -47,7 +47,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         private static List<DisplayInfo> GetDisplays()
         {
             List<DisplayInfo> displayCollection = new List<DisplayInfo>();
-            MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor,  IntPtr dwData)
+            MonitorEnumDelegate monitorDelegate = delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref Rect lprcMonitor, IntPtr dwData)
             {
                 MonitorInfoEx monitorInfo = new MonitorInfoEx();
                 monitorInfo.size = (uint)Marshal.SizeOf(monitorInfo);

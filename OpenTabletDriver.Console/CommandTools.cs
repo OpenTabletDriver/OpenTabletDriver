@@ -59,7 +59,7 @@ namespace OpenTabletDriver.Console
                 command.AddAlias(alias);
             return command;
         }
-        
+
         public static Command CreateCommand<T1, T2, T3, T4>(Func<T1, T2, T3, T4, Task> action, string description, params string[] aliases)
         {
             var parameters = action.Method.GetParameters();
@@ -90,7 +90,7 @@ namespace OpenTabletDriver.Console
             command.Handler = CommandHandler.Create<T1, T2, T3, T4, T5>(action);
             return command;
         }
-        
+
         public static Command CreateCommand<T1, T2, T3, T4, T5, T6>(Func<T1, T2, T3, T4, T5, T6, Task> action, string description, params string[] aliases)
         {
             var parameters = action.Method.GetParameters();

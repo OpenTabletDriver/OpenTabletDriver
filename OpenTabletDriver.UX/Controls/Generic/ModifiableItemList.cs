@@ -69,7 +69,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
                 ItemSource = null;
 
             if (!(ItemSource is INotifyCollectionChanged))
-                HandleCollectionChanged(this , new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldObj, index));
+                HandleCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldObj, index));
         }
 
         protected override Control CreateControlBase(int index, DirectBinding<T> itemBinding)

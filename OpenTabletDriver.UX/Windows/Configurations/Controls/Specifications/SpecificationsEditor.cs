@@ -15,11 +15,11 @@ namespace OpenTabletDriver.UX.Windows.Configurations.Controls.Specifications
             }
             get => this.specification;
         }
-        
+
         public event EventHandler<EventArgs> SpecificationsChanged;
-        
+
         protected virtual void OnSpecificationsChanged() => SpecificationsChanged?.Invoke(this, new EventArgs());
-        
+
         public BindableBinding<SpecificationsEditor<T>, T> SpecificationsBinding
         {
             get

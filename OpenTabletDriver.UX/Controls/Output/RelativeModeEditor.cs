@@ -77,11 +77,11 @@ namespace OpenTabletDriver.UX.Controls.Output
             }
             get => this.settings;
         }
-        
+
         public event EventHandler<EventArgs> SettingsChanged;
-        
+
         protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
-        
+
         public BindableBinding<RelativeModeEditor, RelativeModeSettings> SettingsBinding
         {
             get

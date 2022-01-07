@@ -98,8 +98,8 @@ namespace OpenTabletDriver.UX.Windows.Configurations
         {
             var configDir = new DirectoryInfo(AppInfo.Current.ConfigurationDirectory);
             var sortedConfigs = from config in ReadConfigurations(configDir)
-                orderby config.Name
-                select config;
+                                orderby config.Name
+                                select config;
 
             Configurations = new ObservableCollection<TabletConfiguration>(sortedConfigs);
             SelectedIndex = 0;
@@ -134,7 +134,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
             if (dir.Exists)
             {
                 var configs = from file in dir.GetFiles("*.json", SearchOption.AllDirectories)
-                    select Serialization.Deserialize<TabletConfiguration>(file);
+                              select Serialization.Deserialize<TabletConfiguration>(file);
                 return new ObservableCollection<TabletConfiguration>(configs);
             }
             else
@@ -158,7 +158,7 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                     if (!file.Directory.Exists)
                         file.Directory.Create();
                     Serialization.Serialize(file, config);
-                } 
+                }
                 catch (UnauthorizedAccessException)
                 {
                     Log.Write("Configuration", $"OpenTabletDriver doesn't have permission to save persistent tablet config to {path}.", LogLevel.Error);
@@ -338,11 +338,11 @@ namespace OpenTabletDriver.UX.Windows.Configurations
                 }
                 get => this.configuration;
             }
-            
+
             public event EventHandler<EventArgs> ConfigurationChanged;
-            
+
             protected virtual void OnConfigurationChanged() => ConfigurationChanged?.Invoke(this, new EventArgs());
-            
+
             public BindableBinding<ConfigurationSettings, TabletConfiguration> ConfigurationBinding
             {
                 get

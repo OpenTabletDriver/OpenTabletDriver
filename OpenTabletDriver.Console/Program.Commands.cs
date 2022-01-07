@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Console
         }
 
         private static async Task InstallUpdate()
-        {            
+        {
             if (await Driver.Instance.HasUpdate())
             {
                 await Driver.Instance.InstallUpdate();

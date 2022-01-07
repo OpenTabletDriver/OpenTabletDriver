@@ -1,7 +1,7 @@
 using System.IO;
 using Newtonsoft.Json;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Desktop.Converters;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {

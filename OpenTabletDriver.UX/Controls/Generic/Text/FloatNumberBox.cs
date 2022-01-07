@@ -1,6 +1,6 @@
+using System.Globalization;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic.Text.Providers;
-using System.Globalization;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Text
 {

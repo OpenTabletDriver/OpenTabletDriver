@@ -310,7 +310,7 @@ namespace OpenTabletDriver.Tests
                 var directory = Path.Join(splits[..^1]);
                 var file = splits[^1];
 
-                var targetFile = Path.Join(rollBackDir,  directory, file);
+                var targetFile = Path.Join(rollBackDir, directory, file);
                 Assert.True(File.Exists(targetFile), $"{kv.Key} does not exist in rollback store");
 
                 var fileContent = await File.ReadAllBytesAsync(targetFile);
