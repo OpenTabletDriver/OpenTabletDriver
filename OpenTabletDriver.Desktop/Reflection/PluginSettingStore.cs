@@ -155,6 +155,9 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static void TriggerEventMethods(object obj, TabletReference tabletReference)
         {
+            if (obj == null)
+                return;
+
             var properties = from property in obj.GetType().GetProperties()
                              let attr = property.GetCustomAttribute<TabletReferenceAttribute>()
                              where attr != null && property.PropertyType == _tabletRefType
