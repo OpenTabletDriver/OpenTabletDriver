@@ -78,6 +78,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private bool handlingArLock;
         private bool handlingForcedArConstraint;
+        private bool handlingSettingsChanging;
         private float? prevDisplayWidth;
         private float? prevDisplayHeight;
         private DirectBinding<float> displayWidth;
@@ -98,7 +99,12 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         public event EventHandler<EventArgs> SettingsChanged;
 
-        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnSettingsChanged()
+        {
+            handlingSettingsChanging = true;
+            SettingsChanged?.Invoke(this, new EventArgs());
+            handlingSettingsChanging = false;
+        }
 
         public BindableBinding<AbsoluteModeEditor, AbsoluteModeSettings> SettingsBinding
         {
@@ -179,7 +185,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HandleAspectRatioLock(object sender, EventArgs e)
         {
-            if (!handlingArLock)
+            if (!handlingArLock && !handlingSettingsChanging)
             {
                 // Avoids looping
                 handlingArLock = true;
@@ -213,7 +219,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         private void ForceAreaConstraint(object sender, EventArgs args)
         {
             var display = (AreaDisplay)sender;
-            if (!handlingForcedArConstraint && display.LockToUsableArea && display.Area != null)
+            if (!handlingForcedArConstraint && !handlingSettingsChanging && display.LockToUsableArea && display.Area != null)
             {
                 handlingForcedArConstraint = true;
                 var fullBounds = display.FullAreaBounds;

@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
     public class AreaDisplay : ScheduledDrawable
     {
         /// <summary>
-        /// Workaround for memeory leaks on macos.
+        /// Workaround for memory leaks on macos.
         /// Use shared FormattedText to draw text.
         /// </summary>
         private class TextDrawer
