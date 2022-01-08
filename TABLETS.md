@@ -115,6 +115,7 @@
 | VEIKK A15 Pro                 |  Missing Features | Wheel is unsupported.
 | VEIKK A30                     |  Missing Features | Touchpad is unsupported.
 | VEIKK A50                     |  Missing Features | Touchpad is unsupported.
+| VEIKK A50 V2                  |  Missing Features | Touchpad is unsupported.
 | VEIKK VK640                   |  Missing Features | Aux buttons are unsupported.
 | Wacom CTE-450                 |  Missing Features | Wheel is unsupported.
 | Wacom CTE-650                 |  Missing Features | Wheel is unsupported.
