@@ -13,11 +13,11 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
                 return new XP_PenAuxReport(report);
 
             if (report.Length >= 12)
-                return new XP_PenOffsetPressureTabletReport(report);
-            else if (report.Length >= 10)
-                return new XP_PenTabletReport(report);
+                return new XP_PenTabletPressureOffsetOverflowReport(report);
+            if (report.Length >= 10)
+                return new XP_PenPressureOffsetTiltTabletReport(report);
             else
-                return new TabletReport(report);
+                return new XP_PenPressureOffsetTabletReport(report);
         }
     }
 }
