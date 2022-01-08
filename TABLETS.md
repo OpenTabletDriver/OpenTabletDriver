@@ -85,6 +85,7 @@
 | XENX P3-1060                  |     Supported     |
 | XENX X1-640                   |     Supported     |
 | XP-Pen Artist 12 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 15.6            |     Supported     |
 | XP-Pen Artist 22HD            |     Supported     | Windows: Requires Zadig's WinUSB on interface 0
 | XP-Pen CT430                  |     Supported     |
 | XP-Pen CT640                  |     Supported     |
