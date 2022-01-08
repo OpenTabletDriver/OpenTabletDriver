@@ -223,7 +223,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private static readonly Font Font = SystemFonts.User(8);
         private static readonly Brush TextBrush = new SolidBrush(SystemColors.ControlText);
 
-        private readonly Color AccentColor = SystemColors.Highlight;
+        private readonly Color AccentColor = new Color(SystemColors.Highlight, 0.5f);
         private readonly Color AreaBoundsFillColor = SystemColors.ControlBackground;
         private readonly Color AreaBoundsBorderColor = SystemInterop.CurrentPlatform switch
         {
