@@ -4,7 +4,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 {
-    public struct XP_PenPressureOffsetTabletReport : ITabletReport
+    public struct XP_PenPressureOffsetTabletReport : ITabletReport, IEraserReport
     {
         public XP_PenPressureOffsetTabletReport(byte[] report)
         {
@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
+            Eraser = report[1].IsBitSet(3);
 
             PenButtons = new bool[]
             {
@@ -28,5 +29,6 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
         public Vector2 Position { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
+        public bool Eraser { set; get; }
     }
 }
