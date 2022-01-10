@@ -37,7 +37,8 @@ namespace OpenTabletDriver.Daemon
             Log.Output += (sender, message) =>
             {
                 LogMessages.Add(message);
-                Console.WriteLine(Log.GetStringFormat(message));
+                if (((StreamWriter)Console.Out).BaseStream != null)
+                    Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
 
