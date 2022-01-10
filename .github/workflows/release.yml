@@ -35,8 +35,6 @@ jobs:
         run: ./Redhat/package
       - name: Generic Linux Build
         run: ./Linux/package
-      - name: MacOS Build
-        run: ./MacOS/package
 
       - name: Upload all assets (Release)
         uses: softprops/action-gh-release@v1
@@ -46,7 +44,6 @@ jobs:
             ./Debian/OpenTabletDriver.deb
             ./Redhat/OpenTabletDriver.rpm
             ./Linux/OpenTabletDriver.linux-x64.tar.gz
-            ./MacOS/OpenTabletDriver.osx-x64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,12 +68,43 @@ jobs:
           name: OpenTabletDriver.linux-x64.tar.gz
           path: ./Linux/OpenTabletDriver.linux-x64.tar.gz
 
+  macos:
+    runs-on: macos-latest
+    name: macOS Release
+    env:
+      VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
+    steps:
+      - name: Install dependencies
+        run: brew install coreutils
+      - name: Checkout Packaging Repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'OpenTabletDriver/OpenTabletDriver.Packaging'
+      - name: Checkout OpenTabletDriver Repository
+        uses: actions/checkout@v2
+        with:
+          repository: 'OpenTabletDriver/OpenTabletDriver'
+          path: 'src/OpenTabletDriver'
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0'
+          include-prerelease: True
+      - name: macOS Build
+        run: ./MacOS/package
       - name: Upload macOS asset (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@master
         with:
           name: OpenTabletDriver.osx-x64.tar.gz
           path: ./MacOS/OpenTabletDriver.osx-x64.tar.gz
+      - name: Upload macOS assets (Release)
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ./MacOS/OpenTabletDriver.osx-x64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   windows:
     runs-on: windows-latest
