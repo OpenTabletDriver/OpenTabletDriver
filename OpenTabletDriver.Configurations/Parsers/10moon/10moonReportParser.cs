@@ -1,5 +1,5 @@
-﻿using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin;
+﻿using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.TenMoon
 {
