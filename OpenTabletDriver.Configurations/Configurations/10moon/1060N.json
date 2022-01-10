@@ -33,7 +33,7 @@
     }
   ],
   "AuxilaryDeviceIdentifiers": [
-	  {
+    {
       "VendorID": 2290,
       "ProductID": 26641,
       "InputReportLength": 8,
@@ -44,7 +44,7 @@
         "CAMA//AA//A=",
         "CAMA//AA//A=",
         "CAYBAAAAAAA="
-	    ],
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
