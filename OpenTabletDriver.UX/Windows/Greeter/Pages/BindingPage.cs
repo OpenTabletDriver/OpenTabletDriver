@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                                     Content = new StackLayout
                                     {
                                         Orientation = Orientation.Horizontal,
-                                        Items = 
+                                        Items =
                                         {
                                             new Panel
                                             {
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                     }
                 },
                 new StylizedText("This is the binding editor.", SystemFonts.Bold(9), new Padding(0, 0, 0, 4)),
-                "It allows you to set specific actions that OTD will perform when, for example, a tablet button is pressed.",
+                "It allows you to set specific actions that OpenTabletDriver will perform when, for example, a tablet button is pressed.",
                 "Click on the left button to capture a mouse or keyboard binding.",
                 "Click on the right button to open the advanced binding editor, which allows you to use plugin bindings.",
                 new PaddingSpacerItem(),

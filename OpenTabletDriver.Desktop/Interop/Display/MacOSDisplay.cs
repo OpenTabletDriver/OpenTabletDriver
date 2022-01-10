@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
     public class MacOSDisplay : IVirtualScreen
     {
-        public float Width 
+        public float Width
         {
             get
             {
@@ -50,15 +50,15 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             var offsetY = displayBounds.Min(d => d.origin.y);
 
             return from display in displayBounds
-                select new Display(
-                    (float)display.size.width,
-                    (float)display.size.height,
-                    new Vector2(
-                        (float)(display.origin.x - offsetX),
-                        (float)(display.origin.y - offsetY)
-                    ),
-                    displayBounds.IndexOf(display)
-                );
+                   select new Display(
+                       (float)display.size.width,
+                       (float)display.size.height,
+                       new Vector2(
+                           (float)(display.origin.x - offsetX),
+                           (float)(display.origin.y - offsetY)
+                       ),
+                       displayBounds.IndexOf(display)
+                   );
         });
 
         private static IEnumerable<CGRect> GetDisplayBounds()
@@ -67,7 +67,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             CGGetActiveDisplayList(10, displayIdBuf, out var count);
             var displayIds = displayIdBuf.Take((int)count);
             return from id in displayIds
-                select CGDisplayBounds(id);
+                   select CGDisplayBounds(id);
         }
     }
 }

@@ -30,13 +30,13 @@ namespace OpenTabletDriver.Tools.udev
                 output.Delete();
             if (!output.Directory.Exists)
                 output.Directory.Create();
-            
+
             var path = output.FullName.Replace(Directory.GetCurrentDirectory(), string.Empty);
             Console.WriteLine($"Writing all rules to '{path}'...");
             using (var sw = output.AppendText())
             {
                 await sw.WriteLineAsync(
-                    "# Dynamically generated with the OpenTabletDriver.udev tool. " + 
+                    "# Dynamically generated with the OpenTabletDriver.udev tool. " +
                     "https://github.com/OpenTabletDriver/OpenTabletDriver"
                 );
                 foreach (var rule in CreateRules(directory))
@@ -57,10 +57,10 @@ namespace OpenTabletDriver.Tools.udev
                 if (string.IsNullOrWhiteSpace(tablet.Name))
                     continue;
                 yield return string.Format("# {0}", tablet.Name);
-                
+
                 foreach (var rule in RuleGenerator.CreateAccessRules(tablet, "hidraw", "0666"))
                     yield return rule;
-                
+
                 foreach (var rule in RuleGenerator.CreateAccessRules(tablet, "usb", "0666"))
                     yield return rule;
 

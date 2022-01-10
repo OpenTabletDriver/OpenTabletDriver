@@ -78,9 +78,9 @@ namespace OpenTabletDriver.Desktop.Reflection
                 return;
 
             var properties = from property in target.GetType().GetProperties()
-                let attrs = property.GetCustomAttributes(true)
-                where attrs.Any(attr => attr is PropertyAttribute)
-                select property;
+                             let attrs = property.GetCustomAttributes(true)
+                             where attrs.Any(attr => attr is PropertyAttribute)
+                             select property;
 
             foreach (var setting in Settings)
             {
@@ -97,8 +97,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         private static ObservableCollection<PluginSetting> GetSettingsForType(Type targetType, object source = null)
         {
             var settings = from property in targetType.GetProperties()
-                where property.GetCustomAttribute<PropertyAttribute>() is PropertyAttribute
-                select new PluginSetting(property, source == null ? null : property.GetValue(source));
+                           where property.GetCustomAttribute<PropertyAttribute>() is PropertyAttribute
+                           select new PluginSetting(property, source == null ? null : property.GetValue(source));
             return new ObservableCollection<PluginSetting>(settings);
         }
 
@@ -155,21 +155,24 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         private static void TriggerEventMethods(object obj, TabletReference tabletReference)
         {
+            if (obj == null)
+                return;
+
+            var properties = from property in obj.GetType().GetProperties()
+                             let attr = property.GetCustomAttribute<TabletReferenceAttribute>()
+                             where attr != null && property.PropertyType == _tabletRefType
+                             select property;
+
+            foreach (var property in properties)
+                property.SetValue(obj, tabletReference);
+
             var methods = from method in obj.GetType().GetMethods()
-                let attr = obj.GetType().GetCustomAttribute<OnDependencyLoadAttribute>()
-                where attr != null
-                select method;
+                          let attr = obj.GetType().GetCustomAttribute<OnDependencyLoadAttribute>()
+                          where attr != null
+                          select method;
 
             foreach (var method in methods)
                 method.Invoke(obj, Array.Empty<object>());
-            
-            var properties = from property in obj.GetType().GetProperties()
-                let attr = property.GetCustomAttribute<TabletReferenceAttribute>()
-                where attr != null && property.PropertyType == _tabletRefType
-                select property;
-            
-            foreach (var property in properties)
-                property.SetValue(obj, tabletReference);
         }
     }
 }

@@ -4,7 +4,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
 {
     public struct Intuos4AuxReport : IAuxReport
     {
-        public Intuos4AuxReport (byte[] report)
+        public Intuos4AuxReport(byte[] report)
         {
             Raw = report;
 
@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
                 (report[3] & (1 << 7)) != 0
             };
         }
-        
+
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
     }

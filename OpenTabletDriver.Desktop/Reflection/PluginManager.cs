@@ -23,15 +23,15 @@ namespace OpenTabletDriver.Desktop.Reflection
             };
 
             libTypes = (from type in typeof(IDriver).Assembly.GetExportedTypes()
-                where type.IsAbstract || type.IsInterface
-                select type).ToArray();
+                        where type.IsAbstract || type.IsInterface
+                        select type).ToArray();
 
             var internalTypes = from asm in assemblies
-                from type in asm.DefinedTypes
-                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
-                where IsPluginType(type)
-                where IsPlatformSupported(type)
-                select type;
+                                from type in asm.DefinedTypes
+                                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
+                                where IsPluginType(type)
+                                where IsPlatformSupported(type)
+                                select type;
 
             pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
         }
@@ -51,10 +51,10 @@ namespace OpenTabletDriver.Desktop.Reflection
                     if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
                     {
                         var matchingConstructors = from ctor in type.GetConstructors()
-                            let parameters = ctor.GetParameters()
-                            where parameters.Length == args.Length
-                            where IsValidParameterFor(args, parameters)
-                            select ctor;
+                                                   let parameters = ctor.GetParameters()
+                                                   where parameters.Length == args.Length
+                                                   where IsValidParameterFor(args, parameters)
+                                                   select ctor;
 
                         if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
                         {
@@ -87,8 +87,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
         {
             var children = from type in PluginTypes
-                where typeof(T).IsAssignableFrom(type)
-                select type;
+                           where typeof(T).IsAssignableFrom(type)
+                           select type;
 
             return children.ToArray();
         }
@@ -117,8 +117,8 @@ namespace OpenTabletDriver.Desktop.Reflection
                 return;
 
             var resolvedProperties = from property in type.GetProperties()
-                where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                select property;
+                                     where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                                     select property;
 
             foreach (var property in resolvedProperties)
             {
@@ -128,8 +128,8 @@ namespace OpenTabletDriver.Desktop.Reflection
             }
 
             var resolvedFields = from field in type.GetFields()
-                where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                select field;
+                                 where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
+                                 select field;
 
             foreach (var field in resolvedFields)
             {

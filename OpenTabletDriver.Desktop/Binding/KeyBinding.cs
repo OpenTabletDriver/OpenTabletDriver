@@ -39,9 +39,9 @@ namespace OpenTabletDriver.Desktop.Binding
             get => validKeys ??= DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
-                PluginPlatform.Linux   => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
-                PluginPlatform.MacOS   => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
-                _                      => null
+                PluginPlatform.Linux => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
+                PluginPlatform.MacOS => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
+                _ => null
             };
         }
 

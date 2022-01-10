@@ -9,7 +9,7 @@
         {
             this.Unit = unit;
         }
-        
+
         public string Unit { set; get; }
     }
 }

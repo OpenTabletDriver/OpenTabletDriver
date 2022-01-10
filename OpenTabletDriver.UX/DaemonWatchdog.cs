@@ -34,7 +34,7 @@ namespace OpenTabletDriver.UX
         };
 
         public static bool CanExecute =>
-            File.Exists(startInfo.FileName) || 
+            File.Exists(startInfo.FileName) ||
             File.Exists(startInfo.Arguments);
 
         public void Start()

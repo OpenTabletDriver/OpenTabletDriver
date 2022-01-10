@@ -1,8 +1,8 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Configurations.Parsers.XP_Pen;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Configurations.Parsers.XP_Pen;
 using Xunit;
 
 namespace OpenTabletDriver.Tests

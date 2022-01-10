@@ -44,23 +44,25 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             var selected = this.SelectedItem;
 
             var local = from ctx in AppInfo.PluginManager.GetLoadedPlugins()
-                orderby ctx.FriendlyName
-                select ctx.GetMetadata();
+                        orderby ctx.FriendlyName
+                        select ctx.GetMetadata();
 
             var remote = from meta in Repository
-                where meta.IsSupportedBy(AppVersion)
-                where !local.Any(m => PluginMetadata.Match(m, meta))
-                select meta;
+                         where meta.IsSupportedBy(AppVersion)
+                         where !local.Any(m => PluginMetadata.Match(m, meta))
+                         select meta;
 
             var plugins = from meta in local.Concat(remote)
-                orderby meta.PluginVersion descending
-                group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
+                          orderby meta.PluginVersion descending
+                          group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
 
-            this.DataStore = from plugin in plugins
-                let meta = plugin.FirstOrDefault()
-                orderby meta.Name
-                orderby local.Any(m => PluginMetadata.Match(m, meta)) descending
-                select meta;
+            var query = from plugin in plugins
+                        let meta = plugin.FirstOrDefault()
+                        orderby meta.Name
+                        orderby local.Any(m => PluginMetadata.Match(m, meta)) descending
+                        select meta;
+
+            this.DataStore = query.ToList();
 
             SelectFirstOrDefault(p => PluginMetadata.Match(p, selected));
         });

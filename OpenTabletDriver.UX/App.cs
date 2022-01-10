@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX
 
         public static App Current { get; } = new App();
 
-        public const string FaqUrl = "https://opentabletdriver.net/Wiki";
+        public const string WikiUrl = "https://opentabletdriver.net/Wiki";
         public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
         public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();

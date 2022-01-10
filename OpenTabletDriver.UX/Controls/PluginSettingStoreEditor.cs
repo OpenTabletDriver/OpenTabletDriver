@@ -82,9 +82,9 @@ namespace OpenTabletDriver.UX.Controls
         private IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)
         {
             var properties = from property in type.GetProperties()
-                let attrs = property.GetCustomAttributes(true)
-                where attrs.Any(a => a is PropertyAttribute)
-                select property;
+                             let attrs = property.GetCustomAttributes(true)
+                             where attrs.Any(a => a is PropertyAttribute)
+                             select property;
 
             foreach (var property in properties)
                 yield return GeneratedControls.GetControlForProperty(store, property);

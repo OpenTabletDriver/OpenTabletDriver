@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
     public class AreaDisplay : ScheduledDrawable
     {
         /// <summary>
-        /// Workaround for memeory leaks on macos.
+        /// Workaround for memory leaks on macos.
         /// Use shared FormattedText to draw text.
         /// </summary>
         private class TextDrawer
@@ -228,7 +228,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private readonly Color AreaBoundsBorderColor = SystemInterop.CurrentPlatform switch
         {
             PluginPlatform.Windows => new Color(64, 64, 64),
-            _                      => SystemColors.Control
+            _ => SystemColors.Control
         };
 
         private bool mouseDragging;

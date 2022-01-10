@@ -95,8 +95,8 @@ namespace OpenTabletDriver.UX
             bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => true,
-                PluginPlatform.MacOS   => true,
-                _                      => false,
+                PluginPlatform.MacOS => true,
+                _ => false,
             };
 
             if (App.EnableTrayIcon)
@@ -208,8 +208,8 @@ namespace OpenTabletDriver.UX
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
             pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
 
-            var faqUrl = new Command { MenuText = "Open FAQ Page..." };
-            faqUrl.Executed += (sender, e) => DesktopInterop.Open(FaqUrl);
+            var wikiUrl = new Command { MenuText = "Open Wiki..." };
+            wikiUrl.Executed += (sender, e) => DesktopInterop.Open(WikiUrl);
 
             var showGuide = new Command { MenuText = "Show guide..." };
             showGuide.Executed += (sender, e) => App.Current.StartupGreeterWindow.Show();
@@ -275,7 +275,7 @@ namespace OpenTabletDriver.UX
                         Text = "&Help",
                         Items =
                         {
-                            faqUrl,
+                            wikiUrl,
                             exportDiagnostics,
                             showGuide
                         }
@@ -546,7 +546,7 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName + (fileDialog.FileName.EndsWith(".json") ? "" : ".json"));
                     if (App.Current.Settings is Settings settings)
                         settings.Serialize(file);
-                        await RefreshPresets();
+                    await RefreshPresets();
                     break;
             }
         }

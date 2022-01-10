@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public class MacOSUpdater : Updater
     {
-        public MacOSUpdater() 
+        public MacOSUpdater()
             : this(AssemblyVersion,
                 AppDomain.CurrentDomain.BaseDirectory,
                 AppInfo.Current.AppDataDirectory,

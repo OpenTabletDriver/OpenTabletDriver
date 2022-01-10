@@ -5,7 +5,7 @@ using OpenTabletDriver.Desktop.Profiles;
 namespace OpenTabletDriver.UX.Controls.Bindings
 {
     public abstract class BindingEditor : Panel
-    {        
+    {
         public DirectBinding<BindingSettings> SettingsBinding => ProfileBinding.Child(b => b.BindingSettings);
 
         private Profile profile;
@@ -18,11 +18,11 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             }
             get => this.profile;
         }
-        
+
         public event EventHandler<EventArgs> ProfileChanged;
-        
+
         protected virtual void OnProfileChanged() => ProfileChanged?.Invoke(this, new EventArgs());
-        
+
         public BindableBinding<BindingEditor, Profile> ProfileBinding
         {
             get

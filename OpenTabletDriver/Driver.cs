@@ -145,14 +145,14 @@ namespace OpenTabletDriver
         private IEnumerable<IDeviceEndpoint> GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
         {
             return from device in CompositeDeviceHub.GetDevices()
-                where identifier.VendorID == device.VendorID
-                where identifier.ProductID == device.ProductID
-                where device.CanOpen
-                where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
-                where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
-                where DeviceMatchesStrings(device, identifier.DeviceStrings)
-                where DeviceMatchesAttribute(device, configuration.Attributes)
-                select device;
+                   where identifier.VendorID == device.VendorID
+                   where identifier.ProductID == device.ProductID
+                   where device.CanOpen
+                   where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
+                   where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
+                   where DeviceMatchesStrings(device, identifier.DeviceStrings)
+                   where DeviceMatchesAttribute(device, configuration.Attributes)
+                   select device;
         }
 
         private bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string> deviceStrings)

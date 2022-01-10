@@ -22,11 +22,11 @@ namespace OpenTabletDriver.Desktop.RPC
         public TabletReference Tablet { set; get; }
         public string Path { set; get; }
         public JToken Data { set; get; }
-        
+
         public object ToObject()
         {
             var type = AppInfo.PluginManager.PluginTypes.First(t => t.FullName == Path);
             return Data.ToObject(type);
-        } 
+        }
     }
 }

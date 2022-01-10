@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// The height of the digitizer in millimeters.
         /// </summary>
         public float Height { set; get; }
-        
+
         /// <summary>
         /// The maximum X coordinate for the digitizer.
         /// </summary>

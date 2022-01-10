@@ -11,10 +11,10 @@ namespace OpenTabletDriver
             foreach (var tree in base.Items)
                 foreach (var dev in tree.InputDevices)
                     outdatedDevices.Add(dev);
-            
+
             foreach (var dev in outdatedDevices)
                 dev.Dispose();
-            
+
             base.ClearItems();
         }
     }

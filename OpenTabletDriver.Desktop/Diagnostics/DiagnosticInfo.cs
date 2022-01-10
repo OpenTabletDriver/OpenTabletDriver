@@ -5,9 +5,9 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
-using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {

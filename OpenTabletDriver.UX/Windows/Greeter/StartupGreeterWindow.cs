@@ -77,7 +77,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter
             yield return new PluginPage();
             if (App.EnableTrayIcon)
                 yield return new SystemTrayPage();
-            yield return new FAQPage();
+            yield return new WikiPage();
         }
 
         private class StartupGreeterPageViewer : DocumentControl

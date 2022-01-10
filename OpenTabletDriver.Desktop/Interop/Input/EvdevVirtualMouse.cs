@@ -30,12 +30,12 @@ namespace OpenTabletDriver.Desktop.Interop
 
         protected virtual EventCode? GetCode(MouseButton button) => button switch
         {
-            MouseButton.Left     => EventCode.BTN_LEFT,
-            MouseButton.Middle   => EventCode.BTN_MIDDLE,
-            MouseButton.Right    => EventCode.BTN_RIGHT,
-            MouseButton.Forward  => EventCode.BTN_FORWARD,
+            MouseButton.Left => EventCode.BTN_LEFT,
+            MouseButton.Middle => EventCode.BTN_MIDDLE,
+            MouseButton.Right => EventCode.BTN_RIGHT,
+            MouseButton.Forward => EventCode.BTN_FORWARD,
             MouseButton.Backward => EventCode.BTN_BACK,
-            _                    => null
+            _ => null
         };
 
         public virtual void Dispose()

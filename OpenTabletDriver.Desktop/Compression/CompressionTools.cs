@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Desktop.Compression
                     throw new NotSupportedException($"{format} is not supported.");
             }
         }
-        
+
         public static void Decompress(this ZipInputStream zipStream, string outputDir)
         {
             while (zipStream.GetNextEntry() is ZipEntry entry)
