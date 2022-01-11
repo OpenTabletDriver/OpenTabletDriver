@@ -18,29 +18,29 @@ namespace OpenTabletDriver.Tests
 {
     public class UpdaterTests
     {
-        public static TheoryData<Type, string> Updater_InstallsBinary_InCorrectDirectory_Async_Data => new TheoryData<Type, string>()
-        {
-            { typeof(WindowsUpdater), "OpenTabletDriver.UX.Wpf.exe" },
-            { typeof(MacOSUpdater), "OpenTabletDriver.UX.MacOS" }
-        };
+        // public static TheoryData<Type, string> Updater_InstallsBinary_InCorrectDirectory_Async_Data => new TheoryData<Type, string>()
+        // {
+        //     { typeof(WindowsUpdater), "OpenTabletDriver.UX.Wpf.exe" },
+        //     { typeof(MacOSUpdater), "OpenTabletDriver.UX.MacOS" }
+        // };
 
-        [Theory]
-        [MemberData(nameof(Updater_InstallsBinary_InCorrectDirectory_Async_Data))]
-        public Task Updater_InstallsBinary_InCorrectDirectory_Async(Type updaterType, string expectedUiBinaryName)
-        {
-            return MockEnvironmentAsync(async (updaterEnv) =>
-            {
-                var updater = CreateUpdater(updaterType, updaterEnv);
+        // [Theory]
+        // [MemberData(nameof(Updater_InstallsBinary_InCorrectDirectory_Async_Data))]
+        // public Task Updater_InstallsBinary_InCorrectDirectory_Async(Type updaterType, string expectedUiBinaryName)
+        // {
+        //     return MockEnvironmentAsync(async (updaterEnv) =>
+        //     {
+        //         var updater = CreateUpdater(updaterType, updaterEnv);
 
-                await updater.InstallUpdate();
-                var uiBinaryExists = File.Exists(Path.Join(updaterEnv.BinaryDir, expectedUiBinaryName));
-                var daemonBinaryExists = Directory.EnumerateFiles(updaterEnv.BinaryDir!)
-                    .FirstOrDefault(f => Path.GetFileName(f).StartsWith("OpenTabletDriver.Daemon")) != null;
+        //         await updater.InstallUpdate();
+        //         var uiBinaryExists = File.Exists(Path.Join(updaterEnv.BinaryDir, expectedUiBinaryName));
+        //         var daemonBinaryExists = Directory.EnumerateFiles(updaterEnv.BinaryDir!)
+        //             .FirstOrDefault(f => Path.GetFileName(f).StartsWith("OpenTabletDriver.Daemon")) != null;
 
-                Assert.True(uiBinaryExists, $"UI binary not found in {updaterEnv.BinaryDir}");
-                Assert.True(daemonBinaryExists, $"Daemon binary not found in {updaterEnv.BinaryDir}");
-            });
-        }
+        //         Assert.True(uiBinaryExists, $"UI binary not found in {updaterEnv.BinaryDir}");
+        //         Assert.True(daemonBinaryExists, $"Daemon binary not found in {updaterEnv.BinaryDir}");
+        //     });
+        // }
 
         public static TheoryData<Version?, bool> UpdaterBase_ProperlyChecks_Version_Async_Data => new TheoryData<Version?, bool>()
         {
