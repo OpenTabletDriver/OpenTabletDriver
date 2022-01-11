@@ -17,6 +17,8 @@ namespace OpenTabletDriver.Tests
 {
     public class UpdaterTests
     {
+        // TODO: Reintroduce updater test removed in c0626309 to platform test project
+
         public static TheoryData<Version?, bool> UpdaterBase_ProperlyChecks_Version_Async_Data => new TheoryData<Version?, bool>()
         {
             // Outdated
