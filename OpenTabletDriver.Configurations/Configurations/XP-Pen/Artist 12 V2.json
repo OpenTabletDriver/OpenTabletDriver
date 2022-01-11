@@ -1,14 +1,14 @@
 {
-  "Name": "XP-Pen Deco Mini 4",
+  "Name": "XP-Pen Artist 12 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 101.6,
-      "Height": 76.2,
-      "MaxX": 20320.0,
-      "MaxY": 15240.0
+      "Width": 263.19,
+      "Height": 148.08,
+      "MaxX": 52638.0,
+      "MaxY": 29616.0
     },
     "Pen": {
-      "MaxPressure": 2048,
+      "MaxPressure": 8191,
       "Buttons": {
         "ButtonCount": 2
       }
@@ -22,10 +22,10 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 2345,
+      "ProductID": 2058,
       "InputReportLength": 12,
-      "OutputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputReportLength": 33,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
@@ -35,5 +35,7 @@
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
-  "Attributes": {}
+  "Attributes": {
+    "libinputoverride": "1"
+  }
 }

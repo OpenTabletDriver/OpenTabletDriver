@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen Deco Mini7",
+  "Name": "XP-Pen Deco mini7",
   "Specifications": {
     "Digitizer": {
       "Width": 177.8,
@@ -38,6 +38,19 @@
       "ProductID": 2344,
       "InputReportLength": 12,
       "OutputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2344,
+      "InputReportLength": 12,
+      "OutputReportLength": 21,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [

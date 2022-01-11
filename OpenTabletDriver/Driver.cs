@@ -192,6 +192,12 @@ namespace OpenTabletDriver
 
                     return interfaceMatches && keyMatches;
                 }
+                case PluginPlatform.MacOS:
+                {
+                    var devName = device.DevicePath;
+                    bool interfaceMatches = attributes.ContainsKey("MacInterface") ? Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}") : true;
+                    return interfaceMatches;
+                }
                 default:
                 {
                     return true;

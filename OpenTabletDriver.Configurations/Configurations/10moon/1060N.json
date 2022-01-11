@@ -1,0 +1,56 @@
+{
+  "Name": "10moon 1060N",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254.0,
+      "Height": 152.4,
+      "MaxX": 4095.0,
+      "MaxY": 4095.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 12
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 2290,
+      "ProductID": 26641,
+      "InputReportLength": 64,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.TenMoon.TenMoonReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 2290,
+      "ProductID": 26641,
+      "InputReportLength": 8,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.TenMoon.TenMoonReportParser",
+      "FeatureInitReport": [
+        "CAQdAf/0BoM=",
+        "CAMA//AA//A=",
+        "CAMA//AA//A=",
+        "CAYBAAAAAAA="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

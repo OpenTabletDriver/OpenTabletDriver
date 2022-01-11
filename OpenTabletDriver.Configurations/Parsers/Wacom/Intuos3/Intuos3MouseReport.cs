@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 {
-    public struct Intuos3MouseReport : IMouseReport
+    public struct Intuos3MouseReport : IMouseReport, IProximityReport
     {
         public Intuos3MouseReport(byte[] report)
         {
@@ -33,6 +33,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
             {
                 Y = report[8].IsBitSet(0) ? 1 : report[8].IsBitSet(1) ? -1 : 0
             };
+            NearProximity = report[1].IsBitSet(6);
+            HoverDistance = (uint)report[9] >> 2;
         }
 
         public byte[] Raw { set; get; }
@@ -40,5 +42,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
         public Vector2 Position { set; get; }
         public bool[] MouseButtons { set; get; }
         public Vector2 Scroll { set; get; }
+        public bool NearProximity { set; get; }
+        public uint HoverDistance { set; get; }
     }
 }

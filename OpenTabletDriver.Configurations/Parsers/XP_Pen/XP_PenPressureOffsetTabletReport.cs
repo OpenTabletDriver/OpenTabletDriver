@@ -1,11 +1,12 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Plugin.Tablet
+namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 {
-    public struct TiltTabletReport : ITabletReport, ITiltReport
+    public struct XP_PenPressureOffsetTabletReport : ITabletReport, IEraserReport
     {
-        public TiltTabletReport(byte[] report)
+        public XP_PenPressureOffsetTabletReport(byte[] report)
         {
             Raw = report;
 
@@ -14,25 +15,20 @@ namespace OpenTabletDriver.Plugin.Tablet
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
-            Tilt = new Vector2
-            {
-                X = (sbyte)report[10],
-                Y = (sbyte)report[11]
-            };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
+            Eraser = report[1].IsBitSet(3);
 
-            var penByte = report[1];
             PenButtons = new bool[]
             {
-                penByte.IsBitSet(1),
-                penByte.IsBitSet(2)
+                report[1].IsBitSet(1),
+                report[1].IsBitSet(2)
             };
         }
 
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
-        public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
+        public bool Eraser { set; get; }
     }
 }

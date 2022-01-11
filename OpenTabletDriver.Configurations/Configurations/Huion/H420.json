@@ -1,9 +1,9 @@
 {
-  "Name": "Huion osu!tablet",
+  "Name": "Huion H420",
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
-      "Height": 56.6,
+      "Height": 57.01294964,
       "MaxX": 8340.0,
       "MaxY": 4680.0
     },
@@ -13,36 +13,28 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 3
+    },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
+      "ProductID": 110,
       "InputReportLength": 8,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "200": "HVAN"
+        "6": "H420"
       },
-      "InitializationStrings": []
-    },
-    {
-      "VendorID": 9580,
-      "ProductID": 110,
-      "InputReportLength": 8,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Vendors.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {
-        "200": "HVAN"
-      },
-      "InitializationStrings": []
+      "InitializationStrings": [
+        200,
+        123
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
