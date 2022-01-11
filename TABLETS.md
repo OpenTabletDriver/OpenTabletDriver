@@ -31,7 +31,7 @@
 | 10moon 1060N                  |     Supported     | Doesn't meet any of it's advertised specs
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
-| UGTABLET M708                 |     Supported     |
+| UGTABLET M708                 |     Supported     | Windows: Some variations may require Zadig's WinUSB to be installed on interface 0
 | VEIKK A15                     |     Supported     |
 | VEIKK S640                    |     Supported     |
 | VEIKK S640 V2                 |     Supported     |
