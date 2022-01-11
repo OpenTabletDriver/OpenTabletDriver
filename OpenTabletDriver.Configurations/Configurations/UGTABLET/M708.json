@@ -34,6 +34,23 @@
         "4": "UG902_BPG1006"
       },
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 21827,
+      "ProductID": 129,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetAuxReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "5": "UC-LOIC",
+        "6": "TABLET 1060"
+      },
+      "InitializationStrings": [
+        100,
+        123
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
