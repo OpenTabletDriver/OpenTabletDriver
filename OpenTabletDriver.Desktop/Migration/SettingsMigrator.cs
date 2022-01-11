@@ -19,13 +19,13 @@ namespace OpenTabletDriver.Desktop.Migration
         {
             var file = new FileInfo(appInfo.SettingsFile);
 
-            // Back up existing settings file for safety, in case migration goes wrong
-            var fileCopy = file.CopyTo(file.Name + ".old");
-            Log.Write("Settings", $"Old settings found, and have been backed up to {fileCopy.FullName}.");
-
             if (Migrate(file) is Settings settings)
             {
                 Log.Write("Settings", "Settings have been migrated.");
+
+                // Back up existing settings file for safety
+                file.CopyTo(file.Name + ".old", true);
+
                 Serialization.Serialize(file, settings);
             }
         }
