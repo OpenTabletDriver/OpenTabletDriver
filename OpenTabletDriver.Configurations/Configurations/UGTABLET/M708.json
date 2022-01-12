@@ -21,21 +21,6 @@
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 10429,
-      "ProductID": 2311,
-      "InputReportLength": 12,
-      "OutputReportLength": 10,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": [
-        "ArAE"
-      ],
-      "DeviceStrings": {
-        "4": "UG902_BPG1006"
-      },
-      "InitializationStrings": []
-    },
-    {
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
