@@ -2,13 +2,13 @@
   "Name": "UGTABLET M708",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
-      "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "Width": 200.0,
+      "Height": 120.0,
+      "MaxX": 40000.0,
+      "MaxY": 24000.0
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 2047,
       "Buttons": {
         "ButtonCount": 2
       }
