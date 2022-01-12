@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Octokit;
+using OpenTabletDriver.Plugin;
 
 #nullable enable
 
@@ -47,11 +48,19 @@ namespace OpenTabletDriver.Desktop.Updater
             if (updateSentinel == 2)
                 return false;
 
-            if (forced || latestRelease == null)
-                latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
+            try
+            {
+                if (forced || latestRelease == null)
+                    latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
 
-            var latestVersion = new Version(latestRelease!.TagName[1..]); // remove `v` from `vW.X.Y.Z
-            return latestVersion > CurrentVersion;
+                var latestVersion = new Version(latestRelease!.TagName[1..]); // remove `v` from `vW.X.Y.Z
+                return latestVersion > CurrentVersion;
+            }
+            catch (Exception e)
+            {
+                Log.Exception(e);
+                return false;
+            }
         }
 
         public async Task<Release?> GetRelease()
