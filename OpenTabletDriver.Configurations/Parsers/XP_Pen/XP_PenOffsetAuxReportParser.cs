@@ -11,7 +11,6 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 
             if (report[1].IsBitSet(5))
                 return new XP_PenAuxReport(report, 4);
-
             else if (report.Length >= 10)
                 return new XP_PenTabletReport(report);
             else
