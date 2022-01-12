@@ -8,6 +8,8 @@ using Xunit;
 
 namespace OpenTabletDriver.Tests
 {
+    [CollectionDefinition(nameof(TimerTests), DisableParallelization = true)]
+    [Collection(nameof(TimerTests))]
     public class TimerTests
     {
         private const double TOLERANCE = 0.075;
