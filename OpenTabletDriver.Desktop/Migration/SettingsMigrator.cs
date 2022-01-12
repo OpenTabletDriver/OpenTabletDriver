@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Desktop.Migration
                 Log.Write("Settings", "Settings have been migrated.");
 
                 // Back up existing settings file for safety
-                file.CopyTo(file.Name + ".old", true);
+                file.CopyTo(file.FullName + ".old", true);
 
                 Serialization.Serialize(file, settings);
             }
