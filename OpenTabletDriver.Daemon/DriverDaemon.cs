@@ -62,6 +62,7 @@ namespace OpenTabletDriver.Daemon
 
             LoadUserSettings();
 
+#if !DEBUG
             SleepDetection = new(async () =>
             {
                 Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Debug);
@@ -69,6 +70,7 @@ namespace OpenTabletDriver.Daemon
             });
 
             SleepDetection.Start();
+#endif
         }
 
         public event EventHandler<LogMessage>? Message;
@@ -80,7 +82,9 @@ namespace OpenTabletDriver.Daemon
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private IUpdater Updater = DesktopInterop.Updater;
+#if !DEBUG
         private readonly SleepDetectionThread SleepDetection;
+#endif
 
         private bool debugging;
 
