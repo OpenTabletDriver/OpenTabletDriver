@@ -167,7 +167,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 property.SetValue(obj, tabletReference);
 
             var methods = from method in obj.GetType().GetMethods()
-                          let attr = obj.GetType().GetCustomAttribute<OnDependencyLoadAttribute>()
+                          let attr = method.GetCustomAttribute<OnDependencyLoadAttribute>()
                           where attr != null
                           select method;
 
