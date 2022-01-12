@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+#nullable enable
+
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public class TabletConfiguration
@@ -7,7 +9,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The tablet's name.
         /// </summary>
-        public string Name { set; get; }
+        public string Name { set; get; } = string.Empty;
 
         /// <summary>
         /// The tablet's specifications.
