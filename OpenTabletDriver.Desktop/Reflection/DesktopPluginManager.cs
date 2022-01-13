@@ -29,6 +29,9 @@ namespace OpenTabletDriver.Desktop.Reflection
             PluginDirectory = pluginDirectory;
             TrashDirectory = trashDirectory;
             TemporaryDirectory = tempDirectory;
+
+            if (!PluginDirectory.Exists)
+                PluginDirectory.Create();
         }
 
         public DirectoryInfo PluginDirectory { get; }
