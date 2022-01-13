@@ -115,10 +115,12 @@ namespace OpenTabletDriver.UX.Controls
         {
             ProfileChanged?.Invoke(this, EventArgs.Empty);
 
+            var tablet = Profile != null ? await Profile.GetTabletReference() : null;
+
             if (Platform.IsMac)
                 tabControl.Pages.Clear();
 
-            if (Profile != null && await Profile.GetTabletReference() is TabletReference tablet)
+            if (tablet != null)
             {
                 bool switchToOutput = tabControl.SelectedPage == placeholder.Parent;
 
