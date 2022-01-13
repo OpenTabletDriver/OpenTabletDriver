@@ -120,3 +120,19 @@ jobs:
         run: |
           mapfile -t files < <(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '.*\.cs$')
           if [ ${#files[@]} -ne 0 ]; then dotnet format --verify-no-changes --include "${files[@]}"; fi
+
+  unittests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0'
+          include-prerelease: True
+
+      - name: Run tests
+        run: dotnet test

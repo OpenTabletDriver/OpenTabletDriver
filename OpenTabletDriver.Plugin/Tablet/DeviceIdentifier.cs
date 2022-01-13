@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+#nullable enable
+
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public class DeviceIdentifier
@@ -27,17 +29,17 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The device report parser used by the detected device.
         /// </summary>
-        public string ReportParser { set; get; }
+        public string ReportParser { set; get; } = string.Empty;
 
         /// <summary>
         /// The feature report sent to initialize tablet functions.
         /// </summary>
-        public List<byte[]> FeatureInitReport { set; get; }
+        public List<byte[]>? FeatureInitReport { set; get; }
 
         /// <summary>
         /// The output report sent to initialize tablet functions.
         /// </summary>
-        public List<byte[]> OutputInitReport { set; get; }
+        public List<byte[]>? OutputInitReport { set; get; }
 
         /// <summary>
         /// Device strings to match against, used for identification.

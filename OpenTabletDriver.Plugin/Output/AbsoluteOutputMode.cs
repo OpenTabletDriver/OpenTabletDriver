@@ -14,9 +14,6 @@ namespace OpenTabletDriver.Plugin.Output
         private Vector2 min, max;
         private Area outputArea, inputArea;
 
-        [TabletReference]
-        public TabletReference TabletReference { get; set; }
-
         /// <summary>
         /// The area in which the tablet's input is transformed to.
         /// </summary>
@@ -145,7 +142,7 @@ namespace OpenTabletDriver.Plugin.Output
             if (report is IAbsolutePositionReport absReport)
                 Pointer.SetPosition(absReport.Position);
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
-                pressureHandler.SetPressure(tabletReport.Pressure / (float)TabletReference.Properties.Specifications.Pen.MaxPressure);
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
                 tiltHandler.SetTilt(tiltReport.Tilt);
             if (report is IProximityReport proximityReport)

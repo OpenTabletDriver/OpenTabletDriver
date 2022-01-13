@@ -18,9 +18,14 @@ namespace OpenTabletDriver.Desktop.Migration
         public static void Migrate(AppInfo appInfo)
         {
             var file = new FileInfo(appInfo.SettingsFile);
+
             if (Migrate(file) is Settings settings)
             {
                 Log.Write("Settings", "Settings have been migrated.");
+
+                // Back up existing settings file for safety
+                file.CopyTo(file.FullName + ".old", true);
+
                 Serialization.Serialize(file, settings);
             }
         }

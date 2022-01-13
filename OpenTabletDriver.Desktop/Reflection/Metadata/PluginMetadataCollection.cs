@@ -67,8 +67,9 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
                 string hash = CalculateSHA256(memStream);
                 string cacheDir = Path.Join(AppInfo.Current.CacheDirectory, $"{hash}-OpenTabletDriver-PluginMetadata");
 
-                if (!Directory.Exists(cacheDir))
-                    archive.ExtractContents(cacheDir);
+                if (Directory.Exists(cacheDir))
+                    Directory.Delete(cacheDir, true);
+                archive.ExtractContents(cacheDir);
 
                 var collection = EnumeratePluginMetadata(cacheDir);
                 var metadataCollection = new PluginMetadataCollection(collection);

@@ -17,9 +17,6 @@ namespace OpenTabletDriver.Plugin.Output
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
         private bool skipReport;
 
-        [TabletReference]
-        public TabletReference TabletReference { get; set; }
-
         /// <summary>
         /// The class in which the final relative positioned output is handled.
         /// </summary>
@@ -102,7 +99,7 @@ namespace OpenTabletDriver.Plugin.Output
             if (report is IAbsolutePositionReport absReport)
                 Pointer.SetPosition(absReport.Position);
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
-                pressureHandler.SetPressure(tabletReport.Pressure / (float)TabletReference.Properties.Specifications.Pen.MaxPressure);
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
                 tiltHandler.SetTilt(tiltReport.Tilt);
             if (report is IProximityReport proximityReport)
