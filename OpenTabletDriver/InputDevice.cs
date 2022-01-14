@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
@@ -9,6 +10,9 @@ namespace OpenTabletDriver
 {
     public class InputDevice : DeviceReader<IDeviceReport>
     {
+        private uint FeatureInitDelayMs;
+        private readonly string DelayAttributeKeyName = "FeatureInitDelayMs";
+
         public InputDevice(IDriver driver, IDeviceEndpoint device, TabletConfiguration configuration, DeviceIdentifier identifier)
             : base(device, driver.GetReportParser(identifier))
         {
@@ -24,6 +28,10 @@ namespace OpenTabletDriver
             Endpoint = device;
             Configuration = configuration;
             Identifier = identifier;
+
+            if (Configuration.Attributes.TryGetValue(DelayAttributeKeyName, out var delayStr))
+                if (!UInt32.TryParse(delayStr, out FeatureInitDelayMs))
+                    Log.Debug("Device", $"Could not parse '{delayStr}' from attribute {DelayAttributeKeyName}");
 
             Start();
         }
@@ -52,6 +60,9 @@ namespace OpenTabletDriver
             Log.Debug("Device", $"Initializing device '{Endpoint.FriendlyName}' {Endpoint.DevicePath}");
             Log.Debug("Device", $"Using report parser type '{Identifier.ReportParser}'");
 
+            if (FeatureInitDelayMs != 0)
+                Log.Debug("Device", $"{DelayAttributeKeyName} is set in tablet configuration, will sleep for {FeatureInitDelayMs}ms between FeatureInitReports");
+
             foreach (byte index in Identifier.InitializationStrings ?? new List<byte>())
             {
                 Endpoint.GetDeviceString(index);
@@ -67,6 +78,8 @@ namespace OpenTabletDriver
                 {
                     ReportStream.SetFeature(report);
                     Log.Debug("Device", "Set device feature: " + BitConverter.ToString(report));
+                    if (FeatureInitDelayMs != 0)
+                        Thread.Sleep((int)FeatureInitDelayMs);
                 }
                 catch
                 {
