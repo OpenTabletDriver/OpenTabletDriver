@@ -218,7 +218,7 @@ namespace OpenTabletDriver.UX
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
 
-            var updater = new Command {MenuText = "Check for updates..."};
+            var updater = new Command { MenuText = "Check for updates..." };
             updater.Executed += (sender, e) => Current.UpdaterWindow.Show();
 
             var menuBar = new MenuBar
