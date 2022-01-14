@@ -603,19 +603,16 @@ namespace OpenTabletDriver.UX
 
         private async Task CheckForUpdates()
         {
-            if (await App.Driver.Instance.HasUpdate())
+            if (await Driver.Instance.HasUpdate())
             {
-                var id = "update-prompt";
-                var notification = new Notification
-                {
-                    ContentImage = App.Logo,
-                    Title = "OpenTabletDriver",
-                    Message = "An update to OpenTabletDriver is available.",
-                    ID = id
-                };
-                notification.Show(trayIcon?.Indicator);
+                var result = MessageBox.Show(
+                    "An update to OpenTabletDriver is available. Do you wish to install it?",
+                    "Update",
+                    MessageBoxButtons.YesNo
+                );
 
-                App.Current.AddNotificationHandler(id, App.Current.UpdaterWindow.Show);
+                if (result == DialogResult.Yes)
+                    Current.UpdaterWindow.Show();
             }
         }
     }
