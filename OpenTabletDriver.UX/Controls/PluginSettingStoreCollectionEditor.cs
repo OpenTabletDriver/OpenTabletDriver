@@ -82,6 +82,7 @@ namespace OpenTabletDriver.UX.Controls
 
             // Update DataStore to new types, this refreshes the editor.
             var prevIndex = sourceSelector.SelectedIndex;
+            sourceSelector.SelectedIndex = -1;
             sourceSelector.DataStore = types;
             sourceSelector.SelectedIndex = prevIndex;
 
