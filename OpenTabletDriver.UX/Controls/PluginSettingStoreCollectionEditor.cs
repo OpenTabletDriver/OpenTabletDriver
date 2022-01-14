@@ -5,7 +5,6 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Reflection;
 
 namespace OpenTabletDriver.UX.Controls
@@ -79,7 +78,15 @@ namespace OpenTabletDriver.UX.Controls
 
         private void RefreshContent()
         {
-            this.Content = AppInfo.PluginManager.GetChildTypes<TSource>().Any() ? mainContent : placeholder;
+            var types = AppInfo.PluginManager.GetChildTypes<TSource>();
+
+            // Update DataStore to new types, this refreshes the editor.
+            var prevIndex = sourceSelector.SelectedIndex;
+            sourceSelector.SelectedIndex = -1;
+            sourceSelector.DataStore = types;
+            sourceSelector.SelectedIndex = prevIndex;
+
+            this.Content = types.Any() ? mainContent : placeholder;
         }
 
         public BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection> StoreCollectionBinding
