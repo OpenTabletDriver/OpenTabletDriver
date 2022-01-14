@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
@@ -217,7 +218,10 @@ namespace OpenTabletDriver.UX
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
             exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
 
-            return new MenuBar
+            var updater = new Command {MenuText = "Check for updates..."};
+            updater.Executed += (sender, e) => Current.UpdaterWindow.Show();
+
+            var menuBar = new MenuBar
             {
                 Items =
                 {
@@ -288,6 +292,18 @@ namespace OpenTabletDriver.UX
                 QuitItem = quitCommand,
                 AboutItem = aboutCommand
             };
+
+            switch (SystemInterop.CurrentPlatform)
+            {
+                case PluginPlatform.Windows:
+                case PluginPlatform.MacOS:
+                {
+                    menuBar.Items.GetSubmenu("&Help").Items.Add(updater);
+                    break;
+                }
+            }
+
+            return menuBar;
         }
 
         private void SetTitle(IEnumerable<TabletReference> tablets = null)
