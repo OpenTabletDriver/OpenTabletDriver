@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -28,7 +29,8 @@ namespace OpenTabletDriver.Desktop.Migration
                 if (!Directory.Exists(backupDir))
                     Directory.CreateDirectory(backupDir);
 
-                var backupPath = Path.Join(backupDir, file.Name + ".old");
+                string timestamp = DateTime.UtcNow.ToString(".yyyy-MM-dd_hh-mm-ss");
+                var backupPath = Path.Join(backupDir, file.Name + timestamp + ".old");
                 file.CopyTo(backupPath, true);
 
                 Serialization.Serialize(file, settings);
