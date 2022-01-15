@@ -156,7 +156,7 @@ namespace OpenTabletDriver.Tests
         {
             return MockEnvironmentAsync(async (updaterEnv) =>
             {
-                var mockUpdaterObject = CreateMockUpdater<Updater>(updaterEnv).Object;
+                var mockUpdater = CreateMockUpdater<Updater>(updaterEnv).Object;
                 var wpfFile = Encoding.UTF8.GetBytes("OpenTabletDriver.UX.Wpf");
                 var daemonFile = Encoding.UTF8.GetBytes("OpenTabletDriver.Daemon");
                 var settingsFile = Encoding.UTF8.GetBytes("settings.json");
@@ -174,9 +174,9 @@ namespace OpenTabletDriver.Tests
                 };
                 await SetupFakeBinaryFilesAsync(updaterEnv, fakeBinaryFiles, fakeAppDataFiles);
 
-                await mockUpdaterObject.InstallUpdate();
+                await mockUpdater.InstallUpdate();
 
-                await VerifyFakeBinaryFilesAsync(updaterEnv, fakeBinaryFiles, fakeAppDataFiles);
+                await VerifyFakeBinaryFilesAsync(updaterEnv, mockUpdater, fakeBinaryFiles, fakeAppDataFiles);
             });
         }
 
@@ -267,11 +267,14 @@ namespace OpenTabletDriver.Tests
             }
         }
 
-        private static async Task VerifyFakeBinaryFilesAsync(UpdaterEnvironment updaterEnv,
+        private static async Task VerifyFakeBinaryFilesAsync(
+            UpdaterEnvironment updaterEnv,
+            Updater updater,
             Dictionary<string, byte[]>? fakeBinaryFiles = null,
-            Dictionary<string, byte[]>? fakeAppDataFiles = null)
+            Dictionary<string, byte[]>? fakeAppDataFiles = null
+        )
         {
-            var rollbackDir = Path.Join(updaterEnv.RollBackDir, updaterEnv.Version + "-old");
+            var rollbackDir = updater.VersionedRollbackDirectory!;
             await VerifyFakeFilesAsync(updaterEnv.BinaryDir, Path.Join(rollbackDir, "bin"), fakeBinaryFiles);
             await VerifyFakeFilesAsync(updaterEnv.AppDataDir, Path.Join(rollbackDir, "appdata"), fakeAppDataFiles);
         }

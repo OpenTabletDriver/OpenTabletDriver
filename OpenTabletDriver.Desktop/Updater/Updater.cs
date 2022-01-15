@@ -21,12 +21,14 @@ namespace OpenTabletDriver.Desktop.Updater
         private readonly GitHubClient github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
         private Release? latestRelease;
 
-        protected readonly Version CurrentVersion;
+        protected Version CurrentVersion { get; }
         protected static readonly Version AssemblyVersion = typeof(IUpdater).Assembly.GetName().Version!;
-        protected string BinaryDirectory;
-        protected string AppDataDirectory;
-        protected string RollbackDirectory;
-        protected string DownloadDirectory = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        protected string BinaryDirectory { get; }
+        protected string AppDataDirectory { get; }
+        protected string RollbackDirectory { get; }
+        protected string DownloadDirectory { get; } = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+
+        public string? VersionedRollbackDirectory { private set; get; }
 
         protected Updater(Version? currentVersion, string binaryDir, string appDataDir, string rollbackDir)
         {
@@ -98,11 +100,12 @@ namespace OpenTabletDriver.Desktop.Updater
 
         protected void SetupRollback()
         {
-            var versionRollbackDir = Path.Join(RollbackDirectory, CurrentVersion + "-old");
+            string timestamp = DateTime.UtcNow.ToString("-yyyy-MM-dd_hh-mm-ss");
+            VersionedRollbackDirectory = Path.Join(RollbackDirectory, CurrentVersion + timestamp);
 
-            ExclusiveFileOp(BinaryDirectory, RollbackDirectory, versionRollbackDir, "bin",
+            ExclusiveFileOp(BinaryDirectory, RollbackDirectory, VersionedRollbackDirectory, "bin",
                 static (source, target) => Move(source, target));
-            ExclusiveFileOp(AppDataDirectory, RollbackDirectory, versionRollbackDir, "appdata",
+            ExclusiveFileOp(AppDataDirectory, RollbackDirectory, VersionedRollbackDirectory, "appdata",
                 static (source, target) => Copy(source, target));
         }
 
@@ -126,8 +129,9 @@ namespace OpenTabletDriver.Desktop.Updater
                 .EnumerateFileSystemEntries(source)
                 .Except(new[] { rollbackDir, versionRollbackDir, Path.Join(source, "userdata") });
 
-            if (!Directory.Exists(rollbackTarget))
-                Directory.CreateDirectory(rollbackTarget);
+            if (Directory.Exists(rollbackTarget))
+                Directory.Delete(rollbackTarget, true);
+            Directory.CreateDirectory(rollbackTarget);
 
             foreach (var childEntry in childEntries)
             {

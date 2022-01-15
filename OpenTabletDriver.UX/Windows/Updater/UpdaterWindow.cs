@@ -77,6 +77,9 @@ namespace OpenTabletDriver.UX.Windows.Updater
                 _ => throw new NotSupportedException("Current platform does not support updating.")
             };
 
+            // Disallow multiple invocations
+            (sender as Control)!.Enabled = false;
+
             await App.Driver.Instance.InstallUpdate();
 
             Process.Start(path);

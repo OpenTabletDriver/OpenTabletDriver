@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,7 +25,13 @@ namespace OpenTabletDriver.Desktop.Migration
                 Log.Write("Settings", "Settings have been migrated.");
 
                 // Back up existing settings file for safety
-                file.CopyTo(file.FullName + ".old", true);
+                var backupDir = AppInfo.Current.BackupDirectory;
+                if (!Directory.Exists(backupDir))
+                    Directory.CreateDirectory(backupDir);
+
+                string timestamp = DateTime.UtcNow.ToString(".yyyy-MM-dd_hh-mm-ss");
+                var backupPath = Path.Join(backupDir, file.Name + timestamp + ".old");
+                file.CopyTo(backupPath, true);
 
                 Serialization.Serialize(file, settings);
             }
