@@ -126,8 +126,9 @@ namespace OpenTabletDriver.Desktop.Updater
                 .EnumerateFileSystemEntries(source)
                 .Except(new[] { rollbackDir, versionRollbackDir, Path.Join(source, "userdata") });
 
-            if (!Directory.Exists(rollbackTarget))
-                Directory.CreateDirectory(rollbackTarget);
+            if (Directory.Exists(rollbackTarget))
+                Directory.Delete(rollbackTarget, true);
+            Directory.CreateDirectory(rollbackTarget);
 
             foreach (var childEntry in childEntries)
             {
