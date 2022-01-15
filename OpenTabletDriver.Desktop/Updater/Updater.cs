@@ -138,7 +138,7 @@ namespace OpenTabletDriver.Desktop.Updater
                 .Except(excludeList);
 
             if (IncludeList != null)
-                childEntries = childEntries.Intersect(IncludeList.Select(Path.Join(source, IncludeList)));
+                childEntries = childEntries.Intersect(IncludeList.Select(t => Path.Join(source, t)));
 
             if (Directory.Exists(rollbackTarget))
                 Directory.Delete(rollbackTarget, true);
