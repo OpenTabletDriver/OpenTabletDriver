@@ -10,6 +10,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
     {
+        private readonly EventCode[] eventCodes =
+        {
+                EventCode.BTN_TOOL_PEN,
+                EventCode.BTN_TOOL_RUBBER,
+                EventCode.BTN_TOUCH,
+                EventCode.BTN_STYLUS,
+                EventCode.BTN_STYLUS2,
+                EventCode.BTN_STYLUS3,
+        };
+
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool isEraser;
@@ -71,12 +81,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
-                EventCode.BTN_TOUCH,
-                EventCode.BTN_STYLUS,
-                EventCode.BTN_TOOL_PEN,
-                EventCode.BTN_TOOL_RUBBER,
-                EventCode.BTN_STYLUS2,
-                EventCode.BTN_STYLUS3
+                eventCodes
             );
 
             var result = Device.Initialize();
@@ -135,13 +140,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void Reset()
         {
             // Zero out everything except position and tilt
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_PEN, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, 0);
+            foreach (var code in eventCodes)
+                Device.Write(EventType.EV_KEY, code, 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS2, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
 
             isEraser = false;
         }
