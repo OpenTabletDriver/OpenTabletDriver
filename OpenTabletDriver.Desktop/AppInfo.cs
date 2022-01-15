@@ -17,6 +17,7 @@ namespace OpenTabletDriver.Desktop
             presetDirectory,
             temporaryDirectory,
             cacheDirectory,
+            backupDirectory,
             trashDirectory;
 
         private static AppInfo current;
@@ -88,6 +89,12 @@ namespace OpenTabletDriver.Desktop
             get => this.cacheDirectory ?? GetDefaultCacheDirectory();
         }
 
+        public string BackupDirectory
+        {
+            set => this.backupDirectory = value;
+            get => this.backupDirectory ?? GetDefaultBackupDirectory();
+        }
+
         public string TrashDirectory
         {
             set => this.trashDirectory = value;
@@ -125,6 +132,7 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultPresetDirectory() => Path.Join(AppDataDirectory, "Presets");
         private string GetDefaultTemporaryDirectory() => Path.Join(AppDataDirectory, "Temp");
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
+        private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
     }
 }

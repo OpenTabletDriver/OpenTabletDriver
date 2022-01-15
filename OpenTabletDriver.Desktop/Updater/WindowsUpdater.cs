@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Updater
            : this(AssemblyVersion,
                AppDomain.CurrentDomain.BaseDirectory,
                AppInfo.Current.AppDataDirectory,
-               AppInfo.Current.TemporaryDirectory)
+               AppInfo.Current.BackupDirectory)
         {
         }
 
