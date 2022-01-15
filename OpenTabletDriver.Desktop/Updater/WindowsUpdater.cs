@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
@@ -26,6 +27,13 @@ namespace OpenTabletDriver.Desktop.Updater
                 rollBackDirectory)
         {
         }
+
+        protected override string[] IncludeList { get; } = new[]
+        {
+            "OpenTabletDriver.UX.Wpf.exe",
+            "OpenTabletDriver.Daemon.exe",
+            "Configurations"
+        };
 
         protected override async Task Download(Release release)
         {

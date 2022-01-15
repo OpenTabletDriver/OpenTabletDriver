@@ -27,6 +27,7 @@ namespace OpenTabletDriver.Desktop.Updater
         protected string AppDataDirectory { get; }
         protected string RollbackDirectory { get; }
         protected string DownloadDirectory { get; } = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        protected virtual string[]? IncludeList { get; } = null;
 
         public string? VersionedRollbackDirectory { private set; get; }
 
@@ -120,14 +121,24 @@ namespace OpenTabletDriver.Desktop.Updater
         protected abstract Task Download(Release release);
 
         // Avoid moving/copying the rollback directory if under source directory
-        private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target,
+        protected virtual void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target,
             Action<string, string> fileOp)
         {
             var rollbackTarget = Path.Join(versionRollbackDir, target);
 
+            var excludeList = new[]
+            {
+                rollbackDir,
+                versionRollbackDir,
+                Path.Join(source, "userdata")
+            };
+
             var childEntries = Directory
                 .EnumerateFileSystemEntries(source)
-                .Except(new[] { rollbackDir, versionRollbackDir, Path.Join(source, "userdata") });
+                .Except(excludeList);
+
+            if (IncludeList != null)
+                childEntries = childEntries.Intersect(IncludeList);
 
             if (Directory.Exists(rollbackTarget))
                 Directory.Delete(rollbackTarget, true);
