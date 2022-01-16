@@ -61,6 +61,7 @@
 | Wacom CTL-672                 |     Supported     |
 | Wacom CTL-680                 |     Supported     |
 | Wacom CTL-690                 |     Supported     |
+| Wacom DTC-133                 |     Supported     |
 | Wacom ET-0405-U               |     Supported     |
 | Wacom ET-0405A-U              |     Supported     |
 | Wacom FT-0405-U               |     Supported     |
@@ -92,7 +93,7 @@
 | Gaomon M106K Pro              |  Missing Features | Tilt is unsupported.
 | Gaomon M10K                   |  Missing Features | Wheel is unsupported.
 | Gaomon M10K Pro               |  Missing Features | Tilt and wheel are unsupported.
-| Gaomon M1120                  |  Missing Features | Tilt and wheel are unsupported.
+| Gaomon M1220                  |  Missing Features | Tilt and wheel are unsupported.
 | Gaomon M1230                  |  Missing Features | Touch bar is unsupported.
 | Huion GC610                   |  Missing Features | Touchpad is unsupported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is unsupported.
@@ -118,6 +119,7 @@
 | VEIKK A15 Pro                 |  Missing Features | Wheel is unsupported.
 | VEIKK A30                     |  Missing Features | Touchpad is unsupported.
 | VEIKK A50                     |  Missing Features | Touchpad is unsupported.
+| VEIKK A50 V2                  |  Missing Features | Touchpad is unsupported.
 | VEIKK VK640                   |  Missing Features | Aux buttons are unsupported.
 | Wacom CTE-450                 |  Missing Features | Wheel is unsupported.
 | Wacom CTE-650                 |  Missing Features | Wheel is unsupported.
