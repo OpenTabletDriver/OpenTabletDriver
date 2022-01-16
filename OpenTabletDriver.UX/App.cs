@@ -122,9 +122,17 @@ namespace OpenTabletDriver.UX
 
         private static void ShowUnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
         {
-            var exception = e.ExceptionObject as Exception;
-            Log.Exception(exception);
-            exception.ShowMessageBox();
+            try
+            {
+                var exception = e.ExceptionObject as Exception;
+                Log.Exception(exception);
+                exception.ShowMessageBox();
+            }
+            catch (Exception ex)
+            {
+                // Stops recursion of exceptions if the messagebox itself throws an exception
+                Log.Exception(ex);
+            }
         }
     }
 }
