@@ -92,7 +92,7 @@
 | Gaomon M106K Pro              |  Missing Features | Tilt is unsupported.
 | Gaomon M10K                   |  Missing Features | Wheel is unsupported.
 | Gaomon M10K Pro               |  Missing Features | Tilt and wheel are unsupported.
-| Gaomon M1120                  |  Missing Features | Tilt and wheel are unsupported.
+| Gaomon M1220                  |  Missing Features | Tilt and wheel are unsupported.
 | Huion GC610                   |  Missing Features | Touchpad is unsupported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is unsupported.
 | Huion H1060P                  |  Missing Features | Tilt is unsupported.
