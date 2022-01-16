@@ -38,6 +38,8 @@ namespace OpenTabletDriver.UX
                 Text = "Connecting to OpenTabletDriver Daemon..."
             };
 
+            trayIcon.Indicator.Show();
+
             Driver.Connected += HandleDaemonConnected;
             Driver.Disconnected += HandleDaemonDisconnected;
 
