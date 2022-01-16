@@ -1,0 +1,43 @@
+{
+  "Name": "Huion 320M",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 228.59,
+      "Height": 142.5,
+      "MaxX": 45718.0,
+      "MaxY": 28500.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 11
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+      	"201": "HUION_T198_\\d{6}$"
+      },
+      "InitializationStrings": [
+        "200"
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
