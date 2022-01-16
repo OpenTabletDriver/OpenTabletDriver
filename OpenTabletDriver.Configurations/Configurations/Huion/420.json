@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "6": "420"
+        "6": "^420$"
       },
       "InitializationStrings": [
         100
@@ -43,7 +43,7 @@
       "OutputInitReport": null,
       "DeviceStrings": {
         "6": "^$",
-        "121": "H850_F210"
+        "121": "^H850_F210$"
       },
       "InitializationStrings": [
         100

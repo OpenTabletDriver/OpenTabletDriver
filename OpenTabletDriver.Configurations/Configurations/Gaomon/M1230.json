@@ -1,20 +1,20 @@
 {
-  "Name": "Huion H420",
+  "Name": "Gaomon M1230",
   "Specifications": {
     "Digitizer": {
-      "Width": 101.6,
-      "Height": 57.01295,
-      "MaxX": 8340.0,
-      "MaxY": 4680.0
+      "Width": 258.5,
+      "Height": 171.525,
+      "MaxX": 51700.0,
+      "MaxY": 34305.0
     },
     "Pen": {
-      "MaxPressure": 2047,
+      "MaxPressure": 8191,
       "Buttons": {
         "ButtonCount": 2
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 3
+      "ButtonCount": 12
     },
     "MouseButtons": null,
     "Touch": null
@@ -22,18 +22,17 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 110,
-      "InputReportLength": 8,
+      "ProductID": 109,
+      "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "6": "H420"
+        "201": "GM001_T202_\\d{6}$"
       },
       "InitializationStrings": [
-        100,
-        123
+        200
       ]
     }
   ],

@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 
         private IDeviceReport GetToolReport(byte[] data)
         {
-            return data[1] switch
+            return (data[1] & 0xF0) switch
             {
                 0xE0 => new IntuosV1TabletReport(data),
                 0xA0 => new IntuosV1TabletReport(data),
