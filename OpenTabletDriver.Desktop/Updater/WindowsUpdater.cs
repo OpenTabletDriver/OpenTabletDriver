@@ -27,6 +27,12 @@ namespace OpenTabletDriver.Desktop.Updater
         {
         }
 
+        protected override string[] IncludeList { get; } = new[]
+        {
+            "OpenTabletDriver.UX.Wpf.exe",
+            "OpenTabletDriver.Daemon.exe"
+        };
+
         protected override async Task Download(Release release)
         {
             var asset = release.Assets.First(r => r.Name.Contains("win-x64"));

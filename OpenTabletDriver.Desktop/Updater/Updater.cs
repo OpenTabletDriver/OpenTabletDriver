@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -27,6 +28,7 @@ namespace OpenTabletDriver.Desktop.Updater
         protected string AppDataDirectory { get; }
         protected string RollbackDirectory { get; }
         protected string DownloadDirectory { get; } = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        protected virtual string[]? IncludeList { get; } = null;
 
         public string? VersionedRollbackDirectory { private set; get; }
 
@@ -98,21 +100,21 @@ namespace OpenTabletDriver.Desktop.Updater
             }
         }
 
-        protected void SetupRollback()
+        protected void PerformBackup()
         {
             string timestamp = DateTime.UtcNow.ToString("-yyyy-MM-dd_hh-mm-ss");
             VersionedRollbackDirectory = Path.Join(RollbackDirectory, CurrentVersion + timestamp);
 
-            ExclusiveFileOp(BinaryDirectory, RollbackDirectory, VersionedRollbackDirectory, "bin",
+            InclusiveFileOp(BinaryDirectory, VersionedRollbackDirectory, "bin",
                 static (source, target) => Move(source, target));
-            ExclusiveFileOp(AppDataDirectory, RollbackDirectory, VersionedRollbackDirectory, "appdata",
+            ExclusiveFileOp(AppDataDirectory, RollbackDirectory, "appdata", VersionedRollbackDirectory,
                 static (source, target) => Copy(source, target));
         }
 
         protected virtual async Task Install(Release release)
         {
             await Download(release);
-            SetupRollback();
+            PerformBackup();
 
             Move(DownloadDirectory, BinaryDirectory);
         }
@@ -120,22 +122,46 @@ namespace OpenTabletDriver.Desktop.Updater
         protected abstract Task Download(Release release);
 
         // Avoid moving/copying the rollback directory if under source directory
-        private static void ExclusiveFileOp(string source, string rollbackDir, string versionRollbackDir, string target,
-            Action<string, string> fileOp)
+        private void ExclusiveFileOp(string source, string backupDir, string target, string versionBackupDir, Action<string, string> fileOp)
         {
-            var rollbackTarget = Path.Join(versionRollbackDir, target);
+            var backupTarget = Path.Join(versionBackupDir, target);
 
-            var childEntries = Directory
-                .EnumerateFileSystemEntries(source)
-                .Except(new[] { rollbackDir, versionRollbackDir, Path.Join(source, "userdata") });
-
-            if (Directory.Exists(rollbackTarget))
-                Directory.Delete(rollbackTarget, true);
-            Directory.CreateDirectory(rollbackTarget);
-
-            foreach (var childEntry in childEntries)
+            var excludeList = new[]
             {
-                fileOp(childEntry, Path.Join(rollbackTarget, Path.GetFileName(childEntry)));
+                backupDir,
+                versionBackupDir,
+                Path.Join(source, "userdata")
+            };
+
+            var childEntries = Directory.EnumerateFileSystemEntries(source)
+                .Except(excludeList);
+
+            PerformFileOperations(fileOp, backupTarget, childEntries);
+        }
+
+        private void InclusiveFileOp(string source, string backupDir, string target, Action<string, string> fileOp)
+        {
+            var backupTarget = Path.Join(backupDir, target);
+
+            var entries = Directory.EnumerateFileSystemEntries(source);
+
+            if (IncludeList != null)
+                entries = entries.Intersect(IncludeList.Select(t => Path.Join(source, t)));
+
+            PerformFileOperations(fileOp, backupTarget, entries);
+        }
+
+        private static void PerformFileOperations(Action<string, string> fileOp, string targetParentDir, IEnumerable<string> entries)
+        {
+            if (Directory.Exists(targetParentDir))
+                Directory.Delete(targetParentDir, true);
+            Directory.CreateDirectory(targetParentDir);
+
+            foreach (var entry in entries)
+            {
+                var fileName = Path.GetFileName(entry);
+                var path = Path.Join(targetParentDir, fileName);
+                fileOp(entry, path);
             }
         }
 
