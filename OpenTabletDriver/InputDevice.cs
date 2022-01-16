@@ -31,7 +31,7 @@ namespace OpenTabletDriver
 
             if (Configuration.Attributes.TryGetValue(DelayAttributeKeyName, out var delayStr))
                 if (!UInt32.TryParse(delayStr, out FeatureInitDelayMs))
-                    Log.Debug("Device", $"Could not parse '{delayStr}' from attribute {DelayAttributeKeyName}");
+                    Log.Write("Device", $"Could not parse '{delayStr}' from attribute {DelayAttributeKeyName}", LogLevel.Warning);
 
             Start();
         }
