@@ -2,7 +2,6 @@
 | ---------------------------   | :---------------: | ----- |
 | Acepen AP 1060                |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
-| Gaomon M1230                  |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
 | Gaomon S56K                   |     Supported     |
@@ -94,6 +93,7 @@
 | Gaomon M10K                   |  Missing Features | Wheel is unsupported.
 | Gaomon M10K Pro               |  Missing Features | Tilt and wheel are unsupported.
 | Gaomon M1120                  |  Missing Features | Tilt and wheel are unsupported.
+| Gaomon M1230                  |  Missing Features | Touch bar is unsupported.
 | Huion GC610                   |  Missing Features | Touchpad is unsupported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is unsupported.
 | Huion H1060P                  |  Missing Features | Tilt is unsupported.
