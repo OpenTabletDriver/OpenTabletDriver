@@ -147,5 +147,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Device.Sync();
         }
+
+        protected override EventCode? GetCode(MouseButton button) => button switch
+        {
+            MouseButton.Left => EventCode.BTN_TOUCH,
+            MouseButton.Middle => EventCode.BTN_STYLUS2,
+            MouseButton.Right => EventCode.BTN_STYLUS,
+            _ => null
+        };
     }
 }
