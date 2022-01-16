@@ -98,7 +98,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPressure(float percentage)
         {
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, percentage > 0 ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MAX_PRESSURE * percentage));
         }
 
