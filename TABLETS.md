@@ -71,8 +71,8 @@
 | XenceLabs Pen Tablet Medium   |     Supported     |
 | XP-Pen Artist 12              |     Supported     | 
 | XP-Pen Artist 22HD            |     Supported     | Windows: Requires Zadig's WinUSB on interface 0
-| XP-Pen CT430                  |     Supported     |
-| XP-Pen CT460                  |     Supported     |
+| XP-Pen Deco Fun XS (CT430)    |     Supported     |
+| XP-Pen Deco Fun S (CT640)     |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
