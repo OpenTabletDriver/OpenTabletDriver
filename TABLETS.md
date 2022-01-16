@@ -2,6 +2,7 @@
 | ---------------------------   | :---------------: | ----- |
 | Acepen AP 1060                |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
+| Gaomon M1230                  |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
 | Gaomon S56K                   |     Supported     |
