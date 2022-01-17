@@ -16,7 +16,8 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         public static string[] ValidButtons { get; } = {
             "Pen Button 1",
             "Pen Button 2",
-            "Pen Button 3"
+            "Pen Button 3",
+            "Pen Tip"
         };
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
@@ -39,6 +40,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
                 "Pen Button 1" => EventCode.BTN_STYLUS,
                 "Pen Button 2" => EventCode.BTN_STYLUS2,
                 "Pen Button 3" => EventCode.BTN_STYLUS3,
+                "Pen Tip" => EventCode.BTN_TOUCH,
                 _ => throw new InvalidOperationException($"Invalid Button '{Button}'")
             };
 
