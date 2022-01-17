@@ -152,6 +152,8 @@ namespace OpenTabletDriver.Plugin.Output
                 if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
                     hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
             }
+            if (report is IToolReport toolReport && Pointer is IToolHandler toolHandler)
+                toolHandler.RegisterTool(toolReport.RawToolID, toolReport.Serial);
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)

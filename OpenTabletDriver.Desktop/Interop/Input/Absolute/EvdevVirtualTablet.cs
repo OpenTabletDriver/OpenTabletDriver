@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer, IToolHandler
     {
         private readonly EventCode[] eventCodes =
         {
@@ -23,6 +23,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool isEraser;
+        private int toolID, toolSerial;
 
         public unsafe EvdevVirtualTablet()
         {
@@ -78,6 +79,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             };
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
+
+            var emptyStruct = new input_absinfo();
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_MISC, (IntPtr)((input_absinfo*)&emptyStruct));
+            Device.EnableType(EventType.EV_MSC);
+            Device.EnableCode(EventType.EV_MSC, EventCode.MSC_SERIAL);
 
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
@@ -137,6 +143,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
         }
 
+        public void RegisterTool(uint toolID, ulong toolSerial)
+        {
+            this.toolID = (int)toolID;
+            this.toolSerial = (int)toolSerial;
+        }
+
         public void Reset()
         {
             // Zero out everything except position and tilt
@@ -144,11 +156,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 Device.Write(EventType.EV_KEY, code, 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
 
+            toolID = toolSerial = 0;
             isEraser = false;
         }
 
         public void Flush()
         {
+            if (toolID > 0)
+                Device.Write(EventType.EV_ABS, EventCode.ABS_MISC, toolID);
+            if (toolSerial > 0)
+                Device.Write(EventType.EV_MSC, EventCode.MSC_SERIAL, toolSerial);
+
             Device.Sync();
         }
 
