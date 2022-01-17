@@ -13,7 +13,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool isEraser;
-        private bool proximity = true;
 
         public unsafe EvdevVirtualTablet()
         {
@@ -89,7 +88,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_KEY, isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, proximity ? 1 : 0);
+            Device.Write(EventType.EV_KEY, isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, 1);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
@@ -113,7 +112,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetProximity(bool proximity)
         {
-            this.proximity = proximity;
+            // matches upstream behavior; proximity isn't exposed to userspace
+            return;
         }
 
         public void SetHoverDistance(uint distance)
@@ -138,7 +138,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
 
             isEraser = false;
-            proximity = true; // we counterintuitively set this to true since its the initial state
         }
 
         public void Flush()
