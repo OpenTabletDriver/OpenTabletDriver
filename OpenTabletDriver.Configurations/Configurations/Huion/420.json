@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "6": "^420$"
+        "6": "^420"
       },
       "InitializationStrings": [
         100
