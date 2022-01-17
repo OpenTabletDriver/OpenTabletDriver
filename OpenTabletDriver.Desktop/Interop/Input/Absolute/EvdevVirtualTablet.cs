@@ -44,6 +44,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             input_absinfo* pressurePtr = &pressure;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_PRESSURE, (IntPtr)pressurePtr);
 
+            var distance = new input_absinfo
+            {
+                maximum = 100
+            };
+            input_absinfo* distancePtr = &distance;
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_DISTANCE, (IntPtr)distancePtr);
+
             var xTilt = new input_absinfo
             {
                 minimum = -64,
