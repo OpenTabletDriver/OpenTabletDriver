@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public unsafe EvdevVirtualTablet()
         {
-            Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
+            Device = new EvdevDevice(TABLET_NAME);
 
             Device.EnableType(EventType.INPUT_PROP_DIRECT);
             Device.EnableType(EventType.EV_ABS);
@@ -40,7 +40,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var pressure = new input_absinfo
             {
-                maximum = MaxPressure
+                maximum = MAX_PRESSURE
             };
             input_absinfo* pressurePtr = &pressure;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_PRESSURE, (IntPtr)pressurePtr);
@@ -85,7 +85,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             }
         }
 
-        private const int MaxPressure = ushort.MaxValue;
+        public const int MAX_PRESSURE = ushort.MaxValue;
+        public const string TABLET_NAME = "OpenTabletDriver Virtual Artist Tablet";
 
         public void SetPosition(Vector2 pos)
         {
@@ -97,7 +98,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetPressure(float percentage)
         {
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, percentage > 0 ? 1 : 0);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MaxPressure * percentage));
+            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MAX_PRESSURE * percentage));
         }
 
         public void SetTilt(Vector2 tilt)
