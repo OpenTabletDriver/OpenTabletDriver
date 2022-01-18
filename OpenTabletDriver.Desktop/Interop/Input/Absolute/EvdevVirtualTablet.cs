@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public unsafe EvdevVirtualTablet(IVirtualScreen virtualScreen)
         {
-            Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
+            Device = new EvdevDevice(TABLET_NAME);
 
             Device.EnableProperty(InputProperty.INPUT_PROP_DIRECT);
             Device.EnableProperty(InputProperty.INPUT_PROP_POINTER);
@@ -93,7 +93,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             }
         }
 
-        private const int MAX_PRESSURE = ushort.MaxValue;
+        public const int MAX_PRESSURE = ushort.MaxValue;
+        public const string TABLET_NAME = "OpenTabletDriver Virtual Artist Tablet";
 
         public void SetPosition(Vector2 pos)
         {
