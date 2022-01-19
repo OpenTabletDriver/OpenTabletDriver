@@ -57,7 +57,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var distance = new input_absinfo
             {
-                maximum = 100
+                maximum = 64
             };
             input_absinfo* distancePtr = &distance;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_DISTANCE, (IntPtr)distancePtr);
