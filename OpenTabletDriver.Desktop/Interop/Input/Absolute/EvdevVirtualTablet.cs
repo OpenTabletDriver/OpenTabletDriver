@@ -50,6 +50,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var pressure = new input_absinfo
             {
+                flat = (int)(MaxPressure * 0.005d),
                 maximum = MaxPressure
             };
             input_absinfo* pressurePtr = &pressure;
