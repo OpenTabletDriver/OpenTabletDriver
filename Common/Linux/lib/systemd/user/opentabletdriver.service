@@ -1,0 +1,10 @@
+[Unit]
+Description=OpenTabletDriver Daemon
+
+[Service]
+ExecStart=/usr/share/OpenTabletDriver/OpenTabletDriver.Daemon -c /usr/share/OpenTabletDriver/Configurations
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=default.target

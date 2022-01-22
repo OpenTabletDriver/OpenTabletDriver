@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=0.0.0
+Name=OpenTabletDriver
+Exec=/usr/bin/opentabletdriver
+Icon=/usr/share/pixmaps/otd.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Settings;

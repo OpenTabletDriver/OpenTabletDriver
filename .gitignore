@@ -21,3 +21,7 @@ BenchmarkDotNet.Artifacts/
 # Nix
 .envrc
 shell.nix
+
+# Linux packagaing
+!Common/Linux/bin
+

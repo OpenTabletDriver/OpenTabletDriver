@@ -1,0 +1,10 @@
+#!/bin/bash
+systemctl --user --quiet is-active opentabletdriver
+daemonactive=$?
+
+if [ $daemonactive != 0 ]
+then
+  systemctl --user start opentabletdriver
+fi
+
+/usr/share/OpenTabletDriver/OpenTabletDriver.Console "$@"
