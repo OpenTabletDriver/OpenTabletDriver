@@ -48,6 +48,7 @@ namespace OpenTabletDriver.SystemDrivers
                 new HuionDriverInfoProvider(),
                 new XPPenDriverInfoProvider(),
                 new VeikkDriverInfoDriver(),
+                new RobotPenDriverInfoDriver(),
                 new OpenTabletDriverInfoProvider(),
                 new TabletDriverInfoProvider()
             };
