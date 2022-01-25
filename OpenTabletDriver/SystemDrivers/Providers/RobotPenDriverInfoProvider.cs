@@ -18,5 +18,10 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
         {
             "RobotPen"
         };
+
+        private string[] Exclusions = new string[]
+        {
+            "RobotPen"
+        };
     }
 }

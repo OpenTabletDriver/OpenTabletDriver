@@ -6,7 +6,7 @@ namespace OpenTabletDriver.Configurations.Parsers.RobotPen
     {
         public IDeviceReport Parse(byte[] report)
         {
-            if (report[5].ToString() == "16" || report[5].ToString() == "17")
+            if (report[1].ToString() == "66")
                 return new RobotPenTabletReport(report);
 
             return new DeviceReport(report);
