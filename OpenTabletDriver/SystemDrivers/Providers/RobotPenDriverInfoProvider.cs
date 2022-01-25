@@ -4,9 +4,9 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
     {
         protected override string FriendlyName => "RobotPen";
 
-        protected override string LinuxFriendlyName => "RobotPen";
+        protected override string LinuxFriendlyName => "UC Logic";
 
-        protected override string LinuxModuleName => "RobotPen";
+        protected override string LinuxModuleName => "hid_uclogic";
 
         protected override string[] WinProcessNames { get; } = new string[]
         {
