@@ -289,13 +289,30 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private void startRecording() => Application.Instance.AsyncInvoke(() =>
         {
             startDataRecordingButton.Enabled = false;
-            stopDataRecordingButton.Enabled = true;
-            reportsRecordedGroup.Visible = true;
+            var fileDialog = new SaveFileDialog
+            {
+                Title = "Record reports to file...",
+                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
+                Filters =
+                {
+                    new FileFilter("Tablet Report Recording (*.txt)", ".txt")
+                }
+            };
+            switch (fileDialog.ShowDialog(this))
+            {
+                case DialogResult.Ok:
+                case DialogResult.Yes:
+                    dataRecordingOutput = new StreamWriter(File.OpenWrite(fileDialog.FileName));
 
-            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
-            dataRecordingOutput = new StreamWriter(outputStream);
+                    stopDataRecordingButton.Enabled = true;
+                    reportsRecordedGroup.Visible = true;
 
-            isRecording = true;
+                    isRecording = true;
+                    break;
+                default:
+                    startDataRecordingButton.Enabled = true;
+                    return;
+            }
         });
 
         private void stopRecording() => Application.Instance.AsyncInvoke(() =>
