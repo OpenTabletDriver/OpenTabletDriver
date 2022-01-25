@@ -87,6 +87,7 @@
 | XP-Pen Star G640S             |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
 | XP-Pen Star G960S Plus        |     Supported     |
+| RobotPen T9A                  |     Supported     |
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are unsupported.
