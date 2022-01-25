@@ -66,22 +66,25 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                                 },
                                 new StackLayoutItem
                                 {
-                                    Control = new DebuggerGroup
+                                    Control = reportsRecordedGroup = new DebuggerGroup
                                     {
                                         Text = "Reports Recorded",
                                         Width = LARGE_FONTSIZE * 10,
                                         Content = reportsRecorded = new Label
                                         {
                                             Font = Fonts.Monospace(LARGE_FONTSIZE)
-                                        }
+                                        },
+                                        Visible = false,
                                     }
                                 },
-                                new Group
+                                new StackLayout
                                 {
-                                    Text = "Options",
-                                    Content = enableDataRecording = new CheckBox
+                                    Orientation = Orientation.Vertical,
+                                    Spacing = SPACING,
+                                    Items =
                                     {
-                                        Text = "Enable Data Recording"
+                                       startDataRecordingButton,
+                                       stopDataRecordingButton
                                     }
                                 }
                             }
@@ -161,8 +164,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             App.Driver.TabletsChanged += HandleTabletsChanged;
             App.Driver.Instance.SetTabletDebug(true);
 
-            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
-            dataRecordingOutput = new StreamWriter(outputStream);
+            startDataRecordingButton.Click += (sender, e) => startRecording();
+            stopDataRecordingButton.Click += (sender, e) => stopRecording();
         }
 
         protected override async void OnClosing(CancelEventArgs e)
@@ -171,13 +174,25 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             await App.Driver.Instance.SetTabletDebug(false);
 
-            dataRecordingOutput?.Close();
-            dataRecordingOutput = null;
+            stopRecording();
+            reportsRecordedGroup.Visible = false;
         }
 
         private Label deviceName, rawTablet, tablet, reportRate, reportsRecorded;
         private TabletVisualizer tabletVisualizer;
-        private CheckBox enableDataRecording;
+
+        private readonly Button startDataRecordingButton = new Button
+        {
+            Text = "Start Recording",
+            ToolTip = "Start recording raw reports made by the tablet to a file.",
+        };
+        private readonly Button stopDataRecordingButton = new Button
+        {
+            Text = "Stop Recording",
+            Enabled = false,
+        };
+        private DebuggerGroup reportsRecordedGroup;
+        private static bool isRecording = false;
 
         private DebugReportData reportData;
         private double reportPeriod;
@@ -271,18 +286,37 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         }
 
+        private void startRecording() => Application.Instance.AsyncInvoke(() =>
+        {
+            startDataRecordingButton.Enabled = false;
+            stopDataRecordingButton.Enabled = true;
+            reportsRecordedGroup.Visible = true;
+
+            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
+            dataRecordingOutput = new StreamWriter(outputStream);
+
+            isRecording = true;
+        });
+
+        private void stopRecording() => Application.Instance.AsyncInvoke(() =>
+        {
+            isRecording = false;
+            startDataRecordingButton.Enabled = true;
+            stopDataRecordingButton.Enabled = false;
+
+            dataRecordingOutput?.Close();
+            dataRecordingOutput = null;
+        });
+
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
             this.ReportData = data;
 
-            if (data.ToObject() is IDeviceReport deviceReport)
+            if (isRecording && (data.ToObject() is IDeviceReport deviceReport))
             {
-                if (enableDataRecording.Checked ?? false)
-                {
-                    var output = string.Join(' ', deviceReport.Raw.Select(d => d.ToString("X2")));
-                    dataRecordingOutput?.WriteLine(output);
-                    NumberOfReportsRecorded++;
-                }
+                var output = string.Join(' ', deviceReport.Raw.Select(d => d.ToString("X2")));
+                dataRecordingOutput?.WriteLine(output);
+                NumberOfReportsRecorded++;
             }
         });
 
