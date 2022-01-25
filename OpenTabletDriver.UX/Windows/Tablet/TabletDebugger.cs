@@ -9,6 +9,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Timing;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -190,9 +191,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             Text = "Stop Recording",
             Enabled = false,
+            ToolTip = "Stop recording raw reports made by the tablet, and save the file.",
         };
         private DebuggerGroup reportsRecordedGroup;
-        private static bool isRecording = false;
+        private bool isRecording = false;
 
         private DebugReportData reportData;
         private double reportPeriod;
@@ -302,10 +304,22 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 case DialogResult.Ok:
                 case DialogResult.Yes:
-                    dataRecordingOutput = new StreamWriter(File.OpenWrite(fileDialog.FileName));
+                    var recordingFile = fileDialog.FileName.EndsWith(".txt") ? fileDialog.FileName : fileDialog.FileName + ".txt";
+
+                    try
+                    {
+                        dataRecordingOutput = new StreamWriter(File.OpenWrite(recordingFile));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        Log.Write("Tablet Debugger", $"OpenTabletDriver doesn't have permission to save a recording to {recordingFile}.", LogLevel.Error);
+                        startDataRecordingButton.Enabled = true;
+                        return;
+                    }
 
                     stopDataRecordingButton.Enabled = true;
                     reportsRecordedGroup.Visible = true;
+                    NumberOfReportsRecorded = 0;
 
                     isRecording = true;
                     break;
