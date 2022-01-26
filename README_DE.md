@@ -104,7 +104,7 @@ Keine weiteren Abhängigkeiten.
   - Ausgabemodi
   - Werkzeuge
 
-# zu OpenTabletDriver beitragen
+# Zu OpenTabletDriver beitragen
 
 Wenn Sie zu OpenTabletDriver beitragen wollen, besuchen Sie den [issue
 tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Wenn Sie 
@@ -116,7 +116,7 @@ und füllen Sie die Vorlage mit relevanten Informationen aus. Bug-Reports sowie
 neue Tablets zum unterstützen sind wilkommen. In den meisten 
 Fällen ist es relativ einfach, neue Tablets zu unterstützen.
 
-### neue Tablets unterstützen
+### Neue Tablets unterstützen
 
 Wenn sie wollen, dass wir ein neues Tablet unterstützen, erstellen Sie eine neue issue auf GitHub 
 oder treten Sie unserem [Discord Server](https://discord.gg/9bcMaPkVAR) bei und fragen Sie nach Hilfe. 
