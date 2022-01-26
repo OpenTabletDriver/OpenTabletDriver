@@ -2,10 +2,10 @@
   "Name": "RobotPen T9A",
   "Specifications": {
     "Digitizer": {
-      "Width": 300.0,
-      "Height": 210.0,
-      "MaxX": 22784.0,
-      "MaxY": 16896.0
+      "Width": 282.5,
+      "Height": 208.125,
+      "MaxX": 22600.0,
+      "MaxY": 16650.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -24,11 +24,11 @@
       "VendorID": 1155,
       "ProductID": 24579,
       "InputReportLength": 64,
-      "OutputReportLength": null,
+      "OutputReportLength": 64,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.RobotPen.RobotPenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "qhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+        "qhAC"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []

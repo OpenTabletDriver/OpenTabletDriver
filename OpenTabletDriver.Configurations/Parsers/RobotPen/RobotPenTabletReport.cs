@@ -12,12 +12,11 @@ namespace OpenTabletDriver.Configurations.Parsers.RobotPen
 
             Position = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[6]) | (report[7] << 8),
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[8]) | (report[9] << 8)
+                X = Unsafe.ReadUnaligned<ushort>(ref report[6]),
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[8])
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[10]);
 
-            Eraser = report[11].IsBitSet(6);
 
             PenButtons = new bool[]
             {
@@ -29,6 +28,5 @@ namespace OpenTabletDriver.Configurations.Parsers.RobotPen
         public Vector2 Position { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
-        public bool Eraser { set; get; }
     }
 }

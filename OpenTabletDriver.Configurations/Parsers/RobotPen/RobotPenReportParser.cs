@@ -6,10 +6,10 @@ namespace OpenTabletDriver.Configurations.Parsers.RobotPen
     {
         public IDeviceReport Parse(byte[] report)
         {
-            if (report[1].ToString() == "66")
+            if (report[1] == 0x42)
                 return new RobotPenTabletReport(report);
 
-            return new DeviceReport(report);
+            return new OutOfRangeReport(report);
         }
     }
 }

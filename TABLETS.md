@@ -29,6 +29,7 @@
 | Huion WH1409 V2               |     Supported     |
 | Parblo A640 V2                |     Supported     |
 | 10moon 1060N                  |     Supported     | Doesn't meet any of it's advertised specs
+| RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
 | UGTABLET M708                 |     Supported     | Windows: Some variations may require Zadig's WinUSB to be installed on interface 0
@@ -87,7 +88,6 @@
 | XP-Pen Star G640S             |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
 | XP-Pen Star G960S Plus        |     Supported     |
-| RobotPen T9A                  |     Supported     |
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are unsupported.
