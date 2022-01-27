@@ -36,13 +36,15 @@ Los requisitos para compilar OpenTabletDriver son consistentes en todas las plat
 
 ### Todas las plataformas
 
-- .NET 6 SDK (Puede ser obtenido desde [aquí](https://dotnet.microsoft.com/download/dotnet/6.0) - Usted necesita el SDK para su plataforma, los usuarios de Linux deben de instalarlo a través del gestor de paquetes siempre que sea posible)
+- .NET 6 SDK (Puede ser obtenido desde [aquí](https://dotnet.microsoft.com/download/dotnet/6.0) - Usted necesita el SDK compatible con su plataforma, los usuarios de Linux deben de instalarlo a través del gestor de paquetes siempre que sea posible)
 
 #### Windows
 
 No hay otras dependencias.
 
 #### Linux
+
+Paquetes necesarios (algunos paquetes pueden venir preinstalados en su distribución)
 
 - libx11
 - libxrandr
@@ -53,7 +55,7 @@ Para compilarlo en Linux, ejecute el archivo 'build.sh' proporcionado. Esto ejec
 
 Para compilarlo en Linux en ARM, ejecute el archivo 'build.sh' proporcionado con el runtime apropiado como argumento. Para arm64, esto sería 'linux-arm64'.
 
-Nota: Si se compila por primera vez, ejecute el script generate-rules.sh incluido. Esto generará un conjunto de reglas udev en OpenTabletDriver/bin, llamado '99-opentabletdriver.rules'. Este archivo debe de ser movido a `/etc/udev/rules.d/`:
+Nota: Si se compila por primera vez, ejecute el script 'generate-rules.sh' incluido. Esto generará un conjunto de reglas udev en 'OpenTabletDriver/bin', llamado '99-opentabletdriver.rules'. Este archivo debe de ser movido a `/etc/udev/rules.d/`:
 
 ```
 sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
@@ -111,6 +113,6 @@ Si le gustaría que añadiéramos soporte para una nueva tableta, abra una propu
 
 Le pediremos que haga algunas cosas, como hacer una grabación de los datos enviados por su tableta usando nuestra herramienta de depuración incorporada, probar las características de la tableta (Botones de la tableta, botones del lápiz, presión del lápiz, etc.) con diferentes configuraciones que le enviaremos para que las pruebe.
 
-Por supuesto, también puede abrir una solicitud de extracción añadiendo soporte para él mismo, si tienes un buen conocimiento de lo que implica.
+Por supuesto, también puede abrir una solicitud de extracción añadiendo soporte usted mismo, si tienes un buen conocimiento de lo que implica.
 
-Por lo general este proceso es relativamente fácil, especialmente si se trata de un fabricante de tabletas para el que ya tenemos soporte en otras tabletas.
+Por lo general este proceso es relativamente fácil, especialmente si se trata de un fabricante para el que ya tenemos soporte en otras tabletas.
