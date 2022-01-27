@@ -11,7 +11,7 @@ If the reasoning for a commit is potentially cryptic, consider adding a commit d
 
 # Tablet Configuration Contributions
 
-Tablet configurations are the core at what defines a tablet within OpenTabletDriver. It provides
+Tablet configurations define tablets OpenTabletDriver can detect and operate. They provide
 specifications, functions, and initialization data which are all used to make a drawing tablet
 device, also known as the digitizer, functional.
 
