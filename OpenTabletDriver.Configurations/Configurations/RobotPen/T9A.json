@@ -2,19 +2,16 @@
   "Name": "RobotPen T9A",
   "Specifications": {
     "Digitizer": {
-      "Width": 282.5,
-      "Height": 208.125,
-      "MaxX": 22600.0,
-      "MaxY": 16650.0
+      "Width": 295.11,
+      "Height": 216.69,
+      "MaxX": 22656.0,
+      "MaxY": 16636.0
     },
     "Pen": {
       "MaxPressure": 1023,
       "Buttons": {
-        "ButtonCount": 3
+        "ButtonCount": 1
       }
-    },
-    "AuxiliaryButtons": {
-      "ButtonCount": 1
     },
     "MouseButtons": null,
     "Touch": null
