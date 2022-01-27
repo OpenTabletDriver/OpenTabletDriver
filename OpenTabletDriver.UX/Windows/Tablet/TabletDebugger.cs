@@ -165,8 +165,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             App.Driver.TabletsChanged += HandleTabletsChanged;
             App.Driver.Instance.SetTabletDebug(true);
 
-            startDataRecordingButton.Click += (sender, e) => startRecording();
-            stopDataRecordingButton.Click += (sender, e) => stopRecording();
+            startDataRecordingButton.Click += (sender, e) => StartRecording();
+            stopDataRecordingButton.Click += (sender, e) => StopRecording();
         }
 
         protected override async void OnClosing(CancelEventArgs e)
@@ -175,7 +175,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             await App.Driver.Instance.SetTabletDebug(false);
 
-            stopRecording();
+            StopRecording();
             reportsRecordedGroup.Visible = false;
         }
 
@@ -288,7 +288,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         }
 
-        private void startRecording() => Application.Instance.AsyncInvoke(() =>
+        private void StartRecording() => Application.Instance.AsyncInvoke(() =>
         {
             startDataRecordingButton.Enabled = false;
             var fileDialog = new SaveFileDialog
@@ -329,7 +329,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         });
 
-        private void stopRecording() => Application.Instance.AsyncInvoke(() =>
+        private void StopRecording() => Application.Instance.AsyncInvoke(() =>
         {
             isRecording = false;
             startDataRecordingButton.Enabled = true;
