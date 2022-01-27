@@ -137,7 +137,7 @@
 | Wacom PTH-860                 |  Missing Features | Wheel is unsupported.
 | Wacom PTK-1240                |  Missing Features | Tablet buttons and wheel are unsupported.
 | Wacom PTK-440                 |  Missing Features | Tablet buttons and wheel are unsupported.
-| Wacom PTK-540WL               |  Missing Features | Tablet buttons and wheel are unsupported.
+| Wacom PTK-540WL               |  Missing Features | Wheel is unsupported.
 | Wacom PTK-640                 |  Missing Features | Tablet buttons and wheel are unsupported.
 | Wacom PTK-840                 |  Missing Features | Tablet buttons and wheel are unsupported.
 | Wacom PTZ-1230                |  Missing Features | Tablet buttons and touch strips are unsupported.
