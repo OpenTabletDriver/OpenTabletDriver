@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | Deutsch
+[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | Deutsch
 
 OpenTabletDriver ist ein Open-Source, platformübergreifender, Benutzermodus Tablet Treiber. Das Ziel von OpenTabletDriver ist es so Cross-Platform wie möglich zu sein mit der höchsten Kompatibilität und mit einer einfach zu konfigurierenden grafischen Benutzeroberfläche.
 
@@ -52,16 +52,16 @@ Benötigte Packages (manche Packages können bei Ihrer Distribution vorinstallie
 - GTK+3
 
 
-Um auf Linux zu kompilieren, führen Sie 'build.sh' aus. Es werden die gleichen 
+Um auf Linux zu kompilieren, führen Sie 'build.sh' aus. Es werden die gleichen
 'dotnet publish' Befehle ausgefürt, die auch für das AUR-Package verwendet werden.
 Die ausführbaren Dateien werden dann in dem 'OpenTabletDriver/bin' Ordner erstellt.
 
-Um auf Linux für ARM zu kompilieren, führen Sie 'build.sh' aus und geben 
+Um auf Linux für ARM zu kompilieren, führen Sie 'build.sh' aus und geben
 die richtige Version als Argument an. Z.B. für ARM64 ist das 'linux-arm64'.
 
-Hinweis: Falls Sie OpenTabletDriver zum ersten Mal kompilieren, führen Sie das 
-enthaltene generate-rules.sh Skript aus. Damit werden einige udev Regeln in 
-OpenTabletDriver/bin generiert (99-opentabletdriver.rules). 
+Hinweis: Falls Sie OpenTabletDriver zum ersten Mal kompilieren, führen Sie das
+enthaltene generate-rules.sh Skript aus. Damit werden einige udev Regeln in
+OpenTabletDriver/bin generiert (99-opentabletdriver.rules).
 Diese Datei sollte dann in `/etc/udev/rules.d/` verschoben werden:
 
 ```
@@ -107,28 +107,28 @@ Keine weiteren Abhängigkeiten.
 # Zu OpenTabletDriver beitragen
 
 Wenn Sie zu OpenTabletDriver beitragen wollen, besuchen Sie den [issue
-tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Wenn Sie 
+tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Wenn Sie
 ein Pull-Request erstellen wollen, folgen Sie den Richtlinien unter [Beitragsrichtlinien](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
 Wenn Sie Probleme oder Vorschläge haben, [Erstellen Sie ein issue
 ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
-und füllen Sie die Vorlage mit relevanten Informationen aus. Bug-Reports sowie 
-neue Tablets zum unterstützen sind wilkommen. In den meisten 
+und füllen Sie die Vorlage mit relevanten Informationen aus. Bug-Reports sowie
+neue Tablets zum unterstützen sind wilkommen. In den meisten
 Fällen ist es relativ einfach, neue Tablets zu unterstützen.
 
 ### Neue Tablets unterstützen
 
-Wenn sie wollen, dass wir ein neues Tablet unterstützen, erstellen Sie eine neue issue auf GitHub 
-oder treten Sie unserem [Discord Server](https://discord.gg/9bcMaPkVAR) bei und fragen Sie nach Hilfe. 
+Wenn sie wollen, dass wir ein neues Tablet unterstützen, erstellen Sie eine neue issue auf GitHub
+oder treten Sie unserem [Discord Server](https://discord.gg/9bcMaPkVAR) bei und fragen Sie nach Hilfe.
 *Wir bevorzugen es generell, Unterstützng neuer Tablets wegen der einfacheren Kommunikation auf Discord durchzuführen*.
 
-Sie werden einige Dinge tun müssen, wie das Aufnehmen von gesendeten Tabetdaten mithilfe 
-des eingebauten Tablet-Debuggers, testen von Funktionen des Tablets 
-(Zusatztasten, Stifttasten, Stiftdruck, etc.) mit verschiedenen Konfigurationsdateien, 
+Sie werden einige Dinge tun müssen, wie das Aufnehmen von gesendeten Tabetdaten mithilfe
+des eingebauten Tablet-Debuggers, testen von Funktionen des Tablets
+(Zusatztasten, Stifttasten, Stiftdruck, etc.) mit verschiedenen Konfigurationsdateien,
 die wir Ihnen senden.
 
 Sie können auch gerne ein Pull-Request erstellen und Überstützung selbst hinzufügen,
 wenn Sie ein gutes Verständnis der benötigten Grundlagen haben.
 
-Normalerweise ist dieser Prozess ziemlich einfach, besonders wenn es 
+Normalerweise ist dieser Prozess ziemlich einfach, besonders wenn es
 sich um ein Tablet eines bereits unterstützten Herstellers handelt.
