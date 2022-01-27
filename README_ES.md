@@ -36,7 +36,7 @@ Los requisitos para compilar OpenTabletDriver son consistentes en todas las plat
 
 ### Todas las plataformas
 
-- .NET 6 SDK
+- .NET 6 SDK (Puede ser obtenido desde [aquí](https://dotnet.microsoft.com/download/dotnet/6.0) - Usted necesita el SDK para su plataforma, los usuarios de Linux deben de instalarlo a través del gestor de paquetes siempre que sea posible)
 
 #### Windows
 
@@ -48,6 +48,16 @@ No hay otras dependencias.
 - libxrandr
 - libevdev2
 - GTK+3
+
+Para compilarlo en Linux, ejecute el archivo 'build.sh' proporcionado. Esto ejecutará los mismos comandos 'dotnet publish' utilizados para compilar el paquete AUR, y producirá binarios utilizables en 'OpenTabletDriver/bin'.
+
+Para compilarlo en Linux en ARM, ejecute el archivo 'build.sh' proporcionado con el runtime apropiado como argumento. Para arm64, esto sería 'linux-arm64'.
+
+Nota: Si se compila por primera vez, ejecute el script generate-rules.sh incluido. Esto generará un conjunto de reglas udev en OpenTabletDriver/bin, llamado '99-opentabletdriver.rules'. Este archivo debe de ser movido a `/etc/udev/rules.d/`:
+
+```
+sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
+```
 
 #### MacOS [Experimental]
 
@@ -87,6 +97,20 @@ No hay otras dependencias.
 
 # Contribuyendo a OpenTabletDriver
 
-Si desea contribuir a OpenTabletDriver, revise en el [rastreador de propuestas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
+Si desea contribuir a OpenTabletDriver, revise en el [rastreador de propuestas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Cuando cree una solicitud de extracción, siga las pautas indicadas en nuestros [lineamientos de contribuyente](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
-Si tiene algún problema o sugerencia, [abra un ticket de propuesta](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose).
+Si tiene algún problema o sugerencia, [abra un ticket de propuesta](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) y rellene la plantilla con la información pertinente. Agradecemos tanto los informes de errores, como las nuevas tabletas a las que añadir compatibilidad. En muchos casos, añadir compatibilidad a una nueva tableta es bastante fácil.
+
+Para propuestas y solicitudes de extracción relacionados con el empaquetado de OpenTabletDriver, por favor, vea el repositorio de [aquí](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+
+Para propuestas y solicitudes de extracción relacionados con la página web de OpenTabletDriver, vea el repositorio de [aquí](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+
+### Soporte para una nueva tableta
+
+Si le gustaría que añadiéramos soporte para una nueva tableta, abra una propuesta o únase a nuestro servidor de [discord](https://discord.gg/9bcMaPkVAR) solicitando soporte. *Generalmente preferimos que añadir soporte para una tableta se haga a través de discord, debido a las idas y venidas que se producen*.
+
+Le pediremos que haga algunas cosas, como hacer una grabación de los datos enviados por su tableta usando nuestra herramienta de depuración incorporada, probar las características de la tableta (Botones de la tableta, botones del lápiz, presión del lápiz, etc.) con diferentes configuraciones que le enviaremos para que las pruebe.
+
+Por supuesto, también puede abrir una solicitud de extracción añadiendo soporte para él mismo, si tienes un buen conocimiento de lo que implica.
+
+Por lo general este proceso es relativamente fácil, especialmente si se trata de un fabricante de tabletas para el que ya tenemos soporte en otras tabletas.
