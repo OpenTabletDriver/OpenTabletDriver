@@ -5,6 +5,10 @@ Thank you for showing interest in the development of OpenTabletDriver!
 Our goal with this document is to describe how contributions to OpenTabletDriver should be made,
 depending on what kind of change is being performed.
 
+With any contribution you make, we ask that your commits are named sensibly and similarly to the ones in our [history](https://github.com/OpenTabletDriver/OpenTabletDriver/commits/master).
+At the very least, sentence-case your commits, and do consider prefixing the commit message with a component name in similar fashion to `Updater: Add file IncludeList`.
+If the reasoning for a commit is potentially cryptic, consider adding a commit description to it, succinctly explaining why it was needed.
+
 # Tablet Configuration Contributions
 
 Tablet configurations are the core at what defines a tablet within OpenTabletDriver. It provides
@@ -17,16 +21,16 @@ The following rule(s) are applicable to all configuration contributions, whether
 
 ## Adding a Configuration
 
-Documentation the fields within configurations can be found on the official OpenTabletDriver
+Documentation for the fields within configurations can be found on the official OpenTabletDriver
 website, [here](https://opentabletdriver.net/Wiki/Development/Configurations).
 
 When adding a new tablet configuration file to the `OpenTabletDriver.Configurations` project, these
 rules must be followed:
 
 - The `TABLETS.md` file must be updated to include the newly added configuration, including any
-  quirks or missing features. Please also place the entry near others of it's manufacturer, and in
+  quirks or missing features. Please also place the entry near others of its manufacturer, and in
   alphabetical order from there.
-- The tablet name should follow `[Manufacturer] [Model Number/Product Name]`
+- The tablet name should follow the format `[Manufacturer] [Model Number/Product Name]`.
 - The file name must be the tablet name with the `.json` extension.
 - The file must be located in the directory designated to an individual manufacturer.
 - All trailing whitespace must be trimmed before committing. When using the configuration editor
@@ -45,14 +49,14 @@ rules must be followed:
   | Status           | Requirements                                                                                                              |
   | ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
   | Supported        | All tablet functions are fully supported without issue.                                                                   |
-  | Missing Features | Some tablet functions are unsupported as the driver doesn't have support for it (yet).                                    |
+  | Missing Features | Some tablet functions are unsupported (for now).                                    |
   | Has Quirks       | Some tablet functions work, but with undesired behavior or requiring workarounds to get functioning.                      |
   | Broken           | Tested but does not work. This is here for historical purposes, *no new configuration will be accepted with this status.* |
   | Untested         | Entirely untested, potentially ported from other drivers or from documentation. We will potentially accept these, but strongly prefer verification being performed. |
 
 - Include sources to help with verification of the tablet's specifications. This could be the
   manufacturer's specification sheet of the tablet, the HID report descriptor, or an educated guess
-  by taking MaxX and MaxY and converting it into millimeter units. Please note that specs published
+  by taking `MaxX` and `MaxY` and converting it into millimeter units. Please note that specs published
   by manufacturers have unfortunately been known to be wrong on occasion - avoid trusting them
   without verifying.
 
@@ -76,7 +80,7 @@ Changes merged to the `configs` branch should generally only be parsers, json co
 similar - anything else that runs the risk of breaking functionality not immediately related to the
 tablet in question should be split off, made dependent on the configs PR, and targeted to `master`.
 Essentially, merges of `configs` into `master` should ideally not introduce significant breaking behavior or
-bugs that would impact other users of other tablets.
+bugs that would impact users of other tablets.
 
 # Code Contributions
 
@@ -88,17 +92,19 @@ The following rules apply to all code contributions:
   contributions, mentioned above). Even if a contribution is code, if it's related to configs (eg.
   adding a parser), it should target the configs branch. You should also try to create the branch
   from the most recent commit on master possible, to keep history clean.
-- All trailing whitespace must be trimmed before committing. This can be configured in most IDEs to
-  happen automatically on file save. If your IDE is capable of recognizing `.editorconfig` files,
-  then this will be taken care of for you.
+- The code you commit must adhere to the rules defined in the project's `.editorconfig` file.
+  Some IDEs can recognize `.editorconfig` files and fix some of the broken rules on each file save.
+  Otherwise, you can use the `dotnet format OpenTabletDriver` command from the root of the project to sweep through all files.
+  To avoid formatting unrelated files, you may want to use the `include` option as documented [here](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-format#options).
+  Note that commits on pull requests will go through a formatting check as part of the CI workflow.
 - Follow the [C# Coding
   Conventions](https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions),
-  unless otherwise specified. We don't really do anything particularly eccentric.
+  unless otherwise specified. We don't really do anything particularly eccentric, and most potential issues should be covered by our `.editorconfig` setup.
 - Use spaces for indentation, do not use the tab character. We use 4 space indentation. IDEs that
   respect `.editorconfig` will do this automatically.
 - Split up individual bug fixes or feature additions into separate pull requests. If a pull request
   depends on another, you can make the dependency be merged first by putting `- [ ] depends on
-  #XXXX` in the description. This makes it easier to pinpoint why changes were made along with being
+  #<PR_ID>` in the description. This makes it easier to pinpoint why changes were made along with being
   faster to review, and easier to revert if necessary.
 - Try to avoid opening PRs with many commits - squash commits where reasonable. If you're having
   trouble combining commits, it may be a sign to make multiple PRs instead. However, do not
@@ -111,15 +117,15 @@ The following rules apply to all code contributions:
 
 OpenTabletDriver is a fairly simple project to set up for development. As it's a .NET project, you
 ideally want an IDE capable of working with C# and .NET projects. VSCode, Rider, Visual Studio, etc
-are all suitable.
+are all suitable. Note that VSCode will require you to install C# extensions first.
 
 To get started, create a fork of the repository on GitHub. Then, clone the fork you made, and ensure
 you're capable of building OpenTabletDriver, by running either `build.ps1` (for Windows), or
 `build.sh` (for Linux). If successful, these scripts will produce executables in a newly created
 `bin` subdirectory. You can then run OpenTabletDriver by running the executable for the Daemon and
 the UX. For all intents and purposes, this will be a fully functional, though potentially unstable
-(as it was compiled from `master`) version of OpenTabletDriver that you can use normally, though do
-note there are cases where plugins may not be updated to work on `master`-built versions.
+(as `master` is a development branch) version of OpenTabletDriver that you can use normally.
+Do note that some plugins may not have been updated to work on the latest `master` version.
 
 Once you've confirmed you are able to build the application on your computer, you can begin making
 changes. Before working, however, ensure you create a new branch to work in - we
@@ -129,7 +135,7 @@ make another (as your new PR will contain commits from your previous).
 
 Once you're done, push the created branch to your fork, and open the PR. Fill out the title and
 description of what the PR accomplishes, remembering to link any fixed issues. If any part of our
-continuous integration fails, fix it - **ideally by amending the most recent commit and force
+continuous integration fails, fix it - **ideally by amending/rebasing the most recent commit and force
 pushing,** rather than creating commits purely to fix CI, small spelling mistakes, etc.
 
 If asked to make changes or fixes, please make them through GitHub's **batch commit** feature or
@@ -139,14 +145,7 @@ review comment. Resolve applied fixes, if they are not resolved by GitHub automa
 
 ## Unit-Testing OpenTabletDriver
 
-If you'd like to test OpenTabletDriver locally (our CI runs our unit tests on every PR
-automatically), you can run our unit testing through `dotnet` - simply running:
-
-```
-dotnet test
-```
-
-In the project root will run all tests and report status. The unit tests for the most part concern
-the daemon part of the driver, which performs the bulk of the "work" and thus is critical to test.
+Our CI runs unit tests on each new commit pushed on a PR, but if you'd like to test OpenTabletDriver locally, you can do so by running the command `dotnet test OpenTabletDriver` from the project root, which will run all tests and report status.
+The unit tests for the most part concern the daemon part of the driver, which performs the bulk of the "work" and thus is critical to test.
 Of course, we also welcome contributions adding more unit testing, our coverage is weaker outside of
 critical areas.
