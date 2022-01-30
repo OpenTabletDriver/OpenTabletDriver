@@ -11,7 +11,8 @@ shift
 config=(--configuration='Release')
 
 options=(${config} --framework='net6.0' --self-contained='false' --output='./bin' \
-    /p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false --runtime=$runtime -p:SourceRevisionId=$(git rev-parse --short HEAD))
+    /p:SuppressNETCoreSdkPreviewMessage=true /p:PublishTrimmed=false /p:PublishReadyToRun=true \
+    --runtime=$runtime -p:SourceRevisionId=$(git rev-parse --short HEAD))
 
 # change dir to script root, in case people run the script outside of the folder
 cd "$(dirname "$0")"
