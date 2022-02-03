@@ -14,9 +14,8 @@ namespace OpenTabletDriver.UX.MacOS
             {
                 _ = new Application(Eto.Platforms.Mac64);
                 MessageBox.Show(
-                    "OpenTabletDriver cannot be run from this folder. " +
-                    "Please move it to elsewhere, " +
-                    "such as to the Applications folder.");
+                    "OpenTabletDriver cannot be run from this folder for security reasons. " +
+                    "Please move it elsewhere, such as to the Applications folder.");
                 return;
             }
 
