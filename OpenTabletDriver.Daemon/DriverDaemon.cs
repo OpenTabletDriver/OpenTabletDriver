@@ -65,7 +65,7 @@ namespace OpenTabletDriver.Daemon
 #if !DEBUG
             SleepDetection = new(async () =>
             {
-                Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Debug);
+                Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Info);
                 await DetectTablets();
                 await SetSettings(Settings);
             });
