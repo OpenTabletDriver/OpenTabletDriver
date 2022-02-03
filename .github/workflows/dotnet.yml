@@ -119,7 +119,7 @@ jobs:
       - name: Lint Changed Files
         run: |
           mapfile -t files < <(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '.*\.cs$')
-          if [ ${#files[@]} -ne 0 ]; then dotnet format --verify-no-changes --include "${files[@]}"; fi
+          if [ ${#files[@]} -ne 0 ]; then dotnet format --verify-no-changes --include "${files[@]}" OpenTabletDriver; fi
 
   unittests:
     name: Unit Tests
