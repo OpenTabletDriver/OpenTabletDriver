@@ -49,7 +49,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                                 Padding = 5,
                                 Content = new Label
                                 {
-                                    Text = "Drag and drop plugins to install.",
+                                    Text = "Drag and drop plugins here to install.",
                                     VerticalAlignment = VerticalAlignment.Center
                                 }
                             }
