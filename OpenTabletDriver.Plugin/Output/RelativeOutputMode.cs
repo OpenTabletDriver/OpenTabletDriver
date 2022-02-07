@@ -14,6 +14,7 @@ namespace OpenTabletDriver.Plugin.Output
     public abstract class RelativeOutputMode : OutputMode
     {
         private Vector2? lastPos;
+        private Boolean resetNext = false;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
         private bool skipReport;
 
@@ -78,10 +79,11 @@ namespace OpenTabletDriver.Plugin.Output
             var deltaTime = stopwatch.Restart();
 
             var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
-            var delta = pos - this.lastPos;
+            var delta = this.resetNext ? Vector2.Zero : pos - this.lastPos;
 
             this.lastPos = pos;
-            report.Position = deltaTime < ResetTime ? delta.GetValueOrDefault() : Vector2.Zero;
+            report.Position = delta.GetValueOrDefault();
+            this.resetNext = deltaTime > ResetTime;
 
             if (skipReport)
             {
