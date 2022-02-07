@@ -4,6 +4,7 @@
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
+| Gaomon PD1561                 |     Supported     |
 | Gaomon S56K                   |     Supported     |
 | Gaomon S620                   |     Supported     |
 | Gaomon S630                   |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
