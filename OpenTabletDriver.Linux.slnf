@@ -1,0 +1,19 @@
+{
+  "solution": {
+    "path": ".\\OpenTabletDriver.sln",
+    "projects": [
+      ".\\OpenTabletDriver\\OpenTabletDriver.csproj",
+      ".\\OpenTabletDriver.Benchmarks\\OpenTabletDriver.Benchmarks.csproj",
+      ".\\OpenTabletDriver.Configurations\\OpenTabletDriver.Configurations.csproj",
+      ".\\OpenTabletDriver.Console\\OpenTabletDriver.Console.csproj",
+      ".\\OpenTabletDriver.Daemon\\OpenTabletDriver.Daemon.csproj",
+      ".\\OpenTabletDriver.Desktop\\OpenTabletDriver.Desktop.csproj",
+      ".\\OpenTabletDriver.Native\\OpenTabletDriver.Native.csproj",
+      ".\\OpenTabletDriver.Plugin\\OpenTabletDriver.Plugin.csproj",
+      ".\\OpenTabletDriver.Tests\\OpenTabletDriver.Tests.csproj",
+      ".\\OpenTabletDriver.Tools.udev\\OpenTabletDriver.Tools.udev.csproj",
+      ".\\OpenTabletDriver.UX\\OpenTabletDriver.UX.csproj",
+      ".\\OpenTabletDriver.UX.Gtk\\OpenTabletDriver.UX.Gtk.csproj"
+    ]
+  }
+}

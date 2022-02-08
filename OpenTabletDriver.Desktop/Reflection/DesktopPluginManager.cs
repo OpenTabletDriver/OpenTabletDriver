@@ -29,6 +29,9 @@ namespace OpenTabletDriver.Desktop.Reflection
             PluginDirectory = pluginDirectory;
             TrashDirectory = trashDirectory;
             TemporaryDirectory = tempDirectory;
+
+            if (!PluginDirectory.Exists)
+                PluginDirectory.Create();
         }
 
         public DirectoryInfo PluginDirectory { get; }
@@ -49,9 +52,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 {
                     foreach (var file in PluginDirectory.GetFiles())
                     {
-                        var newPath = Path.Join(PluginDirectory.FullName, file.Name.Replace(file.Extension, string.Empty), file.Name);
-                        Directory.CreateDirectory(Directory.GetParent(newPath).FullName);
-                        file.MoveTo(newPath);
+                        Log.Write("Plugin", $"Unexpected file found: '{file.FullName}'", LogLevel.Warning);
                     }
                 }
 

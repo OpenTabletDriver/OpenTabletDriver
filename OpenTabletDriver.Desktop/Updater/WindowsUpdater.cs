@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Updater
            : this(AssemblyVersion,
                AppDomain.CurrentDomain.BaseDirectory,
                AppInfo.Current.AppDataDirectory,
-               AppInfo.Current.TemporaryDirectory)
+               AppInfo.Current.BackupDirectory)
         {
         }
 
@@ -26,6 +26,12 @@ namespace OpenTabletDriver.Desktop.Updater
                 rollBackDirectory)
         {
         }
+
+        protected override string[] IncludeList { get; } = new[]
+        {
+            "OpenTabletDriver.UX.Wpf.exe",
+            "OpenTabletDriver.Daemon.exe"
+        };
 
         protected override async Task Download(Release release)
         {

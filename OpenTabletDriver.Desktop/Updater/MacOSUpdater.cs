@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Desktop.Updater
             : this(AssemblyVersion,
                 AppDomain.CurrentDomain.BaseDirectory,
                 AppInfo.Current.AppDataDirectory,
-                AppInfo.Current.TemporaryDirectory)
+                AppInfo.Current.BackupDirectory)
         {
         }
 
@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Desktop.Updater
         protected override async Task Install(Release release)
         {
             await Download(release);
-            SetupRollback();
+            PerformBackup();
 
             // Mark the binaries executable, SharpZipLib doesn't do this.
             var subPath = Path.Join(DownloadDirectory, "OpenTabletDriver.app", "Contents", "MacOS");

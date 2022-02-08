@@ -25,7 +25,6 @@ namespace OpenTabletDriver.UX
                 window.Show();
                 window.BringToFront();
             };
-            Indicator.Show();
         }
 
         public TrayIndicator Indicator { get; }
