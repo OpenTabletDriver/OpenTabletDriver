@@ -89,7 +89,7 @@ namespace OpenTabletDriver.UX.Tools
 
         private static IEnumerable<string> GetStringFormat(IToolReport toolReport)
         {
-            yield return $"Tool:{Enum.GetName(typeof(ToolType), toolReport.Tool)}";
+            yield return $"Tool:{Enum.GetName<ToolType>(toolReport.Tool)}";
             yield return $"RawToolID:{toolReport.RawToolID}";
             yield return $"Serial:{toolReport.Serial}";
         }
