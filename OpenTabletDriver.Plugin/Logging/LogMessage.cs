@@ -52,7 +52,7 @@ namespace OpenTabletDriver.Plugin.Logging
             return string.Format(
                 "[{0}:{1}]\t{2}",
                 this.Group,
-                Enum.GetName(typeof(LogLevel), this.Level),
+                Enum.GetName(this.Level),
                 this.Message
             );
         }

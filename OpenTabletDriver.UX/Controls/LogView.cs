@@ -107,7 +107,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Level",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Binding.Property<LogMessage, string>(m => m.Level.GetName())
+                        Binding = Binding.Property<LogMessage, string>(m => Enum.GetName(m.Level))
                     }
                 },
                 new GridColumn
