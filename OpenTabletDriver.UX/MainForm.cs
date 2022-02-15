@@ -326,7 +326,7 @@ namespace OpenTabletDriver.UX
         private void HandleDaemonConnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
         {
             // Hook events after the instance is (re)instantiated
-            Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
+            Log.Output += async (sender, message) => { if (Driver.IsConnected) await Driver.Instance?.WriteMessage(message); };
             Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
 
             // Load the application information from the daemon
