@@ -63,6 +63,7 @@
 | Wacom CTL-672                 |     Supported     |
 | Wacom CTL-680                 |     Supported     |
 | Wacom CTL-690                 |     Supported     |
+| Wacom CTL-6100                |     Supported     |
 | Wacom DTC-133                 |     Supported     |
 | Wacom ET-0405-U               |     Supported     |
 | Wacom ET-0405A-U              |     Supported     |
@@ -71,7 +72,7 @@
 | Wacom GD-0608-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
-| XP-Pen Artist 12              |     Supported     | 
+| XP-Pen Artist 12              |     Supported     |
 | XP-Pen Artist 22HD            |     Supported     | Windows: Requires Zadig's WinUSB on interface 0
 | XP-Pen CT430                  |     Supported     |
 | XP-Pen CT460                  |     Supported     |
