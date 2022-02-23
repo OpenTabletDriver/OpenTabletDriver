@@ -112,6 +112,7 @@
 | Huion Kamvas Pro 13           |  Missing Features | Tilt is unsupported.
 | Huion Kamvas Pro 16           |  Missing Features | Touch bar is unsupported.
 | Huion Kamvas Pro 20           |  Missing Features | Touch bar is unsupported.
+| Huion Kamvas Pro 24           |  Missing Features | Touch bar is unsupported.
 | Huion New 1060 Plus           |  Missing Features | Tilt is unsupported.
 | Huion Q11K V2                 |  Missing Features | Tilt is unsupported.
 | Huion Q620M                   |  Missing Features | Wheel is unsupported.
