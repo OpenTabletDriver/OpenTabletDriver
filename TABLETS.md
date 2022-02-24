@@ -93,6 +93,7 @@
 | XP-Pen Star G640S             |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
 | XP-Pen Star G960S Plus        |     Supported     |
+| Huion H580X                   |    Has Quirks     | User may have to replug their tablet until it is detected.
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order
 | Artisul A1201                 |  Missing Features | Touch bar is unsupported.
