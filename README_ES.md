@@ -99,11 +99,11 @@ No hay otras dependencias.
 
 # Contribuyendo a OpenTabletDriver
 
-Si desea contribuir a OpenTabletDriver, revise en el [rastreador de propuestas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Cuando cree una solicitud de extracción, siga las pautas indicadas en nuestros [lineamientos de contribuyente](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
+Si desea contribuir a OpenTabletDriver, revise en el [rastreador de propuestas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Cuando cree una solicitud de extracción, siga las pautas indicadas en nuestras [guías de contribución](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
 Si tiene algún problema o sugerencia, [abra un ticket de propuesta](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) y rellene la plantilla con la información pertinente. Agradecemos tanto los informes de errores, como las nuevas tabletas a las que añadir compatibilidad. En muchos casos, añadir compatibilidad a una nueva tableta es bastante fácil.
 
-Para propuestas y solicitudes de extracción relacionados con el empaquetado de OpenTabletDriver, por favor, vea el repositorio de [aquí](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+Para propuestas y solicitudes de extracción relacionados con el empaquetado de OpenTabletDriver, por favor, vea el repositorio de [aquí](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
 
 Para propuestas y solicitudes de extracción relacionados con la página web de OpenTabletDriver, vea el repositorio de [aquí](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
 
