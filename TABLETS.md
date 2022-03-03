@@ -21,6 +21,7 @@
 | Huion H640P                   |     Supported     |
 | Huion H642                    |     Supported     |
 | Huion HS64                    |     Supported     |
+| Huion Kamvas 13               |     Supported     |
 | Huion Kamvas 16               |     Supported     |
 | Huion Kamvas 16 (2021)        |     Supported     |
 | Huion Kamvas 20               |     Supported     |
@@ -113,7 +114,6 @@
 | Huion HS610                   |  Missing Features | Tilt and wheel are unsupported.
 | Huion HS611                   |  Missing Features | Touch strip is unsupported.
 | Huion Kamvas 12 Pro           |  Missing Features | Touch strip is unsupported.
-| Huion Kamvas 13               |  Missing Features | Tilt is unsupported.
 | Huion Kamvas Pro 13           |  Missing Features | Tilt is unsupported.
 | Huion Kamvas Pro 16           |  Missing Features | Touch bar is unsupported.
 | Huion Kamvas Pro 20           |  Missing Features | Touch bar is unsupported.
