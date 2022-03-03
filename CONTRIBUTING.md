@@ -58,9 +58,9 @@ rules must be followed:
 
 - Include sources to help with verification of the tablet's specifications. This could be the
   manufacturer's specification sheet of the tablet, the HID report descriptor, or an educated guess
-  by taking `MaxX` and `MaxY` and converting it into millimeter units. Please note that specs published
-  by manufacturers have unfortunately been known to be wrong on occasion - avoid trusting them
-  without verifying.
+  by taking `MaxX` and `MaxY` and converting it into millimeter units. Please note that specs
+  published by manufacturers have unfortunately been known to be wrong on occasion - avoid trusting
+  these published specs without verifying the specs are accurate to the physical product.
 - If you are the owner of the tablet submitting a new config for your own tablet, you may
   self-verify.
 
@@ -125,12 +125,16 @@ The following rules apply to all code contributions:
 ## Setting up your environment
 
 OpenTabletDriver is a fairly simple project to set up for development. As it's a .NET project, you
-ideally want an IDE capable of working with C# and .NET projects. VSCode, Rider, Visual Studio, etc
-are all suitable. Note that VSCode will require you to install C# extensions first.
+ideally want an IDE capable of working with C# and .NET projects.
+[VSCode](https://code.visualstudio.com/) (will require you to install C# extensions first),
+[Rider](https://www.jetbrains.com/rider/) (Used by many c# devs and is our recommended IDE), [Visual
+Studio](https://visualstudio.microsoft.com/), etc are all suitable. Note that OpenTabletDriver being
+an Open Source project means a permanent [free license to use
+Rider](https://www.jetbrains.com/community/opensource/#support) can be obtained.
 
 To get started, create a fork of the repository on GitHub. Then, clone the fork you made, and ensure
 you're capable of building OpenTabletDriver, by running either `build.ps1` (for Windows), or
-`build.sh` (for Linux). If successful, these scripts will produce executables in a newly created
+`build.sh` (for Linux and MacOS). If successful, these scripts will produce executables in a newly created
 `bin` subdirectory. You can then run OpenTabletDriver by running the executable for the Daemon and
 the UX. For all intents and purposes, this will be a fully functional, though potentially unstable
 (as `master` is a development branch) version of OpenTabletDriver that you can use normally.
