@@ -125,11 +125,13 @@ The following rules apply to all code contributions:
 ## Setting up your environment
 
 OpenTabletDriver is a fairly simple project to set up for development. As it's a .NET project, you
-ideally want an IDE capable of working with C# and .NET projects.
-[VSCode](https://code.visualstudio.com/) (will require you to install C# extensions first),
-[Rider](https://www.jetbrains.com/rider/) (Used by many c# devs and is our recommended IDE), [Visual
-Studio](https://visualstudio.microsoft.com/), etc are all suitable. Note that OpenTabletDriver being
-an Open Source project means a permanent [free license to use
+ideally want an IDE capable of working with C# and .NET projects, such as:
+
+- [VSCode](https://code.visualstudio.com/) (with C# extensions installed)
+- [Rider](https://www.jetbrains.com/rider/)
+- [Visual Studio](https://visualstudio.microsoft.com/)
+
+Note that OpenTabletDriver being an open source project means a [yearly free license to use
 Rider](https://www.jetbrains.com/community/opensource/#support) can be obtained.
 
 To get started, create a fork of the repository on GitHub. Then, clone the fork you made, and ensure
