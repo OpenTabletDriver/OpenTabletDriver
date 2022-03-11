@@ -1,0 +1,41 @@
+{
+  "Name": "XP-Pen Star G430 V0",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 101.6,
+      "Height": 76.2,
+      "MaxX": 45720.0,
+      "MaxY": 29210.0
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 117,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "2": "TABLET G3 4x3"
+      },
+      "InitializationStrings": [
+        "100"
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
