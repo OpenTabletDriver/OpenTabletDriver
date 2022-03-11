@@ -45,6 +45,21 @@
         "2": "TABLET G3 4x3"
       },
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 117,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "2": "TABLET G3 4x3"
+      },
+      "InitializationStrings": [
+        "100"
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
