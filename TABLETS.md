@@ -181,3 +181,4 @@
 | Wacom XD-0912-U               |     Untested      |
 | Wacom XD-1212-U               |     Untested      |
 | Wacom XD-1218-U               |     Untested      |
+| XP-Pen Star G430 V0           |     Untested      | Untested on Windows.
