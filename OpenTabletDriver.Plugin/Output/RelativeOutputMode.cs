@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Plugin.Output
     public abstract class RelativeOutputMode : OutputMode
     {
         private Vector2? lastPos;
-        private Boolean resetNext = false;
+        private bool resetNext = false;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
         private bool skipReport;
 
