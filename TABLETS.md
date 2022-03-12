@@ -84,6 +84,7 @@
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
+| XP-Pen Deco mini7             |     Supported     |
 | XP-Pen Star 03                |     Supported     |
 | XP-Pen Star 05 V3             |     Supported     |
 | XP-Pen Star G430              |     Supported     | Windows: Zadig's WinUSB on interface 1 required for older variations
@@ -160,7 +161,6 @@
 | XP-Pen Deco 01 V2 (variant 2) |  Missing Features | Tilt is unsupported
 | XP-Pen Deco 02                |  Missing Features | Wheel is unsupported.
 | XP-Pen Deco 03                |  Missing Features | Wheel is unsupported.
-| XP-Pen Deco mini7             |  Missing Features |
 | XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Deco Pro Small         |  Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Innovator 16           |  Missing Features | Wheel is unsupported.
