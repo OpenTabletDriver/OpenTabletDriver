@@ -40,7 +40,7 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 #### Windows
 
-No other dependencies.
+Run `build.ps1` to produce binary builds to 'bin' folder. These builds will run in portable mode by default.
 
 #### Linux
 
