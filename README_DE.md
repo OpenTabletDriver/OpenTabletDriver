@@ -26,7 +26,7 @@ Der Status aller unterstützten, ungestesteten und zur Ünterstützung geplanten
 
 # OpenTabletDriver ausführen
 
-OpenTabletDriver besteht aus zwei unabhängigen Prozessen, welche nahtlos miteinender interagieren. Der aktive Prozess `OpenTabletDriver.Daemon` geht mit allen Tabetdaten um, während der 'OpenTabletDriver.UX.*' Prozess die grafische Benutzeroberfläche darstellt, wobei '*' platformabhängig ist <sup>1</sup>. Der Daemon muss laufen, damit OpenTabletDriver funktioniert, die Benutzeroberfläche allerdings nicht. Bestehende Einstellungen werden angewendet, wenn der Daemon startet.
+OpenTabletDriver besteht aus zwei unabhängigen Prozessen, welche nahtlos miteinender interagieren. Der aktive Prozess `OpenTabletDriver.Daemon` geht mit allen Tabetdaten um, während der `OpenTabletDriver.UX.*` Prozess die grafische Benutzeroberfläche darstellt, wobei `*` platformabhängig ist <sup>1</sup>. Der Daemon muss laufen, damit OpenTabletDriver funktioniert, die Benutzeroberfläche allerdings nicht. Bestehende Einstellungen werden angewendet, wenn der Daemon startet.
 
 > <sup>1</sup> `Wpf` für Windows, `Gtk` für Linux, und `MacOS` für MacOS. Dies kann jedoch bei nicht selbst kompilierten Versionen ignoriert werden, da nur die richtige Datei im Download enthalten ist.
 
@@ -40,11 +40,11 @@ Die Voraussetzungen für OpenTabletDriver sind auf allen Platformen gleich. Abh�
 
 #### Windows
 
-Keine weiteren Abhängigkeiten.
+Führen Sie `build.ps1` aus, um die benötigten Dateien im 'bin' Ordner zu erstellen. Diese Builds laufen im Portable-Modus.
 
 #### Linux
 
-Benötigte Packages (manche packages können bei Ihrer Distribution vorinstalliert sein)
+Benötigte Packages (manche Packages können bei Ihrer Distribution vorinstalliert sein)
 
 - libx11
 - libxrandr
@@ -53,7 +53,7 @@ Benötigte Packages (manche packages können bei Ihrer Distribution vorinstallie
 
 
 Um auf Linux zu kompilieren, führen Sie 'build.sh' aus. Es werden die gleichen 
-'dotnet publish' Befehle wie für das AUR package benötigt werden ausgeführt 
+'dotnet publish' Befehle wie für das AUR-Package benötigt werden ausgeführt 
 und ausführbare Dateien werden in 'OpenTabletDriver/bin' erstellt.
 
 Um auf Linux für ARM zu kompilieren, führen Sie 'build.sh' aus und geben 
@@ -80,7 +80,7 @@ Keine weiteren Abhängigkeiten.
   - MacOS: `MonoMac`
 - Vollwertiges Konsolenwerkzeug
   - Schnelles ändern, laden und speichern von Einstellungen
-  - Skriptunterstützung (json Ausgabe)
+  - Skriptunterstützung (json-Ausgabe)
 - Absolute Mauszeigerpositionierung
   - Bildschirm- und Tabletarbeitsfläche
   - Zentrierte Verschiebungen
@@ -98,7 +98,7 @@ Keine weiteren Abhängigkeiten.
   - Autoladen von Benutzereinstellungen aus `settings.json` in den momentan aktiven Benutzer `%localappdata%` oder `.config` für das Root-Verzeichnis.
 - Konfigurationseditor
   - Erlaubt es, Konfigurationsdateien zu erstellen, ändern und löschen.
-  - Gerneriert Konfigurationen für sichtbare HID geräte.
+  - Gerneriert Konfigurationen für sichtbare HID-Geräte.
 - Plugins
   - Filter
   - Ausgabemodi
