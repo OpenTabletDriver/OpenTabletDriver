@@ -53,8 +53,8 @@ Benötigte Packages (manche Packages können bei Ihrer Distribution vorinstallie
 
 
 Um auf Linux zu kompilieren, führen Sie 'build.sh' aus. Es werden die gleichen 
-'dotnet publish' Befehle wie für das AUR-Package benötigt werden ausgeführt 
-und ausführbare Dateien werden in 'OpenTabletDriver/bin' erstellt.
+'dotnet publish' Befehle ausgefürt, die auch für das AUR-Package verwendet werden.
+Die ausführbaren Dateien werden dann in dem 'OpenTabletDriver/bin' Ordner erstellt.
 
 Um auf Linux für ARM zu kompilieren, führen Sie 'build.sh' aus und geben 
 die richtige Version als Argument an. Z.B. für ARM64 ist das 'linux-arm64'.
@@ -79,7 +79,7 @@ Keine weiteren Abhängigkeiten.
   - Linux: `GTK+3`
   - MacOS: `MonoMac`
 - Vollwertiges Konsolenwerkzeug
-  - Schnelles ändern, laden und speichern von Einstellungen
+  - Schnelles Ansehen, Ändern, Laden und Speichern von Einstellungen
   - Skriptunterstützung (json-Ausgabe)
 - Absolute Mauszeigerpositionierung
   - Bildschirm- und Tabletarbeitsfläche
@@ -95,7 +95,7 @@ Keine weiteren Abhängigkeiten.
   - Belegung mit Tastaturtasten
   - Belegung mit pluginabhängigen Einstellungen
 - Speichern und Laden von Einstellungen
-  - Autoladen von Benutzereinstellungen aus `settings.json` in den momentan aktiven Benutzer `%localappdata%` oder `.config` für das Root-Verzeichnis.
+  - Autoladen von Benutzereinstellungen aus `settings.json` in den momentan aktiven Benutzer `%localappdata%` oder `.config` in das Root-Verzeichnis.
 - Konfigurationseditor
   - Erlaubt es, Konfigurationsdateien zu erstellen, ändern und löschen.
   - Gerneriert Konfigurationen für sichtbare HID-Geräte.
