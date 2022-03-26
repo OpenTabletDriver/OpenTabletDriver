@@ -76,10 +76,10 @@ namespace OpenTabletDriver
 
                 try
                 {
-                    ReportStream.SetFeature(report);
-                    Log.Debug("Device", "Set device feature: " + BitConverter.ToString(report));
                     if (FeatureInitDelayMs != 0)
                         Thread.Sleep((int)FeatureInitDelayMs);
+                    ReportStream.SetFeature(report);
+                    Log.Debug("Device", "Set device feature: " + BitConverter.ToString(report));
                 }
                 catch
                 {
