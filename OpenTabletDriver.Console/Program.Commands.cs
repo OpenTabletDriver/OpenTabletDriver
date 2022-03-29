@@ -305,7 +305,8 @@ namespace OpenTabletDriver.Console
 
         private static async Task ListFilters()
         {
-            await ListTypes<IPipelineElement<IDeviceReport>>();
+            // Using the predicate stops output mode types from being listed.
+            await ListTypes<IPipelineElement<IDeviceReport>>(t => !t.IsAssignableTo(typeof(IOutputMode)));
         }
 
         private static async Task ListTools()
