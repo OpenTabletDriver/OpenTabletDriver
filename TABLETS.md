@@ -155,7 +155,8 @@
 | Wacom PTZ-1230                |  Missing Features | Tablet buttons and touch strips are unsupported.
 | Wacom PTZ-431W                |  Missing Features | Tablet buttons and touch strips are unsupported.
 | Wacom PTZ-630                 |  Missing Features | Tablet buttons and touch strips are unsupported.
-| Wacom PTZ-930                 |  Missing Features | Tablet buttons and touch strips are unsupported.
+| Wacom PTZ-631W                |  Missing Features | Touch strips are unsupported.
+| Wacom PTZ-930                 |  Missing Features | Touch strips are unsupported.
 | XP-Pen Artist 12              |  Missing Features | Touch bar is unsupported
 | XP-Pen Artist Pro 12          |  Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Artist Pro 15.6        |  Missing Features | Tilt and wheel are unsupported.
@@ -178,7 +179,6 @@
 | Wacom PTK-650                 |     Untested      |
 | Wacom PTZ-1231W               |     Untested      |
 | Wacom PTZ-430                 |     Untested      |
-| Wacom PTZ-631W                |     Untested      |
 | Wacom XD-0405-U               |     Untested      |
 | Wacom XD-0912-U               |     Untested      |
 | Wacom XD-1212-U               |     Untested      |
