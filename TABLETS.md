@@ -80,6 +80,9 @@
 | Wacom XD-0608-U               |     Supported     |
 | Wacom XD-1218-U               |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
+| XENX P1-640                   |     Supported     |
+| XENX P3-1060                  |     Supported     |
+| XENX X1-640                   |     Supported     |
 | XP-Pen Artist 12              |     Supported     |
 | XP-Pen Artist 22HD            |     Supported     | Windows: Requires Zadig's WinUSB on interface 0
 | XP-Pen CT430                  |     Supported     |
