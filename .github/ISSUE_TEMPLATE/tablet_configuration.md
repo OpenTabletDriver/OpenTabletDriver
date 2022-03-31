@@ -20,6 +20,6 @@ assignees: ''
 | LPI             |
 
 ## Diagnostic Information
-<!-- Export diagnostics and attach or paste below -->
+<!-- Export diagnostics and attach as a txt (don't just paste below) -->
 <!-- In the GUI, click Help -> Export Diagnostics -->
 
