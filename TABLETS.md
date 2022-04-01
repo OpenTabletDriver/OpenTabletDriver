@@ -78,6 +78,7 @@
 | Wacom GD-0405-U               |     Supported     |
 | Wacom GD-0608-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
+| Wacom XD-1218-U               |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
 | XP-Pen Artist 12              |     Supported     |
 | XP-Pen Artist 22HD            |     Supported     | Windows: Requires Zadig's WinUSB on interface 0
@@ -157,6 +158,7 @@
 | Wacom PTZ-630                 |  Missing Features | Tablet buttons and touch strips are unsupported.
 | Wacom PTZ-631W                |  Missing Features | Touch strips are unsupported.
 | Wacom PTZ-930                 |  Missing Features | Touch strips are unsupported.
+| Wacom PTZ-1231W               |  Missing Features | Touch strips are unsupported.
 | XP-Pen Artist 12              |  Missing Features | Touch bar is unsupported
 | XP-Pen Artist Pro 12          |  Missing Features | Tilt and wheel are unsupported.
 | XP-Pen Artist Pro 15.6        |  Missing Features | Tilt and wheel are unsupported.
@@ -177,9 +179,7 @@
 | Wacom GD-1218-U               |     Untested      |
 | Wacom PTK-450                 |     Untested      |
 | Wacom PTK-650                 |     Untested      |
-| Wacom PTZ-1231W               |     Untested      |
 | Wacom PTZ-430                 |     Untested      |
 | Wacom XD-0405-U               |     Untested      |
 | Wacom XD-0912-U               |     Untested      |
 | Wacom XD-1212-U               |     Untested      |
-| Wacom XD-1218-U               |     Untested      |
