@@ -21,6 +21,7 @@
 | Huion H640P                   |     Supported     |
 | Huion H642                    |     Supported     |
 | Huion HS64                    |     Supported     |
+| Huion HS95                    |     Supported     |
 | Huion Kamvas 13               |     Supported     |
 | Huion Kamvas 16               |     Supported     |
 | Huion Kamvas 16 (2021)        |     Supported     |
