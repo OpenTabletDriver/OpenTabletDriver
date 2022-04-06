@@ -1,0 +1,42 @@
+{
+  "Name": "XENX P3-1060",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254.00,
+      "Height": 158.75,
+      "MaxX": 25400.0,
+      "MaxY": 15875.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 10
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 11648,
+      "ProductID": 8193,
+      "InputReportLength": 64,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XENX.XENXReportParser",
+      "FeatureInitReport": [
+        "IAE="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {
+      },
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
