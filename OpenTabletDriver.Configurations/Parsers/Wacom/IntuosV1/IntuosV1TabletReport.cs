@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
                 penByte.IsBitSet(2)
             };
             NearProximity = report[1].IsBitSet(6);
-            HoverDistance = (uint)report[9] >> 2;
+            HoverDistance = (uint)report[9];
         }
 
         public byte[] Raw { set; get; }
