@@ -1,5 +1,6 @@
 using System;
 using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.Plugin.Toml;
 
 namespace OpenTabletDriver.Plugin
 {
@@ -52,7 +53,17 @@ namespace OpenTabletDriver.Plugin
                 StackTrace = createStackTrace ? Environment.StackTrace : null,
                 Notification = notify
             };
-            Write(message);
+
+            //Checks for log level with this giant if
+            if((Conf.ConfGet("logLevel") == null)
+            || ((Conf.ConfGet("logLevel") == "-1") && ((level == LogLevel.Fatal)))
+            || ((Conf.ConfGet("logLevel") == "0") && ((level == LogLevel.Fatal) || (level == LogLevel.Error)))
+            || ((Conf.ConfGet("logLevel") == "1") && ((level == LogLevel.Fatal) || (level == LogLevel.Error) || (level == LogLevel.Warning)))
+            || ((Conf.ConfGet("logLevel") == "2") && ((level == LogLevel.Fatal) || (level == LogLevel.Error) || (level == LogLevel.Warning) ||(level == LogLevel.Info)))
+            || ((Conf.ConfGet("logLevel") == "3") && ((level == LogLevel.Fatal) || (level == LogLevel.Error) || (level == LogLevel.Warning) ||(level == LogLevel.Info) ||(level == LogLevel.Debug)))
+            ){
+                Write(message);
+            }
         }
 
         /// <summary>

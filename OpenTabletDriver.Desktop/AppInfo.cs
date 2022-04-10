@@ -101,6 +101,11 @@ namespace OpenTabletDriver.Desktop
             get => this.trashDirectory ?? GetDefaultTrashDirectory();
         }
 
+        public string TomlDirectory
+        {
+            set => this.trashDirectory = value;
+            get => this.trashDirectory ?? GetDefaultTomlDirectory();
+        }
         public static string ProgramDirectory => AppContext.BaseDirectory;
 
         private static string GetDirectory(params string[] directories)
@@ -134,5 +139,6 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
+        private string GetDefaultTomlDirectory() => Path.Join(AppDataDirectory, "config.toml");
     }
 }

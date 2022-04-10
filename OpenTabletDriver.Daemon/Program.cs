@@ -9,6 +9,7 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
+using OpenTabletDriver.Plugin.Toml;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -16,6 +17,9 @@ namespace OpenTabletDriver.Daemon
     {
         static async Task Main(string[] args)
         {
+            Conf.TomlLocation = AppInfo.Current.TomlDirectory;
+            Conf.ConfGen();
+
             using (var instance = new Instance("OpenTabletDriver.Daemon"))
             {
                 if (instance.AlreadyExists)
