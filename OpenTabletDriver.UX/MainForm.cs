@@ -331,6 +331,7 @@ namespace OpenTabletDriver.UX
 
             // Load the application information from the daemon
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
+            Configuration.Load(AppInfo.Current.ConfigurationFile);
 
             // Load any new plugins
             AppInfo.PluginManager.Load();
