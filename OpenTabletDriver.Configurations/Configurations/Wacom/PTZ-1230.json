@@ -53,6 +53,6 @@
   ],
   "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
-    "FeatureInitDelayMs": 150
+    "FeatureInitDelayMs": "150"
   }
 }

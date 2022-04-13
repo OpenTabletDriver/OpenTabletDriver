@@ -13,6 +13,7 @@
         "ButtonCount": 1
       }
     },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },

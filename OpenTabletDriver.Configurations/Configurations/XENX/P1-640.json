@@ -2,8 +2,8 @@
   "Name": "XENX P1-640",
   "Specifications": {
     "Digitizer": {
-      "Width": 168.00,
-      "Height": 105.00,
+      "Width": 168.0,
+      "Height": 105.0,
       "MaxX": 16800.0,
       "MaxY": 10500.0
     },
@@ -30,8 +30,7 @@
         "IAE="
       ],
       "OutputInitReport": null,
-      "DeviceStrings": {
-      },
+      "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],

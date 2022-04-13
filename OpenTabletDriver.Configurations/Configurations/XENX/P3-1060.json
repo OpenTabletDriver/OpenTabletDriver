@@ -2,7 +2,7 @@
   "Name": "XENX P3-1060",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.00,
+      "Width": 254.0,
       "Height": 158.75,
       "MaxX": 25400.0,
       "MaxY": 15875.0
@@ -30,8 +30,7 @@
         "IAE="
       ],
       "OutputInitReport": null,
-      "DeviceStrings": {
-      },
+      "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
