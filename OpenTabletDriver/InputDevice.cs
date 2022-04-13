@@ -10,8 +10,8 @@ namespace OpenTabletDriver
 {
     public class InputDevice : DeviceReader<IDeviceReport>
     {
-        private uint FeatureInitDelayMs;
-        private readonly string DelayAttributeKeyName = "FeatureInitDelayMs";
+        private readonly uint _featureInitDelayMs;
+        private const string DELAY_ATTRIBUTE_KEY_NAME = "FeatureInitDelayMs";
 
         public InputDevice(IDriver driver, IDeviceEndpoint device, TabletConfiguration configuration, DeviceIdentifier identifier)
             : base(device, driver.GetReportParser(identifier))
@@ -29,9 +29,9 @@ namespace OpenTabletDriver
             Configuration = configuration;
             Identifier = identifier;
 
-            if (Configuration.Attributes.TryGetValue(DelayAttributeKeyName, out var delayStr))
-                if (!UInt32.TryParse(delayStr, out FeatureInitDelayMs))
-                    Log.Write("Device", $"Could not parse '{delayStr}' from attribute {DelayAttributeKeyName}", LogLevel.Warning);
+            if (Configuration.Attributes.TryGetValue(DELAY_ATTRIBUTE_KEY_NAME, out var delayStr))
+                if (!uint.TryParse(delayStr, out _featureInitDelayMs))
+                    Log.Write("Device", $"Could not parse '{delayStr}' from attribute {DELAY_ATTRIBUTE_KEY_NAME}", LogLevel.Warning);
 
             Start();
         }
@@ -60,8 +60,8 @@ namespace OpenTabletDriver
             Log.Debug("Device", $"Initializing device '{Endpoint.FriendlyName}' {Endpoint.DevicePath}");
             Log.Debug("Device", $"Using report parser type '{Identifier.ReportParser}'");
 
-            if (FeatureInitDelayMs != 0)
-                Log.Debug("Device", $"{DelayAttributeKeyName} is set in tablet configuration, will sleep for {FeatureInitDelayMs}ms between FeatureInitReports");
+            if (_featureInitDelayMs != 0)
+                Log.Debug("Device", $"{DELAY_ATTRIBUTE_KEY_NAME} is set in tablet configuration, will sleep for {_featureInitDelayMs}ms between FeatureInitReports");
 
             foreach (byte index in Identifier.InitializationStrings ?? new List<byte>())
             {
@@ -76,8 +76,8 @@ namespace OpenTabletDriver
 
                 try
                 {
-                    if (FeatureInitDelayMs != 0)
-                        Thread.Sleep((int)FeatureInitDelayMs);
+                    if (_featureInitDelayMs != 0)
+                        Thread.Sleep((int)_featureInitDelayMs);
                     ReportStream.SetFeature(report);
                     Log.Debug("Device", "Set device feature: " + BitConverter.ToString(report));
                 }
