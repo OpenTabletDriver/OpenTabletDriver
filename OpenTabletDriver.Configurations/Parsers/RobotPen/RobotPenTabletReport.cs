@@ -17,10 +17,9 @@ namespace OpenTabletDriver.Configurations.Parsers.RobotPen
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[10]);
 
-
             PenButtons = new bool[]
             {
-                (report[11] & (1 << 1)) != 0
+                report[11].IsBitSet(1)
             };
         }
 
