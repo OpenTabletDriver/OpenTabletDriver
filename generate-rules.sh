@@ -17,4 +17,4 @@ else
   dotnet_args=("-v" "${TABLET_CONFIGURATIONS}" "${RULES_FILE}")
 fi
 
-dotnet run -p "${PROJECT}" -f "${FRAMEWORK}" -- ${dotnet_args[@]}
+dotnet run --project "${PROJECT}" -f "${FRAMEWORK}" -- ${dotnet_args[@]}
