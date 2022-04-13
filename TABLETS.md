@@ -106,6 +106,7 @@
 | Huion H580X                   |    Has Quirks     | User may have to replug their tablet until it is detected.
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order
+| Artisul AP604 (Pencil Small)  |  Missing Features | Aux buttons and eraser detection are unsupported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
 | Artisul A1201                 |  Missing Features | Touch bar is unsupported.
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are unsupported.
 | Gaomon M106K Pro              |  Missing Features | Tilt is unsupported.
