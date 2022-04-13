@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private static IEnumerable<string> validButtons;
         public static IEnumerable<string> ValidButtons
         {
-            get => validButtons ??= Enum.GetValues(typeof(MouseButton)).Cast<MouseButton>().Select(Enum.GetName);
+            get => validButtons ??= Enum.GetValues<MouseButton>().Select(Enum.GetName);
         }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";

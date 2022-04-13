@@ -326,7 +326,7 @@ namespace OpenTabletDriver.UX
         private void HandleDaemonConnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
         {
             // Hook events after the instance is (re)instantiated
-            Log.Output += async (sender, message) => await Driver.Instance.WriteMessage(message);
+            Log.Output += async (sender, message) => { if (Driver.IsConnected) await Driver.Instance?.WriteMessage(message); };
             Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
 
             // Load the application information from the daemon
@@ -603,7 +603,8 @@ namespace OpenTabletDriver.UX
                 {
                     case DialogResult.Ok:
                     case DialogResult.Yes:
-                        var file = new FileInfo(fileDialog.FileName);
+                        string[] options = { ".json", ".txt", ".log" };
+                        var file = new FileInfo(fileDialog.FileName + (options.Any(fileDialog.FileName.EndsWith) ? "" : ".json"));
                         if (file.Exists)
                             file.Delete();
                         using (var fs = file.OpenWrite())

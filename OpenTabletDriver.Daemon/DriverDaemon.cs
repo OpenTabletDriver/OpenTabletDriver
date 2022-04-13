@@ -186,7 +186,8 @@ namespace OpenTabletDriver.Daemon
                 }
             }
 
-            Log.Write("Settings", "Driver is enabled.");
+            if (Driver.InputDevices.Count > 0)
+                Log.Write("Settings", "Driver is enabled.");
 
             SetToolSettings();
 
