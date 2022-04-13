@@ -175,7 +175,6 @@
 | XP-Pen Innovator 16           |  Missing Features | Wheel is unsupported.
 | XP-Pen Star 06                |  Missing Features | Wheel is unsupported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is unsupported.
-| Huion H420                    |      Broken       | WinUSB implementation required.
 | Wacom ISD-V4                  |      Broken       | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
 | Huion G10T                    |     Untested      |
 | Wacom CTE-440                 |     Untested      |
