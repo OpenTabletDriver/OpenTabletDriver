@@ -29,7 +29,8 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ReportParser",
       "FeatureInitReport": [
-        "AgI="
+        "AgI=",
+        "BAA="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -42,7 +43,8 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.WacomDriverIntuos3ReportParser",
       "FeatureInitReport": [
-        "AgI="
+        "AgI=",
+        "BAA="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -50,5 +52,7 @@
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
-  "Attributes": {}
+  "Attributes": {
+    "FeatureInitDelayMs": 150
+  }
 }
