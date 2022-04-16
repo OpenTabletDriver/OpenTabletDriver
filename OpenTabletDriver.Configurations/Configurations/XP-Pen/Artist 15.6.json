@@ -32,6 +32,19 @@
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2330,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [
