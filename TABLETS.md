@@ -102,6 +102,7 @@
 | XP-Pen Star G640              |     Supported     |
 | XP-Pen Star G640 V2           |     Supported     |
 | XP-Pen Star G640S             |     Supported     |
+| XP-Pen Star G960              |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
 | XP-Pen Star G960S Plus        |     Supported     |
 | Huion H580X                   |    Has Quirks     | User may have to replug their tablet until it is detected.
