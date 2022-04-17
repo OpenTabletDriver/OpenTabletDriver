@@ -37,7 +37,7 @@
 | Huion WH1409 V2               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
-| 10moon 1060N                  |     Supported     | Doesn't meet any of it's advertised specs
+| 10moon 1060N                  |     Supported     | Doesn't meet any of its advertised specs
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
