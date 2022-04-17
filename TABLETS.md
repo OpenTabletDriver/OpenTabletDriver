@@ -2,6 +2,7 @@
 | ---------------------------   | :---------------: | ----- |
 | Acepen AP 1060                |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
+| Gaomon M106K Pro              |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
 | Gaomon PD1561                 |     Supported     |
@@ -17,9 +18,12 @@
 | Huion H420X                   |     Supported     |
 | Huion H430P                   |     Supported     |
 | Huion H610 Pro                |     Supported     |
+| Huion H610 Pro V2             |     Supported     |
 | Huion H610X                   |     Supported     |
 | Huion H640P                   |     Supported     |
 | Huion H642                    |     Supported     |
+| Huion H950P                   |     Supported     |
+| Huion H1060P                  |     Supported     |
 | Huion HS64                    |     Supported     |
 | Huion HS95                    |     Supported     |
 | Huion Kamvas 13               |     Supported     |
@@ -33,6 +37,7 @@
 | Huion New 1060 Plus (2048)    |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet             |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion Q11K                    |     Supported     |
+| Huion Q11K V2                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
 | Parblo A609                   |     Supported     |
@@ -112,25 +117,20 @@
 | Artisul AP604 (Pencil Small)  |  Missing Features | Aux buttons and eraser detection are unsupported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
 | Artisul A1201                 |  Missing Features | Touch bar is unsupported.
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are unsupported.
-| Gaomon M106K Pro              |  Missing Features | Tilt is unsupported.
 | Gaomon M10K                   |  Missing Features | Wheel is unsupported.
-| Gaomon M10K Pro               |  Missing Features | Tilt and wheel are unsupported.
-| Gaomon M1220                  |  Missing Features | Tilt and wheel are unsupported.
+| Gaomon M10K Pro               |  Missing Features | Wheel is unsupported.
+| Gaomon M1220                  |  Missing Features | Wheel is unsupported.
 | Gaomon M1230                  |  Missing Features | Touch bar is unsupported.
 | Huion GC610                   |  Missing Features | Touchpad is unsupported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is unsupported.
-| Huion H1060P                  |  Missing Features | Tilt is unsupported.
-| Huion H1161                   |  Missing Features | Tablet buttons and tilt are unsupported.
-| Huion H610 Pro V2             |  Missing Features | Tilt is unsupported.
-| Huion H950P                   |  Missing Features | Tilt is unsupported.
-| Huion HC16                    |  Missing Features | Tilt and wheel are unsupported.
-| Huion HS610                   |  Missing Features | Tilt and wheel are unsupported.
+| Huion H1161                   |  Missing Features | Tablet buttons are unsupported.
+| Huion HC16                    |  Missing Features | Wheel is unsupported.
+| Huion HS610                   |  Missing Features | Wheel is unsupported.
 | Huion HS611                   |  Missing Features | Touch strip is unsupported.
 | Huion Kamvas 12 Pro           |  Missing Features | Touch strip is unsupported.
 | Huion Kamvas Pro 16           |  Missing Features | Touch bar is unsupported.
 | Huion Kamvas Pro 20           |  Missing Features | Touch bar is unsupported.
 | Huion Kamvas Pro 24           |  Missing Features | Touch bar is unsupported.
-| Huion Q11K V2                 |  Missing Features | Tilt is unsupported.
 | Huion Q620M                   |  Missing Features | Wheel is unsupported.
 | Parblo A610 Pro               |  Missing Features | Wheel is unsupported.
 | Parblo Intangbo M             |  Missing Features | Wheel is unsupported.
