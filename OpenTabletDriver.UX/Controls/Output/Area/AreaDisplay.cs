@@ -361,6 +361,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 graphics.TranslateTransform(-area.Center);
 
                 graphics.FillRectangle(AccentColor, area);
+                graphics.DrawRectangle(SystemColors.ControlText, area);
 
                 var originEllipse = new RectangleF(0, 0, 1, 1);
                 originEllipse.Offset(area.Center - (originEllipse.Size / 2));
