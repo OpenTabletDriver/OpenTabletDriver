@@ -25,7 +25,7 @@
         "ProductID": 100,
         "InputReportLength": 12,
         "OutputReportLength": null,
-        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
         "FeatureInitReport": null,
         "OutputInitReport": null,
         "DeviceStrings": {
