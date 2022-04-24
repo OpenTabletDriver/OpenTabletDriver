@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Octokit;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
@@ -138,6 +139,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<IEnumerable<TabletReference>> DetectTablets()
         {
             Driver.Detect();
+            await Task.Run(CheckForProblematicProcesses).ConfigureAwait(false);
 
             foreach (var tablet in Driver.InputDevices)
             {
@@ -282,6 +284,21 @@ namespace OpenTabletDriver.Daemon
 
             relativeMode.ResetTime = settings.ResetTime;
             Log.Write(group, $"Reset time: {relativeMode.ResetTime}");
+        }
+
+        /// <summary>
+        /// Checks for any problematic processes running on the user's computer that may
+        /// impair function or detection of tablets, such as video game anti-cheat software.
+        /// </summary>
+        private void CheckForProblematicProcesses()
+        {
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+            {
+                if (Process.GetProcessesByName("vgc").Any())
+                    Log.Write("Detect", "Valorant's anti-cheat program Vanguard is detected. Tablet function may be impaired.", LogLevel.Warning);
+                if (Process.GetProcessesByName("VALORANT-Win64-Shipping").Any())
+                    Log.Write("Detect", "Valorant is detected. Tablet function may be impaired.", LogLevel.Warning);
+            }
         }
 
         private void SetBindingHandlerSettings(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings, TabletReference tabletReference)
