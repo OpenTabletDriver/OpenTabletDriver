@@ -32,6 +32,19 @@
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 12267,
+      "ProductID": 6,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "CQEE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
