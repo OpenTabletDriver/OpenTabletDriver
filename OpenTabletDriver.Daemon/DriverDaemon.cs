@@ -290,6 +290,8 @@ namespace OpenTabletDriver.Daemon
             {
                 if (Process.GetProcessesByName("vgc").Any())
                     Log.Write("Detect", "Valorant's anti-cheat program Vanguard is detected. Tablet function may be impaired.", LogLevel.Warning);
+                if (Process.GetProcessesByName("VALORANT-Win64-Shipping").Any())
+                    Log.Write("Detect", "Valorant is detected. Tablet function may be impaired.", LogLevel.Warning);
             }
         }
 
