@@ -63,13 +63,16 @@ namespace OpenTabletDriver.Console
             return profile;
         }
 
-        static async Task ListTypes<T>()
+        static async Task ListTypes<T>(Func<Type, bool> predicate = null)
         {
             foreach (var type in AppInfo.PluginManager.GetChildTypes<T>())
             {
-                var name = AppInfo.PluginManager.GetFriendlyName(type.FullName);
-                var output = string.IsNullOrWhiteSpace(name) ? type.FullName : $"{type.FullName} [{name}]";
-                await Out.WriteLineAsync(output);
+                if (predicate?.Invoke(type) ?? true)
+                {
+                    var name = AppInfo.PluginManager.GetFriendlyName(type.FullName);
+                    var output = string.IsNullOrWhiteSpace(name) ? type.FullName : $"{type.FullName} [{name}]";
+                    await Out.WriteLineAsync(output);
+                }
             }
         }
 
