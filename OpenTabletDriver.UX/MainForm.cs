@@ -47,13 +47,20 @@ namespace OpenTabletDriver.UX
             {
                 try
                 {
-                    await Driver.Connect();
+                    var timeout = Task.Delay(TimeSpan.FromSeconds(15));
+                    var result = await Task.WhenAny(Driver.Connect(), timeout);
+                    if (result == timeout)
+                    {
+                        MessageBox.Show("Daemon connection timed out after some time. Verify that the daemon is running.", "Daemon Connection Timed Out");
+                        Environment.Exit(1);
+                    }
+
                     await CheckForUpdates();
                 }
-                catch (TimeoutException)
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Daemon connection timed out after some time. Verify that the daemon is running.", "Daemon Connection Timed Out");
-                    Application.Instance.Quit();
+                    ex.ShowMessageBox();
+                    Environment.Exit(2);
                 }
             });
         }
