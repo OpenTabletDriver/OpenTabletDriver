@@ -87,6 +87,7 @@
 | Wacom XD-0608-U               |     Supported     |
 | Wacom XD-1218-U               |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
+| XenceLabs Pen Tablet Small    |     Supported     |
 | XENX P1-640                   |     Supported     |
 | XENX P3-1060                  |     Supported     |
 | XENX X1-640                   |     Supported     |
