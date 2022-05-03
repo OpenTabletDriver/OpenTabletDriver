@@ -35,6 +35,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
         private static Color ForegroundBorderColor { get; } = SystemColors.ControlText;
         private static Color BackgroundFillColor { get; } = new Color(Colors.Black, 0.05f);
         private static Color BackgroundBorderColor { get; } = new Color(Colors.Black, 0.25f);
+        private static Color IntersectColor = new Color(SystemColors.ControlText, 0.6f);
 
         protected override void OnDataContextChanged(EventArgs e)
         {
@@ -101,6 +102,32 @@ namespace OpenTabletDriver.UX.Controls.Editors
             {
                 graphics.FillRectangle(BackgroundFillColor, rect);
                 graphics.DrawRectangle(BackgroundBorderColor, rect);
+
+                // Draw borders on intersecting areas
+                foreach (var otherRect in backgrounds.Where(x => x != rect))
+                {
+                    if (rect == otherRect) continue;
+
+                    var match = false;
+                    var startPoint = new PointF(0,0);
+                    var endPoint = new PointF(0,0);
+
+                    if (rect.Right == otherRect.Left) // right<->left intersection
+                    {
+                        match = true;
+                        startPoint = new PointF(rect.Right, Math.Max(rect.TopRight.Y, otherRect.TopLeft.Y));
+                        endPoint = new PointF(rect.Right, Math.Min(rect.BottomRight.Y, otherRect.BottomLeft.Y));
+                    }
+                    else if (rect.Bottom == otherRect.Top) // top<->bottom intersection
+                    {
+                        match = true;
+                        startPoint = new PointF(Math.Max(rect.BottomLeft.X, otherRect.TopLeft.X), rect.Bottom);
+                        endPoint = new PointF(Math.Min(rect.BottomRight.X, otherRect.TopRight.X), rect.Bottom);
+                    }
+
+                    if (match)
+                        graphics.DrawLine(IntersectColor, startPoint, endPoint);
+                }
             }
 
             // Draw foreground area
