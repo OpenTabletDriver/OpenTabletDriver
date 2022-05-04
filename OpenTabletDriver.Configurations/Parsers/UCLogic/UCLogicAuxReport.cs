@@ -22,6 +22,7 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
                 report[5].IsBitSet(1),
                 report[5].IsBitSet(2),
                 report[5].IsBitSet(3),
+                report[5].IsBitSet(4),
             };
         }
 

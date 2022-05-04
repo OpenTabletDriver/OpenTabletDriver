@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos
             };
             Eraser = report[1].IsBitSet(3);
             NearProximity = report[1].IsBitSet(7);
-            HoverDistance = (uint)report[8] >> 2;
+            HoverDistance = (uint)report[8];
         }
 
         public byte[] Raw { set; get; }

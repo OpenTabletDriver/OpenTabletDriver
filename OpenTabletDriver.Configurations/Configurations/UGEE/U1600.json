@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Artist 12 V2",
+  "Name": "UGEE U1600",
   "Specifications": {
     "Digitizer": {
-      "Width": 263.19,
-      "Height": 148.08,
-      "MaxX": 52638.0,
-      "MaxY": 29616.0
+      "Width": 344.14,
+      "Height": 193.57,
+      "MaxX": 68828.0,
+      "MaxY": 38714.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -13,19 +13,17 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 6
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 2058,
+      "ProductID": 2364,
       "InputReportLength": 12,
-      "OutputReportLength": 33,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
+      "OutputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"

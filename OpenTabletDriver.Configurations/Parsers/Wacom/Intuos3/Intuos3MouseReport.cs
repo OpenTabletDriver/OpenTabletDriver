@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
                 Y = report[8].IsBitSet(0) ? 1 : report[8].IsBitSet(1) ? -1 : 0
             };
             NearProximity = report[1].IsBitSet(6);
-            HoverDistance = (uint)report[9] >> 2;
+            HoverDistance = (uint)report[9];
         }
 
         public byte[] Raw { set; get; }

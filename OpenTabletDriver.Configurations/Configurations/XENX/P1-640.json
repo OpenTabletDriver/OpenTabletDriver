@@ -1,0 +1,41 @@
+{
+  "Name": "XENX P1-640",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 168.0,
+      "Height": 105.0,
+      "MaxX": 16800.0,
+      "MaxY": 10500.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 11648,
+      "ProductID": 8194,
+      "InputReportLength": 64,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XENX.XENXReportParser",
+      "FeatureInitReport": [
+        "IAE="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
