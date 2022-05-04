@@ -16,4 +16,3 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
         }
     }
 }
-
