@@ -1,43 +1,43 @@
 {
-    "Name": "Gaomon M6",
-    "Specifications": {
-      "Digitizer": {
-        "Width": 254.0,
-        "Height": 158.75,
-        "MaxX": 50800.0,
-        "MaxY": 31750.0
-      },
-      "Pen": {
-        "MaxPressure": 8191,
-        "Buttons": {
-          "ButtonCount": 2
-        }
-      },
-      "AuxiliaryButtons": {
-        "ButtonCount": 13
-      },
-      "MouseButtons": null,
-      "Touch": null
+  "Name": "Gaomon M6",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 50800.0,
+      "MaxY": 31750.0
     },
-    "DigitizerIdentifiers": [
-      {
-        "VendorID": 9580,
-        "ProductID": 100,
-        "InputReportLength": 12,
-        "OutputReportLength": null,
-        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
-        "FeatureInitReport": null,
-        "OutputInitReport": null,
-        "DeviceStrings": {
-          "201": "OEM02_T183_\\d{6}$"
-        },
-        "InitializationStrings": [
-          200
-        ]
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
       }
-    ],
-    "AuxilaryDeviceIdentifiers": [],
-    "Attributes": {
-      "libinputoverride": "1"
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 13
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "OEM02_T183_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
     }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
   }
+}
