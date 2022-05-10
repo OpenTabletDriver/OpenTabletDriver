@@ -8,7 +8,6 @@ namespace OpenTabletDriver.Devices.SerialBackend
     {
         public SerialDeviceHub()
         {
-
         }
 
         public bool CanEnumeratePorts => true;
