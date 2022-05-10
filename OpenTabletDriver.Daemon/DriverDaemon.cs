@@ -10,9 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
-#if RELEASE
 using OpenTabletDriver.Desktop.Components;
-#endif
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
@@ -43,6 +41,7 @@ namespace OpenTabletDriver.Daemon
         private readonly IPluginManager _pluginManager;
         private readonly IPluginFactory _pluginFactory;
         private readonly IPresetManager _presetManager;
+        private readonly ISleepDetector _sleepDetector;
         private readonly IUpdater? _updater;
 
         public DriverDaemon(
@@ -54,7 +53,8 @@ namespace OpenTabletDriver.Daemon
             ISettingsManager settingsManager,
             IPluginManager pluginManager,
             IPluginFactory pluginFactory,
-            IPresetManager presetManager
+            IPresetManager presetManager,
+            ISleepDetector sleepDetector
         )
         {
             _serviceProvider = serviceProvider;
@@ -66,6 +66,7 @@ namespace OpenTabletDriver.Daemon
             _pluginManager = pluginManager;
             _pluginFactory = pluginFactory;
             _presetManager = presetManager;
+            _sleepDetector = sleepDetector;
 
             _updater = serviceProvider.GetService<IUpdater>();
         }
@@ -106,15 +107,15 @@ namespace OpenTabletDriver.Daemon
 
             await LoadUserSettings();
 
-#if RELEASE
-            SleepDetection = new SleepDetectionThread(() =>
+            _sleepDetector.Slept += async () =>
             {
-                Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Debug);
-                _ = DetectTablets();
-            });
-
-            SleepDetection.Start();
+#if DEBUG
+                if (System.Diagnostics.Debugger.IsAttached)
+                    return;
 #endif
+                Log.Write(nameof(DriverDaemon), "Sleep detected...", LogLevel.Info);
+                await DetectTablets();
+            };
         }
 
         public event EventHandler<LogMessage>? Message;
@@ -125,9 +126,6 @@ namespace OpenTabletDriver.Daemon
 
         private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { get; } = new Collection<ITool>();
-#if RELEASE
-        private SleepDetectionThread? SleepDetection { set; get; }
-#endif
 
         private bool _debugging;
 
@@ -202,7 +200,7 @@ namespace OpenTabletDriver.Daemon
         {
             // Dispose filters that implement IDisposable interface
             foreach (var obj in _driver.InputDevices.SelectMany(d =>
-                         d.OutputMode?.Elements ?? (IEnumerable<object>) Array.Empty<object>()))
+                         d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
                 if (obj is IDisposable disposable)
                     disposable.Dispose();
 
@@ -380,12 +378,12 @@ namespace OpenTabletDriver.Daemon
             if (tablet == null)
                 throw new IOException($"Device not found ({vid:X2}:{pid:X2})");
 
-            return Task.FromResult(tablet.GetDeviceString((byte) index));
+            return Task.FromResult(tablet.GetDeviceString((byte)index));
         }
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            return Task.FromResult((IEnumerable<LogMessage>) LogMessages);
+            return Task.FromResult((IEnumerable<LogMessage>)LogMessages);
         }
 
         public Task<PluginSettings> GetDefaults(string path)
