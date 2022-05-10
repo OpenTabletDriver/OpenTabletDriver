@@ -84,4 +84,3 @@ namespace OpenTabletDriver.UX.Windows
         private readonly GroupBox devicePathGroup, tabletGroup;
     }
 }
-
