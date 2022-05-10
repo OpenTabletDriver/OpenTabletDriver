@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Devices.SerialBackend
 
             if (!parentInterface.TryGetTarget(out var serialInterface))
                 throw new InvalidOperationException("Weak reference to parent interface is unexpectedly invalid");
-        
+
             port = new SerialPort(serialInterface.DevicePath);
             port.Open();
         }
