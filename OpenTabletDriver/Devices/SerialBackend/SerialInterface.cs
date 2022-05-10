@@ -6,7 +6,6 @@ namespace OpenTabletDriver.Devices.SerialBackend
     {
         public unsafe SerialInterface(string devicePath)
         {
-
         }
 
         internal int InterfaceNum { get; private set; }
