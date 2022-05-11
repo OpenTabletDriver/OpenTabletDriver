@@ -4,7 +4,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls;
@@ -49,7 +48,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
                         new PaddingSpacerItem(),
                         new Bitmap(App.Logo.WithSize(256, 256)),
                         "An update is available to install",
-                        release.TagName,
+                        $"v{release.Version}",
                         new Button(Update)
                         {
                             Text = "Install"

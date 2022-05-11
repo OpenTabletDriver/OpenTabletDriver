@@ -3,23 +3,22 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Octokit;
 
 #nullable enable
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public class WindowsUpdater : Updater
+    public class WindowsUpdater : GithubUpdater
     {
         public WindowsUpdater()
-           : this(AssemblyVersion,
+           : this(null,
                AppDomain.CurrentDomain.BaseDirectory,
                AppInfo.Current.AppDataDirectory,
                AppInfo.Current.BackupDirectory)
         {
         }
 
-        public WindowsUpdater(Version currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
+        public WindowsUpdater(Version? currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
             : base(currentVersion,
                 binDirectory,
                 appDataDirectory,
@@ -33,8 +32,9 @@ namespace OpenTabletDriver.Desktop.Updater
             "OpenTabletDriver.Daemon.exe"
         };
 
-        protected override async Task Download(Release release)
+        protected override async Task Download(GithubRelease ghRelease)
         {
+            var release = ghRelease.Release;
             var asset = release.Assets.First(r => r.Name.Contains("win-x64"));
 
             using (var client = new HttpClient())
