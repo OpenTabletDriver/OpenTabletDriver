@@ -462,9 +462,9 @@ namespace OpenTabletDriver.Daemon
             return Updater?.CheckForUpdates() ?? Task.FromResult(false);
         }
 
-        public async Task<UpdateInfo?> GetUpdateInfo()
+        public Task<UpdateInfo?> GetUpdateInfo()
         {
-            return await Updater.GetInfo();
+            return Updater.GetInfo();
         }
 
         public Task InstallUpdate()
