@@ -1,4 +1,8 @@
-﻿using System;
+﻿
+
+#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -27,8 +31,6 @@ using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Tablet;
-
-#nullable enable
 
 namespace OpenTabletDriver.Daemon
 {
@@ -201,6 +203,11 @@ namespace OpenTabletDriver.Daemon
             settings.Serialize(new FileInfo(_appInfo.SettingsFile));
             Log.Write("Settings", $"Settings saved to '{_appInfo.SettingsFile}'");
             await ApplySettings(settings);
+        }
+
+        public Task ConnectLegacyTablet(LegacyHubType type, string port, string tablet)
+        {
+            return Task.CompletedTask;
         }
 
         public Task ApplySettings(Settings? settings)

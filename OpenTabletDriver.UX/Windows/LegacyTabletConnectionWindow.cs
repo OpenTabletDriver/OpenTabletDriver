@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.UX.Components;
+using OpenTabletDriver.Devices;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -42,6 +35,7 @@ namespace OpenTabletDriver.UX.Windows
             devicePathText = new ComboBox();
 
             tablet = new DropDown();
+
             // Orientation.Vertical
             devicePathGroup = new GroupBox
             {
@@ -56,6 +50,17 @@ namespace OpenTabletDriver.UX.Windows
                 Content = tablet
             };
 
+
+
+            portType = new EnumDropDown<LegacyHubType>();
+
+            // Orientation.Vertical
+            portTypeGroup = new GroupBox
+            {
+                Text = "Port type",
+                Content = portType
+            };
+
             reconnectBox = new CheckBox
             {
                 Text = "Remember tablet"
@@ -68,6 +73,7 @@ namespace OpenTabletDriver.UX.Windows
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
                 {
+                    portTypeGroup,
                     devicePathGroup,
                     tabletGroup,
                     reconnectBox,
@@ -78,9 +84,12 @@ namespace OpenTabletDriver.UX.Windows
 
         private readonly ComboBox devicePathText;
         private readonly CheckBox reconnectBox;
+        private readonly Button connectButton;
 
         private readonly DropDown tablet;
 
-        private readonly GroupBox devicePathGroup, tabletGroup;
+        private readonly GroupBox devicePathGroup, tabletGroup, portTypeGroup;
+
+        private readonly EnumDropDown<LegacyHubType> portType;
     }
 }
