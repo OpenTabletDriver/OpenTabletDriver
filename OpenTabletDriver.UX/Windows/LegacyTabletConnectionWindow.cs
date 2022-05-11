@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Windows
 
             tablet = new DropDown();
 
-            tablet.DataStore = _daemon.GetSupportedTablets().Result;
+            tablet.DataStore = _daemon.GetSupportedTablets().Result.Where(x => x.Attributes.ContainsKey("isLegacy"));;
 
             // Orientation.Vertical
             devicePathGroup = new GroupBox

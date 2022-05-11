@@ -27,7 +27,7 @@ namespace OpenTabletDriver.ComponentProviders
 
             LegacyDeviceHubs = Assembly.GetExecutingAssembly().DefinedTypes
                 .Where(type => type.IsAssignableTo(typeof(ILegacyDeviceHub))
-                    && type.GetCustomAttribute<DeviceHubAttribute>() != null
+                    && type.GetCustomAttribute<LegacyDeviceHubAttribute>() != null
                     && (type.GetCustomAttribute<SupportedPlatformAttribute>()?.IsCurrentPlatform ?? true))
                 .Select(type => (ILegacyDeviceHub)ActivatorUtilities.CreateInstance(serviceProvider, type))
                 .ToArray();

@@ -6,7 +6,7 @@ using OpenTabletDriver.Attributes;
 
 namespace OpenTabletDriver.Devices.SerialBackend
 {
-    [DeviceHub]
+    [LegacyDeviceHub("serial")]
     public class SerialDeviceHub : ILegacyDeviceHub
     {
         public SerialDeviceHub()
