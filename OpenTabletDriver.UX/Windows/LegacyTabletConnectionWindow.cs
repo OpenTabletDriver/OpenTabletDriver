@@ -3,6 +3,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.Devices;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -26,15 +27,13 @@ namespace OpenTabletDriver.UX.Windows
                 Text = "Connect",
             };
 
-            /*connectButton.Click += async (_, _) => await Connect(devicePathText.Text,
-                (s) => deviceStringText.Text = s,
-                (e) => MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error),
-                () => MessageBox.Show(OperationTimedOut)
-            );*/
+            connectButton.Click += async (_, _) => await _daemon.ConnectLegacyTablet(portType.SelectedValue, devicePathText.Text, (TabletConfiguration)tablet.SelectedValue, reconnectBox.Checked.Value);
 
             devicePathText = new ComboBox();
 
             tablet = new DropDown();
+
+            tablet.DataStore = _daemon.GetSupportedTablets().Result;
 
             // Orientation.Vertical
             devicePathGroup = new GroupBox
@@ -86,9 +85,9 @@ namespace OpenTabletDriver.UX.Windows
         private readonly CheckBox reconnectBox;
         private readonly Button connectButton;
 
-        private readonly DropDown tablet;
-
         private readonly GroupBox devicePathGroup, tabletGroup, portTypeGroup;
+
+        private readonly DropDown tablet;
 
         private readonly EnumDropDown<LegacyHubType> portType;
     }

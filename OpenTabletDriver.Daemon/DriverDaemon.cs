@@ -205,7 +205,12 @@ namespace OpenTabletDriver.Daemon
             await ApplySettings(settings);
         }
 
-        public Task ConnectLegacyTablet(LegacyHubType type, string port, string tablet)
+        public Task<IEnumerable<TabletConfiguration>> GetSupportedTablets()
+        {
+            return Task.FromResult((IEnumerable<TabletConfiguration>)Array.Empty<TabletConfiguration>()/*.TabletConfigurations*/);
+        }
+
+        public Task ConnectLegacyTablet(LegacyHubType type, string port, TabletConfiguration tablet, bool save)
         {
             return Task.CompletedTask;
         }

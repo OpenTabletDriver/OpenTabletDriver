@@ -36,6 +36,9 @@ namespace OpenTabletDriver
 
         public InputDeviceCollection InputDevices { get; } = new InputDeviceCollection();
 
+        public IEnumerable<TabletConfiguration> TabletConfigurations =>
+            _deviceConfigurationProvider.TabletConfigurations;
+
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
             return _reportParserProvider.GetReportParser(identifier.ReportParser);
