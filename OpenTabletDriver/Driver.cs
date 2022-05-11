@@ -1,5 +1,3 @@
-
-
 #nullable enable
 
 using System;
@@ -239,7 +237,11 @@ namespace OpenTabletDriver
 
             List<InputDeviceEndpoint> endpoints = new List<InputDeviceEndpoint>();
 
-            endpoints.Add(new InputDeviceEndpoint(this, endpoint, config, new DeviceIdentifier()));
+            foreach (var id in config.DigitizerIdentifiers)
+            {
+                endpoints.Add(new InputDeviceEndpoint(this, endpoint, config, id));
+            }
+
 
             InputDevice dev = new InputDevice(config, endpoints);
 
