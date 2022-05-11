@@ -191,6 +191,11 @@ namespace OpenTabletDriver.Daemon
             return await GetTablets();
         }
 
+        public Task<IEnumerable<string>> GetLegacyPorts()
+        {
+            return Task.FromResult(/*_driver.CompositeDeviceHub.LegacyPortNames*/(IEnumerable<string>)Array.Empty<string>());
+        }
+
         public async Task SaveSettings(Settings settings)
         {
             settings.Serialize(new FileInfo(_appInfo.SettingsFile));
