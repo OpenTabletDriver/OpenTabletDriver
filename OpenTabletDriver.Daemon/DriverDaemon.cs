@@ -207,11 +207,12 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<TabletConfiguration>> GetSupportedTablets()
         {
-            return Task.FromResult((IEnumerable<TabletConfiguration>)Array.Empty<TabletConfiguration>()/*.TabletConfigurations*/);
+            return Task.FromResult(_driver.TabletConfigurations);
         }
 
         public Task ConnectLegacyTablet(Uri port, TabletConfiguration tablet, bool save)
         {
+            _driver.ConnectLegacyDevice(port, tablet);
             return Task.CompletedTask;
         }
 

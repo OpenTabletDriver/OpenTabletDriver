@@ -16,6 +16,11 @@ namespace OpenTabletDriver.Components
         IEnumerable<IDeviceHub> DeviceHubs { get; }
 
         /// <summary>
+        /// The legacy device hubs contained in the composite hub.
+        /// </summary>
+        IEnumerable<ILegacyDeviceHub> LegacyDeviceHubs { get; }
+
+        /// <summary>
         /// Connects a device hub.
         /// </summary>
         /// <typeparam name="T">The device hub type.</typeparam>

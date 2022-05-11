@@ -1,14 +1,19 @@
+
+
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Tablet;
-
 namespace OpenTabletDriver
 {
     /// <summary>
@@ -209,6 +214,42 @@ namespace OpenTabletDriver
                     return true;
                 }
             }
+        }
+
+        public void ConnectLegacyDevice(Uri path, TabletConfiguration config)
+        {
+            ILegacyDeviceHub? selectedHub = null;
+            foreach (ILegacyDeviceHub hub in _compositeDeviceHub.LegacyDeviceHubs)
+            {
+                string? protocol = hub.GetType().GetCustomAttribute<LegacyDeviceHubAttribute>()?.Protocol;
+                if (protocol == null)
+                    continue;
+
+                if (path.Scheme == protocol)
+                {
+                    selectedHub = hub;
+                    break;
+                }
+            }
+
+            if (selectedHub == null || !selectedHub.TryGetDevice(path.AbsolutePath, out IDeviceEndpoint endpoint))
+            {
+                throw new ArgumentException();
+            }
+
+            List<InputDeviceEndpoint> endpoints = new List<InputDeviceEndpoint>();
+
+            endpoints.Add(new InputDeviceEndpoint(this, endpoint, config, new DeviceIdentifier()));
+
+            InputDevice dev = new InputDevice(config, endpoints);
+
+            InputDevices.Add(dev);
+
+            dev.Disconnected += (sender, e) =>
+            {
+                InputDevices.Remove(dev);
+                InputDevicesChanged?.Invoke(this, InputDevices);
+            };
         }
 
         public void Dispose()
