@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX.Windows
                 Text = "Connect",
             };
 
-            connectButton.Click += async (_, _) => await _daemon.ConnectLegacyTablet(portType.SelectedValue, devicePathText.Text, (TabletConfiguration)tablet.SelectedValue, reconnectBox.Checked.Value);
+            connectButton.Click += async (_, _) => await _daemon.ConnectLegacyTablet(new Uri(devicePathText.Text), (TabletConfiguration)tablet.SelectedValue, reconnectBox.Checked.Value);
 
             devicePathText = new ComboBox();
 
@@ -47,17 +47,6 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Text = "Tablet",
                 Content = tablet
-            };
-
-
-
-            portType = new EnumDropDown<LegacyHubType>();
-
-            // Orientation.Vertical
-            portTypeGroup = new GroupBox
-            {
-                Text = "Port type",
-                Content = portType
             };
 
             reconnectBox = new CheckBox
@@ -88,7 +77,5 @@ namespace OpenTabletDriver.UX.Windows
         private readonly GroupBox devicePathGroup, tabletGroup, portTypeGroup;
 
         private readonly DropDown tablet;
-
-        private readonly EnumDropDown<LegacyHubType> portType;
     }
 }

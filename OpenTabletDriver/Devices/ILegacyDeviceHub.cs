@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace OpenTabletDriver.Devices
 {
     public interface ILegacyDeviceHub
@@ -6,6 +9,6 @@ namespace OpenTabletDriver.Devices
 
         public bool CanEnumeratePorts { get; }
 
-        public string[] EnumeratePorts();
+        public IEnumerable<Uri> EnumeratePorts();
     }
 }

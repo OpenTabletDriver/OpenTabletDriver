@@ -1,3 +1,6 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO.Ports;
 using OpenTabletDriver.Attributes;
 
@@ -12,7 +15,13 @@ namespace OpenTabletDriver.Devices.SerialBackend
 
         public bool CanEnumeratePorts => true;
 
-        public string[] EnumeratePorts() => SerialPort.GetPortNames();
+        public IEnumerable<Uri> EnumeratePorts()
+        {
+            foreach (string port in SerialPort.GetPortNames())
+            {
+                yield return new Uri("serial://" + port);
+            }
+        }
 
         public bool TryGetDevice(string path, out IDeviceEndpoint endpoint)
         {

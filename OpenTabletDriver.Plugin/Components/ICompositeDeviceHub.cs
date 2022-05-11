@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Devices;
 
@@ -9,7 +10,7 @@ namespace OpenTabletDriver.Plugin.Components
 
         IEnumerable<ILegacyDeviceHub> LegacyDeviceHubs { get; }
 
-        IEnumerable<string> LegacyPortNames { get; }
+        IEnumerable<Uri> LegacyPorts { get; }
 
         void ConnectDeviceHub<T>() where T : IDeviceHub;
         void ConnectDeviceHub(IDeviceHub instance);
