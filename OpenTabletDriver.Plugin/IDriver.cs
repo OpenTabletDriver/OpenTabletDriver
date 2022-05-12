@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin
@@ -28,6 +29,6 @@ namespace OpenTabletDriver.Plugin
         /// <param name="identifier">The identifier to retrieve the report parser path from.</param>
         IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier);
 
-        bool ConnectLegacyDevice(Uri uri, TabletConfiguration config);
+        object ConnectLegacyDevice(Uri uri, TabletConfiguration config);
     }
 }

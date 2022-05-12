@@ -210,7 +210,13 @@ namespace OpenTabletDriver.Daemon
 
         public Task<bool> ConnectLegacyTablet(Uri port, TabletConfiguration tablet, bool save)
         {
-            return Task.FromResult(_driver.ConnectLegacyDevice(port, tablet));
+            var dev = _driver.ConnectLegacyDevice(port, tablet);
+            foreach (var d in dev.Endpoints)
+            {
+                d.RawReport += (_, report) => PostDebugReport(d.Configuration.Name, report);
+                d.RawClone = _debugging;
+            }
+            return Task.FromResult(true);
         }
 
         public Task ApplySettings(Settings? settings)
