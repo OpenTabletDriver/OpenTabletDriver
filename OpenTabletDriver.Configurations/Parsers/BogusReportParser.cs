@@ -2,14 +2,11 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers
 {
-    public class BogusReportParser
+    public class BogusReportParser : IReportParser<IDeviceReport>
     {
-        public class SkipByteTabletReportParser : IReportParser<IDeviceReport>
+        public IDeviceReport Parse(byte[] data)
         {
-            public IDeviceReport Parse(byte[] data)
-            {
-                return new BogusReport { Raw = data };
-            }
+            return new BogusReport { Raw = data };
         }
     }
 }

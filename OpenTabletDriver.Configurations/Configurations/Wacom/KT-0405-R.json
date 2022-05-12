@@ -23,7 +23,7 @@
       "ProductID": 0,
       "InputReportLength": 5,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.BogusReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.BogusReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
