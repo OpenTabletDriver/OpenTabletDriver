@@ -6,7 +6,7 @@ namespace OpenTabletDriver.Configurations.Parsers
     {
         public IDeviceReport Parse(byte[] data)
         {
-            return new BogusReport { Raw = data };
+            return new DeviceReport(data);
         }
     }
 }
