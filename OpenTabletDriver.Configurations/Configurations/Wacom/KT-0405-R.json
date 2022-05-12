@@ -1,0 +1,37 @@
+{
+  "Name": "Wacom KT-0405-R",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 147.6,
+      "Height": 92.25,
+      "MaxX": 14760.0,
+      "MaxY": 9225.0
+    },
+    "Pen": {
+      "MaxPressure": 511,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 0,
+      "ProductID": 0,
+      "InputReportLength": 5,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.BogusReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "isLegacy": true
+  }
+}
