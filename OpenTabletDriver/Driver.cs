@@ -229,11 +229,11 @@ namespace OpenTabletDriver
                     break;
                 }
             }
-            
+
             string fullPath = path.ToString();
-            
-            int pathStart = path.Scheme.Length + 2;
-            int pathEnd = fullPath[fullPath.Length-1] == '/' ? 1 : 0;
+
+            int pathStart = path.Scheme.Length + 3;
+            int pathEnd = fullPath[^1] == '/' ? 1 : 0;
             string actualPath = fullPath.Substring(pathStart, fullPath.Length - (pathStart + pathEnd));
 
             if (selectedHub == null || !selectedHub.TryGetDevice(actualPath, out IDeviceEndpoint endpoint))
