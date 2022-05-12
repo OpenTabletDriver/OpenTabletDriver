@@ -41,7 +41,7 @@ namespace OpenTabletDriver.Desktop.Contracts
 
         Task<IEnumerable<TabletConfiguration>> GetSupportedTablets();
 
-        Task ConnectLegacyTablet(Uri port, TabletConfiguration tablet, bool save);
+        Task<bool> ConnectLegacyTablet(Uri port, TabletConfiguration tablet, bool save);
 
         Task<Settings> GetSettings();
         Task<Settings> ResetSettings();

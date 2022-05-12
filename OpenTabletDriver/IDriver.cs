@@ -19,6 +19,6 @@ namespace OpenTabletDriver
         IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier);
         void Detect();
 
-        void ConnectLegacyDevice(Uri port, TabletConfiguration tablet);
+        bool ConnectLegacyDevice(Uri port, TabletConfiguration tablet);
     }
 }
