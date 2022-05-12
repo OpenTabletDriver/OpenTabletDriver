@@ -135,6 +135,11 @@ namespace OpenTabletDriver.Devices
             {
                 Log.Exception(ex, true);
             }
+            finally
+            {
+                Connected = false;
+                ReportStream?.Dispose();
+            }
         }
 
         private void OnReport(T report) => Report?.Invoke(this, report);

@@ -259,7 +259,7 @@ namespace OpenTabletDriver
                 InputDevicesChanged?.Invoke(this, InputDevices);
             };
 
-            TabletsChanged?.Invoke(this, Tablets);
+            InputDevicesChanged?.Invoke(this, InputDevices);
         }
 
         public void Dispose()
