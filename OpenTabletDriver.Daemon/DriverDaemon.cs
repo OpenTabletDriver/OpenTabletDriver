@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Octokit;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
@@ -463,9 +462,9 @@ namespace OpenTabletDriver.Daemon
             return Updater?.CheckForUpdates() ?? Task.FromResult(false);
         }
 
-        public async Task<Release> GetUpdateInfo()
+        public Task<UpdateInfo?> GetUpdateInfo()
         {
-            return await Updater.GetRelease()!;
+            return Updater.GetInfo();
         }
 
         public Task InstallUpdate()

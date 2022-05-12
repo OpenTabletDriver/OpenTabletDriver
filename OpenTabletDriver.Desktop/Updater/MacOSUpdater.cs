@@ -6,24 +6,23 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Tar;
-using Octokit;
 
 #pragma warning disable 618
 #nullable enable
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public class MacOSUpdater : Updater
+    public class MacOSUpdater : GithubUpdater
     {
         public MacOSUpdater()
-            : this(AssemblyVersion,
+            : this(null,
                 AppDomain.CurrentDomain.BaseDirectory,
                 AppInfo.Current.AppDataDirectory,
                 AppInfo.Current.BackupDirectory)
         {
         }
 
-        public MacOSUpdater(Version currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
+        public MacOSUpdater(Version? currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
             : base(currentVersion,
                 binDirectory,
                 appDataDirectory,
@@ -31,20 +30,16 @@ namespace OpenTabletDriver.Desktop.Updater
         {
         }
 
-        protected override async Task Install(Release release)
+        protected override void PostInstall()
         {
-            await Download(release);
-            PerformBackup();
-
-            // Mark the binaries executable, SharpZipLib doesn't do this.
-            var subPath = Path.Join(DownloadDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
+            var subPath = Path.Join(BinaryDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
             Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.UX.MacOS");
             Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.Daemon");
-            Move(subPath, BinaryDirectory);
         }
 
-        protected override async Task Download(Release release)
+        protected override async Task Download(GithubRelease ghRelease)
         {
+            var release = ghRelease.Release;
             var asset = release.Assets.First(r => r.Name.Contains("osx-x64"));
 
             // Download and extract tar gzip
