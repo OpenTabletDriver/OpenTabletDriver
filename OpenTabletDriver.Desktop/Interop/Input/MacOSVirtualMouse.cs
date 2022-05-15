@@ -120,15 +120,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             CGEventType eventType = 0;
 
             if (GetMouseButtonState(MouseButton.Left))
-                eventType |= CGEventType.kCGEventLeftMouseDragged;
-            if (GetMouseButtonState(MouseButton.Middle))
-                eventType |= CGEventType.kCGEventOtherMouseDragged;
-            if (GetMouseButtonState(MouseButton.Right))
-                eventType |= CGEventType.kCGEventRightMouseDragged;
-            if (GetMouseButtonState(MouseButton.Forward))
-                eventType |= CGEventType.kCGEventOtherMouseDragged;
-            if (GetMouseButtonState(MouseButton.Backward))
-                eventType |= CGEventType.kCGEventOtherMouseDragged;
+                eventType = CGEventType.kCGEventLeftMouseDragged;
+            else if (GetMouseButtonState(MouseButton.Right))
+                eventType = CGEventType.kCGEventRightMouseDragged;
+            else if (GetMouseButtonState(MouseButton.Middle))
+                eventType = CGEventType.kCGEventOtherMouseDragged;
+            else if (GetMouseButtonState(MouseButton.Forward))
+                eventType = CGEventType.kCGEventOtherMouseDragged;
+            else if (GetMouseButtonState(MouseButton.Backward))
+                eventType = CGEventType.kCGEventOtherMouseDragged;
 
             return eventType == 0 ? CGEventType.kCGEventMouseMoved : eventType;
         }
