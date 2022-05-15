@@ -30,6 +30,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                             Text = "Display",
                             Content = displayAreaEditor = new DisplayAreaEditor
                             {
+                                InvalidForegroundError = "Invalid display area.",
                                 Unit = "px"
                             }
                         }
@@ -43,6 +44,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                             Content = tabletAreaEditor = new TabletAreaEditor
                             {
                                 InvalidBackgroundError = "No tablet detected.",
+                                InvalidForegroundError = "Invalid tablet area.",
                                 Unit = "mm"
                             }
                         }
