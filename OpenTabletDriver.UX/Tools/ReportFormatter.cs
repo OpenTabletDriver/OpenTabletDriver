@@ -37,6 +37,8 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(toolReport));
             if (report is OutOfRangeReport oorReport)
                 sb.AppendLines(GetStringFormat(oorReport));
+            if (report is IWheelReport wheelReport)
+                sb.AppendLines(GetStringFormat(wheelReport));
 
             return sb.ToString();
         }
@@ -97,6 +99,13 @@ namespace OpenTabletDriver.UX.Tools
         private static IEnumerable<string> GetStringFormat(OutOfRangeReport oorReport)
         {
             yield return $"Pen is out of Range";
+        }
+
+        private static IEnumerable<string> GetStringFormat(IWheelReport wheelReport)
+        {
+            yield return $"Wheel active: {wheelReport.WheelActive}";
+            if (wheelReport.WheelActive)
+                yield return $"Wheel Position: {wheelReport.WheelPosition}";
         }
 
         private static void AppendLines(this StringBuilder sb, IEnumerable<string> lines)

@@ -17,7 +17,8 @@
       "ButtonCount": 8
     },
     "MouseButtons": null,
-    "Touch": null
+    "Touch": null,
+    "MaxWheelPosition": 71
   },
   "DigitizerIdentifiers": [
     {
