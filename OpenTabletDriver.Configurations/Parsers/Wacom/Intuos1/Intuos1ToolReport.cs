@@ -4,7 +4,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos1
 {
     public struct Intuos1ToolReport : IToolReport, IEraserReport, IProximityReport
     {
-        public Intuos1ToolReport(byte[] report)
+        public Intuos1ToolReport(byte[] report, ref byte ToolTypeByte)
         {
             Raw = report;
 
@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos1
                 ((report[7] & 0x0f) << 16) | ((report[8] & 0xf0) << 8));
 
             Tool = report[3].IsBitSet(7) ? ToolType.Eraser : ToolType.Pen;
+            ToolTypeByte = report[3];
 
             Eraser = Tool == ToolType.Eraser;
 

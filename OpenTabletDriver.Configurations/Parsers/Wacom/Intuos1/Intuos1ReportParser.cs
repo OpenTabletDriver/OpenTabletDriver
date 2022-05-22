@@ -22,17 +22,14 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos1
             if (report[1] == 0x80)
                 return new OutOfRangeReport(report);
             if (report[1].IsBitSet(5))
-                return new Intuos1TabletReport(report);
+                return new Intuos1TabletReport(report, ref ToolTypeByte);
             if (report[1] == 0xC2)
-            {
-                ToolStore = report[3];
-                return new Intuos1ToolReport(report);
-            }
+                return new Intuos1ToolReport(report, ref ToolTypeByte);
                 
 
             return new DeviceReport(report);
         }
 
-        public static byte ToolStore;
+        private byte ToolTypeByte;
     }
 }

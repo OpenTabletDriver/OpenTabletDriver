@@ -1,12 +1,11 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
-using static OpenTabletDriver.Configurations.Parsers.Wacom.Intuos1.Intuos1ReportParser;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos1
 {
     public struct Intuos1TabletReport : ITabletReport, IProximityReport, ITiltReport, IEraserReport
     {
-        public Intuos1TabletReport(byte[] report)
+        public Intuos1TabletReport(byte[] report, ref byte ToolTypeByte)
         {
             Raw = report;
 
@@ -31,7 +30,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos1
             NearProximity = report[1].IsBitSet(6);
             HoverDistance = (uint)report[9];
 
-            Eraser = ToolStore.IsBitSet(7);
+            Eraser = ToolTypeByte.IsBitSet(7);
         }
 
         public byte[] Raw { set; get; }
