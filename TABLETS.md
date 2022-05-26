@@ -138,6 +138,7 @@
 | UGEE EX08                     |  Missing Features | Tilt is not yet supported. Uses the same configuration as the XP-Pen Deco 01 V2.
 | VEIKK A15 Pro                 |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                     |  Missing Features | Touchpad is not yet supported.
+| Veikk A30 V2                  |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50 V2                  |  Missing Features | Touchpad is not yet supported.
 | VEIKK VK640                   |  Missing Features | Aux buttons are not yet supported.
@@ -180,7 +181,6 @@
 | XP-Pen Star 06C               |  Missing Features | Wheel is not yet supported.
 | Wacom ISD-V4                  |      Broken       | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
 | Huion G10T                    |     Untested      |
-| Veikk A30 V2                  |     Untested      |
 | Wacom CTE-440                 |     Untested      |
 | Wacom GD-0912-U               |     Untested      |
 | Wacom GD-1218-U               |     Untested      |
