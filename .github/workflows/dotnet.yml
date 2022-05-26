@@ -20,7 +20,7 @@ jobs:
           dotnet-version: '6.0'
           include-prerelease: True
 
-      - name: Linux Publish
+      - name: Linux x86_64 Publish
         env:
           runtime: linux-x64
         run: |
@@ -72,7 +72,7 @@ jobs:
           dotnet-version: '6.0'
           include-prerelease: True
 
-      - name: MacOS Publish
+      - name: MacOS x86_64 Publish
         env:
           runtime: osx-x64
         run: |
@@ -115,7 +115,7 @@ jobs:
           dotnet-version: '6.0'
           include-prerelease: True
 
-      - name: Windows Publish
+      - name: Windows x86_64 Publish
         env:
           runtime: win-x64
         run: |
@@ -129,6 +129,21 @@ jobs:
         with:
           name: OpenTabletDriver win-x64
           path: build/win-x64
+
+      - name: Windows x86 Publish
+        env:
+          runtime: win-x86
+        run: |
+          $options=@("--configuration", "Release", "-p:PublishSingleFile=true", "-p:DebugType=embedded", "--no-self-contained", "-p:SourceRevisionId=$(git rev-parse --short HEAD)")
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenTabletDriver win-x86
+          path: build/win-x86
 
       - name: Windows ARM64 Publish
         env:
