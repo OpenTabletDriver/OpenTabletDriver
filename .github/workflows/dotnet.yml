@@ -35,7 +35,7 @@ jobs:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
 
-      - name: Linux Arm Publish
+      - name: Linux ARM64 Publish
         env:
           runtime: linux-arm64
         run: |
@@ -87,7 +87,7 @@ jobs:
           name: OpenTabletDriver osx-x64
           path: build/osx-x64
 
-      - name: MacOS Publish
+      - name: MacOS ARM64 Publish
         env:
           runtime: osx-arm64
         run: |
@@ -130,7 +130,7 @@ jobs:
           name: OpenTabletDriver win-x64
           path: build/win-x64
 
-      - name: Windows arm Publish
+      - name: Windows ARM64 Publish
         env:
           runtime: win-arm64
         run: |
