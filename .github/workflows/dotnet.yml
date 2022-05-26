@@ -35,6 +35,21 @@ jobs:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
 
+      - name: Linux Arm Publish
+        env:
+          runtime: linux-arm64
+        run: |
+          read -ra options <<< "--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
+          dotnet publish OpenTabletDriver.Daemon "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.Console "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.UX.Gtk "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+
+      - name: Upload Linux arm artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenTabletDriver linux-arm64
+          path: build/linux-arm64
+
       - name: Generate udev Rules
         run: ./generate-rules.sh
 
@@ -72,6 +87,21 @@ jobs:
           name: OpenTabletDriver osx-x64
           path: build/osx-x64
 
+      - name: MacOS Publish
+        env:
+          runtime: osx-arm64
+        run: |
+          read -ra options <<< "--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
+          dotnet publish OpenTabletDriver.Daemon "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.Console "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+          dotnet publish OpenTabletDriver.UX.MacOS "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+
+      - name: Upload MacOS artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenTabletDriver osx-arm64
+          path: build/osx-arm64
+
   windowspublish:
     runs-on: windows-latest
     name: Windows Publish
@@ -99,6 +129,21 @@ jobs:
         with:
           name: OpenTabletDriver win-x64
           path: build/win-x64
+
+      - name: Windows arm Publish
+        env:
+          runtime: win-arm64
+        run: |
+          $options=@("--configuration", "Release", "-p:PublishSingleFile=true", "-p:DebugType=embedded", "--no-self-contained", "-p:SourceRevisionId=$(git rev-parse --short HEAD)")
+          dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.Console $options --runtime $ENV:runtime -o build/$ENV:runtime
+          dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenTabletDriver win-arm64
+          path: build/win-arm64
 
   linter:
     name: dotnet format
