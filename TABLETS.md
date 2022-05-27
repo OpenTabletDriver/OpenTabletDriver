@@ -140,6 +140,7 @@
 | UGEE EX08                     |  Missing Features | Tilt is not yet supported. Uses the same configuration as the XP-Pen Deco 01 V2.
 | VEIKK A15 Pro                 |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                     |  Missing Features | Touchpad is not yet supported.
+| Veikk A30 V2                  |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50 V2                  |  Missing Features | Touchpad is not yet supported.
 | VEIKK VK640                   |  Missing Features | Aux buttons are not yet supported.
