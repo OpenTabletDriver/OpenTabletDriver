@@ -86,6 +86,7 @@
 | Wacom FT-0405-U               |     Supported     |
 | Wacom GD-0405-U               |     Supported     |
 | Wacom GD-0608-U               |     Supported     |
+| Wacom GD-0912-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
 | Wacom XD-1218-U               |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
@@ -190,7 +191,6 @@
 | Wacom ISD-V4                  |      Broken       | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
 | Huion G10T                    |     Untested      |
 | Wacom CTE-440                 |     Untested      |
-| Wacom GD-0912-U               |     Untested      |
 | Wacom GD-1218-U               |     Untested      |
 | Wacom PTK-450                 |     Untested      |
 | Wacom PTK-650                 |     Untested      |
