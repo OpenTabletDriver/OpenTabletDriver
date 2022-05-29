@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Wpf
@@ -7,7 +8,7 @@ namespace OpenTabletDriver.UX.Wpf
     class Program
     {
         [STAThread]
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
             WindowsPrincipal principal = new(identity);
@@ -21,7 +22,7 @@ namespace OpenTabletDriver.UX.Wpf
                 Eto.Platform.AllowReinitialize = true;
             }
 
-            App.Run(Eto.Platforms.Wpf, args);
+            await App.Run(Eto.Platforms.Wpf, args);
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace OpenTabletDriver.UX.MacOS
 {
     class Program
     {
         [STAThread]
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            App.Run(Eto.Platforms.Mac64, args);
+            await App.Run(Eto.Platforms.Mac64, args);
         }
     }
 }

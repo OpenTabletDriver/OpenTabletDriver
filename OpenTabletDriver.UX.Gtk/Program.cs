@@ -1,15 +1,14 @@
 ﻿using System;
-using Eto.Forms;
-using GLib;
+using System.Threading.Tasks;
 
 namespace OpenTabletDriver.UX.Gtk
 {
     class Program
     {
         [STAThread]
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            App.Run(Eto.Platforms.Gtk, args);
+            await App.Run(Eto.Platforms.Gtk, args);
         }
     }
 }

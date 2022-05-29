@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Reflection;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -25,8 +25,20 @@ namespace OpenTabletDriver.UX
         {
         }
 
-        public static void Run(string platform, string[] args)
+        public static async Task Run(string platform, string[] args)
         {
+            Driver = await DaemonRpcClient.Connect(
+                "OpenTabletDriver.Daemon",
+                "OpenTabletDriver.UX",
+                ui =>
+                {
+                    ui.Instance.ShowInterface();
+                }
+            );
+
+            if (Driver is null)
+                Environment.Exit(0);
+
             var root = new RootCommand("OpenTabletDriver UX")
             {
                 new Option<bool>(new string[] { "-m", "--minimized" }, "Start the application minimized")
@@ -46,7 +58,10 @@ namespace OpenTabletDriver.UX
                 Environment.Exit(code);
 
             var app = new Application(platform);
+            Logo = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
             var mainForm = new MainForm();
+            Driver.Attach(mainForm);
+
             if (startMinimized)
             {
                 mainForm.WindowState = WindowState.Minimized;
@@ -73,8 +88,8 @@ namespace OpenTabletDriver.UX
 
         public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
 
-        public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
-        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
+        public static DaemonRpcClient Driver { get; private set; }
+        public static Bitmap Logo { get; private set; }
 
         private Settings settings;
         public Settings Settings

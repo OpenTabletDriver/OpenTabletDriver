@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX
 {
     using static App;
 
-    public class MainForm : DesktopForm
+    public class MainForm : DesktopForm, IUserInterface
     {
         public MainForm()
             : base()
@@ -72,6 +72,13 @@ namespace OpenTabletDriver.UX
         private MenuBar menu;
         private Placeholder placeholder;
         private TrayIcon trayIcon;
+
+        public Task ShowInterface()
+        {
+            Show();
+            BringToFront();
+            return Task.CompletedTask;
+        }
 
         protected override void InitializeForm()
         {
