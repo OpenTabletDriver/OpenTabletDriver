@@ -1,0 +1,75 @@
+name: Configuration Request
+title: "Add support for "
+description: Request for a new tablet device to be supported
+labels: ["configuration"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The information below can mostly be found on the product page.
+        Please try to fill out as many of the details as you can.
+
+  - type: input
+    id: manufacturer
+    attributes:
+      label: Manufacturer
+      placeholder: ex. Wacom
+    validations:
+      required: true
+
+  - type: input
+    id: name
+    attributes:
+      label: Product Name
+      placeholder: ex. CTL-472
+    validations:
+      required: true
+
+  - type: input
+    id: width
+    attributes:
+      label: Device Width
+      placeholder: ex. 294mm
+    validations:
+      required: false
+
+  - type: input
+    id: height
+    attributes:
+      label: Device Height
+      placeholder: ex. 166mm
+    validations:
+      required: false
+
+  - type: input
+    id: pressure
+    attributes:
+      label: Pressure Levels
+      placeholder: ex. 8192
+    validations:
+      required: false
+
+  - type: input
+    id: lpi
+    attributes:
+      label: Lines per Inch (LPI)
+      placeholder: ex. 5080
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Anything else you would like to add?
+    validations:
+      required: false
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic Information
+      description: Export diagnostics and attach or paste below. In the GUI, click Help -> Export Diagnostics.
+      render: JSON
+    validations:
+      required: true
