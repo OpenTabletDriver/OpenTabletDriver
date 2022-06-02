@@ -3,6 +3,19 @@ title: "Add support for "
 description: Request for a new tablet device to be supported
 labels: ["configuration"]
 body:
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: |
+        Please make sure you are able to tick the items below, so that all parties involved have an easier time.
+        Your issue is very likely to be closed and ignored if these conditions are not met.
+      options:
+        - label: I have searched the existing issues and this new issue is not a duplicate of any.
+          required: true
+        - label: I have written a concise and meaningful title.
+          required: true
+
   - type: markdown
     attributes:
       value: |
@@ -69,7 +82,16 @@ body:
     id: diagnostics
     attributes:
       label: Diagnostic Information
-      description: Export diagnostics and attach or paste below. In the GUI, click Help -> Export Diagnostics.
-      render: JSON
+      description: |
+        Export diagnostics through the OpenTabletDriver GUI from menu <kbd>Help</kbd> → <kbd>Export Diagnostics</kbd>.
+        Then, in the text area below, either attach the file\* or paste its contents\*\*.
+
+        \*: You may need to rename the file to have a `.txt` extension for GitHub to allow uploading it.
+        \*\*: If pasting contents, it would be helpful to use a JSON code block, as you can see in the placeholder text below.
+      placeholder: |
+        ```json
+        <paste file contents>
+        ```
+        (Notice the triple backticks)
     validations:
       required: true
