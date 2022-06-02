@@ -130,8 +130,8 @@
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion HC16                    |  Missing Features | Wheel is not yet supported.
 | Huion HS610                   |  Missing Features | Wheel is not yet supported.
-| Huion HS611                   |  Missing Features | Touch strip is not yet supported.
-| Huion Kamvas 12 Pro           |  Missing Features | Touch strip is not yet supported.
+| Huion HS611                   |  Missing Features | Touch bar is not yet supported.
+| Huion Kamvas Pro 12           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 13           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 16           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 20           |  Missing Features | Touch bar is not yet supported.
@@ -168,12 +168,12 @@
 | Wacom PTK-540WL               |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-640                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-840                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTZ-1230                |  Missing Features | Tablet buttons and touch strips are not yet supported.
-| Wacom PTZ-431W                |  Missing Features | Tablet buttons and touch strips are not yet supported.
-| Wacom PTZ-630                 |  Missing Features | Tablet buttons and touch strips are not yet supported.
-| Wacom PTZ-631W                |  Missing Features | Touch strips are not yet supported.
-| Wacom PTZ-930                 |  Missing Features | Touch strips are not yet supported.
-| Wacom PTZ-1231W               |  Missing Features | Touch strips are not yet supported.
+| Wacom PTZ-1230                |  Missing Features | Tablet buttons and touch bars are not yet supported.
+| Wacom PTZ-431W                |  Missing Features | Tablet buttons and touch bars are not yet supported.
+| Wacom PTZ-630                 |  Missing Features | Tablet buttons and touch bars are not yet supported.
+| Wacom PTZ-631W                |  Missing Features | Touch bars are not yet supported.
+| Wacom PTZ-930                 |  Missing Features | Touch bars are not yet supported.
+| Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | XP-Pen Artist 12              |  Missing Features | Touch bar is not yet supported
 | XP-Pen Artist Pro 12          |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Artist 13.3 Pro        |  Missing Features | Wheel is not yet supported.
