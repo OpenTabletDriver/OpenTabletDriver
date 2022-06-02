@@ -33,7 +33,6 @@
 | Huion Kamvas 16 (2021)        |     Supported     |
 | Huion Kamvas 20               |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
-| Huion Kamvas Pro 13           |     Supported     |
 | Huion Kamvas Pro 13 (2.5k)    |     Supported     |
 | Huion New 1060 Plus           |     Supported     |
 | Huion New 1060 Plus (2048)    |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 1
@@ -133,6 +132,7 @@
 | Huion HS610                   |  Missing Features | Wheel is not yet supported.
 | Huion HS611                   |  Missing Features | Touch strip is not yet supported.
 | Huion Kamvas 12 Pro           |  Missing Features | Touch strip is not yet supported.
+| Huion Kamvas Pro 13           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 16           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 20           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 24           |  Missing Features | Touch bar is not yet supported.
