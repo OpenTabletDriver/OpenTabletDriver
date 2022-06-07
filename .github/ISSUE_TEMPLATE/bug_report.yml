@@ -70,8 +70,11 @@ body:
         Export diagnostics through the OpenTabletDriver GUI from menu <kbd>Help</kbd> → <kbd>Export Diagnostics</kbd>.
         Then, in the text area below, either attach the file\* or paste its contents\*\*.
 
+        **If you are not able to export diagnostics** for some reason (i.e., crashes), then **paste a stack trace
+        if you got one**, or just type "N/A" if there's simply nothing else you can contribute.
+
         \*: You may need to rename the file to have a `.txt` extension for GitHub to allow uploading it.
-        \*\*: If pasting contents, it would be helpful to use a JSON code block, as you can see in the placeholder text below.
+        \*\*: If pasting diagnostics, it would be helpful to use a JSON code block, as you can see in the placeholder text below.
       placeholder: |
         ```json
         <paste file contents>
