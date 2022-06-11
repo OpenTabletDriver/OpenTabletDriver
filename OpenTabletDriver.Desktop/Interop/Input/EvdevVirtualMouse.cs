@@ -33,8 +33,8 @@ namespace OpenTabletDriver.Desktop.Interop
             MouseButton.Left => EventCode.BTN_LEFT,
             MouseButton.Middle => EventCode.BTN_MIDDLE,
             MouseButton.Right => EventCode.BTN_RIGHT,
-            MouseButton.Forward => EventCode.BTN_FORWARD,
-            MouseButton.Backward => EventCode.BTN_BACK,
+            MouseButton.Backward => EventCode.BTN_SIDE,
+            MouseButton.Forward => EventCode.BTN_EXTRA,
             _ => null
         };
 
