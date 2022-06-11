@@ -23,7 +23,7 @@
 | Huion H610X                   |     Supported     |
 | Huion H640P                   |     Supported     |
 | Huion H642                    |     Supported     |
-| Huion H690                    |     Supported     |
+| Huion H690                    |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion H950P                   |     Supported     |
 | Huion H1060P                  |     Supported     |
 | Huion HS64                    |     Supported     |
