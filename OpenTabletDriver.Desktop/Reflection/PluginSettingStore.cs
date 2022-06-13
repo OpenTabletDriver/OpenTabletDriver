@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Tablet;
@@ -51,19 +52,39 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T Construct<T>(TabletReference tabletReference = null, bool trigger = true) where T : class
         {
-            var obj = AppInfo.PluginManager.ConstructObject<T>(Path);
-            ApplySettings(obj);
-            if (trigger)
-                TriggerEventMethods(obj, tabletReference);
-            return obj;
+            try
+            {
+                var obj = AppInfo.PluginManager.ConstructObject<T>(Path);
+                ApplySettings(obj);
+                if (trigger)
+                    TriggerEventMethods(obj, tabletReference);
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Log.Exception(e);
+                Log.WriteNotify("Plugin", $"Error while applying settings of plugin \"{Name}\"");
+
+                return null;
+            }
         }
 
         public T Construct<T>(IServiceManager provider, TabletReference tabletReference = null) where T : class
         {
-            var obj = Construct<T>(tabletReference, false);
-            PluginManager.Inject(provider, obj);
-            TriggerEventMethods(obj, tabletReference);
-            return obj;
+            try
+            {
+                var obj = Construct<T>(tabletReference, false);
+                PluginManager.Inject(provider, obj);
+                TriggerEventMethods(obj, tabletReference);
+                return obj;
+            }
+            catch (Exception e)
+            {
+                Log.Exception(e);
+                Log.WriteNotify("Plugin", $"Error while applying settings of plugin \"{Name}\"");
+
+                return null;
+            }
         }
 
         public static PluginSettingStore FromPath(string path)

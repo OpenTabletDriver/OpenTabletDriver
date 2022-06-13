@@ -85,9 +85,11 @@ namespace OpenTabletDriver.Plugin
         {
             if (ex == null)
                 return;
-
             var message = new LogMessage(ex);
             Write(message);
+
+            if (ex.InnerException != null)
+                Exception(ex.InnerException);
         }
     }
 }
