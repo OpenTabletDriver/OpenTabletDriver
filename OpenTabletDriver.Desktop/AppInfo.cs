@@ -12,6 +12,7 @@ namespace OpenTabletDriver.Desktop
     public class AppInfo
     {
         private string configurationDirectory,
+            configurationFile,
             settingsFile,
             pluginDirectory,
             presetDirectory,
@@ -57,6 +58,12 @@ namespace OpenTabletDriver.Desktop
         {
             set => this.configurationDirectory = value;
             get => this.configurationDirectory ?? GetDefaultConfigurationDirectory();
+        }
+
+        public string ConfigurationFile
+        {
+            set => this.configurationFile = value;
+            get => this.configurationFile ?? GetDefaultConfigurationFile();
         }
 
         public string SettingsFile
@@ -127,6 +134,7 @@ namespace OpenTabletDriver.Desktop
             Path.Join(Environment.CurrentDirectory, "Configurations")
         );
 
+        private string GetDefaultConfigurationFile() => Path.Join(AppDataDirectory, "config.toml");
         private string GetDefaultSettingsFile() => Path.Join(AppDataDirectory, "settings.json");
         private string GetDefaultPluginDirectory() => Path.Join(AppDataDirectory, "Plugins");
         private string GetDefaultPresetDirectory() => Path.Join(AppDataDirectory, "Presets");

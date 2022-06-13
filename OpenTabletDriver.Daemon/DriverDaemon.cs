@@ -34,6 +34,7 @@ namespace OpenTabletDriver.Daemon
         {
             Driver = driver;
 
+            Configuration.Load(AppInfo.Current.ConfigurationFile);
             Log.Output += (sender, message) =>
             {
                 LogMessages.Add(message);

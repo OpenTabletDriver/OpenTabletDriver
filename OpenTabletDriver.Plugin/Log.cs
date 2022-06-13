@@ -11,11 +11,19 @@ namespace OpenTabletDriver.Plugin
         public static event EventHandler<LogMessage> Output;
 
         /// <summary>
+        /// Minimum verbosity to log.
+        /// </summary>
+        public static LogLevel Verbosity { get; set; } = LogLevel.Info;
+
+        /// <summary>
         /// Invoke sending a log message.
         /// </summary>
         /// <param name="message">The message to be passed to the <see cref="Output"/> event.</param>
         public static void Write(LogMessage message)
         {
+            if (message.Level < Verbosity)
+                return;
+
             Output?.Invoke(null, message);
         }
 
