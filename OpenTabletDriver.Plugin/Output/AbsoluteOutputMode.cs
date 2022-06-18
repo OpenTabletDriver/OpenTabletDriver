@@ -135,6 +135,9 @@ namespace OpenTabletDriver.Plugin.Output
             return report;
         }
 
+        private const uint MAX_ABS_WHEEL = 360; // number of points per full wheel rotation
+        private uint _wheel_multiplier = 0;
+
         protected override void OnOutput(IDeviceReport report)
         {
             if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
@@ -151,6 +154,21 @@ namespace OpenTabletDriver.Plugin.Output
                     proximityHandler.SetProximity(proximityReport.NearProximity);
                 if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
                     hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            }
+            if (report is IWheelReport wheelReport && Pointer is IWheelHandler wheelHandler)
+            {
+                if (_wheel_multiplier == 0)
+                {
+                    if (Tablet.Properties.Specifications.MaxWheelPosition == 0)
+                        _wheel_multiplier = 1;
+                    else
+                        _wheel_multiplier = MAX_ABS_WHEEL / (Tablet.Properties.Specifications.MaxWheelPosition + 1);
+                }
+
+                if (wheelReport.WheelActive)
+                    wheelHandler.SetWheel(wheelReport.WheelPosition * _wheel_multiplier);
+                else
+                    wheelHandler.UnsetWheel();
             }
             if (Pointer is ISynchronousPointer synchronousPointer)
             {

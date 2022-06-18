@@ -26,5 +26,10 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// Specifications for the touch digitizer.
         /// </summary>
         public DigitizerSpecifications Touch { set; get; }
+
+        /// <summary>
+        /// The maximum absolute wheel position the tablet can report, if any
+        /// </summary>
+        public uint MaxWheelPosition { set; get; }
     }
 }

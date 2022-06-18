@@ -8,11 +8,11 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer, IWheelHandler
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
-        private bool isEraser;
+        private bool isEraser, wheelActive;
         private bool proximity = true;
 
         public unsafe EvdevVirtualTablet()
@@ -62,6 +62,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             };
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
+
+            var emptyStruct = new input_absinfo(); // empty because ABS_MISC doesn't need any properties
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_MISC, (IntPtr)((input_absinfo*)&emptyStruct));
+
+            var wheel = new input_absinfo
+            {
+                minimum = 0,
+                maximum = 359 // FIXME: no magic number
+            };
+            input_absinfo* wheelPtr = &wheel;
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_WHEEL, (IntPtr)wheelPtr);
 
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
@@ -124,6 +135,23 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetKeyState(EventCode eventCode, bool state)
         {
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
+        }
+
+        public void SetWheel(uint degrees)
+        {
+            Device.Write(EventType.EV_ABS, EventCode.ABS_WHEEL, (int)degrees);
+            if (!wheelActive)
+            {
+                wheelActive = true;
+                Device.Write(EventType.EV_ABS, EventCode.ABS_MISC, 15); // FIXME: magic number
+            }
+        }
+
+        public void UnsetWheel()
+        {
+            wheelActive = false;
+            Device.Write(EventType.EV_ABS, EventCode.ABS_WHEEL, 0);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_MISC, 0);
         }
 
         public void Reset()
