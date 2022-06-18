@@ -47,6 +47,7 @@
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
+| UGEE S640                     |     Supported     |
 | UGEE U1600                    |     Supported     |
 | UGTABLET M708                 |     Supported     | Windows: Some variations may require Zadig's WinUSB to be installed on interface 0
 | VEIKK A15                     |     Supported     |
