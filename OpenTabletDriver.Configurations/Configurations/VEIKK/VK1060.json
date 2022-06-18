@@ -28,7 +28,9 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "CQEE"
+        "CQEE",
+        "CQIC",
+        "CQMC"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
