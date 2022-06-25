@@ -70,7 +70,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 EventCode.BTN_TOOL_PEN,
                 EventCode.BTN_TOOL_RUBBER,
                 EventCode.BTN_STYLUS2,
-                EventCode.BTN_STYLUS3
+                EventCode.BTN_STYLUS3,
+                EventCode.BTN_SIDE,
+                EventCode.BTN_EXTRA
             );
 
             var result = Device.Initialize();
@@ -145,7 +147,5 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Device.Sync();
         }
-
-        protected override EventCode? GetCode(MouseButton button) => null;
     }
 }
