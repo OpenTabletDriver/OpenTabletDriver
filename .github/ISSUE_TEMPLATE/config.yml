@@ -1,4 +1,4 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
   - name: OpenTabletDriver Discord Guild
     url: https://opentabletdriver.net/Discord

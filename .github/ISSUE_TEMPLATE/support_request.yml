@@ -1,7 +1,7 @@
 name: Support Request
 title: "Support Request: "
 description: Request help for something that isn't an obvious bug
-labels: ["support request"]
+labels: ["support request", "need-triage"]
 body:
   - type: markdown
     attributes:

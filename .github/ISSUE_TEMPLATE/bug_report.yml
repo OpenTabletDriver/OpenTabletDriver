@@ -1,6 +1,6 @@
 name: Bug Report
 description: Create a bug report to help fix issues with OpenTabletDriver
-labels: ["bug"]
+labels: ["bug", "needs-triage"]
 body:
   - type: markdown
     attributes:

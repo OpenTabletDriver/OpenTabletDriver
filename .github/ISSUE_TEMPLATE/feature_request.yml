@@ -1,6 +1,6 @@
 name: Feature Request
 description: Create a feature request to help add more to OpenTabletDriver
-labels: ["enhancement"]
+labels: ["enhancement", "needs-triage"]
 body:
   - type: markdown
     attributes:

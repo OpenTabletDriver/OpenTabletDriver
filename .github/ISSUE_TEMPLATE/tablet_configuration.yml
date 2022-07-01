@@ -1,7 +1,7 @@
 name: Configuration Request
 title: "Add support for "
 description: Request for a new tablet device to be supported
-labels: ["configuration"]
+labels: ["configuration", "need-triage"]
 body:
   - type: checkboxes
     id: acknowledgements
