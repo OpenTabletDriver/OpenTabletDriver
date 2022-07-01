@@ -9,10 +9,14 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
             Raw = report;
             AuxButtons = new bool[]
             {
-                report[4].IsBitSet(0) && report[3].IsBitSet(0), // First
-                report[4].IsBitSet(1) && report[3].IsBitSet(0), // Second
-                report[4].IsBitSet(2) && report[3].IsBitSet(0), // Third
-                report[4].IsBitSet(3) && report[3].IsBitSet(0), // Fourth
+                report[4].IsBitSet(0) && report[3].IsBitSet(0),
+                report[4].IsBitSet(1) && report[3].IsBitSet(0),
+                report[4].IsBitSet(2) && report[3].IsBitSet(0),
+                report[4].IsBitSet(3) && report[3].IsBitSet(0),
+                report[4].IsBitSet(4) && report[3].IsBitSet(0),
+                report[4].IsBitSet(5) && report[3].IsBitSet(0),
+                report[4].IsBitSet(6) && report[3].IsBitSet(0),
+                report[4].IsBitSet(7) && report[3].IsBitSet(0),
             };
         }
 
