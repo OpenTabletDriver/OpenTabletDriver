@@ -17,7 +17,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
                 report[4].IsBitSet(5) && report[3].IsBitSet(0),
                 report[4].IsBitSet(6) && report[3].IsBitSet(0),
                 report[4].IsBitSet(7) && report[3].IsBitSet(0),
-
             };
         }
 
