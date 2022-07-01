@@ -138,6 +138,7 @@
 | Huion Kamvas Pro 20           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 24           |  Missing Features | Touch bar is not yet supported.
 | Huion Q620M                   |  Missing Features | Wheel is not yet supported.
+| Huion RTM-500                 |  Missing Features | Touch bar is not yet supported.
 | Parblo A610 Pro               |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo M             |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo S             |  Missing Features | Wheel is not yet supported.
