@@ -76,6 +76,7 @@ namespace OpenTabletDriver.Desktop.Interop
         {
             PluginPlatform.Windows => new WindowsTimer(),
             PluginPlatform.Linux   => new LinuxTimer(),
+            PluginPlatform.MacOS  => new MacOSTimer(),
             _ => new FallbackTimer()
         };
 
