@@ -190,6 +190,7 @@
 | XP-Pen Deco 03                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Deco Pro Small         |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen MT0960B                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Innovator 16           |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is not yet supported.
