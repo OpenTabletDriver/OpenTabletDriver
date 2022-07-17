@@ -1,0 +1,39 @@
+{
+  "Name": "XP-Pen Deco Pro SW",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 230.12,
+      "Height": 129.54,
+      "MaxX": 46024.0,
+      "MaxY": 25908.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2355,
+      "InputReportLength": 12,
+      "OutputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
