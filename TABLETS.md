@@ -9,6 +9,7 @@
 | Gaomon S56K                   |     Supported     |
 | Gaomon S620                   |     Supported     |
 | Gaomon S630                   |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Gaomon S830                   |     Supported     | User may need to re-plug their tablet multiple time for it to be detected
 | Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons
 | Genius i405x                  |     Supported     | Windows: Require Zadig's WinUSB
 | Genius i608x                  |     Supported     | Windows: Require Zadig's WinUSB
