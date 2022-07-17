@@ -31,10 +31,7 @@
         "ArAE"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": [
-        100,
-        123
-      ]
+      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
