@@ -184,9 +184,10 @@
 | Wacom PTZ-930                 |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | XP-Pen Artist 12              |  Missing Features | Touch bar is not yet supported
-| XP-Pen Artist Pro 12          |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Artist 12 Pro          |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Artist 13.3 Pro        |  Missing Features | Wheel is not yet supported.
-| XP-Pen Artist Pro 15.6        |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Artist 15.6 Pro        |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Artist 16 Pro          |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco 01 V2             |  Missing Features | Tilt is not yet supported.
 | XP-Pen Deco 01 V2 (variant 2) |  Missing Features | Tilt is not yet supported
 | XP-Pen Deco 02                |  Missing Features | Wheel is not yet supported.
