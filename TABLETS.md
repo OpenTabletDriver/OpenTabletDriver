@@ -42,6 +42,7 @@
 | Huion Q11K V2                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
+| Monoprice 10594               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
 | 10moon 1060N                  |     Supported     | Doesn't meet any of its advertised specs
