@@ -1,14 +1,21 @@
+using OpenTabletDriver.Components;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin.Components;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop
 {
     public class DesktopReportParserProvider : IReportParserProvider
     {
+        private readonly IPluginFactory _pluginFactory;
+
+        public DesktopReportParserProvider(IPluginFactory pluginFactory)
+        {
+            _pluginFactory = pluginFactory;
+        }
+
         public IReportParser<IDeviceReport> GetReportParser(string reportParserName)
         {
-            return AppInfo.PluginManager.ConstructObject<IReportParser<IDeviceReport>>(reportParserName);
+            return _pluginFactory.Construct<IReportParser<IDeviceReport>>(reportParserName);
         }
     }
 }

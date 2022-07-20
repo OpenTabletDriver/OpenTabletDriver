@@ -1,8 +1,9 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Components;
 using OpenTabletDriver.Configurations.Parsers.XP_Pen;
-using OpenTabletDriver.Plugin.Components;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Tablet;
 using Xunit;
 
 namespace OpenTabletDriver.Tests
@@ -21,7 +22,7 @@ namespace OpenTabletDriver.Tests
         [MemberData(nameof(ReportParserProvider_CanGet_ReportParsers_Data))]
         public void ReportParserProvider_CanGet_ReportParsers(string reportParserName, Type expectedReportParserType)
         {
-            var serviceCollection = new DriverServiceCollection();
+            var serviceCollection = new DesktopServiceCollection();
             var reportParserProvider = serviceCollection.BuildServiceProvider()
                 .GetRequiredService<IReportParserProvider>();
 

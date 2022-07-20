@@ -1,6 +1,6 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Benchmarks.Output
 {

@@ -1,32 +1,34 @@
 using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
     public class EnvironmentDictionary : Dictionary<string, string>
     {
+        private static readonly string[] EnvironmentVariables =
+        {
+            "USER",
+            "TEMP",
+            "TMP",
+            "TMPDIR"
+        };
+
         public EnvironmentDictionary()
         {
-            AddVariable("USER", "TEMP", "TMP", "TMPDIR");
-            switch (DesktopInterop.CurrentPlatform)
-            {
-                case PluginPlatform.Linux:
-                    AddVariable("DISPLAY", "WAYLAND_DISPLAY", "PWD", "PATH");
-                    break;
-                case PluginPlatform.Windows:
-                    AddVariable("USERPROFILE");
-                    break;
-            }
+            AddVariables(EnvironmentVariables);
         }
 
-        private void AddVariable(params string[] variables)
+        protected EnvironmentDictionary(string[] additionalVariables) : this()
+        {
+            AddVariables(additionalVariables);
+        }
+
+        private void AddVariables(string[] variables)
         {
             foreach (var variable in variables)
             {
                 var value = Environment.GetEnvironmentVariable(variable);
-                base.Add(variable, value);
+                Add(variable, value);
             }
         }
     }

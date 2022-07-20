@@ -1,15 +1,15 @@
-﻿using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Touch;
+﻿using OpenTabletDriver.Tablet;
+using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
-    public class Wacom64bAuxReportParser : IReportParser<IDeviceReport>
+    public class Wacom64BAuxReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            return new WacomTouchReport(data, ref prevTouches);
+            return new WacomTouchReport(data, ref _prevTouches);
         }
 
-        private TouchPoint[] prevTouches;
+        private TouchPoint?[] _prevTouches;
     }
 }

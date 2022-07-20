@@ -1,28 +1,34 @@
-using System;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.UX.Components;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class Placeholder : Panel
+    public sealed class Placeholder : DesktopPanel
     {
+        private readonly Panel _extraPanel;
+        private string? _text;
+        private Control? _extraContent;
+
+        // TODO: Clean up Placeholder before using extensively, lots of legacy code smell
         public Placeholder()
         {
-            this.Content = new StackLayout
+            Label label;
+            Content = new StackLayout
             {
                 Spacing = 5,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 Items =
                 {
                     new StackLayoutItem(null, true),
-                    new Bitmap(App.Logo.WithSize(256, 256)),
+                    new Bitmap(Metadata.Logo.WithSize(256, 256)),
                     new StackLayoutItem
                     {
                         Control = label = new Label()
                     },
                     new StackLayoutItem
                     {
-                        Control = extraPanel = new Panel()
+                        Control = _extraPanel = new Panel()
                     },
                     new StackLayoutItem(null, true)
                 }
@@ -31,29 +37,25 @@ namespace OpenTabletDriver.UX.Controls
             label.TextBinding.Bind(TextBinding);
         }
 
-        private Label label;
-        private Panel extraPanel;
-
-        private string text;
-        public string Text
+        public string? Text
         {
             set
             {
-                this.text = value;
-                this.OnTextChanged();
+                _text = value;
+                OnTextChanged();
             }
-            get => this.text;
+            get => _text;
         }
 
-        public event EventHandler<EventArgs> TextChanged;
+        public event EventHandler<EventArgs>? TextChanged;
 
-        protected virtual void OnTextChanged() => TextChanged?.Invoke(this, new EventArgs());
+        private void OnTextChanged() => TextChanged?.Invoke(this, EventArgs.Empty);
 
-        public BindableBinding<Placeholder, string> TextBinding
+        public BindableBinding<Placeholder, string?> TextBinding
         {
             get
             {
-                return new BindableBinding<Placeholder, string>(
+                return new BindableBinding<Placeholder, string?>(
                     this,
                     c => c.Text,
                     (c, v) => c.Text = v,
@@ -63,15 +65,14 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private Control extraContent;
-        public Control ExtraContent
+        public Control? ExtraContent
         {
             set
             {
-                this.extraContent = value;
-                extraPanel.Content = value;
+                _extraContent = value;
+                _extraPanel.Content = value;
             }
-            get => this.extraContent;
+            get => _extraContent;
         }
     }
 }

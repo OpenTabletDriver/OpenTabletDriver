@@ -1,8 +1,8 @@
 using System;
 using BenchmarkDotNet.Attributes;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Benchmarks.Output
 {

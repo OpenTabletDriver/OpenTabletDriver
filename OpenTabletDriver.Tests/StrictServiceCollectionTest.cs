@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using OpenTabletDriver.Plugin.Components;
+using OpenTabletDriver.Components;
+using OpenTabletDriver.Desktop;
 using Xunit;
 
 namespace OpenTabletDriver.Tests
@@ -10,7 +11,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public void RequiredServices_AlwaysExist()
         {
-            var serviceCollection = new DriverServiceCollection();
+            var serviceCollection = new DesktopServiceCollection();
 
             var reportParserProvider = serviceCollection.BuildServiceProvider()
                 .GetService<IReportParserProvider>();
@@ -22,7 +23,7 @@ namespace OpenTabletDriver.Tests
         public void RequiredServices_CanBeReplaced()
         {
             var stubReportParserProvider = new Mock<IReportParserProvider>().Object;
-            var serviceCollection = new DriverServiceCollection().AddSingleton(stubReportParserProvider);
+            var serviceCollection = new DesktopServiceCollection().AddSingleton(stubReportParserProvider);
 
             var retrievedReportParserProvider = serviceCollection.BuildServiceProvider()
                 .GetService<IReportParserProvider>();

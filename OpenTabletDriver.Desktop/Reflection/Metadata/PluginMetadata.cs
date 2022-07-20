@@ -1,70 +1,81 @@
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using OpenTabletDriver.Desktop.Compression;
+
+#nullable enable
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
     public class PluginMetadata
     {
         /// <summary>
         /// The name of the plugin.
         /// </summary>
-        public string Name { set; get; }
+        public string Name { set; get; } = null!;
 
         /// <summary>
         /// The owner of the plugin's source code repository.
         /// </summary>
-        public string Owner { set; get; }
+        public string? Owner { set; get; }
 
         /// <summary>
         /// The plugin's long description.
         /// </summary>
-        public string Description { set; get; }
+        public string? Description { set; get; }
 
         /// <summary>
         /// The plugins' version.
         /// Newer supported versions will be preferred by default.
         /// </summary>
-        public Version PluginVersion { set; get; }
+        [DisplayName("Plugin Version")]
+        public Version? PluginVersion { set; get; }
 
         /// <summary>
         /// The plugin's minimum supported OpenTabletDriver version,
         /// </summary>
-        public Version SupportedDriverVersion { set; get; }
+        [DisplayName("Supported Driver Version")]
+        public Version? SupportedDriverVersion { set; get; }
 
         /// <summary>
         /// The plugin's source code repository URL.
         /// </summary>
-        public string RepositoryUrl { set; get; }
+        [DisplayName("Source Code Repository"), Url]
+        public string? RepositoryUrl { set; get; }
 
         /// <summary>
         /// The plugin's binary download URL.
         /// </summary>
-        public string DownloadUrl { set; get; }
+        [DisplayName("Download"), Url]
+        public string? DownloadUrl { set; get; }
 
         /// <summary>
         /// The compression format used in the binary download from <see cref="DownloadUrl"/>.
         /// </summary>
-        public string CompressionFormat { set; get; }
+        public string? CompressionFormat { set; get; }
 
         /// <summary>
         /// The SHA256 hash of the file at <see cref="DownloadUrl"/>, used for verifying file integrity.
         /// </summary>
-        public string SHA256 { set; get; }
+        public string? SHA256 { set; get; }
 
         /// <summary>
         /// The plugin's wiki URL.
         /// </summary>
-        public string WikiUrl { set; get; }
+        [DisplayName("Wiki"), Url]
+        public string? WikiUrl { set; get; }
 
         /// <summary>
         /// The SPDX license identifier expression.
         /// </summary>
-        public string LicenseIdentifier { set; get; }
+        [DisplayName("License")]
+        public string? LicenseIdentifier { set; get; }
 
         public static string GetSHA256(Stream stream)
         {
@@ -81,7 +92,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return GetSHA256(stream) == SHA256;
         }
 
-        public async Task<Stream> GetDownloadStream()
+        public async Task<Stream?> GetDownloadStream()
         {
             using (var client = PluginMetadataCollection.GetClient())
             {
@@ -101,7 +112,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
                 // Verify SHA256 hash
                 if (SHA256 == null || VerifySHA256(stream))
                 {
-                    stream.Decompress(outputDirectory, this.CompressionFormat);
+                    stream.Decompress(outputDirectory, CompressionFormat);
                 }
                 else
                 {
@@ -113,7 +124,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         public bool IsSupportedBy(Version appVersion)
         {
             // Always return false when major and minor is not equal (x.y.0.0).
-            if (SupportedDriverVersion.Major != appVersion.Major)
+            if (SupportedDriverVersion!.Major != appVersion.Major)
                 return false;
             if (SupportedDriverVersion.Minor != appVersion.Minor)
                 return false;
@@ -127,14 +138,11 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return true;
         }
 
-        public static bool Match(PluginMetadata primary, PluginMetadata secondary)
+        public bool Match(PluginMetadata secondary)
         {
-            if (primary == null || secondary == null)
-                return false;
-
-            return primary.Name == secondary.Name &&
-                primary.Owner == secondary.Owner &&
-                primary.RepositoryUrl == secondary.RepositoryUrl;
+            return Name == secondary.Name &&
+                Owner == secondary.Owner &&
+                RepositoryUrl == secondary.RepositoryUrl;
         }
     }
 }

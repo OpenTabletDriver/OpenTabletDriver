@@ -1,12 +1,11 @@
-using System.Collections.Generic;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OpenTabletDriver.Interop;
-using OpenTabletDriver.Plugin;
 
-namespace OpenTabletDriver.SystemDrivers.InfoProviders
+namespace OpenTabletDriver.SystemDrivers.Providers
 {
     internal abstract class ProcessModuleQueryableDriverInfoProvider : IDriverInfoProvider
     {
@@ -16,33 +15,35 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
         protected abstract string[] WinProcessNames { get; }
         protected abstract string[] Heuristics { get; }
 
-        private static string pnpUtil;
-        private static string linuxModules;
+        private static string? pnpUtil;
+        private static string? linuxModules;
 
-        public DriverInfo GetDriverInfo()
+        public DriverInfo? GetDriverInfo()
         {
             return SystemInterop.CurrentPlatform switch
             {
-                PluginPlatform.Windows => GetWinDriverInfo(),
-                PluginPlatform.Linux => GetLinuxDriverInfo(),
+                SystemPlatform.Windows => GetWinDriverInfo(),
+                SystemPlatform.Linux => GetLinuxDriverInfo(),
                 _ => null
             };
         }
 
-        protected virtual DriverInfo GetWinDriverInfo()
+        protected virtual DriverInfo? GetWinDriverInfo()
         {
-            IEnumerable<Process> processes;
-            var match = Heuristics.Any(name => Regex.IsMatch(pnpUtil, name, RegexOptions.IgnoreCase));
+            if (pnpUtil == null)
+                Refresh();
+
+            var match = Heuristics.Any(name => Regex.IsMatch(pnpUtil!, name, RegexOptions.IgnoreCase));
             if (match)
             {
-                processes = DriverInfo.SystemProcesses
+                var processes = DriverInfo.SystemProcesses
                     .Where(p => WinProcessNames.Concat(Heuristics)
-                    .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase)));
+                        .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase)));
 
                 return new DriverInfo
                 {
                     Name = FriendlyName,
-                    Processes = processes.Any() ? processes.ToArray() : null,
+                    Processes = processes.Any() ? processes.ToArray() : Array.Empty<Process>(),
                     IsBlockingDriver = true,
                     IsSendingInput = processes.Any()
                 };
@@ -51,9 +52,12 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             return null;
         }
 
-        protected virtual DriverInfo GetLinuxDriverInfo()
+        protected virtual DriverInfo? GetLinuxDriverInfo()
         {
-            if (Regex.IsMatch(linuxModules, LinuxModuleName))
+            if (linuxModules == null)
+                Refresh();
+
+            if (Regex.IsMatch(linuxModules!, LinuxModuleName))
             {
                 return new DriverInfo
                 {
@@ -62,17 +66,15 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     IsSendingInput = true
                 };
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         internal static void Refresh()
         {
             switch (SystemInterop.CurrentPlatform)
             {
-                case PluginPlatform.Windows:
+                case SystemPlatform.Windows:
                 {
                     var pnputilProc = new Process
                     {
@@ -89,7 +91,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     pnpUtil = pnputilProc.StandardOutput.ReadToEnd();
                     break;
                 }
-                case PluginPlatform.Linux:
+                case SystemPlatform.Linux:
                 {
                     linuxModules = File.ReadAllText("/proc/modules");
                     break;

@@ -7,6 +7,7 @@
 
   <ItemGroup Label="NuGet Packages">
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">

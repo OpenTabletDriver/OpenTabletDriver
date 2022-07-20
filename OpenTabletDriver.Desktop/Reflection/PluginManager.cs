@@ -1,194 +1,270 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Logging;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
+using OpenTabletDriver.Desktop.Interop.AppInfo;
+using OpenTabletDriver.Desktop.Reflection.Metadata;
+
+#nullable enable
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class PluginManager : ServiceManager
+    public class PluginManager : IPluginManager
     {
-        public PluginManager()
+        public PluginManager(IAppInfo appInfo)
+            : this(appInfo.PluginDirectory, appInfo.TrashDirectory, appInfo.TemporaryDirectory)
         {
-            var assemblies = new[]
-            {
-                Assembly.Load("OpenTabletDriver.Desktop"),
-                Assembly.Load("OpenTabletDriver.Configurations"),
-                Assembly.Load("OpenTabletDriver.Plugin")
-            };
-
-            libTypes = (from type in typeof(IDriver).Assembly.GetExportedTypes()
-                        where type.IsAbstract || type.IsInterface
-                        select type).ToArray();
-
-            var internalTypes = from asm in assemblies
-                                from type in asm.DefinedTypes
-                                where type.IsPublic && !(type.IsInterface || type.IsAbstract)
-                                where IsPluginType(type)
-                                where IsPlatformSupported(type)
-                                select type;
-
-            pluginTypes = new ConcurrentBag<TypeInfo>(internalTypes);
         }
 
-        public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
-        protected ConcurrentBag<TypeInfo> pluginTypes;
-
-        protected readonly Type[] libTypes;
-
-        public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
+        public PluginManager(string pluginDirectory, string trashDirectory, string temporaryDirectory)
         {
-            args ??= new object[0];
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                try
-                {
-                    if (PluginTypes.FirstOrDefault(t => t.FullName == name) is TypeInfo type)
-                    {
-                        var matchingConstructors = from ctor in type.GetConstructors()
-                                                   let parameters = ctor.GetParameters()
-                                                   where parameters.Length == args.Length
-                                                   where IsValidParameterFor(args, parameters)
-                                                   select ctor;
+            PluginDirectory = new DirectoryInfo(pluginDirectory);
+            TrashDirectory = new DirectoryInfo(trashDirectory);
+            TemporaryDirectory = new DirectoryInfo(temporaryDirectory);
 
-                        if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
-                        {
-                            T obj = (T)constructor.Invoke(args) ?? null;
-
-                            if (obj != null)
-                                Inject(this, obj, type);
-                            return obj;
-                        }
-                        else
-                        {
-                            Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
-                        }
-                    }
-                }
-                catch (TargetInvocationException e) when (e.Message == "Exception has been thrown by the target of an invocation.")
-                {
-                    Log.Write("Plugin", "Object construction has thrown an error", LogLevel.Error);
-                    Log.Exception(e.InnerException);
-                }
-                catch (Exception e)
-                {
-                    Log.Write("Plugin", $"Unable to construct object '{name}'", LogLevel.Error);
-                    Log.Exception(e);
-                }
-            }
-            return null;
+            if (!PluginDirectory.Exists)
+                PluginDirectory.Create();
         }
 
-        public virtual IReadOnlyCollection<TypeInfo> GetChildTypes<T>()
-        {
-            var children = from type in PluginTypes
-                           where typeof(T).IsAssignableFrom(type)
-                           select type;
+        private readonly List<DesktopPluginContext> _plugins = new List<DesktopPluginContext>();
 
-            return children.ToArray();
+        private readonly IEnumerable<Assembly> _coreAssemblies = new[]
+        {
+            Assembly.Load("OpenTabletDriver"),
+            Assembly.Load("OpenTabletDriver.Desktop"),
+            Assembly.Load("OpenTabletDriver.Configurations")
+        };
+
+        private DirectoryInfo PluginDirectory { get; }
+        private DirectoryInfo TrashDirectory { get; }
+        private DirectoryInfo TemporaryDirectory { get; }
+
+        public IReadOnlyList<DesktopPluginContext> Plugins => _plugins;
+
+        public IEnumerable<Assembly> Assemblies => Plugins.SelectMany(c => c.Assemblies).Concat(_coreAssemblies);
+
+        public IEnumerable<Type> ExportedTypes => Assemblies.SelectMany(r => r.ExportedTypes);
+
+        public IEnumerable<Type> LibraryTypes => from asm in Assemblies
+            where asm.IsLoadable()
+            from type in asm.GetExportedTypes()
+            where type.IsAbstract || type.IsInterface
+            select type;
+
+        public IEnumerable<Type> PluginTypes => from asm in Assemblies
+            from type in asm.DefinedTypes
+            where type.IsPublic && !(type.IsInterface || type.IsAbstract)
+            where IsPluginType(type)
+            where type.IsPlatformSupported()
+            select type;
+
+        private bool IsPluginType(Type type)
+        {
+            return LibraryTypes.Any(t =>
+                t.IsAssignableFrom(type) ||
+                type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == t));
         }
 
-        public virtual string GetFriendlyName(string path)
-        {
-            if (AppInfo.PluginManager.PluginTypes.FirstOrDefault(t => t.FullName == path) is TypeInfo plugin)
-            {
-                var attrs = plugin.GetCustomAttributes(true);
-                var nameattr = attrs.FirstOrDefault(t => t.GetType() == typeof(PluginNameAttribute));
-                if (nameattr is PluginNameAttribute attr)
-                    return attr.Name;
-            }
-            return null;
-        }
+        public event EventHandler? AssembliesChanged;
 
-        public static void Inject(IServiceProvider serviceProvider, object obj)
-        {
-            if (obj != null)
-                Inject(serviceProvider, obj, obj.GetType());
-        }
-
-        public static void Inject(IServiceProvider serviceProvider, object obj, Type type)
-        {
-            if (obj == null)
-                return;
-
-            var resolvedProperties = from property in type.GetProperties()
-                                     where property.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                                     select property;
-
-            foreach (var property in resolvedProperties)
-            {
-                var service = serviceProvider.GetService(property.PropertyType);
-                if (service != null)
-                    property.SetValue(obj, service);
-            }
-
-            var resolvedFields = from field in type.GetFields()
-                                 where field.GetCustomAttribute<ResolvedAttribute>() is ResolvedAttribute
-                                 select field;
-
-            foreach (var field in resolvedFields)
-            {
-                var service = serviceProvider.GetService(field.FieldType);
-                if (service != null)
-                    field.SetValue(obj, service);
-            }
-        }
-
-        protected virtual bool IsValidParameterFor(object[] args, ParameterInfo[] parameters)
-        {
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                var parameter = parameters[i];
-                var arg = args[i];
-                if (!parameter.ParameterType.IsAssignableFrom(arg.GetType()))
-                    return false;
-            }
-            return true;
-        }
-
-        protected virtual bool IsPluginType(Type type)
-        {
-            return !type.IsAbstract && !type.IsInterface &&
-                libTypes.Any(t => t.IsAssignableFrom(type) ||
-                    type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
-        }
-
-        protected virtual bool IsPlatformSupported(Type type)
-        {
-            var attr = (SupportedPlatformAttribute)type.GetCustomAttribute(typeof(SupportedPlatformAttribute), false);
-            return attr?.IsCurrentPlatform ?? true;
-        }
-
-        protected virtual bool IsPluginIgnored(Type type)
-        {
-            return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));
-        }
-
-        protected virtual bool IsLoadable(Assembly asm)
+        public void Clean()
         {
             try
             {
-                _ = asm.DefinedTypes;
-                return true;
+                if (PluginDirectory.Exists)
+                {
+                    foreach (var file in PluginDirectory.GetFiles())
+                    {
+                        Log.Write("Plugin", $"Unexpected file found: '{file.FullName}'", LogLevel.Warning);
+                    }
+                }
+
+                if (TrashDirectory.Exists)
+                    Directory.Delete(TrashDirectory.FullName, true);
+                if (TemporaryDirectory.Exists)
+                    Directory.Delete(TemporaryDirectory.FullName, true);
             }
             catch (Exception ex)
             {
-                var asmName = asm.GetName();
-                var hResultHex = ex.HResult.ToString("X");
-                var message = new LogMessage
-                {
-                    Group = "Plugin",
-                    Level = LogLevel.Warning,
-                    Message = $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date. (HResult: 0x{hResultHex})",
-                    StackTrace = ex.Message + Environment.NewLine + ex.StackTrace
-                };
-                Log.Write(message);
+                Log.Exception(ex);
+            }
+        }
+
+        public void Load()
+        {
+            foreach (var dir in PluginDirectory.GetDirectories())
+                LoadPlugin(dir);
+
+            AssembliesChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool InstallPlugin(string filePath)
+        {
+            var file = new FileInfo(filePath);
+            if (!file.Exists)
                 return false;
+
+            var name = file.Name.Replace(file.Extension, string.Empty);
+            var tempDir = new DirectoryInfo(Path.Join(TemporaryDirectory.FullName, name));
+            if (!tempDir.Exists)
+                tempDir.Create();
+
+            var pluginPath = Path.Join(PluginDirectory.FullName, name);
+            var pluginDir = new DirectoryInfo(pluginPath);
+            switch (file.Extension)
+            {
+                case ".zip":
+                {
+                    ZipFile.ExtractToDirectory(file.FullName, tempDir.FullName, true);
+                    break;
+                }
+                case ".dll":
+                {
+                    file.CopyTo(Path.Join(tempDir.FullName, file.Name));
+                    break;
+                }
+                default:
+                    throw new InvalidOperationException($"Unsupported archive type: {file.Extension}");
+            }
+            var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == pluginDir.FullName);
+            var result = pluginDir.Exists ? UpdatePlugin(context!, tempDir) : InstallPlugin(pluginDir, tempDir);
+
+            if (!TemporaryDirectory.GetFileSystemInfos().Any())
+                Directory.Delete(TemporaryDirectory.FullName, true);
+
+            if (result)
+                LoadPlugin(pluginDir);
+            return result;
+        }
+
+        public async Task<bool> DownloadPlugin(PluginMetadata metadata)
+        {
+            var sourcePath = Path.Join(TemporaryDirectory.FullName, Guid.NewGuid().ToString());
+            var targetPath = Path.Join(PluginDirectory.FullName, metadata.Name);
+            var metadataPath = Path.Join(targetPath, "metadata.json");
+
+            var sourceDir = new DirectoryInfo(sourcePath);
+            var targetDir = new DirectoryInfo(targetPath);
+
+            await metadata.DownloadAsync(sourcePath);
+
+            var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == targetDir.FullName);
+            var result = targetDir.Exists ? UpdatePlugin(context!, sourceDir) : InstallPlugin(targetDir, sourceDir);
+
+            await using (var fs = File.Create(metadataPath))
+                Serialization.Serialize(fs, metadata);
+
+            if (!TemporaryDirectory.GetFileSystemInfos().Any())
+                Directory.Delete(TemporaryDirectory.FullName, true);
+            return result;
+        }
+
+        public bool InstallPlugin(DirectoryInfo target, DirectoryInfo source)
+        {
+            Log.Write("Plugin", $"Installing plugin '{target.Name}'");
+            CopyDirectory(source, target);
+            LoadPlugin(target);
+            return true;
+        }
+
+        public bool UninstallPlugin(DesktopPluginContext plugin)
+        {
+            var random = new Random();
+            if (!Directory.Exists(TrashDirectory.FullName))
+                TrashDirectory.Create();
+
+            Log.Write("Plugin", $"Uninstalling plugin '{plugin.FriendlyName}'");
+
+            var trashPath = Path.Join(TrashDirectory.FullName, $"{plugin.FriendlyName}_{random.Next()}");
+            Directory.Move(plugin.Directory.FullName, trashPath);
+
+            return UnloadPlugin(plugin);
+        }
+
+        public bool UpdatePlugin(DesktopPluginContext plugin, DirectoryInfo source)
+        {
+            // TODO: Fix update not updating the plugin?
+            var targetDir = new DirectoryInfo(plugin.Directory.FullName);
+            if (UninstallPlugin(plugin))
+                return InstallPlugin(targetDir, source);
+            return false;
+        }
+
+        public bool UnloadPlugin(DesktopPluginContext context)
+        {
+            Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);
+            _plugins.Remove(context);
+            AssembliesChanged?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
+        public string GetStateHash()
+        {
+            using var stream = new MemoryStream();
+            using var sha = SHA256.Create();
+
+            foreach (var module in Assemblies.SelectMany(a => a.Modules))
+                stream.Write(module.ModuleVersionId.ToByteArray());
+
+            stream.Position = 0;
+            var combined = sha.ComputeHash(stream);
+            return string.Concat(combined.Select(h => h.ToString("x2")));
+        }
+
+        private void LoadPlugin(DirectoryInfo directory)
+        {
+            // "Plugins" are directories that contain managed and unmanaged dll
+            // These dlls are loaded into a PluginContext per directory
+            directory.Refresh();
+            if (Plugins.All(p => p.Directory.Name != directory.Name))
+            {
+                if (directory.Exists)
+                {
+                    Log.Write("Plugin", $"Loading plugin '{directory.Name}'", LogLevel.Debug);
+                    var context = new DesktopPluginContext(directory);
+
+                    _plugins.Add(context);
+                }
+                else
+                {
+                    Log.Write("Plugin", $"Tried to load a nonexistent plugin '{directory.Name}'", LogLevel.Warning);
+                }
+            }
+            else
+            {
+                Log.Write("Plugin", $"Attempted to load the plugin {directory.Name} when it is already loaded.", LogLevel.Debug);
+            }
+        }
+
+        private static void CopyDirectory(DirectoryInfo source, DirectoryInfo destination)
+        {
+            if (!source.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + source.FullName);
+            }
+
+            // If the destination directory doesn't exist, create it.
+            destination.Create();
+
+            // Get the files in the directory and copy them to the new location.
+            foreach (var file in source.GetFiles())
+            {
+                string tempPath = Path.Combine(destination.FullName, file.Name);
+                file.CopyTo(tempPath, false);
+            }
+
+            foreach (DirectoryInfo subdir in source.GetDirectories())
+            {
+                CopyDirectory(
+                    new DirectoryInfo(subdir.FullName),
+                    new DirectoryInfo(Path.Combine(destination.FullName, subdir.Name))
+                );
             }
         }
     }

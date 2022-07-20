@@ -1,43 +1,42 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Platform.Pointer;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginName(PLUGIN_NAME)]
     public class MouseBinding : IStateBinding
     {
+        private readonly IMouseButtonHandler _pointer;
+
+        public MouseBinding(IMouseButtonHandler pointer, ISettingsProvider settingsProvider)
+        {
+            _pointer = pointer;
+
+            settingsProvider.Inject(this);
+        }
+
         private const string PLUGIN_NAME = "Mouse Button Binding";
 
-        [Resolved]
-        public IMouseButtonHandler Pointer { set; get; }
-
-        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
+        [Setting("Button"), MemberValidated(nameof(ValidButtons))]
         public string Button { set; get; }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(IDeviceReport report)
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
-                Pointer?.MouseDown(mouseButton);
+                _pointer?.MouseDown(mouseButton);
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(IDeviceReport report)
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
-                Pointer?.MouseUp(mouseButton);
+                _pointer?.MouseUp(mouseButton);
         }
 
-        private static IEnumerable<string> validButtons;
-        public static IEnumerable<string> ValidButtons
-        {
-            get => validButtons ??= Enum.GetValues<MouseButton>().Select(Enum.GetName);
-        }
+        public static IEnumerable<string> ValidButtons { get; } = Enum.GetValues(typeof(MouseButton)).Cast<MouseButton>().Select(Enum.GetName);
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";
     }

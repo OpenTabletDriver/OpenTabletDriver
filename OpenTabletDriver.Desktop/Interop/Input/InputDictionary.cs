@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
 {

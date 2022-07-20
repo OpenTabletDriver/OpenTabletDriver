@@ -1,7 +1,7 @@
 using System.IO;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Converters;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Desktop.Json;
 
 namespace OpenTabletDriver.Desktop
 {
@@ -9,11 +9,11 @@ namespace OpenTabletDriver.Desktop
     {
         static Serialization()
         {
-            serializer.Error += SerializationErrorHandler;
-            serializer.Converters.Add(new VersionConverter());
+            Serializer.Error += SerializationErrorHandler;
+            Serializer.Converters.Add(new VersionConverter());
         }
 
-        private static readonly JsonSerializer serializer = new JsonSerializer
+        public static JsonSerializer Serializer { get; } = new AdvancedJsonSerializer
         {
             Formatting = Formatting.Indented
         };
@@ -55,12 +55,12 @@ namespace OpenTabletDriver.Desktop
 
         public static T Deserialize<T>(JsonTextReader textReader)
         {
-            return serializer.Deserialize<T>(textReader);
+            return Serializer.Deserialize<T>(textReader);
         }
 
         public static void Serialize(JsonTextWriter textWriter, object value)
         {
-            serializer.Serialize(textWriter, value);
+            Serializer.Serialize(textWriter, value);
         }
     }
 }

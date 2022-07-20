@@ -3,15 +3,16 @@
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
     <TargetFramework>$(FrameworkBase)</TargetFramework>
-    <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.10" />
-  </ItemGroup>
-  
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
   </ItemGroup>
-  
+
+  <ItemGroup Label="NuGet Packages">
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.7.0" />
+  </ItemGroup>
+
 </Project>

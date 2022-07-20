@@ -1,71 +1,63 @@
+using System;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Profiles
 {
-    public class Profile : ViewModel
+    public class Profile : NotifyPropertyChanged
     {
-        private string tablet;
-        private PluginSettingStore outputMode;
-        private AbsoluteModeSettings absoluteMode = new AbsoluteModeSettings();
-        private RelativeModeSettings relativeMode = new RelativeModeSettings();
-        private BindingSettings bindings = new BindingSettings();
-        private PluginSettingStoreCollection filters = new PluginSettingStoreCollection();
+        private string _tablet;
+        private PluginSettings _outputMode;
+        private BindingSettings _bindings = new BindingSettings();
+        private PluginSettingsCollection _filters = new PluginSettingsCollection();
 
         [JsonProperty("Tablet")]
         public string Tablet
         {
-            set => this.RaiseAndSetIfChanged(ref tablet, value);
-            get => tablet;
+            set => RaiseAndSetIfChanged(ref _tablet, value);
+            get => _tablet;
         }
 
         [JsonProperty("OutputMode")]
-        public PluginSettingStore OutputMode
+        public PluginSettings OutputMode
         {
-            set => RaiseAndSetIfChanged(ref outputMode, value);
-            get => outputMode;
+            set => RaiseAndSetIfChanged(ref _outputMode, value);
+            get => _outputMode;
         }
 
         [JsonProperty("Filters")]
-        public PluginSettingStoreCollection Filters
+        public PluginSettingsCollection Filters
         {
-            set => RaiseAndSetIfChanged(ref filters, value);
-            get => filters;
-        }
-
-        [JsonProperty("AbsoluteModeSettings")]
-        public AbsoluteModeSettings AbsoluteModeSettings
-        {
-            set => this.RaiseAndSetIfChanged(ref absoluteMode, value);
-            get => absoluteMode;
-        }
-
-        [JsonProperty("RelativeModeSettings")]
-        public RelativeModeSettings RelativeModeSettings
-        {
-            set => this.RaiseAndSetIfChanged(ref relativeMode, value);
-            get => relativeMode;
+            set => RaiseAndSetIfChanged(ref _filters, value);
+            get => _filters;
         }
 
         [JsonProperty("Bindings")]
         public BindingSettings BindingSettings
         {
-            set => this.RaiseAndSetIfChanged(ref bindings, value);
-            get => bindings;
+            set => RaiseAndSetIfChanged(ref _bindings, value);
+            get => _bindings;
         }
 
-        public static Profile GetDefaults(TabletReference tablet)
+        public static Profile GetDefaults(IServiceProvider serviceProvider, InputDevice tablet)
         {
+            var screen = serviceProvider.GetRequiredService<IVirtualScreen>();
+            var digitizer = tablet.Configuration.Specifications.Digitizer;
+
             return new Profile
             {
-                Tablet = tablet.Properties.Name,
-                OutputMode = new PluginSettingStore(typeof(AbsoluteMode)),
-                AbsoluteModeSettings = AbsoluteModeSettings.GetDefaults(tablet.Properties.Specifications.Digitizer),
-                RelativeModeSettings = RelativeModeSettings.GetDefaults(),
-                BindingSettings = BindingSettings.GetDefaults(tablet.Properties.Specifications)
+                Tablet = tablet.Configuration.Name,
+                OutputMode = typeof(AbsoluteMode).GetDefaultSettings(serviceProvider, digitizer, screen),
+                BindingSettings = BindingSettings.GetDefaults(tablet.Configuration.Specifications)
             };
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + ": " + Tablet;
         }
     }
 }

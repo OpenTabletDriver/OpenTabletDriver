@@ -2,7 +2,8 @@ using System;
 using System.Numerics;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Generic;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Display;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
@@ -10,6 +11,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
     public class MacOSRelativePointer : Input.MacOSVirtualMouse, IRelativePointer
     {
+        public MacOSRelativePointer(IVirtualScreen virtualScreen) : base(virtualScreen)
+        {
+        }
+
         public void SetPosition(Vector2 delta)
         {
             var lastPos = base.GetPosition();

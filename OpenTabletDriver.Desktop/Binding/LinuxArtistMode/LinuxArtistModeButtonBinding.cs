@@ -1,17 +1,22 @@
 using System;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
-    [PluginName("Linux Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
+    [PluginName("Linux Artist Mode"), SupportedPlatform(SystemPlatform.Linux)]
     public class LinuxArtistModeButtonBinding : IStateBinding
     {
-        private readonly EvdevVirtualTablet virtualTablet = (EvdevVirtualTablet)DesktopInterop.VirtualTablet;
+        private readonly InputDevice _inputDevice;
+        private readonly EvdevVirtualTablet _virtualTablet;
+
+        public LinuxArtistModeButtonBinding(InputDevice inputDevice, EvdevVirtualTablet virtualTablet)
+        {
+            _inputDevice = inputDevice;
+            _virtualTablet = virtualTablet;
+        }
 
         public static string[] ValidButtons { get; } = {
             "Pen Button 1",
@@ -19,15 +24,15 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
             "Pen Button 3"
         };
 
-        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
-        public string Button { get; set; }
+        [Setting("Button"), MemberValidated(nameof(ValidButtons))]
+        public string Button { set; get; }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(IDeviceReport report)
         {
             SetState(true);
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(IDeviceReport report)
         {
             SetState(false);
         }
@@ -42,7 +47,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
                 _ => throw new InvalidOperationException($"Invalid Button '{Button}'")
             };
 
-            virtualTablet.SetKeyState(eventCode, state);
+            _virtualTablet.SetKeyState(eventCode, state);
         }
     }
 }

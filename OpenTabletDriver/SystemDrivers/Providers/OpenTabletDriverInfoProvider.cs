@@ -1,8 +1,8 @@
-namespace OpenTabletDriver.SystemDrivers.InfoProviders
+namespace OpenTabletDriver.SystemDrivers.Providers
 {
-    public class OpenTabletDriverInfoProvider : IDriverInfoProvider
+    internal class OpenTabletDriverInfoProvider : IDriverInfoProvider
     {
-        public DriverInfo GetDriverInfo()
+        public DriverInfo? GetDriverInfo()
         {
             var daemonInstanceName = "OpenTabletDriver.Daemon";
             if (Instance.Exists(daemonInstanceName) && !Instance.IsOwnerOf(daemonInstanceName))

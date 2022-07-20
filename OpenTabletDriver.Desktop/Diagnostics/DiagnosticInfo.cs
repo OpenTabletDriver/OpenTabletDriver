@@ -1,59 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Devices;
-using OpenTabletDriver.Plugin.Logging;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Devices;
+using OpenTabletDriver.Logging;
+
+#nullable enable
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
-    public class DiagnosticInfo
+    public class DiagnosticInfo : IDiagnosticInfo
     {
-        public DiagnosticInfo(IEnumerable<LogMessage> log, IEnumerable<SerializedDeviceEndpoint> devices)
+        public DiagnosticInfo(
+            IEnumerable<LogMessage> log,
+            IEnumerable<IDeviceEndpoint> devices,
+            EnvironmentDictionary environmentDictionary
+        )
         {
             ConsoleLog = log;
             Devices = devices;
+            EnvironmentVariables = environmentDictionary;
         }
 
-        [JsonProperty("App Version")]
-        public string AppVersion { private set; get; } = GetAppVersion();
-
-        [JsonProperty("Build Date")]
-        public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
-
-        [JsonProperty("Operating System")]
-        public OperatingSystem OperatingSystem { private set; get; } = Environment.OSVersion;
-
-        [JsonProperty("Environment Variables")]
-        public IDictionary<string, string> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
-
-        [JsonProperty("HID Devices")]
-        public IEnumerable<SerializedDeviceEndpoint> Devices { private set; get; }
-
-        [JsonProperty("Console Log")]
-        public IEnumerable<LogMessage> ConsoleLog { private set; get; }
+        public string AppVersion { get; } = GetAppVersion();
+        public string BuildDate { get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>()?.BuildDate ?? string.Empty;
+        public OperatingSystem OperatingSystem { get; } = Environment.OSVersion;
+        public IDictionary<string, string> EnvironmentVariables { get; }
+        public IEnumerable<IDeviceEndpoint> Devices { get; }
+        public IEnumerable<LogMessage> ConsoleLog { get; }
 
         private static string GetAppVersion()
         {
-            string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
             return $"OpenTabletDriver v{version}";
-        }
-
-        [OnError]
-        internal void OnError(StreamingContext _, ErrorContext errorContext)
-        {
-            errorContext.Handled = true;
-            Log.Write("Diagnostics", $"Handled diagnostics serialization error", LogLevel.Error);
-            Log.Exception(errorContext.Error);
         }
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
+            using (var memoryStream = new MemoryStream())
+            using (var sr = new StreamReader(memoryStream))
+            {
+                Serialization.Serialize(memoryStream, this);
+                return sr.ReadToEnd();
+            }
         }
     }
 }

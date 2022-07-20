@@ -1,7 +1,7 @@
 using System;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Linux.Evdev;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop
 {

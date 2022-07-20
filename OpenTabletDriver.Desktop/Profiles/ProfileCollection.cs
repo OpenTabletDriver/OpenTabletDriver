@@ -2,14 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using OpenTabletDriver.Plugin.Tablet;
+using System.Text.Json.Serialization;
+
+#nullable enable
 
 namespace OpenTabletDriver.Desktop.Profiles
 {
     public class ProfileCollection : ObservableCollection<Profile>
     {
+        [JsonConstructor]
         public ProfileCollection()
-            : base()
         {
         }
 
@@ -18,35 +20,37 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
         }
 
-        public ProfileCollection(IEnumerable<TabletReference> tablets)
-            : this(tablets.Select(s => Profile.GetDefaults(s)))
-        {
-        }
-
-        public Profile this[TabletReference tablet]
+        public Profile? this[InputDevice tablet]
         {
             set => SetProfile(tablet, value);
             get => GetProfile(tablet);
         }
 
-        public void SetProfile(TabletReference tablet, Profile profile)
+        private void SetProfile(InputDevice tablet, Profile? profile)
         {
-            if (this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile oldProfile)
+            if (profile == null)
+                return;
+
+            if (this.FirstOrDefault(t => t.Tablet == tablet.Configuration.Name) is Profile oldProfile)
             {
-                this.Remove(oldProfile);
+                Remove(oldProfile);
             }
-            this.Add(profile);
+
+            Add(profile);
         }
 
-        public Profile GetProfile(TabletReference tablet)
+        private Profile? GetProfile(InputDevice tablet)
         {
-            return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
+            return this.FirstOrDefault(t => t.Tablet == tablet.Configuration.Name);
         }
 
-        public Profile Generate(TabletReference tablet)
+        public Profile GetOrSetDefaults(IServiceProvider serviceProvider, InputDevice inputDevice)
         {
-            var profile = Profile.GetDefaults(tablet);
-            SetProfile(tablet, profile);
+            if (GetProfile(inputDevice) is Profile existingProfile)
+                return existingProfile;
+
+            var profile = Profile.GetDefaults(serviceProvider, inputDevice);
+            SetProfile(inputDevice, profile);
             return profile;
         }
     }

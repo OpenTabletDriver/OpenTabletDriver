@@ -1,20 +1,20 @@
 ﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.RPC;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Components;
 
 namespace OpenTabletDriver.Daemon
 {
-    partial class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             using (var instance = new Instance("OpenTabletDriver.Daemon"))
             {
@@ -25,60 +25,60 @@ namespace OpenTabletDriver.Daemon
                     return;
                 }
 
-                AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
-                {
-                    var exception = (Exception)e.ExceptionObject;
-                    File.WriteAllLines(Path.Join(AppInfo.Current.AppDataDirectory, "daemon.log"),
-                        new string[]
-                        {
-                            DateTime.Now.ToString(),
-                            exception.GetType().FullName,
-                            exception.Message,
-                            exception.Source,
-                            exception.StackTrace,
-                            exception.TargetSite.Name
-                        }
-                    );
-                };
-
                 var rootCommand = new RootCommand("OpenTabletDriver")
                 {
-                    new Option(new string[] { "--appdata", "-a" }, "Application data directory")
+                    new Option(new[] { "--appdata", "-a" }, "Application data directory")
                     {
-                        Argument = new Argument<DirectoryInfo>("appdata")
+                        Argument = new Argument<string>("appdata")
                     },
-                    new Option(new string[] { "--config", "-c" }, "Configuration directory")
+                    new Option(new[] { "--config", "-c" }, "Configuration directory")
                     {
-                        Argument = new Argument<DirectoryInfo> ("config")
+                        Argument = new Argument<string> ("config")
                     }
                 };
-                rootCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo>((appdata, config) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(appdata?.FullName))
-                        AppInfo.Current.AppDataDirectory = appdata.FullName;
-                    if (!string.IsNullOrWhiteSpace(config?.FullName))
-                        AppInfo.Current.ConfigurationDirectory = config.FullName;
-                });
-                rootCommand.Invoke(args);
 
-                var host = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
-                host.ConnectionStateChanged += (sender, state) =>
-                    Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
-
-                await host.Run(BuildDaemon());
+                rootCommand.Handler = CommandHandler.Create<string, string>(Run);
+                await rootCommand.InvokeAsync(args);
             }
         }
 
-        static DriverDaemon BuildDaemon()
+        private static async Task Run(string appdata, string config)
         {
-            return new DriverDaemon(new DriverBuilder()
-                .ConfigureServices(serviceCollection =>
-                {
-                    serviceCollection.AddSingleton<IDeviceConfigurationProvider, DesktopDeviceConfigurationProvider>();
-                    serviceCollection.AddSingleton<IReportParserProvider, DesktopReportParserProvider>();
-                })
-                .Build<Driver>(out _)
-            );
+            var serviceCollection = DesktopServiceCollection.GetPlatformServiceCollection();
+            var appInfo = AppInfo.GetPlatformAppInfo();
+
+            if (!string.IsNullOrWhiteSpace(appdata))
+                appInfo.AppDataDirectory = FileUtilities.InjectEnvironmentVariables(appdata);
+            if (!string.IsNullOrWhiteSpace(config))
+                appInfo.ConfigurationDirectory = FileUtilities.InjectEnvironmentVariables(config);
+
+            serviceCollection.AddSingleton(appInfo);
+
+            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+            {
+                var exception = (Exception)e.ExceptionObject;
+                File.AppendAllLines(Path.Join(appInfo.AppDataDirectory, "daemon.log"),
+                    new[]
+                    {
+                        DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                        exception.GetType().FullName!,
+                        exception.Message,
+                        exception.Source ?? string.Empty,
+                        exception.StackTrace ?? string.Empty,
+                        exception.TargetSite?.Name ?? string.Empty
+                    }
+                );
+            };
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var daemon = serviceProvider.CreateInstance<DriverDaemon>();
+
+            var rpcHost = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
+            rpcHost.ConnectionStateChanged += (_, state) =>
+                Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
+
+            await daemon.Initialize();
+            await rpcHost.Run(daemon);
         }
     }
 }

@@ -4,8 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {

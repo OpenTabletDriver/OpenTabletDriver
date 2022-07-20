@@ -2,38 +2,53 @@
 using System.Numerics;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Display;
+using OpenTabletDriver.Platform.Pointer;
+
+#nullable enable
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static Windows;
 
-    public class WindowsAbsolutePointer : WindowsVirtualMouse, IAbsolutePointer
+    public class WindowsAbsolutePointer : WindowsVirtualMouse, IAbsolutePointer, IDisposable
     {
-        static WindowsAbsolutePointer()
+        public WindowsAbsolutePointer(IVirtualScreen virtualScreen)
         {
             timer = new System.Threading.Timer(
-                state => ScreenToVirtualDesktop = new Vector2(
-                    DesktopInterop.VirtualScreen.Width,
-                    DesktopInterop.VirtualScreen.Height
-                ) / 65535,
-                null,
+                UpdateVirtualDesktop,
+                virtualScreen,
                 TimeSpan.Zero,
-                TimeSpan.FromSeconds(1)
+                TimeSpan.FromSeconds(5)
             );
         }
 
-        private static System.Threading.Timer timer;
-        private static Vector2 ScreenToVirtualDesktop = new Vector2(DesktopInterop.VirtualScreen.Width, DesktopInterop.VirtualScreen.Height) / 65535;
+        private System.Threading.Timer timer;
+        private Vector2 screenToVirtualDesktop;
+
+        private void UpdateVirtualDesktop(object? state)
+        {
+            var virtualScreen = (IVirtualScreen)state!;
+
+            screenToVirtualDesktop = new Vector2(
+                virtualScreen.Width,
+                virtualScreen.Height
+            ) / 65535;
+        }
 
         public void SetPosition(Vector2 pos)
         {
-            var virtualDesktopCoords = pos / ScreenToVirtualDesktop;
+            var virtualDesktopCoords = pos / screenToVirtualDesktop;
 
             inputs[0].U.mi.dwFlags = MOUSEEVENTF.ABSOLUTE | MOUSEEVENTF.MOVE | MOUSEEVENTF.VIRTUALDESK;
             inputs[0].U.mi.dx = (int)virtualDesktopCoords.X;
             inputs[0].U.mi.dy = (int)virtualDesktopCoords.Y;
             SendInput(1, inputs, INPUT.Size);
+        }
+
+        public void Dispose()
+        {
+            timer.Dispose();
         }
     }
 }

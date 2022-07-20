@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Native.Linux.Xorg;
-using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
@@ -11,12 +11,12 @@ namespace OpenTabletDriver.Desktop.Interop.Display
     using static XRandr;
     using Window = IntPtr;
 
-    public class XScreen : IVirtualScreen, IDisposable
+    public sealed class XScreen : IVirtualScreen, IDisposable
     {
         public unsafe XScreen()
         {
-            Display = XOpenDisplay(null);
-            RootWindow = XDefaultRootWindow(Display);
+            _display = XOpenDisplay(null);
+            _rootWindow = XDefaultRootWindow(_display);
 
             var monitors = GetXRandrDisplays().ToList();
             var primary = monitors.FirstOrDefault(d => d.Primary != 0);
@@ -37,31 +37,31 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             Position = new Vector2(primary.X, primary.Y);
         }
 
-        private Window Display;
-        private Window RootWindow;
+        private readonly Window _display;
+        private readonly Window _rootWindow;
 
         public float Width
         {
-            get => XDisplayWidth(Display, 0);
+            get => XDisplayWidth(_display, 0);
         }
 
         public float Height
         {
-            get => XDisplayHeight(Display, 0);
+            get => XDisplayHeight(_display, 0);
         }
 
-        public Vector2 Position { private set; get; } = new Vector2(0, 0);
+        public Vector2 Position { get; }
 
         private unsafe IEnumerable<XRRMonitorInfo> GetXRandrDisplays()
         {
             ICollection<XRRMonitorInfo> monitors = new List<XRRMonitorInfo>();
-            var xRandrMonitors = XRRGetMonitors(Display, RootWindow, true, out var count);
+            var xRandrMonitors = XRRGetMonitors(_display, _rootWindow, true, out var count);
             for (int i = 0; i < count; i++)
                 monitors.Add(xRandrMonitors[i]);
             return monitors;
         }
 
-        public IEnumerable<IDisplay> Displays { private set; get; }
+        public IEnumerable<IDisplay> Displays { get; }
 
         public int Index => 0;
 
@@ -72,7 +72,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
         public void Dispose()
         {
-            XCloseDisplay(Display);
+            XCloseDisplay(_display);
         }
     }
 }

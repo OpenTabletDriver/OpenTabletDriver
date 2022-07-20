@@ -1,22 +1,21 @@
-using System;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Output
 {
-    [PluginName("Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
-    public class LinuxArtistMode : AbsoluteOutputMode, IPointerProvider<IAbsolutePointer>
+    [PluginName("Artist Mode"), SupportedPlatform(SystemPlatform.Linux)]
+    public class LinuxArtistMode : AbsoluteOutputMode, IMouseButtonSource
     {
-        [Resolved]
-        public IPressureHandler VirtualTablet { get; set; }
-
-        public override IAbsolutePointer Pointer
+        public LinuxArtistMode(
+            InputDevice tablet,
+            IPressureHandler pressureHandler,
+            ISettingsProvider settingsProvider
+        ) : base(tablet, pressureHandler)
         {
-            set => throw new NotSupportedException();
-            get => (IAbsolutePointer)VirtualTablet;
+            settingsProvider.Inject(this);
         }
+
+        public IMouseButtonHandler MouseButtonHandler => Pointer;
     }
 }

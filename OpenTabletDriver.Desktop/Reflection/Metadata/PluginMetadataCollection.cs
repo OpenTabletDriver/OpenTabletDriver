@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
@@ -16,7 +17,6 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
     {
         [JsonConstructor]
         protected PluginMetadataCollection()
-            : base()
         {
         }
 
@@ -42,20 +42,20 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return await DownloadAsync(REPOSITORY_OWNER, REPOSITORY_NAME);
         }
 
-        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name, string gitRef = null)
+        public static async Task<PluginMetadataCollection> DownloadAsync(IAppInfo appInfo, string owner, string name, string gitRef)
         {
             string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/{gitRef}";
-            return await DownloadAsync(archiveUrl);
+            return await DownloadAsync(archiveUrl, appInfo.CacheDirectory);
         }
 
-        public static async Task<PluginMetadataCollection> DownloadAsync(string archiveUrl)
+        private static async Task<PluginMetadataCollection> DownloadAsync(string archiveUrl, string cacheDir)
         {
             using (var client = GetClient())
             using (var httpStream = await client.GetStreamAsync(archiveUrl))
-                return FromStream(httpStream);
+                return FromStream(httpStream, cacheDir);
         }
 
-        public static PluginMetadataCollection FromStream(Stream stream)
+        private static PluginMetadataCollection FromStream(Stream stream, string cacheDir)
         {
             var memStream = new MemoryStream();
             stream.CopyTo(memStream);
@@ -65,20 +65,20 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             using (var archive = TarArchive.CreateInputTarArchive(gzipStream, null))
             {
                 string hash = CalculateSHA256(memStream);
-                string cacheDir = Path.Join(AppInfo.Current.CacheDirectory, $"{hash}-OpenTabletDriver-PluginMetadata");
+                string metadataCacheDir = Path.Join(cacheDir, $"{hash}-OpenTabletDriver-PluginMetadata");
 
-                if (Directory.Exists(cacheDir))
-                    Directory.Delete(cacheDir, true);
-                archive.ExtractContents(cacheDir);
+                if (Directory.Exists(metadataCacheDir))
+                    Directory.Delete(metadataCacheDir, true);
+                archive.ExtractContents(metadataCacheDir);
 
-                var collection = EnumeratePluginMetadata(cacheDir);
+                var collection = EnumeratePluginMetadata(metadataCacheDir);
                 var metadataCollection = new PluginMetadataCollection(collection);
 
                 return metadataCollection;
             }
         }
 
-        protected static string CalculateSHA256(Stream stream)
+        private static string CalculateSHA256(Stream stream)
         {
             using (var sha256 = SHA256.Create())
             {
@@ -94,7 +94,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             }
         }
 
-        protected static IEnumerable<PluginMetadata> EnumeratePluginMetadata(string directoryPath)
+        private static IEnumerable<PluginMetadata> EnumeratePluginMetadata(string directoryPath)
         {
             foreach (var file in Directory.EnumerateFiles(directoryPath, "*.json", SearchOption.AllDirectories))
                 using (var fs = File.OpenRead(file))

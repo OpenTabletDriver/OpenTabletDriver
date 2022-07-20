@@ -1,6 +1,6 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.RobotPen
 {
@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Configurations.Parsers.RobotPen
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[10]);
 
-            PenButtons = new bool[]
+            PenButtons = new[]
             {
                 report[11].IsBitSet(1)
             };

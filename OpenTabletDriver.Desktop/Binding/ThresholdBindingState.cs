@@ -1,14 +1,28 @@
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Platform.Pointer;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
     public class ThresholdBindingState : BindingState
     {
+        private readonly InputDevice _device;
+
+        public ThresholdBindingState(
+            IPluginFactory pluginFactory,
+            InputDevice device,
+            IMouseButtonHandler mouseButtonHandler,
+            PluginSettings settings
+        ) : base(pluginFactory, device, mouseButtonHandler, settings)
+        {
+            _device = device;
+        }
+
         public float ActivationThreshold { set; get; }
 
-        public void Invoke(TabletReference tablet, IDeviceReport report, float value)
+        public void Invoke(IDeviceReport report, float value)
         {
-            bool newState = value > ActivationThreshold;
+            var newState = value > ActivationThreshold;
 
             if (report is ITabletReport tabletReport)
             {
@@ -18,13 +32,13 @@ namespace OpenTabletDriver.Desktop.Binding
                 }
                 else // remap pressure when beyond threshold
                 {
-                    var maxPressure = tablet.Properties.Specifications.Pen.MaxPressure;
+                    var maxPressure = _device.Configuration.Specifications.Pen!.MaxPressure;
                     var remappedPressure = (value - ActivationThreshold) / (100f - ActivationThreshold);
                     tabletReport.Pressure = (uint)(maxPressure * remappedPressure);
                 }
             }
 
-            base.Invoke(tablet, report, newState);
+            base.Invoke(report, newState);
         }
     }
 }

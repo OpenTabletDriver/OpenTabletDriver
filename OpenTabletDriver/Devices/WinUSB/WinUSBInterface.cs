@@ -4,13 +4,12 @@ using System.IO;
 using System.Threading;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.USB;
-using OpenTabletDriver.Plugin.Devices;
 using static OpenTabletDriver.Native.Windows.Windows;
 using static OpenTabletDriver.Native.Windows.WinUsb;
 
 namespace OpenTabletDriver.Devices.WinUSB
 {
-    public class WinUSBInterface : IDeviceEndpoint
+    internal class WinUSBInterface : IDeviceEndpoint
     {
         public unsafe WinUSBInterface(string devicePath)
         {
@@ -67,11 +66,11 @@ namespace OpenTabletDriver.Devices.WinUSB
                 VendorID = deviceDescriptor.idVendor;
 
                 Manufacturer = deviceDescriptor.iManufacturer != 0
-                    ? GetDeviceString(deviceDescriptor.iManufacturer)
+                    ? GetDeviceString(deviceDescriptor.iManufacturer) ?? string.Empty
                     : "Unknown Manufacturer";
 
                 ProductName = deviceDescriptor.iProduct != 0
-                    ? GetDeviceString(deviceDescriptor.iProduct)
+                    ? GetDeviceString(deviceDescriptor.iProduct) ?? string.Empty
                     : "Unknown Product Name";
 
                 SerialNumber = deviceDescriptor.iSerialNumber != 0
@@ -80,37 +79,37 @@ namespace OpenTabletDriver.Devices.WinUSB
             });
         }
 
-        private int referenceCount;
-        private SafeFileHandle activeFileHandle;
-        private SafeWinUsbInterfaceHandle activeWinUsbHandle;
+        private int _referenceCount;
+        private SafeFileHandle? _activeFileHandle;
+        private SafeWinUsbInterfaceHandle? _activeWinUsbHandle;
 
-        internal int InterfaceNum { get; private set; }
-        internal byte? InputPipe { get; private set; }
-        internal byte? OutputPipe { get; private set; }
+        internal int InterfaceNum { private set; get; }
+        internal byte? InputPipe { private set; get; }
+        internal byte? OutputPipe { private set; get; }
 
-        public int ProductID { get; private set; }
+        public int ProductID { private set; get; }
 
-        public int VendorID { get; private set; }
+        public int VendorID { private set; get; }
 
-        public int InputReportLength { get; private set; }
+        public int InputReportLength { private set; get; }
 
-        public int OutputReportLength { get; private set; }
+        public int OutputReportLength { private set; get; }
 
         public int FeatureReportLength => 0; // requires parsing report descriptor to determine feature report length
 
-        public string Manufacturer { get; private set; }
+        public string? Manufacturer { private set; get; }
 
-        public string ProductName { get; private set; }
+        public string? ProductName { private set; get; }
 
-        public string FriendlyName => ProductName;
+        public string? FriendlyName => ProductName;
 
-        public string SerialNumber { get; private set; }
+        public string? SerialNumber { private set; get; }
 
         public string DevicePath { get; }
 
         public bool CanOpen => true;
 
-        public unsafe string GetDeviceString(byte index)
+        public unsafe string? GetDeviceString(byte index)
         {
             return WithHandle(winUsbHandle =>
             {
@@ -136,7 +135,7 @@ namespace OpenTabletDriver.Devices.WinUSB
             return new WinUSBInterfaceStream(new WeakReference<WinUSBInterface>(this));
         }
 
-        private void WithHandle(Action<SafeWinUsbInterfaceHandle> predicate)
+        private void WithHandle(Action<SafeWinUsbInterfaceHandle?> predicate)
         {
             var handle = BorrowHandle();
             try
@@ -149,7 +148,7 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
-        private T WithHandle<T>(Func<SafeWinUsbInterfaceHandle, T> predicate)
+        private T WithHandle<T>(Func<SafeWinUsbInterfaceHandle?, T> predicate)
         {
             var handle = BorrowHandle();
             try
@@ -162,11 +161,11 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
-        internal SafeWinUsbInterfaceHandle BorrowHandle()
+        internal SafeWinUsbInterfaceHandle? BorrowHandle()
         {
-            if (Interlocked.Increment(ref referenceCount) == 1)
+            if (Interlocked.Increment(ref _referenceCount) == 1)
             {
-                activeFileHandle = CreateFile(DevicePath,
+                _activeFileHandle = CreateFile(DevicePath,
                     FileAccess.ReadWrite,
                     FileShare.ReadWrite,
                     IntPtr.Zero,
@@ -175,29 +174,29 @@ namespace OpenTabletDriver.Devices.WinUSB
                     IntPtr.Zero
                 );
 
-                if (activeFileHandle.IsInvalid)
+                if (_activeFileHandle.IsInvalid)
                     throw new IOException("Failed to open file handle to WinUSB interface");
 
-                if (!WinUsb_Initialize(activeFileHandle, out activeWinUsbHandle))
+                if (!WinUsb_Initialize(_activeFileHandle, out _activeWinUsbHandle))
                     throw new IOException("Failed to initialize WinUSB interface");
             }
 
-            return activeWinUsbHandle;
+            return _activeWinUsbHandle;
         }
 
         // Take reference, so we may easily add multiple interface support in the future
-        internal void ReturnHandle(SafeWinUsbInterfaceHandle handle)
+        internal void ReturnHandle(SafeWinUsbInterfaceHandle? handle)
         {
-            if (activeWinUsbHandle != handle)
+            if (_activeWinUsbHandle != handle)
                 throw new InvalidOperationException("Returning handle is not equal to active handle");
 
-            if (Interlocked.Decrement(ref referenceCount) == 0)
+            if (Interlocked.Decrement(ref _referenceCount) == 0)
             {
-                activeWinUsbHandle.Dispose();
-                activeFileHandle.Dispose();
+                _activeWinUsbHandle?.Dispose();
+                _activeFileHandle?.Dispose();
 
-                activeWinUsbHandle = null;
-                activeFileHandle = null;
+                _activeWinUsbHandle = null;
+                _activeFileHandle = null;
             }
         }
     }

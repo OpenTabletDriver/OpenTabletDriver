@@ -2,8 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Timers;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {

@@ -3,8 +3,8 @@ using System.Numerics;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Native.Linux.Evdev.Structs;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Display;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         private bool isEraser;
         private bool proximity = true;
 
-        public unsafe EvdevVirtualTablet()
+        public unsafe EvdevVirtualTablet(IVirtualScreen virtualScreen)
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 
@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var xAbs = new input_absinfo
             {
-                maximum = (int)(DesktopInterop.VirtualScreen.Width * RESOLUTION),
+                maximum = (int)(virtualScreen.Width * RESOLUTION),
                 resolution = 100000
             };
             input_absinfo* xPtr = &xAbs;
@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             var yAbs = new input_absinfo
             {
-                maximum = (int)(DesktopInterop.VirtualScreen.Height * RESOLUTION),
+                maximum = (int)(virtualScreen.Height * RESOLUTION),
                 resolution = 100000
             };
             input_absinfo* yPtr = &yAbs;
