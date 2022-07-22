@@ -31,10 +31,7 @@ namespace OpenTabletDriver.UX
             Width = 1100;
             Height = 800;
 
-            Content = _placeholder = new Placeholder
-            {
-                Text = "Connecting to OpenTabletDriver Daemon..."
-            };
+            Content = _placeholder = new Placeholder("Connecting to OpenTabletDriver Daemon...");
 
             TitleBinding.BindDataContext((App a) => a.MainFormTitle);
 

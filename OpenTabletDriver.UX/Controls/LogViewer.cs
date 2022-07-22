@@ -139,7 +139,6 @@ namespace OpenTabletDriver.UX.Controls
                 if (m.Level >= LogLevel.Info)
                     _list.SelectedRow = _logMessages.Count - 2;
 
-                // TODO: Improve message notifications
                 if (m.Notification)
                     MessageBox.Show(m.Group, m.Message);
             });

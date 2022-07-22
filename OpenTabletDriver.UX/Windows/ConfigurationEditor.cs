@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using Eto;
@@ -7,31 +7,30 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Devices;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Numeric;
+using OpenTabletDriver.UX.Dialogs;
 using OpenTabletDriver.UX.Utilities;
-using Container = Eto.Forms.Container;
 
 namespace OpenTabletDriver.UX.Windows
 {
     public sealed class ConfigurationEditor : DesktopForm
     {
         private readonly IDriverDaemon _driverDaemon;
+        private readonly App _app;
         private readonly ListBox<TabletConfiguration> _configsList;
 
-        // TODO: Add, Remove, Generate buttons
-        public ConfigurationEditor(IDriverDaemon driverDaemon)
+        public ConfigurationEditor(IDriverDaemon driverDaemon, App app)
         {
             _driverDaemon = driverDaemon;
+            _app = app;
 
             Title = "Configuration Editor";
 
-            var placeholder = new Placeholder
-            {
-                Text = "No configuration selected."
-            };
+            var placeholder = new Placeholder("No configuration selected.");
 
             var splitter = new Splitter
             {
@@ -45,16 +44,13 @@ namespace OpenTabletDriver.UX.Windows
 
             Content = splitter;
 
-            var digitizerEditors = new StackLayout
+            ToolBar = new ToolBar
             {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Spacing = 5,
                 Items =
                 {
-                    TextBoxFor((TabletConfiguration c) => c.Specifications.Digitizer!.Width),
-                    TextBoxFor((TabletConfiguration c) => c.Specifications.Digitizer!.Height),
-                    TextBoxFor((TabletConfiguration c) => c.Specifications.Digitizer!.MaxX),
-                    TextBoxFor((TabletConfiguration c) => c.Specifications.Digitizer!.MaxY)
+                    new AppCommand("Add", AddConfiguration),
+                    new AppCommand("Remove", RemoveConfiguration),
+                    new AppCommand("Generate", GenerateConfiguration)
                 }
             };
 
@@ -182,6 +178,59 @@ namespace OpenTabletDriver.UX.Windows
             LoadConfigurations(appInfo.ConfigurationDirectory);
         }
 
+        /// <summary>
+        /// Adds a new configuration to the list.
+        /// </summary>
+        private void AddConfiguration()
+        {
+            var configs = (IList<TabletConfiguration>) _configsList.DataStore;
+            var newConfig = new TabletConfiguration
+            {
+                Name = "New Configuration"
+            };
+
+            configs.Add(newConfig);
+            _configsList.SelectedIndex = configs.IndexOf(newConfig);
+        }
+
+        /// <summary>
+        /// Removes the selected configuration from the list.
+        /// </summary>
+        private void RemoveConfiguration()
+        {
+            var configs = (IList<TabletConfiguration>) _configsList.DataStore;
+            configs.Remove(_configsList.SelectedItem);
+        }
+
+        /// <summary>
+        /// Generates a new configuration from a device selected in a dialog.
+        /// </summary>
+        private void GenerateConfiguration()
+        {
+            var dialog = _app.ShowDialog<DeviceDialog>(this);
+            if (dialog.Result is not IDeviceEndpoint device)
+                return;
+
+            var newConfig = new TabletConfiguration
+            {
+                Name = $"{device.Manufacturer} {device.FriendlyName ?? device.ProductName}",
+                DigitizerIdentifiers = new List<DeviceIdentifier>
+                {
+                    new DeviceIdentifier
+                    {
+                        VendorID = device.VendorID,
+                        ProductID = device.ProductID,
+                        InputReportLength = (uint) device.InputReportLength,
+                        OutputReportLength = (uint) device.OutputReportLength
+                    }
+                }
+            };
+
+            var configs = (IList<TabletConfiguration>) _configsList.DataStore;
+            configs.Add(newConfig);
+            _configsList.SelectedIndex = configs.IndexOf(newConfig);
+        }
+
         private Container SpecificationEditorsFor<T>(Expression<Func<TabletConfiguration, T?>> expression) where T : class, new()
         {
             var type = typeof(T);
@@ -202,17 +251,25 @@ namespace OpenTabletDriver.UX.Windows
 
             foreach (var property in type.GetProperties())
             {
+                if (!property.PropertyType.IsValueType)
+                    continue;
+
+                var defaultValue = Activator.CreateInstance(property.PropertyType);
+
                 var binding = new DelegateBinding<string?>(
                     () =>
                     {
                         if (DataContext != null && get() is T t)
                             return property.GetValue(t)?.ToString();
-                        return string.Empty;
+                        return defaultValue?.ToString() ?? string.Empty;
                     },
                     v =>
                     {
                         if (get() is T t)
-                            property.SetValue(t, Convert.ChangeType(v, property.PropertyType));
+                        {
+                            var value = string.IsNullOrWhiteSpace(v) ? defaultValue : v;
+                            property.SetValue(t, Convert.ChangeType(value, property.PropertyType));
+                        }
                     },
                     h => DataContextChanged += h,
                     h => DataContextChanged -= h
@@ -220,8 +277,19 @@ namespace OpenTabletDriver.UX.Windows
 
                 var textBox = new TextBox();
                 textBox.TextBinding.Bind(binding);
+                textBox.TextChanging += (s, e) =>
+                {
+                    try
+                    {
+                        _ = Convert.ChangeType(e.NewText, property.PropertyType);
+                    }
+                    catch
+                    {
+                        e.Cancel = true;
+                    }
+                };
 
-                var name = property.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? property.Name;
+                var name = property.GetCustomAttribute<System.ComponentModel.DisplayNameAttribute>()?.DisplayName ?? property.Name;
                 var control = new LabeledGroup(name, textBox);
 
                 editors.Items.Add(control);
@@ -429,7 +497,7 @@ namespace OpenTabletDriver.UX.Windows
 
             var keyBox = new TextBox();
             keyBox.TextBinding.Bind(keyBinding);
-            keyBox.TextChanging += (sender, args) =>
+            keyBox.TextChanging += (_, args) =>
             {
                 var dict = get((TabletConfiguration) DataContext);
                 if (dict.ContainsKey(args.NewText))
@@ -601,12 +669,12 @@ namespace OpenTabletDriver.UX.Windows
 
             _configsList.Enabled = false;
 
-            var configs = EnumerateConfigurations(path).ToList();
+            var configs = new ObservableCollection<TabletConfiguration>(EnumerateConfigurations(path));
             _configsList.DataStore = configs;
 
             _configsList.Enabled = true;
             if (oldValue is TabletConfiguration config)
-                _configsList.SelectedIndex = configs.FindIndex(c => c?.Name == config.Name);
+                _configsList.SelectedIndex = configs.IndexOf(configs.First(c => c.Name == config.Name));
         }
 
         /// <summary>
@@ -639,7 +707,7 @@ namespace OpenTabletDriver.UX.Windows
         /// Enumerates configurations from a directory path.
         /// </summary>
         /// <param name="path">The directory to enumerate for <see cref="TabletConfiguration"/>s.</param>
-        private static IEnumerable<TabletConfiguration?> EnumerateConfigurations(string path)
+        private static IEnumerable<TabletConfiguration> EnumerateConfigurations(string path)
         {
             var dir = new DirectoryInfo(path);
             if (!dir.Exists)

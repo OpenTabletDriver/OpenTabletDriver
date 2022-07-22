@@ -46,14 +46,12 @@ namespace OpenTabletDriver.UX.Controls.Editors
             }
             else
             {
-                Content = new Placeholder
+                var button = new Button((_, _) => app.ShowWindow<Windows.PluginManager>())
                 {
-                    Text = "No plugins of this type are installed.",
-                    ExtraContent = new Button((_, _) => app.ShowWindow<Windows.PluginManager>())
-                    {
-                        Text = "Show plugin manager..."
-                    }
+                    Text = "Show plugin manager..."
                 };
+
+                Content = new Placeholder("No plugins of this type are installed.", button);
             }
         }
     }

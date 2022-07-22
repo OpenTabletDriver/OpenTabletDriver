@@ -25,10 +25,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 Text = "Info",
                 Padding = 5,
-                Content = new Placeholder
-                {
-                    Text = "No tablet is selected. Make sure your tablet is connected."
-                }
+                Content = new Placeholder("No tablet is selected. Make sure your tablet is connected.")
             };
 
             var tabControl = new TabControl

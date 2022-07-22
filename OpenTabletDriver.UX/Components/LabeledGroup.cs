@@ -3,7 +3,7 @@ using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Components
 {
-    public class LabeledGroup : DesktopPanel
+    public class LabeledGroup : Panel
     {
         public LabeledGroup(string text, Control? primaryControl, params StackLayoutItem[] additionalControls)
         {

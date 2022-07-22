@@ -13,10 +13,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
         {
             _controlBuilder = controlBuilder;
 
-            Content = _placeholder = new Placeholder
-            {
-                Text = "No plugin selected."
-            };
+            Content = _placeholder = new Placeholder("No plugin selected.");
         }
 
         protected override void OnDataContextChanged(EventArgs e)

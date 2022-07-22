@@ -27,10 +27,7 @@ namespace OpenTabletDriver.UX.Windows
 
             Title = "Plugin Manager";
 
-            var placeholder = new Placeholder
-            {
-                Text = "No plugin is selected."
-            };
+            var placeholder = new Placeholder("No plugin is selected.");
 
             var splitter = new Splitter
             {
@@ -139,19 +136,19 @@ namespace OpenTabletDriver.UX.Windows
             _remotePlugins = remoteQuery.ToImmutableArray();
 
             var remote = from meta in _remotePlugins
-                where meta.IsSupportedBy(appVersion)
-                where !_installedPlugins.Any(meta.Match)
-                orderby meta.Name
-                select meta;
+                         where meta.IsSupportedBy(appVersion)
+                         where !_installedPlugins.Any(meta.Match)
+                         orderby meta.Name
+                         select meta;
 
             var plugins = from meta in _installedPlugins.Concat(remote)
-                orderby meta.PluginVersion descending
-                group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
+                          orderby meta.PluginVersion descending
+                          group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
 
             var query = from plugin in plugins
-                let meta = plugin.FirstOrDefault()
-                orderby meta.Name, _installedPlugins.Any(m => m.Match(meta)) descending, _installedPlugins.Any(meta.Match)
-                select meta;
+                        let meta = plugin.FirstOrDefault()
+                        orderby meta.Name, _installedPlugins.Any(m => m.Match(meta)) descending, _installedPlugins.Any(meta.Match)
+                        select meta;
 
             var store = query.ToImmutableList();
 
@@ -169,7 +166,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             Content.Enabled = false;
 
-            var plugin = (PluginMetadata) DataContext;
+            var plugin = (PluginMetadata)DataContext;
             await _daemon.DownloadPlugin(plugin);
 
             Content.Enabled = true;
@@ -183,7 +180,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             Content.Enabled = false;
 
-            var plugin = (PluginMetadata) DataContext;
+            var plugin = (PluginMetadata)DataContext;
             await _daemon.UninstallPlugin(plugin);
 
             Content.Enabled = true;

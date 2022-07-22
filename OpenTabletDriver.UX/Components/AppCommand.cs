@@ -4,32 +4,33 @@ namespace OpenTabletDriver.UX.Components
 {
     public class AppCommand : Command
     {
-        public AppCommand(string menuText)
+        public AppCommand(string text)
         {
-            MenuText = menuText;
+            MenuText = text;
+            ToolBarText = text;
         }
 
-        public AppCommand(string menuText, Keys shortcut) : this(menuText)
+        public AppCommand(string text, Keys shortcut) : this(text)
         {
             Shortcut = shortcut;
         }
 
-        public AppCommand(string menuText, Action handler) : this(menuText)
+        public AppCommand(string text, Action handler) : this(text)
         {
             AddActionHandler(handler);
         }
 
-        public AppCommand(string menuText, Func<Task> handler) : this(menuText)
+        public AppCommand(string text, Func<Task> handler) : this(text)
         {
             AddTaskHandler(handler);
         }
 
-        public AppCommand(string menuText, Action handler, Keys shortcut) : this(menuText, shortcut)
+        public AppCommand(string text, Action handler, Keys shortcut) : this(text, shortcut)
         {
             AddActionHandler(handler);
         }
 
-        public AppCommand(string menuText, Func<Task> handler, Keys shortcut) : this(menuText, shortcut)
+        public AppCommand(string text, Func<Task> handler, Keys shortcut) : this(text, shortcut)
         {
             AddTaskHandler(handler);
         }

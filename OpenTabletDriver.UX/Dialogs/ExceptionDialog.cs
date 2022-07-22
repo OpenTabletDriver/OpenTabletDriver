@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Dialogs
 
             var okButton = new Button((_, _) => Close())
             {
-                Text = "OK"
+                Text = "Ok"
             };
 
             Content = new StackLayout
