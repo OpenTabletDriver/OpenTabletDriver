@@ -429,9 +429,10 @@ namespace OpenTabletDriver.Daemon
 
         public async Task<UpdateInfo?> GetUpdateInfo()
         {
-            if (await _updater?.GetInfo()! is UpdateInfo updateInfo)
-                return updateInfo;
-            return null;
+            if (_updater == null)
+                return null;
+
+            return await _updater.GetInfo();
         }
 
         public Task InstallUpdate()

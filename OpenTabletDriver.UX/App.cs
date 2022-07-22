@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.Text;
 using Eto.Forms;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Tablet;
+using Process = System.Diagnostics.Process;
 
 namespace OpenTabletDriver.UX
 {
@@ -84,12 +86,15 @@ namespace OpenTabletDriver.UX
             set
             {
                 RaiseAndSetIfChanged(ref _tablets, value);
-                var title = DefaultTitle;
 
+                var sb = new StringBuilder(DefaultTitle);
                 if (_tablets.Any())
-                    title += " - " + string.Join(", ", _tablets.Select(t => t.Name).Take(3));
+                {
+                    sb.Append(" - ");
+                    sb.AppendJoin(", ", _tablets.Select(t => t.Name).Take(3));
+                }
 
-                MainFormTitle = title;
+                MainFormTitle = sb.ToString();
             }
             get => _tablets;
         }
@@ -241,16 +246,19 @@ namespace OpenTabletDriver.UX
             Settings = await GetDriverDaemon().ResetSettings();
         }
 
+        /// <inheritdoc cref="ShowWindow{TWindow}(object[])"/>
+        public void ShowWindow<TWindow>() where TWindow : Form => ShowWindow<TWindow>(Array.Empty<object>());
+
         /// <summary>
         /// Shows an instance of a window.
         /// </summary>
         /// <typeparam name="TWindow">The window type to show.</typeparam>
-        public void ShowWindow<TWindow>() where TWindow : Form
+        public void ShowWindow<TWindow>(params object[] deps) where TWindow : Form
         {
             var window = Application.Instance.Windows.FirstOrDefault(w => w is TWindow);
             if (window == null)
             {
-                _serviceProvider.GetOrCreateInstance<TWindow>().Show();
+                _serviceProvider.GetOrCreateInstance<TWindow>(deps).Show();
             }
             else
             {
@@ -299,6 +307,8 @@ namespace OpenTabletDriver.UX
 
         /// <inheritdoc cref="Open"/>
         protected abstract void OpenInternal(string uri, bool isDirectory);
+
+        public abstract bool CanUpdate { get; }
 
         /// <summary>
         /// The event handler for all client <see cref="Log.Write(OpenTabletDriver.Logging.LogMessage)"/> calls.

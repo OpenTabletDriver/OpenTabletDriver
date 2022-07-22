@@ -60,7 +60,7 @@ namespace OpenTabletDriver.Desktop
             if (serviceProvider.GetService<T>() is T service)
                 return service;
 
-            return CreateInstance<T>(serviceProvider, additionalDependencies);
+            return serviceProvider.CreateInstance<T>(additionalDependencies);
         }
     }
 }

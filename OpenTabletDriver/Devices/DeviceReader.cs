@@ -108,7 +108,7 @@ namespace OpenTabletDriver.Devices
                 while (Connected)
                 {
                     var data = ReportStream!.Read();
-                     if (Parser.Parse(data) is T report)
+                    if (Parser.Parse(data) is T report)
                         OnReport(report);
 
                     // We create a clone of the report to avoid data being modified on the tablet debugger.

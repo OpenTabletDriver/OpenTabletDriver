@@ -28,13 +28,10 @@ namespace OpenTabletDriver
         {
             var origin = GetPosition();
             var matrix = Matrix3x2.CreateTranslation(-origin);
-            matrix *= Matrix3x2.CreateRotation((float) (Rotation * Math.PI / 180));
+            matrix *= Matrix3x2.CreateRotation((float)(Rotation * Math.PI / 180));
             matrix *= Matrix3x2.CreateTranslation(origin);
 
-            var transformedCorners = from corner in base.GetCorners()
-                select Vector2.Transform(corner, matrix);
-
-            return transformedCorners.ToArray();
+            return base.GetCorners().Select(c => Vector2.Transform(c, matrix)).ToArray();
         }
 
         public override string ToString() => $"[{Width}x{Height}@{GetPosition()}:{Rotation}°]";

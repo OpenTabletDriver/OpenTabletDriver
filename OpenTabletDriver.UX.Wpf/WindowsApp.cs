@@ -24,6 +24,8 @@ namespace OpenTabletDriver.UX.Wpf
             }
         }
 
+        public override bool CanUpdate => true;
+
         public override void StartDaemon()
         {
             // TODO: Add daemon watchdog

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Windows;
@@ -148,6 +149,9 @@ namespace OpenTabletDriver.UX
 
             _app.StartDaemon();
             await _rpc.Connect();
+
+            if (await _rpc.Instance!.GetUpdateInfo() is UpdateInfo updateInfo)
+                _app.ShowWindow<UpdateForm>(updateInfo);
         }
 
         /// <summary>
