@@ -22,8 +22,6 @@ namespace OpenTabletDriver.Desktop.Contracts
         event EventHandler<DebugReportData> DeviceReport;
         event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
 
-        Task Initialize();
-
         Task WriteMessage(LogMessage message);
 
         Task LoadPlugins();
@@ -45,7 +43,7 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<Settings> ResetSettings();
 
         Task ApplyPreset(string name);
-        Task<IEnumerable<string>> GetPresets();
+        Task<IReadOnlyCollection<string>> GetPresets();
         Task SavePreset(string name, Settings settings);
 
         Task<IAppInfo> GetApplicationInfo();
@@ -65,5 +63,6 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<UpdateInfo?> GetUpdateInfo();
         Task InstallUpdate();
         Task<IEnumerable<PluginMetadata>> GetInstalledPlugins();
+        event EventHandler<Settings>? SettingsChanged;
     }
 }

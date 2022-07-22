@@ -107,6 +107,7 @@ namespace OpenTabletDriver.UX.Windows
                 Text = "&File",
                 Items =
                 {
+                    new AppCommand("Install...", InstallDialog),
                     new AppCommand("Refresh", Refresh, Application.Instance.CommonModifier | Keys.R)
                 }
             };
@@ -187,6 +188,30 @@ namespace OpenTabletDriver.UX.Windows
 
             Content.Enabled = true;
             await Refresh();
+        }
+
+        /// <summary>
+        /// Shows an install dialog for a plugin zip file.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private async Task InstallDialog()
+        {
+            var dialog = new OpenFileDialog
+            {
+                Title = "Install OpenTabletDriver plugin...",
+                CheckFileExists = true,
+                MultiSelect = false,
+                Filters =
+                {
+                    new FileFilter("Plugin", "*.zip")
+                }
+            };
+
+            if (dialog.ShowDialog(this) == DialogResult.Ok)
+            {
+                await _daemon.InstallPlugin(dialog.FileName);
+            }
         }
 
         /// <summary>

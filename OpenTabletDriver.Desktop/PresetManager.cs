@@ -1,67 +1,57 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
+
+#nullable enable
 
 namespace OpenTabletDriver.Desktop
 {
     public class PresetManager : IPresetManager
     {
-        public PresetManager(IAppInfo appInfo)
-        {
-            _presetDirectory = new DirectoryInfo(appInfo.PresetDirectory);
-        }
-
-        private readonly DirectoryInfo _presetDirectory;
+        private readonly string _dir;
 
         private const string FILE_EXTENSION = ".json";
+        private const string FILE_FILTER = $"*{FILE_EXTENSION}";
 
-        private List<Preset> Presets { get; } = new List<Preset>();
-
-        public IReadOnlyCollection<Preset> GetPresets() => Presets;
-
-        public Preset FindPreset(string presetName)
+        public PresetManager(IAppInfo appInfo)
         {
-            return Presets.Find(preset => preset.Name == presetName);
+            _dir = appInfo.PresetDirectory;
         }
 
-        private void Load()
-        {
-            foreach (var file in _presetDirectory.EnumerateFiles("*.json"))
-            {
-                var settings = Settings.Deserialize(file);
-                if (settings != null)
-                {
-                    Presets.Add(new Preset(file.Name.Replace(file.Extension, string.Empty), settings));
-                    Log.Write("Settings", $"Loaded preset '{file.Name}'", LogLevel.Info);
-                }
-                else
-                {
-                    Log.Write("Settings", $"Invalid settings file '{file.Name}' attempted to load into presets", LogLevel.Warning);
-                }
-            }
-        }
+        public IReadOnlyCollection<string> GetPresets() => EnumerateDir().ToImmutableList();
 
-        public void Refresh()
+        public Preset? LoadPreset(string name)
         {
-            Presets.Clear();
-            Load();
-            Log.Write("Settings", $"Presets have been refreshed. Loaded {Presets.Count} presets.", LogLevel.Info);
+            var path = Path.Join(_dir, name + FILE_EXTENSION);
+            var file = new FileInfo(path);
+
+            if (!file.Exists)
+                return null;
+
+            var settings = Serialization.Deserialize<Settings>(file);
+            return new Preset(name, settings);
         }
 
         public void Save(string name, Settings settings)
         {
-            if (!_presetDirectory.Exists)
-                _presetDirectory.Create();
+            var dir = new DirectoryInfo(_dir);
+            if (!dir.Exists)
+                dir.Create();
 
-            var files = _presetDirectory.EnumerateFiles("*" + FILE_EXTENSION);
+            var files = dir.EnumerateFiles(FILE_FILTER);
             var oldFile = files.FirstOrDefault(f => f.Name.Replace(FILE_EXTENSION, string.Empty) == name);
-
             oldFile?.Delete();
-            var path = Path.Join(_presetDirectory.FullName, name + FILE_EXTENSION);
-            Serialization.Serialize(File.Create(path), settings);
 
-            Refresh();
+            var path = Path.Join(dir.FullName, name + FILE_EXTENSION);
+            Serialization.Serialize(File.Create(path), settings);
+        }
+
+        private IEnumerable<string> EnumerateDir()
+        {
+            return Directory.EnumerateFiles(_dir, FILE_FILTER, SearchOption.AllDirectories)
+                .Select(file => Path.GetFileName(file).Replace(FILE_EXTENSION, string.Empty));
         }
     }
 }

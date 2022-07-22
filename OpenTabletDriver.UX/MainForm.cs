@@ -1,13 +1,16 @@
 using System.Diagnostics;
+using System.Linq.Expressions;
 using Eto;
 using Eto.Forms;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Dialogs;
 using OpenTabletDriver.UX.Windows;
 
 namespace OpenTabletDriver.UX
@@ -37,17 +40,15 @@ namespace OpenTabletDriver.UX
 
             var modifier = Application.Instance.CommonModifier;
 
-            var loadSettings = new AppCommand("Load settings...", LoadSettingsDialog, modifier | Keys.O);
-            var saveSettings = new AppCommand("Save settings", _app.SaveSettings, modifier | Keys.S);
-            var saveSettingsAs = new AppCommand("Save settings as...", SaveSettingsDialog, modifier | Keys.Shift | Keys.S);
-            var applySettings = new AppCommand("Apply settings", _app.ApplySettings, modifier | Keys.Enter);
-            var discardSettings = new AppCommand("Discard settings", _app.DiscardSettings);
-            var resetDefaults = new AppCommand("Reset to defaults", _app.ResetSettings, modifier | Keys.Shift | Keys.R);
-
-            // TODO: Presets menu items
             var presetsMenu = new ButtonMenuItem
             {
-                Text = "Presets"
+                Text = "Presets",
+                Items =
+                {
+                    new AppCommand("Save preset...", SavePresetDialog),
+                    new AppCommand("Open presets directory", () => OpenAppDirectory(a => a.PresetDirectory)),
+                    _controlBuilder.Build<PresetsMenuItem>()
+                }
             };
 
             var fileMenu = new ButtonMenuItem
@@ -55,58 +56,47 @@ namespace OpenTabletDriver.UX
                 Text = "&File",
                 Items =
                 {
-                    loadSettings,
-                    saveSettings,
-                    saveSettingsAs,
-                    applySettings,
-                    discardSettings,
-                    resetDefaults,
+                    new AppCommand("Load settings...", LoadSettingsDialog, modifier | Keys.O),
+                    new AppCommand("Save settings", _app.SaveSettings, modifier | Keys.S),
+                    new AppCommand("Save settings as...", SaveSettingsDialog, modifier | Keys.Shift | Keys.S),
+                    new AppCommand("Apply settings", _app.ApplySettings, modifier | Keys.Enter),
+                    new AppCommand("Discard settings", _app.DiscardSettings),
+                    new AppCommand("Reset to defaults", _app.ResetSettings, modifier | Keys.Shift | Keys.R),
                     new SeparatorMenuItem(),
                     presetsMenu
                 }
             };
-
-            var detectTablet = new AppCommand("Detect tablet", DetectTablets, modifier | Keys.D);
-            var tabletDebugger = new AppCommand("Tablet debugger...", _app.ShowWindow<TabletDebugger>, modifier | Keys.Shift | Keys.D);
-            var configurationEditor = new AppCommand("Configuration editor...", _app.ShowWindow<ConfigurationEditor>, modifier | Keys.Shift | Keys.E);
 
             var tabletsMenu = new ButtonMenuItem
             {
                 Text = "Tablets",
                 Items =
                 {
-                    detectTablet,
-                    tabletDebugger,
-                    configurationEditor,
+                    new AppCommand("Detect tablet", DetectTablets, modifier | Keys.D),
+                    new AppCommand("Tablet debugger...", _app.ShowWindow<TabletDebugger>, modifier | Keys.Shift | Keys.D),
+                    new AppCommand("Configuration editor...", _app.ShowWindow<ConfigurationEditor>, modifier | Keys.Shift | Keys.E),
                 }
             };
-
-            var pluginManager = new AppCommand("Plugin manager...", _app.ShowWindow<PluginManager>, modifier | Keys.P);
 
             var pluginsMenu = new ButtonMenuItem
             {
                 Text = "Plugins",
                 Items =
                 {
-                    pluginManager
+                    new AppCommand("Plugin manager...", _app.ShowWindow<PluginManager>, modifier | Keys.P),
+                    new AppCommand("Open plugin directory", () => OpenAppDirectory(a => a.PluginDirectory))
                 }
             };
-
-            var exportDiagnostics = new AppCommand("Export diagnostics...", ExportDiagnosticsDialog, modifier | Keys.E);
-            var showWiki = new AppCommand("OpenTabletDriver wiki...", () => _app.Open(Metadata.WIKI_URL));
 
             var helpMenu = new ButtonMenuItem
             {
                 Text = "&Help",
                 Items =
                 {
-                    exportDiagnostics,
-                    showWiki
+                    new AppCommand("Export diagnostics...", ExportDiagnosticsDialog, modifier | Keys.E),
+                    new AppCommand("OpenTabletDriver wiki...", () => _app.Open(Metadata.WIKI_URL))
                 }
             };
-
-            var reconnect = new AppCommand("Reconnect to daemon", Reconnect);
-            var debugBreak = new AppCommand("Debugger break", Debugger.Break);
 
             var debugMenu = new ButtonMenuItem
             {
@@ -114,13 +104,10 @@ namespace OpenTabletDriver.UX
                 Visible = Debugger.IsAttached,
                 Items =
                 {
-                    reconnect,
-                    debugBreak
+                    new AppCommand("Reconnect to daemon", Reconnect),
+                    new AppCommand("Debugger break", Debugger.Break)
                 }
             };
-
-            var quitCommand = new AppCommand("Quit", () => App.Exit(), modifier | Keys.Q);
-            var aboutCommand = new AppCommand("About...", () => serviceProvider.GetRequiredService<AboutDialog>().ShowDialog(this), Keys.F1);
 
             Menu = new MenuBar
             {
@@ -132,8 +119,8 @@ namespace OpenTabletDriver.UX
                     helpMenu,
                     debugMenu
                 },
-                QuitItem = quitCommand,
-                AboutItem = aboutCommand
+                QuitItem = new AppCommand("Quit", () => App.Exit(), modifier | Keys.Q),
+                AboutItem = new AppCommand("About...", () => serviceProvider.GetRequiredService<AboutDialog>().ShowDialog(this), Keys.F1)
             };
 
             InitializeAsync().Run();
@@ -240,6 +227,32 @@ namespace OpenTabletDriver.UX
                 var diagnostics = await _rpc.Instance!.GetDiagnostics();
                 Serialization.Serialize(new FileInfo(path), diagnostics);
             }
+        }
+
+        /// <summary>
+        /// Prompts to save a preset.
+        /// </summary>
+        private async Task SavePresetDialog()
+        {
+            var dialog = new StringDialog
+            {
+                Title = "Save OpenTabletDriver preset..."
+            };
+
+            if (await dialog.ShowModalAsync(this) is string name)
+            {
+                await _rpc.Instance!.SavePreset(name, _app.Settings);
+            }
+        }
+
+        /// <summary>
+        /// Opens a directory in the preferred file manager.
+        /// </summary>
+        /// <param name="getMember">A function pointing to the application directory.</param>
+        private async Task OpenAppDirectory(Func<IAppInfo, string> getMember)
+        {
+            var appInfo = await _rpc.Instance!.GetApplicationInfo();
+            _app.Open(getMember(appInfo), true);
         }
 
         /// <summary>

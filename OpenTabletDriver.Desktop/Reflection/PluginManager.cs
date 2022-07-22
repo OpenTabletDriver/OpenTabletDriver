@@ -259,11 +259,11 @@ namespace OpenTabletDriver.Desktop.Reflection
                 file.CopyTo(tempPath, false);
             }
 
-            foreach (DirectoryInfo subdir in source.GetDirectories())
+            foreach (var subDir in source.GetDirectories())
             {
                 CopyDirectory(
-                    new DirectoryInfo(subdir.FullName),
-                    new DirectoryInfo(Path.Combine(destination.FullName, subdir.Name))
+                    new DirectoryInfo(subDir.FullName),
+                    new DirectoryInfo(Path.Combine(destination.FullName, subDir.Name))
                 );
             }
         }

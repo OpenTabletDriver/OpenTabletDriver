@@ -12,7 +12,6 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Tablet;
-using Process = System.Diagnostics.Process;
 
 namespace OpenTabletDriver.UX
 {
@@ -172,6 +171,7 @@ namespace OpenTabletDriver.UX
         {
             var daemon = _serviceProvider.GetRequiredService<IDriverDaemon>();
             daemon.TabletsChanged += (_, t) => Tablets = new ObservableCollection<TabletConfiguration>(t);
+            daemon.SettingsChanged += (_, s) => Settings = s;
 
             Tablets = new ObservableCollection<TabletConfiguration>(await daemon.GetTablets());
             Displays = new ObservableCollection<IDisplay>(await daemon.GetDisplays());
@@ -208,9 +208,6 @@ namespace OpenTabletDriver.UX
                 var daemon = GetDriverDaemon();
                 var settings = Settings.Deserialize(new FileInfo(filePath))!;
                 await daemon.ApplySettings(settings);
-
-                // Synchronize from daemon rather than using the deserialized file
-                Settings = await daemon.GetSettings();
             }
         }
 
@@ -243,7 +240,7 @@ namespace OpenTabletDriver.UX
         /// </summary>
         public async Task ResetSettings()
         {
-            Settings = await GetDriverDaemon().ResetSettings();
+            await GetDriverDaemon().ResetSettings();
         }
 
         /// <inheritdoc cref="ShowWindow{TWindow}(object[])"/>

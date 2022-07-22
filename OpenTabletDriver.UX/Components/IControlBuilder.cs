@@ -11,7 +11,7 @@ namespace OpenTabletDriver.UX.Components
         /// <param name="additionalDependencies">Any additional dependencies to be provided to the constructor.</param>
         /// <typeparam name="T">The control type.</typeparam>
         /// <returns>A built control of <see cref="T"/></returns>
-        T Build<T>(params object[] additionalDependencies) where T : Control;
+        T Build<T>(params object[] additionalDependencies) where T : BindableWidget;
 
         /// <summary>
         /// Generates controls for plugin settings based on the provided type.

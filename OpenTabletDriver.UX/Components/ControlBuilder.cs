@@ -17,7 +17,7 @@ namespace OpenTabletDriver.UX.Components
             _serviceProvider = serviceProvider;
         }
 
-        public T Build<T>(params object[] additionalDependencies) where T : Control
+        public T Build<T>(params object[] additionalDependencies) where T : BindableWidget
         {
             return _serviceProvider.CreateInstance<T>(additionalDependencies);
         }

@@ -100,7 +100,7 @@ namespace OpenTabletDriver.Daemon
             SleepDetection = new SleepDetectionThread(() =>
             {
                 Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Debug);
-                DetectTablets().RunSynchronously();
+                _ = DetectTablets();
             });
 
             SleepDetection.Start();
@@ -110,6 +110,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<LogMessage>? Message;
         public event EventHandler<DebugReportData>? DeviceReport;
         public event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
+        public event EventHandler<Settings>? SettingsChanged;
 
         private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { get; } = new Collection<ITool>();
@@ -216,13 +217,11 @@ namespace OpenTabletDriver.Daemon
 
                 if (device.OutputMode is IOutputMode outputMode)
                 {
-                    // TODO: Rework BindingHandler to proper pipeline element without this constructor
                     SetOutputModeSettings(device, outputMode, profile);
 
                     var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
-                    var bindingHandler =
-                        _serviceProvider.CreateInstance<BindingHandler>(device, profile.BindingSettings,
-                            mouseButtonHandler);
+                    var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(
+                        device, profile.BindingSettings, mouseButtonHandler);
 
                     var lastElement = outputMode.Elements?.LastOrDefault() ??
                                       outputMode as IPipelineElement<IDeviceReport>;
@@ -233,6 +232,8 @@ namespace OpenTabletDriver.Daemon
             Log.Write("Settings", "Driver is enabled.");
 
             SetToolSettings();
+
+            SettingsChanged?.Invoke(this, _settingsManager.Settings);
 
             return Task.CompletedTask;
         }
@@ -332,17 +333,15 @@ namespace OpenTabletDriver.Daemon
 
         public async Task ApplyPreset(string name)
         {
-            _presetManager.Refresh();
-            if (_presetManager.FindPreset(name) is Preset preset)
+            if (_presetManager.LoadPreset(name) is Preset preset)
                 await ApplySettings(preset.Settings);
             else
-                Log.Write("Presets", $"Unable apply preset \"{name}\" as it could not be found.");
+                Log.Write("Presets", $"Unable apply preset \"{name}\" as it does not exist.", LogLevel.Error);
         }
 
-        public Task<IEnumerable<string>> GetPresets()
+        public Task<IReadOnlyCollection<string>> GetPresets()
         {
-            _presetManager.Refresh();
-            return Task.FromResult(_presetManager.GetPresets().Select(p => p.Name));
+            return Task.FromResult(_presetManager.GetPresets());
         }
 
         public Task SavePreset(string name, Settings settings)
