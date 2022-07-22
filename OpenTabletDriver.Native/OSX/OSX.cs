@@ -48,6 +48,13 @@ namespace OpenTabletDriver.Native.OSX
             [In, Out] CGDirectDisplayID[] activeDisplays, out uint displayCount);
 
         [DllImport(Quartz)]
+        public extern static CGError CGGetOnlineDisplayList(uint maxDisplays,
+            [In, Out] CGDirectDisplayID[]? onlineDisplays, out uint displayCount);
+
+        [DllImport(Quartz)]
         public extern static CGRect CGDisplayBounds(CGDirectDisplayID displayID);
+
+        [DllImport(Quartz)]
+        public extern static CGDirectDisplayID CGDisplayMirrorsDisplay(CGDirectDisplayID displayID);
     }
 }

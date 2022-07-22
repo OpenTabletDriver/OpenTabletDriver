@@ -63,9 +63,16 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
         private static IEnumerable<CGRect> GetDisplayBounds()
         {
-            var displayIdBuf = new uint[10];
-            CGGetActiveDisplayList(10, displayIdBuf, out var count);
-            var displayIds = displayIdBuf.Take((int)count);
+            CGGetOnlineDisplayList(0, null, out var count);
+
+            var displayIdBuf = new uint[count];
+
+            CGGetOnlineDisplayList(count, displayIdBuf, out count);
+
+            var displayIds = displayIdBuf
+                .Take((int)count)
+                .Where(id => CGDisplayMirrorsDisplay(id) == 0);
+
             return from id in displayIds
                    select CGDisplayBounds(id);
         }
