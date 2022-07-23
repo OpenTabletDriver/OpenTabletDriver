@@ -1,7 +1,6 @@
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Output;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Dialogs;
 

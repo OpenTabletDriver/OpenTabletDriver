@@ -1,22 +1,26 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop.RPC.Messages;
 using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
     public class RpcHost<T> where T : class
     {
-        private JsonRpc _rpc;
+        private readonly SynchronizationContext _synchronizationContext;
         private readonly string _pipeName;
+        private JsonRpc _rpc;
 
-        public event EventHandler<bool> ConnectionStateChanged;
-
-        public RpcHost(string pipeName)
+        public RpcHost(SynchronizationContext synchronizationContext, string pipeName)
         {
+            _synchronizationContext = synchronizationContext;
             _pipeName = pipeName;
         }
+
+        public event EventHandler<bool> ConnectionStateChanged;
 
         public async Task Run(T host)
         {
@@ -29,7 +33,12 @@ namespace OpenTabletDriver.Desktop.RPC
                     try
                     {
                         ConnectionStateChanged?.Invoke(this, true);
-                        _rpc = Utilities.Host(stream, host);
+
+                        _rpc = new JsonRpc(new MessageHandler(stream), host)
+                        {
+                            SynchronizationContext = _synchronizationContext
+                        };
+
                         _rpc.StartListening();
                         await _rpc.Completion;
                     }

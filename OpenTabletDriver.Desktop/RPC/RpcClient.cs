@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Pipes;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop.RPC.Messages;
 using StreamJsonRpc;
 
 #nullable enable
@@ -34,7 +35,7 @@ namespace OpenTabletDriver.Desktop.RPC
             if (result == timeout)
                 throw new TimeoutException($"Connecting to daemon failed after {_connectTimeout.Seconds} seconds.");
 
-            _rpc = Utilities.Client(_stream);
+            _rpc = new JsonRpc(new MessageHandler(_stream));
             _rpc.Disconnected += (_, _) => OnDisconnected();
 
             Instance = _rpc.Attach<T>();

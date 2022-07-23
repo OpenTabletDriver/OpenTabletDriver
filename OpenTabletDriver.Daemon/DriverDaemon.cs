@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Components;
@@ -33,6 +35,7 @@ namespace OpenTabletDriver.Daemon
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IDriver _driver;
+        private readonly SynchronizationContext _synchronizationContext;
         private readonly ICompositeDeviceHub _deviceHub;
         private readonly IAppInfo _appInfo;
         private readonly ISettingsManager _settingsManager;
@@ -44,6 +47,7 @@ namespace OpenTabletDriver.Daemon
         public DriverDaemon(
             IServiceProvider serviceProvider,
             IDriver driver,
+            SynchronizationContext synchronizationContext,
             ICompositeDeviceHub deviceHub,
             IAppInfo appInfo,
             ISettingsManager settingsManager,
@@ -54,6 +58,7 @@ namespace OpenTabletDriver.Daemon
         {
             _serviceProvider = serviceProvider;
             _driver = driver;
+            _synchronizationContext = synchronizationContext;
             _deviceHub = deviceHub;
             _appInfo = appInfo;
             _settingsManager = settingsManager;
@@ -73,15 +78,18 @@ namespace OpenTabletDriver.Daemon
                 Message?.Invoke(sender, message);
             };
 
-            _driver.InputDevicesChanged +=
-                (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
-            _deviceHub.DevicesChanged += async (_, args) =>
+            _driver.InputDevicesChanged += (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
+            _deviceHub.DevicesChanged += async (_, e) =>
             {
-                if (args.Additions.Any())
-                {
-                    await DetectTablets();
-                    await ApplySettings(_settingsManager.Settings);
-                }
+                if (!e.Additions.Any())
+                    return;
+
+                // ReSharper disable once AsyncVoidLambda
+                await DetectTablets();
+                await ApplySettings(_settingsManager.Settings);
+                // _synchronizationContext.Post(async _ =>
+                // {
+                // }, this);
             };
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
@@ -202,7 +210,7 @@ namespace OpenTabletDriver.Daemon
 
             _settingsManager.Settings = settings ?? Settings.GetDefaults();
 
-            foreach (var device in _driver.InputDevices)
+            foreach (var device in _driver.InputDevices.ToImmutableArray())
             {
                 var group = device.Configuration.Name;
 

@@ -36,11 +36,11 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            daemon.Message += (_, m) =>
+            daemon.Message += (_, m) => Application.Instance.AsyncInvoke(() =>
             {
                 if (m.Level > LogLevel.Info)
                     tabControl.SelectedPage = logPage;
-            };
+            });
 
             Content = new Panel
             {

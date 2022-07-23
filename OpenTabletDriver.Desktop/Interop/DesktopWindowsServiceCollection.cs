@@ -9,6 +9,7 @@ using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Platform.Display;
+using OpenTabletDriver.Platform.Environment;
 using OpenTabletDriver.Platform.Keyboard;
 using OpenTabletDriver.Platform.Pointer;
 
@@ -22,7 +23,7 @@ namespace OpenTabletDriver.Desktop.Interop
     {
         private static readonly IEnumerable<ServiceDescriptor> PlatformRequiredServices = new[]
         {
-            Transient<EnvironmentHandler, WindowsEnvironmentHandler>(),
+            Transient<IEnvironmentHandler, WindowsEnvironmentHandler>(),
             Transient<EnvironmentDictionary, WindowsEnvironmentDictionary>(),
             Transient<ITimer, WindowsTimer>(),
             Transient<IAbsolutePointer, WindowsAbsolutePointer>(),

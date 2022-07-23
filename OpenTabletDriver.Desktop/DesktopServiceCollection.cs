@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.Threading;
 using Octokit;
 using OpenTabletDriver.ComponentProviders;
 using OpenTabletDriver.Components;
@@ -22,6 +24,7 @@ namespace OpenTabletDriver.Desktop
         private static readonly IEnumerable<ServiceDescriptor> RequiredServices = new[]
         {
             // Core Services
+            Singleton<SynchronizationContext>(_ => new NonConcurrentSynchronizationContext(false)),
             Singleton<IDriver, Driver>(),
             Singleton<IReportParserProvider, ReportParserProvider>(),
             Singleton<IDeviceHubsProvider, DeviceHubsProvider>(p => new DeviceHubsProvider(p)),
@@ -34,7 +37,8 @@ namespace OpenTabletDriver.Desktop
             Singleton<IPluginManager, PluginManager>(),
             Singleton<ISettingsManager, SettingsManager>(),
             Singleton<IPresetManager, PresetManager>(),
-            Singleton<IPluginFactory, PluginFactory>()
+            Singleton<IPluginFactory, PluginFactory>(),
+            Transient(p => p.GetRequiredService<ISettingsManager>().Settings)
         };
 
         public DesktopServiceCollection()

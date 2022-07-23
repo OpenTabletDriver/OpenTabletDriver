@@ -73,7 +73,7 @@ namespace OpenTabletDriver.Daemon
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var daemon = serviceProvider.CreateInstance<DriverDaemon>();
 
-            var rpcHost = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
+            var rpcHost = serviceProvider.CreateInstance<RpcHost<DriverDaemon>>("OpenTabletDriver.Daemon");
             rpcHost.ConnectionStateChanged += (_, state) =>
                 Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
 

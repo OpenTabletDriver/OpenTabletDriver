@@ -3,7 +3,7 @@ using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
-    public class Wacom64BAuxReportParser : IReportParser<IDeviceReport>
+    public class Wacom64bAuxReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {

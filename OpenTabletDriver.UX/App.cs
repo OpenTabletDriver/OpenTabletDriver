@@ -23,8 +23,8 @@ namespace OpenTabletDriver.UX
             Platform = platform;
             Arguments = args;
         }
-
         public void Start()
+
         {
             var command = new RootCommand("OpenTabletDriver UX")
             {
@@ -33,12 +33,31 @@ namespace OpenTabletDriver.UX
                 Handler = CommandHandler.Create(Invoke)
             };
 
+            _app = new Application(Platform)
+            {
+                Name = "OpenTabletDriver"
+            };
+
+            _app.UnhandledException += (_, args) =>
+            {
+                try
+                {
+                    var ex = args.ExceptionObject as Exception;
+                    ex?.Show();
+                }
+                catch (Exception ex2)
+                {
+                    Log.Exception(ex2);
+                }
+            };
+
             var code = command.Invoke(Arguments);
             if (code != 0)
                 Exit(code);
         }
 
         // Some fields are suppressed because they're all initialized in Invoke() rather than the ctor()
+        private Application _app = null!;
         private IServiceProvider _serviceProvider = null!;
         private Settings _settings = null!;
         private ObservableCollection<TabletConfiguration> _tablets = new ObservableCollection<TabletConfiguration>();
@@ -118,24 +137,6 @@ namespace OpenTabletDriver.UX
             var serviceCollection = new UXServiceCollection(this);
             _serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var app = new Application(Platform)
-            {
-                Name = "OpenTabletDriver"
-            };
-
-            app.UnhandledException += (_, args) =>
-            {
-                try
-                {
-                    var ex = args.ExceptionObject as Exception;
-                    ex?.Show();
-                }
-                catch (Exception ex2)
-                {
-                    Log.Exception(ex2);
-                }
-            };
-
             var mainForm = _serviceProvider.GetRequiredService<MainForm>();
             mainForm.Closed += (_, _) => Exit();
 
@@ -152,7 +153,7 @@ namespace OpenTabletDriver.UX
             // Force unobserved exceptions to be considered observed, stops hanging on async exceptions.
             TaskScheduler.UnobservedTaskException += (_, args) => args.SetObserved();
 
-            app.Run(mainForm);
+            _app.Run(mainForm);
         }
 
         /// <summary>
@@ -170,8 +171,8 @@ namespace OpenTabletDriver.UX
         public async Task Synchronize()
         {
             var daemon = _serviceProvider.GetRequiredService<IDriverDaemon>();
-            daemon.TabletsChanged += (_, t) => Tablets = new ObservableCollection<TabletConfiguration>(t);
-            daemon.SettingsChanged += (_, s) => Settings = s;
+            daemon.TabletsChanged += (_, t) => _app.AsyncInvoke(() => Tablets = new ObservableCollection<TabletConfiguration>(t));
+            daemon.SettingsChanged += (_, s) => _app.AsyncInvoke(() => Settings = s);
 
             Tablets = new ObservableCollection<TabletConfiguration>(await daemon.GetTablets());
             Displays = new ObservableCollection<IDisplay>(await daemon.GetDisplays());
