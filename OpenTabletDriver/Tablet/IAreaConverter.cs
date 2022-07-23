@@ -42,6 +42,6 @@ namespace OpenTabletDriver.Tablet
         /// <param name="bottom">The dimension defined by the <see cref="Bottom"/> label.</param>
         /// <param name="right">The dimension defined by the <see cref="Right"/> label.</param>
         /// <returns>An <see cref="AngledArea"/> converted from manufacturer specifications.</returns>
-        AngledArea Convert(InputDevice tablet, double top, double left, double bottom, double right);
+        AngledArea Convert(TabletConfiguration tablet, float top, float left, float bottom, float right);
     }
 }

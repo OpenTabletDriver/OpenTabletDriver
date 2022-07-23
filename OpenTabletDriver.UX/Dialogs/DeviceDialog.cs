@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
-using System.Security.Cryptography;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;

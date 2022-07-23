@@ -13,20 +13,20 @@ namespace OpenTabletDriver.Desktop.Conversion
         public string Bottom => "Bottom";
         public string Right => "Right";
 
-        private static double GetConversionFactor(InputDevice tablet)
+        private static float GetConversionFactor(TabletConfiguration tablet)
         {
-            var digitizer = tablet.Configuration.Specifications.Digitizer;
+            var digitizer = tablet.Specifications.Digitizer!;
             return digitizer.MaxX / digitizer.Width;
         }
 
-        public AngledArea Convert(InputDevice tablet, double top, double left, double bottom, double right)
+        public AngledArea Convert(TabletConfiguration tablet, float top, float left, float bottom, float right)
         {
             var conversionFactor = GetConversionFactor(tablet);
 
-            var width = (float) ((right - left) / conversionFactor);
-            var height = (float) ((bottom - top) / conversionFactor);
-            var offsetX = (float) (width / 2 + left / conversionFactor);
-            var offsetY = (float) (height / 2 + top / conversionFactor);
+            var width = (right - left) / conversionFactor;
+            var height = (bottom - top) / conversionFactor;
+            var offsetX = width / 2 + left / conversionFactor;
+            var offsetY = height / 2 + top / conversionFactor;
 
             return new AngledArea
             {

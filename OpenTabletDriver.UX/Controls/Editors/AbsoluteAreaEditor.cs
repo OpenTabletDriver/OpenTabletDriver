@@ -201,7 +201,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
             };
         }
 
-        private void EnforceAngledAreaToBounds(
+        private static void EnforceAngledAreaToBounds(
             MaskedTextBox<float> source,
             MaskedTextBox<float> inputX,
             MaskedTextBox<float> inputY,
@@ -225,7 +225,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
             }
         }
 
-        private void EnforcePositionToBounds(MaskedTextBox<float> position, float axisSize, float boundsSize)
+        private static void EnforcePositionToBounds(MaskedTextBox<float> position, float axisSize, float boundsSize)
         {
             // This stops the position value from flickering due to rounding errors
             if (axisSize > boundsSize || Math.Abs(axisSize - boundsSize) < 0.0005f)

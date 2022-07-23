@@ -1,21 +1,14 @@
 using Eto.Forms;
+using OpenTabletDriver.UX.Components;
 
 namespace OpenTabletDriver.UX.Dialogs
 {
-    public class StringDialog : Dialog<string?>
+    public class StringDialog : DesktopDialog<string?>
     {
         public StringDialog()
         {
-            var binding = new BindableBinding<StringDialog, string?>(
-                this,
-                c => c.DataContext as string,
-                (d, s) => d.DataContext = s,
-                (d, h) => d.DataContextChanged += h,
-                (d, h) => d.DataContextChanged -= h
-            );
-
             var tb = new TextBox();
-            tb.TextBinding.Bind(binding);
+            tb.TextBinding.Bind(DataContextBinding.Cast<string?>());
 
             Content = new StackLayout
             {
