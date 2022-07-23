@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Console
                 Name = name
             };
 
-            foreach (var command in CommandCollection.Build(this))
+            foreach (var command in new CommandCollection(this))
                 root.AddCommand(command);
 
             return root;

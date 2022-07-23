@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Console
 {
     public class CommandCollection : Collection<Command>
     {
-        private CommandCollection(object source)
+        public CommandCollection(object source)
         {
             var module = source.GetType();
             var commandMethods = from method in module.GetMethods()
@@ -24,62 +24,43 @@ namespace OpenTabletDriver.Console
             }
         }
 
-        public static CommandCollection Build(object source) => new CommandCollection(source);
-
         private static Command BuildCommand(MethodInfo method, object source)
         {
             var name = method.GetCustomAttribute<CommandAttribute>()!.Command;
             var description = GetDescription(method);
-
-            var arguments = GetArguments(method);
-            var options = GetOptions(method);
 
             var command = new Command(name, description)
             {
                 Handler = method.IsStatic ? CommandHandler.Create(method) : CommandHandler.Create(method, source)
             };
 
-            foreach (var argument in arguments)
-                command.AddArgument(argument);
-
-            foreach (var option in options)
-                command.AddOption(option);
+            foreach (var symbol in GetSymbols(method))
+                command.Add(symbol);
 
             return command;
         }
 
-        private static IEnumerable<Argument> GetArguments(MethodInfo method)
+        private static IEnumerable<Symbol> GetSymbols(MethodBase method)
         {
             return from parameter in method.GetParameters()
                 where parameter.IsIn
-                where !parameter.IsOptional
-                select BuildArgument(parameter);
+                select parameter.IsOptional ? BuildOption(parameter) : BuildArgument(parameter);
         }
 
-        private static IEnumerable<Option> GetOptions(MethodInfo method)
+        private static Symbol BuildArgument(ParameterInfo parameter)
         {
-            return from parameter in method.GetParameters()
-                where parameter.IsIn
-                where parameter.IsOptional
-                select BuildOption(parameter);
-        }
-
-        private static Argument BuildArgument(ParameterInfo parameter)
-        {
-            return new Argument(parameter.Name)
+            return new Argument(parameter.Name!)
             {
                 Description = GetDescription(parameter),
                 ArgumentType = parameter.ParameterType
             };
         }
 
-        private static Option BuildOption(ParameterInfo parameter)
+        private static Symbol BuildOption(ParameterInfo parameter)
         {
-            return new Option(parameter.Name)
+            return new Option(parameter.Name!)
             {
-                Description = GetDescription(parameter),
-                Argument = BuildArgument(parameter),
-                Required = false
+                Description = GetDescription(parameter)
             };
         }
 

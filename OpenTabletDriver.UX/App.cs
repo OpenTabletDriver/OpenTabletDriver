@@ -12,6 +12,7 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Tablet;
+using UnhandledExceptionEventArgs = Eto.UnhandledExceptionEventArgs;
 
 namespace OpenTabletDriver.UX
 {
@@ -23,37 +24,61 @@ namespace OpenTabletDriver.UX
             Platform = platform;
             Arguments = args;
         }
-        public void Start()
 
+        public void Start()
         {
-            var command = new RootCommand("OpenTabletDriver UX")
-            {
-                Name = "OpenTabletDriver",
-                TreatUnmatchedTokensAsErrors = true,
-                Handler = CommandHandler.Create(Invoke)
-            };
+            var serviceCollection = new UXServiceCollection(this);
+            _serviceProvider = serviceCollection.BuildServiceProvider();
 
             _app = new Application(Platform)
             {
                 Name = "OpenTabletDriver"
             };
 
-            _app.UnhandledException += (_, args) =>
+            _app.UnhandledException += UnhandledException;
+
+            var mainForm = _serviceProvider.GetRequiredService<MainForm>();
+            mainForm.Closed += (_, _) => Exit();
+
+            var command = new RootCommand("OpenTabletDriver UX")
             {
-                try
+                Name = "OpenTabletDriver",
+                TreatUnmatchedTokensAsErrors = true,
+                Handler = CommandHandler.Create<bool>(minimized =>
                 {
-                    var ex = args.ExceptionObject as Exception;
-                    ex?.Show();
-                }
-                catch (Exception ex2)
-                {
-                    Log.Exception(ex2);
-                }
+                    if (minimized)
+                    {
+                        mainForm.WindowState = WindowState.Minimized;
+                    }
+                })
             };
+
+            // We're hooking up the log output handler later than when the log output handler expects
+            // This may cause missing log messages
+            var rpc = _serviceProvider.GetRequiredService<RpcClient<IDriverDaemon>>();
+            Log.Output += (_, message) => LogOutputHandler(rpc, message).Run();
+
+            // Force unobserved exceptions to be considered observed, stops hanging on async exceptions.
+            TaskScheduler.UnobservedTaskException += (_, args) => args.SetObserved();
 
             var code = command.Invoke(Arguments);
             if (code != 0)
                 Exit(code);
+
+            _app.Run(mainForm);
+        }
+
+        private void UnhandledException(object? sender, UnhandledExceptionEventArgs args)
+        {
+            try
+            {
+                var ex = args.ExceptionObject as Exception;
+                ex?.Show();
+            }
+            catch (Exception ex2)
+            {
+                Log.Exception(ex2);
+            }
         }
 
         // Some fields are suppressed because they're all initialized in Invoke() rather than the ctor()
@@ -127,33 +152,6 @@ namespace OpenTabletDriver.UX
         {
             set => RaiseAndSetIfChanged(ref _mainFormTitle, value);
             get => _mainFormTitle;
-        }
-
-        /// <summary>
-        /// Start the OpenTabletDriver application window and its components.
-        /// </summary>
-        public void Invoke(bool minimized)
-        {
-            var serviceCollection = new UXServiceCollection(this);
-            _serviceProvider = serviceCollection.BuildServiceProvider();
-
-            var mainForm = _serviceProvider.GetRequiredService<MainForm>();
-            mainForm.Closed += (_, _) => Exit();
-
-            if (minimized)
-            {
-                mainForm.WindowState = WindowState.Minimized;
-            }
-
-            // We're hooking up the log output handler later than when the log output handler expects
-            // This may cause issues in the future
-            var rpc = _serviceProvider.GetRequiredService<RpcClient<IDriverDaemon>>();
-            Log.Output += (_, message) => LogOutputHandler(rpc, message).Run();
-
-            // Force unobserved exceptions to be considered observed, stops hanging on async exceptions.
-            TaskScheduler.UnobservedTaskException += (_, args) => args.SetObserved();
-
-            _app.Run(mainForm);
         }
 
         /// <summary>

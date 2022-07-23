@@ -17,12 +17,10 @@ namespace OpenTabletDriver.Console
 {
     public class ProgramCommands : CommandModule
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly IDriverDaemon _driverDaemon;
 
-        public ProgramCommands(IServiceProvider serviceProvider, IDriverDaemon driverDaemon)
+        public ProgramCommands(IDriverDaemon driverDaemon)
         {
-            _serviceProvider = serviceProvider;
             _driverDaemon = driverDaemon;
         }
 
@@ -290,7 +288,7 @@ namespace OpenTabletDriver.Console
         public async Task ListOutputModes() => await ListTypes<IOutputMode>();
 
         [Command("list-filters", "Lists all supported filters")]
-        public async Task ListFilters() => await ListTypes<IPipelineElement<IDeviceReport>>();
+        public async Task ListFilters() => await ListTypes<IDevicePipelineElement>();
 
         [Command("list-bindings", "Lists all supported bindings")]
         public async Task ListBindings() => await ListTypes<IBinding>();
