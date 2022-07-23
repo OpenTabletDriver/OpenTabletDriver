@@ -6,15 +6,26 @@ namespace OpenTabletDriver.Benchmarks.Output
 {
     public sealed class NoopAbsoluteMode : AbsoluteOutputMode
     {
-        public override IAbsolutePointer Pointer { set; get; } = new NoopPointer();
+        public NoopAbsoluteMode(InputDevice tablet, ISettingsProvider settingsProvider) : base(tablet, new NoopPointer())
+        {
+            settingsProvider.Inject(this);
+        }
 
         public class NoopPointer : IAbsolutePointer
         {
-            public Vector2 Position { private set; get; }
+            public Vector2 Position { set; get; }
 
             public void SetPosition(Vector2 pos)
             {
                 Position = pos;
+            }
+
+            public void MouseDown(MouseButton button)
+            {
+            }
+
+            public void MouseUp(MouseButton button)
+            {
             }
         }
     }

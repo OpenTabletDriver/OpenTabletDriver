@@ -3,6 +3,7 @@
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
     <TargetFramework>$(FrameworkBase)</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">

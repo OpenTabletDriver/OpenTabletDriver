@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
-using OpenTabletDriver.Desktop.Profiles;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Tablet;
 
@@ -8,31 +11,37 @@ namespace OpenTabletDriver.Benchmarks.Output
 {
     public class OutputBenchmark
     {
-        public AbsoluteOutputMode OutputMode { get; set; } = new NoopAbsoluteMode();
-        public IDeviceReport Report { get; set; }
+        private readonly IPluginFactory _pluginFactory;
+        private AbsoluteOutputMode? _outputMode;
+        private IDeviceReport? _report;
 
-        public void SetProfile(Profile profile)
+        public OutputBenchmark()
         {
-            OutputMode.Tablet = new TabletReference
+            var serviceProvider = new DesktopServiceCollection().BuildServiceProvider();
+            _pluginFactory = serviceProvider.GetRequiredService<IPluginFactory>();
+        }
+
+        public void ApplySettings(PluginSettings settings)
+        {
+            var config = new TabletConfiguration
             {
-                Properties = new TabletConfiguration
+                Specifications = new TabletSpecifications
                 {
-                    Specifications = new TabletSpecifications
+                    Digitizer = new DigitizerSpecifications
                     {
-                        Digitizer = new DigitizerSpecifications
-                        {
-                            MaxX = 2000,
-                            MaxY = 2000,
-                            Width = 20,
-                            Height = 20,
-                        },
-                        Pen = new PenSpecifications()
-                    }
+                        MaxX = 2000,
+                        MaxY = 2000,
+                        Width = 20,
+                        Height = 20,
+                    },
+                    Pen = new PenSpecifications()
                 }
             };
 
-            OutputMode.Output = profile.AbsoluteModeSettings.Display.Area;
-            OutputMode.Input = profile.AbsoluteModeSettings.Tablet.Area;
+            var device = new InputDevice(config, new List<InputDeviceEndpoint>());
+
+            _outputMode = _pluginFactory.Construct<AbsoluteOutputMode>(settings)!;
+            _outputMode.Tablet = device;
 
             var data = new byte[8];
             var randGen = new Random();
@@ -40,38 +49,35 @@ namespace OpenTabletDriver.Benchmarks.Output
 
             var parser = new TabletReportParser();
 
-            Report = parser.Parse(data);
+            _report = parser.Parse(data);
         }
 
         [GlobalSetup]
         public void Setup()
         {
-            var profile = new Profile
+            var settings = new PluginSettings(typeof(NoopAbsoluteMode), new
             {
-                AbsoluteModeSettings = new AbsoluteModeSettings
+                Display = new Area
                 {
-                    Display = new AreaSettings
-                    {
-                        Width = 1366,
-                        Height = 768,
-                        X = 0,
-                        Y = 0,
-                    },
-                    Tablet = new AreaSettings
-                    {
-                        Width = 20,
-                        Height = 20
-                    }
+                    Width = 1366,
+                    Height = 768,
+                    XPosition = 0,
+                    YPosition = 0
+                },
+                Tablet = new AngledArea
+                {
+                    Width = 20,
+                    Height = 20
                 }
-            };
+            });
 
-            SetProfile(profile);
+            ApplySettings(settings);
         }
 
         [Benchmark]
         public void Output()
         {
-            OutputMode.Read(Report);
+            _outputMode!.Read(_report!);
         }
     }
 }

@@ -1,25 +1,35 @@
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Benchmarks.Output
 {
     public class MacOSInteropBenchmark
     {
-        private MacOSAbsolutePointer absolutePointer = new MacOSAbsolutePointer();
-        private MacOSRelativePointer relativePointer = new MacOSRelativePointer();
+        private readonly IAbsolutePointer _absolutePointer;
+        private readonly IRelativePointer _relativePointer;
+
+        public MacOSInteropBenchmark()
+        {
+            var serviceProvider = new DesktopMacOSServiceCollection().BuildServiceProvider();
+            _absolutePointer = serviceProvider.GetRequiredService<IAbsolutePointer>();
+            _relativePointer = serviceProvider.GetRequiredService<IRelativePointer>();
+        }
 
         [Benchmark]
         public void CoreGraphicsAbsolute()
         {
-            absolutePointer.SetPosition(Vector2.Zero);
+            _absolutePointer.SetPosition(Vector2.Zero);
         }
 
         [Benchmark]
         public void CoreGraphicsRelative()
         {
-            relativePointer.SetPosition(Vector2.Zero);
+            _relativePointer.SetPosition(Vector2.Zero);
         }
     }
 }
