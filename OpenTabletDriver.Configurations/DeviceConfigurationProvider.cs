@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Configurations
 
             TabletConfigurations = asm.GetManifestResourceNames()
                 .Where(path => path.Contains(".json"))
-                .Select(path => Deserialize(jsonSerializer, asm.GetManifestResourceStream(path)))
+                .Select(path => Deserialize(jsonSerializer, asm.GetManifestResourceStream(path)!))
                 .ToArray();
         }
 
@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Configurations
         {
             using var reader = new StreamReader(stream);
             using var jsonReader = new JsonTextReader(reader);
-            return jsonSerializer.Deserialize<TabletConfiguration>(jsonReader);
+            return jsonSerializer.Deserialize<TabletConfiguration>(jsonReader)!;
         }
     }
 }

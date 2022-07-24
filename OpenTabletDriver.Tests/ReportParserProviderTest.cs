@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Tests
 {
     public class ReportParserProviderTest
     {
-        public static TheoryData<string, Type> ReportParserProvider_CanGet_ReportParsers_Data => new()
+        public static TheoryData<string, Type> ReportParserProvider_CanGet_ReportParsers_Data => new TheoryData<string, Type>
         {
             // Built-in
             { typeof(TabletReportParser).FullName!, typeof(TabletReportParser) },
@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Tests
         [MemberData(nameof(ReportParserProvider_CanGet_ReportParsers_Data))]
         public void ReportParserProvider_CanGet_ReportParsers(string reportParserName, Type expectedReportParserType)
         {
-            var serviceCollection = new DesktopServiceCollection();
+            var serviceCollection = Utility.GetServices();
             var reportParserProvider = serviceCollection.BuildServiceProvider()
                 .GetRequiredService<IReportParserProvider>();
 

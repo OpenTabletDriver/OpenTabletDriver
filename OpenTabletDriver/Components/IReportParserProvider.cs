@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
 using OpenTabletDriver.Tablet;
 
+#nullable enable
+
 namespace OpenTabletDriver.Components
 {
     /// <summary>

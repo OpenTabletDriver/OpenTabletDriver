@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
-    internal class FallbackTimer : ITimer, IDisposable
+    public class FallbackTimer : ITimer, IDisposable
     {
         private Thread threadTimer;
         private bool runTimer = true;

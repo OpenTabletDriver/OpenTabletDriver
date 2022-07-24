@@ -10,8 +10,6 @@ using Moq.Protected;
 using OpenTabletDriver.Desktop.Updater;
 using Xunit;
 
-#nullable enable
-
 namespace OpenTabletDriver.Tests
 {
     using MockUpdater = Updater<UpdateInfo>;
@@ -37,7 +35,7 @@ namespace OpenTabletDriver.Tests
         [MemberData(nameof(UpdaterBase_ProperlyChecks_Version_Async_Data))]
         public Task Updater_ProperlyChecks_Version_Async(Version version, bool expectedUpdateStatus)
         {
-            return MockEnvironmentAsync(async (updaterEnv) =>
+            return MockEnvironmentAsync(async updaterEnv =>
             {
                 updaterEnv.Version = version;
                 var mockUpdater = CreateMockUpdater(updaterEnv).Object;
@@ -52,7 +50,7 @@ namespace OpenTabletDriver.Tests
         [MemberData(nameof(UpdaterBase_ProperlyChecks_Version_Async_Data))]
         public Task Updater_PreventsUpdate_WhenAlreadyUpToDate_Async(Version version, bool expectedUpdateStatus)
         {
-            return MockEnvironmentAsync(async (updaterEnv) =>
+            return MockEnvironmentAsync(async updaterEnv =>
             {
                 updaterEnv.Version = version;
                 var mockUpdater = CreateMockUpdater(updaterEnv);
@@ -74,7 +72,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public Task Updater_AllowsReupdate_WhenInstallFailed_Async()
         {
-            return MockEnvironmentAsync(async (updaterEnv) =>
+            return MockEnvironmentAsync(async updaterEnv =>
             {
                 var mockUpdater = CreateMockUpdater(updaterEnv);
                 mockUpdater.Protected()
@@ -94,7 +92,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public Task Updater_HasUpdateReturnsFalse_During_UpdateInstall_Async()
         {
-            return MockEnvironmentAsync(async (updaterEnv) =>
+            return MockEnvironmentAsync(async updaterEnv =>
             {
                 var mockUpdaterObject = CreateMockUpdater(updaterEnv).Object;
                 var beforeUpdate = await mockUpdaterObject.CheckForUpdates();
@@ -111,7 +109,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public Task Updater_HasUpdateReturnsFalse_After_UpdateInstall_Async()
         {
-            return MockEnvironmentAsync(async (updaterEnv) =>
+            return MockEnvironmentAsync(async updaterEnv =>
             {
                 var mockUpdaterObject = CreateMockUpdater(updaterEnv).Object;
                 var beforeUpdate = await mockUpdaterObject.CheckForUpdates();
@@ -127,7 +125,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public Task Updater_Prevents_ConcurrentAndConsecutive_Updates_Async()
         {
-            return MockEnvironmentAsync(async (updaterEnv) =>
+            return MockEnvironmentAsync(async updaterEnv =>
             {
                 var mockUpdater = CreateMockUpdater(updaterEnv);
                 var callCount = 0;
@@ -138,12 +136,12 @@ namespace OpenTabletDriver.Tests
                     .Callback(() => Interlocked.Increment(ref callCount));
 
                 var mockUpdaterObject = mockUpdater.Object;
-                var parallelTasks = new Task[]
+                var parallelTasks = new[]
                 {
-                    Task.Run(() => mockUpdaterObject.InstallUpdate()),
-                    Task.Run(() => mockUpdaterObject.InstallUpdate()),
-                    Task.Run(() => mockUpdaterObject.InstallUpdate()),
-                    Task.Run(() => mockUpdaterObject.InstallUpdate())
+                    Task.Run(mockUpdaterObject.InstallUpdate),
+                    Task.Run(mockUpdaterObject.InstallUpdate),
+                    Task.Run(mockUpdaterObject.InstallUpdate),
+                    Task.Run(mockUpdaterObject.InstallUpdate)
                 };
 
                 await Task.WhenAll(parallelTasks);
@@ -155,7 +153,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public Task Updater_ProperlyBackups_BinAndAppDataDirectory_Async()
         {
-            return MockEnvironmentAsync(async (updaterEnv) =>
+            return MockEnvironmentAsync(async updaterEnv =>
             {
                 var mockUpdater = CreateMockUpdater(updaterEnv).Object;
                 var wpfFile = Encoding.UTF8.GetBytes("OpenTabletDriver.UX.Wpf");
@@ -163,12 +161,12 @@ namespace OpenTabletDriver.Tests
                 var settingsFile = Encoding.UTF8.GetBytes("settings.json");
                 var pluginFile = Encoding.UTF8.GetBytes("Plugin.dll");
 
-                var fakeBinaryFiles = new Dictionary<string, byte[]>()
+                var fakeBinaryFiles = new Dictionary<string, byte[]>
                 {
                     ["OpenTabletDriver.UX.Wpf"] = wpfFile,
                     ["OpenTabletDriver.Daemon"] = daemonFile
                 };
-                var fakeAppDataFiles = new Dictionary<string, byte[]>()
+                var fakeAppDataFiles = new Dictionary<string, byte[]>
                 {
                     ["settings.json"] = settingsFile,
                     ["Plugins/SomePlugin/Plugin.dll"] = pluginFile
@@ -195,7 +193,7 @@ namespace OpenTabletDriver.Tests
 
         private static async Task MockEnvironmentAsync(Func<UpdaterEnvironment, Task> asyncAction)
         {
-            var mockUpdaterEnv = new UpdaterEnvironment()
+            var mockUpdaterEnv = new UpdaterEnvironment
             {
                 Version = new Version("0.1.0.0"),
                 BinaryDir = Path.Join(Path.GetTempPath(), Path.GetRandomFileName()),

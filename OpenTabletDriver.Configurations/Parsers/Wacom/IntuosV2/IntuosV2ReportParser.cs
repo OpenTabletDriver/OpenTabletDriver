@@ -1,3 +1,4 @@
+using System;
 using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Tablet.Touch;
 
@@ -24,6 +25,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
             }
         }
 
-        private TouchPoint?[] _prevTouches;
+        private TouchPoint?[] _prevTouches = Array.Empty<TouchPoint?>();
     }
 }

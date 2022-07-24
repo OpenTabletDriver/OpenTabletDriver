@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace OpenTabletDriver.Tests
@@ -13,9 +14,10 @@ namespace OpenTabletDriver.Tests
         private const double TOLERANCE = 0.075;
         private readonly ITimer _timer;
 
-        public TimerTests(ITimer timer)
+        public TimerTests()
         {
-            _timer = timer;
+            var serviceProvider = Utility.GetServices().BuildServiceProvider();
+            _timer = serviceProvider.GetRequiredService<ITimer>();
         }
 
         [Theory]
@@ -26,12 +28,12 @@ namespace OpenTabletDriver.Tests
         public void TimerAccuracy(float interval, float duration)
         {
             // Skip test when running on Github CI due to high variance in timer latency.
-            if (Environment.GetEnvironmentVariable("CI") is "true")
+            if (Environment.GetEnvironmentVariable("CI") == "true")
                 return;
 
             var expectedFires = (int)(interval * 1000 / interval * duration);
             var list = new List<double>(expectedFires);
-            var watch = new HPETDeltaStopwatch(true);
+            var watch = new HPETDeltaStopwatch();
 
             _timer.Interval = interval;
             _timer.Elapsed += () =>
@@ -51,7 +53,7 @@ namespace OpenTabletDriver.Tests
             var minimum = interval - intervalTolerance;
             var maximum = interval + intervalTolerance;
 
-            var withinTolerance = (average > minimum) && (average < maximum);
+            var withinTolerance = average > minimum && average < maximum;
 
             Assert.True(withinTolerance);
         }

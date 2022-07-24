@@ -1,4 +1,5 @@
-﻿using OpenTabletDriver.Tablet;
+﻿using System;
+using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
@@ -10,6 +11,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
             return new WacomTouchReport(data, ref _prevTouches);
         }
 
-        private TouchPoint?[] _prevTouches;
+        private TouchPoint?[] _prevTouches = Array.Empty<TouchPoint?>();
     }
 }

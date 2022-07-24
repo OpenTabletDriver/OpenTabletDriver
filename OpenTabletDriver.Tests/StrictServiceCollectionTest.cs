@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public void RequiredServices_AlwaysExist()
         {
-            var serviceCollection = new DesktopServiceCollection();
+            var serviceCollection = Utility.GetServices();
 
             var reportParserProvider = serviceCollection.BuildServiceProvider()
                 .GetService<IReportParserProvider>();

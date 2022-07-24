@@ -7,7 +7,7 @@ using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public abstract class GitHubUpdater : Updater
+    public abstract class GitHubUpdater : Updater<UpdateInfo>
     {
         private readonly IGitHubClient _github;
 

@@ -10,7 +10,7 @@ using Octokit;
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public abstract class Updater : IUpdater
+    public abstract class Updater<T> : IUpdater where T : UpdateInfo
     {
         protected Updater(Version? currentVersion, string binaryDir, string appDataDir, string rollbackDir)
         {
@@ -117,7 +117,7 @@ namespace OpenTabletDriver.Desktop.Updater
             Move(DownloadDirectory, BinaryDirectory);
         }
 
-        protected abstract Task<UpdateInfo?> GetUpdate();
+        protected abstract Task<T?> GetUpdate();
         protected abstract Task Download(Release release);
 
         // Avoid moving/copying the rollback directory if under source directory
