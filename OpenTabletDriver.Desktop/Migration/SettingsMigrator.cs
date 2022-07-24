@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -9,8 +10,6 @@ using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
-
-#nullable enable
 
 namespace OpenTabletDriver.Desktop.Migration
 {
@@ -48,7 +47,7 @@ namespace OpenTabletDriver.Desktop.Migration
 
         private Settings? Migrate(FileInfo file)
         {
-            var v6 = Serialization.Deserialize<V6::Settings>(file);
+            var v6 = Serialization.Deserialize<V6::Settings>(file)!;
             return v6.IsValid() ? Convert(v6) : null;
         }
 
@@ -56,17 +55,17 @@ namespace OpenTabletDriver.Desktop.Migration
         {
             var settings = new Settings
             {
-                Tools = new PluginSettingsCollection(oldSettings.Tools)
+                Tools = new PluginSettingsCollection(oldSettings.Tools ?? new Collection<PluginSettings>())
             };
 
-            foreach (var oldProfile in oldSettings.Profiles)
+            foreach (var oldProfile in oldSettings.Profiles ?? new Collection<V6::Profile>())
             {
                 var newProfile = new Profile
                 {
-                    Tablet = oldProfile.Tablet,
-                    Filters = oldProfile.Filters,
-                    BindingSettings = oldProfile.BindingSettings,
-                    OutputMode = MigrateOutputModeSettings(oldSettings, oldProfile)
+                    Tablet = oldProfile.Tablet ?? string.Empty,
+                    Filters = oldProfile.Filters ?? new PluginSettingsCollection(),
+                    BindingSettings = oldProfile.BindingSettings ?? new BindingSettings(),
+                    OutputMode = MigrateOutputModeSettings(oldSettings, oldProfile) ?? new PluginSettings(typeof(AbsoluteOutputMode))
                 };
                 settings.Profiles.Add(newProfile);
             }
@@ -82,7 +81,7 @@ namespace OpenTabletDriver.Desktop.Migration
             var pluginFactory =  _serviceProvider.GetRequiredService<IPluginFactory>();
 
             var oldSetting = oldProfile.OutputMode;
-            var type = pluginFactory.GetPluginType(oldSetting.Path);
+            var type = pluginFactory.GetPluginType(oldSetting!.Path);
             if (type == null)
                 return null;
 
@@ -91,12 +90,12 @@ namespace OpenTabletDriver.Desktop.Migration
 
             if (isAbsolute)
             {
-                var absSettings = oldProfile.AbsoluteModeSettings;
+                var absSettings = oldProfile.AbsoluteModeSettings!;
                 return new PluginSettings(type, new
                 {
                     Input = new AngledArea
                     {
-                        Width = absSettings.Tablet.Width,
+                        Width = absSettings.Tablet!.Width,
                         Height = absSettings.Tablet.Height,
                         XPosition = absSettings.Tablet.X,
                         YPosition = absSettings.Tablet.Y,
@@ -104,7 +103,7 @@ namespace OpenTabletDriver.Desktop.Migration
                     },
                     Output = new Area
                     {
-                        Width = absSettings.Display.Width,
+                        Width = absSettings.Display!.Width,
                         Height = absSettings.Display.Height,
                         XPosition = absSettings.Display.X,
                         YPosition = absSettings.Display.Y
@@ -118,7 +117,7 @@ namespace OpenTabletDriver.Desktop.Migration
 
             if (isRelative)
             {
-                var relSettings = oldProfile.RelativeModeSettings;
+                var relSettings = oldProfile.RelativeModeSettings!;
                 return new PluginSettings(type, new
                 {
                     Sensitivity = new Vector2(relSettings.XSensitivity, relSettings.YSensitivity),
@@ -224,11 +223,10 @@ namespace OpenTabletDriver.Desktop.Migration
 
         private PluginSettingsCollection SafeMigrateCollection(PluginSettingsCollection? collection)
         {
-            if (collection == null)
-                collection = new PluginSettingsCollection();
+            collection ??= new PluginSettingsCollection();
 
             for (int i = 0; i < collection.Count; i++)
-                collection[i] = SafeMigrate(collection[i]);
+                collection[i] = SafeMigrate(collection[i]) ?? new PluginSettings(typeof(object));
 
             return collection;
         }

@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Desktop.Binding
         }
 
         [Setting("Key"), MemberValidated(nameof(GetValidKeys))]
-        public string Key { set; get; }
+        public string Key { set; get; } = string.Empty;
 
         public void Press(IDeviceReport report)
         {

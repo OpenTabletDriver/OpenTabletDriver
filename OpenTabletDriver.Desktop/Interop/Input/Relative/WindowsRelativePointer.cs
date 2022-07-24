@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static Windows;
 
-    public class WindowsRelativePointer : Input.WindowsVirtualMouse, IRelativePointer
+    public class WindowsRelativePointer : WindowsVirtualMouse, IRelativePointer
     {
         private Vector2 error;
 

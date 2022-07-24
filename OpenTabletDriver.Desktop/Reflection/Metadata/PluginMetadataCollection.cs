@@ -98,7 +98,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         {
             foreach (var file in Directory.EnumerateFiles(directoryPath, "*.json", SearchOption.AllDirectories))
                 using (var fs = File.OpenRead(file))
-                    yield return Serialization.Deserialize<PluginMetadata>(fs);
+                    yield return Serialization.Deserialize<PluginMetadata>(fs)!;
         }
     }
 }

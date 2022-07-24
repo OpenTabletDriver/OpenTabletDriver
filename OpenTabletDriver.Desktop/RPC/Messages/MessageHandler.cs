@@ -1,8 +1,6 @@
 using System.IO;
 using StreamJsonRpc;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.RPC.Messages
 {
     public class MessageHandler : NewLineDelimitedMessageHandler

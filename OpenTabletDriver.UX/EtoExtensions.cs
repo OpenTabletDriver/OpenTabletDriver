@@ -59,7 +59,7 @@ namespace OpenTabletDriver.UX
             var propertyName = property.Name;
             var propertyType = property.PropertyType;
 
-            return () => (T)settings[propertyName].GetValue(propertyType);
+            return () => (T)settings[propertyName].GetValue(propertyType)!;
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace OpenTabletDriver.UX
         public static DirectBinding<TValue> ValueSetting<TValue>(this DirectBinding<PluginSetting> binding)
         {
             return binding.Convert(
-                c => c.GetValue<TValue>(),
+                c => c.GetValue<TValue>()!,
                 v => binding.DataValue.SetValue(v)
             );
         }
@@ -133,7 +133,7 @@ namespace OpenTabletDriver.UX
         public static TValue Get<TType, TValue>(this PluginSettings settings, Expression<Func<TType, TValue>> expression)
         {
             var name = MemberNameFor(expression);
-            return settings[name].GetValue<TValue>();
+            return settings[name].GetValue<TValue>()!;
         }
 
         /// <summary>

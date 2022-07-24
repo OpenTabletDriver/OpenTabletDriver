@@ -3,6 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>$(FrameworkBase)</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Warnings">
+    <NoWarn>
+      VSTHRD200 <!-- Async suffix -->
+    </NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

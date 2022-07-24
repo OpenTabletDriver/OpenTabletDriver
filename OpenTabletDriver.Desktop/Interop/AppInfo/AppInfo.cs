@@ -6,7 +6,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
 {
     public class AppInfo : IAppInfo
     {
-        private string _binaryDirectory,
+        private string? _binaryDirectory,
             _configurationDirectory,
             _settingsFile,
             _pluginDirectory,
@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             _backupDirectory,
             _trashDirectory;
 
-        public string AppDataDirectory { set; get; }
+        public string AppDataDirectory { set; get; } = string.Empty;
 
         public string BinaryDirectory
         {

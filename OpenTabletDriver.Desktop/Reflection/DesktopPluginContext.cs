@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             Directory.Refresh();
             if (Directory.Exists && Directory.EnumerateFiles().FirstOrDefault(f => f.Name == "metadata.json") is FileInfo file)
             {
-                return Serialization.Deserialize<PluginMetadata>(file);
+                return Serialization.Deserialize<PluginMetadata>(file)!;
             }
 
             return new PluginMetadata
@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             };
         }
 
-        private Assembly LoadAssemblyFromFile(FileInfo file)
+        private Assembly? LoadAssemblyFromFile(FileSystemInfo file)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 SystemPlatform.Windows => $"{dllName}.dll",
                 SystemPlatform.Linux => $"lib{dllName}.so",
                 SystemPlatform.MacOS => $"lib{dllName}.dylib",
-                _ => null
+                _ => throw new PlatformNotSupportedException()
             };
         }
     }

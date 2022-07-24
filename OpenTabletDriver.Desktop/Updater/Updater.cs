@@ -6,8 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Octokit;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract class Updater<T> : IUpdater where T : UpdateInfo

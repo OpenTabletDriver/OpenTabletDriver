@@ -117,7 +117,7 @@ namespace OpenTabletDriver.UX
         /// </summary>
         public Settings Settings
         {
-            set => RaiseAndSetIfChanged(ref _settings, value);
+            set => RaiseAndSetIfChanged(ref _settings!, value);
             get => _settings;
         }
 
@@ -128,7 +128,7 @@ namespace OpenTabletDriver.UX
         {
             set
             {
-                RaiseAndSetIfChanged(ref _tablets, value);
+                RaiseAndSetIfChanged(ref _tablets!, value);
 
                 var sb = new StringBuilder(DefaultTitle);
                 if (_tablets.Any())
@@ -144,13 +144,13 @@ namespace OpenTabletDriver.UX
 
         public ObservableCollection<IDisplay> Displays
         {
-            set => RaiseAndSetIfChanged(ref _displays, value);
+            set => RaiseAndSetIfChanged(ref _displays!, value);
             get => _displays;
         }
 
         public string MainFormTitle
         {
-            set => RaiseAndSetIfChanged(ref _mainFormTitle, value);
+            set => RaiseAndSetIfChanged(ref _mainFormTitle!, value);
             get => _mainFormTitle;
         }
 

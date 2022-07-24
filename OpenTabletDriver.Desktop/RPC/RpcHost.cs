@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop.RPC
     {
         private readonly SynchronizationContext _synchronizationContext;
         private readonly string _pipeName;
-        private JsonRpc _rpc;
+        private JsonRpc? _rpc;
 
         public RpcHost(SynchronizationContext synchronizationContext, string pipeName)
         {
@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Desktop.RPC
             _pipeName = pipeName;
         }
 
-        public event EventHandler<bool> ConnectionStateChanged;
+        public event EventHandler<bool>? ConnectionStateChanged;
 
         public async Task Run(T host)
         {
@@ -53,7 +53,7 @@ namespace OpenTabletDriver.Desktop.RPC
                         Log.Exception(ex);
                     }
                     ConnectionStateChanged?.Invoke(this, false);
-                    _rpc.Dispose();
+                    _rpc?.Dispose();
                     await stream.DisposeAsync();
                 });
             }

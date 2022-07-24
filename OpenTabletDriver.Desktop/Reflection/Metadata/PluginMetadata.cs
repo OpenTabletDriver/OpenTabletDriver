@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using OpenTabletDriver.Desktop.Compression;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]
@@ -102,17 +100,17 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public async Task DownloadAsync(string outputDirectory)
         {
-            using (var httpStream = await GetDownloadStream())
-            using (var stream = new MemoryStream())
+            await using (var httpStream = await GetDownloadStream())
+            await using (var stream = new MemoryStream())
             {
                 // Download into memory
-                await httpStream.CopyToAsync(stream);
+                await httpStream!.CopyToAsync(stream);
                 stream.Position = 0;
 
                 // Verify SHA256 hash
                 if (SHA256 == null || VerifySHA256(stream))
                 {
-                    stream.Decompress(outputDirectory, CompressionFormat);
+                    stream.Decompress(outputDirectory, CompressionFormat!);
                 }
                 else
                 {

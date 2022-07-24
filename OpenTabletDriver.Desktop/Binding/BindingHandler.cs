@@ -7,8 +7,6 @@ using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Pointer;
 using OpenTabletDriver.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Binding
 {
     public class BindingHandler : IPipelineElement<IDeviceReport>

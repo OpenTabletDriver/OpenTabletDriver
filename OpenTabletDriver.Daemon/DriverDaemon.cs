@@ -79,17 +79,17 @@ namespace OpenTabletDriver.Daemon
             };
 
             _driver.InputDevicesChanged += (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
-            _deviceHub.DevicesChanged += async (_, e) =>
+            _deviceHub.DevicesChanged += (_, e) =>
             {
                 if (!e.Additions.Any())
                     return;
 
                 // ReSharper disable once AsyncVoidLambda
-                await DetectTablets();
-                await ApplySettings(_settingsManager.Settings);
-                // _synchronizationContext.Post(async _ =>
-                // {
-                // }, this);
+                _synchronizationContext.Post(async _ =>
+                {
+                    await DetectTablets();
+                    await ApplySettings(_settingsManager.Settings);
+                }, this);
             };
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
@@ -228,8 +228,15 @@ namespace OpenTabletDriver.Daemon
                     SetOutputModeSettings(device, outputMode, profile);
 
                     var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
-                    var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(
-                        device, profile.BindingSettings, mouseButtonHandler);
+
+                    var deps = new object?[]
+                    {
+                        device,
+                        profile.BindingSettings,
+                        mouseButtonHandler
+                    }.Where(o => o != null).ToArray() as object[];
+
+                    var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
 
                     var lastElement = outputMode.Elements?.LastOrDefault() ??
                                       outputMode as IPipelineElement<IDeviceReport>;
@@ -410,7 +417,7 @@ namespace OpenTabletDriver.Daemon
         public Task<PluginSettings> GetDefaults(string path)
         {
             var type = _pluginFactory.GetPluginType(path)!;
-            var settings = type.GetDefaultSettings(_serviceProvider, this);
+            var settings = _serviceProvider.GetDefaultSettings(type, this);
             return Task.FromResult(settings);
         }
 

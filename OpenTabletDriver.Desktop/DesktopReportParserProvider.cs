@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop
 
         public IReportParser<IDeviceReport> GetReportParser(string reportParserName)
         {
-            return _pluginFactory.Construct<IReportParser<IDeviceReport>>(reportParserName);
+            return _pluginFactory.Construct<IReportParser<IDeviceReport>>(reportParserName)!;
         }
     }
 }

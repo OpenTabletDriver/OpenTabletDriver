@@ -21,8 +21,8 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private const string PLUGIN_NAME = "Multi-Key Binding";
 
-        private IList<string> _keys;
-        private string _keysString;
+        private IList<string> _keys = Array.Empty<string>();
+        private string _keysString = string.Empty;
 
         [Setting("Keys")]
         public string Keys

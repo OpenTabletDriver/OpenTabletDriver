@@ -5,8 +5,6 @@ using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static Windows;

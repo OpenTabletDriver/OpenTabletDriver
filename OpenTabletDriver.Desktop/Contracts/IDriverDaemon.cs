@@ -12,8 +12,6 @@ using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Contracts
 {
     public interface IDriverDaemon

@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             displays.Add(this);
             foreach (var monitor in monitors)
             {
-                var display = new Interop.Display.Display(
+                var display = new Display(
                     monitor.Width,
                     monitor.Height,
                     new Vector2(monitor.X - primary.X, monitor.Y - primary.Y),

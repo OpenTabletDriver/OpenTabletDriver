@@ -6,8 +6,6 @@ using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public class Settings : NotifyPropertyChanged
@@ -18,14 +16,14 @@ namespace OpenTabletDriver.Desktop
         [JsonProperty("Profiles")]
         public ProfileCollection Profiles
         {
-            set => RaiseAndSetIfChanged(ref _profiles, value);
+            set => RaiseAndSetIfChanged(ref _profiles!, value);
             get => _profiles;
         }
 
         [JsonProperty("Tools")]
         public PluginSettingsCollection Tools
         {
-            set => RaiseAndSetIfChanged(ref _tools, value);
+            set => RaiseAndSetIfChanged(ref _tools!, value);
             get => _tools;
         }
 

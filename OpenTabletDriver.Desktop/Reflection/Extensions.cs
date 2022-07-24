@@ -6,8 +6,6 @@ using System.Reflection;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Logging;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public static class Extensions
@@ -65,8 +63,8 @@ namespace OpenTabletDriver.Desktop.Reflection
         }
 
         public static PluginSettings GetDefaultSettings(
-            this Type type,
-            IServiceProvider serviceProvider,
+            this IServiceProvider serviceProvider,
+            Type type,
             params object[] additionalDeps
         )
         {

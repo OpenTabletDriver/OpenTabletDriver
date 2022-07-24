@@ -1,8 +1,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public interface IHostBuilder<out THost>

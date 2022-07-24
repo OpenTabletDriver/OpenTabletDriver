@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public interface IPluginFactory

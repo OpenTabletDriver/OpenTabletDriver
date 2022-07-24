@@ -1,8 +1,6 @@
 using System;
 using Newtonsoft.Json;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Json.Converters
 {
     public class InterfaceConverter<TInterface, TClass> : JsonConverter<TInterface> where TInterface : class where TClass : TInterface, new()

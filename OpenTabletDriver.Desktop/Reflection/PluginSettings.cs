@@ -7,8 +7,6 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using OpenTabletDriver.Attributes;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Reflection
 {
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]
@@ -65,7 +63,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 var result = Settings.FirstOrDefault(s => s.Property == propertyName);
                 if (result == null)
                 {
-                    var newSetting = new PluginSetting(propertyName, null);
+                    var newSetting = new PluginSetting(propertyName, new object());
                     Settings!.Add(newSetting);
                     return newSetting;
                 }

@@ -7,7 +7,7 @@ namespace OpenTabletDriver
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void RaiseAndSetIfChanged<T>(ref T obj, T newValue, [CallerMemberName] string propertyName = "")
+        protected void RaiseAndSetIfChanged<T>(ref T? obj, T? newValue, [CallerMemberName] string propertyName = "")
         {
             obj = newValue;
             RaiseChanged(propertyName);

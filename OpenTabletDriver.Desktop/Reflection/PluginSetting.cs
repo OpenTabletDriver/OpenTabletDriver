@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             SetValue(value);
         }
 
-        public PluginSetting(PropertyInfo property, object value)
+        public PluginSetting(PropertyInfo property, object? value)
         {
             Property = property.Name;
             SetValue(value ?? GetDefault(property));
@@ -25,18 +25,18 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
-        private string _property;
-        private JToken _value;
+        private string _property = null!;
+        private JToken? _value;
 
         [JsonProperty]
         public string Property
         {
-            set => RaiseAndSetIfChanged(ref _property, value);
+            set => RaiseAndSetIfChanged(ref _property!, value);
             get => _property;
         }
 
         [JsonProperty]
-        public JToken Value
+        public JToken? Value
         {
             set => RaiseAndSetIfChanged(ref _value, value);
             get => _value;
@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         [JsonIgnore]
         public bool HasValue => Value != null && Value.Type != JTokenType.Null;
 
-        public PluginSetting SetValue(object value)
+        public PluginSetting SetValue(object? value)
         {
             if (value is PluginSetting)
                 throw new InvalidOperationException();
@@ -54,17 +54,17 @@ namespace OpenTabletDriver.Desktop.Reflection
             return this;
         }
 
-        public T GetValue<T>()
+        public T? GetValue<T>()
         {
             return Value == null ? default : Value.Type != JTokenType.Null ? Value.ToObject<T>() : default;
         }
 
-        public object GetValue(Type asType)
+        public object? GetValue(Type asType)
         {
             return Value == null ? default : Value.Type != JTokenType.Null ? Value.ToObject(asType) : default;
         }
 
-        private static object GetDefault(PropertyInfo property)
+        private static object? GetDefault(PropertyInfo property)
         {
             if (property.GetCustomAttribute<DefaultValueAttribute>() is { Value: object value } &&
                 value.GetType() == property.PropertyType)

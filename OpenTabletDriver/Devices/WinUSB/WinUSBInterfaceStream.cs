@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         public byte[] Read()
         {
-            WinUsb_ReadPipe(_winUsbHandle, _readPipe, _readPtr, (uint)_readBuffer.Length, out var bytesRead, null);
+            WinUsb_ReadPipe(_winUsbHandle!, _readPipe, _readPtr, (uint)_readBuffer.Length, out var bytesRead, null);
             return bytesRead < _readBuffer.Length
                 ? _readBuffer.AsSpan(0, (int)bytesRead).ToArray()
                 : _readBuffer;
@@ -57,13 +57,13 @@ namespace OpenTabletDriver.Devices.WinUSB
             {
                 _writeBuffer.AsSpan().Clear();
                 buffer.AsSpan().CopyTo(_writeBuffer);
-                WinUsb_WritePipe(_winUsbHandle, _writePipe, _writePtr, (uint)_writeBuffer.Length, out _, null);
+                WinUsb_WritePipe(_winUsbHandle!, _writePipe, _writePtr, (uint)_writeBuffer.Length, out _, null);
             }
             else
             {
                 fixed (void* bufferPtr = &buffer[0])
                 {
-                    WinUsb_WritePipe(_winUsbHandle, _writePipe, bufferPtr, (uint)buffer.Length, out _, null);
+                    WinUsb_WritePipe(_winUsbHandle!, _writePipe, bufferPtr, (uint)buffer.Length, out _, null);
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
             fixed (void* bufferPtr = &buffer[0])
             {
-                WinUsb_ControlTransfer(_winUsbHandle, packet, bufferPtr, (uint)length, out _, null);
+                WinUsb_ControlTransfer(_winUsbHandle!, packet, bufferPtr, (uint)length, out _, null);
             }
         }
 
@@ -100,7 +100,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
             fixed (void* bufferPtr = &buffer[0])
             {
-                WinUsb_ControlTransfer(_winUsbHandle, packet, bufferPtr, (uint)length, out _, null);
+                WinUsb_ControlTransfer(_winUsbHandle!, packet, bufferPtr, (uint)length, out _, null);
             }
         }
 

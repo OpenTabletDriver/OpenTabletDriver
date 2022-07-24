@@ -7,8 +7,6 @@ using OpenTabletDriver.Configurations;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public class DesktopDeviceConfigurationProvider : IDeviceConfigurationProvider
@@ -33,7 +31,7 @@ namespace OpenTabletDriver.Desktop
                 var files = Directory.EnumerateFiles(_appInfo.ConfigurationDirectory, "*.json", SearchOption.AllDirectories);
 
                 jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path)))
-                    .Select(jsonConfig => (ConfigurationSource.File, jsonConfig));
+                    .Select(jsonConfig => (ConfigurationSource.File, jsonConfig))!;
             }
 
             return _inAssemblyConfigurationProvider.TabletConfigurations

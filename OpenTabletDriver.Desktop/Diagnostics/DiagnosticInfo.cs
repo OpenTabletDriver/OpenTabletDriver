@@ -6,8 +6,6 @@ using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Logging;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
     public class DiagnosticInfo : IDiagnosticInfo

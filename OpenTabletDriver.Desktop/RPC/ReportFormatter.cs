@@ -27,7 +27,6 @@ namespace OpenTabletDriver.Desktop.RPC
             }
 
             return sb.ToString();
-            return BitConverter.ToString(raw).Replace('-', ' ');
         }
 
         public static string GetStringFormat(IDeviceReport report)
@@ -95,7 +94,7 @@ namespace OpenTabletDriver.Desktop.RPC
             yield return $"Touch data:";
             foreach (var touch in touchReport.Touches)
                 if (touch != null)
-                    yield return touch.ToString();
+                    yield return touch.Value.ToString();
         }
 
         private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)

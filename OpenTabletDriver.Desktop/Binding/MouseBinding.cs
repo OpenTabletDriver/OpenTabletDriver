@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Mouse Button Binding";
 
         [Setting("Button"), MemberValidated(nameof(ValidButtons))]
-        public string Button { set; get; }
+        public string Button { set; get; } = string.Empty;
 
         public void Press(IDeviceReport report)
         {
@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Binding
                 _pointer?.MouseUp(mouseButton);
         }
 
-        public static IEnumerable<string> ValidButtons { get; } = Enum.GetValues(typeof(MouseButton)).Cast<MouseButton>().Select(Enum.GetName);
+        public static IEnumerable<string> ValidButtons { get; } = Enum.GetValues(typeof(MouseButton)).Cast<MouseButton>().Select(Enum.GetName)!;
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";
     }

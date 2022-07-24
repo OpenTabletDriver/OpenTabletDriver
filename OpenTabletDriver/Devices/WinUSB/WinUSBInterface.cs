@@ -26,11 +26,11 @@ namespace OpenTabletDriver.Devices.WinUSB
                 var deviceDescriptor = new DeviceDescriptor();
                 void* descriptorPtr = &deviceDescriptor;
 
-                if (!WinUsb_ControlTransfer(winUsbHandle, packet, descriptorPtr, (uint)sizeof(DeviceDescriptor), out _, null))
+                if (!WinUsb_ControlTransfer(winUsbHandle!, packet, descriptorPtr, (uint)sizeof(DeviceDescriptor), out _, null))
                     throw new IOException("Failed to retrieve device descriptor");
 
                 var interfaceDescriptor = new InterfaceDescriptor();
-                if (!WinUsb_QueryInterfaceSettings(winUsbHandle, 0, &interfaceDescriptor))
+                if (!WinUsb_QueryInterfaceSettings(winUsbHandle!, 0, &interfaceDescriptor))
                     throw new IOException("Failed to get interface descriptor");
 
                 InterfaceNum = interfaceDescriptor.bInterfaceNumber;
@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Devices.WinUSB
                 for (byte i = 0; i < interfaceDescriptor.bNumEndpoints; i++)
                 {
                     var b = i; // Workaround CoreCLR bug
-                    if (!WinUsb_QueryPipe(winUsbHandle, 0, i, out var pipeInfo))
+                    if (!WinUsb_QueryPipe(winUsbHandle!, 0, i, out var pipeInfo))
                         throw new IOException("Failed to get pipe information");
                     i = b;
 
@@ -118,7 +118,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
                 fixed (void* bufferPtr = &buffer[0])
                 {
-                    if (!WinUsb_ControlTransfer(winUsbHandle, packet, bufferPtr, StringDescriptor.MaxSize, out var descriptorLength, null))
+                    if (!WinUsb_ControlTransfer(winUsbHandle!, packet, bufferPtr, StringDescriptor.MaxSize, out var descriptorLength, null))
                     {
                         ArrayPool<byte>.Shared.Return(buffer);
                         return null;

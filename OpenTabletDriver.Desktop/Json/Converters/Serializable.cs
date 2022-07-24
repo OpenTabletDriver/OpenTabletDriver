@@ -2,8 +2,6 @@ using System;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Json.Converters
 {
     [JsonObject]

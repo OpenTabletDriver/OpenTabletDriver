@@ -5,8 +5,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public interface IPluginManager

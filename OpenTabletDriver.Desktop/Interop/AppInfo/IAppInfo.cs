@@ -1,9 +1,8 @@
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Interop.AppInfo
 {
     public interface IAppInfo
     {
+        string AppDataDirectory { set; get; }
         string ConfigurationDirectory { set; get; }
         string SettingsFile { set; get; }
         string BinaryDirectory { set; get; }
@@ -13,6 +12,5 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
         string CacheDirectory { set; get; }
         string BackupDirectory { set; get; }
         string TrashDirectory { set; get; }
-        string AppDataDirectory { set; get; }
     }
 }

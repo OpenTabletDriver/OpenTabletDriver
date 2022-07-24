@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public BindingState(IPluginFactory pluginFactory, InputDevice device, IMouseButtonHandler mouseButtonHandler, PluginSettings settings)
         {
-            _binding = pluginFactory.Construct<IBinding>(settings, device, mouseButtonHandler);
+            _binding = pluginFactory.Construct<IBinding>(settings, device, mouseButtonHandler)!;
         }
 
         private bool _previousState;

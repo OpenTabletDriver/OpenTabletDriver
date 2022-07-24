@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginManager : IPluginManager

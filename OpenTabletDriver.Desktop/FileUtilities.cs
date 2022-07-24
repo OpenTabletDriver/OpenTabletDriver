@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public static class FileUtilities
@@ -16,11 +14,7 @@ namespace OpenTabletDriver.Desktop
         /// <returns>A valid path in which may or may not currently exist.</returns>
         public static string? GetPath(params string[] paths)
         {
-            foreach (var dir in paths.Select(InjectEnvironmentVariables))
-                if (Path.IsPathRooted(dir))
-                    return dir;
-
-            return null;
+            return paths.Select(InjectEnvironmentVariables).FirstOrDefault(Path.IsPathRooted);
         }
 
         /// <summary>
@@ -29,11 +23,7 @@ namespace OpenTabletDriver.Desktop
         /// <returns>An existing path or null.</returns>
         public static string? GetExistingPath(params string[] paths)
         {
-            foreach (var dir in paths.Select(InjectEnvironmentVariables))
-                if (Directory.Exists(dir))
-                    return dir;
-
-            return null;
+            return paths.Select(InjectEnvironmentVariables).FirstOrDefault(Directory.Exists);
         }
 
         /// <summary>
@@ -48,7 +38,7 @@ namespace OpenTabletDriver.Desktop
 
         public static string InjectEnvironmentVariables(string str)
         {
-            StringBuilder sb = new StringBuilder(str);
+            var sb = new StringBuilder(str);
             sb.Replace("~", Environment.GetEnvironmentVariable("HOME"));
 
             foreach (DictionaryEntry envVar in Environment.GetEnvironmentVariables())

@@ -16,30 +16,16 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
-        public PluginSettingsCollection Trim()
-        {
-            while (true)
-            {
-                if (!Remove(null))
-                    break;
-            }
-
-            return this;
-        }
-
         public PluginSettingsCollection SetExpectedCount(int expectedCount)
         {
             while (Count < expectedCount)
-                Add(null);
+                Add(new PluginSettings(typeof(object)));
 
             return this;
         }
 
         public PluginSettings FromType(TypeInfo type)
         {
-            if (type == null)
-                return null;
-
             var store = this.FirstOrDefault(s => s.Path == type.FullName) ?? new PluginSettings(type, false);
             if (!Contains(store))
                 Add(store);

@@ -9,8 +9,6 @@ using Octokit;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 #pragma warning disable 618
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Updater
 {
     public class MacOSUpdater : GitHubUpdater

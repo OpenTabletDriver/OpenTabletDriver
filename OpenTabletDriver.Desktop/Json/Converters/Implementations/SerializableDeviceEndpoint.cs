@@ -1,7 +1,5 @@
 using OpenTabletDriver.Devices;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Json.Converters.Implementations
 {
     internal sealed class SerializableDeviceEndpoint : Serializable, IDeviceEndpoint

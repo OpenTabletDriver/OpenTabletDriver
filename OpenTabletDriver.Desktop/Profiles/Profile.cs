@@ -9,36 +9,36 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class Profile : NotifyPropertyChanged
     {
-        private string _tablet;
-        private PluginSettings _outputMode;
+        private string _tablet = string.Empty;
+        private PluginSettings _outputMode = null!;
         private BindingSettings _bindings = new BindingSettings();
         private PluginSettingsCollection _filters = new PluginSettingsCollection();
 
         [JsonProperty("Tablet")]
         public string Tablet
         {
-            set => RaiseAndSetIfChanged(ref _tablet, value);
+            set => RaiseAndSetIfChanged(ref _tablet!, value);
             get => _tablet;
         }
 
         [JsonProperty("OutputMode")]
         public PluginSettings OutputMode
         {
-            set => RaiseAndSetIfChanged(ref _outputMode, value);
+            set => RaiseAndSetIfChanged(ref _outputMode!, value);
             get => _outputMode;
         }
 
         [JsonProperty("Filters")]
         public PluginSettingsCollection Filters
         {
-            set => RaiseAndSetIfChanged(ref _filters, value);
+            set => RaiseAndSetIfChanged(ref _filters!, value);
             get => _filters;
         }
 
         [JsonProperty("Bindings")]
         public BindingSettings BindingSettings
         {
-            set => RaiseAndSetIfChanged(ref _bindings, value);
+            set => RaiseAndSetIfChanged(ref _bindings!, value);
             get => _bindings;
         }
 
@@ -50,7 +50,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             return new Profile
             {
                 Tablet = tablet.Configuration.Name,
-                OutputMode = typeof(AbsoluteMode).GetDefaultSettings(serviceProvider, digitizer, screen),
+                OutputMode = serviceProvider.GetDefaultSettings(typeof(AbsoluteMode), digitizer!, screen),
                 BindingSettings = BindingSettings.GetDefaults(tablet.Configuration.Specifications)
             };
         }

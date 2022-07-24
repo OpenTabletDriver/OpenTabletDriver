@@ -2,8 +2,6 @@ using System.Numerics;
 using Newtonsoft.Json;
 using OpenTabletDriver.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.RPC
 {
     [JsonObject]

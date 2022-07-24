@@ -4,8 +4,6 @@ using JetBrains.Annotations;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Logging;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
     [PublicAPI]

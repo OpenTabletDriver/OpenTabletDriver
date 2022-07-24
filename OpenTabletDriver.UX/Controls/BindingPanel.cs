@@ -50,7 +50,7 @@ namespace OpenTabletDriver.UX.Controls
         /// </summary>
         /// <param name="expression">Expression pointing to the plugin settings.</param>
         /// <param name="name">Friendly name for the button, otherwise pulled via reflection.</param>
-        protected Container ButtonFor(Expression<Func<Profile, PluginSettings>> expression, string? name = null)
+        protected Container ButtonFor(Expression<Func<Profile, PluginSettings?>> expression, string? name = null)
         {
             var binding = DataContextBinding.Cast<Profile>().Child(expression);
             var editor = _controlBuilder.Build<BindingEditor>(binding);

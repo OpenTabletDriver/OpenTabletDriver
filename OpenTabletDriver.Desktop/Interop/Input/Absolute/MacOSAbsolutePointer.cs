@@ -17,8 +17,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            var newPos = new CGPoint(pos.X, pos.Y) - offset;
-            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, moveEvent, newPos, pressedButtons);
+            var newPos = new CGPoint(pos.X, pos.Y) - Offset;
+            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, MoveEvent, newPos, PressedButtons);
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
             CFRelease(mouseEventRef);
         }

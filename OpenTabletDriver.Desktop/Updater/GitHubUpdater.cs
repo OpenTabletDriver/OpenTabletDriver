@@ -3,8 +3,6 @@ using System.Threading.Tasks;
 using Octokit;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract class GitHubUpdater : Updater<UpdateInfo>

@@ -13,8 +13,6 @@ using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Interop;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     using static ServiceDescriptor;

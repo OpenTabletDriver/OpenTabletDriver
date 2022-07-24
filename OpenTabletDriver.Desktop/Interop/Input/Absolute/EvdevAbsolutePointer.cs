@@ -6,8 +6,6 @@ using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class EvdevAbsolutePointer : EvdevVirtualMouse, IAbsolutePointer

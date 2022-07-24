@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             _outputs = new List<WaylandOutput>();
             using (var connection = new WaylandClientConnection())
             {
-                ZxdgOutputManagerV1 outputManager = null;
+                ZxdgOutputManagerV1? outputManager = null;
                 var registry = connection.Display.GetRegistry();
                 registry.Global += (wlRegistry, name, @interface, version) =>
                 {

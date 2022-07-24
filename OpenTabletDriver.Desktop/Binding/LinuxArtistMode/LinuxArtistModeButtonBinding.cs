@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
         };
 
         [Setting("Button"), MemberValidated(nameof(ValidButtons))]
-        public string Button { set; get; }
+        public string Button { set; get; } = string.Empty;
 
         public void Press(IDeviceReport report)
         {

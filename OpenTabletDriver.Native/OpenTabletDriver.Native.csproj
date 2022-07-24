@@ -3,6 +3,7 @@
   <PropertyGroup Label="Project Properties">
     <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

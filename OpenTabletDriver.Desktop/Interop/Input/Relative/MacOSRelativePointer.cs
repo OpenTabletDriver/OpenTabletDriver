@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static OSX;
 
-    public class MacOSRelativePointer : Input.MacOSVirtualMouse, IRelativePointer
+    public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer
     {
         public MacOSRelativePointer(IVirtualScreen virtualScreen) : base(virtualScreen)
         {
@@ -17,10 +17,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
         public void SetPosition(Vector2 delta)
         {
-            var lastPos = base.GetPosition();
+            var lastPos = GetPosition();
             var newPos = lastPos + delta;
-            var cgPt = new CGPoint(newPos.X, newPos.Y) - offset;
-            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, moveEvent, cgPt, pressedButtons);
+            var cgPt = new CGPoint(newPos.X, newPos.Y) - Offset;
+            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, MoveEvent, cgPt, PressedButtons);
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
             CFRelease(mouseEventRef);
         }

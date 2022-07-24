@@ -1,7 +1,5 @@
 using System.IO;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public interface ISettingsManager

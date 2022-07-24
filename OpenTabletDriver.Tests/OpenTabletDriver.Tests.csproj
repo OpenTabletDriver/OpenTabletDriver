@@ -2,8 +2,8 @@
 
   <PropertyGroup Label="Project Properties">
     <TargetFramework>$(FrameworkBase)</TargetFramework>
-    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

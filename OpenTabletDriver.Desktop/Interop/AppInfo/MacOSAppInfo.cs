@@ -6,9 +6,14 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
     {
         public MacOSAppInfo()
         {
-            AppDataDirectory = GetPath("~/Library/Application Support/OpenTabletDriver");
-            TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver");
-            CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver");
+            if (GetPath("~/Library/Application Support/OpenTabletDriver") is string appdata)
+                AppDataDirectory = appdata;
+
+            if (GetPath("$TMPDIR/OpenTabletDriver") is string temp)
+                TemporaryDirectory = temp;
+
+            if (GetPath("~/Library/Caches/OpenTabletDriver") is string cache)
+                CacheDirectory = cache;
         }
     }
 }

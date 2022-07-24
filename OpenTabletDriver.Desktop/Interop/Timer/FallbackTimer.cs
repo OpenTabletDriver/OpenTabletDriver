@@ -4,37 +4,37 @@ using System.Threading;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
-    public class FallbackTimer : ITimer, IDisposable
+    public class FallbackTimer : ITimer
     {
-        private Thread threadTimer;
-        private bool runTimer = true;
+        private Thread? _threadTimer;
+        private bool _runTimer = true;
+        private float _ignoreEventIfLateBy = float.MaxValue;
 
         public float Interval { get; set; }
-        public float IgnoreEventIfLateBy { get; set; } = float.MaxValue;
-        public bool Enabled => this.threadTimer != null && this.threadTimer.IsAlive;
+        public bool Enabled => _threadTimer is { IsAlive: true };
 
-        public event Action Elapsed;
+        public event Action? Elapsed;
 
         public void Start()
         {
             if (Enabled || Interval <= 0)
                 return;
 
-            this.runTimer = true;
+            _runTimer = true;
 
-            this.IgnoreEventIfLateBy = Interval * 2;
+            _ignoreEventIfLateBy = Interval * 2;
 
-            this.threadTimer = new Thread(ThreadMain)
+            _threadTimer = new Thread(ThreadMain)
             {
                 Priority = ThreadPriority.AboveNormal
             };
-            this.threadTimer.Start();
+            _threadTimer.Start();
         }
 
         public void Stop()
         {
-            this.runTimer = false;
-            this.threadTimer.Join();
+            _runTimer = false;
+            _threadTimer!.Join();
         }
 
         private void ThreadMain()
@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            while (this.runTimer)
+            while (_runTimer)
             {
                 nextNotification += Interval;
 
@@ -55,7 +55,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     Thread.Yield();
                 }
 
-                if (elapsedMilliseconds - nextNotification >= IgnoreEventIfLateBy)
+                if (elapsedMilliseconds - nextNotification >= _ignoreEventIfLateBy)
                     continue;
                 Elapsed?.Invoke();
             }

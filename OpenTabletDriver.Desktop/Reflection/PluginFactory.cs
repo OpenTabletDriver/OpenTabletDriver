@@ -4,8 +4,6 @@ using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Attributes;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginFactory : IPluginFactory

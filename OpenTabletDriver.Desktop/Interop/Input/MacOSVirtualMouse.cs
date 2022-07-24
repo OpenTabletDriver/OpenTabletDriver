@@ -15,14 +15,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     {
         protected MacOSVirtualMouse(IVirtualScreen virtualScreen)
         {
-            var primary = virtualScreen.Displays.FirstOrDefault();
-            offset = new CGPoint(primary.Position.X, primary.Position.Y);
+            var primary = virtualScreen.Displays.First();
+            Offset = new CGPoint(primary.Position.X, primary.Position.Y);
         }
 
-        protected InputDictionary inputDictionary = new InputDictionary();
-        protected CGEventType moveEvent = CGEventType.kCGEventMouseMoved;
-        protected CGPoint offset;
-        protected CGMouseButton pressedButtons;
+        private readonly InputDictionary _inputDictionary = new InputDictionary();
+        protected CGEventType MoveEvent = CGEventType.kCGEventMouseMoved;
+        protected CGPoint Offset;
+        protected CGMouseButton PressedButtons;
 
         public void MouseDown(MouseButton button)
         {
@@ -98,20 +98,20 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         private bool GetMouseButtonState(MouseButton button)
         {
-            return inputDictionary.TryGetValue(button, out var state) ? state : false;
+            return _inputDictionary.TryGetValue(button, out var state) ? state : false;
         }
 
         private void SetMouseButtonState(MouseButton button, bool newState)
         {
-            inputDictionary.UpdateState(button, newState);
-            moveEvent = GetMoveEventType();
-            pressedButtons = GetPressedCGButtons();
+            _inputDictionary.UpdateState(button, newState);
+            MoveEvent = GetMoveEventType();
+            PressedButtons = GetPressedCgButtons();
         }
 
         protected Vector2 GetPosition()
         {
             var eventRef = CGEventCreate(IntPtr.Zero);
-            CGPoint cursor = CGEventGetLocation(eventRef) + offset;
+            CGPoint cursor = CGEventGetLocation(eventRef) + Offset;
             CFRelease(eventRef);
             return new Vector2((float)cursor.x, (float)cursor.y);
         }
@@ -134,7 +134,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             return eventType == 0 ? CGEventType.kCGEventMouseMoved : eventType;
         }
 
-        private CGMouseButton GetPressedCGButtons()
+        private CGMouseButton GetPressedCgButtons()
         {
             CGMouseButton pressedButtons = 0;
 
@@ -155,7 +155,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
         {
             var curPos = GetPosition();
-            var cgPos = new CGPoint(curPos.X, curPos.Y) - offset;
+            var cgPos = new CGPoint(curPos.X, curPos.Y) - Offset;
             var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, type, cgPos, cgButton);
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
             CFRelease(mouseEventRef);

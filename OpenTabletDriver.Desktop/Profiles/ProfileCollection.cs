@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.Json.Serialization;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Profiles
 {
     public class ProfileCollection : ObservableCollection<Profile>

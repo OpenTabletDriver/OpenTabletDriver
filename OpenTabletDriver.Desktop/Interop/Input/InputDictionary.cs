@@ -6,9 +6,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     public class InputDictionary : IDictionary<MouseButton, bool>
     {
-        #region MouseButton Implementation
-
-        private Dictionary<MouseButton, bool> _mouse = new Dictionary<MouseButton, bool>();
+        private readonly Dictionary<MouseButton, bool> _mouse = new Dictionary<MouseButton, bool>();
 
         public bool this[MouseButton key]
         {
@@ -86,7 +84,5 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             else
                 _mouse.Add(button, isPressed);
         }
-
-        #endregion
     }
 }

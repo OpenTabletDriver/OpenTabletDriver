@@ -18,18 +18,16 @@ namespace OpenTabletDriver.Desktop.Diagnostics
             AddVariables(EnvironmentVariables);
         }
 
-        protected EnvironmentDictionary(string[] additionalVariables) : this()
+        protected EnvironmentDictionary(IEnumerable<string> additionalVariables) : this()
         {
             AddVariables(additionalVariables);
         }
 
-        private void AddVariables(string[] variables)
+        private void AddVariables(IEnumerable<string> variables)
         {
             foreach (var variable in variables)
-            {
-                var value = Environment.GetEnvironmentVariable(variable);
-                Add(variable, value);
-            }
+                if (Environment.GetEnvironmentVariable(variable) is string value)
+                    Add(variable, value);
         }
     }
 }

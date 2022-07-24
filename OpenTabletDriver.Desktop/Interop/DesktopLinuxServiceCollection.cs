@@ -12,8 +12,6 @@ using OpenTabletDriver.Platform.Environment;
 using OpenTabletDriver.Platform.Keyboard;
 using OpenTabletDriver.Platform.Pointer;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Interop
 {
     using static ServiceDescriptor;

@@ -5,10 +5,10 @@ namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
     public class AbsoluteModeSettings : NotifyPropertyChanged
     {
         [JsonProperty("Display")]
-        public AreaSettings Display { set; get; }
+        public AreaSettings? Display { set; get; }
 
         [JsonProperty("Tablet")]
-        public AreaSettings Tablet { set; get; }
+        public AreaSettings? Tablet { set; get; }
 
         [JsonProperty("EnableClipping")]
         public bool EnableClipping { set; get; }

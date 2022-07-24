@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
     public class Settings : NotifyPropertyChanged
     {
         [JsonProperty("Profiles")]
-        public Collection<Profile> Profiles { set; get; }
+        public Collection<Profile>? Profiles { set; get; }
 
         [JsonProperty("LockUsableAreaDisplay")]
         public bool LockUsableAreaDisplay { set; get; }
@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
         public bool LockUsableAreaTablet { set; get; }
 
         [JsonProperty("Tools")]
-        public Collection<PluginSettings> Tools { set; get; }
+        public Collection<PluginSettings>? Tools { set; get; }
 
         public bool IsValid()
         {

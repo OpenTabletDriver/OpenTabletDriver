@@ -1,8 +1,6 @@
 using System.IO;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public class SettingsManager : ISettingsManager

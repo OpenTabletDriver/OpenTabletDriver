@@ -1,7 +1,5 @@
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Json.Converters.Implementations
 {
     internal sealed class SerializableAppInfo : Serializable, IAppInfo

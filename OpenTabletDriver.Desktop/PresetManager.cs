@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public class PresetManager : IPresetManager
@@ -17,7 +15,7 @@ namespace OpenTabletDriver.Desktop
 
         public PresetManager(IAppInfo appInfo)
         {
-            _dir = appInfo.PresetDirectory;
+            _dir = appInfo.PresetDirectory!;
         }
 
         public IReadOnlyCollection<string> GetPresets() => EnumerateDir().ToImmutableList();
@@ -30,7 +28,7 @@ namespace OpenTabletDriver.Desktop
             if (!file.Exists)
                 return null;
 
-            var settings = Serialization.Deserialize<Settings>(file);
+            var settings = Serialization.Deserialize<Settings>(file)!;
             return new Preset(name, settings);
         }
 

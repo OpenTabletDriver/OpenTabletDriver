@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using StreamJsonRpc;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.RPC.Messages
 {
     public class MessageFormatter : JsonMessageFormatter

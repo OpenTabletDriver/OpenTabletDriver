@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.RPC.Messages;
 using StreamJsonRpc;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.RPC
 {
     public class RpcClient<T> where T : class

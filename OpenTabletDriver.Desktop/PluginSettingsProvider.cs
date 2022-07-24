@@ -2,8 +2,6 @@ using System.Reflection;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Desktop.Reflection;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop
 {
     public class PluginSettingsProvider : ISettingsProvider
