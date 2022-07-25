@@ -24,8 +24,6 @@ namespace OpenTabletDriver.UX.Wpf
             }
         }
 
-        public override bool CanUpdate => true;
-
         public override void StartDaemon()
         {
             if (Instance.Exists("OpenTabletDriver.Daemon"))

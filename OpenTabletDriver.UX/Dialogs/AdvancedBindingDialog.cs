@@ -17,8 +17,11 @@ namespace OpenTabletDriver.UX.Dialogs
 
             var initialSettings = binding.DataValue;
 
-            var types = pluginFactory.GetMatchingTypes(typeof(IBinding)).ToImmutableList();
+            var typesQuery = from item in pluginFactory.GetMatchingTypes(typeof(IBinding))
+                orderby item.GetFriendlyName()
+                select item;
 
+            var types = typesQuery.ToImmutableList();
             var typePicker = new DropDown
             {
                 ItemTextBinding = Binding.Property<Type?, string>(t => Format(t)),

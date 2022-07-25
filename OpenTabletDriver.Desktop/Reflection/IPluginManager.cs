@@ -9,7 +9,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public interface IPluginManager
     {
-        event EventHandler? AssembliesChanged;
+        event EventHandler<PluginEventType>? AssembliesChanged;
+
         IEnumerable<Assembly> Assemblies { get; }
         IReadOnlyList<DesktopPluginContext> Plugins { get; }
         IEnumerable<Type> ExportedTypes { get; }

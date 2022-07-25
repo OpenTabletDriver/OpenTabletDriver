@@ -12,7 +12,7 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Tablet;
-using UnhandledExceptionEventArgs = Eto.UnhandledExceptionEventArgs;
+using OpenTabletDriver.UX.Dialogs;
 
 namespace OpenTabletDriver.UX
 {
@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX
             _app.Run(mainForm);
         }
 
-        private void UnhandledException(object? sender, UnhandledExceptionEventArgs args)
+        private void UnhandledException(object? sender, Eto.UnhandledExceptionEventArgs args) => Application.Instance.AsyncInvoke(() =>
         {
             try
             {
@@ -77,9 +77,9 @@ namespace OpenTabletDriver.UX
             }
             catch (Exception ex2)
             {
-                Log.Exception(ex2);
+                Console.WriteLine(ex2);
             }
-        }
+        });
 
         // Some fields are suppressed because they're all initialized in Invoke() rather than the ctor()
         private Application _app = null!;
@@ -171,6 +171,10 @@ namespace OpenTabletDriver.UX
             var daemon = _serviceProvider.GetRequiredService<IDriverDaemon>();
             daemon.TabletsChanged += (_, t) => _app.AsyncInvoke(() => Tablets = new ObservableCollection<TabletConfiguration>(t));
             daemon.SettingsChanged += (_, s) => _app.AsyncInvoke(() => Settings = s);
+            daemon.AssembliesChanged += (_, _) =>
+            {
+                _app.AsyncInvoke(SynchronizePlugins(daemon).Run);
+            };
 
             Tablets = new ObservableCollection<TabletConfiguration>(await daemon.GetTablets());
             Displays = new ObservableCollection<IDisplay>(await daemon.GetDisplays());
@@ -180,11 +184,18 @@ namespace OpenTabletDriver.UX
             var appInfo = await daemon.GetApplicationInfo();
             PluginManager = _serviceProvider.CreateInstance<PluginManager>(appInfo);
             PluginFactory = _serviceProvider.CreateInstance<PluginFactory>(PluginManager);
-            PluginManager.Load();
 
-            // TODO: Add better handling for non-matching hashes
+            await SynchronizePlugins(daemon);
+        }
+
+        private async Task SynchronizePlugins(IDriverDaemon daemon)
+        {
+            PluginManager.Load();
             if (!await daemon.CheckAssemblyHashes(PluginManager.GetStateHash()))
-                throw new Exception("Client plugin manager is not synchronized to the daemon.");
+            {
+                ShowDialog<FatalErrorDialog>(_app.MainForm, "Client plugin manager is not synchronized to the daemon.");
+                Exit(3);
+            }
         }
 
         /// <summary>
@@ -251,10 +262,9 @@ namespace OpenTabletDriver.UX
         /// <typeparam name="TWindow">The window type to show.</typeparam>
         public void ShowWindow<TWindow>(params object[] deps) where TWindow : Form
         {
-            var window = Application.Instance.Windows.FirstOrDefault(w => w is TWindow);
-            if (window == null)
+            if (Application.Instance.Windows.FirstOrDefault(w => w is TWindow) is not TWindow window)
             {
-                _serviceProvider.GetOrCreateInstance<TWindow>(deps).Show();
+                _app.AsyncInvoke(_serviceProvider.GetOrCreateInstance<TWindow>(deps).Show);
             }
             else
             {
@@ -303,8 +313,6 @@ namespace OpenTabletDriver.UX
 
         /// <inheritdoc cref="Open"/>
         protected abstract void OpenInternal(string uri, bool isDirectory);
-
-        public abstract bool CanUpdate { get; }
 
         /// <summary>
         /// The event handler for all client <see cref="Log.Write(OpenTabletDriver.Logging.LogMessage)"/> calls.

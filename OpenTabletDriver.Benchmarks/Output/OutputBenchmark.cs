@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Benchmarks.Output
             _pluginFactory = serviceProvider.GetRequiredService<IPluginFactory>();
         }
 
-        public void ApplySettings(PluginSettings settings)
+        private void ApplySettings(PluginSettings settings)
         {
             var config = new TabletConfiguration
             {

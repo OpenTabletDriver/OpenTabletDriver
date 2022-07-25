@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class PluginSettingsCollection : ObservableCollection<PluginSettings>
+    public class PluginSettingsCollection : ObservableCollection<PluginSettings?>
     {
         public PluginSettingsCollection()
         {
@@ -19,14 +19,17 @@ namespace OpenTabletDriver.Desktop.Reflection
         public PluginSettingsCollection SetExpectedCount(int expectedCount)
         {
             while (Count < expectedCount)
-                Add(new PluginSettings(typeof(object)));
+                Add(null);
 
             return this;
         }
 
-        public PluginSettings FromType(TypeInfo type)
+        public PluginSettings? FromType(TypeInfo? type)
         {
-            var store = this.FirstOrDefault(s => s.Path == type.FullName) ?? new PluginSettings(type, false);
+            if (type == null)
+                return null;
+
+            var store = this.FirstOrDefault(s => s?.Path == type.FullName) ?? new PluginSettings(type, false);
             if (!Contains(store))
                 Add(store);
             return store;

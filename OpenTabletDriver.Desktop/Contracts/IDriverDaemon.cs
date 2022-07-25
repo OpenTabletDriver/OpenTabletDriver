@@ -19,10 +19,10 @@ namespace OpenTabletDriver.Desktop.Contracts
         event EventHandler<LogMessage> Message;
         event EventHandler<DebugReportData> DeviceReport;
         event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
+        event EventHandler<PluginEventType>? AssembliesChanged;
 
         Task WriteMessage(LogMessage message);
 
-        Task LoadPlugins();
         Task<bool> CheckAssemblyHashes(string remoteHash);
         Task<bool> InstallPlugin(string filePath);
         Task<bool> UninstallPlugin(PluginMetadata metadata);

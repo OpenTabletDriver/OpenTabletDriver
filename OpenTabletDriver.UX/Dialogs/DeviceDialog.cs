@@ -8,7 +8,7 @@ using OpenTabletDriver.UX.Components;
 
 namespace OpenTabletDriver.UX.Dialogs
 {
-    public sealed class DeviceDialog : Dialog<IDeviceEndpoint>
+    public sealed class DeviceDialog : Dialog<IDeviceEndpoint?>
     {
         private readonly IDriverDaemon _daemon;
         private readonly ListBox<IDeviceEndpoint> _list;
@@ -19,6 +19,9 @@ namespace OpenTabletDriver.UX.Dialogs
 
             _list = new ListBox<IDeviceEndpoint>();
             _list.ItemTextBinding = Binding.Property<IDeviceEndpoint, string>(e => $"{e.Manufacturer} {e.FriendlyName ?? e.ProductName}");
+            _list.KeyDown += HandleInput;
+            _list.MouseDoubleClick += HandleInput;
+
             Refresh().Run();
 
             Title = "Select a device...";
@@ -103,6 +106,19 @@ namespace OpenTabletDriver.UX.Dialogs
 
             _list.Source = devices;
             _list.SelectedIndex = devices.Any() ? 0 : -1;
+        }
+
+        private void HandleInput(object? sender, EventArgs args)
+        {
+            var isClick = args switch
+            {
+                MouseEventArgs mouse => (mouse.Buttons & MouseButtons.Primary) == MouseButtons.Primary,
+                KeyEventArgs key => (key.Key & Keys.Enter) == Keys.Enter,
+                _ => false
+            };
+
+            if (isClick)
+                Close(_list.SelectedItem);
         }
 
         private static Control LabelFor(Expression<Func<IDeviceEndpoint, object?>> expression)

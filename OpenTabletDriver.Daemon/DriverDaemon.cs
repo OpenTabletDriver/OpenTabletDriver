@@ -10,11 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
+#if RELEASE
 using OpenTabletDriver.Desktop.Components;
+#endif
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
-using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
@@ -92,6 +93,8 @@ namespace OpenTabletDriver.Daemon
                 }, this);
             };
 
+            _pluginManager.AssembliesChanged += (s, e) => AssembliesChanged?.Invoke(s, e);
+
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
             {
                 Log.Write("Detect", $"Another tablet driver found: {driverInfo.Name}", LogLevel.Warning);
@@ -101,10 +104,9 @@ namespace OpenTabletDriver.Daemon
                     Log.Write("Detect", $"Detected input coming from {driverInfo.Name} driver", LogLevel.Error);
             }
 
-            _pluginManager.Clean();
             await LoadUserSettings();
 
-#if !DEBUG
+#if RELEASE
             SleepDetection = new SleepDetectionThread(() =>
             {
                 Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Debug);
@@ -119,6 +121,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<DebugReportData>? DeviceReport;
         public event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
         public event EventHandler<Settings>? SettingsChanged;
+        public event EventHandler<PluginEventType>? AssembliesChanged;
 
         private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { get; } = new Collection<ITool>();
@@ -131,12 +134,6 @@ namespace OpenTabletDriver.Daemon
         public Task WriteMessage(LogMessage message)
         {
             Log.Write(message);
-            return Task.CompletedTask;
-        }
-
-        public Task LoadPlugins()
-        {
-            _pluginManager.Load();
             return Task.CompletedTask;
         }
 
@@ -190,6 +187,7 @@ namespace OpenTabletDriver.Daemon
                 }
             }
 
+            await ApplySettings(_settingsManager.Settings);
             return await GetTablets();
         }
 
@@ -261,10 +259,6 @@ namespace OpenTabletDriver.Daemon
 
         private async Task LoadUserSettings()
         {
-            _pluginManager.Clean();
-            await LoadPlugins();
-            await DetectTablets();
-
             var appdataDir = new DirectoryInfo(_appInfo.AppDataDirectory);
             if (!appdataDir.Exists)
             {
@@ -272,32 +266,14 @@ namespace OpenTabletDriver.Daemon
                 Log.Write("Settings", $"Created OpenTabletDriver application data directory: {appdataDir.FullName}");
             }
 
-            var settingsFile = new FileInfo(_appInfo.SettingsFile);
+            _pluginManager.Clean();
+            _pluginManager.Load();
 
-            if (settingsFile.Exists)
-            {
-                var migrator = new SettingsMigrator(_serviceProvider);
-                migrator.Migrate(_appInfo);
+            var file = new FileInfo(_appInfo.SettingsFile);
+            if (file.Exists)
+                _settingsManager.Load(file);
 
-                var settings = Settings.Deserialize(settingsFile);
-                if (settings != null)
-                {
-                    await ApplySettings(settings);
-                }
-                else
-                {
-                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
-                    settings = Settings.GetDefaults();
-
-                    Settings.Recover(settingsFile, settings);
-                    Log.Write("Settings", "Recovery complete");
-                    await ApplySettings(settings);
-                }
-            }
-            else
-            {
-                await ResetSettings();
-            }
+            await DetectTablets();
         }
 
         private void SetOutputModeSettings(InputDevice dev, IOutputMode outputMode, Profile profile)
@@ -324,10 +300,10 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var settings in _settingsManager.Settings.Tools)
             {
-                if (settings.Enable == false)
+                if (settings is { Enable: false })
                     continue;
 
-                var tool = _pluginFactory.Construct<ITool>(settings);
+                var tool = _pluginFactory.Construct<ITool>(settings!);
 
                 if (tool?.Initialize() ?? false)
                 {

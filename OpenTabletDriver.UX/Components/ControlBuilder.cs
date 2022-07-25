@@ -81,12 +81,17 @@ namespace OpenTabletDriver.UX.Components
             {
                 if (memberValidated.GetValue(_serviceProvider, property) is IEnumerable<object> enumerable)
                 {
+                    var items = enumerable.ToImmutableList();
                     var dropDown = new DropDown
                     {
-                        DataStore = enumerable.ToImmutableList(),
+                        DataStore = items,
                         ID = property.Name
                     };
+
                     dropDown.SelectedValueBinding.Bind(binding.ValueSetting<object>());
+                    if (dropDown.SelectedIndex < 0 && items.Any())
+                        dropDown.SelectedIndex = 0;
+
                     return dropDown;
                 }
             }

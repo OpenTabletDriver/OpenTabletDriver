@@ -30,6 +30,9 @@ namespace OpenTabletDriver.UX.Windows
 
             Title = "Configuration Editor";
 
+            Width = 1000;
+            Height = 700;
+
             var placeholder = new Placeholder("No configuration selected.");
 
             var splitter = new Splitter
@@ -44,12 +47,15 @@ namespace OpenTabletDriver.UX.Windows
 
             Content = splitter;
 
+            var removeCommand = new AppCommand("Remove", RemoveConfiguration);
+            _configsList.SelectedIndexChanged += (_, _) => removeCommand.Enabled = _configsList.SelectedIndex >= 0;
+
             ToolBar = new ToolBar
             {
                 Items =
                 {
                     new AppCommand("Add", AddConfiguration),
-                    new AppCommand("Remove", RemoveConfiguration),
+                    removeCommand,
                     new AppCommand("Generate", GenerateConfiguration)
                 }
             };

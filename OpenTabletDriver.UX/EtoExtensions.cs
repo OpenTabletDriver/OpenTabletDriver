@@ -27,7 +27,7 @@ namespace OpenTabletDriver.UX
                 }
                 catch
                 {
-                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine(ex);
                 }
             });
         }

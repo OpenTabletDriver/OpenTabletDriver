@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Immutable;
 using System.Reflection;
 using Eto.Drawing;
@@ -10,43 +11,58 @@ namespace OpenTabletDriver.UX.Controls.Editors
 {
     public class PluginSettingsEditorList<T> : DesktopPanel where T : class
     {
+        private readonly ListBox<TypeInfo> _list;
+        private readonly IPluginFactory _pluginFactory;
+        private readonly PluginSettingsEditor _settingsPanel;
+        private readonly App _app;
+
         // TODO: Fix discard/load not updating settings
-        public PluginSettingsEditorList(IControlBuilder controlBuilder, IPluginFactory pluginFactory, App app)
+        public PluginSettingsEditorList(IControlBuilder controlBuilder, IPluginFactory pluginFactory, IPluginManager pluginManager, App app)
         {
-            var list = new ListBox<TypeInfo>
+            _app = app;
+            _pluginFactory = pluginFactory;
+
+            _list = new ListBox<TypeInfo>
             {
                 ItemKeyBinding = Binding.Property<TypeInfo, string>(t => t.FullName!),
-                ItemTextBinding = Binding.Property<TypeInfo, string>(t => t.GetFriendlyName() ?? t.FullName!),
-                DataStore = pluginFactory.GetMatchingTypes(typeof(T)).ToImmutableArray()
+                ItemTextBinding = Binding.Property<TypeInfo, string>(t => t.GetFriendlyName() ?? t.FullName!)
             };
 
-            var settingsPanel = controlBuilder.Build<PluginSettingsEditor>();
+            pluginManager.AssembliesChanged += (_, _) => Refresh();
+            Refresh();
 
-            list.SelectedIndexChanged += (_, _) =>
+            _settingsPanel = controlBuilder.Build<PluginSettingsEditor>();
+
+            _list.SelectedIndexChanged += (_, _) =>
             {
-                if (DataContext is PluginSettingsCollection settingsCollection)
-                {
-                    var type = list.SelectedItem;
-                    var settings = settingsCollection.FromType(type);
-                    settingsPanel.DataContext = new SettingsViewModel(settings, type);
-                }
+                var type = _list.SelectedItem;
+                if (DataContext is PluginSettingsCollection settingsCollection && settingsCollection.FromType(type) is PluginSettings settings)
+                    _settingsPanel.DataContext = new SettingsViewModel(settings, type);
+                else
+                    _settingsPanel.DataContext = null;
             };
+        }
 
-            if (list.DataStore.Any())
+        private void Refresh()
+        {
+            var items = _pluginFactory.GetMatchingTypes(typeof(T)).ToImmutableArray();
+            _list.DataStore = items;
+
+            if (items.Any())
             {
                 Content = new Splitter
                 {
                     Panel1 = new Panel
                     {
                         MinimumSize = new Size(250, 0),
-                        Content = list
+                        Content = _list
                     },
-                    Panel2 = settingsPanel
+                    Panel2 = _settingsPanel
                 };
             }
             else
             {
-                var button = new Button((_, _) => app.ShowWindow<Windows.PluginManager>())
+                var button = new Button((_, _) => _app.ShowWindow<Windows.PluginManager>())
                 {
                     Text = "Show plugin manager..."
                 };

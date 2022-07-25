@@ -34,7 +34,7 @@ namespace OpenTabletDriver.UX.Controls
             for (var i = 0; i < count; i++)
             {
                 var index = i;
-                var binding = new DelegateBinding<PluginSettings>(
+                var binding = new DelegateBinding<PluginSettings?>(
                     () => get()[index],
                     v => get()[index] = v,
                     h => get().CollectionChanged += h.Invoke,

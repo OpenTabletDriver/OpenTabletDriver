@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == t));
         }
 
-        public event EventHandler? AssembliesChanged;
+        public event EventHandler<PluginEventType>? AssembliesChanged;
 
         public void Clean()
         {
@@ -94,10 +95,21 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public void Load()
         {
-            foreach (var dir in PluginDirectory.GetDirectories())
+            Unload();
+
+            var directories = PluginDirectory.GetDirectories();
+            foreach (var dir in directories)
                 LoadPlugin(dir);
 
-            AssembliesChanged?.Invoke(this, EventArgs.Empty);
+            AssembliesChanged?.Invoke(this, PluginEventType.Load);
+        }
+
+        private void Unload()
+        {
+            foreach (var plugin in Plugins.ToImmutableArray())
+                UnloadPlugin(plugin);
+
+            AssembliesChanged?.Invoke(this, PluginEventType.Unload);
         }
 
         public bool InstallPlugin(string filePath)
@@ -106,7 +118,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (!file.Exists)
                 return false;
 
-            var name = file.Name.Replace(file.Extension, string.Empty);
+            var name = Path.GetFileNameWithoutExtension(file.Name);
             var tempDir = new DirectoryInfo(Path.Join(TemporaryDirectory.FullName, name));
             if (!tempDir.Exists)
                 tempDir.Create();
@@ -136,6 +148,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
             if (result)
                 LoadPlugin(pluginDir);
+
+            AssembliesChanged?.Invoke(this, PluginEventType.Load);
             return result;
         }
 
@@ -158,6 +172,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
                 Directory.Delete(TemporaryDirectory.FullName, true);
+
+            AssembliesChanged?.Invoke(this, PluginEventType.Load);
             return result;
         }
 
@@ -180,6 +196,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             var trashPath = Path.Join(TrashDirectory.FullName, $"{plugin.FriendlyName}_{random.Next()}");
             Directory.Move(plugin.Directory.FullName, trashPath);
 
+            AssembliesChanged?.Invoke(this, PluginEventType.Unload);
             return UnloadPlugin(plugin);
         }
 
@@ -195,9 +212,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         public bool UnloadPlugin(DesktopPluginContext context)
         {
             Log.Write("Plugin", $"Unloading plugin '{context.FriendlyName}'", LogLevel.Debug);
-            _plugins.Remove(context);
-            AssembliesChanged?.Invoke(this, EventArgs.Empty);
-            return true;
+            return _plugins.Remove(context);
         }
 
         public string GetStateHash()

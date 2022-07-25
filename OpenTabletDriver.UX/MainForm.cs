@@ -128,13 +128,24 @@ namespace OpenTabletDriver.UX
         private async Task InitializeAsync()
         {
             _rpc.Connected += (_, _) => OnConnected().Run();
-            _rpc.Disconnected += (_, _) => Application.Instance.AsyncInvoke(OnDisconnected);
+            _rpc.Disconnected += (_, _) => OnDisconnected().Run();
 
             _app.StartDaemon();
-            await _rpc.Connect();
 
-            if (await _rpc.Instance!.GetUpdateInfo() is UpdateInfo updateInfo)
-                _app.ShowWindow<UpdateForm>(updateInfo);
+            try
+            {
+                await _rpc.Connect();
+            }
+            catch (TimeoutException)
+            {
+                _app.ShowDialog<FatalErrorDialog>(this, "Unable to connect to the OpenTabletDriver Daemon.");
+                App.Exit(1);
+            }
+            catch (Exception ex)
+            {
+                ex.Show();
+                App.Exit(2);
+            }
         }
 
         /// <summary>
@@ -143,22 +154,34 @@ namespace OpenTabletDriver.UX
         /// </summary>
         private async Task OnConnected()
         {
+            // Wait a bit before synchronizing, avoids RPC connection errors from an updating state
+            await Task.Delay(100);
+
             // Synchronize before building the main panel, this will avoid flickering
             await _app.Synchronize();
 
             await Application.Instance.InvokeAsync(() => Content = _controlBuilder.Build<SettingsPanel>());
+
+            if (await _rpc.Instance!.GetUpdateInfo() is UpdateInfo updateInfo)
+                _app.ShowWindow<UpdateForm>(updateInfo);
         }
 
         /// <summary>
         /// The event handler for <see cref="RpcClient{T}.Disconnected"/>.
         /// This is called when RPC disconnects from the OpenTabletDriver daemon and returns to the placeholder UI.
         /// </summary>
-        private void OnDisconnected()
+        private async Task OnDisconnected()
         {
             Content = _placeholder;
             _app.Desynchronize();
 
-            _rpc.Connect().Run();
+            await Application.Instance.InvokeAsync(() =>
+            {
+                foreach (var window in Application.Instance.Windows.SkipWhile(w => w == this).ToArray())
+                    window.Close();
+            });
+
+            await _rpc.Connect();
         }
 
         /// <summary>
@@ -236,9 +259,7 @@ namespace OpenTabletDriver.UX
             };
 
             if (await dialog.ShowModalAsync(this) is string name)
-            {
                 await _rpc.Instance!.SavePreset(name, _app.Settings);
-            }
         }
 
         /// <summary>
@@ -262,9 +283,9 @@ namespace OpenTabletDriver.UX
         /// <summary>
         /// Forces RPC to reconnect.
         /// </summary>
-        private async Task Reconnect()
+        private void Reconnect()
         {
-            await _rpc.Reconnect();
+            _rpc.Disconnect();
         }
     }
 }

@@ -13,8 +13,6 @@ namespace OpenTabletDriver.UX.Gtk
             Process.Start("xdg-open", uri);
         }
 
-        public override bool CanUpdate => false;
-
         public override void StartDaemon()
         {
             // Don't start the daemon watchdog on Linux

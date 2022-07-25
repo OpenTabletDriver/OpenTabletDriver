@@ -13,8 +13,6 @@ namespace OpenTabletDriver.UX.MacOS
             Process.Start("open", $"\"{uri}\"");
         }
 
-        public override bool CanUpdate => true;
-
         public override void StartDaemon()
         {
             if (Instance.Exists("OpenTabletDriver.Daemon"))

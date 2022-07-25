@@ -15,16 +15,19 @@ namespace OpenTabletDriver.UX.Controls
 
             Text = "Apply preset...";
 
-            Validate += (_, _) => UpdateItems().Run();
+            Validate += (_, _) => Refresh().Run();
         }
 
-        private async Task UpdateItems()
+        private async Task Refresh()
         {
             Items.Clear();
 
-            foreach (var preset in await _rpc.Instance!.GetPresets())
+            if (_rpc.IsConnected)
             {
-                Items.Add(GetPresetItem(preset));
+                foreach (var preset in await _rpc.Instance!.GetPresets())
+                {
+                    Items.Add(GetPresetItem(preset));
+                }
             }
 
             Enabled = Items.Any();

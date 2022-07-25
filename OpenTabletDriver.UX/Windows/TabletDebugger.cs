@@ -10,11 +10,11 @@ namespace OpenTabletDriver.UX.Windows
 {
     public sealed class TabletDebugger : DesktopForm
     {
-        private readonly IDriverDaemon _driverDaemon;
+        private readonly RpcClient<IDriverDaemon> _rpc;
 
-        public TabletDebugger(IControlBuilder controlBuilder, IDriverDaemon driverDaemon)
+        public TabletDebugger(IControlBuilder controlBuilder, RpcClient<IDriverDaemon> rpc, IDriverDaemon daemon)
         {
-            _driverDaemon = driverDaemon;
+            _rpc = rpc;
 
             Title = "Tablet Debugger";
             MinimumSize = new Size(800, 600);
@@ -35,8 +35,8 @@ namespace OpenTabletDriver.UX.Windows
             var reportPeriod = 0.0;
             var sw = new HPETDeltaStopwatch();
 
-            _driverDaemon.SetTabletDebug(true).Run();
-            _driverDaemon.DeviceReport += (_, data) => Application.Instance.AsyncInvoke(() =>
+            daemon.SetTabletDebug(true).Run();
+            daemon.DeviceReport += (_, data) => Application.Instance.AsyncInvoke(() =>
             {
                 viewer.Draw(data);
                 DataContext = data;
@@ -97,7 +97,8 @@ namespace OpenTabletDriver.UX.Windows
         {
             base.OnClosing(e);
 
-            _driverDaemon.SetTabletDebug(false).Run();
+            if (_rpc.IsConnected)
+                _rpc.Instance!.SetTabletDebug(false).Run();
         }
 
         /// <summary>

@@ -82,28 +82,20 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            var copyCommand = new Command((_, _) => Copy(_list.SelectedItems))
-            {
-                MenuText = "Copy"
-            };
+            var modifier = Application.Instance.CommonModifier;
+            var copy = new AppCommand("Copy", () => Copy(_list.SelectedItems), modifier | Keys.C);
             _list.ContextMenu = new ContextMenu
             {
                 Items =
                 {
-                    copyCommand
+                    copy
                 }
             };
 
             _list.KeyDown += (_, e) =>
             {
-                switch (e.Modifiers, e.Key)
-                {
-                    case (Keys.Control, Keys.C):
-                    {
-                        copyCommand.Execute();
-                        break;
-                    }
-                }
+                if ((e.KeyData & copy.Shortcut) == copy.Shortcut)
+                    copy.Execute();
             };
 
             Content = new StackLayout

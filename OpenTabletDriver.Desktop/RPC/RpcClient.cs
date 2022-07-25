@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO.Pipes;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using OpenTabletDriver.Desktop.RPC.Messages;
 using StreamJsonRpc;
 
@@ -20,6 +21,7 @@ namespace OpenTabletDriver.Desktop.RPC
         private readonly TimeSpan _connectTimeout = TimeSpan.FromSeconds(5);
 
         public T? Instance { private set; get; }
+        public bool IsConnected { private set; get; }
 
         public event EventHandler? Connected;
         public event EventHandler? Disconnected;
@@ -42,20 +44,20 @@ namespace OpenTabletDriver.Desktop.RPC
             OnConnected();
         }
 
-        public async Task Reconnect()
+        public void Disconnect()
         {
-            await _stream!.DisposeAsync();
             _rpc?.Dispose();
-            await Task.Delay(500);
         }
 
         protected virtual void OnConnected()
         {
+            IsConnected = true;
             Connected?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnDisconnected()
         {
+            IsConnected = false;
             Disconnected?.Invoke(this, EventArgs.Empty);
         }
 
