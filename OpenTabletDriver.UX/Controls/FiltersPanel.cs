@@ -1,17 +1,22 @@
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Controls.Editors;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class FiltersPanel : DesktopPanel
+    public class FiltersPanel : PluginSettingsPanel<IDevicePipelineElement>
     {
-        public FiltersPanel(IControlBuilder controlBuilder)
+        public FiltersPanel(
+            IControlBuilder controlBuilder,
+            IPluginFactory pluginFactory,
+            App app,
+            IPluginManager pluginManager
+        ) : base(controlBuilder, pluginFactory, app, pluginManager)
         {
-            var editor = controlBuilder.Build<PluginSettingsEditorList<IDevicePipelineElement>>();
-            editor.DataContextBinding.BindDataContext((Profile p) => p.Filters);
-            Content = editor;
         }
+
+        protected override PluginSettingsCollection? Settings => (DataContext as Profile)?.Filters;
     }
 }

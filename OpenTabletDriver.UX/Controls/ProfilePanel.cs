@@ -3,6 +3,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Components;
+using Application = Eto.Forms.Application;
 
 namespace OpenTabletDriver.UX.Controls
 {
@@ -32,7 +33,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 Pages =
                 {
-                    logPage
+                    placeholderPage
                 }
             };
 
@@ -50,6 +51,8 @@ namespace OpenTabletDriver.UX.Controls
 
             DataContextChanged += delegate
             {
+                var prevPage = tabControl.SelectedPage;
+
                 var pages = tabControl.Pages;
                 pages.Clear();
 
@@ -74,14 +77,20 @@ namespace OpenTabletDriver.UX.Controls
                         pages.Add(mousePage);
 
                     pages.Add(toolsPage);
+                    pages.Add(logPage);
+
+                    if (prevPage != placeholderPage && pages.Contains(prevPage))
+                        tabControl.SelectedPage = prevPage;
+                    else
+                        tabControl.SelectedIndex = 0;
                 }
                 else
                 {
                     pages.Add(placeholderPage);
+                    pages.Add(logPage);
+
                     tabControl.SelectedPage = placeholderPage;
                 }
-
-                pages.Add(logPage);
             };
         }
 

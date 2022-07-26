@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Tools.udev.Comparers

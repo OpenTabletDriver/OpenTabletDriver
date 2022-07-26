@@ -1,37 +1,21 @@
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.UX.Components;
-using OpenTabletDriver.UX.ViewModels;
 
 namespace OpenTabletDriver.UX.Controls.Editors
 {
     public class PluginSettingsEditor : DesktopPanel
     {
-        private readonly IControlBuilder _controlBuilder;
-        private readonly Placeholder _placeholder;
-
-        public PluginSettingsEditor(IControlBuilder controlBuilder)
+        public PluginSettingsEditor(IControlBuilder controlBuilder, PluginSettings settings, Type type)
         {
-            _controlBuilder = controlBuilder;
-
-            Content = _placeholder = new Placeholder("No plugin selected.");
-        }
-
-        protected override void OnDataContextChanged(EventArgs e)
-        {
-            base.OnDataContextChanged(e);
-
-            if (DataContext is not SettingsViewModel { Settings: not null, Type: not null } model)
-            {
-                Content = _placeholder;
-                return;
-            }
+            DataContext = settings;
 
             var enableToggle = new CheckBox
             {
                 Text = "Enable"
             };
 
-            enableToggle.CheckedBinding.BindDataContext((SettingsViewModel m) => m.Settings.Enable);
+            enableToggle.CheckedBinding.BindDataContext((PluginSettings s) => s.Enable);
 
             var layout = new StackLayout
             {
@@ -44,7 +28,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
                 }
             };
 
-            foreach (var control in _controlBuilder.Generate(model.Settings, model.Type))
+            foreach (var control in controlBuilder.Generate(settings, type))
             {
                 var item = new StackLayoutItem(control);
                 layout.Items.Add(item);

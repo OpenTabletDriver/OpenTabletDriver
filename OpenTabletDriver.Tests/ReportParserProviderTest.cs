@@ -2,7 +2,6 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Configurations.Parsers.XP_Pen;
-using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Tablet;
 using Xunit;
 

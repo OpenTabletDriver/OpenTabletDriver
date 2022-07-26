@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO.Pipes;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using OpenTabletDriver.Desktop.RPC.Messages;
 using StreamJsonRpc;
 

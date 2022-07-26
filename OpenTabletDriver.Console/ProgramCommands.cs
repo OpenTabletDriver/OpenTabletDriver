@@ -10,7 +10,6 @@ using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
-using OpenTabletDriver.Tablet;
 using static System.Console;
 
 namespace OpenTabletDriver.Console
@@ -351,7 +350,7 @@ namespace OpenTabletDriver.Console
             {
                 await using (var fs = File.OpenRead(path))
                 {
-                    var newSettings = Serialization.Deserialize<Settings>(fs);
+                    var newSettings = Serialization.Deserialize<Settings>(fs)!;
                     await ApplySettings(newSettings);
                     await Out.WriteLineAsync("Settings were successfully applied.");
                 }

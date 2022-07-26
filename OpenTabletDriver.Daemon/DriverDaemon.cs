@@ -125,7 +125,7 @@ namespace OpenTabletDriver.Daemon
 
         private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { get; } = new Collection<ITool>();
-#if !DEBUG
+#if RELEASE
         private SleepDetectionThread? SleepDetection { set; get; }
 #endif
 
