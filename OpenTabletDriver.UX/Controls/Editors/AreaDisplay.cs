@@ -35,6 +35,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
         private static Color ForegroundBorderColor { get; } = SystemColors.ControlText;
         private static Color BackgroundFillColor { get; } = SystemColors.WindowBackground;
         private static Color BackgroundBorderColor { get; } = SystemColors.Control;
+        private static Brush TextBrush { get; } = new SolidBrush(SystemColors.ControlText);
 
         protected override void OnDataContextChanged(EventArgs e)
         {
@@ -71,8 +72,9 @@ namespace OpenTabletDriver.UX.Controls.Editors
         {
             var formattedText = new FormattedText
             {
+                Text = text,
                 Font = Font,
-                Text = text
+                ForegroundBrush = TextBrush
             };
 
             using (graphics.SaveTransformState())
@@ -121,16 +123,18 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
                 var widthText = new FormattedText
                 {
-                    Text = area.Width.ToString(CultureInfo.CurrentUICulture) + Unit,
-                    Font = Font
+                    Text = area.Width + Unit,
+                    Font = Font,
+                    ForegroundBrush = TextBrush
                 };
                 var widthSize = widthText.Measure();
                 graphics.DrawText(widthText, new PointF(-widthSize.Width / 2, size.Height / 2 - widthSize.Height - 5));
 
                 var heightText = new FormattedText
                 {
-                    Text = area.Height.ToString(CultureInfo.CurrentUICulture) + Unit,
-                    Font = Font
+                    Text = area.Height + Unit,
+                    Font = Font,
+                    ForegroundBrush = TextBrush
                 };
                 var heightSize = heightText.Measure();
                 graphics.RotateTransform(270);
