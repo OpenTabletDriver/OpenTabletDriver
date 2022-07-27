@@ -29,6 +29,8 @@ namespace OpenTabletDriver.UX.Controls
 
         private void UpdateItems()
         {
+            var index = SelectedIndex;
+
             var profiles = _app.Settings.Profiles;
             var tablets = _app.Tablets.Select(t => t.Name);
 
@@ -39,7 +41,7 @@ namespace OpenTabletDriver.UX.Controls
                 DataStore = visibleProfiles;
 
                 if (SelectedIndex == -1 && visibleProfiles.Any())
-                    SelectedIndex = 0;
+                    SelectedIndex = Math.Clamp(index, 0, visibleProfiles.Length - 1);
 
                 OnSelectedValueChanged(EventArgs.Empty);
             });

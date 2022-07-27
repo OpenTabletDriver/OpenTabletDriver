@@ -7,8 +7,10 @@ namespace OpenTabletDriver.UX.Services
     {
         public EtoKeysProvider()
         {
-            var keys = Enum.GetNames<Keys>();
-            var pairs = keys.Select(k => new KeyValuePair<string, object>(k, k));
+            var pairs = from key in Enum.GetNames<Keys>()
+                where key != nameof(Keys.None)
+                select new KeyValuePair<string, object>(key, key);
+
             EtoToNative = new Dictionary<string, object>(pairs);
         }
 

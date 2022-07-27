@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.RPC;
 
@@ -37,12 +38,12 @@ namespace OpenTabletDriver.Daemon
                     }
                 };
 
-                rootCommand.Handler = CommandHandler.Create<string, string>(Run);
+                rootCommand.Handler = CommandHandler.Create<string, string>(Invoke);
                 await rootCommand.InvokeAsync(args);
             }
         }
 
-        private static async Task Run(string appdata, string config)
+        private static async Task Invoke(string appdata, string config)
         {
             var serviceCollection = DesktopServiceCollection.GetPlatformServiceCollection();
             var appInfo = AppInfo.GetPlatformAppInfo();
@@ -52,7 +53,9 @@ namespace OpenTabletDriver.Daemon
             if (!string.IsNullOrWhiteSpace(config))
                 appInfo.ConfigurationDirectory = FileUtilities.InjectEnvironmentVariables(config);
 
-            serviceCollection.AddSingleton(appInfo);
+            serviceCollection.AddSingleton(appInfo)
+                .AddSingleton(s => s.CreateInstance<RpcHost<IDriverDaemon>>("OpenTabletDriver.Daemon"))
+                .AddSingleton<IDriverDaemon, DriverDaemon>();
 
             AppDomain.CurrentDomain.UnhandledException += (_, e) =>
             {
@@ -70,10 +73,13 @@ namespace OpenTabletDriver.Daemon
                 );
             };
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var daemon = serviceProvider.CreateInstance<DriverDaemon>();
+            await Run(serviceCollection.BuildServiceProvider());
+        }
 
-            var rpcHost = serviceProvider.CreateInstance<RpcHost<DriverDaemon>>("OpenTabletDriver.Daemon");
+        private static async Task Run(IServiceProvider serviceProvider)
+        {
+            var daemon = serviceProvider.GetRequiredService<IDriverDaemon>();
+            var rpcHost = serviceProvider.GetRequiredService<RpcHost<IDriverDaemon>>();
             rpcHost.ConnectionStateChanged += (_, state) =>
                 Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
 

@@ -2,7 +2,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 {
     public sealed class WindowsEnvironmentDictionary : EnvironmentDictionary
     {
-        private static readonly string[] EnvironmentVariables = new[]
+        private static readonly string[] EnvironmentVariables =
         {
             "USER",
             "TEMP",

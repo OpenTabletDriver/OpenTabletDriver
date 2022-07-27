@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -48,6 +49,9 @@ namespace OpenTabletDriver.Desktop
 
         private IEnumerable<string> EnumerateDir()
         {
+            if (!Directory.Exists(_dir))
+                return Array.Empty<string>();
+
             return Directory.EnumerateFiles(_dir, FILE_FILTER, SearchOption.AllDirectories)
                 .Select(file => Path.GetFileName(file).Replace(FILE_EXTENSION, string.Empty));
         }

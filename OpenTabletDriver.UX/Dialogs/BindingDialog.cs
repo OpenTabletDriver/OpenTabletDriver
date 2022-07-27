@@ -87,14 +87,20 @@ namespace OpenTabletDriver.UX.Dialogs
                 _ => MouseButton.None
             };
 
-            var settings = new PluginSettings(typeof(MouseBinding));
-            settings.Set((MouseBinding b) => b.Button, Enum.GetName(button));
+            if (button != MouseButton.None)
+            {
+                var settings = new PluginSettings(typeof(MouseBinding));
+                settings.Set((MouseBinding b) => b.Button, Enum.GetName(button));
 
-            DataContext = settings;
+                DataContext = settings;
+            }
         }
 
         private void KeyHandler(object? sender, KeyEventArgs args)
         {
+            if (args.Key == Keys.None)
+                return;
+
             var keys = args.KeyData;
 
             if (keys.HasFlag(Keys.Alt | Keys.LeftAlt) || keys.HasFlag(Keys.Alt | Keys.RightAlt))

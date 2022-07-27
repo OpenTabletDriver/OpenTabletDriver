@@ -24,7 +24,7 @@ namespace OpenTabletDriver.UX.Dialogs
                 Items =
                 {
                     new StackLayoutItem(null, true),
-                    new Bitmap(Metadata.Logo, 192, 192),
+                    new Bitmap(Metadata.Logo.WithSize(192, 129)),
                     error,
                     new StackLayoutItem(null, true),
                     new StackLayout

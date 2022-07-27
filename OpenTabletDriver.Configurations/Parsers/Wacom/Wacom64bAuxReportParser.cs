@@ -11,6 +11,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
             return new WacomTouchReport(data, ref _prevTouches);
         }
 
-        private TouchPoint?[] _prevTouches = Array.Empty<TouchPoint?>();
+        private TouchPoint?[]? _prevTouches;
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -42,9 +43,6 @@ namespace OpenTabletDriver.Desktop.Reflection
             get => _value;
         }
 
-        [JsonIgnore]
-        public bool HasValue => Value != null && Value.Type != JTokenType.Null;
-
         public PluginSetting SetValue(object? value)
         {
             if (value is PluginSetting)
@@ -56,12 +54,32 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public T? GetValue<T>()
         {
-            return Value == null ? default : Value.Type != JTokenType.Null ? Value.ToObject<T>() : default;
+            if (Value == null)
+                return default;
+
+            try
+            {
+                return Value.ToObject<T>();
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         public object? GetValue(Type asType)
         {
-            return Value == null ? default : Value.Type != JTokenType.Null ? Value.ToObject(asType) : default;
+            if (Value == null)
+                return default;
+
+            try
+            {
+                return Value.ToObject(asType);
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         private static object? GetDefault(PropertyInfo property)

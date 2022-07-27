@@ -27,6 +27,9 @@ namespace OpenTabletDriver.UX.Windows
 
             Title = "Plugin Manager";
 
+            Width = 800;
+            Height = 600;
+
             var placeholder = new Placeholder("No plugin is selected.");
 
             var splitter = new Splitter

@@ -34,7 +34,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
         private static Color ForegroundFillColor { get; } = new Color(SystemColors.Highlight, 0.75f);
         private static Color ForegroundBorderColor { get; } = SystemColors.ControlText;
         private static Color BackgroundFillColor { get; } = SystemColors.WindowBackground;
-        private static Color BackgroundBorderColor { get; } = SystemColors.Control;
+        private static Color BackgroundBorderColor { get; } = new Color(Colors.White, 0.25f);
         private static Brush TextBrush { get; } = new SolidBrush(SystemColors.ControlText);
 
         protected override void OnDataContextChanged(EventArgs e)
@@ -121,25 +121,30 @@ namespace OpenTabletDriver.UX.Controls.Editors
                 var centerPoint = RectangleF.FromCenter(PointF.Empty, new SizeF(3, 3));
                 graphics.DrawEllipse(SystemColors.ControlText, centerPoint);
 
-                var widthText = new FormattedText
-                {
-                    Text = area.Width + Unit,
-                    Font = Font,
-                    ForegroundBrush = TextBrush
-                };
+                var ratioText = CreateText($"{Math.Round(area.Width / area.Height, 4)}");
+                var ratioSize = ratioText.Measure();
+                graphics.DrawText(ratioText, new PointF(-ratioSize.Width / 2, ratioSize.Height / 2));
+
+                var widthText = CreateText(area.Width + Unit);
                 var widthSize = widthText.Measure();
                 graphics.DrawText(widthText, new PointF(-widthSize.Width / 2, size.Height / 2 - widthSize.Height - 5));
 
-                var heightText = new FormattedText
-                {
-                    Text = area.Height + Unit,
-                    Font = Font,
-                    ForegroundBrush = TextBrush
-                };
-                var heightSize = heightText.Measure();
                 graphics.RotateTransform(270);
+
+                var heightText = CreateText(area.Height + Unit);
+                var heightSize = heightText.Measure();
                 graphics.DrawText(heightText, new PointF(-heightSize.Width / 2, size.Width / 2 - heightSize.Height - 5));
             }
+        }
+
+        private static FormattedText CreateText(string text)
+        {
+            return new FormattedText
+            {
+                Text = text,
+                Font = Font,
+                ForegroundBrush = TextBrush
+            };
         }
     }
 }

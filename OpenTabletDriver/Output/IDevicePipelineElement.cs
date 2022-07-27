@@ -1,3 +1,4 @@
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Output
@@ -8,6 +9,7 @@ namespace OpenTabletDriver.Output
     /// <typeparam name="T">
     /// The pipeline element type.
     /// </typeparam>
+    [PluginName("Filter")]
     public interface IDevicePipelineElement : IPipelineElement<IDeviceReport>
     {
         /// <summary>

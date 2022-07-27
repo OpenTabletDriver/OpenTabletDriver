@@ -15,6 +15,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
         private readonly ListBox<TypeInfo> _list;
         private readonly Splitter _splitter;
         private readonly Placeholder _placeholder;
+        private readonly string _typeName = typeof(T).GetFriendlyName()?.ToLower() ?? typeof(T).GetPath();
 
         protected PluginSettingsPanel(
             IControlBuilder controlBuilder,
@@ -62,12 +63,16 @@ namespace OpenTabletDriver.UX.Controls.Editors
             }
             else
             {
-                var button = new Button((_, _) => _app.ShowWindow<Windows.PluginManager>())
+                var extraContent = new Panel
                 {
-                    Text = "Show plugin manager..."
+                    Padding = new Padding(0, 25),
+                    Content = new Button((_, _) => _app.ShowWindow<Windows.PluginManager>())
+                    {
+                        Text = "Show plugin manager..."
+                    }
                 };
 
-                Content = new Placeholder("No plugins of this type are installed.", button);
+                Content = new Placeholder($"No {_typeName}s are installed.", extraContent);
             }
         }
 

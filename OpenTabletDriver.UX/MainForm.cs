@@ -206,7 +206,7 @@ namespace OpenTabletDriver.UX
         /// <summary>
         /// Prompts for a file to save settings.
         /// </summary>
-        private async Task SaveSettingsDialog()
+        private void SaveSettingsDialog()
         {
             var dialog = new SaveFileDialog
             {
@@ -219,7 +219,7 @@ namespace OpenTabletDriver.UX
             };
 
             if (dialog.ShowDialog(this) == DialogResult.Ok)
-                await _rpc.Instance!.SaveSettings(_app.Settings);
+                Serialization.Serialize(new FileInfo(dialog.FileName), _app.Settings);
         }
 
         /// <summary>

@@ -27,6 +27,7 @@ namespace OpenTabletDriver.UX.Controls
             var buttons = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Padding = 5,
                 Spacing = 5
             };
 

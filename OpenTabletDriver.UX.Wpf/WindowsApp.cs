@@ -34,7 +34,10 @@ namespace OpenTabletDriver.UX.Wpf
             {
                 var daemon = new Process
                 {
-                    StartInfo = new ProcessStartInfo(daemonPath),
+                    StartInfo = new ProcessStartInfo(daemonPath)
+                    {
+                        CreateNoWindow = true
+                    },
                     EnableRaisingEvents = true
                 };
                 daemon.Start();

@@ -62,5 +62,6 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task InstallUpdate();
         Task<IEnumerable<PluginMetadata>> GetInstalledPlugins();
         event EventHandler<Settings>? SettingsChanged;
+        Task Initialize();
     }
 }

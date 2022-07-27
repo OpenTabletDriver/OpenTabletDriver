@@ -32,7 +32,7 @@ namespace OpenTabletDriver.UX.Windows
                 Items =
                 {
                     new StackLayoutItem(null, true),
-                    new Bitmap(Metadata.Logo, 256, 256),
+                    new Bitmap(Metadata.Logo.WithSize(256, 256)),
                     "An update is available to install",
                     $"v{update.Version}",
                     new Panel

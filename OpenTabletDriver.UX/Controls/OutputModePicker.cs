@@ -24,9 +24,9 @@ namespace OpenTabletDriver.UX.Controls
             return _pluginFactory.GetMatchingTypes(typeof(IOutputMode)).ToImmutableArray();
         }
 
-        private void Refresh()
+        private void Refresh() => Application.Instance.AsyncInvoke(() =>
         {
             DataStore = CreateDefaultDataStore();
-        }
+        });
     }
 }

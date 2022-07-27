@@ -10,6 +10,12 @@ namespace OpenTabletDriver.UX.Dialogs
             var tb = new TextBox();
             tb.TextBinding.Bind(DataContextBinding.Cast<string?>());
 
+            tb.KeyDown += (_, e) =>
+            {
+                if (e.Key == Keys.Enter)
+                    Close(DataContext as string);
+            };
+
             Content = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -29,7 +35,7 @@ namespace OpenTabletDriver.UX.Dialogs
                             {
                                 Text = "Cancel"
                             },
-                            new Button(Ok)
+                            new Button((_, _) => Close(DataContext as string))
                             {
                                 Text = "Ok"
                             }
@@ -37,11 +43,6 @@ namespace OpenTabletDriver.UX.Dialogs
                     }
                 }
             };
-        }
-
-        private void Ok(object? sender, EventArgs e)
-        {
-            Close(DataContext as string);
         }
     }
 }

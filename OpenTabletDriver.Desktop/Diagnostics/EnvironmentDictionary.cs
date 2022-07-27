@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         {
             foreach (var variable in variables)
                 if (Environment.GetEnvironmentVariable(variable) is string value)
-                    Add(variable, value);
+                    TryAdd(variable, value);
         }
     }
 }

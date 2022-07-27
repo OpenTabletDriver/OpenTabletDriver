@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
     public struct WacomTouchReport : ITouchReport, IAuxReport
     {
-        public WacomTouchReport(byte[] report, ref TouchPoint?[] prevTouches)
+        public WacomTouchReport(byte[] report, ref TouchPoint?[]? prevTouches)
         {
             Raw = report;
             AuxButtons = Array.Empty<bool>();
@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
                 if (touchID == 0x80)
                 {
                     var auxByte = report[1 + offset];
-                    AuxButtons = new bool[]
+                    AuxButtons = new[]
                     {
                         auxByte.IsBitSet(0),
                         auxByte.IsBitSet(1),
