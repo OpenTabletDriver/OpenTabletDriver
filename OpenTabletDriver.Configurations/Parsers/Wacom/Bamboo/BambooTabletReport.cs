@@ -35,7 +35,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo
 
             NearProximity = report[1].IsBitSet(7);
             HoverDistance = (uint)report[1];
-
         }
 
         public byte[] Raw { set; get; }
