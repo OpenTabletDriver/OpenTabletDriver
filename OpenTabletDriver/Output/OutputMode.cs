@@ -113,9 +113,10 @@ namespace OpenTabletDriver.Output
         public virtual void Consume(IDeviceReport report)
         {
             if (report is IAbsolutePositionReport tabletReport)
-                report = Transform(tabletReport);
+                report = Transform(tabletReport)!;
 
-            Emit?.Invoke(report);
+            if (report is not null)
+                Emit?.Invoke(report);
         }
 
         public virtual void Read(IDeviceReport deviceReport) => _entryElement?.Consume(deviceReport);
