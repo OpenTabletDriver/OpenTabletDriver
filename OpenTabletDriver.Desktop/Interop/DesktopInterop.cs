@@ -95,6 +95,7 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IPressureHandler VirtualTablet => CurrentPlatform switch
         {
             PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
+            PluginPlatform.MacOS => virtualTablet ??= new MacOSVirtualTablet(),
             _ => null
         };
 

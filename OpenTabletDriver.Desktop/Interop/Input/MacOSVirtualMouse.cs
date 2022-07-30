@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
-    public abstract class MacOSVirtualMouse : IMouseButtonHandler
+    public abstract class MacOSVirtualMouse : IPressureHandler, ITiltHandler, IProximityHandler, IMouseButtonHandler
     {
         protected MacOSVirtualMouse()
         {
@@ -22,6 +22,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         protected CGEventType moveEvent = CGEventType.kCGEventMouseMoved;
         protected CGPoint offset;
         protected CGMouseButton pressedButtons;
+        protected double pressure;
+        protected Vector2 tilt;
+        protected bool proximity;
+        protected bool tabletFeaturesEnabled = false;
 
         public void MouseDown(MouseButton button)
         {
@@ -95,6 +99,21 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             }
         }
 
+        public void SetPressure(float percentage)
+        {
+            this.pressure = percentage;
+        }
+
+        public void SetTilt(Vector2 tilt)
+        {
+            this.tilt = tilt;
+        }
+
+        public void SetProximity(bool proximity)
+        {
+            this.proximity = proximity;
+        }
+
         private bool GetMouseButtonState(MouseButton button)
         {
             return inputDictionary.TryGetValue(button, out var state) ? state : false;
@@ -133,6 +152,22 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             return eventType == 0 ? CGEventType.kCGEventMouseMoved : eventType;
         }
 
+        protected CGMouseEventSubtype GetMouseEventSubtype()
+        {
+            if (!tabletFeaturesEnabled)
+            {
+                return CGMouseEventSubtype.kCGEventMouseSubtypeDefault;
+            }
+            else if (proximity)
+            {
+                return CGMouseEventSubtype.kCGEventMouseSubtypeTabletProximity;
+            }
+            else
+            {
+                return CGMouseEventSubtype.kCGEventMouseSubtypeTabletPoint;
+            }
+        }
+
         private CGMouseButton GetPressedCGButtons()
         {
             CGMouseButton pressedButtons = 0;
@@ -156,6 +191,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             var curPos = GetPosition();
             var cgPos = new CGPoint(curPos.X, curPos.Y) - offset;
             var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, type, cgPos, cgButton);
+            CGEventSetIntegerValueField(mouseEventRef, CGEventField.kCGMouseEventSubtype, (ulong) GetMouseEventSubtype());
+            if (tabletFeaturesEnabled)
+            {
+                CGEventSetDoubleValueField(mouseEventRef, CGEventField.kCGMouseEventPressure, pressure);
+                CGEventSetDoubleValueField(mouseEventRef, CGEventField.kCGTabletEventPointPressure, pressure);
+                CGEventSetDoubleValueField(mouseEventRef, CGEventField.kCGTabletEventTiltX, (double) tilt.X);
+                CGEventSetDoubleValueField(mouseEventRef, CGEventField.kCGTabletEventTiltY, (double) tilt.Y);
+            }
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
             CFRelease(mouseEventRef);
         }
