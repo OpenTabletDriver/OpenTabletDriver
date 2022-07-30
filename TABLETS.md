@@ -44,6 +44,7 @@
 | Huion Q11K V2                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
+| KENTING K5540                 |     Supported     | Windows: Requires Zadig's WinUSB
 | Monoprice 10594               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
