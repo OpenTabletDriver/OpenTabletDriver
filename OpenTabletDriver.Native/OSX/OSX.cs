@@ -22,7 +22,13 @@ namespace OpenTabletDriver.Native.OSX
         public extern static CGEventRef CGEventCreate(CGEventSourceRef source);
 
         [DllImport(Quartz)]
+        public extern static CGEventRef CGEventSetType(CGEventRef eventRef, CGEventType type);
+
+        [DllImport(Quartz)]
         public extern static CGPoint CGEventGetLocation(CGEventRef eventRef);
+
+        [DllImport(Quartz)]
+        public extern static void CGEventSetLocation(CGEventRef eventRef, CGPoint location);
 
         [DllImport(Quartz)]
         public extern static CGEventRef CGWarpMouseCursorPosition(CGPoint newCursorPosition);
@@ -49,5 +55,11 @@ namespace OpenTabletDriver.Native.OSX
 
         [DllImport(Quartz)]
         public extern static CGRect CGDisplayBounds(CGDirectDisplayID displayID);
+
+        [DllImport(Quartz)]
+        public extern static void CGEventSetIntegerValueField(CGEventRef eventRef, CGEventField field, UInt64 value);
+
+        [DllImport(Quartz)]
+        public extern static void CGEventSetDoubleValueField(CGEventRef eventRef, CGEventField field, double value);
     }
 }
