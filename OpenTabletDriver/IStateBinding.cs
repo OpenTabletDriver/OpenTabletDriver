@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
@@ -5,6 +6,7 @@ namespace OpenTabletDriver
     /// <summary>
     /// A binding with a boolean state.
     /// </summary>
+    [PublicAPI]
     public interface IStateBinding : IBinding
     {
         /// <summary>

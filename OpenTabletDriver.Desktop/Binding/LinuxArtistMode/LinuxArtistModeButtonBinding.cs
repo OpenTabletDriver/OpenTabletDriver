@@ -6,16 +6,20 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 {
-    [PluginName("Linux Artist Mode"), SupportedPlatform(SystemPlatform.Linux)]
+    [PluginName(PLUGIN_NAME), SupportedPlatform(SystemPlatform.Linux)]
     public class LinuxArtistModeButtonBinding : IStateBinding
     {
+        private const string PLUGIN_NAME = "Linux Artist Mode Binding";
+
         private readonly InputDevice _inputDevice;
         private readonly EvdevVirtualTablet _virtualTablet;
 
-        public LinuxArtistModeButtonBinding(InputDevice inputDevice, EvdevVirtualTablet virtualTablet)
+        public LinuxArtistModeButtonBinding(InputDevice inputDevice, ISettingsProvider settingsProvider, EvdevVirtualTablet? virtualTablet = null)
         {
             _inputDevice = inputDevice;
-            _virtualTablet = virtualTablet;
+            _virtualTablet = virtualTablet ?? throw new Exception("The selected output mode does not support artist mode bindings");
+
+            settingsProvider.Inject(this);
         }
 
         public static string[] ValidButtons { get; } = {

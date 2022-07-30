@@ -69,12 +69,12 @@ namespace OpenTabletDriver.UX.Controls.Editors
                     case CheckBox { ID: nameof(AbsoluteOutputMode.LockAspectRatio) } lockAspectRatio:
                     {
                         var output = FindChild<OutputAreaEditor>();
-                        var outputWidth = output.FindChild<NumericMaskedTextBox<float>>("Width");
-                        var outputHeight = output.FindChild<NumericMaskedTextBox<float>>("Height");
+                        var outputWidth = output.FindChild<NumericMaskedTextBox<float>>(nameof(Area.Width));
+                        var outputHeight = output.FindChild<NumericMaskedTextBox<float>>(nameof(Area.Height));
 
                         var input = FindChild<InputAreaEditor>();
-                        var inputWidth = input.FindChild<NumericMaskedTextBox<float>>("Width");
-                        var inputHeight = input.FindChild<NumericMaskedTextBox<float>>("Height");
+                        var inputWidth = input.FindChild<NumericMaskedTextBox<float>>(nameof(AngledArea.Width));
+                        var inputHeight = input.FindChild<NumericMaskedTextBox<float>>(nameof(AngledArea.Height));
 
                         _lockingAspectRatio = lockAspectRatio.Checked ?? false;
                         lockAspectRatio.CheckedChanged += (_, _) =>
@@ -91,7 +91,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
                         break;
                     }
-                    case CheckBox {ID: nameof(AbsoluteOutputMode.LockToBounds)} lockToBounds:
+                    case CheckBox { ID: nameof(AbsoluteOutputMode.LockToBounds) } lockToBounds:
                     {
                         var output = FindChild<OutputAreaEditor>();
                         var outputDisplay = output.FindChild<OutputAreaDisplay>();
@@ -105,8 +105,6 @@ namespace OpenTabletDriver.UX.Controls.Editors
                         var inputX = input.FindChild<NumericMaskedTextBox<float>>(nameof(AbsoluteOutputMode.Input.XPosition));
                         var inputY = input.FindChild<NumericMaskedTextBox<float>>(nameof(AbsoluteOutputMode.Input.YPosition));
 
-                        AngledArea? GetArea() => (inputDisplay?.DataContext as Profile)?.OutputMode?.Get((AbsoluteOutputMode f) => f.Input);
-
                         _lockingToBounds = lockToBounds.Checked ?? false;
                         lockToBounds.CheckedChanged += (_, _) =>
                         {
@@ -115,15 +113,15 @@ namespace OpenTabletDriver.UX.Controls.Editors
                             {
                                 EnforcePositionToBounds(outputX, outputWidth.Value, outputDisplay.FullBackground.Width);
                                 EnforcePositionToBounds(outputY, outputHeight.Value, outputDisplay.FullBackground.Height);
-                                EnforceAngledAreaToBounds(inputX, inputX, inputY, inputDisplay, GetArea);
-                                EnforceAngledAreaToBounds(inputY, inputX, inputY, inputDisplay, GetArea);
+                                EnforceAngledAreaToBounds(inputX, inputX, inputY, inputDisplay, GetInputArea);
+                                EnforceAngledAreaToBounds(inputY, inputX, inputY, inputDisplay, GetInputArea);
                             }
                         };
 
                         HookPositionToBounds(outputX, outputWidth, () => outputDisplay.FullBackground.Width);
                         HookPositionToBounds(outputY, outputHeight, () => outputDisplay.FullBackground.Height);
-                        LockAngledAreaToBounds(inputX, inputX, inputY, inputDisplay, GetArea);
-                        LockAngledAreaToBounds(inputY, inputX, inputY, inputDisplay, GetArea);
+                        LockAngledAreaToBounds(inputX, inputX, inputY, inputDisplay, GetInputArea);
+                        LockAngledAreaToBounds(inputY, inputX, inputY, inputDisplay, GetInputArea);
 
                         break;
                     }
@@ -136,6 +134,11 @@ namespace OpenTabletDriver.UX.Controls.Editors
         private bool _lockingAspectRatio;
         private bool _lockingToBounds;
         private bool _valueChanging;
+
+        private AngledArea? GetInputArea()
+        {
+            return (DataContext as Profile)?.OutputMode.Get((AbsoluteOutputMode f) => f.Input);
+        }
 
         private void HookAspectRatio(
             MaskedTextBox<float> source,

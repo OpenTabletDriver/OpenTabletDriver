@@ -15,12 +15,13 @@ namespace OpenTabletDriver.Logging
         {
         }
 
-        public LogMessage(Exception exception)
+        public LogMessage(Exception exception, bool notify = false)
         {
             Group = exception.GetType().Name;
             Message = exception.Message;
             Level = LogLevel.Error;
             StackTrace = exception.StackTrace;
+            Notification = notify;
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace OpenTabletDriver.Logging
         /// <summary>
         /// True if the log message should create a notification in the user's desktop environment.
         /// </summary>
-        public bool Notification { set; get; } = false;
+        public bool Notification { set; get; }
 
         public override string ToString()
         {

@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace OpenTabletDriver.Desktop
 {
+    [PublicAPI]
     public static class DependencyInjectionExtensions
     {
         public static void AddServices(this IServiceCollection serviceCollection, IEnumerable<ServiceDescriptor> services)
@@ -43,11 +46,11 @@ namespace OpenTabletDriver.Desktop
 
             var constructor = constructorQuery.First();
 
-            var argsQuery = from parameter in constructor.GetParameters()
-                let paramType = parameter.ParameterType
-                select additionalDependencies.FirstOrDefault(d => d.GetType().IsAssignableTo(paramType)) ?? serviceProvider.GetRequiredService(paramType);
+            var args = constructor.GetParameters()
+                .Select(p => GetServiceForParameter(p, serviceProvider, additionalDependencies))
+                .ToArray();
 
-            return constructor.Invoke(argsQuery.ToArray());
+            return constructor.Invoke(args);
         }
 
         public static T CreateInstance<T>(this IServiceProvider serviceProvider, params object[] additionalDependencies)
@@ -61,6 +64,16 @@ namespace OpenTabletDriver.Desktop
                 return service;
 
             return serviceProvider.CreateInstance<T>(additionalDependencies);
+        }
+
+        private static object? GetServiceForParameter(ParameterInfo parameter, IServiceProvider serviceProvider, IEnumerable<object> deps)
+        {
+            var type = parameter.ParameterType;
+
+            if (deps.FirstOrDefault(d => d.GetType().IsAssignableTo(type)) is object dep)
+                return dep;
+
+            return parameter.IsOptional ? serviceProvider.GetService(type) : serviceProvider.GetRequiredService(type);
         }
     }
 }

@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations
 {
+    [PublicAPI]
     public class DeviceConfigurationProvider : IDeviceConfigurationProvider
     {
         public DeviceConfigurationProvider()

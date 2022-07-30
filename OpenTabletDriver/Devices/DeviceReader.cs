@@ -119,22 +119,21 @@ namespace OpenTabletDriver.Devices
             catch (ObjectDisposedException dex)
             {
                 Log.Debug("Device", $"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
+                Connected = false;
             }
-            catch (IOException ioEx) when (ioEx.Message == "I/O disconnected." || ioEx.Message == "Operation failed after some time.")
+            catch (IOException ioEx) when (ioEx.Message is "I/O disconnected." or "Operation failed after some time.")
             {
                 Log.Write("Device", "Device disconnected.");
+                Connected = false;
             }
             catch (ArgumentOutOfRangeException)
             {
                 Log.Write("Device", "Not enough report data returned by the device. Was it disconnected?");
+                Connected = false;
             }
             catch (Exception ex)
             {
-                Log.Exception(ex);
-            }
-            finally
-            {
-                Connected = false;
+                Log.Exception(ex, true);
             }
         }
 

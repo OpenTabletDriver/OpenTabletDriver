@@ -1,6 +1,7 @@
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Output;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Dialogs;
 
@@ -64,16 +65,15 @@ namespace OpenTabletDriver.UX.Controls.Editors
             areaDisplay.MouseMove += AreaMouseHandler;
             areaDisplay.MouseDown += AreaMouseHandler;
 
-            // TODO: Fix rotation handling, doesn't move to actual edges
             var alignMenu = new ButtonMenuItem
             {
                 Text = "Align",
                 Items =
                 {
-                    new AppCommand("Left", () => _xPosition.Value = _width.Value / 2),
-                    new AppCommand("Right", () => _xPosition.Value = areaDisplay.FullBackground.Width - _width.Value / 2),
-                    new AppCommand("Top", () => _yPosition.Value = _height.Value / 2),
-                    new AppCommand("Bottom", () => _yPosition.Value = areaDisplay.FullBackground.Height - _height.Value / 2),
+                    new AppCommand("Left", () => _xPosition.Value = TransformedAreaSize.Width / 2),
+                    new AppCommand("Right", () => _xPosition.Value = areaDisplay.FullBackground.Width - TransformedAreaSize.Width / 2),
+                    new AppCommand("Top", () => _yPosition.Value = TransformedAreaSize.Height / 2),
+                    new AppCommand("Bottom", () => _yPosition.Value = areaDisplay.FullBackground.Height - TransformedAreaSize.Height / 2),
                     new AppCommand("Center", () =>
                     {
                         _xPosition.Value = areaDisplay.FullBackground.Width / 2;
@@ -179,6 +179,21 @@ namespace OpenTabletDriver.UX.Controls.Editors
                     }
                 }
             };
+        }
+
+        private RectangleF TransformedAreaSize
+        {
+            get
+            {
+                var area = ((Profile) DataContext).OutputMode[nameof(AbsoluteOutputMode.Input)].GetValue<AngledArea>()!;
+                var corners = area.GetCorners();
+                return RectangleF.FromSides(
+                    corners.Min(t => t.X),
+                    corners.Min(t => t.Y),
+                    corners.Max(t => t.X),
+                    corners.Max(t => t.Y)
+                );
+            }
         }
 
         private void ConvertArea()
