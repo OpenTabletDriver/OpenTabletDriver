@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
             if (data[1].IsBitSet(6))
                 return new UCLogicAuxReport(data);
             else
-                return new TiltTabletReport(data);
+                return new TiltTabletReport(data, false, true);
         }
     }
 }
