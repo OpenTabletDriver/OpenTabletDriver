@@ -6,7 +6,8 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
 {
     public class AppInfo : IAppInfo
     {
-        private string? _binaryDirectory,
+        private string? _appDataDirectory,
+            _binaryDirectory,
             _configurationDirectory,
             _settingsFile,
             _pluginDirectory,
@@ -16,7 +17,11 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             _backupDirectory,
             _trashDirectory;
 
-        public string AppDataDirectory { set; get; } = string.Empty;
+        public string AppDataDirectory
+        {
+            set => _appDataDirectory = value;
+            get => _appDataDirectory ?? GetDefaultAppDataDirectory();
+        }
 
         public string BinaryDirectory
         {
@@ -85,9 +90,11 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             };
         }
 
-        private string GetDefaultBinaryDirectory() => AppDomain.CurrentDomain.BaseDirectory;
+        private static string GetDefaultAppDataDirectory() => FileUtilities.InjectEnvironmentVariables(EnvironmentVariable("OTD_APPDATA"));
+        private static string GetDefaultBinaryDirectory() => AppDomain.CurrentDomain.BaseDirectory;
 
         private string GetDefaultConfigurationDirectory() => FileUtilities.GetExistingPathOrLast(
+            EnvironmentVariable("OTD_CONFIGURATIONS"),
             Path.Join(AppDataDirectory, "Configurations"),
             Path.Join(ProgramDirectory, "Configurations"),
             Path.Join(System.Environment.CurrentDirectory, "Configurations")
@@ -100,5 +107,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
+
+        private static string EnvironmentVariable(string envVar) => FileUtilities.InjectEnvironmentVariables(System.Environment.GetEnvironmentVariable(envVar));
     }
 }

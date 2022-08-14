@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
     {
         public WindowsAppInfo()
         {
-            AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver");
+            AppDataDirectory = GetExistingPathOrLast(AppDataDirectory, Path.Join(ProgramDirectory, "userdata"), "$LOCALAPPDATA\\OpenTabletDriver");
         }
     }
 }

@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop
             return GetExistingPath(paths) ?? InjectEnvironmentVariables(paths.Last());
         }
 
-        public static string InjectEnvironmentVariables(string str)
+        public static string InjectEnvironmentVariables(string? str)
         {
             var sb = new StringBuilder(str);
             sb.Replace("~", Environment.GetEnvironmentVariable("HOME"));
