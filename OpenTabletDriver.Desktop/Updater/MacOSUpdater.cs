@@ -18,11 +18,8 @@ namespace OpenTabletDriver.Desktop.Updater
         {
         }
 
-        protected override async Task Install(Release release)
+        protected override void PostInstall()
         {
-            await Download(release);
-            PerformBackup();
-
             // Mark the binaries executable, SharpZipLib doesn't do this.
             var subPath = Path.Join(DownloadDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
             Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.UX.MacOS");
@@ -36,8 +33,8 @@ namespace OpenTabletDriver.Desktop.Updater
 
             // Download and extract tar gzip
             using (var httpClient = new HttpClient())
-            using (var httpStream = await httpClient.GetStreamAsync(asset.BrowserDownloadUrl))
-            using (var decompressionStream = new GZipStream(httpStream, CompressionMode.Decompress))
+            await using (var httpStream = await httpClient.GetStreamAsync(asset.BrowserDownloadUrl))
+            await using (var decompressionStream = new GZipStream(httpStream, CompressionMode.Decompress))
             using (var tar = TarArchive.CreateInputTarArchive(decompressionStream))
             {
                 tar.ExtractContents(DownloadDirectory);

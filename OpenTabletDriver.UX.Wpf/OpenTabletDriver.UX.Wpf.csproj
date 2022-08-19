@@ -5,6 +5,10 @@
     <TargetFramework>$(FrameworkBase)-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <NoWarn>
+      NU1701 <!-- WPF Toolkit is built with .NET Framework, not an issue on Windows. -->
+    </NoWarn>
   </PropertyGroup>
 
   <ItemGroup Label="Project References">

@@ -113,13 +113,19 @@ namespace OpenTabletDriver.Desktop.Updater
             PerformBackup();
 
             Move(DownloadDirectory, BinaryDirectory);
+            PostInstall();
+        }
+
+        protected virtual void PostInstall()
+        {
+            // Stub
         }
 
         protected abstract Task<T?> GetUpdate();
         protected abstract Task Download(Release release);
 
         // Avoid moving/copying the rollback directory if under source directory
-        private void ExclusiveFileOp(string source, string backupDir, string target, string versionBackupDir, Action<string, string> fileOp)
+        private static void ExclusiveFileOp(string source, string backupDir, string target, string versionBackupDir, Action<string, string> fileOp)
         {
             var backupTarget = Path.Join(versionBackupDir, target);
 
