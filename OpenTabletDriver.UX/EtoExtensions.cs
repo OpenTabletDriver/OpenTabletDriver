@@ -173,7 +173,7 @@ namespace OpenTabletDriver.UX
             var parentObj = settings[parentName].GetValue(parentExpression.Type);
 
             property.SetValue(parentObj, value);
-            settings[parentName].SetValue(parentObj); // TODO: Verify this notifies for MVVM!
+            settings[parentName].SetValue(parentObj);
         }
 
         /// <summary>

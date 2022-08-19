@@ -8,6 +8,8 @@ namespace OpenTabletDriver.UX.MacOS
         {
         }
 
+        protected override bool EnableTray => true;
+
         protected override void OpenInternal(string uri, bool isDirectory)
         {
             Process.Start("open", $"\"{uri}\"");

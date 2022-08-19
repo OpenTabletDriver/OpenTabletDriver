@@ -90,7 +90,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             };
         }
 
-        private static string GetDefaultAppDataDirectory() => FileUtilities.InjectEnvironmentVariables(EnvironmentVariable("OTD_APPDATA"));
+        private static string GetDefaultAppDataDirectory() => EnvironmentVariable("OTD_APPDATA");
         private static string GetDefaultBinaryDirectory() => AppDomain.CurrentDomain.BaseDirectory;
 
         private string GetDefaultConfigurationDirectory() => FileUtilities.GetExistingPathOrLast(

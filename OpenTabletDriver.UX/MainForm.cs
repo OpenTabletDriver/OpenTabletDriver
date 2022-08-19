@@ -101,6 +101,7 @@ namespace OpenTabletDriver.UX
                 Items =
                 {
                     new AppCommand("Reconnect to daemon", Reconnect),
+                    new AppCommand("Minimize", Minimize),
                     new AppCommand("Debugger break", Debugger.Break)
                 }
             };

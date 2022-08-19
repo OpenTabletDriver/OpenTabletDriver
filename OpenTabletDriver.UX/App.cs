@@ -12,6 +12,7 @@ using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Dialogs;
 
 namespace OpenTabletDriver.UX
@@ -64,6 +65,10 @@ namespace OpenTabletDriver.UX
             var code = command.Invoke(Arguments);
             if (code != 0)
                 Exit(code);
+
+            // Show the tray icon, if the platform supports it as intended.
+            if (EnableTray)
+                _serviceProvider.GetRequiredService<TrayIcon>().Show();
 
             _app.Run(mainForm);
         }
@@ -305,6 +310,12 @@ namespace OpenTabletDriver.UX
             if (uri != null)
                 OpenInternal(uri, isDirectory);
         }
+
+        /// <summary>
+        /// Determines whether to use the tray icon.
+        /// This affects the MainForm minimize behavior.
+        /// </summary>
+        protected abstract bool EnableTray { get; }
 
         /// <summary>
         /// Starts the OpenTabletDriver daemon, if applicable.

@@ -1,14 +1,34 @@
 using Eto.Forms;
+using OpenTabletDriver.UX.Controls;
 
 namespace OpenTabletDriver.UX.Components
 {
     public class TrayIcon : TrayIndicator
     {
-        public TrayIcon()
+        public TrayIcon(MainForm mainForm, IControlBuilder controlBuilder)
         {
-            // TODO: Implement Tray Icon
             Title = "OpenTabletDriver";
             Image = Metadata.Logo;
+
+            var showItem = new AppCommand("Show...", mainForm.BringToFront).CreateMenuItem();
+            showItem.Visible = mainForm.WindowState == WindowState.Minimized;
+
+            Menu = new ContextMenu
+            {
+                Items =
+                {
+                    showItem,
+                    controlBuilder.Build<PresetsMenuItem>(),
+                    new AppCommand("Quit", () => App.Exit())
+                }
+            };
+
+            // Change window state change behavior
+            mainForm.WindowStateChanged += delegate
+            {
+                showItem.Visible = mainForm.WindowState == WindowState.Minimized;
+                mainForm.ShowInTaskbar = !showItem.Visible;
+            };
         }
     }
 }
