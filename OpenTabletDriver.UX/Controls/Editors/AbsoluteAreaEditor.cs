@@ -13,7 +13,6 @@ namespace OpenTabletDriver.UX.Controls.Editors
         private readonly IPluginFactory _pluginFactory;
         private readonly StackLayout _advancedSettings;
 
-        // TODO: Fix aspect ratio locking stopping SetDisplay from scaling
         public AbsoluteAreaEditor(IControlBuilder controlBuilder, IPluginFactory pluginFactory)
         {
             _controlBuilder = controlBuilder;
@@ -50,6 +49,9 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
         protected override void OnDataContextChanged(EventArgs e)
         {
+            // Stops settings from persisting between profiles
+            _valueChanging = true;
+
             base.OnDataContextChanged(e);
 
             if (DataContext is not Profile profile)
@@ -129,6 +131,8 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
                 _advancedSettings.Items.Add(control);
             }
+
+            _valueChanging = false;
         }
 
         private bool _lockingAspectRatio;

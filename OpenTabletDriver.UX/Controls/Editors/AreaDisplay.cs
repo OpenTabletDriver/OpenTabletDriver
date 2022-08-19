@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Linq.Expressions;
 using Eto.Drawing;
 using Eto.Forms;

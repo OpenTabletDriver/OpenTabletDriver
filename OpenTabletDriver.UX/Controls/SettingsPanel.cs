@@ -39,7 +39,6 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            // TODO: Fix profile switching retaining old settings while updating the profile (such as lock aspect ratio)
             var profilePanel = controlBuilder.Build<ProfilePanel>();
             profilePanel.DataContextBinding.Bind(profilePicker.SelectedValueBinding);
 

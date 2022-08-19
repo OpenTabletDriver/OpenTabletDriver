@@ -1,5 +1,4 @@
-﻿using System;
-using OpenTabletDriver.Tablet;
+﻿using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
