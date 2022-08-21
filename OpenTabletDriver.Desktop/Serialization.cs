@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Desktop
             Serializer.Converters.Add(new VersionConverter());
         }
 
-        private static JsonSerializer Serializer { get; } = new AdvancedJsonSerializer
+        internal static JsonSerializer Serializer { get; } = new AdvancedJsonSerializer
         {
             Formatting = Formatting.Indented
         };

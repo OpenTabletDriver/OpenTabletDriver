@@ -2,21 +2,22 @@ using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
 {
-    public class AbsoluteModeSettings : NotifyPropertyChanged
+    [JsonObject]
+    internal class AbsoluteModeSettings
     {
-        [JsonProperty("Display")]
+        [JsonProperty(nameof(Display))]
         public AreaSettings? Display { set; get; }
 
-        [JsonProperty("Tablet")]
+        [JsonProperty(nameof(Tablet))]
         public AreaSettings? Tablet { set; get; }
 
-        [JsonProperty("EnableClipping")]
+        [JsonProperty(nameof(EnableClipping))]
         public bool EnableClipping { set; get; }
 
-        [JsonProperty("EnableAreaLimiting")]
+        [JsonProperty(nameof(EnableAreaLimiting))]
         public bool EnableAreaLimiting { set; get; }
 
-        [JsonProperty("LockAspectRatio")]
+        [JsonProperty(nameof(LockAspectRatio))]
         public bool LockAspectRatio { set; get; }
     }
 }

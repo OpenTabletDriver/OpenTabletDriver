@@ -99,13 +99,13 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         private void MatchSpecifications(TabletSpecifications tabletSpecifications)
         {
-            int penButtonCount = (int?)tabletSpecifications.Pen?.ButtonCount ?? 0;
-            int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
-            int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
+            var penButtonCount = tabletSpecifications.Pen?.ButtonCount ?? 0;
+            var auxButtonCount = tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
+            var mouseButtonCount = tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
 
-            PenButtons = PenButtons.SetExpectedCount(penButtonCount);
-            AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
-            MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
+            PenButtons = PenButtons.SetLength(penButtonCount);
+            AuxButtons = AuxButtons.SetLength(auxButtonCount);
+            MouseButtons = MouseButtons.SetLength(mouseButtonCount);
         }
     }
 }

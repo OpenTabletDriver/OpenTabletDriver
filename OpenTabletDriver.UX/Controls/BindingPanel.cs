@@ -31,6 +31,9 @@ namespace OpenTabletDriver.UX.Controls
 
             var prefix = GetName(expression);
 
+            // Enforces the button count to match what is expected
+            get().SetLength(count);
+
             for (var i = 0; i < count; i++)
             {
                 var index = i;

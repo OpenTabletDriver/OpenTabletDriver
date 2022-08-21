@@ -13,6 +13,8 @@ namespace OpenTabletDriver.UX.Components
             var showItem = new AppCommand("Show...", mainForm.BringToFront).CreateMenuItem();
             showItem.Visible = mainForm.WindowState == WindowState.Minimized;
 
+            Activated += (_, _) => mainForm.BringToFront();
+
             Menu = new ContextMenu
             {
                 Items =

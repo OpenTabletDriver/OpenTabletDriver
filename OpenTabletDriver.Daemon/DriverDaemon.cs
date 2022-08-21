@@ -269,9 +269,7 @@ namespace OpenTabletDriver.Daemon
             _pluginManager.Clean();
             _pluginManager.Load();
 
-            var file = new FileInfo(_appInfo.SettingsFile);
-            if (file.Exists)
-                _settingsManager.Load(file);
+            _settingsManager.Load();
 
             await DetectTablets();
         }

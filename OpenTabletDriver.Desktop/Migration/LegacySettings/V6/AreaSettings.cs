@@ -1,8 +1,10 @@
+using System;
 using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
 {
-    public class AreaSettings
+    [JsonObject]
+    internal class AreaSettings : IMigrate<AngledArea>
     {
         [JsonProperty("Width")]
         public float Width { set; get; }
@@ -18,5 +20,17 @@ namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
 
         [JsonProperty("Rotation")]
         public float Rotation { set; get; }
+
+        public AngledArea Migrate(IServiceProvider serviceProvider)
+        {
+            return new AngledArea
+            {
+                Width = Width,
+                Height = Height,
+                XPosition = X,
+                YPosition = Y,
+                Rotation = Rotation
+            };
+        }
     }
 }

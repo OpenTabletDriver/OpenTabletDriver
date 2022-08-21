@@ -1,7 +1,5 @@
 using System;
-using System.ComponentModel;
 using System.IO;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
@@ -13,14 +11,21 @@ namespace OpenTabletDriver.Desktop
         private ProfileCollection _profiles = new ProfileCollection();
         private PluginSettingsCollection _tools = new PluginSettingsCollection();
 
-        [JsonProperty("Profiles")]
+        /// <summary>
+        /// Revision of the Settings file.
+        /// This is used to assist in migrating versions.
+        /// </summary>
+        [JsonProperty(nameof(Revision))]
+        public Version? Revision { set; get; }
+
+        [JsonProperty(nameof(Profiles))]
         public ProfileCollection Profiles
         {
             set => RaiseAndSetIfChanged(ref _profiles!, value);
             get => _profiles;
         }
 
-        [JsonProperty("Tools")]
+        [JsonProperty(nameof(Tools))]
         public PluginSettingsCollection Tools
         {
             set => RaiseAndSetIfChanged(ref _tools!, value);
@@ -31,11 +36,10 @@ namespace OpenTabletDriver.Desktop
         {
             return new Settings
             {
-                Profiles = new ProfileCollection()
+                Revision = Version.Parse("0.7.0.0"),
+                Profiles = new ProfileCollection(),
             };
         }
-
-        #region Custom Serialization
 
         static Settings()
         {
@@ -55,33 +59,11 @@ namespace OpenTabletDriver.Desktop
                 if (args.CurrentObject == null)
                     return;
 
-                var property = args.CurrentObject.GetType().GetProperty(path);
-                if (property != null && property.PropertyType == typeof(PluginSettings))
-                {
-                    var match = PropertyValueRegex.Match(args.ErrorContext.Error.Message);
-                    if (match.Success)
-                    {
-                        // TODO: Fix settings auto migration
-                        // var objPath = SettingsMigrator.MigrateNamespace(match.Groups[1].Value);
-                        // var newValue = PluginSettingStore.FromPath(objPath);
-                        // if (newValue != null)
-                        // {
-                        //     property.SetValue(args.CurrentObject, newValue);
-                        //     Log.Write("Settings", $"Migrated {path} to {nameof(PluginSettingStore)}");
-                        //     return;
-                        // }
-                        Log.Write("Settings", "Ignoring failed migration temporarily.", LogLevel.Error);
-                        return;
-                    }
-                }
-                Log.Write("Settings", $"Unable to migrate {path}", LogLevel.Error);
+                Log.Write("Settings", $"Failed to load setting: {path}", LogLevel.Error);
                 return;
             }
             Log.Exception(args.ErrorContext.Error);
         }
-
-        private static readonly Regex PropertyValueRegex = new Regex(PROPERTY_VALUE_REGEX, RegexOptions.Compiled);
-        private const string PROPERTY_VALUE_REGEX = "\\\"(.+?)\\\"";
 
         public static Settings? Deserialize(FileInfo file)
         {
@@ -89,33 +71,6 @@ namespace OpenTabletDriver.Desktop
             using (var sr = new StreamReader(stream))
             using (var jr = new JsonTextReader(sr))
                 return Serializer.Deserialize<Settings>(jr);
-        }
-
-        public static void Recover(FileInfo file, Settings settings)
-        {
-            using (var stream = file.OpenRead())
-            using (var sr = new StreamReader(stream))
-            using (var jr = new JsonTextReader(sr))
-            {
-                void PropertyWatch(object? _, PropertyChangedEventArgs p)
-                {
-                    settings.GetType().GetProperty(p.PropertyName!)?.GetValue(settings);
-                    Log.Write("Settings", $"Recovered '{p.PropertyName}'", LogLevel.Debug);
-                }
-
-                settings.PropertyChanged += PropertyWatch;
-
-                try
-                {
-                    Serializer.Populate(jr, settings);
-                }
-                catch (JsonReaderException e)
-                {
-                    Log.Write("Settings", $"Recovery ended. Reason: {e.Message}", LogLevel.Debug);
-                }
-
-                settings.PropertyChanged -= PropertyWatch;
-            }
         }
 
         public void Serialize(FileInfo file)
@@ -134,7 +89,5 @@ namespace OpenTabletDriver.Desktop
                 Log.Write("Settings", $"OpenTabletDriver doesn't have permission to save persistent settings to {file.DirectoryName}", LogLevel.Error);
             }
         }
-
-        #endregion
     }
 }

@@ -11,12 +11,12 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
-        public PluginSettingsCollection(IEnumerable<PluginSettings> collection)
+        public PluginSettingsCollection(IEnumerable<PluginSettings?> collection)
             : base(collection)
         {
         }
 
-        public PluginSettingsCollection SetExpectedCount(int expectedCount)
+        public PluginSettingsCollection SetLength(uint expectedCount)
         {
             while (Count < expectedCount)
                 Add(null);

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
 {
-    public class RelativeModeSettings : NotifyPropertyChanged
+    internal class RelativeModeSettings
     {
         [JsonProperty("XSensitivity")]
         public float XSensitivity { set; get; }
