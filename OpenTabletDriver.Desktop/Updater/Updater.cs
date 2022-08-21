@@ -70,7 +70,8 @@ namespace OpenTabletDriver.Desktop.Updater
             if (_updateSentinel == 2)
                 return null;
 
-            return await GetUpdate();
+            var update = await GetUpdate();
+            return update?.Version > CurrentVersion ? update : null;
         }
 
         public async Task InstallUpdate()

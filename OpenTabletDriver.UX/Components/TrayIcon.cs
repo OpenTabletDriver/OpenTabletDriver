@@ -5,7 +5,7 @@ namespace OpenTabletDriver.UX.Components
 {
     public class TrayIcon : TrayIndicator
     {
-        public TrayIcon(MainForm mainForm, IControlBuilder controlBuilder)
+        public TrayIcon(MainForm mainForm, App app, IControlBuilder controlBuilder)
         {
             Title = "OpenTabletDriver";
             Image = Metadata.Logo;
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX.Components
                 {
                     showItem,
                     controlBuilder.Build<PresetsMenuItem>(),
-                    new AppCommand("Quit", () => App.Exit())
+                    new AppCommand("Quit", app.Exit)
                 }
             };
 

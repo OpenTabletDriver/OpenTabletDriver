@@ -4,6 +4,8 @@ namespace OpenTabletDriver.UX.Gtk
 {
     public class LinuxApp : App
     {
+        private Process? _daemon;
+
         public LinuxApp(string[] args) : base(Eto.Platforms.Gtk, args)
         {
         }
@@ -23,15 +25,32 @@ namespace OpenTabletDriver.UX.Gtk
             var daemonPath = Path.Join(AppContext.BaseDirectory, "OpenTabletDriver.Daemon");
             if (File.Exists(daemonPath))
             {
-                var daemon = new Process
+                _daemon = new Process
                 {
                     StartInfo = new ProcessStartInfo(daemonPath),
                     EnableRaisingEvents = true
                 };
-                daemon.Start();
+                _daemon.Start();
 
-                daemon.Exited += (_, _) => StartDaemon();
+                _daemon.Exited += HandleDaemonExited;
             }
+        }
+
+        public override void Exit(int code)
+        {
+            if (_daemon != null)
+            {
+                _daemon.Exited -= HandleDaemonExited;
+                _daemon.Close();
+            }
+
+            base.Exit(code);
+        }
+
+        private void HandleDaemonExited(object? o, EventArgs eventArgs)
+        {
+            _daemon = null;
+            StartDaemon();
         }
 
         private static bool IsVariableSet(string envVar)

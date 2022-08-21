@@ -116,7 +116,7 @@ namespace OpenTabletDriver.UX
                     helpMenu,
                     debugMenu
                 },
-                QuitItem = new AppCommand("Quit", () => App.Exit(), modifier | Keys.Q),
+                QuitItem = new AppCommand("Quit", app.Exit, modifier | Keys.Q),
                 AboutItem = new AppCommand("About...", () => serviceProvider.GetRequiredService<AboutDialog>().ShowDialog(this), Keys.F1)
             };
 
@@ -140,12 +140,12 @@ namespace OpenTabletDriver.UX
             catch (TimeoutException)
             {
                 _app.ShowDialog<FatalErrorDialog>(this, "Unable to connect to the OpenTabletDriver Daemon.");
-                App.Exit(1);
+                _app.Exit(1);
             }
             catch (Exception ex)
             {
                 ex.Show();
-                App.Exit(2);
+                _app.Exit(2);
             }
         }
 

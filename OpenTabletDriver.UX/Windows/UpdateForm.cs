@@ -56,7 +56,7 @@ namespace OpenTabletDriver.UX.Windows
 
             await _daemon.InstallUpdate();
             Process.Start(path, _app.Arguments);
-            App.Exit();
+            _app.Exit();
         }
     }
 }

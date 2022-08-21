@@ -4,6 +4,8 @@ namespace OpenTabletDriver.UX.Wpf
 {
     public class WindowsApp : App
     {
+        private Process? _daemon;
+
         public WindowsApp(string[] args) : base(Eto.Platforms.Wpf, args)
         {
         }
@@ -34,7 +36,7 @@ namespace OpenTabletDriver.UX.Wpf
             var daemonPath = Path.Join(AppContext.BaseDirectory, "OpenTabletDriver.Daemon.exe");
             if (File.Exists(daemonPath))
             {
-                var daemon = new Process
+                _daemon = new Process
                 {
                     StartInfo = new ProcessStartInfo(daemonPath)
                     {
@@ -42,13 +44,26 @@ namespace OpenTabletDriver.UX.Wpf
                     },
                     EnableRaisingEvents = true
                 };
-                daemon.Start();
-
-                daemon.Exited += (_, _) =>
-                {
-                    StartDaemon();
-                };
+                _daemon.Exited += HandleDaemonExited;
+                _daemon.Start();
             }
+        }
+
+        public override void Exit(int code)
+        {
+            if (_daemon != null)
+            {
+                _daemon.Exited -= HandleDaemonExited;
+                _daemon.Kill();
+            }
+
+            base.Exit(code);
+        }
+
+        private void HandleDaemonExited(object? sender, EventArgs e)
+        {
+            _daemon = null;
+            StartDaemon();
         }
     }
 }

@@ -30,11 +30,11 @@ namespace OpenTabletDriver.UX.Controls.Editors
         }
 
         private static Font Font { get; } = SystemFonts.User(9);
+        private static Brush TextBrush { get; } = new SolidBrush(SystemColors.ControlText);
         private static Color ForegroundFillColor { get; } = new Color(SystemColors.Highlight, 0.75f);
         private static Color ForegroundBorderColor { get; } = SystemColors.ControlText;
-        private static Color BackgroundFillColor { get; } = SystemColors.WindowBackground;
-        private static Color BackgroundBorderColor { get; } = new Color(Colors.White, 0.25f);
-        private static Brush TextBrush { get; } = new SolidBrush(SystemColors.ControlText);
+        private static Color BackgroundFillColor { get; } = new Color(Colors.Black, 0.05f);
+        private static Color BackgroundBorderColor { get; } = new Color(Colors.Black, 0.25f);
 
         protected override void OnDataContextChanged(EventArgs e)
         {

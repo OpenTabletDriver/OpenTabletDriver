@@ -86,7 +86,7 @@ namespace OpenTabletDriver.UX
             }
         });
 
-        // Some fields are suppressed because they're all initialized in Invoke() rather than the ctor()
+        // Some fields are suppressed because they're all initialized in Start() rather than the ctor()
         private Application _app = null!;
         private IServiceProvider _serviceProvider = null!;
         private Settings _settings = null!;
@@ -160,12 +160,18 @@ namespace OpenTabletDriver.UX
         }
 
         /// <summary>
-        /// Exit the application, with an optional exit code.
+        /// <inheritdoc cref="Exit()"/> with an optional exit code
         /// </summary>
-        public static void Exit(int code = 0)
+        /// <param name="code">The application exit code</param>
+        public virtual void Exit(int code)
         {
             Environment.Exit(code);
         }
+
+        /// <summary>
+        /// Exits the application
+        /// </summary>
+        public void Exit() => Exit(0x0);
 
         /// <summary>
         /// Synchronize with the daemon.
