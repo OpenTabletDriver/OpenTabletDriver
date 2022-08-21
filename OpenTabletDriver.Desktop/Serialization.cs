@@ -1,7 +1,7 @@
 using System.IO;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Converters;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Desktop.Json;
 
 namespace OpenTabletDriver.Desktop
 {
@@ -9,22 +9,22 @@ namespace OpenTabletDriver.Desktop
     {
         static Serialization()
         {
-            serializer.Error += SerializationErrorHandler;
-            serializer.Converters.Add(new VersionConverter());
+            Serializer.Error += SerializationErrorHandler;
+            Serializer.Converters.Add(new VersionConverter());
         }
 
-        private static readonly JsonSerializer serializer = new JsonSerializer
+        internal static JsonSerializer Serializer { get; } = new AdvancedJsonSerializer
         {
             Formatting = Formatting.Indented
         };
 
-        private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+        private static void SerializationErrorHandler(object? sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
             Log.Exception(args.ErrorContext.Error);
             args.ErrorContext.Handled = true;
         }
 
-        public static T Deserialize<T>(FileInfo file)
+        public static T? Deserialize<T>(FileInfo file)
         {
             using (var fs = file.OpenRead())
                 return Deserialize<T>(fs);
@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop
                 Serialize(fs, value);
         }
 
-        public static T Deserialize<T>(Stream stream)
+        public static T? Deserialize<T>(Stream stream)
         {
             using (var sr = new StreamReader(stream))
             using (var jr = new JsonTextReader(sr))
@@ -53,14 +53,14 @@ namespace OpenTabletDriver.Desktop
                 Serialize(jw, value);
         }
 
-        public static T Deserialize<T>(JsonTextReader textReader)
+        public static T? Deserialize<T>(JsonTextReader textReader)
         {
-            return serializer.Deserialize<T>(textReader);
+            return Serializer.Deserialize<T>(textReader);
         }
 
         public static void Serialize(JsonTextWriter textWriter, object value)
         {
-            serializer.Serialize(textWriter, value);
+            Serializer.Serialize(textWriter, value);
         }
     }
 }

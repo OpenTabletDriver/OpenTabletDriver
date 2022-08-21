@@ -1,20 +1,20 @@
 using System;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Linux.Evdev;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Desktop.Interop
+namespace OpenTabletDriver.Desktop.Interop.Input
 {
     [PluginIgnore]
     public abstract class EvdevVirtualMouse : IMouseButtonHandler, IDisposable
     {
-        protected EvdevDevice Device { set; get; }
+        protected EvdevDevice Device { init; get; } = null!;
 
         public void MouseDown(MouseButton button)
         {
             if (GetCode(button) is EventCode code)
             {
-                Device.Write(EventType.EV_KEY, code, 1);
+                Device!.Write(EventType.EV_KEY, code, 1);
                 Device.Sync();
             }
         }
@@ -40,7 +40,7 @@ namespace OpenTabletDriver.Desktop.Interop
 
         public virtual void Dispose()
         {
-            Device?.Dispose();
+            Device.Dispose();
         }
     }
 }

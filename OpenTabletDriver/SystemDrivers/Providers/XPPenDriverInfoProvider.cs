@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace OpenTabletDriver.SystemDrivers.InfoProviders
+namespace OpenTabletDriver.SystemDrivers.Providers
 {
     internal class XPPenDriverInfoProvider : ProcessModuleQueryableDriverInfoProvider
     {
@@ -32,7 +32,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
             "Veikk"
         };
 
-        protected override DriverInfo GetWinDriverInfo()
+        protected override DriverInfo? GetWinDriverInfo()
         {
             var processes = DriverInfo.SystemProcesses
                 .Where(p => WinProcessNames.Concat(Heuristics)
@@ -49,10 +49,8 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     IsSendingInput = true
                 };
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

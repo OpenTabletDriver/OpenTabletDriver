@@ -1,138 +1,361 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Reflection;
-using Eto.Drawing;
+using System.Text;
 using Eto.Forms;
+using JetBrains.Annotations;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.UX.RPC;
-using OpenTabletDriver.UX.Windows;
-using OpenTabletDriver.UX.Windows.Configurations;
-using OpenTabletDriver.UX.Windows.Greeter;
-using OpenTabletDriver.UX.Windows.Plugins;
-using OpenTabletDriver.UX.Windows.Tablet;
-using OpenTabletDriver.UX.Windows.Updater;
+using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Logging;
+using OpenTabletDriver.Platform.Display;
+using OpenTabletDriver.Tablet;
+using OpenTabletDriver.UX.Components;
+using OpenTabletDriver.UX.Dialogs;
 
 namespace OpenTabletDriver.UX
 {
-    public sealed class App : ViewModel
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
+    public abstract class App : NotifyPropertyChanged
     {
-        private App()
+        protected App(string platform, string[] args)
         {
+            Platform = platform;
+            Arguments = args;
         }
 
-        public static void Run(string platform, string[] args)
+        public void Start()
         {
-            var root = new RootCommand("OpenTabletDriver UX")
+            var serviceCollection = new UXServiceCollection(this);
+            _serviceProvider = serviceCollection.BuildServiceProvider();
+
+            _app = new Application(Platform)
             {
-                new Option<bool>(new string[] { "-m", "--minimized" }, "Start the application minimized")
-                {
-                    Argument = new Argument<bool>("minimized")
-                }
+                Name = "OpenTabletDriver"
             };
 
-            bool startMinimized = false;
-            root.Handler = CommandHandler.Create<bool>((minimized) =>
-            {
-                startMinimized = minimized;
-            });
+            _app.UnhandledException += UnhandledException;
+            ApplyStyles();
 
-            int code = root.Invoke(args);
-            if (code != 0)
-                Environment.Exit(code);
+            var mainForm = _serviceProvider.GetRequiredService<MainForm>();
+            mainForm.Closed += (_, _) => Exit();
 
-            var app = new Application(platform);
-            var mainForm = new MainForm();
-            if (startMinimized)
+            var command = new RootCommand("OpenTabletDriver UX")
             {
-                mainForm.WindowState = WindowState.Minimized;
-                if (EnableTrayIcon)
+                Name = "OpenTabletDriver",
+                TreatUnmatchedTokensAsErrors = true,
+                Handler = CommandHandler.Create<bool>(minimized =>
                 {
-                    mainForm.Show();
-                    mainForm.Visible = true;
-                    mainForm.WindowState = WindowState.Minimized;
-                    mainForm.ShowInTaskbar = false;
-                    mainForm.Visible = false;
-                }
-            }
+                    if (minimized)
+                    {
+                        mainForm.WindowState = WindowState.Minimized;
+                    }
+                })
+            };
 
-            app.NotificationActivated += Current.HandleNotification;
-            app.UnhandledException += ShowUnhandledException;
+            // We're hooking up the log output handler later than when the log output handler expects
+            // This may cause missing log messages
+            var rpc = _serviceProvider.GetRequiredService<RpcClient<IDriverDaemon>>();
+            Log.Output += (_, message) => LogOutputHandler(rpc, message).Run();
 
-            app.Run(mainForm);
+            // Force unobserved exceptions to be considered observed, stops hanging on async exceptions.
+            TaskScheduler.UnobservedTaskException += (_, args) => args.SetObserved();
+
+            var code = command.Invoke(Arguments);
+            if (code != 0)
+                Exit(code);
+
+            // Show the tray icon, if the platform supports it as intended.
+            if (EnableTray)
+                _serviceProvider.GetRequiredService<TrayIcon>().Show();
+
+            _app.Run(mainForm);
         }
 
-        public static App Current { get; } = new App();
-
-        public const string WikiUrl = "https://opentabletdriver.net/Wiki";
-        public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-
-        public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
-
-        public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
-        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
-
-        private Settings settings;
-        public Settings Settings
-        {
-            set => this.RaiseAndSetIfChanged(ref this.settings, value);
-            get => this.settings;
-        }
-
-        public static AboutDialog AboutDialog => new AboutDialog
-        {
-            Title = "OpenTabletDriver",
-            ProgramName = "OpenTabletDriver",
-            ProgramDescription = "Open source, cross-platform tablet configurator",
-            WebsiteLabel = "OpenTabletDriver GitHub Repository",
-            Website = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver"),
-            Version = $"v{Version}",
-            Developers = new string[] { "InfinityGhost" },
-            Designers = new string[] { "InfinityGhost" },
-            Documenters = new string[] { "InfinityGhost" },
-            License = string.Empty,
-            Copyright = string.Empty,
-            Logo = Logo.WithSize(256, 256)
-        };
-
-        public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
-        public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
-
-        public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();
-        public WindowSingleton<ConfigurationEditor> ConfigEditorWindow { get; } = new WindowSingleton<ConfigurationEditor>();
-        public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
-        public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
-        public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
-        public WindowSingleton<UpdaterWindow> UpdaterWindow { get; } = new WindowSingleton<UpdaterWindow>();
-
-        public void AddNotificationHandler(string identifier, Action handler)
-        {
-            NotificationHandlers.Add(identifier, handler);
-        }
-
-        private void HandleNotification(object sender, NotificationEventArgs e)
-        {
-            if (NotificationHandlers.ContainsKey(e.ID))
-                NotificationHandlers[e.ID].Invoke();
-        }
-
-        private static void ShowUnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
+        private void UnhandledException(object? sender, Eto.UnhandledExceptionEventArgs args) => Application.Instance.AsyncInvoke(() =>
         {
             try
             {
-                var exception = e.ExceptionObject as Exception;
-                Log.Exception(exception);
-                exception.ShowMessageBox();
+                var ex = args.ExceptionObject as Exception;
+                ex?.Show();
+            }
+            catch (Exception ex2)
+            {
+                Console.WriteLine(ex2);
+            }
+        });
+
+        // Some fields are suppressed because they're all initialized in Start() rather than the ctor()
+        private Application _app = null!;
+        private IServiceProvider _serviceProvider = null!;
+        private Settings _settings = null!;
+        private ObservableCollection<TabletConfiguration> _tablets = new ObservableCollection<TabletConfiguration>();
+        private ObservableCollection<IDisplay> _displays = null!;
+        private string _mainFormTitle = DefaultTitle;
+
+        private static string DefaultTitle { get; } = $"OpenTabletDriver v{Metadata.Version}";
+
+        /// <summary>
+        /// The <see cref="Eto.Platform"/> this app was built with.
+        /// </summary>
+        public string Platform { get; }
+
+        /// <summary>
+        /// The command line arguments passed to the app.
+        /// </summary>
+        public string[] Arguments { get; }
+
+        /// <summary>
+        /// The client plugin manager, used to load clientside plugins.
+        /// </summary>
+        public IPluginManager PluginManager { set; get; } = null!;
+
+        /// <summary>
+        /// The client plugin factory, used to reflect clientside plugins.
+        /// </summary>
+        public IPluginFactory PluginFactory { set; get; } = null!;
+
+        /// <summary>
+        /// The local client instance of Settings.
+        /// This is synchronized when <see cref="IDriverDaemon.ApplySettings"/> is invoked.
+        /// </summary>
+        public Settings Settings
+        {
+            set => RaiseAndSetIfChanged(ref _settings!, value);
+            get => _settings;
+        }
+
+        /// <summary>
+        /// Collection of all currently connected tablets.
+        /// </summary>
+        public ObservableCollection<TabletConfiguration> Tablets
+        {
+            set
+            {
+                RaiseAndSetIfChanged(ref _tablets!, value);
+
+                var sb = new StringBuilder(DefaultTitle);
+                if (_tablets.Any())
+                {
+                    sb.Append(" - ");
+                    sb.AppendJoin(", ", _tablets.Select(t => t.Name).Take(3));
+                }
+
+                MainFormTitle = sb.ToString();
+            }
+            get => _tablets;
+        }
+
+        public ObservableCollection<IDisplay> Displays
+        {
+            set => RaiseAndSetIfChanged(ref _displays!, value);
+            get => _displays;
+        }
+
+        public string MainFormTitle
+        {
+            set => RaiseAndSetIfChanged(ref _mainFormTitle!, value);
+            get => _mainFormTitle;
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="Exit()"/> with an optional exit code
+        /// </summary>
+        /// <param name="code">The application exit code</param>
+        public virtual void Exit(int code)
+        {
+            Environment.Exit(code);
+        }
+
+        /// <summary>
+        /// Exits the application
+        /// </summary>
+        public void Exit() => Exit(0x0);
+
+        /// <summary>
+        /// Synchronize with the daemon.
+        /// This will wipe any local changes.
+        /// </summary>
+        public async Task Synchronize()
+        {
+            var daemon = _serviceProvider.GetRequiredService<IDriverDaemon>();
+            daemon.TabletsChanged += (_, t) => _app.AsyncInvoke(() => Tablets = new ObservableCollection<TabletConfiguration>(t));
+            daemon.SettingsChanged += (_, s) => _app.AsyncInvoke(() => Settings = s);
+            daemon.AssembliesChanged += (_, _) =>
+            {
+                _app.AsyncInvoke(SynchronizePlugins(daemon).Run);
+            };
+
+            Tablets = new ObservableCollection<TabletConfiguration>(await daemon.GetTablets());
+            Displays = new ObservableCollection<IDisplay>(await daemon.GetDisplays());
+
+            Settings = await daemon.GetSettings();
+
+            var appInfo = await daemon.GetApplicationInfo();
+            PluginManager = _serviceProvider.CreateInstance<PluginManager>(appInfo);
+            PluginFactory = _serviceProvider.CreateInstance<PluginFactory>(PluginManager);
+
+            await SynchronizePlugins(daemon);
+        }
+
+        private async Task SynchronizePlugins(IDriverDaemon daemon)
+        {
+            PluginManager.Load();
+            if (!await daemon.CheckAssemblyHashes(PluginManager.GetStateHash()))
+            {
+                ShowDialog<FatalErrorDialog>(_app.MainForm, "Client plugin manager is not synchronized to the daemon.");
+                Exit(3);
+            }
+        }
+
+        /// <summary>
+        /// Desynchronize from the daemon.
+        /// </summary>
+        public void Desynchronize()
+        {
+            Tablets.Clear();
+            Settings = new Settings();
+        }
+
+        /// <summary>
+        /// Loads settings then synchronizes with the daemon.
+        /// </summary>
+        /// <param name="filePath">The file path to load settings from.</param>
+        public async Task LoadSettings(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                var daemon = GetDriverDaemon();
+                var settings = Settings.Deserialize(new FileInfo(filePath))!;
+                await daemon.ApplySettings(settings);
+            }
+        }
+
+        /// <summary>
+        /// Synchronizes client settings with the daemon and saves.
+        /// </summary>
+        public async Task SaveSettings()
+        {
+            await GetDriverDaemon().SaveSettings(Settings);
+        }
+
+        /// <summary>
+        /// Synchronizes client settings with the daemon without saving.
+        /// </summary>
+        public async Task ApplySettings()
+        {
+            await GetDriverDaemon().ApplySettings(Settings);
+        }
+
+        /// <summary>
+        /// Discards client settings changes and resynchronizes settings with the daemon.
+        /// </summary>
+        public async Task DiscardSettings()
+        {
+            Settings = await GetDriverDaemon().GetSettings();
+        }
+
+        /// <summary>
+        /// Discards client and daemon settings, resetting to defaults.
+        /// </summary>
+        public async Task ResetSettings()
+        {
+            await GetDriverDaemon().ResetSettings();
+        }
+
+        /// <inheritdoc cref="ShowWindow{TWindow}(object[])"/>
+        public void ShowWindow<TWindow>() where TWindow : Form => ShowWindow<TWindow>(Array.Empty<object>());
+
+        /// <summary>
+        /// Shows an instance of a window.
+        /// </summary>
+        /// <typeparam name="TWindow">The window type to show.</typeparam>
+        public void ShowWindow<TWindow>(params object[] deps) where TWindow : Form
+        {
+            if (Application.Instance.Windows.FirstOrDefault(w => w is TWindow) is not TWindow window)
+            {
+                _app.AsyncInvoke(_serviceProvider.GetOrCreateInstance<TWindow>(deps).Show);
+            }
+            else
+            {
+                window.BringToFront();
+                window.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Shows an instance of a dialog.
+        /// </summary>
+        /// <param name="parent">The parent window.</param>
+        /// <param name="args">Additional arguments to pass to the <typeparamref name="TDialog"/> constructor.</param>
+        /// <typeparam name="TDialog">The dialog type to show.</typeparam>
+        public TDialog ShowDialog<TDialog>(Window parent, params object[] args) where TDialog : Dialog
+        {
+            if (Application.Instance.Windows.FirstOrDefault(w => w is TDialog) is not TDialog dialog)
+            {
+                dialog = _serviceProvider.GetOrCreateInstance<TDialog>(args);
+                dialog.ShowModal(parent);
+            }
+            else
+            {
+                dialog.BringToFront();
+                dialog.Focus();
+            }
+
+            return dialog;
+        }
+
+        /// <summary>
+        /// Opens a uri with intended default application.
+        /// </summary>
+        /// <param name="uri">The uri to open</param>
+        /// <param name="isDirectory">Whether this uri is a filesystem directory</param>
+        public virtual void Open(string? uri, bool isDirectory = false)
+        {
+            if (uri != null)
+                OpenInternal(uri, isDirectory);
+        }
+
+        /// <summary>
+        /// Determines whether to use the tray icon.
+        /// This affects the MainForm minimize behavior.
+        /// </summary>
+        protected abstract bool EnableTray { get; }
+
+        /// <summary>
+        /// Apply platform-specific styles.
+        /// </summary>
+        protected abstract void ApplyStyles();
+
+        /// <inheritdoc cref="Open"/>
+        protected abstract void OpenInternal(string uri, bool isDirectory);
+
+        /// <summary>
+        /// Starts the OpenTabletDriver daemon, if applicable.
+        /// </summary>
+        public abstract void StartDaemon();
+
+        /// <summary>
+        /// The event handler for all client <see cref="Log.Write(OpenTabletDriver.Logging.LogMessage)"/> calls.
+        /// </summary>
+        private static async Task LogOutputHandler(RpcClient<IDriverDaemon> rpc, LogMessage message)
+        {
+            try
+            {
+                if (rpc.Instance != null)
+                    await rpc.Instance.WriteMessage(message);
             }
             catch (Exception ex)
             {
-                // Stops recursion of exceptions if the messagebox itself throws an exception
-                Log.Exception(ex);
+                ex.Show();
             }
+        }
+
+        private IDriverDaemon GetDriverDaemon()
+        {
+            return _serviceProvider.GetRequiredService<IDriverDaemon>();
         }
     }
 }

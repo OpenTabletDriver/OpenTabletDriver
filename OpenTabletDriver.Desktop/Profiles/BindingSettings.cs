@@ -1,109 +1,111 @@
+using System.ComponentModel;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Platform.Pointer;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Profiles
 {
-    public class BindingSettings : ViewModel
+    public class BindingSettings : NotifyPropertyChanged
     {
-        private float tP, eP;
-        private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown;
-        private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
-            auxButtons = new PluginSettingStoreCollection(),
-            mouseButtons = new PluginSettingStoreCollection();
+        private float _tP, _eP;
+        private PluginSettings? _tipButton, _eraserButton, _mouseScrollUp, _mouseScrollDown;
+        private PluginSettingsCollection _penButtons = new PluginSettingsCollection(),
+            _auxButtons = new PluginSettingsCollection(),
+            _mouseButtons = new PluginSettingsCollection();
 
-        [JsonProperty("TipActivationThreshold")]
+        [DisplayName("Tip Activation Threshold"), JsonProperty("TipActivationThreshold")]
         public float TipActivationThreshold
         {
-            set => this.RaiseAndSetIfChanged(ref this.tP, value);
-            get => this.tP;
+            set => RaiseAndSetIfChanged(ref _tP, value);
+            get => _tP;
         }
 
-        [JsonProperty("TipButton")]
-        public PluginSettingStore TipButton
+        [DisplayName("Tip Button"), JsonProperty("TipButton")]
+        public PluginSettings? TipButton
         {
-            set => this.RaiseAndSetIfChanged(ref this.tipButton, value);
-            get => this.tipButton;
+            set => RaiseAndSetIfChanged(ref _tipButton, value);
+            get => _tipButton;
         }
 
-        [JsonProperty("EraserActivationThreshold")]
+        [DisplayName("Eraser Activation Threshold"), JsonProperty("EraserActivationThreshold")]
         public float EraserActivationThreshold
         {
-            set => this.RaiseAndSetIfChanged(ref this.eP, value);
-            get => this.eP;
+            set => RaiseAndSetIfChanged(ref _eP, value);
+            get => _eP;
         }
 
-        [JsonProperty("EraserButton")]
-        public PluginSettingStore EraserButton
+        [DisplayName("Eraser Button"), JsonProperty("EraserButton")]
+        public PluginSettings? EraserButton
         {
-            set => this.RaiseAndSetIfChanged(ref this.eraserButton, value);
-            get => this.eraserButton;
+            set => RaiseAndSetIfChanged(ref _eraserButton, value);
+            get => _eraserButton;
         }
 
-        [JsonProperty("PenButtons")]
-        public PluginSettingStoreCollection PenButtons
+        [DisplayName("Pen Button"), JsonProperty("PenButtons")]
+        public PluginSettingsCollection PenButtons
         {
-            set => this.RaiseAndSetIfChanged(ref this.penButtons, value);
-            get => this.penButtons;
+            set => RaiseAndSetIfChanged(ref _penButtons!, value);
+            get => _penButtons;
         }
 
-        [JsonProperty("AuxButtons")]
-        public PluginSettingStoreCollection AuxButtons
+        [DisplayName("Auxiliary Button"), JsonProperty("AuxButtons")]
+        public PluginSettingsCollection AuxButtons
         {
-            set => this.RaiseAndSetIfChanged(ref this.auxButtons, value);
-            get => this.auxButtons;
+            set => RaiseAndSetIfChanged(ref _auxButtons!, value);
+            get => _auxButtons;
         }
 
-        [JsonProperty("MouseButtons")]
-        public PluginSettingStoreCollection MouseButtons
+        [DisplayName("Mouse Button"), JsonProperty("MouseButtons")]
+        public PluginSettingsCollection MouseButtons
         {
-            set => this.RaiseAndSetIfChanged(ref this.mouseButtons, value);
-            get => this.mouseButtons;
+            set => RaiseAndSetIfChanged(ref _mouseButtons!, value);
+            get => _mouseButtons;
         }
 
-        [JsonProperty("MouseScrollUp")]
-        public PluginSettingStore MouseScrollUp
+        [DisplayName("Mouse Scroll Up"), JsonProperty("MouseScrollUp")]
+        public PluginSettings? MouseScrollUp
         {
-            set => this.RaiseAndSetIfChanged(ref this.mouseScrollUp, value);
-            get => this.mouseScrollUp;
+            set => RaiseAndSetIfChanged(ref _mouseScrollUp, value);
+            get => _mouseScrollUp;
         }
 
-        [JsonProperty("MouseScrollDown")]
-        public PluginSettingStore MouseScrollDown
+        [DisplayName("Mouse Scroll Down"), JsonProperty("MouseScrollDown")]
+        public PluginSettings? MouseScrollDown
         {
-            set => this.RaiseAndSetIfChanged(ref this.mouseScrollDown, value);
-            get => this.mouseScrollDown;
+            set => RaiseAndSetIfChanged(ref _mouseScrollDown, value);
+            get => _mouseScrollDown;
         }
 
         public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
         {
             var bindingSettings = new BindingSettings
             {
-                TipButton = new PluginSettingStore(
-                    new MouseBinding
+                TipButton = new PluginSettings(
+                    typeof(MouseBinding),
+                    new
                     {
                         Button = nameof(MouseButton.Left)
                     }
                 ),
-                PenButtons = new PluginSettingStoreCollection(),
-                AuxButtons = new PluginSettingStoreCollection(),
-                MouseButtons = new PluginSettingStoreCollection()
+                PenButtons = new PluginSettingsCollection(),
+                AuxButtons = new PluginSettingsCollection(),
+                MouseButtons = new PluginSettingsCollection()
             };
             bindingSettings.MatchSpecifications(tabletSpecifications);
             return bindingSettings;
         }
 
-        public void MatchSpecifications(TabletSpecifications tabletSpecifications)
+        private void MatchSpecifications(TabletSpecifications tabletSpecifications)
         {
-            int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
-            int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
-            int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
+            var penButtonCount = tabletSpecifications.Pen?.ButtonCount ?? 0;
+            var auxButtonCount = tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
+            var mouseButtonCount = tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
 
-            PenButtons = PenButtons.SetExpectedCount(penButtonCount);
-            AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
-            MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
+            PenButtons = PenButtons.SetLength(penButtonCount);
+            AuxButtons = AuxButtons.SetLength(auxButtonCount);
+            MouseButtons = MouseButtons.SetLength(mouseButtonCount);
         }
     }
 }

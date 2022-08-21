@@ -1,7 +1,5 @@
-using System.Numerics;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Conversion
 {
@@ -15,16 +13,23 @@ namespace OpenTabletDriver.Desktop.Conversion
         public string Bottom => "Down";
         public string Right => "Right";
 
-        public Area Convert(TabletReference tablet, double up, double left, double down, double right)
+        public AngledArea Convert(TabletConfiguration tablet, float up, float left, float down, float right)
         {
-            var digitizer = tablet.Properties.Specifications.Digitizer;
+            var digitizer = tablet.Specifications.Digitizer!;
 
             var width = (right - left) * digitizer.Width;
             var height = (down - up) * digitizer.Height;
-            var offsetX = (width / 2) + (left * digitizer.Width);
-            var offsetY = (height / 2) + (up * digitizer.Height);
+            var offsetX = width / 2 + left * digitizer.Width;
+            var offsetY = height / 2 + up * digitizer.Height;
 
-            return new Area((float)width, (float)height, new Vector2((float)offsetX, (float)offsetY), 0f);
+            return new AngledArea
+            {
+                Width = width,
+                Height = height,
+                XPosition = offsetX,
+                YPosition = offsetY,
+                Rotation = 0
+            };
         }
     }
 }

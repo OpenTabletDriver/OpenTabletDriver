@@ -2,13 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Components;
-using OpenTabletDriver.Plugin.Devices;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Components;
+using OpenTabletDriver.Devices;
 
 namespace OpenTabletDriver.ComponentProviders
 {
+    /// <summary>
+    /// Reflection-sourced device hub provider.
+    /// </summary>
+    [PublicAPI]
     public class DeviceHubsProvider : IDeviceHubsProvider
     {
         public DeviceHubsProvider(IServiceProvider serviceProvider)
@@ -21,6 +26,9 @@ namespace OpenTabletDriver.ComponentProviders
                 .ToArray();
         }
 
+        /// <summary>
+        /// An enumeration of the reflected device hubs.
+        /// </summary>
         public IEnumerable<IDeviceHub> DeviceHubs { get; }
     }
 }
