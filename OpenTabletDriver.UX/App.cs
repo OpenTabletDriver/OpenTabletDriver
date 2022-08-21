@@ -37,6 +37,7 @@ namespace OpenTabletDriver.UX
             };
 
             _app.UnhandledException += UnhandledException;
+            ApplyStyles();
 
             var mainForm = _serviceProvider.GetRequiredService<MainForm>();
             mainForm.Closed += (_, _) => Exit();
@@ -324,12 +325,17 @@ namespace OpenTabletDriver.UX
         protected abstract bool EnableTray { get; }
 
         /// <summary>
-        /// Starts the OpenTabletDriver daemon, if applicable.
+        /// Apply platform-specific styles.
         /// </summary>
-        public abstract void StartDaemon();
+        protected abstract void ApplyStyles();
 
         /// <inheritdoc cref="Open"/>
         protected abstract void OpenInternal(string uri, bool isDirectory);
+
+        /// <summary>
+        /// Starts the OpenTabletDriver daemon, if applicable.
+        /// </summary>
+        public abstract void StartDaemon();
 
         /// <summary>
         /// The event handler for all client <see cref="Log.Write(OpenTabletDriver.Logging.LogMessage)"/> calls.

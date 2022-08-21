@@ -28,9 +28,8 @@ namespace OpenTabletDriver.UX.Controls
                     buttons.Items.Add(button);
             };
 
-            Content = new GroupBox
+            Content = new Scrollable
             {
-                Padding = 5,
                 Content = buttons
             };
         }

@@ -9,12 +9,11 @@ namespace OpenTabletDriver.UX.Controls.Editors
 {
     public abstract class AreaEditor : DesktopPanel
     {
-        protected Control CreateUnitBox(string text, Control control, string unit)
+        protected static Control CreateUnitBox(string text, Control control, string unit)
         {
             return new GroupBox
             {
-                Padding = 5,
-                BackgroundColor = Platform.IsMac ? default : SystemColors.WindowBackground,
+                Style = "labeled",
                 Content = new StackLayout
                 {
                     Orientation = Orientation.Horizontal,

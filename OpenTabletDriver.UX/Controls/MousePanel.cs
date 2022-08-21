@@ -55,9 +55,12 @@ namespace OpenTabletDriver.UX.Controls
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new Scrollable
+                        Control = new GroupBox
                         {
-                            Content = buttons
+                            Content = new Scrollable
+                            {
+                                Content = buttons
+                            }
                         }
                     }
                 }

@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using Eto;
+using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Wpf
 {
@@ -6,11 +8,19 @@ namespace OpenTabletDriver.UX.Wpf
     {
         private Process? _daemon;
 
-        public WindowsApp(string[] args) : base(Eto.Platforms.Wpf, args)
+        public WindowsApp(string[] args) : base(Platforms.Wpf, args)
         {
         }
 
         protected override bool EnableTray => true;
+
+        protected override void ApplyStyles()
+        {
+            Style.Add<Scrollable>(null, c =>
+            {
+                c.Border = BorderType.None;
+            });
+        }
 
         protected override void OpenInternal(string uri, bool isDirectory)
         {

@@ -163,14 +163,12 @@ namespace OpenTabletDriver.UX.Controls.Editors
                         Control = new GroupBox
                         {
                             Text = "Output",
-                            Padding = 5,
                             Content = areaDisplay
                         },
                         Expand = true
                     },
                     new Scrollable
                     {
-                        Border = BorderType.None,
                         Content = editorControls
                     }
                 }

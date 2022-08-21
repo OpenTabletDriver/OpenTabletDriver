@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using System.Xml.Schema;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Components;
@@ -11,7 +9,6 @@ using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Display;
-using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
 {

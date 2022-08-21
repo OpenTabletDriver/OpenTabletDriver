@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using Eto;
+using Eto.Drawing;
+using Eto.Forms;
 
 namespace OpenTabletDriver.UX.Gtk
 {
@@ -6,11 +9,28 @@ namespace OpenTabletDriver.UX.Gtk
     {
         private Process? _daemon;
 
-        public LinuxApp(string[] args) : base(Eto.Platforms.Gtk, args)
+        public LinuxApp(string[] args) : base(Platforms.Gtk, args)
         {
         }
 
         protected override bool EnableTray { get; } = IsVariableSet("OTD_TRAY_ICON");
+
+        protected override void ApplyStyles()
+        {
+            Style.Add<GroupBox>(null, c =>
+            {
+                c.Padding = 5;
+            });
+            Style.Add<GroupBox>("labeled", c =>
+            {
+                c.BackgroundColor = SystemColors.WindowBackground;
+            });
+
+            Style.Add<Scrollable>(null, c =>
+            {
+                c.Border = BorderType.None;
+            });
+        }
 
         protected override void OpenInternal(string uri, bool isDirectory)
         {

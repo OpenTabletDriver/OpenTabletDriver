@@ -89,8 +89,9 @@ namespace OpenTabletDriver.UX.Controls
 
             var stackLayout = new StackLayout
             {
-                Spacing = 5,
                 Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Spacing = 5,
                 Items =
                 {
                     new StackLayoutItem(slider, true),

@@ -25,8 +25,7 @@ namespace OpenTabletDriver.UX.Components
 
             Content = new GroupBox
             {
-                Padding = 5,
-                BackgroundColor = Platform.IsMac ? default : SystemColors.WindowBackground,
+                Style = "labeled",
                 Content = layout
             };
         }

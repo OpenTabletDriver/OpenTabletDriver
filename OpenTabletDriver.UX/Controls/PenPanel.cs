@@ -1,4 +1,3 @@
-using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Components;
@@ -9,33 +8,25 @@ namespace OpenTabletDriver.UX.Controls
     {
         public PenPanel(IControlBuilder controlBuilder, App app) : base(controlBuilder)
         {
-            var tipSettings = new GroupBox
+            var tipSettings = new StackLayout
             {
-                Content = new StackLayout
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5,
+                Items =
                 {
-                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                    Padding = new Padding(5, 5, 5, 0),
-                    Spacing = 5,
-                    Items =
-                    {
-                        ButtonFor(p => p.BindingSettings.TipButton),
-                        SliderFor(p => p.BindingSettings.TipActivationThreshold)
-                    }
+                    ButtonFor(p => p.BindingSettings.TipButton),
+                    SliderFor(p => p.BindingSettings.TipActivationThreshold)
                 }
             };
 
-            var eraserSettings = new GroupBox
+            var eraserSettings = new StackLayout
             {
-                Content = new StackLayout
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5,
+                Items =
                 {
-                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                    Padding = new Padding(5, 5, 5, 0),
-                    Spacing = 5,
-                    Items =
-                    {
-                        ButtonFor(p => p.BindingSettings.EraserButton),
-                        SliderFor(p => p.BindingSettings.EraserActivationThreshold)
-                    }
+                    ButtonFor(p => p.BindingSettings.EraserButton),
+                    SliderFor(p => p.BindingSettings.EraserActivationThreshold)
                 }
             };
 
@@ -84,7 +75,6 @@ namespace OpenTabletDriver.UX.Controls
                         Expand = true,
                         Control = new Scrollable
                         {
-                            Padding = 5,
                             Content = buttons
                         }
                     }

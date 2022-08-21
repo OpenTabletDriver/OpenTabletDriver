@@ -134,8 +134,7 @@ namespace OpenTabletDriver.UX.Windows
             return new GroupBox
             {
                 Text = text,
-                Content = content,
-                Padding = 5
+                Content = content
             };
         }
     }

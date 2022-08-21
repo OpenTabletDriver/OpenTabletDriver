@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using Eto;
+using Eto.Forms;
 
 namespace OpenTabletDriver.UX.MacOS
 {
@@ -6,11 +8,19 @@ namespace OpenTabletDriver.UX.MacOS
     {
         private Process? _daemon;
 
-        public MacOSApp(string[] args) : base(Eto.Platforms.Mac64, args)
+        public MacOSApp(string[] args) : base(Platforms.Mac64, args)
         {
         }
 
         protected override bool EnableTray => true;
+
+        protected override void ApplyStyles()
+        {
+            Style.Add<GroupBox>(null, c =>
+            {
+                c.Padding = 5;
+            });
+        }
 
         protected override void OpenInternal(string uri, bool isDirectory)
         {
