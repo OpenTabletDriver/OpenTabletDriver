@@ -1,0 +1,35 @@
+{
+  "Name": "Wacom CTE-660",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 216.48,
+      "Height": 135.0,
+      "MaxX": 21648.0,
+      "MaxY": 13500.0
+    },
+    "Pen": {
+      "MaxPressure": 511,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 107,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
