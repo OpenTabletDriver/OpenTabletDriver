@@ -40,4 +40,10 @@ dotnet publish OpenTabletDriver.Console ${options[@]} $@ || exit 2
 echo -e "\nBuilding GTK UX...\n"
 dotnet publish OpenTabletDriver.UX.Gtk ${options[@]} $@ || exit 3
 
-echo "Build finished. Binaries created in ./bin"
+echo "Build finished successfully. Binaries created in ./bin"
+
+if [ ! -f /etc/udev/rules.d/99-opentabletdriver.rules ]; then
+    echo "\nUdev rules don't seem to be installed in /etc/udev/rules.d."
+    echo "If your distribution installs them elsewhere, ignore this message."
+    echo "If not, generate them by running generate-rules.sh, then follow the prompts."
+fi
