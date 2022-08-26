@@ -17,4 +17,10 @@ else
   dotnet_args=("-v" "${TABLET_CONFIGURATIONS}" "${RULES_FILE}")
 fi
 
+echo "Generating udev rules..."
+
 dotnet run --project "${PROJECT}" -f "${FRAMEWORK}" -- ${dotnet_args[@]}
+
+echo "\nRule file generated. Please move the generated rule file './bin/99-opentabletdriver.rules' to /etc/udev/rules.d, then run"
+echo "sudo udevadm control --reload-rules"
+echo "or simply reboot your PC."
