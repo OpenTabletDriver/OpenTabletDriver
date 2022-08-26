@@ -10,6 +10,7 @@ namespace OpenTabletDriver.UX.Controls
     public class ProfilePanel : DesktopPanel
     {
         private readonly IControlBuilder _controlBuilder;
+        private TabPage? _prevPage;
 
         public ProfilePanel(IDriverDaemon daemon, IControlBuilder controlBuilder, App app)
         {
@@ -51,7 +52,8 @@ namespace OpenTabletDriver.UX.Controls
 
             DataContextChanged += delegate
             {
-                var prevPage = tabControl.SelectedPage;
+                if (tabControl.SelectedPage is not { Text: "Info" })
+                    _prevPage = tabControl.SelectedPage;
 
                 var pages = tabControl.Pages;
                 pages.Clear();
@@ -79,8 +81,8 @@ namespace OpenTabletDriver.UX.Controls
                     pages.Add(toolsPage);
                     pages.Add(logPage);
 
-                    if (prevPage != placeholderPage && pages.Contains(prevPage))
-                        tabControl.SelectedPage = prevPage;
+                    if (_prevPage is not null or { Text: "Info" } && pages.Contains(_prevPage))
+                        tabControl.SelectedPage = _prevPage;
                     else
                         tabControl.SelectedIndex = 0;
                 }
