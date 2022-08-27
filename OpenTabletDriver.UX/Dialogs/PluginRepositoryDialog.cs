@@ -13,25 +13,6 @@ namespace OpenTabletDriver.UX.Dialogs
             DataContext = new RepositoryModel();
 
             Width = 300;
-            Height = 200;
-
-            var buttons = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                Spacing = 5,
-                Items =
-                {
-                    new StackLayoutItem(null, true),
-                    new Button((_, _) => Close())
-                    {
-                        Text = "Cancel"
-                    },
-                    new Button((_, _) => Close(DataContext as RepositoryModel))
-                    {
-                        Text = "Ok"
-                    }
-                }
-            };
 
             Content = new StackLayout
             {
@@ -43,8 +24,23 @@ namespace OpenTabletDriver.UX.Dialogs
                     ControlFor(m => m.Owner),
                     ControlFor(m => m.Name),
                     ControlFor(m => m.GitRef),
-                    new StackLayoutItem(null, true),
-                    buttons
+                    new StackLayout
+                    {
+                        Orientation = Orientation.Horizontal,
+                        Spacing = 5,
+                        Items =
+                        {
+                            new StackLayoutItem(null, true),
+                            new Button((_, _) => Close())
+                            {
+                                Text = "Cancel"
+                            },
+                            new Button((_, _) => Close(DataContext as RepositoryModel))
+                            {
+                                Text = "Ok"
+                            }
+                        }
+                    }
                 }
             };
         }
