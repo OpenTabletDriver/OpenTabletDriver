@@ -7,9 +7,10 @@ namespace OpenTabletDriver.UX
     {
         public const string WIKI_URL = "https://opentabletdriver.net/Wiki";
 
-        public static string Version { get; } =
-        Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!
-                .InformationalVersion;
+        public static string FullVersion { get; } =
+            Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+
+        public static Version Version { get; } = Assembly.GetEntryAssembly()!.GetName().Version!;
 
         public static Bitmap Logo => new Bitmap(typeof(Metadata).Assembly.GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
     }

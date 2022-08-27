@@ -95,7 +95,7 @@ namespace OpenTabletDriver.UX
         private ObservableCollection<IDisplay> _displays = null!;
         private string _mainFormTitle = DefaultTitle;
 
-        private static string DefaultTitle { get; } = $"OpenTabletDriver v{Metadata.Version}";
+        private static string DefaultTitle { get; } = $"OpenTabletDriver v{Metadata.FullVersion}";
 
         /// <summary>
         /// The <see cref="Eto.Platform"/> this app was built with.
