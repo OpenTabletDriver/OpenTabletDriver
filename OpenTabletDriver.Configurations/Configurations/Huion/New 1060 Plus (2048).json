@@ -2,10 +2,10 @@
   "Name": "Huion New 1060 Plus (2048)",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.75,
-      "MaxX": 40000.0,
-      "MaxY": 25000.0
+      "MaxX": 40000,
+      "MaxY": 25000
     },
     "Pen": {
       "MaxPressure": 2047,
