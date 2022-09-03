@@ -59,6 +59,7 @@
 | UGTABLET M708                 |     Supported     | Windows: Some variations may require Zadig's WinUSB to be installed on interface 0
 | UGTABLET M708 V2              |     Supported     |
 | VEIKK A15                     |     Supported     |
+| VEIKK A15 V2                  |     Supported     |
 | VEIKK S640                    |     Supported     |
 | VEIKK S640 V2                 |     Supported     |
 | VEIKK VK1060                  |     Supported     |
