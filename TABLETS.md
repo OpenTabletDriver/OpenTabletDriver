@@ -68,6 +68,7 @@
 | Wacom CTE-630                 |     Supported     |
 | Wacom CTE-460                 |     Supported     |
 | Wacom CTE-640                 |     Supported     |
+| Wacom CTE-660                 |     Supported     |
 | Wacom CTF-430                 |     Supported     |
 | Wacom CTH-460                 |     Supported     |
 | Wacom CTH-470                 |     Supported     |
