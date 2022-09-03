@@ -1,27 +1,31 @@
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Platform.Pointer;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
     public class BindingState
     {
-        public IBinding Binding { set; get; }
-        public bool State { protected set; get; }
+        private readonly IBinding _binding;
 
-        protected bool PreviousState { set; get; }
-
-        public virtual void Invoke(TabletReference tablet, IDeviceReport report, bool newState)
+        public BindingState(IPluginFactory pluginFactory, InputDevice device, IMouseButtonHandler mouseButtonHandler, PluginSettings settings)
         {
-            if (Binding is IStateBinding stateBinding)
+            _binding = pluginFactory.Construct<IBinding>(settings, device, mouseButtonHandler)!;
+        }
+
+        private bool _previousState;
+
+        public void Invoke(IDeviceReport report, bool newState)
+        {
+            if (_binding is IStateBinding stateBinding)
             {
-                if (newState && !PreviousState)
-                    stateBinding.Press(tablet, report);
-                else if (!newState && PreviousState)
-                    stateBinding.Release(tablet, report);
+                if (newState && !_previousState)
+                    stateBinding.Press(report);
+                else if (!newState && _previousState)
+                    stateBinding.Release(report);
             }
 
-            PreviousState = newState;
+            _previousState = newState;
         }
     }
 }

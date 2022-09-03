@@ -3,48 +3,51 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Plugin.Components;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Components;
+using OpenTabletDriver.Tablet;
 using Xunit;
-
-#nullable enable
+using Xunit.Abstractions;
 
 namespace OpenTabletDriver.Tests
 {
     public class ConfigurationTest
     {
-        public static IEnumerable<object[]> Configurations_Have_ExistentParsers_Data
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public ConfigurationTest(ITestOutputHelper testOutputHelper)
         {
-            get
-            {
-                var configurationProvider = new DriverServiceCollection()
-                    .BuildServiceProvider()
-                    .GetRequiredService<IDeviceConfigurationProvider>();
-
-                var parsers = configurationProvider.TabletConfigurations
-                    .SelectMany(c => c.DigitizerIdentifiers)
-                    .Concat(configurationProvider.TabletConfigurations
-                        .SelectMany(c => c.AuxilaryDeviceIdentifiers))
-                    .Select(i => i.ReportParser)
-                    .Where(r => r != null)
-                    .Distinct();
-
-                foreach (var parser in parsers)
-                    yield return new object[] { parser };
-            }
+            _testOutputHelper = testOutputHelper;
         }
 
-        [Theory]
-        [MemberData(nameof(Configurations_Have_ExistentParsers_Data))]
-        public void Configurations_Have_ExistentParsers(string reportParserName)
+        [Fact]
+        public void Configurations_Have_ExistentParsers()
         {
-            var parserProvider = new DriverServiceCollection()
-                .BuildServiceProvider()
-                .GetRequiredService<IReportParserProvider>();
+            var serviceProvider = Utility.GetServices().BuildServiceProvider();
+            var parserProvider = serviceProvider.GetRequiredService<IReportParserProvider>();
+            var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
 
-            var reportParser = parserProvider.GetReportParser(reportParserName);
+            var parsers = from configuration in configurationProvider.TabletConfigurations
+                from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers)
+                orderby identifier.ReportParser
+                select identifier.ReportParser;
 
-            Assert.NotNull(reportParser);
+            var failed = false;
+
+            foreach (var parserType in parsers.Distinct())
+            {
+                try
+                {
+                    var parser = parserProvider.GetReportParser(parserType);
+                    _testOutputHelper.WriteLine(parser.ToString());
+                }
+                catch
+                {
+                    _testOutputHelper.WriteLine($"Unable to find report parser '{parserType}'");
+                    failed = true;
+                }
+            }
+
+            Assert.False(failed);
         }
 
         [Fact]
@@ -172,61 +175,58 @@ namespace OpenTabletDriver.Tests
             Assert.False(equality);
         }
 
-        public static IEnumerable<object[]> Configurations_DeviceIdentifier_IsNotConflicting_Data
+        [Fact]
+        public void Configurations_DeviceIdentifier_IsNotConflicting()
         {
-            get
+            var configurationProvider = Utility.GetServices()
+                .BuildServiceProvider()
+                .GetRequiredService<IDeviceConfigurationProvider>();
+
+            var digitizerIdentificationContexts = (from config in configurationProvider.TabletConfigurations
+                from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index)).ToArray();
+
+            var auxIdentificationContexts = (from config in configurationProvider.TabletConfigurations
+                from identifier in config.AuxiliaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index)).ToArray();
+
+            var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts).ToList();
+
+            var encounteredPairs = new HashSet<IdentificationContextPair>();
+
+            foreach (var identificationContext in identificationContexts)
             {
-                var configurationProvider = new DriverServiceCollection()
-                    .BuildServiceProvider()
-                    .GetRequiredService<IDeviceConfigurationProvider>();
-
-                var digitizerIdentificationContexts = (from config in configurationProvider.TabletConfigurations
-                                                       from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                                                       select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index)).ToArray();
-
-                var auxIdentificationContexts = (from config in configurationProvider.TabletConfigurations
-                                                 from identifier in config.AuxilaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                                                 select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxilliary, identifier.Index)).ToArray();
-
-                var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts);
-
-                var encounteredPairs = new HashSet<IdentificationContextPair>();
-
-                foreach (var identificationContext in identificationContexts)
+                foreach (var otherIdentificationContext in identificationContexts.Where(c => !ReferenceEquals(identificationContext, c)))
                 {
-                    foreach (var otherIdentificationContext in identificationContexts.Where(c => !ReferenceEquals(identificationContext, c)))
-                    {
-                        // Yield return if unique pair
-                        if (encounteredPairs.Add(new IdentificationContextPair(identificationContext, otherIdentificationContext)))
-                            yield return new object[] { identificationContext, otherIdentificationContext };
-                    }
+                    // Yield return if unique pair
+                    encounteredPairs.Add(new IdentificationContextPair(identificationContext, otherIdentificationContext));
+                }
+            }
+
+            var comparer = new DeviceStringsComparer();
+
+            foreach (var context in encounteredPairs)
+            {
+                var deviceIdentifier = context.A;
+                var otherIdentifier = context.B;
+                var equality = IsEqual(deviceIdentifier.Identifier, otherIdentifier.Identifier, comparer);
+
+                if (equality)
+                {
+                    var message = string.Format("'{0}' {1} (index: {2}) conflicts with '{3}' {4} (index: {5})",
+                        deviceIdentifier.TabletConfiguration.Name,
+                        deviceIdentifier.IdentifierType,
+                        deviceIdentifier.IdentifierIndex,
+                        otherIdentifier.TabletConfiguration.Name,
+                        otherIdentifier.IdentifierType,
+                        otherIdentifier.IdentifierIndex);
+
+                    throw new Exception(message);
                 }
             }
         }
 
-        [Theory]
-        [MemberData(nameof(Configurations_DeviceIdentifier_IsNotConflicting_Data))]
-        public void Configurations_DeviceIdentifier_IsNotConflicting(IdentificationContext deviceIdentifier, IdentificationContext otherIdentifier)
-        {
-            var comparer = new DeviceStringsComparer();
-
-            var equality = IsEqual(deviceIdentifier.Identifier, otherIdentifier.Identifier, comparer);
-
-            if (equality)
-            {
-                var message = string.Format("'{0}' {1} (index: {2}) conflicts with '{3}' {4} (index: {5})",
-                    deviceIdentifier.TabletConfiguration.Name,
-                    deviceIdentifier.IdentifierType,
-                    deviceIdentifier.IdentifierIndex,
-                    otherIdentifier.TabletConfiguration.Name,
-                    otherIdentifier.IdentifierType,
-                    otherIdentifier.IdentifierIndex);
-
-                throw new Exception(message);
-            }
-        }
-
-        private bool IsEqual(DeviceIdentifier a, DeviceIdentifier b, DeviceStringsComparer comparerInstance)
+        private static bool IsEqual(DeviceIdentifier a, DeviceIdentifier b, DeviceStringsComparer comparerInstance)
         {
             var pidMatch = a.VendorID == b.VendorID && a.ProductID == b.ProductID;
             var stringMatch = !a.DeviceStrings.Any() || !b.DeviceStrings.Any() || a.DeviceStrings.SequenceEqual(b.DeviceStrings, comparerInstance);
@@ -239,15 +239,17 @@ namespace OpenTabletDriver.Tests
         public enum IdentifierType
         {
             Digitizer,
-            Auxilliary
+            Auxiliary
         }
 
-        public record IdentificationContext(TabletConfiguration TabletConfiguration,
-                                             DeviceIdentifier Identifier,
-                                             IdentifierType IdentifierType,
-                                             int IdentifierIndex);
+        public record IdentificationContext(
+            TabletConfiguration TabletConfiguration,
+            DeviceIdentifier Identifier,
+            IdentifierType IdentifierType,
+            int IdentifierIndex
+        );
 
-        public struct IdentificationContextPair
+        private struct IdentificationContextPair
         {
             public IdentificationContext A { get; }
             public IdentificationContext B { get; }
@@ -255,11 +257,11 @@ namespace OpenTabletDriver.Tests
             public IdentificationContextPair(IdentificationContext a, IdentificationContext b)
             {
                 // Order by name
-                (A, B) = a.TabletConfiguration.Name.CompareTo(b.TabletConfiguration.Name) < 0 ? (a, b) : (b, a);
+                (A, B) = string.Compare(a.TabletConfiguration.Name, b.TabletConfiguration.Name, StringComparison.Ordinal) < 0 ? (a, b) : (b, a);
             }
         }
 
-        public class DeviceStringsComparer : IEqualityComparer<KeyValuePair<byte, string>>
+        private class DeviceStringsComparer : IEqualityComparer<KeyValuePair<byte, string>>
         {
             public bool Equals(KeyValuePair<byte, string> x, KeyValuePair<byte, string> y)
             {

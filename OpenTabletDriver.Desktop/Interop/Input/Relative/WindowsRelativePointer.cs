@@ -1,13 +1,13 @@
 using System.Numerics;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static Windows;
 
-    public class WindowsRelativePointer : Input.WindowsVirtualMouse, IRelativePointer
+    public class WindowsRelativePointer : WindowsVirtualMouse, IRelativePointer
     {
         private Vector2 error;
 

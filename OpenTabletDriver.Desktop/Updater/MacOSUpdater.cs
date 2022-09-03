@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -7,35 +6,20 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.Tar;
 using Octokit;
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 #pragma warning disable 618
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public class MacOSUpdater : Updater
+    public class MacOSUpdater : GitHubUpdater
     {
-        public MacOSUpdater()
-            : this(AssemblyVersion,
-                AppDomain.CurrentDomain.BaseDirectory,
-                AppInfo.Current.AppDataDirectory,
-                AppInfo.Current.BackupDirectory)
+        public MacOSUpdater(IAppInfo appInfo, IGitHubClient client)
+            : base(AssemblyVersion, appInfo, client)
         {
         }
 
-        public MacOSUpdater(Version currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
-            : base(currentVersion,
-                binDirectory,
-                appDataDirectory,
-                rollBackDirectory)
+        protected override void PostInstall()
         {
-        }
-
-        protected override async Task Install(Release release)
-        {
-            await Download(release);
-            PerformBackup();
-
             // Mark the binaries executable, SharpZipLib doesn't do this.
             var subPath = Path.Join(DownloadDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
             Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.UX.MacOS");
@@ -49,8 +33,8 @@ namespace OpenTabletDriver.Desktop.Updater
 
             // Download and extract tar gzip
             using (var httpClient = new HttpClient())
-            using (var httpStream = await httpClient.GetStreamAsync(asset.BrowserDownloadUrl))
-            using (var decompressionStream = new GZipStream(httpStream, CompressionMode.Decompress))
+            await using (var httpStream = await httpClient.GetStreamAsync(asset.BrowserDownloadUrl))
+            await using (var decompressionStream = new GZipStream(httpStream, CompressionMode.Decompress))
             using (var tar = TarArchive.CreateInputTarArchive(decompressionStream))
             {
                 tar.ExtractContents(DownloadDirectory);

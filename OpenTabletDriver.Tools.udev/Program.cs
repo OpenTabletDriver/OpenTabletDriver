@@ -5,13 +5,13 @@ using System.CommandLine.Invocation;
 using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Tools.udev
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var root = new RootCommand("OpenTabletDriver udev rule tool")
             {
@@ -24,16 +24,16 @@ namespace OpenTabletDriver.Tools.udev
             root.Invoke(args);
         }
 
-        static async Task WriteRules(DirectoryInfo directory, FileInfo output, bool verbose = false)
+        private static async Task WriteRules(DirectoryInfo directory, FileInfo output, bool verbose = false)
         {
             if (output.Exists)
                 output.Delete();
-            if (!output.Directory.Exists)
+            if (!output.Directory!.Exists)
                 output.Directory.Create();
 
             var path = output.FullName.Replace(Directory.GetCurrentDirectory(), string.Empty);
             Console.WriteLine($"Writing all rules to '{path}'...");
-            using (var sw = output.AppendText())
+            await using (var sw = output.AppendText())
             {
                 await sw.WriteLineAsync(
                     "# Dynamically generated with the OpenTabletDriver.udev tool. " +
@@ -49,7 +49,7 @@ namespace OpenTabletDriver.Tools.udev
             Console.WriteLine("Finished writing all rules.");
         }
 
-        static IEnumerable<string> CreateRules(DirectoryInfo directory)
+        private static IEnumerable<string> CreateRules(DirectoryInfo directory)
         {
             yield return RuleGenerator.CreateAccessRule("uinput", "misc");
             foreach (var tablet in GetAllConfigurations(directory))
@@ -70,7 +70,7 @@ namespace OpenTabletDriver.Tools.udev
             }
         }
 
-        static IEnumerable<TabletConfiguration> GetAllConfigurations(DirectoryInfo directory)
+        private static IEnumerable<TabletConfiguration> GetAllConfigurations(DirectoryInfo directory)
         {
             var files = Directory.GetFiles(directory.FullName, "*.json", SearchOption.AllDirectories);
             foreach (var path in files)
@@ -79,10 +79,10 @@ namespace OpenTabletDriver.Tools.udev
                 using (var fs = file.OpenRead())
                 using (var sr = new StreamReader(fs))
                 using (var jr = new JsonTextReader(sr))
-                    yield return jsonSerializer.Deserialize<TabletConfiguration>(jr);
+                    yield return JsonSerializer.Deserialize<TabletConfiguration>(jr)!;
             }
         }
 
-        static readonly JsonSerializer jsonSerializer = new JsonSerializer();
+        private static readonly JsonSerializer JsonSerializer = new JsonSerializer();
     }
 }

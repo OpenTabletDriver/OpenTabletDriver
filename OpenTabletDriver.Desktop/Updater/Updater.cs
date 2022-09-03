@@ -5,33 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Octokit;
-using OpenTabletDriver.Plugin;
-
-#nullable enable
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public abstract class Updater : IUpdater
+    public abstract class Updater<T> : IUpdater where T : UpdateInfo
     {
-        /// <summary>
-        /// <para>0 allows update install and check.</para>
-        /// <para>1 disallows update install and check.</para>
-        /// <para>2 means update was installed and check will return false.</para>
-        /// </summary>
-        private int updateSentinel = 0;
-        private readonly GitHubClient github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
-        private Release? latestRelease;
-
-        protected Version CurrentVersion { get; }
-        protected static readonly Version AssemblyVersion = typeof(IUpdater).Assembly.GetName().Version!;
-        protected string BinaryDirectory { get; }
-        protected string AppDataDirectory { get; }
-        protected string RollbackDirectory { get; }
-        protected string DownloadDirectory { get; } = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
-        protected virtual string[]? IncludeList { get; } = null;
-
-        public string? VersionedRollbackDirectory { private set; get; }
-
         protected Updater(Version? currentVersion, string binaryDir, string appDataDir, string rollbackDir)
         {
             CurrentVersion = currentVersion ?? AssemblyVersion;
@@ -45,19 +23,39 @@ namespace OpenTabletDriver.Desktop.Updater
                 Directory.CreateDirectory(DownloadDirectory);
         }
 
+        /// <summary>
+        /// <para>0 allows update install and check.</para>
+        /// <para>1 disallows update install and check.</para>
+        /// <para>2 means update was installed and check will return false.</para>
+        /// </summary>
+        private int _updateSentinel = 0;
+        private readonly GitHubClient _github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
+        private Release? _latestRelease;
+
+        protected static readonly Version AssemblyVersion = typeof(IUpdater).Assembly.GetName().Version!;
+
+        protected Version CurrentVersion { get; }
+        protected string BinaryDirectory { get; }
+        protected string AppDataDirectory { get; }
+        protected string RollbackDirectory { get; }
+        protected string DownloadDirectory { get; } = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        protected virtual string[]? IncludeList { get; } = null;
+
+        public string? VersionedRollbackDirectory { private set; get; }
+
         public Task<bool> CheckForUpdates() => CheckForUpdates(true);
 
         public async Task<bool> CheckForUpdates(bool forced)
         {
-            if (updateSentinel == 2)
+            if (_updateSentinel == 2)
                 return false;
 
             try
             {
-                if (forced || latestRelease == null)
-                    latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
+                if (forced || _latestRelease == null)
+                    _latestRelease = await _github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
 
-                var latestVersion = new Version(latestRelease!.TagName[1..]); // remove `v` from `vW.X.Y.Z
+                var latestVersion = new Version(_latestRelease!.TagName[1..]); // remove `v` from `vW.X.Y.Z
                 return latestVersion > CurrentVersion;
             }
             catch (Exception e)
@@ -67,36 +65,35 @@ namespace OpenTabletDriver.Desktop.Updater
             }
         }
 
-        public async Task<Release?> GetRelease()
+        public async Task<UpdateInfo?> GetInfo()
         {
-            if (latestRelease == null)
-            {
-                await CheckForUpdates();
-            }
+            if (_updateSentinel == 2)
+                return null;
 
-            return latestRelease;
+            var update = await GetUpdate();
+            return update?.Version > CurrentVersion ? update : null;
         }
 
         public async Task InstallUpdate()
         {
             // Skip if update is already installed, or in the process of installing
-            if (Interlocked.CompareExchange(ref updateSentinel, 1, 0) == 0)
+            if (Interlocked.CompareExchange(ref _updateSentinel, 1, 0) == 0)
             {
                 if (await CheckForUpdates(false))
                 {
                     try
                     {
-                        await Install(latestRelease!);
-                        updateSentinel = 2;
+                        await Install(_latestRelease!);
+                        _updateSentinel = 2;
                         return;
                     }
                     catch
                     {
-                        updateSentinel = 0;
+                        _updateSentinel = 0;
                         throw;
                     }
                 }
-                updateSentinel = 0;
+                _updateSentinel = 0;
             }
         }
 
@@ -117,12 +114,19 @@ namespace OpenTabletDriver.Desktop.Updater
             PerformBackup();
 
             Move(DownloadDirectory, BinaryDirectory);
+            PostInstall();
         }
 
+        protected virtual void PostInstall()
+        {
+            // Stub
+        }
+
+        protected abstract Task<T?> GetUpdate();
         protected abstract Task Download(Release release);
 
         // Avoid moving/copying the rollback directory if under source directory
-        private void ExclusiveFileOp(string source, string backupDir, string target, string versionBackupDir, Action<string, string> fileOp)
+        private static void ExclusiveFileOp(string source, string backupDir, string target, string versionBackupDir, Action<string, string> fileOp)
         {
             var backupTarget = Path.Join(versionBackupDir, target);
 

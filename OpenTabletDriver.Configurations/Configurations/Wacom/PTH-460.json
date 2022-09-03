@@ -9,9 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
@@ -49,7 +47,7 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
+  "AuxiliaryDeviceIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 914,

@@ -1,49 +1,59 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
-using OpenTabletDriver.Plugin;
+using System.Linq;
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 namespace OpenTabletDriver.Desktop
 {
-    public class PresetManager
+    public class PresetManager : IPresetManager
     {
-        public PresetManager()
+        private readonly string _dir;
+
+        private const string FILE_EXTENSION = ".json";
+        private const string FILE_FILTER = $"*{FILE_EXTENSION}";
+
+        public PresetManager(IAppInfo appInfo)
         {
-            PresetDirectory = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+            _dir = appInfo.PresetDirectory!;
         }
 
-        public DirectoryInfo PresetDirectory { get; }
+        public IReadOnlyCollection<string> GetPresets() => EnumerateDir().ToImmutableList();
 
-        private List<Preset> Presets { get; } = new List<Preset>();
-
-        public IReadOnlyCollection<Preset> GetPresets() => Presets;
-
-        public Preset FindPreset(string presetName)
+        public Preset? LoadPreset(string name)
         {
-            return Presets.Find(preset => preset.Name == presetName);
+            var path = Path.Join(_dir, name + FILE_EXTENSION);
+            var file = new FileInfo(path);
+
+            if (!file.Exists)
+                return null;
+
+            var settings = Serialization.Deserialize<Settings>(file)!;
+            return new Preset(name, settings);
         }
 
-        private void Load()
+        public void Save(string name, Settings settings)
         {
-            foreach (var preset in PresetDirectory.EnumerateFiles("*.json"))
-            {
-                var settings = Settings.Deserialize(preset);
-                if (settings != null)
-                {
-                    Presets.Add(new Preset(preset.Name.Replace(preset.Extension, string.Empty), settings));
-                    Log.Write("Settings", $"Loaded preset '{preset.Name}'", LogLevel.Info);
-                }
-                else
-                {
-                    Log.Write("Settings", $"Invalid settings file '{preset.Name}' attempted to load into presets", LogLevel.Warning);
-                }
-            }
+            var dir = new DirectoryInfo(_dir);
+            if (!dir.Exists)
+                dir.Create();
+
+            var files = dir.EnumerateFiles(FILE_FILTER);
+            var oldFile = files.FirstOrDefault(f => f.Name.Replace(FILE_EXTENSION, string.Empty) == name);
+            oldFile?.Delete();
+
+            var path = Path.Join(dir.FullName, name + FILE_EXTENSION);
+            Serialization.Serialize(File.Create(path), settings);
         }
 
-        public void Refresh()
+        private IEnumerable<string> EnumerateDir()
         {
-            Presets.Clear();
-            Load();
-            Log.Write("Settings", $"Presets have been refreshed. Loaded {Presets.Count} presets.", LogLevel.Info);
+            if (!Directory.Exists(_dir))
+                return Array.Empty<string>();
+
+            return Directory.EnumerateFiles(_dir, FILE_FILTER, SearchOption.AllDirectories)
+                .Select(file => Path.GetFileName(file).Replace(FILE_EXTENSION, string.Empty));
         }
     }
 }

@@ -9,9 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -32,6 +30,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }
