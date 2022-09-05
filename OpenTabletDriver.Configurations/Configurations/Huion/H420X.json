@@ -2,10 +2,10 @@
   "Name": "Huion H420X",
   "Specifications": {
     "Digitizer": {
-      "Width": 106.0,
-      "Height": 66.0,
-      "MaxX": 21200.0,
-      "MaxY": 13200.0
+      "Width": 106,
+      "Height": 66,
+      "MaxX": 21200,
+      "MaxY": 13200
     },
     "Pen": {
       "MaxPressure": 8191,

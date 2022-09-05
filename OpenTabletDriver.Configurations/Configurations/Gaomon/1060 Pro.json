@@ -2,10 +2,10 @@
   "Name": "Gaomon 1060 Pro",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.75,
-      "MaxX": 50800.0,
-      "MaxY": 31750.0
+      "MaxX": 50800,
+      "MaxY": 31750
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -23,7 +23,7 @@
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -38,11 +38,26 @@
       "ProductID": 100,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
         "201": "OEM02_T174_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "GM001_T213_\\d{6}$"
       },
       "InitializationStrings": [
         200
