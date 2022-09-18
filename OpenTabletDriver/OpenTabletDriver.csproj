@@ -4,6 +4,7 @@
     <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package Information">
@@ -19,9 +20,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\OpenTabletDriver.Plugin\OpenTabletDriver.Plugin.csproj" />
     <ProjectReference Include="..\OpenTabletDriver.Native\OpenTabletDriver.Native.csproj" />
-    <ProjectReference Include="..\OpenTabletDriver.Configurations\OpenTabletDriver.Configurations.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Configurations">

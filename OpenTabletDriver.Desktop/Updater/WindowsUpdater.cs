@@ -1,40 +1,27 @@
-using System;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-
-#nullable enable
+using Octokit;
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public class WindowsUpdater : GithubUpdater
+    public class WindowsUpdater : GitHubUpdater
     {
-        public WindowsUpdater()
-           : this(null,
-               AppDomain.CurrentDomain.BaseDirectory,
-               AppInfo.Current.AppDataDirectory,
-               AppInfo.Current.BackupDirectory)
+        public WindowsUpdater(IAppInfo appInfo, IGitHubClient client)
+           : base(AssemblyVersion, appInfo, client)
         {
         }
 
-        public WindowsUpdater(Version? currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
-            : base(currentVersion,
-                binDirectory,
-                appDataDirectory,
-                rollBackDirectory)
-        {
-        }
-
-        protected override string[] IncludeList { get; } = new[]
+        protected override string[] IncludeList { get; } =
         {
             "OpenTabletDriver.UX.Wpf.exe",
             "OpenTabletDriver.Daemon.exe"
         };
 
-        protected override async Task Download(GithubRelease ghRelease)
+        protected override async Task Download(Release release)
         {
-            var release = ghRelease.Release;
             var asset = release.Assets.First(r => r.Name.Contains("win-x64"));
 
             using (var client = new HttpClient())

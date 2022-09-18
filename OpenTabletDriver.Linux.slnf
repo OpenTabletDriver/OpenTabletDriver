@@ -9,7 +9,6 @@
       ".\\OpenTabletDriver.Daemon\\OpenTabletDriver.Daemon.csproj",
       ".\\OpenTabletDriver.Desktop\\OpenTabletDriver.Desktop.csproj",
       ".\\OpenTabletDriver.Native\\OpenTabletDriver.Native.csproj",
-      ".\\OpenTabletDriver.Plugin\\OpenTabletDriver.Plugin.csproj",
       ".\\OpenTabletDriver.Tests\\OpenTabletDriver.Tests.csproj",
       ".\\OpenTabletDriver.Tools.udev\\OpenTabletDriver.Tools.udev.csproj",
       ".\\OpenTabletDriver.UX\\OpenTabletDriver.UX.csproj",

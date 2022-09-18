@@ -1,7 +1,5 @@
-using System.Numerics;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Conversion
 {
@@ -17,15 +15,21 @@ namespace OpenTabletDriver.Desktop.Conversion
 
         private const float XP_PEN_AREA_CONSTANT = 3.937f;
 
-        public Area Convert(TabletReference tablet, double w, double h, double x, double y)
+        public AngledArea Convert(TabletConfiguration tablet, float w, float h, float x, float y)
         {
-            double conversionFactor = XP_PEN_AREA_CONSTANT;
-            var width = w / conversionFactor;
-            var height = h / conversionFactor;
-            var offsetX = (width / 2) + (x / conversionFactor);
-            var offsetY = (height / 2) + (y / conversionFactor);
+            var width = w / XP_PEN_AREA_CONSTANT;
+            var height = h / XP_PEN_AREA_CONSTANT;
+            var offsetX = width / 2 + x / XP_PEN_AREA_CONSTANT;
+            var offsetY = height / 2 + y / XP_PEN_AREA_CONSTANT;
 
-            return new Area((float)width, (float)height, new Vector2((float)offsetX, (float)offsetY), 0f);
+            return new AngledArea
+            {
+                Width = width,
+                Height = height,
+                XPosition = offsetX,
+                YPosition = offsetY,
+                Rotation = 0
+            };
         }
     }
 }

@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 304.8,
       "Height": 304.8,
-      "MaxX": 60960.0,
-      "MaxY": 60960.0
+      "MaxX": 60960,
+      "MaxY": 60960
     },
     "Pen": {
       "MaxPressure": 2046,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -51,7 +49,7 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

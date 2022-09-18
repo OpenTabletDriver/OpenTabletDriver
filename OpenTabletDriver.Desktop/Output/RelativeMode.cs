@@ -1,14 +1,21 @@
-﻿using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+﻿using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Output
 {
     [PluginName("Relative Mode")]
-    public class RelativeMode : RelativeOutputMode, IPointerProvider<IRelativePointer>
+    public class RelativeMode : RelativeOutputMode, IMouseButtonSource
     {
-        [Resolved]
-        public override IRelativePointer Pointer { set; get; }
+        public RelativeMode(
+            InputDevice tablet,
+            IRelativePointer relativePointer,
+            ISettingsProvider settingsProvider
+        ) : base(tablet, relativePointer)
+        {
+            settingsProvider.Inject(this);
+        }
+
+        public IMouseButtonHandler MouseButtonHandler => Pointer;
     }
 }

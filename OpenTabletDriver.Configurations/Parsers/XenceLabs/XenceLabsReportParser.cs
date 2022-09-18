@@ -1,5 +1,5 @@
 using OpenTabletDriver.Configurations.Parsers.XP_Pen;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.XenceLabs
 {

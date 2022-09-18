@@ -1,58 +1,36 @@
 using System.Collections.Generic;
-using System.CommandLine;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using OpenTabletDriver.Desktop.Reflection;
+
+#nullable enable
 
 namespace OpenTabletDriver.Console
 {
     public static class Extensions
     {
-        public static void AddRange(this Command command, IEnumerable<Symbol> symbols)
+        public static string Format(this PluginSettings? settings)
         {
-            foreach (var sym in symbols)
-                command.Add(sym);
+            return settings == null ? "None" : settings.ToString();
         }
 
-        public static string Format(this PluginSetting setting)
+        public static string Format(this IEnumerable<PluginSettings?> settings)
         {
-            if (setting == null)
-                return null;
-
-            return $"{{ {setting.Property}: {setting.GetValue(typeof(object))} }}";
+            return string.Join(", ", settings.FormatEnumerable());
         }
 
-        public static string Format(this PluginSettingStore store)
+        public static string ComputeFileHash(this SHA256 sha256, string path)
         {
-            if (store == null || !store.Enable)
-                return null;
-
-            IList<string> storeSettings = new List<string>();
-            foreach (var setting in store.Settings)
-                storeSettings.Add(setting.Format());
-
-            string prefix = store.Name ?? store.Path;
-            string suffix = storeSettings.Count == 0 ? null : string.Join(", ", storeSettings);
-
-            return string.IsNullOrEmpty(suffix) ? $"'{prefix}'" : $"'{prefix}: {suffix}'";
+            var data = File.ReadAllBytes(path);
+            var hash = sha256.ComputeHash(data);
+            return string.Join(null, hash.Select(b => b.ToString("X")));
         }
 
-        public static IEnumerable<string> Format(this IEnumerable<PluginSettingStore> storeCollection, bool showIndex = false)
+        private static IEnumerable<string> FormatEnumerable(this IEnumerable<PluginSettings?> settings)
         {
-            if (storeCollection.Any(s => s != null))
-            {
-                int index = 0;
-                foreach (var store in storeCollection)
-                {
-                    var str = store.Format();
-                    if (!string.IsNullOrWhiteSpace(str))
-                        yield return showIndex ? $"[{index}]: {str}" : store.Format();
-                    index++;
-                }
-            }
-            else
-            {
-                yield return "None";
-            }
+            foreach (var setting in settings)
+                yield return setting.Format();
         }
     }
 }

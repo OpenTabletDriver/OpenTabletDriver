@@ -1,12 +1,9 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Platform.Keyboard;
-using OpenTabletDriver.Plugin.Tablet;
+using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Platform.Keyboard;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
@@ -15,34 +12,36 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         private const string PLUGIN_NAME = "Key Binding";
 
-        [Resolved]
-        public IVirtualKeyboard Keyboard { set; get; }
+        private readonly InputDevice _device;
+        private readonly IVirtualKeyboard _keyboard;
 
-        [Property("Key"), PropertyValidated(nameof(ValidKeys))]
-        public string Key { set; get; }
-
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public KeyBinding(InputDevice device, IVirtualKeyboard keyboard, ISettingsProvider settingsProvider)
         {
-            if (!string.IsNullOrWhiteSpace(Key))
-                Keyboard.Press(Key);
+            _device = device;
+            _keyboard = keyboard;
+
+            settingsProvider.Inject(this);
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        [Setting("Key"), MemberValidated(nameof(GetValidKeys))]
+        public string Key { set; get; } = string.Empty;
+
+        public void Press(IDeviceReport report)
         {
             if (!string.IsNullOrWhiteSpace(Key))
-                Keyboard.Release(Key);
+                _keyboard.Press(Key);
         }
 
-        private static IEnumerable<string> validKeys;
-        public static IEnumerable<string> ValidKeys
+        public void Release(IDeviceReport report)
         {
-            get => validKeys ??= DesktopInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
-                PluginPlatform.Linux => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
-                PluginPlatform.MacOS => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
-                _ => null
-            };
+            if (!string.IsNullOrWhiteSpace(Key))
+                _keyboard.Release(Key);
+        }
+
+        public static IEnumerable<string> GetValidKeys(IServiceProvider serviceProvider)
+        {
+            var keysProvider = serviceProvider.GetRequiredService<IKeysProvider>();
+            return keysProvider.EtoToNative.Keys;
         }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Key}";

@@ -7,7 +7,7 @@ $nl = [Environment]::NewLine;
 
 $Config = "Release";
 
-$Options = @("--configuration", "$Config", "--self-contained=false", "--output=./bin", "/p:PublishSingleFile=true", "/p:DebugType=embedded",`
+$Options = @("--configuration", "$Config", "--verbosity=quiet", "--self-contained=false", "--output=./bin", "/p:PublishSingleFile=true", "/p:DebugType=embedded",`
     "/p:SuppressNETCoreSdkPreviewMessage=true", "/p:PublishTrimmed=false", "--runtime=$NetRuntime", "-p:SourceRevisionId=$(git rev-parse --short HEAD)");
 
 # Change dir to script root, in case people run the script outside of the folder.
