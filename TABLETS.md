@@ -196,6 +196,7 @@
 | XP-Pen Artist 13.3 Pro        |  Missing Features | Wheel is not yet supported.
 | XP-Pen Artist 15.6 Pro        |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Artist 16 Pro          |  Missing Features | Wheel is not yet supported.
+| XP-Pen Artist Pro 16TP        |  Missing Features | Touch is not yet supported.
 | XP-Pen Deco 01 V2             |  Missing Features | Tilt is not yet supported.
 | XP-Pen Deco 01 V2 (variant 2) |  Missing Features | Tilt is not yet supported
 | XP-Pen Deco 02                |  Missing Features | Wheel is not yet supported.
