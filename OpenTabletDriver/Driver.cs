@@ -73,13 +73,13 @@ namespace OpenTabletDriver
 
         protected virtual InputDevice? Match(TabletConfiguration config)
         {
-            Log.Debug("Detect", $"Searching for tablet '{config.Name}'");
+            Log.Debug("Detect", $"Searching for tablet '{config}'");
             try
             {
                 var devices = new List<InputDeviceEndpoint>();
                 if (MatchDevice(config, config.DigitizerIdentifiers) is InputDeviceEndpoint digitizer)
                 {
-                    Log.Write("Detect", $"Found tablet '{config.Name}'");
+                    Log.Write("Detect", $"Found tablet '{config}'");
                     devices.Add(digitizer);
 
                     if (config.AuxiliaryDeviceIdentifiers.Any())

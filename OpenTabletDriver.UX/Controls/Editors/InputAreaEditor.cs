@@ -197,7 +197,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
         private void ConvertArea()
         {
             var profile = (Profile)DataContext;
-            var tablet = _app.Tablets.First(t => t.Name == profile.Tablet);
+            var tablet = _app.GetTablet(profile);
 
             var dialog = _app.ShowDialog<AreaConverterDialog>(ParentWindow, tablet);
             if (dialog.Result is AngledArea area)

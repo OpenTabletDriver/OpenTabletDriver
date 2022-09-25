@@ -42,7 +42,7 @@ namespace OpenTabletDriver.UX.Windows
                 Panel2 = placeholder
             };
 
-            _configsList.ItemTextBinding = Binding.Property<TabletConfiguration, string>(c => c.Name);
+            _configsList.ItemTextBinding = Binding.Property<TabletConfiguration, string>(c => c.ToString());
             Refresh().Run();
 
             Content = splitter;
@@ -66,33 +66,9 @@ namespace OpenTabletDriver.UX.Windows
             var mouseSpecifications = SpecificationEditorsFor(c => c.Specifications.MouseButtons);
             var touchSpecifications = SpecificationEditorsFor(c => c.Specifications.Touch);
 
-            var digitizerIdentifiers = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Spacing = 5,
-                Padding = 5
-            };
-
-            var auxiliaryIdentifiers = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Spacing = 5,
-                Padding = 5
-            };
-
-            var attributes = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Spacing = 5,
-                Padding = 5
-            };
-
-            DataContextChanged += delegate
-            {
-                AssignIdentifierEditors(digitizerIdentifiers, c => c.DigitizerIdentifiers);
-                AssignIdentifierEditors(auxiliaryIdentifiers, c => c.AuxiliaryDeviceIdentifiers);
-                AssignDictionaryEditor(attributes, c => c.Attributes);
-            };
+            var digitizerIdentifiers = IdentifierEditorsFor(c => c.DigitizerIdentifiers);
+            var auxiliaryIdentifiers = IdentifierEditorsFor(c => c.AuxiliaryDeviceIdentifiers);
+            var attributes = DictionaryEditorFor(c => c.Attributes);
 
             var editorPanel = new StackLayout
             {
@@ -101,7 +77,8 @@ namespace OpenTabletDriver.UX.Windows
                 Padding = 5,
                 Items =
                 {
-                    TextBoxFor((TabletConfiguration c) => c.Name),
+                    TextBoxFor((TabletConfiguration c) => c.Manufacturer),
+                    TextBoxFor((TabletConfiguration c) => c.Model),
                     new Expander
                     {
                         Header = LabelFor((TabletConfiguration c) => c.Specifications),
@@ -122,19 +99,25 @@ namespace OpenTabletDriver.UX.Windows
                     },
                     new Expander
                     {
-                        Header = LabelFor((TabletConfiguration c) => c.DigitizerIdentifiers),
-                        Content = digitizerIdentifiers
+                        Header = LabelFor((TabletConfiguration c) => c.Metadata),
+                        Content = new StackLayout
+                        {
+                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                            Spacing = 5,
+                            Padding = 5,
+                            Items =
+                            {
+                                ListEditorFor(c => c.Metadata.Aliases),
+                                EnumDropDownFor(c => c.Metadata.SupportStatus),
+                                ListEditorFor(c => c.Metadata.Features),
+                                ListEditorFor(c => c.Metadata.UnsupportedFeatures),
+                                ListEditorFor(c => c.Metadata.Notes)
+                            }
+                        }
                     },
-                    new Expander
-                    {
-                        Header = LabelFor((TabletConfiguration c) => c.AuxiliaryDeviceIdentifiers),
-                        Content = auxiliaryIdentifiers
-                    },
-                    new Expander
-                    {
-                        Header = LabelFor((TabletConfiguration c) => c.Attributes),
-                        Content = attributes
-                    }
+                    digitizerIdentifiers,
+                    auxiliaryIdentifiers,
+                    attributes
                 }
             };
 
@@ -164,17 +147,6 @@ namespace OpenTabletDriver.UX.Windows
             };
         }
 
-        private static BindableBinding<T, bool?> GetEnabledBinding<T>(T control) where T : Control
-        {
-            return new BindableBinding<T, bool?>(
-                control,
-                c => c.Enabled,
-                (c, v) => c.Enabled = v.GetValueOrDefault(),
-                (c, h) => c.EnabledChanged += h,
-                (c, h) => c.EnabledChanged -= h
-            );
-        }
-
         /// <summary>
         /// Refreshes the configuration editor from the configuration directory.
         /// </summary>
@@ -192,7 +164,7 @@ namespace OpenTabletDriver.UX.Windows
             var configs = (IList<TabletConfiguration>) _configsList.DataStore;
             var newConfig = new TabletConfiguration
             {
-                Name = "New Configuration"
+                Model = "New Configuration"
             };
 
             configs.Add(newConfig);
@@ -219,7 +191,7 @@ namespace OpenTabletDriver.UX.Windows
 
             var newConfig = new TabletConfiguration
             {
-                Name = $"{device.Manufacturer} {device.FriendlyName ?? device.ProductName}",
+                Model = $"{device.Manufacturer} {device.FriendlyName ?? device.ProductName}",
                 DigitizerIdentifiers = new List<DeviceIdentifier>
                 {
                     new DeviceIdentifier
@@ -237,11 +209,16 @@ namespace OpenTabletDriver.UX.Windows
             _configsList.SelectedIndex = configs.IndexOf(newConfig);
         }
 
+        /// <summary>
+        /// Creates specification editors for the target expression.
+        /// </summary>
+        /// <param name="expression">The expression to bind to.</param>
+        /// <typeparam name="T">The specification type.</typeparam>
         private Container SpecificationEditorsFor<T>(Expression<Func<TabletConfiguration, T?>> expression) where T : class, new()
         {
             var type = typeof(T);
 
-            var editors = new StackLayout
+            var layout = new StackLayout
             {
                 Orientation = Orientation.Vertical,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -298,7 +275,7 @@ namespace OpenTabletDriver.UX.Windows
                 var name = property.GetCustomAttribute<System.ComponentModel.DisplayNameAttribute>()?.DisplayName ?? property.Name;
                 var control = new LabeledGroup(name, textBox);
 
-                editors.Items.Add(control);
+                layout.Items.Add(control);
             }
 
             return new Expander
@@ -311,19 +288,404 @@ namespace OpenTabletDriver.UX.Windows
                     Padding = 5,
                     Items =
                     {
-                        ToggleFor(expression, editors),
-                        editors
+                        ToggleFor(expression, layout),
+                        layout
                     }
                 }
             };
         }
 
         /// <summary>
+        /// Creates a list editor for the target expression.
+        /// </summary>
+        /// <param name="expression">The expression to bind to.</param>
+        private Container ListEditorFor(Expression<Func<TabletConfiguration, IList<string>>> expression)
+        {
+            var layout = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5,
+                Padding = 5
+            };
+
+            UpdateListEditor(layout, expression);
+            DataContextChanged += (_, _) => UpdateListEditor(layout, expression);
+
+            return new Expander
+            {
+                Header = LabelFor(expression!),
+                Content = layout
+            };
+        }
+
+        /// <summary>
+        /// Creates a dictionary editor for the target expression.
+        /// </summary>
+        /// <param name="expression">The expression to bind to.</param>
+        private Container DictionaryEditorFor(Expression<Func<TabletConfiguration, IDictionary<string, string>>> expression)
+        {
+            var layout = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5,
+                Padding = 5
+            };
+
+            UpdateDictionaryEditor(layout, expression);
+            DataContextChanged += (_, _) => UpdateDictionaryEditor(layout, expression);
+
+            return new Expander
+            {
+                Header = LabelFor(expression!),
+                Content = layout
+            };
+        }
+
+        /// <summary>
+        /// Creates a list of identifier editors for the target expression.
+        /// </summary>
+        /// <param name="expression">The expression to bind to.</param>
+        private Container IdentifierEditorsFor(Expression<Func<TabletConfiguration, IList<DeviceIdentifier>>> expression)
+        {
+            var layout = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Spacing = 5,
+                Padding = 5
+            };
+
+            UpdateIdentifierEditors(layout, expression);
+            DataContextChanged += (_, _) => UpdateIdentifierEditors(layout, expression);
+
+            return new Expander
+            {
+                Header = LabelFor(expression!),
+                Content = layout
+            };
+        }
+
+        /// <summary>
+        /// Creates a label for an expression, using friendly names where possible.
+        /// </summary>
+        /// <param name="expression">Expression pointing to the target member.</param>
+        /// <typeparam name="T">The source type.</typeparam>
+        /// <typeparam name="TValue">The target value type.</typeparam>
+        private static Control LabelFor<T, TValue>(Expression<Func<T, TValue?>> expression)
+        {
+            return new Panel
+            {
+                Padding = new Padding(3, 0, 0, 0),
+                Content = new Label
+                {
+                    Text = expression.GetFriendlyName()
+                }
+            };
+        }
+
+        /// <summary>
+        /// Creates an enum dropdown for the target expression.
+        /// </summary>
+        /// <param name="expression">Expression pointing to the target member.</param>
+        /// <typeparam name="T">The enum type.</typeparam>
+        private static Control EnumDropDownFor<T>(Expression<Func<TabletConfiguration, T>> expression)
+        {
+            var control = new EnumDropDown<T>();
+            control.SelectedValueBinding.BindDataContext(expression);
+
+            return new Expander
+            {
+                Header = LabelFor(expression!),
+                Padding = 5,
+                Content = control
+            };
+        }
+
+        /// <summary>
+        /// Creates a toggle bound to an expression.
+        /// </summary>
+        /// <remarks>
+        /// When the checked state is changed, it will update the binding with a new value.
+        /// When unchecked, the bound value is set to null.
+        /// When checked, the bound value is set to a new instance of <typeparamref name="T"/>
+        /// </remarks>
+        /// <param name="expression">The expression to bind to.</param>
+        /// <param name="control">The control to enable when checked.</param>
+        /// <typeparam name="T">The expected <see cref="BindableWidget.DataContext"/> type.</typeparam>
+        /// <typeparam name="TValue">The target member type in the expression.</typeparam>
+        private CheckBox ToggleFor<T, TValue>(Expression<Func<T, TValue?>> expression, Control control) where TValue : class, new()
+        {
+            var toggle = new CheckBox
+            {
+                Text = "Enable"
+            };
+
+            // this.((T)DataContext).<expression>
+            var thisExpr = Expression.Constant(this);
+            var dataContextExpr = Expression.Convert(Expression.Property(thisExpr, nameof(DataContext)), typeof(T));
+            var baseExpr = new ExpressionMemberAccessor().AccessMember(dataContextExpr, expression);
+
+            // v => this.((T)DataContext).<expression> = v
+            var parameter = Expression.Parameter(typeof(TValue));
+            var setExpr = Expression.Assign(baseExpr, parameter);
+
+            var set = Expression.Lambda<Action<TValue?>>(setExpr, parameter).Compile();
+            var get = Expression.Lambda<Func<TValue>>(baseExpr).Compile();
+
+            toggle.CheckedBinding.Convert<TValue?>(
+                b =>
+                {
+                    if (DataContext is null)
+                        return default;
+                    set(b.GetValueOrDefault() ? new TValue() : null);
+                    return get();
+                },
+                v => v != null
+            ).BindDataContext(expression);
+
+            toggle.CheckedBinding.Bind(GetEnabledBinding(control));
+            toggle.CheckedChanged += (_, _) => control.UpdateBindings();
+
+            return toggle;
+        }
+
+        /// <summary>
+        /// Creates a TextBox bound to an expression.
+        /// </summary>
+        /// <param name="expression">An expression pointing to a member.</param>
+        /// <typeparam name="T">The <see cref="BindableWidget.DataContext"/> type.</typeparam>
+        private Control TextBoxFor<T>(Expression<Func<T, object?>> expression)
+        {
+            var textBox = new TextBox();
+            textBox.TextBinding.Convert(s => s, (object? o) => o?.ToString()).BindDataContext(expression);
+            return new LabeledGroup(expression.GetFriendlyName(), textBox);
+        }
+
+        /// <summary>
+        /// Creates a hexadecimal number editor bound to an expression.
+        /// </summary>
+        /// <param name="expression">An expression pointing to a member.</param>
+        /// <typeparam name="T">The <see cref="BindableWidget.DataContext"/> type.</typeparam>
+        private Control HexEditorFor<T>(Expression<Func<T, int>> expression)
+        {
+            var hex = new HexNumberBox();
+            hex.ValueBinding.BindDataContext(expression);
+            return new LabeledGroup(expression.GetFriendlyName(), hex);
+        }
+
+        /// <summary>
+        /// Updates the contents of a list editor control.
+        /// </summary>
+        /// <param name="layout">The layout containing the list editor.</param>
+        /// <param name="expression">An expression pointing to the target member.</param>
+        private void UpdateListEditor(StackLayout layout, Expression<Func<TabletConfiguration, IList<string>>> expression)
+        {
+            layout.Items.Clear();
+
+            if (DataContext is not TabletConfiguration config)
+                return;
+
+            var get = expression.Compile();
+            var listState = get(config);
+
+            for (var i = 0; i < listState.Count; i++)
+            {
+                var control = ListItemForIndex(i, expression);
+                layout.Items.Add(control);
+            }
+
+            var addButton = new Button
+            {
+                Text = "+"
+            };
+            addButton.Click += delegate
+            {
+                var list = get((TabletConfiguration) DataContext);
+                list.Add(string.Empty);
+
+                var index = list.Count - 1;
+                var control = ListItemForIndex(index, expression);
+                layout.Items.Insert(index, control);
+            };
+            layout.Items.Add(new StackLayoutItem(addButton, HorizontalAlignment.Right));
+        }
+
+        /// <summary>
+        /// Creates a list item at an index for the target expression.
+        /// </summary>
+        private Container ListItemForIndex(int index, Expression<Func<TabletConfiguration, IList<string>>> expression)
+        {
+            var get = expression.Compile();
+
+            var valueBinding = new DelegateBinding<string>(
+                () =>
+                {
+                    var list = get((TabletConfiguration) DataContext);
+                    return list[index];
+                },
+                v =>
+                {
+                    var list = get((TabletConfiguration) DataContext);
+                    list[index] = v;
+                }
+            );
+
+            var valueBox = new TextBox();
+            valueBox.TextBinding.Bind(valueBinding);
+
+            var removeButton = new Button
+            {
+                Text = "-"
+            };
+
+            var control = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Spacing = 5,
+                Items =
+                {
+                    new StackLayoutItem(valueBox, true),
+                    removeButton
+                }
+            };
+
+            removeButton.Click += delegate
+            {
+                var layout = control.FindParent<StackLayout>();
+                var instance = get((TabletConfiguration) DataContext);
+                instance.RemoveAt(index);
+                layout.Items.Remove(control);
+
+                // Regenerate layout to fix bindings
+                UpdateListEditor(layout, expression);
+            };
+
+            return control;
+        }
+
+        /// <summary>
+        /// Updates the contents of a dictionary editor control.
+        /// </summary>
+        /// <param name="layout">The layout containing the dictionary editor.</param>
+        /// <param name="expression">An expression pointing to the target member.</param>
+        private void UpdateDictionaryEditor(StackLayout layout, Expression<Func<TabletConfiguration, IDictionary<string, string>>> expression)
+        {
+            layout.Items.Clear();
+
+            if (DataContext is not TabletConfiguration config)
+                return;
+
+            var get = expression.Compile();
+
+            foreach (var pair in get(config))
+            {
+                var control = DictionaryItemForKey(pair.Key, expression);
+                layout.Items.Add(control);
+            }
+
+            var addButton = new Button
+            {
+                Text = "+"
+            };
+            addButton.Click += delegate
+            {
+                var dict = get((TabletConfiguration) DataContext);
+                if (dict.TryAdd(string.Empty, string.Empty))
+                {
+                    var control = DictionaryItemForKey(string.Empty, expression);
+                    layout.Items.Insert(layout.Items.Count - 1, control);
+                }
+            };
+            layout.Items.Add(new StackLayoutItem(addButton, HorizontalAlignment.Right));
+        }
+
+        /// <summary>
+        /// Creates a dictionary item for a dictionary editor.
+        /// </summary>
+        private Container DictionaryItemForKey(string key, Expression<Func<TabletConfiguration, IDictionary<string, string>>> expression)
+        {
+            var get = expression.Compile();
+
+            var keyBinding = new DelegateBinding<string>(
+                () => key,
+                newKey =>
+                {
+                    var dict = get((TabletConfiguration) DataContext);
+                    var value = string.Empty;
+
+                    if (dict.ContainsKey(key))
+                    {
+                        value = dict[key];
+                        dict.Remove(key);
+                    }
+
+                    dict.Add(newKey, value);
+                    key = newKey;
+                }
+            );
+
+            var valueBinding = new DelegateBinding<string>(
+                () => get((TabletConfiguration) DataContext)[key],
+                v =>
+                {
+                    var dict = get((TabletConfiguration) DataContext);
+                    if (dict.ContainsKey(key))
+                        dict[key] = v;
+                    else
+                        dict.Add(key, v);
+                }
+            );
+
+            var keyBox = new TextBox();
+            keyBox.TextBinding.Bind(keyBinding);
+            keyBox.TextChanging += (_, args) =>
+            {
+                var dict = get((TabletConfiguration) DataContext);
+                if (dict.ContainsKey(args.NewText))
+                    args.Cancel = true;
+            };
+
+            var valueBox = new TextBox();
+            valueBox.TextBinding.Bind(valueBinding);
+
+            var removeButton = new Button
+            {
+                Text = "-"
+            };
+
+            var control = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Spacing = 5,
+                Items =
+                {
+                    new StackLayoutItem(keyBox, true),
+                    new StackLayoutItem(valueBox, true),
+                    removeButton
+                }
+            };
+
+            removeButton.Click += delegate
+            {
+                var layout = control.FindParent<StackLayout>();
+                var instance = get((TabletConfiguration) DataContext);
+                instance.Remove(keyBinding.DataValue);
+                layout.Items.Remove(control);
+
+                // Regenerate layout to fix bindings
+                UpdateDictionaryEditor(layout, expression);
+            };
+
+            return control;
+        }
+
+        /// <summary>
         /// Updates all items in a <see cref="StackLayout"/> to target an expression with <see cref="DeviceIdentifier"/> editor controls.
         /// </summary>
-        /// <param name="layout"></param>
+        /// <param name="layout">The target layout</param>
         /// <param name="expression"></param>
-        private void AssignIdentifierEditors(StackLayout layout, Expression<Func<TabletConfiguration, IList<DeviceIdentifier>>> expression)
+        private void UpdateIdentifierEditors(StackLayout layout, Expression<Func<TabletConfiguration, IList<DeviceIdentifier>>> expression)
         {
             // Keeps items open whenever this function is re-invoked (remove button invocation)
             var openItemsQuery = from item in layout.Items
@@ -430,209 +792,10 @@ namespace OpenTabletDriver.UX.Windows
                 get((TabletConfiguration)DataContext).RemoveAt(i);
 
                 // Regenerate layout to fix bindings
-                AssignIdentifierEditors(parentLayout, expression);
+                UpdateIdentifierEditors(parentLayout, expression);
             };
 
             return control;
-        }
-
-        private void AssignDictionaryEditor(StackLayout layout, Expression<Func<TabletConfiguration, IDictionary<string, string>>> expression)
-        {
-            layout.Items.Clear();
-
-            if (DataContext is not TabletConfiguration config)
-                return;
-
-            var get = expression.Compile();
-
-            foreach (var pair in get(config))
-            {
-                var control = DictionaryItemForKey(pair.Key, expression);
-                layout.Items.Add(control);
-            }
-
-            var addButton = new Button
-            {
-                Text = "+"
-            };
-            addButton.Click += delegate
-            {
-                var dict = get((TabletConfiguration) DataContext);
-                if (dict.TryAdd(string.Empty, string.Empty))
-                {
-                    var control = DictionaryItemForKey(string.Empty, expression);
-                    layout.Items.Insert(layout.Items.Count - 1, control);
-                }
-            };
-            layout.Items.Add(new StackLayoutItem(addButton, HorizontalAlignment.Right));
-        }
-
-        private Container DictionaryItemForKey(string key, Expression<Func<TabletConfiguration, IDictionary<string, string>>> expression)
-        {
-            var get = expression.Compile();
-
-            var keyBinding = new DelegateBinding<string>(
-                () => key,
-                newKey =>
-                {
-                    var dict = get((TabletConfiguration) DataContext);
-                    var value = string.Empty;
-
-                    if (dict.ContainsKey(key))
-                    {
-                        value = dict[key];
-                        dict.Remove(key);
-                    }
-
-                    dict.Add(newKey, value);
-                    key = newKey;
-                }
-            );
-
-            var valueBinding = new DelegateBinding<string>(
-                () => get((TabletConfiguration) DataContext)[key],
-                v =>
-                {
-                    var dict = get((TabletConfiguration) DataContext);
-                    if (dict.ContainsKey(key))
-                        dict[key] = v;
-                    else
-                        dict.Add(key, v);
-                }
-            );
-
-            var keyBox = new TextBox();
-            keyBox.TextBinding.Bind(keyBinding);
-            keyBox.TextChanging += (_, args) =>
-            {
-                var dict = get((TabletConfiguration) DataContext);
-                if (dict.ContainsKey(args.NewText))
-                    args.Cancel = true;
-            };
-
-            var valueBox = new TextBox();
-            valueBox.TextBinding.Bind(valueBinding);
-
-            var removeButton = new Button
-            {
-                Text = "-"
-            };
-
-            var control = new StackLayout
-            {
-                Orientation = Orientation.Horizontal,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
-                Spacing = 5,
-                Items =
-                {
-                    new StackLayoutItem(keyBox, true),
-                    new StackLayoutItem(valueBox, true),
-                    removeButton
-                }
-            };
-
-            removeButton.Click += delegate
-            {
-                var layout = control.FindParent<StackLayout>();
-                var instance = get((TabletConfiguration) DataContext);
-                instance.Remove(keyBinding.DataValue);
-                layout.Items.Remove(control);
-
-                // Regenerate layout to fix bindings
-                AssignDictionaryEditor(layout, expression);
-            };
-
-            return control;
-        }
-
-        /// <summary>
-        /// Creates a label for an expression, using friendly names where possible.
-        /// </summary>
-        /// <param name="expression">Expression pointing to the target member.</param>
-        /// <typeparam name="T">The source type.</typeparam>
-        /// <typeparam name="TValue">The target value type.</typeparam>
-        private static Control LabelFor<T, TValue>(Expression<Func<T, TValue?>> expression)
-        {
-            return new Panel
-            {
-                Padding = new Padding(3, 0, 0, 0),
-                Content = new Label
-                {
-                    Text = expression.GetFriendlyName()
-                }
-            };
-        }
-
-        /// <summary>
-        /// Creates a toggle bound to an expression.
-        /// </summary>
-        /// <remarks>
-        /// When the checked state is changed, it will update the binding with a new value.
-        /// When unchecked, the bound value is set to null.
-        /// When checked, the bound value is set to a new instance of <typeparamref name="T"/>
-        /// </remarks>
-        /// <param name="expression">The expression to bind to.</param>
-        /// <param name="control">The control to enable when checked.</param>
-        /// <typeparam name="T">The expected <see cref="BindableWidget.DataContext"/> type.</typeparam>
-        /// <typeparam name="TValue">The target member type in the expression.</typeparam>
-        private CheckBox ToggleFor<T, TValue>(Expression<Func<T, TValue?>> expression, Control control) where TValue : class, new()
-        {
-            var toggle = new CheckBox
-            {
-                Text = "Enable"
-            };
-
-            // this.((T)DataContext).<expression>
-            var thisExpr = Expression.Constant(this);
-            var dataContextExpr = Expression.Convert(Expression.Property(thisExpr, nameof(DataContext)), typeof(T));
-            var baseExpr = new ExpressionMemberAccessor().AccessMember(dataContextExpr, expression);
-
-            // v => this.((T)DataContext).<expression> = v
-            var parameter = Expression.Parameter(typeof(TValue));
-            var setExpr = Expression.Assign(baseExpr, parameter);
-
-            var set = Expression.Lambda<Action<TValue?>>(setExpr, parameter).Compile();
-            var get = Expression.Lambda<Func<TValue>>(baseExpr).Compile();
-
-            toggle.CheckedBinding.Convert<TValue?>(
-                b =>
-                {
-                    if (DataContext is null)
-                        return default;
-                    set(b.GetValueOrDefault() ? new TValue() : null);
-                    return get();
-                },
-                v => v != null
-            ).BindDataContext(expression);
-
-            toggle.CheckedBinding.Bind(GetEnabledBinding(control));
-            toggle.CheckedChanged += (_, _) => control.UpdateBindings();
-
-            return toggle;
-        }
-
-        /// <summary>
-        /// Creates a TextBox bound to an expression.
-        /// </summary>
-        /// <param name="expression">An expression pointing to a member.</param>
-        /// <typeparam name="T">The <see cref="BindableWidget.DataContext"/> type.</typeparam>
-        private Control TextBoxFor<T>(Expression<Func<T, object?>> expression)
-        {
-            var textBox = new TextBox();
-            textBox.TextBinding.Convert(s => s, (object? o) => o?.ToString()).BindDataContext(expression);
-            return new LabeledGroup(expression.GetFriendlyName(), textBox);
-        }
-
-        /// <summary>
-        /// Creates a hexadecimal number editor bound to an expression.
-        /// </summary>
-        /// <param name="expression">An expression pointing to a member.</param>
-        /// <typeparam name="T">The <see cref="BindableWidget.DataContext"/> type.</typeparam>
-        private Control HexEditorFor<T>(Expression<Func<T, int>> expression)
-        {
-            var hex = new HexNumberBox();
-            hex.ValueBinding.BindDataContext(expression);
-            return new LabeledGroup(expression.GetFriendlyName(), hex);
         }
 
         /// <summary>
@@ -680,7 +843,10 @@ namespace OpenTabletDriver.UX.Windows
 
             _configsList.Enabled = true;
             if (oldValue is TabletConfiguration config)
-                _configsList.SelectedIndex = configs.IndexOf(configs.First(c => c.Name == config.Name));
+            {
+                if (configs.FirstOrDefault(c => c.ToString() == config.ToString()) is { } listCfg)
+                    _configsList.SelectedIndex = configs.IndexOf(listCfg);
+            }
         }
 
         /// <summary>
@@ -695,11 +861,7 @@ namespace OpenTabletDriver.UX.Windows
 
             foreach (var config in configs)
             {
-                var spaceIndex = config.Name.IndexOf(' ');
-                var manufacturer = config.Name[..spaceIndex];
-                var tabletName = config.Name[spaceIndex..].TrimStart();
-
-                var configPath = Path.Join(path, manufacturer, $"{tabletName}.json");
+                var configPath = Path.Join(path, config.Manufacturer, $"{config.Model}.json");
                 var file = new FileInfo(configPath);
 
                 if (!file.Directory!.Exists)
@@ -721,8 +883,22 @@ namespace OpenTabletDriver.UX.Windows
 
             return from file in dir.EnumerateFiles("*.json", SearchOption.AllDirectories)
                 let config = Serialization.Deserialize<TabletConfiguration>(file)
-                orderby config.Name
+                orderby config.ToString()
                 select config;
+        }
+
+        /// <summary>
+        /// Returns a binding for the enable state of a control.
+        /// </summary>
+        private static BindableBinding<T, bool?> GetEnabledBinding<T>(T control) where T : Control
+        {
+            return new BindableBinding<T, bool?>(
+                control,
+                c => c.Enabled,
+                (c, v) => c.Enabled = v.GetValueOrDefault(),
+                (c, h) => c.EnabledChanged += h,
+                (c, h) => c.EnabledChanged -= h
+            );
         }
     }
 }

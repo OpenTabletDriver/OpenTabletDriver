@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.Json.Converters;
@@ -19,7 +20,9 @@ namespace OpenTabletDriver.Desktop.Json
             new InterfaceConverter<IDeviceEndpointStream, SerializableDeviceEndpointStream>(),
             new InterfaceConverter<IAppInfo, SerializableAppInfo>(),
             new InterfaceConverter<IDiagnosticInfo, SerializableDiagnosticInfo>(),
-            new InterfaceConverter<IDisplay, SerializableDisplay>()
+            new InterfaceConverter<IDisplay, SerializableDisplay>(),
+            new Converters.VersionConverter(),
+            new StringEnumConverter()
         };
     }
 }

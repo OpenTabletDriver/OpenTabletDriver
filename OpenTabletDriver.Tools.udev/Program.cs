@@ -54,9 +54,9 @@ namespace OpenTabletDriver.Tools.udev
             yield return RuleGenerator.CreateAccessRule("uinput", "misc");
             foreach (var tablet in GetAllConfigurations(directory))
             {
-                if (string.IsNullOrWhiteSpace(tablet.Name))
+                if (string.IsNullOrWhiteSpace(tablet.ToString()))
                     continue;
-                yield return string.Format("# {0}", tablet.Name);
+                yield return string.Format("# {0}", tablet);
 
                 foreach (var rule in RuleGenerator.CreateAccessRules(tablet, "hidraw", "0666"))
                     yield return rule;

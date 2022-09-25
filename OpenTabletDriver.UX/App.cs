@@ -7,6 +7,7 @@ using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Logging;
@@ -140,7 +141,7 @@ namespace OpenTabletDriver.UX
                 if (_tablets.Any())
                 {
                     sb.Append(" - ");
-                    sb.AppendJoin(", ", _tablets.Select(t => t.Name).Take(3));
+                    sb.AppendJoin(", ", _tablets.Select(t => t.ToString()).Take(3));
                 }
 
                 MainFormTitle = sb.ToString();
@@ -317,6 +318,9 @@ namespace OpenTabletDriver.UX
             if (uri != null)
                 OpenInternal(uri, isDirectory);
         }
+
+        public TabletConfiguration GetTablet(string displayName) => Tablets.First(t => t.ToString() == displayName);
+        public TabletConfiguration GetTablet(Profile profile) => GetTablet(profile.Tablet);
 
         /// <summary>
         /// Determines whether to use the tray icon.

@@ -37,8 +37,8 @@ namespace OpenTabletDriver.UX.Windows
             if (_data == null)
                 return;
 
-            if (_configuration?.Name != _data.DeviceName)
-                _configuration = _app.Tablets.First(t => t.Name == _data.DeviceName);
+            if (_configuration?.ToString() != _data.DeviceName)
+                _configuration = _app.GetTablet(_data.DeviceName);
 
             if (_configuration != null)
                 DrawDigitizer(e.Graphics);
