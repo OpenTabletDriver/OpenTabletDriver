@@ -1,11 +1,12 @@
 {
-  "Name": "VEIKK S640",
+  "Manufacturer": "VEIKK",
+  "Model": "S640",
   "Specifications": {
     "Digitizer": {
       "Width": 152.4,
       "Height": 101.6,
-      "MaxX": 30480,
-      "MaxY": 20320
+      "MaxX": 30480.0,
+      "MaxY": 20320.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -31,6 +32,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

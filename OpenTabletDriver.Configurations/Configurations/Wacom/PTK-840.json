@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTK-840",
+  "Manufacturer": "Wacom",
+  "Model": "PTK-840",
   "Specifications": {
     "Digitizer": {
       "Width": 325.12,
       "Height": 203.2,
-      "MaxX": 65024,
-      "MaxY": 40640
+      "MaxX": 65024.0,
+      "MaxY": 40640.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -46,5 +47,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

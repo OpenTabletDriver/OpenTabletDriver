@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTH-661",
+  "Manufacturer": "Wacom",
+  "Model": "CTH-661",
   "Specifications": {
     "Digitizer": {
       "Width": 216.48,
-      "Height": 137,
-      "MaxX": 21648,
-      "MaxY": 13700
+      "Height": 137.0,
+      "MaxX": 21648.0,
+      "MaxY": 13700.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -72,5 +73,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

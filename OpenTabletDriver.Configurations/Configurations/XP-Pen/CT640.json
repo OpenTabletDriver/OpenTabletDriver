@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen CT640",
+  "Manufacturer": "XP-Pen",
+  "Model": "CT640",
   "Specifications": {
     "Digitizer": {
-      "Width": 160,
+      "Width": 160.0,
       "Height": 101.6,
-      "MaxX": 32000,
-      "MaxY": 20320
+      "MaxX": 32000.0,
+      "MaxY": 20320.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

@@ -1,11 +1,12 @@
 {
-  "Name": "Gaomon M1220",
+  "Manufacturer": "Gaomon",
+  "Model": "M1220",
   "Specifications": {
     "Digitizer": {
       "Width": 258.5,
       "Height": 161.55,
-      "MaxX": 51700,
-      "MaxY": 32310
+      "MaxX": 51700.0,
+      "MaxY": 32310.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

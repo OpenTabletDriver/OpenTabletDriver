@@ -1,11 +1,12 @@
 {
-  "Name": "Huion GT-220 V2",
+  "Manufacturer": "Huion",
+  "Model": "GT-220 V2",
   "Specifications": {
     "Digitizer": {
       "Width": 476.68,
       "Height": 268.145,
-      "MaxX": 95336,
-      "MaxY": 53629
+      "MaxX": 95336.0,
+      "MaxY": 53629.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Kamvas Pro 20",
+  "Manufacturer": "Huion",
+  "Model": "Kamvas Pro 20",
   "Specifications": {
     "Digitizer": {
       "Width": 435.375,
       "Height": 238.75,
-      "MaxX": 87075,
-      "MaxY": 47750
+      "MaxX": 87075.0,
+      "MaxY": 47750.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bar is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -1,11 +1,12 @@
 {
-  "Name": "Huion RTM-500",
+  "Manufacturer": "Huion",
+  "Model": "RTM-500",
   "Specifications": {
     "Digitizer": {
       "Width": 220.995,
       "Height": 137.995,
-      "MaxX": 44199,
-      "MaxY": 27599
+      "MaxX": 44199.0,
+      "MaxY": 27599.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bar is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

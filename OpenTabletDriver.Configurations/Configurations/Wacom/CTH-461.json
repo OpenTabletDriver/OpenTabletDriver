@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTH-461",
+  "Manufacturer": "Wacom",
+  "Model": "CTH-461",
   "Specifications": {
     "Digitizer": {
       "Width": 147.2,
-      "Height": 92,
-      "MaxX": 14720,
-      "MaxY": 9200
+      "Height": 92.0,
+      "MaxX": 14720.0,
+      "MaxY": 9200.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -59,5 +60,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tablet buttons and touch are not yet supported."
+    ]
+  },
   "Attributes": {}
 }

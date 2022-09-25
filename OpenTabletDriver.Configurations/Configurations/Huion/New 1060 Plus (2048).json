@@ -1,11 +1,12 @@
 {
-  "Name": "Huion New 1060 Plus (2048)",
+  "Manufacturer": "Huion",
+  "Model": "New 1060 Plus (2048)",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 158.75,
-      "MaxX": 40000,
-      "MaxY": 25000
+      "MaxX": 40000.0,
+      "MaxY": 25000.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -50,6 +51,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Requires Zadig's WinUSB to be installed on interface 1"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

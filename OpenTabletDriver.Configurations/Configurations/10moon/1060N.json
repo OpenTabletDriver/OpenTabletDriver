@@ -1,11 +1,12 @@
 {
-  "Name": "10moon 1060N",
+  "Manufacturer": "10moon",
+  "Model": "1060N",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 152.4,
-      "MaxX": 4095,
-      "MaxY": 4095
+      "MaxX": 4095.0,
+      "MaxY": 4095.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -48,6 +49,15 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Doesn't meet any of its advertised specs"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

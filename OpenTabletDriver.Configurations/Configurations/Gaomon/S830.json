@@ -1,11 +1,12 @@
 {
-  "Name": "Gaomon S830",
+  "Manufacturer": "Gaomon",
+  "Model": "S830",
   "Specifications": {
     "Digitizer": {
       "Width": 182.3,
       "Height": 107.7,
-      "MaxX": 34460,
-      "MaxY": 21540
+      "MaxX": 34460.0,
+      "MaxY": 21540.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "User may have to replug their tablet until it is detected."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

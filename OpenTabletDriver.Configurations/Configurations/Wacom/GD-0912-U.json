@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom GD-0912-U",
+  "Manufacturer": "Wacom",
+  "Model": "GD-0912-U",
   "Specifications": {
     "Digitizer": {
       "Width": 304.8,
       "Height": 240.6,
-      "MaxX": 60960,
-      "MaxY": 48120
+      "MaxX": 60960.0,
+      "MaxY": 48120.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

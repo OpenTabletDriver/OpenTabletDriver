@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H430P",
+  "Manufacturer": "Huion",
+  "Model": "H430P",
   "Specifications": {
     "Digitizer": {
       "Width": 121.92,
       "Height": 76.2,
-      "MaxX": 24384,
-      "MaxY": 15240
+      "MaxX": 24384.0,
+      "MaxY": 15240.0
     },
     "Pen": {
       "MaxPressure": 4095,
@@ -65,6 +66,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

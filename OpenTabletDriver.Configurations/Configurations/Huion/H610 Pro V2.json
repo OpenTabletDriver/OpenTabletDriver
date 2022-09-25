@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H610 Pro V2",
+  "Manufacturer": "Huion",
+  "Model": "H610 Pro V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 158.75,
-      "MaxX": 50800,
-      "MaxY": 31750
+      "MaxX": 50800.0,
+      "MaxY": 31750.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -50,6 +51,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

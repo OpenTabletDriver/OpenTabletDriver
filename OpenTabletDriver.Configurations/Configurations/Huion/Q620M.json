@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Q620M",
+  "Manufacturer": "Huion",
+  "Model": "Q620M",
   "Specifications": {
     "Digitizer": {
       "Width": 266.7,
       "Height": 165.1,
-      "MaxX": 53340,
-      "MaxY": 33020
+      "MaxX": 53340.0,
+      "MaxY": 33020.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

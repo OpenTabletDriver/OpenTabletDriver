@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Deco 02",
+  "Manufacturer": "XP-Pen",
+  "Model": "Deco 02",
   "Specifications": {
     "Digitizer": {
       "Width": 223.52,
       "Height": 139.7,
-      "MaxX": 22352,
-      "MaxY": 13970
+      "MaxX": 22352.0,
+      "MaxY": 13970.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

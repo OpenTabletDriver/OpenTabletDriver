@@ -1,11 +1,12 @@
 {
-  "Name": "Parblo Ninos M",
+  "Manufacturer": "Parblo",
+  "Model": "Ninos M",
   "Specifications": {
     "Digitizer": {
       "Width": 217.1954,
       "Height": 125.22,
-      "MaxX": 20320,
-      "MaxY": 10160
+      "MaxX": 20320.0,
+      "MaxY": 10160.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -46,6 +47,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Aux buttons are not in order."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

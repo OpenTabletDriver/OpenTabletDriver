@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom XD-1212-U",
+  "Manufacturer": "Wacom",
+  "Model": "XD-1212-U",
   "Specifications": {
     "Digitizer": {
       "Width": 304.8,
       "Height": 316.8,
-      "MaxX": 60960,
-      "MaxY": 63360
+      "MaxX": 60960.0,
+      "MaxY": 63360.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -46,6 +47,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

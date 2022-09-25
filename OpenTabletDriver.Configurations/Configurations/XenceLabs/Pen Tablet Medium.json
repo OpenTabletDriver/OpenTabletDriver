@@ -1,11 +1,12 @@
 {
-  "Name": "XenceLabs Pen Tablet Medium",
+  "Manufacturer": "XenceLabs",
+  "Model": "Pen Tablet Medium",
   "Specifications": {
     "Digitizer": {
       "Width": 261.62,
-      "Height": 148,
-      "MaxX": 52324,
-      "MaxY": 29600
+      "Height": 148.0,
+      "MaxX": 52324.0,
+      "MaxY": 29600.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

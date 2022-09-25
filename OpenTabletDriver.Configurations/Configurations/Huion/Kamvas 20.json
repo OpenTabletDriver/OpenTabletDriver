@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Kamvas 20",
+  "Manufacturer": "Huion",
+  "Model": "Kamvas 20",
   "Specifications": {
     "Digitizer": {
       "Width": 434.75,
       "Height": 238.75,
-      "MaxX": 86950,
-      "MaxY": 47750
+      "MaxX": 86950.0,
+      "MaxY": 47750.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

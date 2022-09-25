@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star G640S",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star G640S",
   "Specifications": {
     "Digitizer": {
-      "Width": 165,
-      "Height": 103,
-      "MaxX": 32999,
-      "MaxY": 20599
+      "Width": 165.0,
+      "Height": 103.0,
+      "MaxX": 32999.0,
+      "MaxY": 20599.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -59,6 +60,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

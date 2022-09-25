@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H640P",
+  "Manufacturer": "Huion",
+  "Model": "H640P",
   "Specifications": {
     "Digitizer": {
-      "Width": 160,
-      "Height": 100,
-      "MaxX": 32000,
-      "MaxY": 20000
+      "Width": 160.0,
+      "Height": 100.0,
+      "MaxX": 32000.0,
+      "MaxY": 20000.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -80,6 +81,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

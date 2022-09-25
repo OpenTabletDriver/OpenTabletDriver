@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Artist 15.6 Pro",
+  "Manufacturer": "XP-Pen",
+  "Model": "Artist 15.6 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 344.16,
       "Height": 193.59,
-      "MaxX": 34416,
-      "MaxY": 19359
+      "MaxX": 34416.0,
+      "MaxY": 19359.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tilt and wheel are not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

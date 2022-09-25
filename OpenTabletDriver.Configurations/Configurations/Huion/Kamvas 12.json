@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Kamvas 12",
+  "Manufacturer": "Huion",
+  "Model": "Kamvas 12",
   "Specifications": {
     "Digitizer": {
       "Width": 267.9,
       "Height": 168.2,
-      "MaxX": 53580,
-      "MaxY": 33640
+      "MaxX": 53580.0,
+      "MaxY": 33640.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

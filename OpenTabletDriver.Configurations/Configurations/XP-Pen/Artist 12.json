@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Artist 12",
+  "Manufacturer": "XP-Pen",
+  "Model": "Artist 12",
   "Specifications": {
     "Digitizer": {
       "Width": 256.32,
       "Height": 144.18,
-      "MaxX": 25632,
-      "MaxY": 14418
+      "MaxX": 25632.0,
+      "MaxY": 14418.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bar is not yet supported"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

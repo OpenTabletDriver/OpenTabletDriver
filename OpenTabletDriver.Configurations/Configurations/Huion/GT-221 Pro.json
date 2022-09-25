@@ -1,11 +1,12 @@
 {
-  "Name": "Huion GT-221 Pro",
+  "Manufacturer": "Huion",
+  "Model": "GT-221 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 476.73,
       "Height": 268.205,
-      "MaxX": 95346,
-      "MaxY": 53641
+      "MaxX": 95346.0,
+      "MaxY": 53641.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bar is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

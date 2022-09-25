@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTH-450",
+  "Manufacturer": "Wacom",
+  "Model": "PTH-450",
   "Specifications": {
     "Digitizer": {
       "Width": 157.48,
       "Height": 98.425,
-      "MaxX": 31496,
-      "MaxY": 19685
+      "MaxX": 31496.0,
+      "MaxY": 19685.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -58,5 +59,14 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

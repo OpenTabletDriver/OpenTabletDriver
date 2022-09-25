@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star G960S",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star G960S",
   "Specifications": {
     "Digitizer": {
       "Width": 228.8,
       "Height": 152.6,
-      "MaxX": 22860,
-      "MaxY": 15240
+      "MaxX": 22860.0,
+      "MaxY": 15240.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

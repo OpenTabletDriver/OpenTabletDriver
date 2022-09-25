@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Kamvas Pro 13",
+  "Manufacturer": "Huion",
+  "Model": "Kamvas Pro 13",
   "Specifications": {
     "Digitizer": {
       "Width": 293.76,
       "Height": 165.24,
-      "MaxX": 58752,
-      "MaxY": 33048
+      "MaxX": 58752.0,
+      "MaxY": 33048.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -50,6 +51,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bar is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

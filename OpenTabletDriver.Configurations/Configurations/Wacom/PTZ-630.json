@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTZ-630",
+  "Manufacturer": "Wacom",
+  "Model": "PTZ-630",
   "Specifications": {
     "Digitizer": {
       "Width": 203.2,
       "Height": 152.4,
-      "MaxX": 40640,
-      "MaxY": 30480
+      "MaxX": 40640.0,
+      "MaxY": 30480.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -50,6 +51,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tablet buttons and touch bars are not yet supported."
+    ]
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

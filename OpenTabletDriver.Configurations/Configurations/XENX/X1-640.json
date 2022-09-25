@@ -1,11 +1,12 @@
 {
-  "Name": "XENX X1-640",
+  "Manufacturer": "XENX",
+  "Model": "X1-640",
   "Specifications": {
     "Digitizer": {
-      "Width": 152,
-      "Height": 95,
-      "MaxX": 15200,
-      "MaxY": 9500
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTK-450",
+  "Manufacturer": "Wacom",
+  "Model": "PTK-450",
   "Specifications": {
     "Digitizer": {
       "Width": 157.48,
       "Height": 98.425,
-      "MaxX": 31496,
-      "MaxY": 19685
+      "MaxX": 31496.0,
+      "MaxY": 19685.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -46,5 +47,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTE-660",
+  "Manufacturer": "Wacom",
+  "Model": "CTE-660",
   "Specifications": {
     "Digitizer": {
       "Width": 216.48,
-      "Height": 135,
-      "MaxX": 21648,
-      "MaxY": 13500
+      "Height": 135.0,
+      "MaxX": 21648.0,
+      "MaxY": 13500.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -31,5 +32,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

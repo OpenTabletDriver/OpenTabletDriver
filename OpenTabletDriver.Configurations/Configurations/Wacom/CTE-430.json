@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTE-430",
+  "Manufacturer": "Wacom",
+  "Model": "CTE-430",
   "Specifications": {
     "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
-      "MaxX": 10208,
-      "MaxY": 7424
+      "MaxX": 10208.0,
+      "MaxY": 7424.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

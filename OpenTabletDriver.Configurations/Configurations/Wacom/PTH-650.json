@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTH-650",
+  "Manufacturer": "Wacom",
+  "Model": "PTH-650",
   "Specifications": {
     "Digitizer": {
       "Width": 223.52,
       "Height": 139.7,
-      "MaxX": 44704,
-      "MaxY": 27940
+      "MaxX": 44704.0,
+      "MaxY": 27940.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -58,5 +59,14 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

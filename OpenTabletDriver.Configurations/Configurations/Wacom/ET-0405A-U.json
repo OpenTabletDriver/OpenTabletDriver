@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom ET-0405A-U",
+  "Manufacturer": "Wacom",
+  "Model": "ET-0405A-U",
   "Specifications": {
     "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
-      "MaxX": 10208,
-      "MaxY": 7424
+      "MaxX": 10208.0,
+      "MaxY": 7424.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

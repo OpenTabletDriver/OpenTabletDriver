@@ -1,11 +1,12 @@
 {
-  "Name": "UGEE U1600",
+  "Manufacturer": "UGEE",
+  "Model": "U1600",
   "Specifications": {
     "Digitizer": {
       "Width": 344.14,
       "Height": 193.57,
-      "MaxX": 68828,
-      "MaxY": 38714
+      "MaxX": 68828.0,
+      "MaxY": 38714.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -31,6 +32,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

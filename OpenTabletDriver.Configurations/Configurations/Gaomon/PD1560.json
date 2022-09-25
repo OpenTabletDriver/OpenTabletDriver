@@ -1,11 +1,12 @@
 {
-  "Name": "Gaomon PD1560",
+  "Manufacturer": "Gaomon",
+  "Model": "PD1560",
   "Specifications": {
     "Digitizer": {
       "Width": 344.16,
       "Height": 193.59,
-      "MaxX": 68832,
-      "MaxY": 38718
+      "MaxX": 68832.0,
+      "MaxY": 38718.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

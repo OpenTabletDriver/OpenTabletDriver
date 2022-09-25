@@ -1,11 +1,12 @@
 {
-  "Name": "Parblo A640 V2",
+  "Manufacturer": "Parblo",
+  "Model": "A640 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 150,
-      "Height": 90,
-      "MaxX": 31203,
-      "MaxY": 18730
+      "Width": 150.0,
+      "Height": 90.0,
+      "MaxX": 31203.0,
+      "MaxY": 18730.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

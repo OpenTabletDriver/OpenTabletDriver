@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star G430S V2",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star G430S V2",
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
       "Height": 76.2,
-      "MaxX": 10160,
-      "MaxY": 7620
+      "MaxX": 10160.0,
+      "MaxY": 7620.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -31,6 +32,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "WARNING: No tablet metadata was found when converting configurations."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

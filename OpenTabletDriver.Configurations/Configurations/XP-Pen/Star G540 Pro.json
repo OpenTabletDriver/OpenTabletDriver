@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star G540 Pro",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star G540 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 136.8,
       "Height": 73.025,
-      "MaxX": 54720,
-      "MaxY": 29210
+      "MaxX": 54720.0,
+      "MaxY": 29210.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -31,6 +32,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

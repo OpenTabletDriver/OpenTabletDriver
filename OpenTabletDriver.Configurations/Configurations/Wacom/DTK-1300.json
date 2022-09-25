@@ -1,17 +1,16 @@
 {
-  "Name": "Wacom Cintiq 13HD (DTK-1300)",
+  "Manufacturer": "Wacom",
+  "Model": "Cintiq 13HD (DTK-1300)",
   "Specifications": {
     "Digitizer": {
-      "Width": 299,
-      "Height": 171,
-      "MaxX": 59800,
-      "MaxY": 34200
+      "Width": 299.0,
+      "Height": 171.0,
+      "MaxX": 59800.0,
+      "MaxY": 34200.0
     },
     "Pen": {
       "MaxPressure": 2048,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 0
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -34,5 +33,15 @@
       "InitializationStrings": []
     }
   ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "WARNING: No tablet metadata was found when converting configurations."
+    ]
+  },
   "Attributes": {}
 }

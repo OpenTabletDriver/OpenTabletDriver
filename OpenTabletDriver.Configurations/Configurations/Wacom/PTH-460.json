@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTH-460",
+  "Manufacturer": "Wacom",
+  "Model": "PTH-460",
   "Specifications": {
     "Digitizer": {
       "Width": 159.6,
       "Height": 99.75,
-      "MaxX": 31920,
-      "MaxY": 19950
+      "MaxX": 31920.0,
+      "MaxY": 19950.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -60,5 +61,14 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

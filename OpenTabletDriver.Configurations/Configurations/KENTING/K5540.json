@@ -1,11 +1,12 @@
 {
-  "Name": "KENTING K5540",
+  "Manufacturer": "KENTING",
+  "Model": "K5540",
   "Specifications": {
     "Digitizer": {
       "Width": 139.6873,
       "Height": 101.5873,
-      "MaxX": 10999,
-      "MaxY": 7999
+      "MaxX": 10999.0,
+      "MaxY": 7999.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -31,6 +32,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Requires Zadig's WinUSB to be installed"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

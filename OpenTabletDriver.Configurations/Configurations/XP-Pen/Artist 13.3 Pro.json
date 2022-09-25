@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Artist 13.3 Pro",
+  "Manufacturer": "XP-Pen",
+  "Model": "Artist 13.3 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 293.62,
       "Height": 165.1,
-      "MaxX": 29362,
-      "MaxY": 16510
+      "MaxX": 29362.0,
+      "MaxY": 16510.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

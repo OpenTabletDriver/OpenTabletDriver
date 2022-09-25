@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom MTE-450",
+  "Manufacturer": "Wacom",
+  "Model": "MTE-450",
   "Specifications": {
     "Digitizer": {
       "Width": 147.6,
       "Height": 92.25,
-      "MaxX": 14760,
-      "MaxY": 9225
+      "MaxX": 14760.0,
+      "MaxY": 9225.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -46,5 +47,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

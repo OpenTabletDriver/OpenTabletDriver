@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H690",
+  "Manufacturer": "Huion",
+  "Model": "H690",
   "Specifications": {
     "Digitizer": {
       "Width": 228.6,
       "Height": 142.875,
-      "MaxX": 36000,
-      "MaxY": 22500
+      "MaxX": 36000.0,
+      "MaxY": 22500.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -52,6 +53,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Requires Zadig's WinUSB to be installed on interface 0"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Deco mini4",
+  "Manufacturer": "XP-Pen",
+  "Model": "Deco mini4",
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
       "Height": 76.2,
-      "MaxX": 20320,
-      "MaxY": 15240
+      "MaxX": 20320.0,
+      "MaxY": 15240.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,5 +34,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

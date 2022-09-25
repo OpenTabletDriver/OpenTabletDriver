@@ -1,11 +1,12 @@
 {
-  "Name": "UGTABLET M708",
+  "Manufacturer": "UGTABLET",
+  "Model": "M708",
   "Specifications": {
     "Digitizer": {
-      "Width": 200,
-      "Height": 120,
-      "MaxX": 40000,
-      "MaxY": 24000
+      "Width": 200.0,
+      "Height": 120.0,
+      "MaxX": 40000.0,
+      "MaxY": 24000.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -37,6 +38,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Might need Zadig's WinUSB to be installed on interface 0"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

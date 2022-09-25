@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTH-860",
+  "Manufacturer": "Wacom",
+  "Model": "PTH-860",
   "Specifications": {
     "Digitizer": {
-      "Width": 311,
-      "Height": 216,
-      "MaxX": 62200,
-      "MaxY": 43200
+      "Width": 311.0,
+      "Height": 216.0,
+      "MaxX": 62200.0,
+      "MaxY": 43200.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -54,5 +55,14 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

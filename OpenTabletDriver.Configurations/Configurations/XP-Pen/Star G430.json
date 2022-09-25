@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star G430",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star G430",
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
       "Height": 76.2,
-      "MaxX": 45720,
-      "MaxY": 29210
+      "MaxX": 45720.0,
+      "MaxY": 29210.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -48,6 +49,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Might need Zadig's WinUSB to be installed on interface 1"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

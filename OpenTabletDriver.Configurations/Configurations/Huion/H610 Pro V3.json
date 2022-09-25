@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H610 Pro V3",
+  "Manufacturer": "Huion",
+  "Model": "H610 Pro V3",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 158.75,
-      "MaxX": 2048,
-      "MaxY": 2048
+      "MaxX": 2048.0,
+      "MaxY": 2048.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -31,6 +32,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

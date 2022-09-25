@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom FT-0405-U",
+  "Manufacturer": "Wacom",
+  "Model": "FT-0405-U",
   "Specifications": {
     "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
-      "MaxX": 5104,
-      "MaxY": 3712
+      "MaxX": 5104.0,
+      "MaxY": 3712.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

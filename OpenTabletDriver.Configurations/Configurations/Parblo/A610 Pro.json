@@ -1,11 +1,12 @@
 {
-  "Name": "Parblo A610 Pro",
+  "Manufacturer": "Parblo",
+  "Model": "A610 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 255.5,
-      "Height": 160,
-      "MaxX": 51100,
-      "MaxY": 32000
+      "Height": 160.0,
+      "MaxX": 51100.0,
+      "MaxY": 32000.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

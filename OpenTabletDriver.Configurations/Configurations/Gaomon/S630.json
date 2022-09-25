@@ -1,11 +1,12 @@
 {
-  "Name": "Gaomon S630",
+  "Manufacturer": "Gaomon",
+  "Model": "S630",
   "Specifications": {
     "Digitizer": {
       "Width": 129.3,
       "Height": 80.8,
-      "MaxX": 25860,
-      "MaxY": 16160
+      "MaxX": 25860.0,
+      "MaxY": 16160.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Requires Zadig's WinUSB to be installed on interface 0"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H320M",
+  "Manufacturer": "Huion",
+  "Model": "H320M",
   "Specifications": {
     "Digitizer": {
       "Width": 228.5,
       "Height": 142.9,
-      "MaxX": 45700,
-      "MaxY": 28580
+      "MaxX": 45700.0,
+      "MaxY": 28580.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

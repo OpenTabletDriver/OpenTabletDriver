@@ -1,11 +1,12 @@
 {
-  "Name": "VEIKK VK430",
+  "Manufacturer": "VEIKK",
+  "Model": "VK430",
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
       "Height": 76.2,
-      "MaxX": 50800,
-      "MaxY": 31750
+      "MaxX": 50800.0,
+      "MaxY": 31750.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -31,6 +32,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Aux buttons are not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -1,11 +1,12 @@
 {
-  "Name": "Huion HS95",
+  "Manufacturer": "Huion",
+  "Model": "HS95",
   "Specifications": {
     "Digitizer": {
       "Width": 203.19,
       "Height": 126.99,
-      "MaxX": 40638,
-      "MaxY": 25398
+      "MaxX": 40638.0,
+      "MaxY": 25398.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }
