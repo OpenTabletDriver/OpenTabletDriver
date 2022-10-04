@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
     <VersionBase>0.7.0.0</VersionBase>
-    <FrameworkBase>net6.0</FrameworkBase>
-    <LangVersion>preview</LangVersion>
+    <FrameworkBase>net7.0</FrameworkBase>
+    <LangVersion>11</LangVersion>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
   </PropertyGroup>
 
