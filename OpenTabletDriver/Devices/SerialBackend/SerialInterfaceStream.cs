@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Devices.SerialBackend
                 throw new InvalidOperationException("Weak reference to parent interface is unexpectedly invalid");
 
             port = new SerialPort(serialInterface.DevicePath);
-            Console.WriteLine("created serial port");
+            Console.WriteLine($"created serial port with speed {port.BaudRate}");
             port.Open();
             Console.WriteLine("opened serial port");
         }
@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Devices.SerialBackend
         {
             //NOTE: idk if we should use the internal buffer size instead
             byte[] buf = new byte[16];
-            Console.WriteLine($"new buffer of size {0}");
+            Console.WriteLine($"new buffer of size {buf}");
             int read = port.Read(buf, 0, buf.Length);
             Console.WriteLine($"read {read} bytes");
 
