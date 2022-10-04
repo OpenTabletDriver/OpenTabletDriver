@@ -111,9 +111,14 @@ namespace OpenTabletDriver.Devices
                 Connected = true;
                 while (Connected)
                 {
+                    Console.WriteLine("iteration");
                     var data = ReportStream!.Read();
+                    Console.WriteLine($"read {data.Length} bytes from stream");
                     if (Parser.Parse(data) is { } report)
+                    {
+                        Console.WriteLine("on report");
                         OnReport(report);
+                    }
 
                     // We create a clone of the report to avoid data being modified on the tablet debugger.
                     if (RawClone && RawReport != null && Parser.Parse(data) is { } debugReport)
