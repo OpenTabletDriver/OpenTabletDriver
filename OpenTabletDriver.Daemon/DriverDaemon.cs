@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -27,8 +29,6 @@ using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Tablet;
-
-#nullable enable
 
 namespace OpenTabletDriver.Daemon
 {
@@ -191,11 +191,32 @@ namespace OpenTabletDriver.Daemon
             return await GetTablets();
         }
 
+        public Task<IEnumerable<Uri>> GetLegacyPorts()
+        {
+            return Task.FromResult(_deviceHub.LegacyPorts);
+        }
+
         public async Task SaveSettings(Settings settings)
         {
             settings.Serialize(new FileInfo(_appInfo.SettingsFile));
             Log.Write("Settings", $"Settings saved to '{_appInfo.SettingsFile}'");
             await ApplySettings(settings);
+        }
+
+        public Task<IEnumerable<TabletConfiguration>> GetSupportedTablets()
+        {
+            return Task.FromResult(_driver.TabletConfigurations);
+        }
+
+        public Task<bool> ConnectLegacyTablet(Uri port, TabletConfiguration tablet, bool save)
+        {
+            var dev = _driver.ConnectLegacyDevice(port, tablet);
+            foreach (var d in dev.Endpoints)
+            {
+                d.RawReport += (_, report) => PostDebugReport(d.Configuration.Name, report);
+                d.RawClone = _debugging;
+            }
+            return Task.FromResult(true);
         }
 
         public Task ApplySettings(Settings? settings)

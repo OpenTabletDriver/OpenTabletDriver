@@ -69,6 +69,7 @@ namespace OpenTabletDriver.UX
                 Items =
                 {
                     new AppCommand("Detect tablet", DetectTablets, modifier | Keys.D),
+                    new AppCommand("Connect legacy tablet...", _app.ShowWindow<LegacyTabletConnectionWindow>),
                     new AppCommand("Tablet debugger...", _app.ShowWindow<TabletDebugger>, modifier | Keys.Shift | Keys.D),
                     new AppCommand("Configuration editor...", _app.ShowWindow<ConfigurationEditor>, modifier | Keys.Shift | Keys.E),
                 }

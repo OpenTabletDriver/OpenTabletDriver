@@ -14,5 +14,10 @@ namespace OpenTabletDriver.Components
         /// Enumeration of all supported device hubs.
         /// </summary>
         IEnumerable<IDeviceHub> DeviceHubs { get; }
+
+        /// <summary>
+        /// Enumeration of all supported device hubs.
+        /// </summary>
+        IEnumerable<ILegacyDeviceHub> LegacyDeviceHubs { get; }
     }
 }

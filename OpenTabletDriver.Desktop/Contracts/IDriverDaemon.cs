@@ -37,6 +37,12 @@ namespace OpenTabletDriver.Desktop.Contracts
 
         Task SaveSettings(Settings settings);
         Task ApplySettings(Settings settings);
+        Task<IEnumerable<Uri>> GetLegacyPorts();
+
+        Task<IEnumerable<TabletConfiguration>> GetSupportedTablets();
+
+        Task<bool> ConnectLegacyTablet(Uri port, TabletConfiguration tablet, bool save);
+
         Task<Settings> GetSettings();
         Task<Settings> ResetSettings();
 

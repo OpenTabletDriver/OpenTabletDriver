@@ -36,5 +36,10 @@ namespace OpenTabletDriver.Tablet
         /// Other information about the tablet that can be used in tools or other applications.
         /// </summary>
         public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

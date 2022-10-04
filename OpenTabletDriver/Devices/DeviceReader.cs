@@ -89,6 +89,10 @@ namespace OpenTabletDriver.Devices
                 Log.Exception(ex);
                 return false;
             }
+            finally
+            {
+                Connected = false;
+            }
         }
 
         protected void Start()
@@ -107,12 +111,17 @@ namespace OpenTabletDriver.Devices
                 Connected = true;
                 while (Connected)
                 {
+                    Console.WriteLine("iteration");
                     var data = ReportStream!.Read();
-                    if (Parser.Parse(data) is T report)
+                    Console.WriteLine($"read {data.Length} bytes from stream");
+                    if (Parser.Parse(data) is { } report)
+                    {
+                        Console.WriteLine("on report");
                         OnReport(report);
+                    }
 
                     // We create a clone of the report to avoid data being modified on the tablet debugger.
-                    if (RawClone && RawReport != null && Parser.Parse(data) is T debugReport)
+                    if (RawClone && RawReport != null && Parser.Parse(data) is { } debugReport)
                         OnRawReport(debugReport);
                 }
             }
@@ -134,6 +143,11 @@ namespace OpenTabletDriver.Devices
             catch (Exception ex)
             {
                 Log.Exception(ex, true);
+            }
+            finally
+            {
+                Connected = false;
+                ReportStream?.Dispose();
             }
         }
 

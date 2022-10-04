@@ -1,14 +1,17 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Tablet;
-
 namespace OpenTabletDriver
 {
     /// <summary>
@@ -35,6 +38,9 @@ namespace OpenTabletDriver
         public event EventHandler<IEnumerable<InputDevice>>? InputDevicesChanged;
 
         public InputDeviceCollection InputDevices { get; } = new InputDeviceCollection();
+
+        public IEnumerable<TabletConfiguration> TabletConfigurations =>
+            _deviceConfigurationProvider.TabletConfigurations;
 
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
@@ -206,6 +212,57 @@ namespace OpenTabletDriver
                     return true;
                 }
             }
+        }
+
+        public InputDevice ConnectLegacyDevice(Uri path, TabletConfiguration config)
+        {
+            ILegacyDeviceHub? selectedHub = null;
+            foreach (ILegacyDeviceHub hub in _compositeDeviceHub.LegacyDeviceHubs)
+            {
+                string? protocol = hub.GetType().GetCustomAttribute<LegacyDeviceHubAttribute>()?.Protocol;
+                if (protocol == null)
+                    continue;
+
+                if (path.Scheme == protocol)
+                {
+                    selectedHub = hub;
+                    break;
+                }
+            }
+
+            string fullPath = path.ToString();
+
+            int pathStart = path.Scheme.Length + 3;
+            int pathEnd = fullPath[^1] == '/' ? 1 : 0;
+            string actualPath = fullPath.Substring(pathStart, fullPath.Length - (pathStart + pathEnd));
+
+            if (selectedHub == null || !selectedHub.TryGetDevice(actualPath, out IDeviceEndpoint endpoint))
+            {
+                throw new ArgumentException();
+            }
+
+            List<InputDeviceEndpoint> endpoints = new List<InputDeviceEndpoint>();
+
+            foreach (var id in config.DigitizerIdentifiers)
+            {
+                endpoints.Add(new InputDeviceEndpoint(this, endpoint, config, id));
+            }
+
+
+            InputDevice dev = new InputDevice(config, endpoints);
+
+            InputDevices.Add(dev);
+
+            dev.Disconnected += (sender, e) =>
+            {
+                InputDevices.Remove(dev);
+                InputDevicesChanged?.Invoke(this, InputDevices);
+            };
+
+
+            InputDevicesChanged?.Invoke(this, InputDevices);
+
+            return dev;
         }
 
         public void Dispose()

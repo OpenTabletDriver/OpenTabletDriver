@@ -13,7 +13,12 @@ namespace OpenTabletDriver
     {
         event EventHandler<IEnumerable<InputDevice>>? InputDevicesChanged;
         InputDeviceCollection InputDevices { get; }
+
+        IEnumerable<TabletConfiguration> TabletConfigurations { get; }
+
         IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier);
         void Detect();
+
+        InputDevice ConnectLegacyDevice(Uri port, TabletConfiguration tablet);
     }
 }
