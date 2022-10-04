@@ -25,9 +25,14 @@ namespace OpenTabletDriver.Devices.SerialBackend
         public byte[] Read()
         {
             //NOTE: idk if we should use the internal buffer size instead
-            byte[] buf = new byte[port.BytesToRead];
+            byte[] buf = new byte[16];
             Console.WriteLine($"new buffer of size {0}");
-            Console.WriteLine($"read {port.Read(buf, 0, buf.Length)} bytes");
+            int read = port.Read(buf, 0, buf.Length);
+            Console.WriteLine($"read {read} bytes");
+
+            if (read == 0)
+                return Array.Empty<byte>();
+
             return buf;
         }
 
