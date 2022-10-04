@@ -193,7 +193,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<Uri>> GetLegacyPorts()
         {
-            return Task.FromResult(/*_driver.CompositeDeviceHub.LegacyPortNames*/(IEnumerable<Uri>)Array.Empty<Uri>());
+            return Task.FromResult(_deviceHub.LegacyPorts);
         }
 
         public async Task SaveSettings(Settings settings)

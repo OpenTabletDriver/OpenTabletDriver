@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using OpenTabletDriver.Devices;
@@ -19,6 +20,8 @@ namespace OpenTabletDriver.Components
         /// The legacy device hubs contained in the composite hub.
         /// </summary>
         IEnumerable<ILegacyDeviceHub> LegacyDeviceHubs { get; }
+
+        IEnumerable<Uri> LegacyPorts { get; }
 
         /// <summary>
         /// Connects a device hub.

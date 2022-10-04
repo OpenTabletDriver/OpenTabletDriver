@@ -39,6 +39,8 @@ namespace OpenTabletDriver.UX.Windows
 
             devicePathText = new ComboBox();
 
+            devicePathText.DataStore = _daemon.GetLegacyPorts().Result;
+
             tablet = new DropDown();
 
             tablet.DataStore = _daemon.GetSupportedTablets().Result.Where(x => x.Attributes.ContainsKey("isLegacy"));;
