@@ -6,6 +6,10 @@ namespace OpenTabletDriver.Configurations.Parsers
     {
         public IDeviceReport Parse(byte[] data)
         {
+            //TODO: change the API to support not returning anything.
+            if (data.Length == 0)
+                return null;
+
             return new DeviceReport(data);
         }
     }

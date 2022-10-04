@@ -165,7 +165,7 @@ namespace OpenTabletDriver.Devices
         }
 
         private void ForceEnumeration()
-        {
+         {
             _endpoints.Clear();
             _endpoints.AddRange(_hubs.SelectMany(h => h.GetDevices()));
             _legacyPorts = _legacyHubs.Where(h => h.CanEnumeratePorts).SelectMany(h => h.EnumeratePorts());
