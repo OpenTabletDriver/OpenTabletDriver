@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Attributes
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     [PublicAPI]
-    public class MemberValidatedAttribute : Attribute
+    public partial class MemberValidatedAttribute : Attribute
     {
         public MemberValidatedAttribute(string memberName, bool requiresInstance = false)
         {
@@ -51,7 +51,7 @@ namespace OpenTabletDriver.Attributes
             {
                 Log.Write("Plugin", $"Failed to get valid binding values for '{MemberName}'", LogLevel.Error);
 
-                var match = Regex.Match(e.Message, "Non-static (.*) requires a target\\.");
+                var match = NonStaticTargetRegex().Match(e.Message);
 
                 if (e is TargetException && match.Success)
                 {
@@ -65,5 +65,8 @@ namespace OpenTabletDriver.Attributes
 
             return default;
         }
+
+        [GeneratedRegex("Non-static (.*) requires a target\\.")]
+        private static partial Regex NonStaticTargetRegex();
     }
 }

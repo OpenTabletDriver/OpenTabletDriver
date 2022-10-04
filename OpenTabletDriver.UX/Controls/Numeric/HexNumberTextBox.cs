@@ -5,16 +5,17 @@ using OpenTabletDriver.UX.Controls.Numeric.TextProviders;
 
 namespace OpenTabletDriver.UX.Controls.Numeric
 {
-    public class HexNumberBox : MaskedTextBox<int>
+    public partial class HexNumberBox : MaskedTextBox<int>
     {
         public HexNumberBox()
         {
             Provider = new HexTextProvider();
         }
 
-        private class HexTextProvider : RegexTextProvider<int>
+        private partial class HexTextProvider : RegexTextProvider<int>
         {
-            protected override Regex Regex => new Regex(@"^(?:0x)?(?:[0-9A-F]{1,4})?$");
+            [GeneratedRegex(@"^(?:0x)?(?:[0-9A-F]{1,4})?$")]
+            protected override partial Regex Regex();
 
             public override int Value
             {
