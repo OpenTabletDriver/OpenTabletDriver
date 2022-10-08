@@ -35,5 +35,10 @@ namespace OpenTabletDriver.Tablet
         /// Specifications for the touch digitizer.
         /// </summary>
         public DigitizerSpecifications? Touch { set; get; }
+
+        /// <summary>
+        /// Specifications for the touchpad gestures.
+        /// </summary>
+        public GestureTouchpadSpecifications? GestureTouchpad { set; get; }
     }
 }

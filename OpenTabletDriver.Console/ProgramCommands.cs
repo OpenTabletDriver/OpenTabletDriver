@@ -131,6 +131,17 @@ namespace OpenTabletDriver.Console
             });
         }
 
+        [Command("set-gesturetouch-binding", "Sets the gesture touchpad bindings")]
+        public async Task SetGestureTouchpadBinding(string tablet, string name, int index)
+        {
+            await ModifyProfile(tablet, async p =>
+            {
+                var binding = await _driverDaemon.GetDefaults(name);
+                
+                p.BindingSettings.TouchGestures[index] = binding;
+            });
+        }
+
         [Command("set-output-mode", "Sets the active output mode with its defaults")]
         public async Task SetOutputMode(string tablet, string mode)
         {
