@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Desktop.Compression
             }
         }
 
-        public static void Decompress(this ZipInputStream zipStream, string outputDir)
+        private static void Decompress(this ZipInputStream zipStream, string outputDir)
         {
             while (zipStream.GetNextEntry() is ZipEntry entry)
             {
@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Compression
 
                 // Manipulate the output filename here as desired.
                 var zipPath = Path.Combine(outputDir, entryFileName);
-                var directoryName = Path.GetDirectoryName(zipPath);
+                var directoryName = Path.GetDirectoryName(zipPath)!;
                 if (directoryName.Length > 0)
                     Directory.CreateDirectory(directoryName);
 
@@ -49,12 +49,12 @@ namespace OpenTabletDriver.Desktop.Compression
                     continue;
                 }
 
-                using (FileStream streamWriter = File.Create(zipPath))
+                using (var streamWriter = File.Create(zipPath))
                     StreamUtils.Copy(zipStream, streamWriter, buffer);
             }
         }
 
-        public static void Decompress(this GZipInputStream gzipStream, string outputDir)
+        private static void Decompress(this GZipInputStream gzipStream, string outputDir)
         {
             using (var archive = TarArchive.CreateInputTarArchive(gzipStream, null))
                 archive.ExtractContents(outputDir);

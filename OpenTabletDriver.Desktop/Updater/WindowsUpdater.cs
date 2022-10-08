@@ -1,33 +1,20 @@
-using System;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Octokit;
-
-#nullable enable
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public class WindowsUpdater : Updater
+    public class WindowsUpdater : GitHubUpdater
     {
-        public WindowsUpdater()
-           : this(AssemblyVersion,
-               AppDomain.CurrentDomain.BaseDirectory,
-               AppInfo.Current.AppDataDirectory,
-               AppInfo.Current.BackupDirectory)
+        public WindowsUpdater(IAppInfo appInfo, IGitHubClient client)
+           : base(AssemblyVersion, appInfo, client)
         {
         }
 
-        public WindowsUpdater(Version currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
-            : base(currentVersion,
-                binDirectory,
-                appDataDirectory,
-                rollBackDirectory)
-        {
-        }
-
-        protected override string[] IncludeList { get; } = new[]
+        protected override string[] IncludeList { get; } =
         {
             "OpenTabletDriver.UX.Wpf.exe",
             "OpenTabletDriver.Daemon.exe"

@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Native.Linux.Xorg
 
     public class XLib
     {
-        private const string libX11 = "libX11";
+        private const string libX11 = "libX11.so.6";
         private static object Lock = new object();
 
         [DllImport(libX11, EntryPoint = "XOpenDisplay")]

@@ -1,25 +1,23 @@
-using System.IO;
 using HidSharp;
-using OpenTabletDriver.Plugin.Devices;
 
 namespace OpenTabletDriver.Devices.HidSharpBackend
 {
-    public class HidSharpEndpointStream : IDeviceEndpointStream
+    internal sealed class HidSharpEndpointStream : IDeviceEndpointStream
     {
-        internal HidSharpEndpointStream(HidStream stream)
+        public HidSharpEndpointStream(HidStream stream)
         {
-            this.stream = stream;
-            stream.ReadTimeout = int.MaxValue;
+            _stream = stream;
+            _stream.ReadTimeout = int.MaxValue;
         }
 
-        private HidStream stream;
+        private readonly HidStream _stream;
 
-        public byte[] Read() => stream.Read();
-        public void Write(byte[] buffer) => stream.Write(buffer);
+        public byte[] Read() => _stream.Read();
+        public void Write(byte[] buffer) => _stream.Write(buffer);
 
-        public void GetFeature(byte[] buffer) => stream.GetFeature(buffer);
-        public void SetFeature(byte[] buffer) => stream.SetFeature(buffer);
+        public void GetFeature(byte[] buffer) => _stream.GetFeature(buffer);
+        public void SetFeature(byte[] buffer) => _stream.SetFeature(buffer);
 
-        public void Dispose() => stream.Dispose();
+        public void Dispose() => _stream.Dispose();
     }
 }

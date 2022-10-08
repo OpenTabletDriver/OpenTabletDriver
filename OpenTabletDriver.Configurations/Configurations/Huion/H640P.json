@@ -2,16 +2,14 @@
   "Name": "Huion H640P",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 100.0,
-      "MaxX": 32000.0,
-      "MaxY": 20000.0
+      "Width": 160,
+      "Height": 100,
+      "MaxX": 32000,
+      "MaxY": 20000
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
@@ -25,7 +23,7 @@
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -40,7 +38,7 @@
       "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -55,7 +53,7 @@
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -70,7 +68,7 @@
       "ProductID": 100,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -81,7 +79,7 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

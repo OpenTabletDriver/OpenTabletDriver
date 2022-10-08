@@ -2,16 +2,14 @@
   "Name": "Huion HS64",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 102.0,
-      "MaxX": 32000.0,
-      "MaxY": 20400.0
+      "Width": 160,
+      "Height": 102,
+      "MaxX": 32000,
+      "MaxY": 20400
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
@@ -51,7 +49,7 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -2,16 +2,14 @@
   "Name": "Wacom CTL-471",
   "Specifications": {
     "Digitizer": {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0
+      "Width": 152,
+      "Height": 95,
+      "MaxX": 15200,
+      "MaxY": 9500
     },
     "Pen": {
       "MaxPressure": 1023,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -45,13 +43,13 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
+  "AuxiliaryDeviceIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 768,
       "InputReportLength": 64,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.AuxReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},

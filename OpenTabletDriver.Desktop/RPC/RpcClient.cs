@@ -1,63 +1,70 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop.RPC.Messages;
 using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
     public class RpcClient<T> where T : class
     {
-        private readonly string pipeName;
-        private NamedPipeClientStream stream;
-        private JsonRpc rpc;
-        private IList<Action<T>> reconnectHooks = new List<Action<T>>();
-
-        public T Instance { private set; get; }
-        public bool IsConnected { get => rpc != null && !rpc.IsDisposed; }
-
-        public event EventHandler Connected;
-        public event EventHandler Disconnected;
+        private readonly string _pipeName;
 
         public RpcClient(string pipeName)
         {
-            this.pipeName = pipeName;
+            _pipeName = pipeName;
         }
+
+        private NamedPipeClientStream? _stream;
+        private JsonRpc? _rpc;
+        private readonly TimeSpan _connectTimeout = TimeSpan.FromSeconds(5);
+
+        public T? Instance { private set; get; }
+        public bool IsConnected { private set; get; }
+
+        public event EventHandler? Connected;
+        public event EventHandler? Disconnected;
 
         public async Task Connect()
         {
-            this.stream = GetStream();
-            await this.stream.ConnectAsync();
+            _stream = GetStream();
+            var connect = _stream.ConnectAsync();
+            var timeout = Task.Delay(_connectTimeout);
+            var result = await Task.WhenAny(connect, timeout);
+            if (result == timeout)
+                throw new TimeoutException($"Connecting to daemon failed after {_connectTimeout.Seconds} seconds.");
 
-            rpc = new JsonRpc(this.stream);
-            rpc.Disconnected += (_, _) =>
-            {
-                this.stream.Dispose();
-                OnDisconnected();
-                rpc.Dispose();
-            };
+            _rpc = new JsonRpc(new MessageHandler(_stream));
+            _rpc.Disconnected += (_, _) => OnDisconnected();
 
-            this.Instance = this.rpc.Attach<T>();
-            rpc.StartListening();
+            Instance = _rpc.Attach<T>();
+            _rpc.StartListening();
 
             OnConnected();
         }
 
-        protected virtual void OnConnected()
+        public void Disconnect()
         {
-            this.Connected?.Invoke(this, EventArgs.Empty);
+            _rpc?.Dispose();
         }
 
-        protected virtual void OnDisconnected()
+        protected virtual void OnConnected()
         {
-            this.Disconnected?.Invoke(this, EventArgs.Empty);
+            IsConnected = true;
+            Connected?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnDisconnected()
+        {
+            IsConnected = false;
+            Disconnected?.Invoke(this, EventArgs.Empty);
         }
 
         private NamedPipeClientStream GetStream()
         {
             return new NamedPipeClientStream(
                 ".",
-                this.pipeName,
+                _pipeName,
                 PipeDirection.InOut,
                 PipeOptions.Asynchronous | PipeOptions.WriteThrough | PipeOptions.CurrentUserOnly
             );

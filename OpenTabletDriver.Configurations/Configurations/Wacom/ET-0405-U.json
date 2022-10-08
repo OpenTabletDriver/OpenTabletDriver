@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
-      "MaxX": 10208.0,
-      "MaxY": 7424.0
+      "MaxX": 10208,
+      "MaxY": 7424
     },
     "Pen": {
       "MaxPressure": 511,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -23,7 +21,7 @@
       "ProductID": 16,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
@@ -45,6 +43,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }

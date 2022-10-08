@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 217.1954,
       "Height": 125.22,
-      "MaxX": 20320.0,
-      "MaxY": 10160.0
+      "MaxX": 20320,
+      "MaxY": 10160
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -47,7 +45,7 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }
