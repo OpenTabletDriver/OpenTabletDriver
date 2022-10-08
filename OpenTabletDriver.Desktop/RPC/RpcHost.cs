@@ -1,23 +1,26 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Desktop.RPC.Messages;
 using StreamJsonRpc;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
     public class RpcHost<T> where T : class
     {
-        private JsonRpc rpc;
-        private readonly string pipeName;
+        private readonly SynchronizationContext _synchronizationContext;
+        private readonly string _pipeName;
+        private JsonRpc? _rpc;
 
-        public event EventHandler<bool> ConnectionStateChanged;
-
-        public RpcHost(string pipeName)
+        public RpcHost(SynchronizationContext synchronizationContext, string pipeName)
         {
-            this.pipeName = pipeName;
+            _synchronizationContext = synchronizationContext;
+            _pipeName = pipeName;
         }
+
+        public event EventHandler<bool>? ConnectionStateChanged;
 
         public async Task Run(T host)
         {
@@ -30,8 +33,14 @@ namespace OpenTabletDriver.Desktop.RPC
                     try
                     {
                         ConnectionStateChanged?.Invoke(this, true);
-                        this.rpc = JsonRpc.Attach(stream, host);
-                        await this.rpc.Completion;
+
+                        _rpc = new JsonRpc(new MessageHandler(stream), host)
+                        {
+                            SynchronizationContext = _synchronizationContext
+                        };
+
+                        _rpc.StartListening();
+                        await _rpc.Completion;
                     }
                     catch (ObjectDisposedException)
                     {
@@ -44,7 +53,7 @@ namespace OpenTabletDriver.Desktop.RPC
                         Log.Exception(ex);
                     }
                     ConnectionStateChanged?.Invoke(this, false);
-                    this.rpc.Dispose();
+                    _rpc?.Dispose();
                     await stream.DisposeAsync();
                 });
             }
@@ -53,7 +62,7 @@ namespace OpenTabletDriver.Desktop.RPC
         private NamedPipeServerStream CreateStream()
         {
             return new NamedPipeServerStream(
-                this.pipeName,
+                _pipeName,
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Byte,

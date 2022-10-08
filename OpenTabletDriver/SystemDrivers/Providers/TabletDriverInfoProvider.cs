@@ -1,20 +1,19 @@
 using System.Linq;
 using OpenTabletDriver.Interop;
-using OpenTabletDriver.Plugin;
 
-namespace OpenTabletDriver.SystemDrivers.InfoProviders
+namespace OpenTabletDriver.SystemDrivers.Providers
 {
     internal class TabletDriverInfoProvider : IDriverInfoProvider
     {
-        private readonly string[] ProcessNames = new string[]
+        private static readonly string[] ProcessNames = new string[]
         {
             "TabletDriverGUI",
             "TabletDriverService"
         };
 
-        public DriverInfo GetDriverInfo()
+        public DriverInfo? GetDriverInfo()
         {
-            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+            if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)
             {
                 var processes = DriverInfo.SystemProcesses.Where(p => ProcessNames.Contains(p.ProcessName)).ToArray();
                 if (processes.Any())

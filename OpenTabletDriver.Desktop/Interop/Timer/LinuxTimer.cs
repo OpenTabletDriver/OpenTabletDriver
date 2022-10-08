@@ -3,51 +3,49 @@ using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Timers;
 using OpenTabletDriver.Native.Linux.Timers.Structs;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     using static Timers;
 
-    internal class LinuxTimer : ITimer, IDisposable
+    internal class LinuxTimer : ITimer
     {
         public LinuxTimer()
         {
-            callbackDelegate = Callback;
-            callbackHandle = GCHandle.Alloc(callbackDelegate);
+            _callbackDelegate = Callback;
+            _callbackHandle = GCHandle.Alloc(_callbackDelegate);
         }
 
-        private IntPtr timerID;
-        private readonly TimerCallback callbackDelegate;
-        private GCHandle callbackHandle;
-        private readonly object stateLock = new object();
-        private TimerSpec timeSpec;
-        private SigEvent sigEvent;
+        private readonly TimerCallback _callbackDelegate;
+        private readonly object _stateLock = new object();
+        private IntPtr _timerID;
+        private GCHandle _callbackHandle;
+        private TimerSpec _timeSpec;
+        private SigEvent _sigEvent;
 
         public bool Enabled { private set; get; }
         public float Interval { set; get; } = 1;
 
-        public event Action Elapsed;
+        public event Action? Elapsed;
 
         public void Start()
         {
-            lock (stateLock)
+            lock (_stateLock)
             {
                 if (!Enabled)
                 {
-                    sigEvent = new SigEvent
+                    _sigEvent = new SigEvent
                     {
                         notify = SigEv.Thread,
                         thread = new SigEvThread
                         {
-                            function = Marshal.GetFunctionPointerForDelegate(callbackDelegate),
+                            function = Marshal.GetFunctionPointerForDelegate(_callbackDelegate),
                             attribute = IntPtr.Zero
                         },
                         value = new SigVal()
                     };
 
-                    if (TimerCreate(ClockID.Monotonic, ref sigEvent, out timerID) != ERRNO.NONE)
+                    if (TimerCreate(ClockID.Monotonic, ref _sigEvent, out _timerID) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed creating timer: {(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
@@ -55,7 +53,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
                     double interval = Interval * 1000 * 1000;
 
-                    timeSpec = new TimerSpec
+                    _timeSpec = new TimerSpec
                     {
                         interval = new TimeSpec
                         {
@@ -70,7 +68,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     };
 
                     var oldTimeSpec = new TimerSpec();
-                    if (TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, ref oldTimeSpec) != ERRNO.NONE)
+                    if (TimerSetTime(_timerID, TimerFlag.Default, ref _timeSpec, ref oldTimeSpec) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed activating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
@@ -83,7 +81,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
         public void Stop()
         {
-            lock (stateLock)
+            lock (_stateLock)
             {
                 if (Enabled)
                 {
@@ -96,13 +94,13 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                         }
                     };
 
-                    if (TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, IntPtr.Zero) != ERRNO.NONE)
+                    if (TimerSetTime(_timerID, TimerFlag.Default, ref timeSpec, IntPtr.Zero) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed deactivating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
                     }
 
-                    if (TimerDelete(timerID) != ERRNO.NONE)
+                    if (TimerDelete(_timerID) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed deleting the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
@@ -122,7 +120,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             if (Enabled)
                 Stop();
-            callbackHandle.Free();
+            _callbackHandle.Free();
             GC.SuppressFinalize(this);
         }
     }

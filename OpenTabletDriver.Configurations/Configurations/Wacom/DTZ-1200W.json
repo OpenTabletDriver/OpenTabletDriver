@@ -1,0 +1,38 @@
+{
+  "Name": "Wacom Cintiq 12WX (DTZ-1200W)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 261.1,
+      "Height": 163.2,
+      "MaxX": 52220,
+      "MaxY": 32640
+    },
+    "Pen": {
+      "MaxPressure": 2046,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 198,
+      "InputReportLength": 10,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {}
+}

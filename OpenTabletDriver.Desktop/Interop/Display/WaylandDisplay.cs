@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Platform.Display;
 using WaylandNET.Client;
 using WaylandNET.Client.Protocol;
 
@@ -10,23 +10,25 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 {
     public class WaylandDisplay : IVirtualScreen
     {
-        private List<WaylandOutput> _outputs;
+        private readonly List<WaylandOutput> _outputs;
 
         public WaylandDisplay()
         {
             _outputs = new List<WaylandOutput>();
             using (var connection = new WaylandClientConnection())
             {
-                ZxdgOutputManagerV1 outputManager = null;
+                ZxdgOutputManagerV1? outputManager = null;
                 var registry = connection.Display.GetRegistry();
                 registry.Global += (wlRegistry, name, @interface, version) =>
                 {
                     switch (@interface)
                     {
                         case "wl_output":
-                            var output = new WaylandOutput();
-                            output.Index = _outputs.Count + 1;
-                            output.WlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 1);
+                            var output = new WaylandOutput
+                            {
+                                Index = _outputs.Count + 1,
+                                WlOutput = wlRegistry.Bind<WlOutput>(name, @interface, 1)
+                            };
                             output.WlOutput.Geometry += (wlOutput, x, y, physicalWidth, physicalHeight, subpixel, make, model, transform) =>
                             {
                                 if (output.XdgOutput == null || output.XdgOutput.Version < 2)
@@ -80,7 +82,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             }
         }
 
-        public IEnumerable<IDisplay> Displays => new IDisplay[] { this }.Concat(_outputs);
+        public IEnumerable<IDisplay> Displays => _outputs.Append<IDisplay>(this);
 
         public int Index => 0;
 

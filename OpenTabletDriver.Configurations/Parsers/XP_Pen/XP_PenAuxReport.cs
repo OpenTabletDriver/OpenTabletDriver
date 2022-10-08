@@ -1,4 +1,4 @@
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
 {
@@ -19,6 +19,7 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
                 report[index].IsBitSet(6),
                 report[index].IsBitSet(7),
                 report[index + 1].IsBitSet(0),
+                report[index + 1].IsBitSet(1),
             };
         }
 

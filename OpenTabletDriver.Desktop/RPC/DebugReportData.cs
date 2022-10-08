@@ -1,32 +1,34 @@
-using System.Linq;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json.Linq;
-using OpenTabletDriver.Plugin.Tablet;
+using System.Numerics;
+using Newtonsoft.Json;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
+    [JsonObject]
     public class DebugReportData
     {
         [JsonConstructor]
-        public DebugReportData()
+        private DebugReportData()
         {
         }
 
-        public DebugReportData(TabletReference tablet, IDeviceReport report)
+        public DebugReportData(string deviceName, IDeviceReport report)
         {
-            this.Tablet = tablet;
-            this.Data = JToken.FromObject(report);
-            this.Path = report.GetType().FullName;
+            var type = report.GetType();
+
+            DeviceName = deviceName;
+            ReportType = type.FullName!;
+            Raw = ReportFormatter.GetStringRaw(report.Raw);
+            Formatted = ReportFormatter.GetStringFormat(report);
+
+            RawPosition = (report as ITabletReport)?.Position;
         }
 
-        public TabletReference Tablet { set; get; }
-        public string Path { set; get; }
-        public JToken Data { set; get; }
+        public string DeviceName { set; get; } = string.Empty;
+        public string ReportType { set; get; } = string.Empty;
+        public string Raw { set; get; } = string.Empty;
+        public string Formatted { set; get; } = string.Empty;
 
-        public object ToObject()
-        {
-            var type = AppInfo.PluginManager.PluginTypes.First(t => t.FullName == Path);
-            return Data.ToObject(type);
-        }
+        public Vector2? RawPosition { set; get; }
     }
 }
