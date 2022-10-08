@@ -1,4 +1,4 @@
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Veikk
 {
@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
         public VeikkGestureTouchpadReport(byte[] report)
         {
             Raw = report;
-
+            
             TouchGestures = new bool[]
             {
                 report[3].IsBitSet(0) && report[2].IsBitSet(0), // Top
