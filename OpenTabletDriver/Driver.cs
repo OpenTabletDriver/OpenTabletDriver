@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,6 +21,7 @@ namespace OpenTabletDriver
         private readonly ICompositeDeviceHub _compositeDeviceHub;
         private readonly IReportParserProvider _reportParserProvider;
         private readonly IDeviceConfigurationProvider _deviceConfigurationProvider;
+        private readonly InputDeviceCollection _inputDevices = new InputDeviceCollection();
 
         public Driver(
             ICompositeDeviceHub deviceHub,
@@ -34,7 +36,16 @@ namespace OpenTabletDriver
 
         public event EventHandler<IEnumerable<InputDevice>>? InputDevicesChanged;
 
-        public InputDeviceCollection InputDevices { get; } = new InputDeviceCollection();
+
+        public IReadOnlyList<InputDevice> InputDevices
+        {
+            get {
+                lock(_inputDevices)
+                {
+                    return _inputDevices.ToImmutableArray();
+                }
+            }
+        }
 
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
         {
@@ -47,17 +58,28 @@ namespace OpenTabletDriver
 
             Log.Write("Detect", "Searching for tablets...");
 
-            InputDevices.Clear();
+            lock(_inputDevices)
+            {
+                _inputDevices.Clear();
+            }
+
             foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
             {
                 if (Match(config) is InputDevice tree)
                 {
                     success = true;
-                    InputDevices.Add(tree);
+
+                    lock(_inputDevices)
+                    {
+                        _inputDevices.Add(tree);
+                    }
 
                     tree.Disconnected += (sender, e) =>
                     {
-                        InputDevices.Remove(tree);
+                        lock(_inputDevices) {
+                            _inputDevices.Remove(tree);
+                        }
+
                         InputDevicesChanged?.Invoke(this, InputDevices);
                     };
                 }
@@ -210,7 +232,7 @@ namespace OpenTabletDriver
 
         public void Dispose()
         {
-            foreach (InputDevice tree in InputDevices.ToList())
+            foreach (InputDevice tree in InputDevices)
                 foreach (InputDeviceEndpoint dev in tree.Endpoints.ToList())
                     dev.Dispose();
         }
