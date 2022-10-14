@@ -39,8 +39,9 @@ namespace OpenTabletDriver
 
         public IReadOnlyList<InputDevice> InputDevices
         {
-            get {
-                lock(_inputDevices)
+            get
+            {
+                lock (_inputDevices)
                 {
                     return _inputDevices.ToImmutableArray();
                 }
@@ -58,7 +59,7 @@ namespace OpenTabletDriver
 
             Log.Write("Detect", "Searching for tablets...");
 
-            lock(_inputDevices)
+            lock (_inputDevices)
             {
                 _inputDevices.Clear();
             }
@@ -69,14 +70,15 @@ namespace OpenTabletDriver
                 {
                     success = true;
 
-                    lock(_inputDevices)
+                    lock (_inputDevices)
                     {
                         _inputDevices.Add(tree);
                     }
 
                     tree.Disconnected += (sender, e) =>
                     {
-                        lock(_inputDevices) {
+                        lock (_inputDevices)
+                        {
                             _inputDevices.Remove(tree);
                         }
 
