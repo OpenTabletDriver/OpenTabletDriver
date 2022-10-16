@@ -12,7 +12,7 @@ namespace OpenTabletDriver
     public interface IDriver
     {
         event EventHandler<IEnumerable<InputDevice>>? InputDevicesChanged;
-        InputDeviceCollection InputDevices { get; }
+        IReadOnlyList<InputDevice> InputDevices { get; }
         IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier);
         void Detect();
     }
