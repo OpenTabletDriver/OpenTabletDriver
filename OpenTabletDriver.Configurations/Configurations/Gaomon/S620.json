@@ -1,11 +1,12 @@
 {
-  "Name": "Gaomon S620",
+  "Manufacturer": "Gaomon",
+  "Model": "S620",
   "Specifications": {
     "Digitizer": {
       "Width": 165.1,
       "Height": 101.6,
-      "MaxX": 33020,
-      "MaxY": 20320
+      "MaxX": 33020.0,
+      "MaxY": 20320.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

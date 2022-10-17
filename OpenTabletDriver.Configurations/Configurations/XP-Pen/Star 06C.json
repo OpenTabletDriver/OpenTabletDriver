@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star 06C",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star 06C",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 152.4,
-      "MaxX": 50800,
-      "MaxY": 30480
+      "MaxX": 50800.0,
+      "MaxY": 30480.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

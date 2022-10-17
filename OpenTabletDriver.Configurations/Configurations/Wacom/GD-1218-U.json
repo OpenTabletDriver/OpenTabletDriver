@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom GD-1218-U",
+  "Manufacturer": "Wacom",
+  "Model": "GD-1218-U",
   "Specifications": {
     "Digitizer": {
       "Width": 457.2,
       "Height": 316.8,
-      "MaxX": 91440,
-      "MaxY": 63360
+      "MaxX": 91440.0,
+      "MaxY": 63360.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

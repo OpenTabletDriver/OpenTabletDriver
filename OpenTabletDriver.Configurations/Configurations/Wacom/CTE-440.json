@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTE-440",
+  "Manufacturer": "Wacom",
+  "Model": "CTE-440",
   "Specifications": {
     "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
-      "MaxX": 10208,
-      "MaxY": 7424
+      "MaxX": 10208.0,
+      "MaxY": 7424.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -67,5 +68,12 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

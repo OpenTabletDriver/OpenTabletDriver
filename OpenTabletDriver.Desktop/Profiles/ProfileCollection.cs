@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             if (profile == null)
                 return;
 
-            if (this.FirstOrDefault(t => t.Tablet == tablet.Configuration.Name) is Profile oldProfile)
+            if (this.FirstOrDefault(t => t.Tablet == tablet.Configuration.ToString()) is Profile oldProfile)
             {
                 Remove(oldProfile);
             }
@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         private Profile? GetProfile(InputDevice tablet)
         {
-            return this.FirstOrDefault(t => t.Tablet == tablet.Configuration.Name);
+            return this.FirstOrDefault(t => t.Tablet == tablet.Configuration.ToString());
         }
 
         public Profile GetOrSetDefaults(IServiceProvider serviceProvider, InputDevice inputDevice)

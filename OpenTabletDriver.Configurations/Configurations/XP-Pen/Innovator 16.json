@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Innovator 16",
+  "Manufacturer": "XP-Pen",
+  "Model": "Innovator 16",
   "Specifications": {
     "Digitizer": {
       "Width": 343.915,
       "Height": 193.545,
-      "MaxX": 68783,
-      "MaxY": 38709
+      "MaxX": 68783.0,
+      "MaxY": 38709.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

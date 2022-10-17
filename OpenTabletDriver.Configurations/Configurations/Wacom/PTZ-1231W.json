@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTZ-1231W",
+  "Manufacturer": "Wacom",
+  "Model": "PTZ-1231W",
   "Specifications": {
     "Digitizer": {
       "Width": 487.68,
       "Height": 304.8,
-      "MaxX": 97536,
-      "MaxY": 60960
+      "MaxX": 97536.0,
+      "MaxY": 60960.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -50,6 +51,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bars are not yet supported."
+    ]
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

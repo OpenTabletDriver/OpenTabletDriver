@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Artist 16 Pro",
+  "Manufacturer": "XP-Pen",
+  "Model": "Artist 16 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 341.07,
       "Height": 191.795,
-      "MaxX": 68214,
-      "MaxY": 38359
+      "MaxX": 68214.0,
+      "MaxY": 38359.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

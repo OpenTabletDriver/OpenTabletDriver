@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H420X",
+  "Manufacturer": "Huion",
+  "Model": "H420X",
   "Specifications": {
     "Digitizer": {
-      "Width": 106,
-      "Height": 66,
-      "MaxX": 21200,
-      "MaxY": 13200
+      "Width": 106.0,
+      "Height": 66.0,
+      "MaxX": 21200.0,
+      "MaxY": 13200.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -48,6 +49,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

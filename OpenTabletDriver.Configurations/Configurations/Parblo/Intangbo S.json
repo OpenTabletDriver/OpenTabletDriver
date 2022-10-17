@@ -1,11 +1,12 @@
 {
-  "Name": "Parblo Intangbo S",
+  "Manufacturer": "Parblo",
+  "Model": "Intangbo S",
   "Specifications": {
     "Digitizer": {
       "Width": 177.5,
       "Height": 103.5,
-      "MaxX": 17306,
-      "MaxY": 10045
+      "MaxX": 17306.0,
+      "MaxY": 10045.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -46,6 +47,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

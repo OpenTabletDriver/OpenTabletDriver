@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom Cintiq 16 (DTK1660)",
+  "Manufacturer": "Wacom",
+  "Model": "Cintiq 16 (DTK1660)",
   "Specifications": {
     "Digitizer": {
       "Width": 348.16,
       "Height": 197.59,
-      "MaxX": 69632,
-      "MaxY": 39518
+      "MaxX": 69632.0,
+      "MaxY": 39518.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -31,5 +32,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "WARNING: No tablet metadata was found when converting configurations."
+    ]
+  },
   "Attributes": {}
 }

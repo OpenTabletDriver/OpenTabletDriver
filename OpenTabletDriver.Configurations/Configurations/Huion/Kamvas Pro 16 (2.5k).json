@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Kamvas Pro 16 (2.5k)",
+  "Manufacturer": "Huion",
+  "Model": "Kamvas Pro 16 (2.5k)",
   "Specifications": {
     "Digitizer": {
       "Width": 349.63,
       "Height": 196.665,
-      "MaxX": 69926,
-      "MaxY": 39333
+      "MaxX": 69926.0,
+      "MaxY": 39333.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,5 +34,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

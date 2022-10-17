@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom GD-0405-U",
+  "Manufacturer": "Wacom",
+  "Model": "GD-0405-U",
   "Specifications": {
     "Digitizer": {
-      "Width": 127,
-      "Height": 106,
-      "MaxX": 25400,
-      "MaxY": 21200
+      "Width": 127.0,
+      "Height": 106.0,
+      "MaxX": 25400.0,
+      "MaxY": 21200.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

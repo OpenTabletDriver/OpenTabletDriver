@@ -1,11 +1,12 @@
 {
-  "Name": "Genius i608x",
+  "Manufacturer": "Genius",
+  "Model": "i608x",
   "Specifications": {
     "Digitizer": {
       "Width": 203.2,
       "Height": 152.4,
-      "MaxX": 40960,
-      "MaxY": 30720
+      "MaxX": 40960.0,
+      "MaxY": 30720.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -33,5 +34,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Requires Zadig's WinUSB to be installed"
+    ]
+  },
   "Attributes": {}
 }

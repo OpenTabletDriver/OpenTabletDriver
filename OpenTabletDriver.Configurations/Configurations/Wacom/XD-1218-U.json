@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom XD-1218-U",
+  "Manufacturer": "Wacom",
+  "Model": "XD-1218-U",
   "Specifications": {
     "Digitizer": {
       "Width": 457.2,
       "Height": 316.8,
-      "MaxX": 91440,
-      "MaxY": 63360
+      "MaxX": 91440.0,
+      "MaxY": 63360.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -46,6 +47,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

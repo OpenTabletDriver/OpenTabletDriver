@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTL-480",
+  "Manufacturer": "Wacom",
+  "Model": "CTL-480",
   "Specifications": {
     "Digitizer": {
-      "Width": 152,
-      "Height": 95,
-      "MaxX": 15200,
-      "MaxY": 9500
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -58,5 +59,12 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

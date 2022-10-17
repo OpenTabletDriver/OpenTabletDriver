@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom XD-0405-U",
+  "Manufacturer": "Wacom",
+  "Model": "XD-0405-U",
   "Specifications": {
     "Digitizer": {
-      "Width": 127,
-      "Height": 106,
-      "MaxX": 25400,
-      "MaxY": 21200
+      "Width": 127.0,
+      "Height": 106.0,
+      "MaxX": 25400.0,
+      "MaxY": 21200.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -46,6 +47,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

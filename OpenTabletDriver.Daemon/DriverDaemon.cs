@@ -182,7 +182,7 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var dev in tablet.Endpoints)
                 {
-                    dev.RawReport += (_, report) => PostDebugReport(dev.Configuration.Name, report);
+                    dev.RawReport += (_, report) => PostDebugReport(dev.Configuration.ToString(), report);
                     dev.RawClone = _debugging;
                 }
             }
@@ -210,7 +210,7 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var device in _driver.InputDevices.ToImmutableArray())
             {
-                var group = device.Configuration.Name;
+                var group = device.Configuration.ToString();
 
                 var profile = _settingsManager.Settings.Profiles.GetOrSetDefaults(_serviceProvider, device);
                 device.OutputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, device);
@@ -276,7 +276,7 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeSettings(InputDevice dev, IOutputMode outputMode, Profile profile)
         {
-            string group = dev.Configuration.Name;
+            var group = dev.Configuration.ToString();
 
             var elements = from store in profile.Filters
                 where store.Enable
@@ -428,9 +428,9 @@ namespace OpenTabletDriver.Daemon
             return _updater?.InstallUpdate() ?? Task.CompletedTask;
         }
 
-        private void PostDebugReport(string tablet, IDeviceReport report)
+        private void PostDebugReport(string deviceName, IDeviceReport report)
         {
-            DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
+            DeviceReport?.Invoke(this, new DebugReportData(deviceName, report));
         }
     }
 }

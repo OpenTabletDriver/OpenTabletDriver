@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H642",
+  "Manufacturer": "Huion",
+  "Model": "H642",
   "Specifications": {
     "Digitizer": {
       "Width": 160.02,
       "Height": 99.06,
-      "MaxX": 32004,
-      "MaxY": 19812
+      "MaxX": 32004.0,
+      "MaxY": 19812.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

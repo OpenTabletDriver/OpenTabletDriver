@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTZ-431W",
+  "Manufacturer": "Wacom",
+  "Model": "PTZ-431W",
   "Specifications": {
     "Digitizer": {
       "Width": 157.48,
       "Height": 98.425,
-      "MaxX": 31496,
-      "MaxY": 19685
+      "MaxX": 31496.0,
+      "MaxY": 19685.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -50,6 +51,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tablet buttons and touch bars are not yet supported."
+    ]
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

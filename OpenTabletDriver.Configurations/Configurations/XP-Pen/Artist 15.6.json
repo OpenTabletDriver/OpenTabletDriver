@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Artist 15.6",
+  "Manufacturer": "XP-Pen",
+  "Model": "Artist 15.6",
   "Specifications": {
     "Digitizer": {
       "Width": 344.19,
       "Height": 194.61,
-      "MaxX": 34419,
-      "MaxY": 19461
+      "MaxX": 34419.0,
+      "MaxY": 19461.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -60,6 +61,13 @@
       ]
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

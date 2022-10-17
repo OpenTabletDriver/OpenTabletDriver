@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTH-470",
+  "Manufacturer": "Wacom",
+  "Model": "CTH-470",
   "Specifications": {
     "Digitizer": {
       "Width": 147.2,
-      "Height": 92,
-      "MaxX": 14720,
-      "MaxY": 9200
+      "Height": 92.0,
+      "MaxX": 14720.0,
+      "MaxY": 9200.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -58,5 +59,12 @@
       "InitializationStrings": []
     }
   ],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

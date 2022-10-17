@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom DTC-133",
+  "Manufacturer": "Wacom",
+  "Model": "DTC-133",
   "Specifications": {
     "Digitizer": {
       "Width": 294.34,
       "Height": 165.56,
-      "MaxX": 29434,
-      "MaxY": 16556
+      "MaxX": 29434.0,
+      "MaxY": 16556.0
     },
     "Pen": {
       "MaxPressure": 4095,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

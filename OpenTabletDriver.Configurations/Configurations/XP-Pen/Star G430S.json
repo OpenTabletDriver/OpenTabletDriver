@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star G430S",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star G430S",
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
       "Height": 76.2,
-      "MaxX": 20320,
-      "MaxY": 15240
+      "MaxX": 20320.0,
+      "MaxY": 15240.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

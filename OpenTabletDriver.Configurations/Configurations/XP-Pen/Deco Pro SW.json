@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Deco Pro SW",
+  "Manufacturer": "XP-Pen",
+  "Model": "Deco Pro SW",
   "Specifications": {
     "Digitizer": {
       "Width": 230.12,
       "Height": 129.54,
-      "MaxX": 46024,
-      "MaxY": 25908
+      "MaxX": 46024.0,
+      "MaxY": 25908.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,5 +34,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

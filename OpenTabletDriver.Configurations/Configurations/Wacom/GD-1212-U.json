@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom GD-1212-U",
+  "Manufacturer": "Wacom",
+  "Model": "GD-1212-U",
   "Specifications": {
     "Digitizer": {
       "Width": 304.8,
       "Height": 316.8,
-      "MaxX": 60960,
-      "MaxY": 63360
+      "MaxX": 60960.0,
+      "MaxY": 63360.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -44,5 +45,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "WARNING: No tablet metadata was found when converting configurations."
+    ]
+  },
   "Attributes": {}
 }

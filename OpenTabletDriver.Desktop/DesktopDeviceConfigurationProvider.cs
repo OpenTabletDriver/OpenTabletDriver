@@ -37,7 +37,7 @@ namespace OpenTabletDriver.Desktop
             return _inAssemblyConfigurationProvider.TabletConfigurations
                 .Select(asmConfig => (ConfigurationSource.Assembly, asmConfig))
                 .Concat(jsonConfigurations)
-                .GroupBy(sourcedConfig => sourcedConfig.Item2.Name)
+                .GroupBy(sourcedConfig => sourcedConfig.Item2.ToString())
                 .Select(multiSourcedConfig =>
                 {
                     var asmConfig = multiSourcedConfig.Where(m => m.Item1 == ConfigurationSource.Assembly)

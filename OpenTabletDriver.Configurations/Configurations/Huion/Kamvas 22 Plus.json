@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Kamvas 22 Plus",
+  "Manufacturer": "Huion",
+  "Model": "Kamvas 22 Plus",
   "Specifications": {
     "Digitizer": {
       "Width": 476.64,
       "Height": 268.11,
-      "MaxX": 95328,
-      "MaxY": 53622
+      "MaxX": 95328.0,
+      "MaxY": 53622.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

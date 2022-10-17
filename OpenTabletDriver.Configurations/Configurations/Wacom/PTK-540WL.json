@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTK-540WL",
+  "Manufacturer": "Wacom",
+  "Model": "PTK-540WL",
   "Specifications": {
     "Digitizer": {
       "Width": 203.2,
-      "Height": 127,
-      "MaxX": 40640,
-      "MaxY": 25400
+      "Height": 127.0,
+      "MaxX": 40640.0,
+      "MaxY": 25400.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -46,5 +47,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

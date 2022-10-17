@@ -1,6 +1,5 @@
 using System.IO;
 using Newtonsoft.Json;
-using OpenTabletDriver.Desktop.Converters;
 using OpenTabletDriver.Desktop.Json;
 
 namespace OpenTabletDriver.Desktop
@@ -10,7 +9,6 @@ namespace OpenTabletDriver.Desktop
         static Serialization()
         {
             Serializer.Error += SerializationErrorHandler;
-            Serializer.Converters.Add(new VersionConverter());
         }
 
         internal static JsonSerializer Serializer { get; } = new AdvancedJsonSerializer

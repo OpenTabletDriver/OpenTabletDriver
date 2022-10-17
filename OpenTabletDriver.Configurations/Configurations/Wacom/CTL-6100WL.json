@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTL-6100WL",
+  "Manufacturer": "Wacom",
+  "Model": "CTL-6100WL",
   "Specifications": {
     "Digitizer": {
-      "Width": 216,
-      "Height": 135,
-      "MaxX": 21600,
-      "MaxY": 13500
+      "Width": 216.0,
+      "Height": 135.0,
+      "MaxX": 21600.0,
+      "MaxY": 13500.0
     },
     "Pen": {
       "MaxPressure": 4095,
@@ -33,5 +34,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wireless is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

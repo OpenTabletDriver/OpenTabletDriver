@@ -1,11 +1,12 @@
 {
-  "Name": "Acepen AP 1060",
+  "Manufacturer": "Acepen",
+  "Model": "AP 1060",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 152.4,
-      "MaxX": 50800,
-      "MaxY": 30480
+      "MaxX": 50800.0,
+      "MaxY": 30480.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,5 +36,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

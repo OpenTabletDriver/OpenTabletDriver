@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H1161",
+  "Manufacturer": "Huion",
+  "Model": "H1161",
   "Specifications": {
     "Digitizer": {
       "Width": 279.4,
       "Height": 174.625,
-      "MaxX": 55880,
-      "MaxY": 34925
+      "MaxX": 55880.0,
+      "MaxY": 34925.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -50,6 +51,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tablet buttons are not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

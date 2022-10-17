@@ -32,7 +32,7 @@ namespace OpenTabletDriver.UX.Controls
             var index = SelectedIndex;
 
             var profiles = _app.Settings.Profiles;
-            var tablets = _app.Tablets.Select(t => t.Name);
+            var tablets = _app.Tablets.Select(t => t.ToString());
 
             var visibleProfiles = profiles.Where(p => tablets.Contains(p.Tablet)).ToImmutableArray();
 

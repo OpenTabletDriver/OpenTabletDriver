@@ -1,11 +1,12 @@
 {
-  "Name": "UGEE S640",
+  "Manufacturer": "UGEE",
+  "Model": "S640",
   "Specifications": {
     "Digitizer": {
       "Width": 159.99,
       "Height": 99.97,
-      "MaxX": 31998,
-      "MaxY": 19994
+      "MaxX": 31998.0,
+      "MaxY": 19994.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

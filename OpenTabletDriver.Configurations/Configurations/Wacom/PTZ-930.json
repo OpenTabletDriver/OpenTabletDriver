@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTZ-930",
+  "Manufacturer": "Wacom",
+  "Model": "PTZ-930",
   "Specifications": {
     "Digitizer": {
       "Width": 304.8,
       "Height": 228.6,
-      "MaxX": 60960,
-      "MaxY": 45720
+      "MaxX": 60960.0,
+      "MaxY": 45720.0
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -50,6 +51,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bars are not yet supported."
+    ]
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

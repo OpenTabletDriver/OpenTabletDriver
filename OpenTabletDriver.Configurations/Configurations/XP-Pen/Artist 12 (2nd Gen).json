@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Artist 12 (2nd Gen)",
+  "Manufacturer": "XP-Pen",
+  "Model": "Artist 12 (2nd Gen)",
   "Specifications": {
     "Digitizer": {
       "Width": 263.19,
       "Height": 148.08,
-      "MaxX": 52638,
-      "MaxY": 29616
+      "MaxX": 52638.0,
+      "MaxY": 29616.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Deco Pro Medium",
+  "Manufacturer": "XP-Pen",
+  "Model": "Deco Pro Medium",
   "Specifications": {
     "Digitizer": {
       "Width": 278.99,
       "Height": 156.995,
-      "MaxX": 55798,
-      "MaxY": 31399
+      "MaxX": 55798.0,
+      "MaxY": 31399.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tilt and wheel are not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

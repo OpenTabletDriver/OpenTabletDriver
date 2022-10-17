@@ -1,11 +1,12 @@
 {
-  "Name": "Artisul AP604",
+  "Manufacturer": "Artisul",
+  "Model": "AP604",
   "Specifications": {
     "Digitizer": {
-      "Width": 159,
+      "Width": 159.0,
       "Height": 99.3,
-      "MaxX": 15900,
-      "MaxY": 9930
+      "MaxX": 15900.0,
+      "MaxY": 9930.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -29,6 +30,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "WARNING: No tablet metadata was found when converting configurations."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

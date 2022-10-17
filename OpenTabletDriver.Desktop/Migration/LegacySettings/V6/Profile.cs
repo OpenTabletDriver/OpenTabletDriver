@@ -91,7 +91,7 @@ namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
         private AngledArea GetDefaultTabletArea(IServiceProvider serviceProvider)
         {
             var configProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
-            var config = configProvider.TabletConfigurations.First(c => c.Name == Tablet);
+            var config = configProvider.TabletConfigurations.First(c => c.ToString() == Tablet);
             var specs = config.Specifications.Digitizer!;
             return new AngledArea
             {

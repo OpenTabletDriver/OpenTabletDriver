@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTK-650",
+  "Manufacturer": "Wacom",
+  "Model": "PTK-650",
   "Specifications": {
     "Digitizer": {
       "Width": 223.52,
       "Height": 139.7,
-      "MaxX": 44704,
-      "MaxY": 27940
+      "MaxX": 44704.0,
+      "MaxY": 27940.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -46,5 +47,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

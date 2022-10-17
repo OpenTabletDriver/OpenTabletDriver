@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTL-4100",
+  "Manufacturer": "Wacom",
+  "Model": "CTL-4100",
   "Specifications": {
     "Digitizer": {
-      "Width": 152,
-      "Height": 95,
-      "MaxX": 15200,
-      "MaxY": 9500
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0
     },
     "Pen": {
       "MaxPressure": 4095,
@@ -42,5 +43,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

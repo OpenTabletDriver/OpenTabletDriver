@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom XD-0912-U",
+  "Manufacturer": "Wacom",
+  "Model": "XD-0912-U",
   "Specifications": {
     "Digitizer": {
       "Width": 304.8,
       "Height": 240.6,
-      "MaxX": 60960,
-      "MaxY": 48120
+      "MaxX": 60960.0,
+      "MaxY": 48120.0
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -46,6 +47,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "FeatureInitDelayMs": "150"
   }

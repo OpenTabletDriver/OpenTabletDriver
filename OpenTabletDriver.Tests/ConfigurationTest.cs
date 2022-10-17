@@ -214,10 +214,10 @@ namespace OpenTabletDriver.Tests
                 if (equality)
                 {
                     var message = string.Format("'{0}' {1} (index: {2}) conflicts with '{3}' {4} (index: {5})",
-                        deviceIdentifier.TabletConfiguration.Name,
+                        deviceIdentifier.TabletConfiguration,
                         deviceIdentifier.IdentifierType,
                         deviceIdentifier.IdentifierIndex,
-                        otherIdentifier.TabletConfiguration.Name,
+                        otherIdentifier.TabletConfiguration,
                         otherIdentifier.IdentifierType,
                         otherIdentifier.IdentifierIndex);
 
@@ -257,7 +257,7 @@ namespace OpenTabletDriver.Tests
             public IdentificationContextPair(IdentificationContext a, IdentificationContext b)
             {
                 // Order by name
-                (A, B) = string.Compare(a.TabletConfiguration.Name, b.TabletConfiguration.Name, StringComparison.Ordinal) < 0 ? (a, b) : (b, a);
+                (A, B) = string.Compare(a.TabletConfiguration.ToString(), b.TabletConfiguration.ToString(), StringComparison.Ordinal) < 0 ? (a, b) : (b, a);
             }
         }
 

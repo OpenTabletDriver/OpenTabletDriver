@@ -278,7 +278,7 @@ namespace OpenTabletDriver.Console
         public async Task ListTablets()
         {
             var tablets = await _driverDaemon.GetTablets();
-            var tabletNames = tablets.Select(t => t.Name);
+            var tabletNames = tablets.Select(t => t.ToString());
             var output = string.Join(", ", tabletNames);
             await Out.WriteLineAsync(output);
         }

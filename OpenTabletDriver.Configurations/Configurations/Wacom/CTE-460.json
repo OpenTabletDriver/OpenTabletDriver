@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTE-460",
+  "Manufacturer": "Wacom",
+  "Model": "CTE-460",
   "Specifications": {
     "Digitizer": {
-      "Width": 152,
-      "Height": 95,
-      "MaxX": 15200,
-      "MaxY": 9500
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 15200.0,
+      "MaxY": 9500.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -44,5 +45,12 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {}
 }

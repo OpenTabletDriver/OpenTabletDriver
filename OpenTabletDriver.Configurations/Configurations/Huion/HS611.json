@@ -1,11 +1,12 @@
 {
-  "Name": "Huion HS611",
+  "Manufacturer": "Huion",
+  "Model": "HS611",
   "Specifications": {
     "Digitizer": {
       "Width": 258.4,
       "Height": 161.5,
-      "MaxX": 51680,
-      "MaxY": 32300
+      "MaxX": 51680.0,
+      "MaxY": 32300.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Touch bar is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

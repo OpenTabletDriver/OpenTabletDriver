@@ -1,11 +1,12 @@
 {
-  "Name": "VEIKK A15 V2",
+  "Manufacturer": "VEIKK",
+  "Model": "A15 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 152.4,
-      "MaxX": 50800,
-      "MaxY": 31750
+      "MaxX": 50800.0,
+      "MaxY": 31750.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

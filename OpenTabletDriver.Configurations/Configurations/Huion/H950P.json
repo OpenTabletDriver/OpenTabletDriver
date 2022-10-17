@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H950P",
+  "Manufacturer": "Huion",
+  "Model": "H950P",
   "Specifications": {
     "Digitizer": {
-      "Width": 221,
-      "Height": 138,
-      "MaxX": 44200,
-      "MaxY": 27600
+      "Width": 221.0,
+      "Height": 138.0,
+      "MaxX": 44200.0,
+      "MaxY": 27600.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -50,6 +51,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

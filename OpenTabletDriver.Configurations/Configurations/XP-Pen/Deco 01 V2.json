@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Deco 01 V2",
+  "Manufacturer": "XP-Pen",
+  "Model": "Deco 01 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 254.0,
       "Height": 158.75,
-      "MaxX": 25400,
-      "MaxY": 15875
+      "MaxX": 25400.0,
+      "MaxY": 15875.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -51,6 +52,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tilt is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

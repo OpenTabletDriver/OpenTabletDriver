@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Deco Pro Small",
+  "Manufacturer": "XP-Pen",
+  "Model": "Deco Pro Small",
   "Specifications": {
     "Digitizer": {
       "Width": 230.12,
       "Height": 129.54,
-      "MaxX": 46024,
-      "MaxY": 25908
+      "MaxX": 46024.0,
+      "MaxY": 25908.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tilt and wheel are not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

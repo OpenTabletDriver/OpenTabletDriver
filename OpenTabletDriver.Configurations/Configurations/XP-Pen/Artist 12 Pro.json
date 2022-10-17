@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Artist 12 Pro",
+  "Manufacturer": "XP-Pen",
+  "Model": "Artist 12 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 256.34,
       "Height": 144.15,
-      "MaxX": 25634,
-      "MaxY": 14415
+      "MaxX": 25634.0,
+      "MaxY": 14415.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tilt and wheel are not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

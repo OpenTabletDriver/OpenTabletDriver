@@ -49,7 +49,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
             return new Profile
             {
-                Tablet = tablet.Configuration.Name,
+                Tablet = tablet.Configuration.ToString(),
                 OutputMode = serviceProvider.GetDefaultSettings(typeof(AbsoluteMode), digitizer!, screen),
                 BindingSettings = BindingSettings.GetDefaults(tablet.Configuration.Specifications)
             };

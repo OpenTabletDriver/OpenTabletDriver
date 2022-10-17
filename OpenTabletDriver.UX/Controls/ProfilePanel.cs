@@ -60,7 +60,7 @@ namespace OpenTabletDriver.UX.Controls
 
                 if (DataContext is Profile profile && app.Tablets.Any())
                 {
-                    var tablet = app.Tablets.First(t => t.Name == profile.Tablet);
+                    var tablet = app.GetTablet(profile);
                     var specifications = tablet.Specifications;
 
                     if (specifications.Digitizer != null)

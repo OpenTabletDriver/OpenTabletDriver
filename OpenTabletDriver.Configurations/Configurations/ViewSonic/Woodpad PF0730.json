@@ -1,11 +1,12 @@
 {
-  "Name": "ViewSonic Woodpad PF0730",
+  "Manufacturer": "ViewSonic",
+  "Model": "Woodpad PF0730",
   "Specifications": {
     "Digitizer": {
-      "Width": 168,
+      "Width": 168.0,
       "Height": 106.4,
-      "MaxX": 16800,
-      "MaxY": 10640
+      "MaxX": 16800.0,
+      "MaxY": 10640.0
     },
     "Pen": {
       "MaxPressure": 4095,
@@ -31,5 +32,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "WARNING: No tablet metadata was found when converting configurations."
+    ]
+  },
   "Attributes": {}
 }

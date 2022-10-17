@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom CTE-650",
+  "Manufacturer": "Wacom",
+  "Model": "CTE-650",
   "Specifications": {
     "Digitizer": {
       "Width": 216.48,
       "Height": 135.3,
-      "MaxX": 21648,
-      "MaxY": 13530
+      "MaxX": 21648.0,
+      "MaxY": 13530.0
     },
     "Pen": {
       "MaxPressure": 511,
@@ -33,5 +34,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

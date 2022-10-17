@@ -1,11 +1,12 @@
 {
-  "Name": "Huion H420",
+  "Manufacturer": "Huion",
+  "Model": "H420",
   "Specifications": {
     "Digitizer": {
       "Width": 101.6,
       "Height": 57.01295,
-      "MaxX": 8340,
-      "MaxY": 4680
+      "MaxX": 8340.0,
+      "MaxY": 4680.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -36,6 +37,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "HasQuirks",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Windows: Requires Zadig's WinUSB to be installed on interface 0"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

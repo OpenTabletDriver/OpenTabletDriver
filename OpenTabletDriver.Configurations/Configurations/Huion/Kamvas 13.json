@@ -1,11 +1,12 @@
 {
-  "Name": "Huion Kamvas 13",
+  "Manufacturer": "Huion",
+  "Model": "Kamvas 13",
   "Specifications": {
     "Digitizer": {
       "Width": 293.76,
       "Height": 165.24,
-      "MaxX": 58752,
-      "MaxY": 33048
+      "MaxX": 58752.0,
+      "MaxY": 33048.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

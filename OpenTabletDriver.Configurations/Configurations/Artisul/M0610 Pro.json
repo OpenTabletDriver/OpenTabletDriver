@@ -1,11 +1,12 @@
 {
-  "Name": "Artisul M0610 Pro",
+  "Manufacturer": "Artisul",
+  "Model": "M0610 Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 257.375,
       "Height": 161.49,
-      "MaxX": 51475,
-      "MaxY": 32298
+      "MaxX": 51475.0,
+      "MaxY": 32298.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Tablet buttons, tilt, and wheel are not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

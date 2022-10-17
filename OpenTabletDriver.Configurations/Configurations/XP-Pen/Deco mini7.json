@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Deco mini7",
+  "Manufacturer": "XP-Pen",
+  "Model": "Deco mini7",
   "Specifications": {
     "Digitizer": {
       "Width": 177.8,
       "Height": 111.095,
-      "MaxX": 35560,
-      "MaxY": 22219
+      "MaxX": 35560.0,
+      "MaxY": 22219.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -72,6 +73,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

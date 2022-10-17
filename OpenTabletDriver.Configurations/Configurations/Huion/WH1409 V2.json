@@ -1,11 +1,12 @@
 {
-  "Name": "Huion WH1409 V2",
+  "Manufacturer": "Huion",
+  "Model": "WH1409 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 350,
-      "Height": 218,
-      "MaxX": 70000,
-      "MaxY": 43600
+      "Width": 350.0,
+      "Height": 218.0,
+      "MaxX": 70000.0,
+      "MaxY": 43600.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

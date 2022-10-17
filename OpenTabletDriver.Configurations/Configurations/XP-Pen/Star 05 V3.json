@@ -1,11 +1,12 @@
 {
-  "Name": "XP-Pen Star 05 V3",
+  "Manufacturer": "XP-Pen",
+  "Model": "Star 05 V3",
   "Specifications": {
     "Digitizer": {
       "Width": 203.2,
-      "Height": 127,
-      "MaxX": 40640,
-      "MaxY": 20540
+      "Height": 127.0,
+      "MaxX": 40640.0,
+      "MaxY": 20540.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -33,6 +34,13 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": []
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

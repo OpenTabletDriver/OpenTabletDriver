@@ -1,11 +1,12 @@
 {
-  "Name": "Wacom PTK-1240",
+  "Manufacturer": "Wacom",
+  "Model": "PTK-1240",
   "Specifications": {
     "Digitizer": {
       "Width": 487.68,
       "Height": 304.8,
-      "MaxX": 97536,
-      "MaxY": 60960
+      "MaxX": 97536.0,
+      "MaxY": 60960.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -46,5 +47,14 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {}
 }

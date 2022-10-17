@@ -1,11 +1,12 @@
 {
-  "Name": "Gaomon M106K",
+  "Manufacturer": "Gaomon",
+  "Model": "M106K",
   "Specifications": {
     "Digitizer": {
-      "Width": 200,
-      "Height": 125,
-      "MaxX": 40000,
-      "MaxY": 25000
+      "Width": 200.0,
+      "Height": 125.0,
+      "MaxX": 40000.0,
+      "MaxY": 25000.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Untested",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "WARNING: No tablet metadata was found when converting configurations."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

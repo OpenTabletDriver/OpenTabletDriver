@@ -1,11 +1,12 @@
 {
-  "Name": "Genius G-Pen 560",
+  "Manufacturer": "Genius",
+  "Model": "G-Pen 560",
   "Specifications": {
     "Digitizer": {
       "Width": 152.3873,
       "Height": 114.2873,
-      "MaxX": 11999,
-      "MaxY": 8999
+      "MaxX": 11999.0,
+      "MaxY": 8999.0
     },
     "Pen": {
       "MaxPressure": 1024,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "Supported",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Soft-buttons are bindable as aux buttons"
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

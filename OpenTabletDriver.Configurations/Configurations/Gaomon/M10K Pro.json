@@ -1,11 +1,12 @@
 {
-  "Name": "Gaomon M10K Pro",
+  "Manufacturer": "Gaomon",
+  "Model": "M10K Pro",
   "Specifications": {
     "Digitizer": {
       "Width": 254.1,
       "Height": 158.75,
-      "MaxX": 50800,
-      "MaxY": 31750
+      "MaxX": 50800.0,
+      "MaxY": 31750.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -35,6 +36,15 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
+  "Metadata": {
+    "Aliases": [],
+    "SupportStatus": "MissingFeatures",
+    "Features": [],
+    "UnsupportedFeatures": [],
+    "Notes": [
+      "Wheel is not yet supported."
+    ]
+  },
   "Attributes": {
     "libinputoverride": "1"
   }

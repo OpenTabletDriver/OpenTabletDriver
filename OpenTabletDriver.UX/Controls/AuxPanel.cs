@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX.Controls
                 if (DataContext is not Profile profile)
                     return;
 
-                var tablet = app.Tablets.First(t => t.Name == profile.Tablet);
+                var tablet = app.GetTablet(profile);
                 var buttonCount = tablet.Specifications.AuxiliaryButtons?.ButtonCount ?? 0;
 
                 foreach (var button in ButtonsFor(c => c.BindingSettings.AuxButtons, buttonCount))
