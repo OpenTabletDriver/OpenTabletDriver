@@ -27,6 +27,10 @@ namespace OpenTabletDriver.Benchmarks.Output
             public void MouseUp(MouseButton button)
             {
             }
+
+            public void Scroll(Vector2 delta)
+            {
+            }
         }
     }
 }

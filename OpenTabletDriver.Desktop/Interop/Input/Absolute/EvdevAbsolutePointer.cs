@@ -30,13 +30,22 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             input_absinfo* yPtr = &yAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
 
+            // Vertical and horizontal scrolling
+            Device.EnableCodes(
+                EventType.EV_REL,
+                EventCode.REL_WHEEL,
+                EventCode.REL_HWHEEL
+            );
+
+            // Mouse buttons
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
                 EventCode.BTN_LEFT,
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
                 EventCode.BTN_SIDE,
-                EventCode.BTN_EXTRA);
+                EventCode.BTN_EXTRA
+            );
 
             var result = Device.Initialize();
             switch (result)
