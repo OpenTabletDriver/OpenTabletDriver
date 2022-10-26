@@ -358,7 +358,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<IDiagnosticInfo> GetDiagnostics()
         {
             var devices = await GetDevices();
-            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, LogMessages, devices);
+            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, LogMessages, devices, _settingsManager.Settings);
         }
 
         public Task SetTabletDebug(bool enabled)
