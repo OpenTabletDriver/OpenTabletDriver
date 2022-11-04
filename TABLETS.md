@@ -51,6 +51,8 @@
 | VEIKK A15 V2                  |     Supported     |
 | VEIKK S640                    |     Supported     |
 | VEIKK S640 V2                 |     Supported     |
+| VEIKK VK430                   |     Supported     |
+| VEIKK VK640                   |     Supported     |
 | VEIKK VK1060                  |     Supported     |
 | ViewSonic WoodPad PF0730      |     Supported     |
 | Wacom CTE-430                 |     Supported     |
@@ -162,8 +164,6 @@
 | VEIKK A30 V2                  |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50 V2                  |  Missing Features | Touchpad is not yet supported.
-| VEIKK VK430                   |  Missing Features | Aux buttons are not yet supported.
-| VEIKK VK640                   |  Missing Features | Aux buttons are not yet supported.
 | Wacom CTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom CTE-650                 |  Missing Features | Wheel is not yet supported.
 | Wacom CTH-461                 |  Missing Features | Tablet buttons and touch are not yet supported.
