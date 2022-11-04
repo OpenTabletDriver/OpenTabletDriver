@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
@@ -24,11 +27,13 @@ namespace OpenTabletDriver
 
         private readonly IReportParserProvider _reportParserProvider;
         private readonly IDeviceConfigurationProvider _deviceConfigurationProvider;
+        private readonly object _detectSync = new object();
+        private ImmutableArray<InputDeviceTree> _inputDeviceTrees = ImmutableArray<InputDeviceTree>.Empty;
 
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
 
         public ICompositeDeviceHub CompositeDeviceHub { get; }
-        public InputDeviceTreeList InputDevices { get; } = new();
+        public ImmutableArray<InputDeviceTree> InputDevices => _inputDeviceTrees;
         public IEnumerable<TabletReference> Tablets => InputDevices.Select(c => c.CreateReference());
 
         public IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier)
@@ -38,34 +43,49 @@ namespace OpenTabletDriver
 
         public virtual bool Detect()
         {
-            bool success = false;
-
-            Log.Write("Detect", "Searching for tablets...");
-
-            InputDevices.Clear();
-            foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
+            lock (_detectSync)
             {
-                if (Match(config) is InputDeviceTree tree)
+                bool success = false;
+
+                Log.Write("Detect", "Searching for tablets...");
+
+                var treeBuilder = ImmutableArray.CreateBuilder<InputDeviceTree>();
+                foreach (var config in _deviceConfigurationProvider.TabletConfigurations)
                 {
-                    success = true;
-                    InputDevices.Add(tree);
-
-                    tree.Disconnected += (sender, e) =>
+                    if (Match(config) is InputDeviceTree tree)
                     {
-                        InputDevices.Remove(tree);
-                        TabletsChanged?.Invoke(this, Tablets);
-                    };
+                        success = true;
+                        treeBuilder.Add(tree);
+
+                        tree.Disconnected += (sender, e) =>
+                        {
+                            // save the immutable array for later use
+                            Unsafe.SkipInit(out ImmutableArray<InputDeviceTree> updatedTrees);
+                            ImmutableInterlocked.Update(ref _inputDeviceTrees, (trees, tree) =>
+                            {
+                                updatedTrees = trees.Remove(tree);
+                                return updatedTrees;
+                            }, tree);
+
+                            // use here, we do this to avoid using an _inputDeviceTrees that may have been updated
+                            TabletsChanged?.Invoke(this, updatedTrees.Select(c => c.CreateReference()));
+                        };
+                    }
                 }
+
+                // atomically update InputDevices
+                var oldDevices = _inputDeviceTrees;
+                _inputDeviceTrees = treeBuilder.ToImmutable();
+                DisposeDevices(oldDevices);
+                TabletsChanged?.Invoke(this, Tablets);
+
+                if (!success)
+                {
+                    Log.Write("Detect", "No tablets were detected.");
+                }
+
+                return success;
             }
-
-            TabletsChanged?.Invoke(this, Tablets);
-
-            if (!success)
-            {
-                Log.Write("Detect", "No tablets were detected.");
-            }
-
-            return success;
         }
 
         protected virtual InputDeviceTree? Match(TabletConfiguration config)
@@ -205,11 +225,16 @@ namespace OpenTabletDriver
             }
         }
 
+        private static void DisposeDevices(ImmutableArray<InputDeviceTree> trees)
+        {
+            foreach (var tree in trees)
+                foreach (var device in tree.InputDevices.ToArray())
+                    device.Dispose();
+        }
+
         public void Dispose()
         {
-            foreach (InputDeviceTree tree in InputDevices.ToList())
-                foreach (InputDevice dev in tree.InputDevices.ToList())
-                    dev.Dispose();
+            DisposeDevices(_inputDeviceTrees);
         }
     }
 }
