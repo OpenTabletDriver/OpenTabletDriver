@@ -20,7 +20,7 @@ namespace OpenTabletDriver
         [DisplayName(nameof(Rotation))]
         public float Rotation
         {
-            set => RaiseAndSetIfChanged(ref _rotation, value);
+            set => RaiseAndSetIfChanged(ref _rotation, value % 360);
             get => _rotation;
         }
 
