@@ -63,7 +63,7 @@ Nenhuma outra depedência.
 - Posicionamento absoluto do cursor
   - Área da tela e área da mesa
   - Deslocamentos ancorados no centro
-  - Precisa rotação de área
+  - Rotação de área precisa
 - Posicionamento relativo do cursor
   - Sensibilidade horizontal e vertical de px / mm
 - Configuração da caneta
