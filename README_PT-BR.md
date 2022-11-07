@@ -28,7 +28,7 @@ O OpenTabletDriver funciona como dois processos separados que se interagem entre
 
 > <sup>1</sup>Windows usa o `Wpf`, Linux usa o `Gtk`, e MacOS usa  `MacOS` respectivamente. Essa parte pode ser ignorada se você não o compilar do código fonte, já que a versão correta será fornecida na instalação.
 
-## Compilando o OpenTabletDriver do código fonte
+## Compilando o OpenTabletDriver do código-fonte
 
 Os requerimentos para compilar o OpenTabletDriver são consistente entre todas as plataformas, A execução do OpenTabletDriver em cada plataforma requer dependências diferentes.
 
