@@ -24,7 +24,7 @@ Todos os estados das mesas que são suportadas, não testadas, e que o suporte �
 
 # Executando os binários do OpenTabletDriver
 
-O OpenTabletDriver funciona como dois processos separados que se interagem entre si perfeitamente. O programa ativo que cuida de toda a informação da mesa é o `OpenTabletDriver.Daemon`, enquanto a interface é `OpenTabletDriver.UX.*`, onde `*` depende de sua plataforma<sup>1</sup>. O Daemon deve ser iniciado para tudo funcionar, mas a interface é desnecessária. Se você tem configurações existentes, elas vão se aplicar assim que o daemon iniciar.
+O OpenTabletDriver funciona como dois processos separados que se interagem entre si perfeitamente. O programa ativo que cuida de toda a informação da mesa é o `OpenTabletDriver.Daemon`, enquanto a interface é o `OpenTabletDriver.UX.*`, onde `*` depende de sua plataforma<sup>1</sup>. O daemon deve ser iniciado para tudo funcionar, mas a interface é desnecessária. Se você tem configurações existentes, elas vão se aplicar assim que o daemon iniciar.
 
 > <sup>1</sup>Windows usa o `Wpf`, Linux usa o `Gtk`, e MacOS usa  `MacOS` respectivamente. Essa parte pode ser ignorada se você não o compilar do código fonte, já que a versão correta será fornecida na instalação.
 
