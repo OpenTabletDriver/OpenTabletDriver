@@ -74,7 +74,7 @@ Nenhuma outra depedência.
   - Configuração do teclado
   - Configuração de plug-ins externos
 - Salvando e carregando configurações
-  - Automaticamente carrega as configurações do usuário usando `settings.json` no usuário ativo `%localappdata%` ou `.config` no diretório raiz.
+  - Automaticamente carrega as configurações usando `settings.json` no usuário ativo `%localappdata%` ou `.config` no diretório raiz.
 - Editor de configurações
   - Permite você á criar, modificar, e deletar configurações.
   - Gerar configurações de dispositivos HID visíveis
