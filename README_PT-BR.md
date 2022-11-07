@@ -67,7 +67,7 @@ Nenhuma outra depedência.
 - Posicionamento relativo do cursor
   - Sensibilidade horizontal e vertical de px / mm
 - Configuração da caneta
-  - Ponta por ligações de pressão
+  - Atalhos que dependem da pressão da ponta
   - Configuração dos atalhos de teclado expressos
   - Configurações dos botões da caneta
   - Configuração do botão do mouse
