@@ -13,7 +13,7 @@ O OpenTabletDriver é um driver para mesas digitalizadoras em modo de usuário, 
 
 # Mesas Digitalizadoras Suportadas
 
-Todos os estados das mesas que estão suportadas, não testado, e planejado a ter suporte podem ser encontrados aqui. Soluções para problemas comuns podem ser encontrados na wiki para sua plataforma. 
+Todos os estados das mesas que são suportadas, não testadas, e que o suporte é planejado podem ser encontrados aqui. Soluções para problemas comuns podem ser encontrados na wiki para sua plataforma. 
 - [Mesas Suportadas](https://opentabletdriver.net/Tablets)
 
 # Instalação
