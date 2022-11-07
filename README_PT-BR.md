@@ -62,7 +62,7 @@ Nenhuma outra depedência.
   - Suporte a scripts (arquivo/saída json)
 - Posicionamento absoluto do cursor
   - Área da tela e área da mesa
-  - *Offsets* ancorados no centro
+  - Deslocamentos ancorados no centro
   - Precisa rotação de área
 - Posicionamento relativo do cursor
   - Sensibilidade horizontal e vertical de px / mm
