@@ -85,6 +85,22 @@ Nenhuma outra depedência.
 
 # Contribuindo ao OpenTabletDriver
 
-Se você deseja contribuir ao OpenTabletDriver, confira o [Rastreador de Problemas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
+Se você deseja contribuir ao OpenTabletDriver, confira o [Rastreador de Problemas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Ao criar pull requests, siga as diretrizes descritas em nossas [Diretrizes de Contribuição](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
+
+Se você tem quaisquer problemas ou sugestões, [abra um ticket de problema](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) e preencha o modelo com as informações relevantes. Nós saudamos ambos relatórios de bugs assim como novas mesas para adicionar suporte. Em muitos casos, adicionar suporte para uma mesa nova é bem fácil.
+
+Para problemas e PRs relacionados ao empacotamento do OpenTabletDriver, por favor veja [este](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging) repositório.
+
+Para problemas e PRs relacionados à [página na web](https://opentabletdriver.net) do OpenTabletDriver, veja [este](https://github.com/OpenTabletDriver/OpenTabletDriver.Web) repositório.
+
+### Adicionando suporte à uma nova mesa
+
+Se você gostaria que a nós adicionássemos suporte para uma nova mesa, abra uma issue ou junte-se ao nosso [discord](https://discord.gg/9bcMaPkVAR) pedindo por suporte. *Nós geralmente preferimos adicionar suporte para uma mesa por meio do Discord por causa do vai-e-vem envolvido*.
+
+Nós iremos fazer você fazer algumas coisas como uma gravação dos dados enviados da sua mesa digitalizadora usando a nossa ferramenta de debugging embarcada, testar funcionalidades da mesa (botões no tablet, botões da caneta, pressão da caneta, etc.) com diferentes configurações que iremos mandar para você testar.
+
+Claro, você também é bem-vindo para abrir um PR adicionando suporte para a mesa você mesmo, se você entende bem o que está fazendo.
+
+Geralmente esse processo é relativamente fácil, especialmente se é para uma fabricante que já tem algumas de suas mesas suportadas por nós.
 
 Se você tiver algum problema ou sugestão, [abra um tíquete de problema](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose).
