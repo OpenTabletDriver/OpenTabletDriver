@@ -1,21 +1,22 @@
 using System.Collections;
 using System.Collections.Specialized;
 using OpenTabletDriver.Logging;
+using OpenTabletDriver.UX.Collections;
 
 namespace OpenTabletDriver.UX.Components
 {
-    public sealed class LogDataStore : INotifyCollectionChanged, IList<LogMessage>
+    public sealed class LogDataStore : INotifyCollectionChanged, IList<LogMessage>, IList
     {
         public LogDataStore(IEnumerable<LogMessage> currentMessages)
         {
-            _messages = new Queue<LogMessage>(currentMessages.TakeLast(MAX_NUM_MESSAGES));
-            _filteredMessages = new Queue<LogMessage>(GetFilteredMessages());
+            _messages = new RandomAccessQueue<LogMessage>(currentMessages.TakeLast(MAX_NUM_MESSAGES));
+            _filteredMessages = new RandomAccessQueue<LogMessage>(GetFilteredMessages());
         }
 
         private const int MAX_NUM_MESSAGES = 250;
 
-        private readonly Queue<LogMessage> _messages;
-        private Queue<LogMessage> _filteredMessages;
+        private readonly RandomAccessQueue<LogMessage> _messages;
+        private RandomAccessQueue<LogMessage> _filteredMessages;
         private LogLevel _filter = LogLevel.Info;
 
         public LogLevel Filter
@@ -23,7 +24,7 @@ namespace OpenTabletDriver.UX.Components
             set
             {
                 _filter = value;
-                _filteredMessages = new Queue<LogMessage>(GetFilteredMessages());
+                _filteredMessages = new RandomAccessQueue<LogMessage>(GetFilteredMessages());
                 OnCollectionChanged();
             }
             get => _filter;
@@ -86,17 +87,17 @@ namespace OpenTabletDriver.UX.Components
 
         bool ICollection<LogMessage>.Contains(LogMessage item)
         {
-            return _messages.Contains(item);
+            return _filteredMessages.Contains(item);
         }
 
         void ICollection<LogMessage>.CopyTo(LogMessage[] array, int arrayIndex)
         {
-            _messages.CopyTo(array, arrayIndex);
+            _filteredMessages.CopyTo(array, arrayIndex);
         }
 
         int IList<LogMessage>.IndexOf(LogMessage item)
         {
-            return _filteredMessages.ToList().IndexOf(item);
+            return _filteredMessages.IndexOf(item);
         }
 
         void IList<LogMessage>.Insert(int index, LogMessage item)
@@ -114,10 +115,62 @@ namespace OpenTabletDriver.UX.Components
             throw new NotSupportedException();
         }
 
+        bool IList.IsFixedSize => false;
+
+        bool ICollection.IsSynchronized => false;
+
+        object ICollection.SyncRoot => this;
+
+        object? IList.this[int index] { get => _filteredMessages[index]; set => _filteredMessages[index] = (LogMessage)value!; }
+
+        int IList.Add(object? value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IList.Clear()
+        {
+            ((ICollection<LogMessage>)this).Clear();
+        }
+
+        bool IList.Contains(object? value)
+        {
+            return _filteredMessages.Contains(value);
+        }
+
+        int IList.IndexOf(object? value)
+        {
+            if (value is LogMessage message)
+            {
+                return _filteredMessages.IndexOf(message);
+            }
+            return -1;
+        }
+
+        void IList.Insert(int index, object? value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IList.Remove(object? value)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IList.RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            ((ICollection)_filteredMessages).CopyTo(array, index);
+        }
+
         LogMessage IList<LogMessage>.this[int index]
         {
-            get => (_filteredMessages as IList<LogMessage>)![index];
-            set => (_filteredMessages as IList<LogMessage>)![index] = value;
+            get => _filteredMessages[index];
+            set => _filteredMessages[index] = value;
         }
     }
 }
