@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | 한국어 | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md)
+[English](../README.md) | 한국어 | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md)
 
 OpenTabletDriver는 관리자 권한 없이 여러 플랫폼에서 작동하는 오픈 소스 타블렛 드라이버입니다. OpenTabletDriver는 쉽게 사용 가능한 유저 인터페이스를 제공함과 동시에 가능한 한 여러 플랫폼에서 무리 없이 작동하도록 하는 것을 목표로 하고 있습니다.
 
