@@ -4,7 +4,7 @@
 
 [English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR
 
-OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de tablet configurável pelo usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas com a maior compatibilidade possível em uma interface gráfica amigável e de fácil utilização para o usuário.
+OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de tablet configurável pelo usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
 
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
@@ -14,7 +14,7 @@ OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de t
 
 # Tablets suportados
 
-Todos os status dos tablets que estão suportados, não estados e que estão em planejamento para serem testados estão aqui. Soluções de problemas comuns podem ser encontrados na wiki.
+Todos os status dos tablets que estão suportados, não testados ou que estão em planejamento para serem testados estão aqui. Soluções de problemas comuns podem ser encontrados na wiki.
 
 - [Tablets suportados](https://opentabletdriver.net/Tablets)
 
@@ -103,10 +103,10 @@ Sem outras dependências.
 
 Se você deseja contribuir para o OpenTabletDriver, confira a aba de [problemas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues). Quando criar pull requests, siga as orientações descritas em nosso [guia de contribuição](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
-Se você tiver algum problema ou sugestão, [relate o problema](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) e preencha o template com informações relevantes.
-Somos gratos aos relatos de bugs quanto aos pedidos de novos tablets para suportar. Em alguns casos, suportar um novo tablet pode ser fácil.
+Se você tiver algum problema ou sugestão, [relate um problema](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) e preencha o template com informações relevantes.
+Somos gratos aos relatos de bugs quanto aos pedidos de novos tablets para adicionar suporte. Em alguns casos, adicionar um novo tablet pode ser fácil.
 
-Para issues e PRs relacionados aos pacotes do OpenTabletDriver, por favor veja neste repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
+Para issues (problemas) e PRs relacionados aos pacotes do OpenTabletDriver, por favor veja neste repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
 
 Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https://opentabletdriver.net), veja este repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
 
@@ -123,7 +123,7 @@ utilizando nossa ferramenta de debug integrada, testando funcionalidades do tabl
 nós iremos enviar a você para testar.
 
 Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,
-caso tenha uma compreensão do que está desenvolvido.
+caso tenha uma boa compreensão do que está desenvolvido.
 
 Geralmente esse processo é relativamente fácil, especialmente se a fabricante
-do seu tablet já exisitr em algum outro tablet com suporte.
+do seu tablet já exisitr em algum outro tablet que já tenha suporte.
