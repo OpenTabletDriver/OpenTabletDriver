@@ -54,7 +54,7 @@ Pacotes requeridos (alguns pacotes podem já estar pré-instalados na sua distro
 Para compilar no Linux, execute o arquivo fornecido chamado 'build.sh'. Irá executar o equivalente ao comando 'dotnet publish'
 usado para compilação do pacote AUR, e irá produzir as compilações binárias em 'OpenTabletDriver/bin'.
 
-Para compilar no ARM linux, execute o arquivo fornecido 'build.sh' passando o runtime apropriado como argumento. Por exemplo para o arm64 seria: 'linux-arm64'.
+Para compilar no ARM linux, execute o arquivo fornecido 'build.sh' passando o runtime apropriado como argumento. Por exemplo, para o arm64 seria: 'linux-arm64'.
 
 Nota: Se você está compilando pela primeira vez, execute junto o script generate-rules.sh. Isso irá gerar um pacote de regras de udev em OpenTabletDriver/bin,
 chamado '99-opentabletdriver.rules'. Esse arquivo deve ser movido para `/etc/udev/rules.d/`:
