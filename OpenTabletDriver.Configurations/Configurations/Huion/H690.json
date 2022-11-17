@@ -1,11 +1,11 @@
 {
-  "Name": "Gaomon S56K",
+  "Name": "Huion H690",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 120.0,
-      "MaxX": 32000.0,
-      "MaxY": 24000.0
+      "Width": 228.6,
+      "Height": 142.875,
+      "MaxX": 36000.0,
+      "MaxY": 22500.0
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -13,39 +13,27 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 3
+    },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
-      "InputReportLength": 8,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {
-        "201": "HUION_T156_\\d{6}$"
-      },
-      "InitializationStrings": [
-        200
-      ]
-    },
-    {
-      "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T156_\\d{6}$"
+        "6": "HuionH690"
       },
       "InitializationStrings": [
-        200
+        100,
+        123
       ]
     },
     {
@@ -53,14 +41,15 @@
       "ProductID": 110,
       "InputReportLength": 16,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T156_\\d{6}$"
+        "6": "HuionH690"
       },
       "InitializationStrings": [
-        200
+        100,
+        123
       ]
     }
   ],

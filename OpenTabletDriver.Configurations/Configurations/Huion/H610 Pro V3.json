@@ -1,39 +1,35 @@
 {
-  "Name": "Huion Kamvas Pro 16",
+  "Name": "Huion H610 Pro V3",
   "Specifications": {
     "Digitizer": {
-      "Width": 344.2,
-      "Height": 193.6,
-      "MaxX": 68840.0,
-      "MaxY": 38720.0
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 2048.0,
+      "MaxY": 2048.0
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 2047,
       "Buttons": {
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 6
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
-      "InputReportLength": 12,
+      "ProductID": 110,
+      "InputReportLength": 16,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_M183_\\d{6}$"
+        "121": "^HA60"
       },
-      "InitializationStrings": [
-        200
-      ]
+      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

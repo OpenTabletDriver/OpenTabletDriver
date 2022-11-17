@@ -1,5 +1,5 @@
 {
-  "Name": "Huion Kamvas Pro 16",
+  "Name": "Gaomon GM156HD",
   "Specifications": {
     "Digitizer": {
       "Width": 344.2,
@@ -14,7 +14,7 @@
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 6
+      "ButtonCount": 10
     },
     "MouseButtons": null,
     "Touch": null
@@ -29,7 +29,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_M183_\\d{6}$"
+        "201": "OEM02_M166_\\d{6}$"
       },
       "InitializationStrings": [
         200

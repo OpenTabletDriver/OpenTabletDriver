@@ -1,20 +1,20 @@
 {
-  "Name": "Huion Kamvas Pro 16",
+  "Name": "Monoprice 10594",
   "Specifications": {
     "Digitizer": {
-      "Width": 344.2,
-      "Height": 193.6,
-      "MaxX": 68840.0,
-      "MaxY": 38720.0
+      "Width": 254.0,
+      "Height": 158.75,
+      "MaxX": 40000.0,
+      "MaxY": 25000.0
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 2047,
       "Buttons": {
         "ButtonCount": 2
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 6
+      "ButtonCount": 8
     },
     "MouseButtons": null,
     "Touch": null
@@ -22,17 +22,18 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
-      "InputReportLength": 12,
+      "ProductID": 110,
+      "InputReportLength": 16,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_M183_\\d{6}$"
+        "121": "HA60-F400"
       },
       "InitializationStrings": [
-        200
+        100,
+        123
       ]
     }
   ],
