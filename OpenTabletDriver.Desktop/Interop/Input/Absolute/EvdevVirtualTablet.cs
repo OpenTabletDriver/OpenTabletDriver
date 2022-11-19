@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
     {
         // order seems important due to reset ordering (to satisfy libinput)
         // tools -> touch -> buttons
-        private readonly EventCode[] eventCodes =
+        private static readonly EventCode[] eventCodes =
         {
                 EventCode.BTN_TOOL_PEN,
                 EventCode.BTN_TOOL_RUBBER,
