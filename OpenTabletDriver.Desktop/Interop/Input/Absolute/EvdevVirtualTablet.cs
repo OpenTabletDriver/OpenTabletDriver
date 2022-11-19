@@ -72,7 +72,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 EventCode.BTN_STYLUS2,
                 EventCode.BTN_STYLUS3,
                 EventCode.BTN_SIDE,
-                EventCode.BTN_EXTRA
+                EventCode.BTN_EXTRA,
+                EventCode.BTN_LEFT,
+                EventCode.BTN_MIDDLE,
+                EventCode.BTN_RIGHT,
+                EventCode.BTN_FORWARD,
+                EventCode.BTN_BACK
             );
 
             var result = Device.Initialize();
