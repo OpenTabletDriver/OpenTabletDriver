@@ -10,6 +10,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
     {
+        // order seems important due to reset ordering (to satisfy libinput)
+        // tools -> touch -> buttons
         private readonly EventCode[] eventCodes =
         {
                 EventCode.BTN_TOOL_PEN,
