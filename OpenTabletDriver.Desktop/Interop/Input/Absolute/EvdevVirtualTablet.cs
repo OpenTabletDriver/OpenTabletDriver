@@ -8,7 +8,7 @@ using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
@@ -110,12 +110,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetEraser(bool isEraser)
         {
             this._isEraser = isEraser;
-        }
-
-        public void SetProximity(bool proximity)
-        {
-            // matches upstream behavior; proximity isn't exposed to userspace
-            return;
         }
 
         public void SetHoverDistance(uint distance)
