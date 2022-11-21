@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     }
                     else
                     {
-                        Log.Write("Timer", "Unsupported interval detected, will use fallback timer. Expect high CPU usage", LogLevel.Warning);
+                        Log.WriteNotify("Timer", "Unsupported interval detected, will use fallback timer. Expect high CPU usage", LogLevel.Warning);
                         _fallbackTimer = new FallbackTimer
                         {
                             Interval = Interval
