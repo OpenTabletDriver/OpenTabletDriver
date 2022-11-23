@@ -8,7 +8,7 @@ using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
     {
         // order seems important due to reset ordering (to satisfy libinput)
         // tools -> touch -> buttons
@@ -25,7 +25,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool _isEraser;
-        private bool _proximity = true;
 
         public unsafe EvdevVirtualTablet(IVirtualScreen virtualScreen)
         {
@@ -96,7 +95,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_KEY, _isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, _proximity ? 1 : 0);
+            Device.Write(EventType.EV_KEY, _isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, 1);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
@@ -118,11 +117,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             this._isEraser = isEraser;
         }
 
-        public void SetProximity(bool proximity)
-        {
-            this._proximity = proximity;
-        }
-
         public void SetHoverDistance(uint distance)
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
@@ -141,7 +135,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
 
             _isEraser = false;
-            _proximity = true; // we counterintuitively set this to true since its the initial state
         }
 
         public void Flush()
