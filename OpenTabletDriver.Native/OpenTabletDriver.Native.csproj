@@ -2,12 +2,12 @@
 
   <PropertyGroup Label="Project Properties">
     <TargetFrameworks>$(FrameworkLTS);$(FrameworkLatest)</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+    <ProjectReference Include="..\OpenTabletDriver.Native.Linux\OpenTabletDriver.Native.Linux.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Native.MacOS\OpenTabletDriver.Native.MacOS.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Native.Windows\OpenTabletDriver.Native.Windows.csproj" />
   </ItemGroup>
 
 </Project>
