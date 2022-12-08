@@ -6,49 +6,33 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "Build Daemon",
+            "cwd": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net7.0",
             "program": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net7.0/OpenTabletDriver.Daemon.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/OpenTabletDriver.Daemon",
             "console": "internalConsole",
             "stopAtEntry": false
         },
         {
-            "name": "UX (Wpf)",
+            "name": "UX",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "Build UX (Wpf)",
-            "program": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0/OpenTabletDriver.UX.Wpf.dll",
+            "preLaunchTask": "Build UX",
+            "program": "",
             "args": [],
-            "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Wpf",
             "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
-            "name": "UX (Gtk)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "Build UX (Gtk)",
-            "program": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/OpenTabletDriver.UX.Gtk.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Gtk",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
-            "name": "UX (MacOS)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "Build UX (MacOS)",
-            "program": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/OpenTabletDriver.UX.MacOS",
-            "console": "internalConsole",
-            "stopAtEntry": false
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach"
+            "stopAtEntry": false,
+            "windows": {
+                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0-windows",
+                "program": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0-windows/OpenTabletDriver.UX.Wpf.dll",
+            },
+            "linux": {
+                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/",
+                "program": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/OpenTabletDriver.UX.Gtk.dll",
+            },
+            "osx": {
+                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/",
+                "program": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/OpenTabletDriver.UX.MacOS.dll",
+            }
         }
     ]
 }
