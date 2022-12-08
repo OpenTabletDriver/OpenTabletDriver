@@ -31,7 +31,7 @@ get_csproj() {
 }
 
 main() {
-    while [[ $# -gt 0 ]]; do
+    while [ $# -gt 0 ]; do
         local key="$1"
         case $key in
             -h|--help)
@@ -56,14 +56,25 @@ main() {
         exit 1
     fi
 
+    if [ ! -d "$feed" ]; then
+        mkdir "$feed"
+    fi
+
     local command="$1"
-    local project_name="$2"
+    shift
 
     if [ "$command" == "pack" ]; then
-        remove "$2"
-        pack "$2"
+        while [ $# -gt 0 ]; do
+            local project_name="$1"
+            remove "${project_name}"
+            pack "${project_name}"
+            shift
+        done
     elif [ "$command" == "remove" ]; then
-        remove "$2"
+        while [ $# -gt 0 ]; do
+            remove "$1"
+            shift
+        done
     else
         echo "Invalid command: $command"
         exit 1
