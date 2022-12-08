@@ -25,4 +25,6 @@ BenchmarkDotNet.Artifacts/
 shell.nix
 
 # Nuget local feed
-.local_feed/
+.local_feed/**
+
+!.gitkeep
