@@ -1,0 +1,54 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Daemon",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build Daemon",
+            "program": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net7.0/OpenTabletDriver.Daemon.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/OpenTabletDriver.Daemon",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "UX (Wpf)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build UX (Wpf)",
+            "program": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0/OpenTabletDriver.UX.Wpf.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Wpf",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "UX (Gtk)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build UX (Gtk)",
+            "program": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/OpenTabletDriver.UX.Gtk.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Gtk",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "UX (MacOS)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "Build UX (MacOS)",
+            "program": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/OpenTabletDriver.UX.MacOS",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}

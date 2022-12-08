@@ -2,7 +2,7 @@
 
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(FrameworkBase)</TargetFramework>
+    <TargetFramework>$(FrameworkLatest)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
