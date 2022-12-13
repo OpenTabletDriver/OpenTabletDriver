@@ -5,6 +5,7 @@
     <TargetFramework>$(FrameworkLatest)</TargetFramework>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup Label="Project References">
