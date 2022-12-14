@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Native.MacOS.Input;
 using OpenTabletDriver.Platform.Keyboard;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard

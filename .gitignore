@@ -23,3 +23,8 @@ BenchmarkDotNet.Artifacts/
 # Nix
 .envrc
 shell.nix
+
+# Nuget local feed
+.local_feed/**
+
+!.gitkeep
