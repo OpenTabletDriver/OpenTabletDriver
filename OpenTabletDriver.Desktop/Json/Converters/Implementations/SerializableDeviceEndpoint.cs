@@ -4,8 +4,8 @@ namespace OpenTabletDriver.Desktop.Json.Converters.Implementations
 {
     internal sealed class SerializableDeviceEndpoint : Serializable, IDeviceEndpoint
     {
-        public int ProductID { set; get; }
         public int VendorID { set; get; }
+        public int ProductID { set; get; }
         public int InputReportLength { set; get; }
         public int OutputReportLength { set; get; }
         public int FeatureReportLength { set; get; }
