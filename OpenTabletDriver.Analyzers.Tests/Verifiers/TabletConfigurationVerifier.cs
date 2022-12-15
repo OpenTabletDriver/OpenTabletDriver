@@ -25,20 +25,6 @@ namespace OpenTabletDriver.Analyzers.Tests.Verifiers
 
         public static Task Verify(
             (string file, string content)[] tabletJsonFiles,
-            (string file, string content)[] generatedSources,
-            Func<string, string?> analyzerConfigOptionsFactory)
-        {
-            return new IncrementalGeneratorVerifier<TabletConfigurationGenerator>()
-            {
-                AdditionalTexts = tabletJsonFiles.ToList(),
-                GeneratedSources = generatedSources.ToList(),
-                AnalyzerConfigOptionsFactory = analyzerConfigOptionsFactory,
-                AdditionalReferences = GetMetadataReferences()
-            }.RunAsync();
-        }
-
-        public static Task Verify(
-            (string file, string content)[] tabletJsonFiles,
             Func<string, string?> analyzerConfigOptionsFactory)
         {
             return new IncrementalGeneratorVerifier<TabletConfigurationGenerator>()
