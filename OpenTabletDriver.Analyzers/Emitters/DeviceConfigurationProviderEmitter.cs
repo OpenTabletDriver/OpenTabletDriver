@@ -54,7 +54,7 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                             .WithTypeArgumentList(
                                                 SyntaxFactory.TypeArgumentList(
                                                     SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
-                                                        SyntaxFactory.ParseTypeName("global::OpenTabletDriver.Tablet.TabletConfiguration")))),
+                                                        SyntaxFactory.ParseTypeName(TabletConfigurationEmitter.CLASS_NAME)))),
                                             SyntaxFactory.Identifier("TabletConfigurations"))
                                         .WithModifiers(
                                             SyntaxFactory.TokenList(

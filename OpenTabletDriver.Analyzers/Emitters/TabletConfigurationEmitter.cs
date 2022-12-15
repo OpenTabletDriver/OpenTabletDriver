@@ -47,7 +47,7 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                     _configuration.DigitizerIdentifiers == null
                                         ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
                                         : EmitterHelper.CreateList(
-                                            SyntaxFactory.ParseTypeName("global::OpenTabletDriver.Tablet.DeviceIdentifier"),
+                                            SyntaxFactory.ParseTypeName(DeviceIdentifierEmitter.CLASS_NAME),
                                             _configuration.DigitizerIdentifiers.Select(d =>
                                                 new DeviceIdentifierEmitter(d).Emit()))),
                                 SyntaxFactory.AssignmentExpression(
@@ -56,7 +56,7 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                     _configuration.AuxiliaryDeviceIdentifiers == null
                                         ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
                                         : EmitterHelper.CreateList(
-                                            SyntaxFactory.ParseTypeName("global::OpenTabletDriver.Tablet.DeviceIdentifier"),
+                                            SyntaxFactory.ParseTypeName(DeviceIdentifierEmitter.CLASS_NAME),
                                             _configuration.AuxiliaryDeviceIdentifiers.Select(d =>
                                                 new DeviceIdentifierEmitter(d).Emit()))),
                                 SyntaxFactory.AssignmentExpression(
