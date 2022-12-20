@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Benchmarks.Plugin
     [DryJob]
     public class PluginManagerBenchmark
     {
-        private PluginManager _pluginManager;
+        private PluginManager? _pluginManager;
 
         [Benchmark]
         public void PluginManagerCtor()

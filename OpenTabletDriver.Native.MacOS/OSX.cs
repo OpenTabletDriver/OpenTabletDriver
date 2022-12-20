@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using OpenTabletDriver.Native.OSX.Generic;
-using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Native.MacOS.Generic;
+using OpenTabletDriver.Native.MacOS.Input;
 
-namespace OpenTabletDriver.Native.OSX
+namespace OpenTabletDriver.Native.MacOS
 {
     using CGDirectDisplayID = UInt32;
     using CGError = Int32;
     using CGEventRef = IntPtr;
     using CGEventSourceRef = IntPtr;
 
-    public static class OSX
+    public static class MacOS
     {
         private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
         private const string Foundation = "/System/Library/Frameworks/Foundation.framework/Foundation";

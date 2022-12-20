@@ -1,6 +1,8 @@
 # IDE
 .vs/
-.vscode/
+.vscode/**
+!.vscode/launch.json
+!.vscode/tasks.json
 .idea/
 
 # Build Artifacts
@@ -21,3 +23,8 @@ BenchmarkDotNet.Artifacts/
 # Nix
 .envrc
 shell.nix
+
+# Nuget local feed
+.local_feed/**
+
+!.gitkeep
