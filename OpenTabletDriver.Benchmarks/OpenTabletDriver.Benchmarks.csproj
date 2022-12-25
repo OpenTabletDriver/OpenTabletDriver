@@ -4,10 +4,11 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>$(FrameworkLatest)</TargetFramework>
     <Nullable>enable</Nullable>
+    <LangVersion>11</LangVersion>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
     <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
 

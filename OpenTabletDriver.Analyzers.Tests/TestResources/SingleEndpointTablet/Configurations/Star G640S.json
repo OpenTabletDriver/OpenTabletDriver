@@ -1,0 +1,65 @@
+{
+  "Name": "XP-Pen Star G640S",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 165,
+      "Height": 103,
+      "MaxX": 32999,
+      "MaxY": 20599
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2310,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2310,
+      "InputReportLength": 10,
+      "OutputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2310,
+      "InputReportLength": 12,
+      "OutputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
