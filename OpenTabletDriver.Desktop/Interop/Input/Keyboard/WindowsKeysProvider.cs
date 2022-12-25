@@ -57,7 +57,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "D7", VirtualKey.VK_7 },
             { "D8", VirtualKey.VK_8 },
             { "D9", VirtualKey.VK_9 },
-            { "Minus", VirtualKey.VK_SUBTRACT },
+            { "Minus", VirtualKey.VK_OEM_MINUS },
             { "Grave", VirtualKey.VK_OEM_3 },
             { "Insert", VirtualKey.VK_INSERT },
             { "Home", VirtualKey.VK_HOME },
