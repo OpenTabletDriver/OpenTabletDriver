@@ -214,7 +214,7 @@ namespace OpenTabletDriver.Daemon
 
             _settingsManager.Settings = settings ?? Settings.GetDefaults();
 
-            foreach (var device in _driver.InputDevices.ToImmutableArray())
+            foreach (var device in _driver.InputDevices)
             {
                 var group = device.Configuration.Name;
 
