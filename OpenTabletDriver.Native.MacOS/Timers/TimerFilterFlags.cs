@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenTabletDriver.Native.OSX.Timers
+namespace OpenTabletDriver.Native.MacOS.Timers
 {
     [Flags]
     public enum FilterFlags : UInt32

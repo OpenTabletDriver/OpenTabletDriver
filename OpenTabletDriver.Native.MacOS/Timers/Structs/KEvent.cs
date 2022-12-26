@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace OpenTabletDriver.Native.OSX.Timers
+namespace OpenTabletDriver.Native.MacOS.Timers
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct KEvent

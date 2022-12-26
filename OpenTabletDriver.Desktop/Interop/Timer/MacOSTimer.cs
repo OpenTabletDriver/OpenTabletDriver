@@ -4,21 +4,19 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using OpenTabletDriver.Native.Linux;
-using OpenTabletDriver.Native.OSX.Timers;
-using OpenTabletDriver.Native.Posix;
+using OpenTabletDriver.Native.MacOS.Timers;
+using static OpenTabletDriver.Desktop.Interop.Posix.Utility;
+using static OpenTabletDriver.Native.MacOS.Timers.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
-    using static Timers;
-    using static Utility;
-
     internal class MacOSTimer : ITimer, IDisposable
     {
         const int TIMER_CANCELLED = 1;
 
         private Thread? thread;
         private int kqueue;
-        private readonly object stateLock = new object();
+        private readonly object stateLock = new();
 
         public MacOSTimer()
         {
@@ -102,7 +100,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     return;
                 }
 
-                if (events.First().udata != (IntPtr)TIMER_CANCELLED)
+                if (events.First().udata != TIMER_CANCELLED)
                 {
                     Elapsed?.Invoke();
                 }
@@ -123,7 +121,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     flags   = Flags.EV_ADD,
                     fflags  = FilterFlags.NOTE_MACHTIME | FilterFlags.NOTE_CRITICAL,
                     data    = IntPtr.Zero,
-                    udata   = (IntPtr)TIMER_CANCELLED
+                    udata   = TIMER_CANCELLED
                 }
             };
 
