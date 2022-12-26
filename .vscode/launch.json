@@ -33,6 +33,36 @@
                 "cwd": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/",
                 "program": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/OpenTabletDriver.UX.MacOS.dll",
             }
+        },
+        {
+            "name": "Daemon (Persistent)",
+            "type": "coreclr",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "windows": {
+                "program": "${workspaceFolder}/bin/OpenTabletDriver.Daemon.exe",
+            },
+            "linux": {
+                "program": "${workspaceFolder}/bin/OpenTabletDriver.Daemon",
+            },
+            "args": [],
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "UX (Persistent)",
+            "type": "coreclr",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "windows": {
+                "program": "${workspaceFolder}/bin/OpenTabletDriver.UX.Wpf.exe",
+            },
+            "linux": {
+                "program": "${workspaceFolder}/bin/OpenTabletDriver.UX.Gtk",
+            },
+            "args": [],
+            "console": "internalConsole",
+            "stopAtEntry": false
         }
     ]
 }
