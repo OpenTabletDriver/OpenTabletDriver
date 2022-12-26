@@ -9,6 +9,8 @@ using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Controls;
+using OpenTabletDriver.UX.Dialogs;
+using OpenTabletDriver.UX.ViewModels;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -40,7 +42,7 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             _pluginsList.ItemTextBinding = Binding.Property<PluginMetadata, string>(p => p.Name);
-            Refresh().Run();
+            RefreshDefault().Run();
 
             Content = splitter;
 
@@ -102,13 +104,15 @@ namespace OpenTabletDriver.UX.Windows
                 installButton.Text = uninstallButton.Enabled ? "Update" : "Install";
             };
 
+            var modifier = Application.Instance.CommonModifier;
             var fileMenu = new ButtonMenuItem
             {
                 Text = "&File",
                 Items =
                 {
-                    new AppCommand("Install...", InstallDialog),
-                    new AppCommand("Refresh", Refresh, Application.Instance.CommonModifier | Keys.R)
+                    new AppCommand("Install...", InstallDialog, modifier | Keys.O),
+                    new AppCommand("Refresh", RefreshDefault, modifier | Keys.R),
+                    new AppCommand("Use alternate source...", RefreshDialog, modifier | Keys.Shift | Keys.R)
                 }
             };
 
@@ -125,33 +129,48 @@ namespace OpenTabletDriver.UX.Windows
         /// <summary>
         /// Refreshes the plugin list from the default remote source.
         /// </summary>
-        private async Task Refresh()
+        private async Task RefreshDefault()
+        {
+            var remotePlugins = await _daemon.GetRemotePlugins();
+            await UpdateList(remotePlugins);
+        }
+
+        /// <summary>
+        /// Refreshes the plugin list from the user-specified remote source.
+        /// </summary>
+        private async Task RefreshDialog()
+        {
+            var dialog = _app.ShowDialog<PluginRepositoryDialog>(this);
+            if (dialog.Result is RepositoryModel repo)
+            {
+                var remotePlugins = await _daemon.GetRemotePlugins(repo.Owner, repo.Name, repo.GitRef);
+                await UpdateList(remotePlugins);
+            }
+        }
+
+        private async Task UpdateList(IEnumerable<PluginMetadata> remotePlugins)
         {
             _pluginsList.Enabled = false;
-            var selectedItem = _pluginsList.SelectedValue as PluginMetadata;
-
-            var appVersion = Assembly.GetEntryAssembly()!.GetName().Version!;
 
             var installedQuery = await _daemon.GetInstalledPlugins();
             _installedPlugins = installedQuery.ToImmutableArray();
+            _remotePlugins = remotePlugins.ToImmutableArray();
 
-            var remoteQuery = await _daemon.GetRemotePlugins();
-            _remotePlugins = remoteQuery.ToImmutableArray();
-
+            var selectedItem = _pluginsList.SelectedValue as PluginMetadata;
             var remote = from meta in _remotePlugins
-                         where meta.IsSupportedBy(appVersion)
-                         where !_installedPlugins.Any(meta.Match)
-                         orderby meta.Name
-                         select meta;
+                where meta.IsSupportedBy(Metadata.Version)
+                where !_installedPlugins.Any(meta.Match)
+                orderby meta.Name
+                select meta;
 
             var plugins = from meta in _installedPlugins.Concat(remote)
-                          orderby meta.PluginVersion descending
-                          group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
+                orderby meta.PluginVersion descending
+                group meta by (meta.Name, meta.Owner, meta.RepositoryUrl);
 
             var query = from plugin in plugins
-                        let meta = plugin.FirstOrDefault()
-                        orderby meta.Name, _installedPlugins.Any(m => m.Match(meta)) descending, _installedPlugins.Any(meta.Match)
-                        select meta;
+                let meta = plugin.FirstOrDefault()
+                orderby meta.Name, _installedPlugins.Any(m => m.Match(meta)) descending, _installedPlugins.Any(meta.Match)
+                select meta;
 
             var store = query.ToImmutableList();
 
@@ -173,7 +192,7 @@ namespace OpenTabletDriver.UX.Windows
             await _daemon.DownloadPlugin(plugin);
 
             Content.Enabled = true;
-            await Refresh();
+            await RefreshDefault();
         }
 
         /// <summary>
@@ -187,7 +206,7 @@ namespace OpenTabletDriver.UX.Windows
             await _daemon.UninstallPlugin(plugin);
 
             Content.Enabled = true;
-            await Refresh();
+            await RefreshDefault();
         }
 
         /// <summary>

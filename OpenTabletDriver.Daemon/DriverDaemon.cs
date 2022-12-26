@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +25,9 @@ using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Devices;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Logging;
+using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.SystemDrivers;
@@ -79,6 +84,7 @@ namespace OpenTabletDriver.Daemon
                 Message?.Invoke(sender, message);
             };
 
+            InitializePlatform();
             _driver.InputDevicesChanged += (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
             _deviceHub.DevicesChanged += (_, e) =>
             {
@@ -431,6 +437,35 @@ namespace OpenTabletDriver.Daemon
         private void PostDebugReport(string tablet, IDeviceReport report)
         {
             DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
+        }
+
+        private static void InitializePlatform()
+        {
+            switch (SystemInterop.CurrentPlatform)
+            {
+                case SystemPlatform.Windows:
+                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+
+                    var windows8 = new Version(6, 2, 9200, 0);
+                    if (Environment.OSVersion.Version >= windows8)
+                    {
+                        unsafe
+                        {
+                            var state = Windows.PowerThrottlingState.Create();
+                            state.ControlMask = (int)Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
+
+                            if (!Windows.SetProcessInformation(
+                                System.Diagnostics.Process.GetCurrentProcess().Handle,
+                                Windows.ProcessInformationClass.ProcessPowerThrottling,
+                                (IntPtr)Unsafe.AsPointer(ref state),
+                                Unsafe.SizeOf<Windows.PowerThrottlingState>()))
+                            {
+                                Log.Write("Platform", "Failed to allow timer resolution, asynchronous filters may have lower resolution when OTD is minimized.", LogLevel.Error);
+                            }
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

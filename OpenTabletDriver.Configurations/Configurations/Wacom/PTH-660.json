@@ -2,10 +2,10 @@
   "Name": "Wacom PTH-660",
   "Specifications": {
     "Digitizer": {
-      "Width": 224.0,
-      "Height": 148.0,
-      "MaxX": 44800.0,
-      "MaxY": 29600.0
+      "Width": 224,
+      "Height": 148,
+      "MaxX": 44800,
+      "MaxY": 29600
     },
     "Pen": {
       "MaxPressure": 8191,

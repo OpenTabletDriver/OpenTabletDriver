@@ -2,10 +2,10 @@
   "Name": "ViewSonic Woodpad PF0730",
   "Specifications": {
     "Digitizer": {
-      "Width": 168.0,
+      "Width": 168,
       "Height": 106.4,
-      "MaxX": 16800.0,
-      "MaxY": 10640.0
+      "MaxX": 16800,
+      "MaxY": 10640
     },
     "Pen": {
       "MaxPressure": 4095,

@@ -27,7 +27,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '7.0'
           include-prerelease: True
       - name: Debian Build
         run: ./Debian/package
@@ -96,7 +96,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '7.0'
           include-prerelease: True
       - name: Package
         run: ./Windows/package.ps1

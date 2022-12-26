@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop.Diagnostics;
@@ -42,8 +43,7 @@ namespace OpenTabletDriver.Desktop.Interop
             if (HasEnvironmentVariable("DISPLAY"))
                 return Singleton<IVirtualScreen, XScreen>();
 
-            Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
-            return Singleton<IVirtualScreen, XScreen>();
+            throw new InvalidOperationException("Neither Wayland nor X11 environment variables were set");
         }
 
         private static bool HasEnvironmentVariable(string variable)

@@ -2,10 +2,10 @@
   "Name": "Wacom CTL-4100WL",
   "Specifications": {
     "Digitizer": {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0
+      "Width": 152,
+      "Height": 95,
+      "MaxX": 15200,
+      "MaxY": 9500
     },
     "Pen": {
       "MaxPressure": 4095,
@@ -18,6 +18,19 @@
     "Touch": null
   },
   "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 886,
+      "InputReportLength": 64,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
     {
       "VendorID": 1386,
       "ProductID": 886,

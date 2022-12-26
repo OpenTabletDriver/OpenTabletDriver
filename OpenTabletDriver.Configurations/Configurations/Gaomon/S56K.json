@@ -2,10 +2,10 @@
   "Name": "Gaomon S56K",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 120.0,
-      "MaxX": 32000.0,
-      "MaxY": 24000.0
+      "Width": 160,
+      "Height": 120,
+      "MaxX": 32000,
+      "MaxY": 24000
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -35,6 +35,21 @@
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T156_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 16,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,

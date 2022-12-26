@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 using System.Numerics;
-using OpenTabletDriver.Native.OSX;
-using OpenTabletDriver.Native.OSX.Generic;
-using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Native.MacOS;
+using OpenTabletDriver.Native.MacOS.Generic;
+using OpenTabletDriver.Native.MacOS.Input;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
 {
-    using static OSX;
+    using static MacOS;
 
     public abstract class MacOSVirtualMouse : IMouseButtonHandler
     {
