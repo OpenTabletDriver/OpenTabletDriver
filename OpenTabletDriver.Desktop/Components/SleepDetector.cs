@@ -1,9 +1,6 @@
 using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-
-#nullable enable
 
 namespace OpenTabletDriver.Desktop.Components
 {
@@ -62,7 +59,9 @@ namespace OpenTabletDriver.Desktop.Components
                     return;
 
                 cts!.Cancel();
+#pragma warning disable VSTHRD002
                 task.Wait();
+#pragma warning restore VSTHRD002
 
                 cts.Dispose();
                 cts = null;
