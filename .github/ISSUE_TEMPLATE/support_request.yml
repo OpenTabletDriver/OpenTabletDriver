@@ -1,0 +1,64 @@
+name: Support Request
+title: "Support Request: "
+description: Request help for something that isn't an obvious bug
+labels: ["support request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill out the fields below adequately so that we have an easier time solving your issue. Thank you.
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: |
+        Please make sure you are able to tick the items below, so that all parties involved have an easier time.
+        Your issue is very likely to be closed and ignored if these conditions are not met.
+      options:
+        - label: I have installed OpenTabletDriver by following its [official installation instructions](https://opentabletdriver.net/).
+        - label: I have checked the [OpenTabletDriver Wiki](https://opentabletdriver.net/Wiki) and respective FAQ pages, and my issue was not covered or actually fixed.
+          required: true
+        - label: I have searched the existing issues and this new issue is not a duplicate of any.
+          required: true
+        - label: I have written a concise and meaningful title.
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What do you need help with?
+      description: Please be descriptive and use images or video where possible.
+      placeholder: ex. OpenTabletDriver has stopped detecting my tablet...
+    validations:
+      required: true
+
+  - type: textarea
+    id: attempts
+    attributes:
+      label: What have you tried?
+      description: List anything you've already tried to fix the problem. Reference any wiki pages you've tried.
+      placeholder: ex. I tried restarting my computer but...
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostic Information
+      description: |
+        Export diagnostics through the OpenTabletDriver GUI from menu <kbd>Help</kbd> → <kbd>Export Diagnostics</kbd>.
+        Then, in the text area below, either attach the file\* or paste its contents\*\*.
+
+        **If you are not able to export diagnostics** for some reason (i.e., crashes), then **paste a stack trace
+        if you got one**, or just type "N/A" if there's simply nothing else you can contribute.
+
+        \*: You may need to rename the file to have a `.txt` extension for GitHub to allow uploading it.
+        \*\*: If pasting diagnostics, it would be helpful to use a JSON code block, as you can see in the placeholder text below.
+      placeholder: |
+        ```json
+        <paste file contents>
+        ```
+        (Notice the triple backticks)
+    validations:
+      required: true

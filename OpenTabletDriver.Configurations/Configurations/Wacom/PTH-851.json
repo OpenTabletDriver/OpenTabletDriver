@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 325.12,
       "Height": 203.2,
-      "MaxX": 65024.0,
-      "MaxY": 40640.0
+      "MaxX": 65024,
+      "MaxY": 40640
     },
     "Pen": {
       "MaxPressure": 2047,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -47,7 +45,7 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
+  "AuxiliaryDeviceIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 791,

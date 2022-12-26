@@ -61,6 +61,7 @@ rules must be followed:
   by taking `MaxX` and `MaxY` and converting it into millimeter units. Please note that specs
   published by manufacturers have unfortunately been known to be wrong on occasion - avoid trusting
   these published specs without verifying the specs are accurate to the physical product.
+- Also include a diagnostics file that shows that OTD succesfully detected the tablet.
 - If you are the owner of the tablet submitting a new config for your own tablet, you may
   self-verify.
 

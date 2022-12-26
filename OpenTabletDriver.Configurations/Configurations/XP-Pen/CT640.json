@@ -2,16 +2,14 @@
   "Name": "XP-Pen CT640",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
+      "Width": 160,
       "Height": 101.6,
-      "MaxX": 32000.0,
-      "MaxY": 20320.0
+      "MaxX": 32000,
+      "MaxY": 20320
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -45,6 +43,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }

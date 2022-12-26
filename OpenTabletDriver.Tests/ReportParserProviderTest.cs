@@ -1,15 +1,15 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Components;
 using OpenTabletDriver.Configurations.Parsers.XP_Pen;
-using OpenTabletDriver.Plugin.Components;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 using Xunit;
 
 namespace OpenTabletDriver.Tests
 {
     public class ReportParserProviderTest
     {
-        public static TheoryData<string, Type> ReportParserProvider_CanGet_ReportParsers_Data => new()
+        public static TheoryData<string, Type> ReportParserProvider_CanGet_ReportParsers_Data => new TheoryData<string, Type>
         {
             // Built-in
             { typeof(TabletReportParser).FullName!, typeof(TabletReportParser) },
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Tests
         [MemberData(nameof(ReportParserProvider_CanGet_ReportParsers_Data))]
         public void ReportParserProvider_CanGet_ReportParsers(string reportParserName, Type expectedReportParserType)
         {
-            var serviceCollection = new DriverServiceCollection();
+            var serviceCollection = Utility.GetServices();
             var reportParserProvider = serviceCollection.BuildServiceProvider()
                 .GetRequiredService<IReportParserProvider>();
 

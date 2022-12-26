@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 165.1,
       "Height": 101.6,
-      "MaxX": 33020.0,
-      "MaxY": 20320.0
+      "MaxX": 33020,
+      "MaxY": 20320
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
@@ -34,9 +32,24 @@
       "InitializationStrings": [
         200
       ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 111,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "OEM02_T18e_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

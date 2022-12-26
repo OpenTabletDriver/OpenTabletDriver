@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Components;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Components;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations
 {
@@ -30,7 +29,7 @@ namespace OpenTabletDriver.Configurations
 
         private static Func<IReportParser<IDeviceReport>> GetConstructor(Type reportParserType)
         {
-            return () => (IReportParser<IDeviceReport>)Activator.CreateInstance(reportParserType);
+            return () => (IReportParser<IDeviceReport>)Activator.CreateInstance(reportParserType)!;
         }
 
         private static Dictionary<string, Func<IReportParser<IDeviceReport>>> CreateParsersFromAssembly(params Assembly[] assemblies)
@@ -38,8 +37,8 @@ namespace OpenTabletDriver.Configurations
             return assemblies.SelectMany(asm => asm.ExportedTypes)
                 .Where(t => t.IsAssignableTo(typeof(IReportParser<IDeviceReport>)))
                 .ToDictionary(
-                    t => t.FullName,
-                    t => GetConstructor(t)
+                    t => t.FullName!,
+                    GetConstructor
                 );
         }
     }

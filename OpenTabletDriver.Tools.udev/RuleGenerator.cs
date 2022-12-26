@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Tools.udev.Comparers;
 using udev.NET.Rules;
 using udev.NET.Rules.Names;
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Tools.udev
 
         private static IEnumerable<DeviceIdentifier> GetDistinctIdentifiers(TabletConfiguration config)
         {
-            var allIdentifiers = config.DigitizerIdentifiers.Concat(config.AuxilaryDeviceIdentifiers);
+            var allIdentifiers = config.DigitizerIdentifiers.Concat(config.AuxiliaryDeviceIdentifiers);
             return allIdentifiers.Distinct(new IdentifierComparer());
         }
 

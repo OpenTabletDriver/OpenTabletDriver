@@ -1,28 +1,31 @@
 using System.Runtime.InteropServices;
-using OpenTabletDriver.Plugin;
+using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Interop
 {
-    public class SystemInterop
+    /// <summary>
+    /// Provides system platform detection.
+    /// </summary>
+    [PublicAPI]
+    public static class SystemInterop
     {
-        protected SystemInterop()
-        {
-        }
-
-        public static PluginPlatform CurrentPlatform
+        /// <summary>
+        /// The currently running system platform.
+        /// </summary>
+        public static SystemPlatform CurrentPlatform
         {
             get
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    return PluginPlatform.Windows;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    return PluginPlatform.Linux;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                    return PluginPlatform.MacOS;
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-                    return PluginPlatform.FreeBSD;
-                else
-                    return 0;
+                    return SystemPlatform.Windows;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    return SystemPlatform.Linux;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    return SystemPlatform.MacOS;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+                    return SystemPlatform.FreeBSD;
+
+                return default;
             }
         }
     }

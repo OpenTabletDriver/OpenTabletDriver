@@ -1,126 +1,63 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using OpenTabletDriver.Devices;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Devices;
-using OpenTabletDriver.Plugin.Tablet;
+using JetBrains.Annotations;
+using Newtonsoft.Json;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver
 {
-    public class InputDevice : DeviceReader<IDeviceReport>
+    /// <summary>
+    /// A configured input device.
+    /// </summary>
+    [PublicAPI]
+    public class InputDevice
     {
-        private readonly uint _featureInitDelayMs;
-        private const string DELAY_ATTRIBUTE_KEY_NAME = "FeatureInitDelayMs";
-
-        public InputDevice(IDriver driver, IDeviceEndpoint device, TabletConfiguration configuration, DeviceIdentifier identifier)
-            : base(device, driver.GetReportParser(identifier))
+        public InputDevice(TabletConfiguration configuration, IList<InputDeviceEndpoint> endpoints)
         {
-            if (driver == null || device == null || configuration == null || identifier == null)
-            {
-                string argumentName = driver == null ? nameof(driver) :
-                    device == null ? nameof(device) :
-                    configuration == null ? nameof(configuration) :
-                    nameof(identifier);
-                throw new ArgumentNullException(argumentName);
-            }
-
-            Endpoint = device;
             Configuration = configuration;
-            Identifier = identifier;
+            Endpoints = endpoints;
 
-            if (Configuration.Attributes.TryGetValue(DELAY_ATTRIBUTE_KEY_NAME, out var delayStr))
-                if (!uint.TryParse(delayStr, out _featureInitDelayMs))
-                    Log.Write("Device", $"Could not parse '{delayStr}' from attribute {DELAY_ATTRIBUTE_KEY_NAME}", LogLevel.Warning);
-
-            Start();
+            foreach (var dev in Endpoints)
+            {
+                // Hook endpoint states
+                dev.ConnectionStateChanged += (sender, reading) =>
+                {
+                    if (_connected && !reading)
+                    {
+                        _connected = false;
+                        Disconnected?.Invoke(this, EventArgs.Empty);
+                    }
+                };
+                dev.Report += HandleReport;
+            }
         }
 
-        /// <summary>
-        /// The driver in which this <see cref="InputDevice"/> was sourced from.
-        /// </summary>
-        public IDriver Driver { private set; get; }
-
-        /// <summary>
-        /// The tablet configuration referring to this device.
-        /// </summary>
-        public TabletConfiguration Configuration { private set; get; }
-
-        /// <summary>
-        /// The device identifier used to detect this device.
-        /// </summary>
-        /// <value></value>
-        public DeviceIdentifier Identifier { private set; get; }
-
-        protected override bool Initialize()
+        [JsonConstructor]
+        private InputDevice()
         {
-            if (!base.Initialize())
-                return false;
-
-            Log.Debug("Device", $"Initializing device '{Endpoint.FriendlyName}' {Endpoint.DevicePath}");
-            Log.Debug("Device", $"Using report parser type '{Identifier.ReportParser}'");
-
-            if (_featureInitDelayMs != 0)
-                Log.Debug("Device", $"{DELAY_ATTRIBUTE_KEY_NAME} is set in tablet configuration, will sleep for {_featureInitDelayMs}ms between FeatureInitReports");
-
-            foreach (byte index in Identifier.InitializationStrings ?? new List<byte>())
-            {
-                Endpoint.GetDeviceString(index);
-                Log.Debug("Device", $"Initialized string index {index}");
-            }
-
-            foreach (var report in Identifier.FeatureInitReport ?? new List<byte[]>())
-            {
-                if (report == null || report.Length == 0)
-                    continue;
-
-                try
-                {
-                    if (_featureInitDelayMs != 0)
-                        Thread.Sleep((int)_featureInitDelayMs);
-                    ReportStream.SetFeature(report);
-                    Log.Debug("Device", "Set device feature: " + BitConverter.ToString(report));
-                }
-                catch
-                {
-                    Log.Write("Device", "Failed to set device feature: " + BitConverter.ToString(report), LogLevel.Warning);
-                }
-            }
-
-            foreach (var report in Identifier.OutputInitReport ?? new List<byte[]>())
-            {
-                if (report == null || report.Length == 0)
-                    continue;
-
-                try
-                {
-                    ReportStream.Write(report);
-                    Log.Debug("Device", "Set device output: " + BitConverter.ToString(report));
-                }
-                catch
-                {
-                    Log.Write("Device", "Failed to set device output: " + BitConverter.ToString(report), LogLevel.Warning);
-                }
-            }
-
-            return true;
+            Endpoints = Array.Empty<InputDeviceEndpoint>();
+            Configuration = null!;
         }
 
-        private bool TryGetDeviceProperty<T>(Func<IDeviceEndpoint, T> predicate, out T value)
+        private bool _connected = true;
+
+        public event EventHandler<EventArgs>? Disconnected;
+
+        public TabletConfiguration Configuration { protected set; get; }
+
+        [JsonIgnore]
+        public IList<InputDeviceEndpoint> Endpoints { get; }
+
+        /// <summary>
+        /// The active output mode at the end of the data pipeline for all data to be processed.
+        /// </summary>
+        [JsonIgnore]
+        public IOutputMode? OutputMode { set; get; }
+
+        private void HandleReport(object? sender, IDeviceReport? report)
         {
-            try
-            {
-                value = predicate(Endpoint);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Exception(ex);
-            }
-            value = default(T);
-            return false;
+            OutputMode?.Read(report!);
         }
-
-        private T SafeGetDeviceProperty<T>(Func<IDeviceEndpoint, T> predicate, T fallback) => TryGetDeviceProperty(predicate, out var val) ? val : fallback;
     }
 }

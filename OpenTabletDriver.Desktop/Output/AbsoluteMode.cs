@@ -1,14 +1,22 @@
-﻿using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+﻿using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Output
 {
     [PluginName("Absolute Mode")]
-    public class AbsoluteMode : AbsoluteOutputMode, IPointerProvider<IAbsolutePointer>
+    public class AbsoluteMode : AbsoluteOutputMode, IMouseButtonSource
     {
-        [Resolved]
-        public override IAbsolutePointer Pointer { set; get; }
+        public AbsoluteMode(
+            InputDevice tablet,
+            IAbsolutePointer absolutePointer,
+            ISettingsProvider settingsProvider
+        ) : base(tablet, absolutePointer)
+        {
+            settingsProvider.Inject(this);
+        }
+
+
+        public IMouseButtonHandler MouseButtonHandler => Pointer;
     }
 }

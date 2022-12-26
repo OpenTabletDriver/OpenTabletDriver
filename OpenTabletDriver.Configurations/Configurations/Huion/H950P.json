@@ -2,16 +2,14 @@
   "Name": "Huion H950P",
   "Specifications": {
     "Digitizer": {
-      "Width": 221.0,
-      "Height": 138.0,
-      "MaxX": 44200.0,
-      "MaxY": 27600.0
+      "Width": 221,
+      "Height": 138,
+      "MaxX": 44200,
+      "MaxY": 27600
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -51,7 +49,7 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

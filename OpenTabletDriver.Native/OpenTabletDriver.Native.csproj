@@ -1,8 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFrameworks>$(FrameworkLTS);$(FrameworkLatest)</TargetFrameworks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenTabletDriver.Native.Linux\OpenTabletDriver.Native.Linux.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Native.MacOS\OpenTabletDriver.Native.MacOS.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Native.Windows\OpenTabletDriver.Native.Windows.csproj" />
+  </ItemGroup>
 
 </Project>

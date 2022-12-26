@@ -2,16 +2,14 @@
   "Name": "XP-Pen Deco 02",
   "Specifications": {
     "Digitizer": {
-      "Width": 223.52,
-      "Height": 139.7,
-      "MaxX": 22352.0,
-      "MaxY": 13970.0
+      "Width": 254.0,
+      "Height": 142.875,
+      "MaxX": 22352,
+      "MaxY": 13970
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
@@ -34,7 +32,7 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

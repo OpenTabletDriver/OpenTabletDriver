@@ -1,8 +1,8 @@
 using System;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
 {

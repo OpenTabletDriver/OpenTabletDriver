@@ -1,5 +1,5 @@
 using OpenTabletDriver.Configurations.Parsers.UCLogic;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion
 {
