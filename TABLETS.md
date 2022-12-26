@@ -99,6 +99,7 @@
 | XENX X1-640                   |     Supported     |
 | XP-Pen Artist 10 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 12 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 13 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
 | XP-Pen CT430                  |     Supported     |
 | XP-Pen CT640                  |     Supported     |
