@@ -104,7 +104,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     return;
                 }
 
-                if (events.First().udata != TIMER_CANCELLED)
+                if (events[0].udata != TIMER_CANCELLED)
                 {
                     Elapsed?.Invoke();
                 }
