@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         private readonly InputDevice _device;
         private readonly IServiceProvider _serviceProvider;
+        private bool _isEraser;
 
         public BindingHandler(IServiceProvider serviceProvider, InputDevice device, BindingSettings settings, IMouseButtonHandler? mouseButtonHandler = null)
         {
@@ -62,6 +63,8 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private void HandleBinding(InputDevice device, IDeviceReport report)
         {
+            if (report is IEraserReport eraserReport)
+                _isEraser = eraserReport.Eraser;
             if (report is ITabletReport tabletReport)
                 HandleTabletReport(device.Configuration.Specifications.Pen!, tabletReport);
             if (report is IAuxReport auxReport)
@@ -73,7 +76,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private void HandleTabletReport(PenSpecifications pen, ITabletReport report)
         {
             var pressurePercent = report.Pressure / (float)pen.MaxPressure * 100f;
-            if (report is IEraserReport { Eraser: true })
+            if (_isEraser)
                 Eraser?.Invoke(report, pressurePercent);
             else
                 Tip?.Invoke(report, pressurePercent);
