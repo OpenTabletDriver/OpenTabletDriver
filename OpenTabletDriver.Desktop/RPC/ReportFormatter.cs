@@ -41,7 +41,9 @@ namespace OpenTabletDriver.Desktop.RPC
                 sb.AppendLines(GetStringFormat(auxReport));
             if (report is IEraserReport eraserReport)
                 sb.AppendLines(GetStringFormat(eraserReport));
-            if (report is IProximityReport proximityReport)
+            if (report is IConfidenceReport confidenceReport)
+                sb.AppendLines(GetStringFormat(confidenceReport));
+            if (report is IHoverReport proximityReport)
                 sb.AppendLines(GetStringFormat(proximityReport));
             if (report is ITiltReport tiltReport)
                 sb.AppendLines(GetStringFormat(tiltReport));
@@ -78,10 +80,14 @@ namespace OpenTabletDriver.Desktop.RPC
             yield return $"Eraser:{eraserReport.Eraser}";
         }
 
-        private static IEnumerable<string> GetStringFormat(IProximityReport proximityReport)
+        private static IEnumerable<string> GetStringFormat(IHoverReport proximityReport)
         {
-            yield return $"NearProximity:{proximityReport.NearProximity}";
             yield return $"HoverDistance:{proximityReport.HoverDistance}";
+        }
+
+        private static IEnumerable<string> GetStringFormat(IConfidenceReport confidenceReport)
+        {
+            yield return $"Confidence:{confidenceReport.HighConfidence}";
         }
 
         private static IEnumerable<string> GetStringFormat(ITiltReport tiltReport)
