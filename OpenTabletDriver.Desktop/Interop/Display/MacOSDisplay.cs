@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using OpenTabletDriver.Native.OSX;
-using OpenTabletDriver.Native.OSX.Generic;
+using OpenTabletDriver.Native.MacOS;
+using OpenTabletDriver.Native.MacOS.Generic;
 using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
-    using static OSX;
+    using static MacOS;
 
     public class MacOSDisplay : IVirtualScreen
     {

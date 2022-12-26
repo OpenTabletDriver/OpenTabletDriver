@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Native.OSX;
-using OpenTabletDriver.Native.OSX.Generic;
-using OpenTabletDriver.Native.OSX.Input;
+using OpenTabletDriver.Native.MacOS;
+using OpenTabletDriver.Native.MacOS.Generic;
+using OpenTabletDriver.Native.MacOS.Input;
 using OpenTabletDriver.Platform.Keyboard;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 {
-    using static OSX;
+    using static MacOS;
 
     public class MacOSVirtualKeyboard : IVirtualKeyboard
     {

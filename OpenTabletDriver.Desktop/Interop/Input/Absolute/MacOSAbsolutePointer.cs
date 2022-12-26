@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Numerics;
-using OpenTabletDriver.Native.OSX;
-using OpenTabletDriver.Native.OSX.Generic;
+using OpenTabletDriver.Native.MacOS;
+using OpenTabletDriver.Native.MacOS.Generic;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    using static OSX;
+    using static MacOS;
 
     public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
     {

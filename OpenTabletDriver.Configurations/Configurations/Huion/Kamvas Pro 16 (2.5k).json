@@ -29,7 +29,7 @@
       "DeviceStrings": {
         "201": "HUION_M214_\\d{6}$"
       },
-      "InitializationStrings": null
+      "InitializationStrings": []
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
