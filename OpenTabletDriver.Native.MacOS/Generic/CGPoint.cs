@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace OpenTabletDriver.Native.OSX
+namespace OpenTabletDriver.Native.MacOS
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct CGPoint

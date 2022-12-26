@@ -2,7 +2,7 @@
 
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(FrameworkBase)</TargetFramework>
+    <TargetFramework>$(FrameworkLatest)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

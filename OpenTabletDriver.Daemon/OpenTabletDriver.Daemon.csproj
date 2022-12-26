@@ -2,7 +2,7 @@
 
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
-    <TargetFramework>$(FrameworkBase)</TargetFramework>
+    <TargetFramework>$(FrameworkLatest)</TargetFramework>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
     <Nullable>enable</Nullable>
   </PropertyGroup>
