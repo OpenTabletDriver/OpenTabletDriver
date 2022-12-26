@@ -179,13 +179,8 @@ namespace OpenTabletDriver.Output
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Configuration.Specifications.Pen!.MaxPressure);
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
                 tiltHandler.SetTilt(tiltReport.Tilt);
-            if (report is IProximityReport proximityReport)
-            {
-                if (Pointer is IProximityHandler proximityHandler)
-                    proximityHandler.SetProximity(proximityReport.NearProximity);
-                if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
-                    hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
-            }
+            if (report is IHoverReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
+                hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)

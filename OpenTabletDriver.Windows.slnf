@@ -3,6 +3,8 @@
     "path": ".\\OpenTabletDriver.sln",
     "projects": [
       ".\\OpenTabletDriver\\OpenTabletDriver.csproj",
+      ".\\OpenTabletDriver.Analyzers\\OpenTabletDriver.Analyzers.csproj"
+      ".\\OpenTabletDriver.Analyzers.Tests\\OpenTabletDriver.Analyzers.Tests.csproj"
       ".\\OpenTabletDriver.Benchmarks\\OpenTabletDriver.Benchmarks.csproj",
       ".\\OpenTabletDriver.Configurations\\OpenTabletDriver.Configurations.csproj",
       ".\\OpenTabletDriver.Console\\OpenTabletDriver.Console.csproj",

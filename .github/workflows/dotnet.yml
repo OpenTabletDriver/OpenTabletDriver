@@ -17,7 +17,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '7.0'
           include-prerelease: True
 
       - name: Linux Publish
@@ -54,7 +54,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '7.0'
           include-prerelease: True
 
       - name: MacOS Publish
@@ -82,7 +82,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '7.0'
           include-prerelease: True
 
       - name: Windows Publish
@@ -113,7 +113,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '7.0'
           include-prerelease: True
 
       - name: Lint Changed Files
@@ -131,7 +131,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '7.0'
           include-prerelease: True
 
       - name: Run tests

@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using JetBrains.Annotations;
 using OpenTabletDriver.Tablet;
 
@@ -11,8 +11,8 @@ namespace OpenTabletDriver
     [PublicAPI]
     public interface IDriver
     {
-        event EventHandler<IEnumerable<InputDevice>>? InputDevicesChanged;
-        IReadOnlyList<InputDevice> InputDevices { get; }
+        event EventHandler<ImmutableArray<InputDevice>>? InputDevicesChanged;
+        ImmutableArray<InputDevice> InputDevices { get; }
         IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier);
         void Detect();
     }

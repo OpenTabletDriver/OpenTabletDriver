@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Desktop.Interop
     {
         private static readonly IEnumerable<ServiceDescriptor> PlatformRequiredServices = new[]
         {
-            Transient<ITimer, WindowsTimer>(),
+            Transient<ITimer, MacOSTimer>(),
             Transient<IAbsolutePointer, MacOSAbsolutePointer>(),
             Transient<IRelativePointer, MacOSRelativePointer>(),
             Transient<IVirtualKeyboard, MacOSVirtualKeyboard>(),
