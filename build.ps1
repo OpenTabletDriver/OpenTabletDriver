@@ -15,7 +15,7 @@ Set-Location $PSScriptRoot;
 
 # Sanity check
 if (!(Test-Path "./OpenTabletDriver")) {
-    Write-Error "Could not find OpenTabletDriver folder. Please run this script from the root of the OpenTabletDriver repository.";
+    Write-Error "Could not find OpenTabletDriver folder! Please put this script from the root of the OpenTabletDriver repository.";
     exit 1;
 }
 
@@ -33,11 +33,10 @@ if (Test-Path "./bin") {
     }
 }
 
-dotnet clean --configuration $Config;
+dotnet clean --configuration $Config --verbosity=quiet;
 
 Write-Output "Building OpenTabletDriver with runtime $NetRuntime...";
 New-Item -ItemType Directory -Force -Path "./bin";
-New-Item -ItemType Directory -Force -Path "./bin/userdata";
 
 Write-Output "${nl}Building Daemon...$nl";
 dotnet publish .\OpenTabletDriver.Daemon $Options;
