@@ -4,7 +4,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo
 {
-    public struct BambooTabletReport : ITabletReport, IAuxReport, IEraserReport, IProximityReport
+    public struct BambooTabletReport : ITabletReport, IAuxReport, IEraserReport, IConfidenceReport
     {
         public BambooTabletReport(byte[] report)
         {
@@ -33,8 +33,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo
                 report[7].IsBitSet(6),
             };
 
-            NearProximity = report[1].IsBitSet(7);
-            HoverDistance = (uint)report[1] >> 4;
+            HighConfidence = report[1].IsBitSet(7);
         }
 
         public byte[] Raw { set; get; }
@@ -43,7 +42,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo
         public bool[] PenButtons { set; get; }
         public bool[] AuxButtons { set; get; }
         public bool Eraser { set; get; }
-        public bool NearProximity { set; get; }
-        public uint HoverDistance { set; get; }
+        public bool HighConfidence { set; get; }
     }
 }
