@@ -163,7 +163,7 @@ namespace OpenTabletDriver.UX
 
             await Application.Instance.InvokeAsync(() => Content = _controlBuilder.Build<SettingsPanel>());
 
-            if (await _rpc.Instance!.GetUpdateInfo() is UpdateInfo updateInfo)
+            if (await _rpc.Instance!.CheckForUpdates() is SerializedUpdateInfo updateInfo)
                 _app.ShowWindow<UpdateForm>(updateInfo);
         }
 

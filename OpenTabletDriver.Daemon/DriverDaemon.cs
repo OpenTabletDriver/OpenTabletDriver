@@ -49,6 +49,8 @@ namespace OpenTabletDriver.Daemon
         private readonly ISleepDetector _sleepDetector;
         private readonly IUpdater? _updater;
 
+        private UpdateInfo? _updateInfo;
+
         public DriverDaemon(
             IServiceProvider serviceProvider,
             IDriver driver,
@@ -414,22 +416,33 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(matchingTypes);
         }
 
-        public Task<bool> HasUpdate()
-        {
-            return _updater?.CheckForUpdates() ?? Task.FromResult(false);
-        }
-
-        public async Task<UpdateInfo?> GetUpdateInfo()
+        public async Task<SerializedUpdateInfo?> CheckForUpdates()
         {
             if (_updater == null)
                 return null;
 
-            return await _updater.GetInfo();
+            _updateInfo = await _updater.CheckForUpdates();
+            return _updateInfo?.ToSerializedUpdateInfo();
         }
 
-        public Task InstallUpdate()
+        public async Task InstallUpdate()
         {
-            return _updater?.InstallUpdate() ?? Task.CompletedTask;
+            if (_updateInfo == null)
+                throw new InvalidOperationException("No update available"); // Misbehaving client
+
+            try
+            {
+                var update = await _updateInfo.GetUpdate();
+                _updater?.Install(update);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                _updateInfo = null;
+            }
         }
 
         private void PostDebugReport(string tablet, IDeviceReport report)

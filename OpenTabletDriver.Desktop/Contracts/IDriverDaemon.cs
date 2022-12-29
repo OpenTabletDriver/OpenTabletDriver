@@ -57,9 +57,9 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<TypeProxy> GetProxiedType(string typeName);
         Task<IEnumerable<TypeProxy>> GetMatchingTypes(string typeName);
 
-        Task<bool> HasUpdate();
-        Task<UpdateInfo?> GetUpdateInfo();
+        Task<SerializedUpdateInfo?> CheckForUpdates();
         Task InstallUpdate();
+
         Task<IEnumerable<PluginMetadata>> GetInstalledPlugins();
         event EventHandler<Settings>? SettingsChanged;
         Task Initialize();
