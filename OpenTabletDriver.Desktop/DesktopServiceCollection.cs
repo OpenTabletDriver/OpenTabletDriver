@@ -7,6 +7,7 @@ using Octokit;
 using OpenTabletDriver.ComponentProviders;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Configurations;
+using OpenTabletDriver.Desktop.Components;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection;
@@ -36,6 +37,7 @@ namespace OpenTabletDriver.Desktop
             Singleton<ISettingsManager, SettingsManager>(),
             Singleton<IPresetManager, PresetManager>(),
             Singleton<IPluginFactory, PluginFactory>(),
+            Singleton<ISleepDetector, SleepDetector>(),
             Transient(p => p.GetRequiredService<ISettingsManager>().Settings)
         };
 

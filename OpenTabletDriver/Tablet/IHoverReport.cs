@@ -3,16 +3,11 @@ using JetBrains.Annotations;
 namespace OpenTabletDriver.Tablet
 {
     /// <summary>
-    /// A report containing information for pen proximity.
+    /// A report containing information for pen hover.
     /// </summary>
     [PublicAPI]
-    public interface IProximityReport : IDeviceReport
+    public interface IHoverReport : IDeviceReport
     {
-        /// <summary>
-        /// Whether the pen is in proximity.
-        /// </summary>
-        bool NearProximity { set; get; }
-
         /// <summary>
         /// The hover distance of the pen. This is an arbitrary value with no defined real-world units.
         /// </summary>
