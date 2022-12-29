@@ -15,10 +15,6 @@ Tablet configurations define tablets OpenTabletDriver can detect and operate. Th
 specifications, functions, and initialization data which are all used to make a drawing tablet
 device, also referred to as a digitizer, functional.
 
-The following rule(s) are applicable to contributions to `OpenTabletDriver.Configurations`:
-
-- The git branch must be based on and targeting the `configs` branch.
-
 ## Adding a Configuration
 
 Documentation for the fields within configurations can be found on the official OpenTabletDriver
@@ -71,24 +67,6 @@ rules must be followed:
   `TABLETS.md` according to the same rules as adding the configuration in the first place.
 - Specify the reasoning for a tablet configuration update in your pull request, otherwise we have no
   way of knowing why the configuration change is being made.
-
-## Configuration Maintainer Notes
-
-> This applies to any user with push permissions to the `configs` branch.
-
-We use a branch (`configs`) for configuration contributions in order to quickly merge newly added
-tablet configurations. This branch will periodically be merged into the `master` branch and the
-branches will be synchronized.
-
-Ensure that all pull requests modifying or adding configurations have valid specifications and
-correctly match the status in `TABLETS.md`.
-
-Changes merged to the `configs` branch should generally only be parsers, json config files, and
-similar - anything else that runs the risk of breaking functionality not immediately related to the
-tablet in question should be split off, made dependent on the configs PR, and targeted to `master`.
-
-Essentially, merges of `configs` into `master` should ideally not introduce significant breaking
-behavior or bugs that would impact other users of other tablets.
 
 
 # Code Contributions
