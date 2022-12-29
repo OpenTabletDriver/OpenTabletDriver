@@ -1,0 +1,53 @@
+{
+  "Name": "XP-Pen Artist 13.3",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 293.76,
+      "Height": 165.24,
+      "MaxX": 29376.0,
+      "MaxY": 16524.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 11,
+      "InputReportLength": 8,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAC"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 11,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenDedicatedAuxReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": [
+        4
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

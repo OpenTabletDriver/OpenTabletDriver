@@ -99,6 +99,7 @@
 | XENX X1-640                   |     Supported     |
 | XP-Pen Artist 10 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 12 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 13 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
 | XP-Pen CT430                  |     Supported     |
@@ -157,6 +158,7 @@
 | Huion Kamvas Pro 24           |  Missing Features | Touch bar is not yet supported.
 | Huion Q620M                   |  Missing Features | Wheel is not yet supported.
 | Huion RTM-500                 |  Missing Features | Touch bar is not yet supported.
+| Lifetec LT9570                |  Missing Features | Aux buttons and tilt is not yet supported.
 | Monoprice MP1060-HA60         |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Parblo A610 Pro               |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo M             |  Missing Features | Wheel is not yet supported.
