@@ -192,7 +192,7 @@ namespace OpenTabletDriver.Tests
         }
 
         [Fact]
-        public async Task Updater_ProperlyBackups_BinAndAppDataDirectory_Async()
+        public async Task Install_Copies_AppDataFiles()
         {
             var presets = new FakeDirectory
             {
