@@ -1,6 +1,7 @@
 using System.Numerics;
 using Newtonsoft.Json;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.Desktop.RPC
 {
@@ -22,6 +23,7 @@ namespace OpenTabletDriver.Desktop.RPC
             Formatted = ReportFormatter.GetStringFormat(report);
 
             RawPosition = (report as ITabletReport)?.Position;
+            TouchPoints = (report as ITouchReport)?.Touches;
         }
 
         public string DeviceName { set; get; } = string.Empty;
@@ -30,5 +32,6 @@ namespace OpenTabletDriver.Desktop.RPC
         public string Formatted { set; get; } = string.Empty;
 
         public Vector2? RawPosition { set; get; }
+        public TouchPoint?[]? TouchPoints { set; get; }
     }
 }

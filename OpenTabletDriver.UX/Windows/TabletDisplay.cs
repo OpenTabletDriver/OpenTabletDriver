@@ -2,6 +2,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.UX.Windows
 {
@@ -64,22 +65,66 @@ namespace OpenTabletDriver.UX.Windows
                 graphics.FillRectangle(BackgroundFillColor, scaledBackground);
                 graphics.DrawRectangle(BackgroundBorderColor, scaledBackground);
 
-                if (_data!.RawPosition == null)
-                    return;
+                DrawTabletPoint(scale, scaledBackground, graphics);
+                DrawTouchPoints(scaledBackground, graphics);
+            }
+        }
 
-                var x = _data.RawPosition.Value.X * scale;
-                var y = _data.RawPosition.Value.Y * scale;
-                var point = RectangleF.FromCenter(new PointF(x, y), new SizeF(5, 5));
+        private void DrawTabletPoint(float scale, RectangleF scaledBackground, Graphics graphics)
+        {
+            if (_data!.RawPosition == null)
+                return;
+
+            var x = _data!.RawPosition!.Value.X * scale;
+            var y = _data.RawPosition.Value.Y * scale;
+            var point = RectangleF.FromCenter(new PointF(x, y), new SizeF(5, 5));
+            graphics.DrawEllipse(PointColor, point);
+
+            graphics.DrawLine(PointLinesColor, x, 0, x, scaledBackground.Height);
+            graphics.DrawLine(PointLinesColor, 0, y, scaledBackground.Width, y);
+
+            var text = new FormattedText
+            {
+                Font = TextFont,
+                ForegroundBrush = TextBrush,
+                Text = _data.RawPosition.ToString(),
+            };
+
+            var textPos = new PointF(x + 5, y + 5);
+            var textSize = text.Measure();
+
+            if (textSize.Height + textPos.Y > Height - 10)
+                textPos.Y -= textSize.Height + 10;
+            if (textSize.Width + textPos.X > Width - 10)
+                textPos.X -= textSize.Width + 10;
+
+            graphics.DrawText(text, textPos);
+        }
+
+        private void DrawTouchPoints(RectangleF scaledBackground, Graphics graphics)
+        {
+            if (_data!.TouchPoints == null || _configuration!.Specifications.Touch == null)
+                return;
+
+            var touchSize = _configuration!.Specifications.Touch!;
+            var touchScaleX = scaledBackground.Width / touchSize.MaxX;
+            var touchScaleY = scaledBackground.Height / touchSize.MaxY;
+
+            foreach (TouchPoint? touchPoint in _data!.TouchPoints!)
+            {
+                if (touchPoint == null)
+                    continue;
+
+                var x = touchPoint.Value.Position.X * touchScaleX;
+                var y = touchPoint.Value.Position.Y * touchScaleY;
+                var point = RectangleF.FromCenter(new PointF(x, y), new SizeF(15, 15));
                 graphics.DrawEllipse(PointColor, point);
-
-                graphics.DrawLine(PointLinesColor, x, 0, x, scaledBackground.Height);
-                graphics.DrawLine(PointLinesColor, 0, y, scaledBackground.Width, y);
 
                 var text = new FormattedText
                 {
                     Font = TextFont,
                     ForegroundBrush = TextBrush,
-                    Text = _data.RawPosition.ToString(),
+                    Text = touchPoint.Value.Position.ToString(),
                 };
 
                 var textPos = new PointF(x + 5, y + 5);
