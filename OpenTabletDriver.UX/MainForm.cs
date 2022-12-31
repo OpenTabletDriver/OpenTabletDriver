@@ -117,7 +117,7 @@ namespace OpenTabletDriver.UX
                     debugMenu
                 },
                 QuitItem = new AppCommand("Quit", app.Exit, modifier | Keys.Q),
-                AboutItem = new AppCommand("About...", () => serviceProvider.GetRequiredService<AboutDialog>().ShowDialog(this), Keys.F1)
+                AboutItem = new AppCommand("About...", () => serviceProvider.CreateInstance<AboutDialog>().ShowDialog(this), Keys.F1)
             };
 
             InitializeAsync().Run();
