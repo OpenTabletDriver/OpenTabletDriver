@@ -13,7 +13,7 @@ namespace OpenTabletDriver.UX.Windows
         private readonly IDriverDaemon _daemon;
         private readonly App _app;
 
-        public UpdateForm(IDriverDaemon daemon, App app, UpdateInfo update)
+        public UpdateForm(IDriverDaemon daemon, App app, SerializedUpdateInfo update)
         {
             _daemon = daemon;
             _app = app;
