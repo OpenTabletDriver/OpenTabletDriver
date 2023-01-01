@@ -51,9 +51,7 @@ namespace OpenTabletDriver.UX.Windows
         private async Task InstallUpdate()
         {
             Enabled = false;
-            var executable = Process.GetCurrentProcess().ProcessName;
-            var path = Path.Join(AppInfo.ProgramDirectory, executable);
-
+            var path = Process.GetCurrentProcess().MainModule!.FileName;
             await _daemon.InstallUpdate();
             Process.Start(path, _app.Arguments);
             _app.Exit();
