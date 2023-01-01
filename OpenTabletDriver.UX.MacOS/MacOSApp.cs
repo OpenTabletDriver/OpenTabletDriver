@@ -51,7 +51,7 @@ namespace OpenTabletDriver.UX.MacOS
             if (_daemon != null)
             {
                 _daemon.Exited -= HandleDaemonExited;
-                _daemon.Close();
+                _daemon.Kill();
             }
 
             base.Exit(code);
