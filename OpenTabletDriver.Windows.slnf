@@ -2,18 +2,21 @@
   "solution": {
     "path": ".\\OpenTabletDriver.sln",
     "projects": [
-      ".\\OpenTabletDriver\\OpenTabletDriver.csproj",
-      ".\\OpenTabletDriver.Analyzers\\OpenTabletDriver.Analyzers.csproj"
-      ".\\OpenTabletDriver.Analyzers.Tests\\OpenTabletDriver.Analyzers.Tests.csproj"
-      ".\\OpenTabletDriver.Benchmarks\\OpenTabletDriver.Benchmarks.csproj",
-      ".\\OpenTabletDriver.Configurations\\OpenTabletDriver.Configurations.csproj",
-      ".\\OpenTabletDriver.Console\\OpenTabletDriver.Console.csproj",
-      ".\\OpenTabletDriver.Daemon\\OpenTabletDriver.Daemon.csproj",
-      ".\\OpenTabletDriver.Desktop\\OpenTabletDriver.Desktop.csproj",
-      ".\\OpenTabletDriver.Native\\OpenTabletDriver.Native.csproj",
-      ".\\OpenTabletDriver.Tests\\OpenTabletDriver.Tests.csproj",
-      ".\\OpenTabletDriver.UX\\OpenTabletDriver.UX.csproj",
-      ".\\OpenTabletDriver.UX.Wpf\\OpenTabletDriver.UX.Wpf.csproj"
+      "OpenTabletDriver\\OpenTabletDriver.csproj",
+      "OpenTabletDriver.Analyzers\\OpenTabletDriver.Analyzers.csproj",
+      "OpenTabletDriver.Analyzers.Tests\\OpenTabletDriver.Analyzers.Tests.csproj",
+      "OpenTabletDriver.Benchmarks\\OpenTabletDriver.Benchmarks.csproj",
+      "OpenTabletDriver.Configurations\\OpenTabletDriver.Configurations.csproj",
+      "OpenTabletDriver.Console\\OpenTabletDriver.Console.csproj",
+      "OpenTabletDriver.Daemon\\OpenTabletDriver.Daemon.csproj",
+      "OpenTabletDriver.Desktop\\OpenTabletDriver.Desktop.csproj",
+      "OpenTabletDriver.Native\\OpenTabletDriver.Native.csproj",
+      "OpenTabletDriver.Native.Linux\\OpenTabletDriver.Native.Linux.csproj",
+      "OpenTabletDriver.Native.MacOS\\OpenTabletDriver.Native.MacOS.csproj",
+      "OpenTabletDriver.Native.Windows\\OpenTabletDriver.Native.Windows.csproj",
+      "OpenTabletDriver.Tests\\OpenTabletDriver.Tests.csproj",
+      "OpenTabletDriver.UX\\OpenTabletDriver.UX.csproj",
+      "OpenTabletDriver.UX.Wpf\\OpenTabletDriver.UX.Wpf.csproj"
     ]
   }
 }
