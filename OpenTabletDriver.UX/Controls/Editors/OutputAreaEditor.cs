@@ -112,8 +112,8 @@ namespace OpenTabletDriver.UX.Controls.Editors
                 {
                     width.Value = display.Width;
                     height.Value = display.Height;
-                    xPosition.Value = display.Position.X + display.Width / 2;
-                    yPosition.Value = display.Position.Y + display.Height / 2;
+                    xPosition.Value = display.Position.X - areaDisplay.FullBackground.X + display.Width / 2;
+                    yPosition.Value = display.Position.Y - areaDisplay.FullBackground.Y + display.Height / 2;
                 });
                 displayMenu.Items.Add(setDisplayCommand);
             }

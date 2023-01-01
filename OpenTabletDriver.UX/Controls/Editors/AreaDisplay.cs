@@ -96,11 +96,17 @@ namespace OpenTabletDriver.UX.Controls.Editors
             graphics.TranslateTransform(ControlOffset);
 
             // Draw background area
-            var backgrounds = Backgrounds.Select(r => r * Scale);
-            foreach (var rect in backgrounds)
+            using (graphics.SaveTransformState())
             {
-                graphics.FillRectangle(BackgroundFillColor, rect);
-                graphics.DrawRectangle(BackgroundBorderColor, rect);
+                var offset = -FullBackground.TopLeft * Scale;
+                graphics.TranslateTransform(offset);
+
+                var backgrounds = Backgrounds.Select(r => r * Scale);
+                foreach (var rect in backgrounds)
+                {
+                    graphics.FillRectangle(BackgroundFillColor, rect);
+                    graphics.DrawRectangle(BackgroundBorderColor, rect);
+                }
             }
 
             // Draw foreground area
