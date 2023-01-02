@@ -2,16 +2,14 @@
   "Name": "UC-Logic PF1209",
   "Specifications": {
     "Digitizer": {
-      "Width": 305.0,
-      "Height": 229.0,
-      "MaxX": 47999.0,
-      "MaxY": 35999.0
+      "Width": 305,
+      "Height": 229,
+      "MaxX": 47999,
+      "MaxY": 35999
     },
     "Pen": {
       "MaxPressure": 1023,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -34,7 +32,7 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

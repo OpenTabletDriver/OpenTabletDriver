@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 177.8,
       "Height": 111.095,
-      "MaxX": 35560.0,
-      "MaxY": 22219.0
+      "MaxX": 35560,
+      "MaxY": 22219
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -58,9 +56,22 @@
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2344,
+      "InputReportLength": 12,
+      "OutputReportLength": 32,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

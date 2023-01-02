@@ -2,21 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Windows.CM;
 using OpenTabletDriver.Native.Windows.SetupApiStructs;
 using OpenTabletDriver.Native.Windows.USB;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Devices;
 using static OpenTabletDriver.Native.Windows.CfgMgr32;
 using static OpenTabletDriver.Native.Windows.SetupAPI;
 
 namespace OpenTabletDriver.Devices.WinUSB
 {
-    [DeviceHub, SupportedPlatform(PluginPlatform.Windows)]
+    [DeviceHub, SupportedPlatform(SystemPlatform.Windows)]
     public class WinUSBRootHub : CriticalFinalizerObject, IDeviceHub
     {
-        private static readonly Guid[] _winUsbGuids = new Guid[]
+        private static readonly Guid[] WinUsbGuids = new Guid[]
         {
             // Standard WinUSB (Zadig)
             new Guid("{dee824ef-729b-4a0e-9c14-b7117d33a817}"),
@@ -26,8 +24,8 @@ namespace OpenTabletDriver.Devices.WinUSB
         };
 
         private readonly CM_NOTIFY_CALLBACK _callback;
-        private readonly GCHandle _callbackPin;
-        private List<WinUSBInterface> _oldDevices;
+        private GCHandle _callbackPin;
+        private List<WinUSBInterface>? _oldDevices;
         private List<WinUSBInterface> _currentDevices;
         private readonly Dictionary<Guid, SafeCmNotificationHandle> _notificationHandles = new();
 
@@ -48,11 +46,11 @@ namespace OpenTabletDriver.Devices.WinUSB
 
             _currentDevices = new List<WinUSBInterface>();
 
-            foreach (var guid in _winUsbGuids)
+            foreach (var guid in WinUsbGuids)
                 EnumerateAllDevicesWithGuid(_currentDevices, guid);
         }
 
-        public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
+        public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
         public IEnumerable<IDeviceEndpoint> GetDevices()
         {
@@ -64,7 +62,7 @@ namespace OpenTabletDriver.Devices.WinUSB
             _oldDevices = _currentDevices;
             _currentDevices = new List<WinUSBInterface>();
 
-            foreach (var guid in _winUsbGuids)
+            foreach (var guid in WinUsbGuids)
                 EnumerateAllDevicesWithGuid(_currentDevices, guid);
 
             DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(_oldDevices, _currentDevices));
@@ -115,9 +113,9 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
-        private unsafe int NotificationCallback(IntPtr hNotify, IntPtr Context, CM_NOTIFY_ACTION Action, CM_NOTIFY_EVENT_DATA* EventData, int EventDataSize)
+        private unsafe int NotificationCallback(IntPtr hNotify, IntPtr context, CM_NOTIFY_ACTION action, CM_NOTIFY_EVENT_DATA* eventData, int eventDataSize)
         {
-            switch (Action)
+            switch (action)
             {
                 case CM_NOTIFY_ACTION.DEVICEINTERFACEARRIVAL:
                 case CM_NOTIFY_ACTION.DEVICEINTERFACEREMOVAL:
@@ -131,7 +129,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         private void HookDeviceNotification()
         {
-            foreach (var guid in _winUsbGuids)
+            foreach (var guid in WinUsbGuids)
             {
                 var notificationFilter = CM_NOTIFY_FILTER.Create(guid);
                 var ret = CM_Register_Notification(in notificationFilter, IntPtr.Zero, _callback, out var notificationHandle);

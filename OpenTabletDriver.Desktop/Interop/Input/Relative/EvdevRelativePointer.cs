@@ -1,14 +1,13 @@
 using System.Numerics;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     public class EvdevRelativePointer : EvdevVirtualMouse, IRelativePointer
     {
-        public unsafe EvdevRelativePointer()
+        public EvdevRelativePointer()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Mouse");
 
@@ -23,8 +22,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
                 EventCode.BTN_LEFT,
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
-                EventCode.BTN_FORWARD,
-                EventCode.BTN_BACK);
+                EventCode.BTN_SIDE,
+                EventCode.BTN_EXTRA);
 
             var result = Device.Initialize();
             switch (result)
@@ -38,12 +37,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             }
         }
 
-        private Vector2 error;
+        private Vector2 _error;
 
         public void SetPosition(Vector2 delta)
         {
-            delta += error;
-            error = new Vector2(delta.X % 1, delta.Y % 1);
+            delta += _error;
+            _error = new Vector2(delta.X % 1, delta.Y % 1);
 
             Device.Write(EventType.EV_REL, EventCode.REL_X, (int)delta.X);
             Device.Write(EventType.EV_REL, EventCode.REL_Y, (int)delta.Y);

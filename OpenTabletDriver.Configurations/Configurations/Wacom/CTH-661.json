@@ -3,15 +3,13 @@
   "Specifications": {
     "Digitizer": {
       "Width": 216.48,
-      "Height": 137.0,
-      "MaxX": 21648.0,
-      "MaxY": 13700.0
+      "Height": 137,
+      "MaxX": 21648,
+      "MaxY": 13700
     },
     "Pen": {
       "MaxPressure": 1023,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
@@ -45,20 +43,34 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
-    }
-  ],
-  "AuxilaryDeviceIdentifiers": [
+    },
     {
       "VendorID": 1386,
-      "ProductID": 211,
-      "InputReportLength": 20,
+      "ProductID": 219,
+      "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 216,
+      "InputReportLength": 9,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }

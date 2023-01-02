@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
+    <TargetFrameworks>$(FrameworkLTS);$(FrameworkLatest)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package Information">
@@ -19,15 +20,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\OpenTabletDriver.Plugin\OpenTabletDriver.Plugin.csproj" />
-    <ProjectReference Include="..\OpenTabletDriver.Native\OpenTabletDriver.Native.csproj" />
-    <ProjectReference Include="..\OpenTabletDriver.Configurations\OpenTabletDriver.Configurations.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Label="Configurations">
-    <EmbeddedResource Include=".\Configurations\*\*.json">
-      <IncludeInPackage>true</IncludeInPackage>
-    </EmbeddedResource>
+    <ProjectReference Include="..\OpenTabletDriver.Native.Windows\OpenTabletDriver.Native.Windows.csproj" />
   </ItemGroup>
 
 </Project>

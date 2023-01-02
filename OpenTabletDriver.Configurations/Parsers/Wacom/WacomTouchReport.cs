@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Numerics;
-using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Tablet.Touch;
+using OpenTabletDriver.Tablet;
+using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
     public struct WacomTouchReport : ITouchReport, IAuxReport
     {
-        public WacomTouchReport(byte[] report, ref TouchPoint[] prevTouches)
+        public WacomTouchReport(byte[] report, ref TouchPoint?[]? prevTouches)
         {
             Raw = report;
             AuxButtons = Array.Empty<bool>();
-            Touches = prevTouches ?? new TouchPoint[MAX_POINTS];
+            Touches = prevTouches ?? new TouchPoint?[MAX_POINTS];
             if (report[2] == 0x81)
             {
                 ApplyTouchMask((ushort)(Raw[3] | (Raw[4] << 8)));
-                prevTouches = (TouchPoint[])Touches.Clone();
+                prevTouches = (TouchPoint?[])Touches.Clone();
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
                 if (touchID == 0x80)
                 {
                     var auxByte = report[1 + offset];
-                    AuxButtons = new bool[]
+                    AuxButtons = new[]
                     {
                         auxByte.IsBitSet(0),
                         auxByte.IsBitSet(1),
@@ -55,8 +55,10 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
                     };
                 }
             }
-            prevTouches = (TouchPoint[])Touches.Clone();
+            prevTouches = (TouchPoint?[])Touches.Clone();
         }
+
+        private const int MAX_POINTS = 16;
 
         private void ApplyTouchMask(ushort mask)
         {
@@ -69,10 +71,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
                 mask >>= 1;
             }
         }
-        public const int MAX_POINTS = 16;
+
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
-        public TouchPoint[] Touches { set; get; }
-        public bool ShouldSerializeTouches() => true;
+        public TouchPoint?[] Touches { set; get; }
     }
 }

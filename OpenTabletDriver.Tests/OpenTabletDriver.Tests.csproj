@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFramework>$(FrameworkBase)</TargetFramework>
-    <Nullable>enable</Nullable>
+    <TargetFramework>$(FrameworkLatest)</TargetFramework>
     <IsPackable>false</IsPackable>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

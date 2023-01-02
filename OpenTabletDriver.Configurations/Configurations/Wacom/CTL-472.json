@@ -2,16 +2,14 @@
   "Name": "Wacom CTL-472",
   "Specifications": {
     "Digitizer": {
-      "Width": 152.0,
-      "Height": 95.0,
-      "MaxX": 15200.0,
-      "MaxY": 9500.0
+      "Width": 152,
+      "Height": 95,
+      "MaxX": 15200,
+      "MaxY": 9500
     },
     "Pen": {
       "MaxPressure": 2047,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -45,18 +43,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 890,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }

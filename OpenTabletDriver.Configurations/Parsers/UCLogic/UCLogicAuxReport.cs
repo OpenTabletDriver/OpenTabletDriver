@@ -1,4 +1,4 @@
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.UCLogic
 {
@@ -22,6 +22,14 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
                 report[5].IsBitSet(1),
                 report[5].IsBitSet(2),
                 report[5].IsBitSet(3),
+                report[5].IsBitSet(4),
+                report[5].IsBitSet(5),
+                report[5].IsBitSet(6),
+                report[5].IsBitSet(7),
+                report[6].IsBitSet(0),
+                report[6].IsBitSet(1),
+                report[6].IsBitSet(2),
+                report[6].IsBitSet(3)
             };
         }
 

@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 101.6,
       "Height": 57.01295,
-      "MaxX": 8340.0,
-      "MaxY": 4680.0
+      "MaxX": 8340,
+      "MaxY": 4680
     },
     "Pen": {
       "MaxPressure": 2047,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -27,10 +25,11 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "6": "^420$"
+        "6": "^420"
       },
       "InitializationStrings": [
-        100
+        100,
+        123
       ]
     },
     {
@@ -46,11 +45,12 @@
         "121": "^H850_F210$"
       },
       "InitializationStrings": [
-        100
+        100,
+        123
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

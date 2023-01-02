@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
-      "MaxX": 10208.0,
-      "MaxY": 7424.0
+      "MaxX": 10208,
+      "MaxY": 7424
     },
     "Pen": {
       "MaxPressure": 511,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 2
@@ -25,7 +23,7 @@
       "ProductID": 21,
       "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -36,7 +34,7 @@
       "ProductID": 21,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
@@ -56,13 +54,13 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
+  "AuxiliaryDeviceIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 21,
       "InputReportLength": 64,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.AuxReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.AuxReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},

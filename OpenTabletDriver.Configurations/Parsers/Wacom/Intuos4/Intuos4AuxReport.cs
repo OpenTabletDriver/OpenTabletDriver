@@ -1,4 +1,4 @@
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
 {
@@ -8,16 +8,22 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
         {
             Raw = report;
 
+            var touchWheelButtonByte = report[2];
+            var buttonsByte = report[3];
+
             AuxButtons = new bool[]
             {
-                (report[3] & (1 << 0)) != 0,
-                (report[3] & (1 << 1)) != 0,
-                (report[3] & (1 << 2)) != 0,
-                (report[3] & (1 << 3)) != 0,
-                (report[3] & (1 << 4)) != 0,
-                (report[3] & (1 << 5)) != 0,
-                (report[3] & (1 << 6)) != 0,
-                (report[3] & (1 << 7)) != 0
+                buttonsByte.IsBitSet(0),
+                buttonsByte.IsBitSet(1),
+                buttonsByte.IsBitSet(2),
+                buttonsByte.IsBitSet(3),
+
+                touchWheelButtonByte.IsBitSet(0),
+
+                buttonsByte.IsBitSet(4),
+                buttonsByte.IsBitSet(5),
+                buttonsByte.IsBitSet(6),
+                buttonsByte.IsBitSet(7),
             };
         }
 

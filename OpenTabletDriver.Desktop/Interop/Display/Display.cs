@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {

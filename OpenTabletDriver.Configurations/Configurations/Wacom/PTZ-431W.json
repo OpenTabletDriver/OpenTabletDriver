@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 157.48,
       "Height": 98.425,
-      "MaxX": 31496.0,
-      "MaxY": 19685.0
+      "MaxX": 31496,
+      "MaxY": 19685
     },
     "Pen": {
       "MaxPressure": 2046,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
@@ -29,7 +27,8 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ReportParser",
       "FeatureInitReport": [
-        "AgI="
+        "AgI=",
+        "BAA="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
@@ -42,13 +41,16 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.WacomDriverIntuos3ReportParser",
       "FeatureInitReport": [
-        "AgI="
+        "AgI=",
+        "BAA="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
-  "Attributes": {}
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "FeatureInitDelayMs": "150"
+  }
 }

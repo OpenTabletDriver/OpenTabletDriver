@@ -1,48 +1,38 @@
 using System;
+using System.Collections.Immutable;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Octokit;
-
-#nullable enable
+using OpenTabletDriver.Desktop.Interop.AppInfo;
 
 namespace OpenTabletDriver.Desktop.Updater
 {
-    public class WindowsUpdater : Updater
+    public sealed class WindowsUpdater : GitHubUpdater
     {
-        public WindowsUpdater()
-           : this(AssemblyVersion,
-               AppDomain.CurrentDomain.BaseDirectory,
-               AppInfo.Current.AppDataDirectory,
-               AppInfo.Current.BackupDirectory)
+        public WindowsUpdater(IAppInfo appInfo, IGitHubClient client)
+           : base(AssemblyVersion, appInfo, client)
         {
         }
 
-        public WindowsUpdater(Version currentVersion, string binDirectory, string appDataDirectory, string rollBackDirectory)
-            : base(currentVersion,
-                binDirectory,
-                appDataDirectory,
-                rollBackDirectory)
+        protected override async Task<Update> Download(Release release, Version version)
         {
-        }
-
-        protected override string[] IncludeList { get; } = new[]
-        {
-            "OpenTabletDriver.UX.Wpf.exe",
-            "OpenTabletDriver.Daemon.exe"
-        };
-
-        protected override async Task Download(Release release)
-        {
+            var downloadPath = GetDownloadPath();
             var asset = release.Assets.First(r => r.Name.Contains("win-x64"));
 
             using (var client = new HttpClient())
             using (var stream = await client.GetStreamAsync(asset.BrowserDownloadUrl))
             using (var zipStream = new ZipArchive(stream))
             {
-                zipStream.ExtractToDirectory(DownloadDirectory);
+                zipStream.ExtractToDirectory(downloadPath);
             }
+
+            return new Update(
+                version,
+                ImmutableArray.Create(Directory.GetFileSystemEntries(downloadPath))
+            );
         }
     }
 }

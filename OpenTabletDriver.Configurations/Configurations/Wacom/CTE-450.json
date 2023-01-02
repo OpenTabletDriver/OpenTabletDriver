@@ -4,14 +4,12 @@
     "Digitizer": {
       "Width": 147.6,
       "Height": 92.25,
-      "MaxX": 14760.0,
-      "MaxY": 9225.0
+      "MaxX": 14760,
+      "MaxY": 9225
     },
     "Pen": {
       "MaxPressure": 511,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
@@ -25,7 +23,7 @@
       "ProductID": 23,
       "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
@@ -34,6 +32,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }

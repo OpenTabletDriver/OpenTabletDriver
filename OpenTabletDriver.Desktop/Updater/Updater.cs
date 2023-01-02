@@ -1,225 +1,185 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Octokit;
-using OpenTabletDriver.Plugin;
-
-#nullable enable
 
 namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract class Updater : IUpdater
     {
-        /// <summary>
-        /// <para>0 allows update install and check.</para>
-        /// <para>1 disallows update install and check.</para>
-        /// <para>2 means update was installed and check will return false.</para>
-        /// </summary>
-        private int updateSentinel = 0;
-        private readonly GitHubClient github = new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
-        private Release? latestRelease;
+        private static readonly ImmutableArray<string> AppDataFiles =
+            ImmutableArray.Create(
+                "settings.json",
+                "Presets"
+            );
 
-        protected Version CurrentVersion { get; }
         protected static readonly Version AssemblyVersion = typeof(IUpdater).Assembly.GetName().Version!;
-        protected string BinaryDirectory { get; }
-        protected string AppDataDirectory { get; }
-        protected string RollbackDirectory { get; }
-        protected string DownloadDirectory { get; } = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
-        protected virtual string[]? IncludeList { get; } = null;
 
-        public string? VersionedRollbackDirectory { private set; get; }
-
-        protected Updater(Version? currentVersion, string binaryDir, string appDataDir, string rollbackDir)
+        protected Updater(Version currentVersion, string binaryDir, string appDataDir, string rollbackDir)
         {
-            CurrentVersion = currentVersion ?? AssemblyVersion;
+            CurrentVersion = currentVersion;
             BinaryDirectory = binaryDir;
             RollbackDirectory = rollbackDir;
             AppDataDirectory = appDataDir;
 
             if (!Directory.Exists(RollbackDirectory))
                 Directory.CreateDirectory(RollbackDirectory);
-            if (!Directory.Exists(DownloadDirectory))
-                Directory.CreateDirectory(DownloadDirectory);
         }
 
-        public Task<bool> CheckForUpdates() => CheckForUpdates(true);
+        private int _installing;
+        private bool _installed;
 
-        public async Task<bool> CheckForUpdates(bool forced)
+        protected Version CurrentVersion { get; }
+        protected string BinaryDirectory { get; }
+        protected string AppDataDirectory { get; }
+        protected string RollbackDirectory { get; }
+
+        public event Action<Update>? UpdateInstalling;
+        public event Action<string>? RollbackCreated;
+        public event Action<Update>? UpdateInstalled;
+
+        public async Task<UpdateInfo?> CheckForUpdates()
         {
-            if (updateSentinel == 2)
-                return false;
+            var update = await CheckForUpdatesCore();
+            if (update == null || update.Version <= CurrentVersion)
+                return null;
 
+            return update;
+        }
+
+        public Task Install(Update update)
+        {
+            if (_installed)
+                throw new UpdateAlreadyInstalledException();
+
+            if (Interlocked.CompareExchange(ref _installing, 1, 0) == 1)
+                throw new UpdateInProgressException();
+
+            var installed = false;
             try
             {
-                if (forced || latestRelease == null)
-                    latestRelease = await github.Repository.Release.GetLatest("OpenTabletDriver", "OpenTabletDriver");
-
-                var latestVersion = new Version(latestRelease!.TagName[1..]); // remove `v` from `vW.X.Y.Z
-                return latestVersion > CurrentVersion;
+                UpdateInstalling?.Invoke(update);
+                PrepareForUpdate(update);
+                InstallUpdate(update);
+                installed = true;
             }
-            catch (Exception e)
+            finally
             {
-                Log.Exception(e);
-                return false;
-            }
-        }
+                _installing = 0;
+                _installed = installed; // this will be false if PrepareForUpdate or InstallCore throws
 
-        public async Task<Release?> GetRelease()
-        {
-            if (latestRelease == null)
-            {
-                await CheckForUpdates();
-            }
-
-            return latestRelease;
-        }
-
-        public async Task InstallUpdate()
-        {
-            // Skip if update is already installed, or in the process of installing
-            if (Interlocked.CompareExchange(ref updateSentinel, 1, 0) == 0)
-            {
-                if (await CheckForUpdates(false))
+                if (installed)
                 {
-                    try
-                    {
-                        await Install(latestRelease!);
-                        updateSentinel = 2;
-                        return;
-                    }
-                    catch
-                    {
-                        updateSentinel = 0;
-                        throw;
-                    }
+                    UpdateInstalled?.Invoke(update);
                 }
-                updateSentinel = 0;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private void InstallUpdate(Update update)
+        {
+            foreach (var source in update.Paths)
+            {
+                var destination = Path.Join(BinaryDirectory, Path.GetFileName(source));
+
+                if (File.Exists(source))
+                    File.Move(source, destination);
+                else if (Directory.Exists(source))
+                    Directory.Move(source, destination);
             }
         }
 
-        protected void PerformBackup()
+        protected abstract Task<UpdateInfo?> CheckForUpdatesCore();
+
+        protected void PrepareForUpdate(Update update)
         {
             string timestamp = DateTime.UtcNow.ToString("-yyyy-MM-dd_hh-mm-ss");
-            VersionedRollbackDirectory = Path.Join(RollbackDirectory, CurrentVersion + timestamp);
+            var rollback = Path.Join(RollbackDirectory, CurrentVersion + timestamp);
+            var binaryRollback = Path.Join(rollback, "bin");
+            var appDataRollback = Path.Join(rollback, "appdata");
 
-            InclusiveFileOp(BinaryDirectory, VersionedRollbackDirectory, "bin",
-                static (source, target) => Move(source, target));
-            ExclusiveFileOp(AppDataDirectory, RollbackDirectory, "appdata", VersionedRollbackDirectory,
-                static (source, target) => Copy(source, target));
+            Directory.CreateDirectory(rollback);
+            Directory.CreateDirectory(binaryRollback);
+            Directory.CreateDirectory(appDataRollback);
+
+            Backup(binaryRollback, update.Paths);
+            BackupAppData(appDataRollback);
+
+            RollbackCreated?.Invoke(rollback);
         }
 
-        protected virtual async Task Install(Release release)
+        // Moves files/directories that would be updated to a rollback directory.
+        // Doing a move is necessary for Windows to allow the update to overwrite the files.
+        protected void Backup(string binaryRollback, ImmutableArray<string> pathsToUpdate)
         {
-            await Download(release);
-            PerformBackup();
-
-            Move(DownloadDirectory, BinaryDirectory);
-        }
-
-        protected abstract Task Download(Release release);
-
-        // Avoid moving/copying the rollback directory if under source directory
-        private void ExclusiveFileOp(string source, string backupDir, string target, string versionBackupDir, Action<string, string> fileOp)
-        {
-            var backupTarget = Path.Join(versionBackupDir, target);
-
-            var excludeList = new[]
+            foreach (var path in pathsToUpdate.Select(f => Path.GetFileName(f)))
             {
-                backupDir,
-                versionBackupDir,
-                Path.Join(source, "userdata")
-            };
+                var source = Path.Join(BinaryDirectory, path);
+                var destination = Path.Join(binaryRollback, path);
 
-            var childEntries = Directory.EnumerateFileSystemEntries(source)
-                .Except(excludeList);
-
-            PerformFileOperations(fileOp, backupTarget, childEntries);
-        }
-
-        private void InclusiveFileOp(string source, string backupDir, string target, Action<string, string> fileOp)
-        {
-            var backupTarget = Path.Join(backupDir, target);
-
-            var entries = Directory.EnumerateFileSystemEntries(source);
-
-            if (IncludeList != null)
-                entries = entries.Intersect(IncludeList.Select(t => Path.Join(source, t)));
-
-            PerformFileOperations(fileOp, backupTarget, entries);
-        }
-
-        private static void PerformFileOperations(Action<string, string> fileOp, string targetParentDir, IEnumerable<string> entries)
-        {
-            if (Directory.Exists(targetParentDir))
-                Directory.Delete(targetParentDir, true);
-            Directory.CreateDirectory(targetParentDir);
-
-            foreach (var entry in entries)
-            {
-                var fileName = Path.GetFileName(entry);
-                var path = Path.Join(targetParentDir, fileName);
-                fileOp(entry, path);
+                if (File.Exists(source))
+                    File.Move(source, destination);
+                else if (Directory.Exists(source))
+                    Directory.Move(source, destination);
             }
         }
 
-        protected static void Move(string source, string target)
+        // Copies important files/directories from AppDataDirectory to a rollback directory.
+        protected void BackupAppData(string appDataRollback)
         {
+            foreach (var path in AppDataFiles)
+            {
+                var source = Path.Join(AppDataDirectory, path);
+                var destination = Path.Join(appDataRollback, path);
+
+                if (File.Exists(source) || Directory.Exists(source))
+                {
+                    Copy(source, destination);
+                }
+            }
+        }
+
+        protected static void Copy(string source, string destination)
+        {
+            // if file
             if (File.Exists(source))
             {
-                var sourceFile = new FileInfo(source);
-                sourceFile.MoveTo(target);
+                File.Copy(source, destination, true);
                 return;
             }
 
-            var sourceDir = new DirectoryInfo(source);
-            var targetDir = new DirectoryInfo(target);
-            if (targetDir.Exists)
+            // else directory
+            if (!Directory.Exists(destination))
+                Directory.CreateDirectory(destination);
+
+            foreach (var path in Directory.EnumerateFileSystemEntries(source))
             {
-                foreach (var childEntry in sourceDir.EnumerateFileSystemInfos())
-                {
-                    if (childEntry is FileInfo file)
-                    {
-                        file.MoveTo(Path.Join(target, file.Name));
-                    }
-                    else if (childEntry is DirectoryInfo directory)
-                    {
-                        directory.MoveTo(Path.Join(target, directory.Name));
-                    }
-                }
-            }
-            else
-            {
-                Directory.Move(source, target);
+                var pathName = Path.GetFileName(path);
+                var destPath = Path.Join(destination, pathName);
+                Copy(path, destPath);
             }
         }
 
-        protected static void Copy(string source, string target)
+        protected static string GetDownloadPath()
         {
-            if (File.Exists(source))
-            {
-                var sourceFile = new FileInfo(source);
-                sourceFile.CopyTo(target);
-                return;
-            }
+            return Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
+        }
+    }
 
-            if (!Directory.Exists(target))
-                Directory.CreateDirectory(target);
+    public class UpdateInProgressException : Exception
+    {
+        public UpdateInProgressException() : base("An update is already in progress.")
+        {
+        }
+    }
 
-            var sourceDir = new DirectoryInfo(source);
-            foreach (var fileInfo in sourceDir.EnumerateFileSystemInfos())
-            {
-                if (fileInfo is FileInfo file)
-                {
-                    file.CopyTo(Path.Join(target, file.Name));
-                }
-                else if (fileInfo is DirectoryInfo directory)
-                {
-                    Copy(directory.FullName, Path.Join(target, directory.Name));
-                }
-            }
+    public class UpdateAlreadyInstalledException : Exception
+    {
+        public UpdateAlreadyInstalledException() : base("An update has already been installed.")
+        {
         }
     }
 }

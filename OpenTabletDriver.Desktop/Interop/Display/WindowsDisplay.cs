@@ -4,8 +4,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
@@ -22,8 +21,8 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             }
             catch { }
 
-            var monitors = GetDisplays().OrderBy(e => e.Left).ToList();
-            var primary = monitors.FirstOrDefault(m => m.IsPrimary);
+            var monitors = GetDisplays();
+            var primary = monitors.First(m => m.IsPrimary);
 
             var displays = new List<IDisplay>();
             displays.Add(this);

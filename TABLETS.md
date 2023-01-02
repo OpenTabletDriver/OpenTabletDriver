@@ -2,44 +2,64 @@
 | ---------------------------   | :---------------: | ----- |
 | Acepen AP 1060                |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
+| Gaomon GM156HD                |     Supported     |
+| Gaomon M106K Pro              |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
-| Gaomon S56K                   |     Supported     |
+| Gaomon PD1561                 |     Supported     |
+| Gaomon PD2200                 |     Supported     |
 | Gaomon S620                   |     Supported     |
-| Gaomon S630                   |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons
-| Genius i608x                  |     Supported     | Require Zadig's WinUSB
 | Huion 1060 Plus               |     Supported     |
-| Huion 420                     |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion GT-220 V2               |     Supported     |
-| Huion H420                    |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion H320M                   |     Supported     |
 | Huion H420X                   |     Supported     |
 | Huion H430P                   |     Supported     |
 | Huion H610 Pro                |     Supported     |
+| Huion H610 Pro V2             |     Supported     |
+| Huion H610X                   |     Supported     |
 | Huion H640P                   |     Supported     |
+| Huion H642                    |     Supported     |
+| Huion H950P                   |     Supported     |
+| Huion H1060P                  |     Supported     |
 | Huion HS64                    |     Supported     |
+| Huion HS95                    |     Supported     |
+| Huion Kamvas 12               |     Supported     |
+| Huion Kamvas 13               |     Supported     |
 | Huion Kamvas 16               |     Supported     |
 | Huion Kamvas 16 (2021)        |     Supported     |
 | Huion Kamvas 20               |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
-| Huion New 1060 Plus (2048)    |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 1
-| Huion osu! Tablet             |     Supported     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion Kamvas Pro 13 (2.5k)    |     Supported     |
+| Huion Kamvas Pro 16 (2.5k)    |     Supported     |
+| Huion New 1060 Plus           |     Supported     |
 | Huion Q11K                    |     Supported     |
+| Huion Q11K V2                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
+| Monoprice 10594               |     Supported     |
+| Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
-| 10moon 1060N                  |     Supported     | Doesn't meet any of it's advertised specs
+| 10moon 1060N                  |     Supported     | Doesn't meet any of its advertised specs
+| RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
-| UGTABLET M708                 |     Supported     | Windows: Some variations may require Zadig's WinUSB to be installed on interface 0
+| UGEE S640                     |     Supported     |
+| UGEE U1600                    |     Supported     |
+| UGTABLET M708 V2              |     Supported     |
 | VEIKK A15                     |     Supported     |
+| VEIKK A15 V2                  |     Supported     |
 | VEIKK S640                    |     Supported     |
 | VEIKK S640 V2                 |     Supported     |
+| VEIKK VK430                   |     Supported     |
+| VEIKK VK640                   |     Supported     |
+| VEIKK VK1060                  |     Supported     |
 | ViewSonic WoodPad PF0730      |     Supported     |
 | Wacom CTE-430                 |     Supported     |
 | Wacom CTE-630                 |     Supported     |
 | Wacom CTE-460                 |     Supported     |
 | Wacom CTE-640                 |     Supported     |
+| Wacom CTE-660                 |     Supported     |
 | Wacom CTF-430                 |     Supported     |
 | Wacom CTH-460                 |     Supported     |
 | Wacom CTH-470                 |     Supported     |
@@ -61,114 +81,144 @@
 | Wacom CTL-672                 |     Supported     |
 | Wacom CTL-680                 |     Supported     |
 | Wacom CTL-690                 |     Supported     |
+| Wacom CTL-6100                |     Supported     |
 | Wacom DTC-133                 |     Supported     |
+| Wacom DTK-1600                |     Supported     |
 | Wacom ET-0405-U               |     Supported     |
 | Wacom ET-0405A-U              |     Supported     |
 | Wacom FT-0405-U               |     Supported     |
 | Wacom GD-0405-U               |     Supported     |
 | Wacom GD-0608-U               |     Supported     |
+| Wacom GD-0912-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
+| Wacom XD-1218-U               |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
-| XP-Pen Artist 12              |     Supported     | 
-| XP-Pen Artist 22HD            |     Supported     | Windows: Requires Zadig's WinUSB on interface 0
+| XenceLabs Pen Tablet Small    |     Supported     |
+| XENX P1-640                   |     Supported     |
+| XENX P3-1060                  |     Supported     |
+| XENX X1-640                   |     Supported     |
+| XP-Pen Artist 10 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 12 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 13.3            |     Supported     |
+| XP-Pen Artist 13 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 15.6            |     Supported     |
 | XP-Pen CT430                  |     Supported     |
-| XP-Pen CT460                  |     Supported     |
+| XP-Pen CT640                  |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
+| XP-Pen Deco mini7             |     Supported     |
 | XP-Pen Star 03                |     Supported     |
 | XP-Pen Star 05 V3             |     Supported     |
-| XP-Pen Star G430              |     Supported     | Windows: Zadig's WinUSB on interface 1 required for older variations
 | XP-Pen Star G430S             |     Supported     |
 | XP-Pen Star G540              |     Supported     |
 | XP-Pen Star G540 Pro          |     Supported     |
 | XP-Pen Star G640              |     Supported     |
 | XP-Pen Star G640 V2           |     Supported     |
 | XP-Pen Star G640S             |     Supported     |
+| XP-Pen Star G960              |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
 | XP-Pen Star G960S Plus        |     Supported     |
-| Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order
-| Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order
-| Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are unsupported.
-| Gaomon M106K Pro              |  Missing Features | Tilt is unsupported.
-| Gaomon M10K                   |  Missing Features | Wheel is unsupported.
-| Gaomon M10K Pro               |  Missing Features | Tilt and wheel are unsupported.
-| Gaomon M1220                  |  Missing Features | Tilt and wheel are unsupported.
-| Gaomon M1230                  |  Missing Features | Touch bar is unsupported.
-| Huion GC610                   |  Missing Features | Touchpad is unsupported.
-| Huion GT-221 Pro              |  Missing Features | Touch bar is unsupported.
-| Huion H1060P                  |  Missing Features | Tilt is unsupported.
-| Huion H1161                   |  Missing Features | Tablet buttons and tilt are unsupported.
-| Huion H610 Pro V2             |  Missing Features | Tilt is unsupported.
-| Huion H950P                   |  Missing Features | Tilt is unsupported.
-| Huion HC16                    |  Missing Features | Tilt and wheel are unsupported.
-| Huion HS610                   |  Missing Features | Tilt and wheel are unsupported.
-| Huion HS611                   |  Missing Features | Touch strip is unsupported.
-| Huion Kamvas 12 Pro           |  Missing Features | Touch strip is unsupported.
-| Huion Kamvas 13               |  Missing Features | Tilt is unsupported.
-| Huion Kamvas Pro 13           |  Missing Features | Tilt is unsupported.
-| Huion Kamvas Pro 16           |  Missing Features | Touch bar is unsupported.
-| Huion Kamvas Pro 20           |  Missing Features | Touch bar is unsupported.
-| Huion New 1060 Plus           |  Missing Features | Tilt is unsupported.
-| Huion Q11K V2                 |  Missing Features | Tilt is unsupported.
-| Huion Q620M                   |  Missing Features | Wheel is unsupported.
-| Parblo A610 Pro               |  Missing Features | Wheel is unsupported.
-| Parblo Intangbo M             |  Missing Features | Wheel is unsupported.
-| Parblo Intangbo S             |  Missing Features | Wheel is unsupported.
-| UGEE EX08                     |  Missing Features | Tilt is unsupported. Uses the same configuration as the XP-Pen Deco 01 V2.
-| VEIKK A15 Pro                 |  Missing Features | Wheel is unsupported.
-| VEIKK A30                     |  Missing Features | Touchpad is unsupported.
-| VEIKK A50                     |  Missing Features | Touchpad is unsupported.
-| VEIKK A50 V2                  |  Missing Features | Touchpad is unsupported.
-| VEIKK VK640                   |  Missing Features | Aux buttons are unsupported.
-| Wacom CTE-450                 |  Missing Features | Wheel is unsupported.
-| Wacom CTE-650                 |  Missing Features | Wheel is unsupported.
-| Wacom CTH-461                 |  Missing Features | Tablet buttons and touch are unsupported.
-| Wacom CTL-6100WL              |  Missing Features | Wireless is unsupported.
-| Wacom MTE-450                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-450                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-451                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-460                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-650                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-651                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-851                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-660                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-850                 |  Missing Features | Wheel is unsupported.
-| Wacom PTH-860                 |  Missing Features | Wheel is unsupported.
-| Wacom PTK-1240                |  Missing Features | Tablet buttons and wheel are unsupported.
-| Wacom PTK-440                 |  Missing Features | Tablet buttons and wheel are unsupported.
-| Wacom PTK-540WL               |  Missing Features | Tablet buttons and wheel are unsupported.
-| Wacom PTK-640                 |  Missing Features | Tablet buttons and wheel are unsupported.
-| Wacom PTK-840                 |  Missing Features | Tablet buttons and wheel are unsupported.
-| Wacom PTZ-1230                |  Missing Features | Tablet buttons and touch strips are unsupported.
-| Wacom PTZ-431W                |  Missing Features | Tablet buttons and touch strips are unsupported.
-| Wacom PTZ-630                 |  Missing Features | Tablet buttons and touch strips are unsupported.
-| Wacom PTZ-930                 |  Missing Features | Tablet buttons and touch strips are unsupported.
-| XP-Pen Artist 12              |  Missing Features | Touch bar is unsupported
-| XP-Pen Artist Pro 12          |  Missing Features | Tilt and wheel are unsupported.
-| XP-Pen Artist Pro 15.6        |  Missing Features | Tilt and wheel are unsupported.
-| XP-Pen Deco 01 V2             |  Missing Features | Tilt is unsupported.
-| XP-Pen Deco 01 V2 (variant 2) |  Missing Features | Tilt is unsupported
-| XP-Pen Deco 02                |  Missing Features | Wheel is unsupported.
-| XP-Pen Deco 03                |  Missing Features | Wheel is unsupported.
-| XP-Pen Deco mini7             |  Missing Features |
-| XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are unsupported.
-| XP-Pen Deco Pro Small         |  Missing Features | Tilt and wheel are unsupported.
-| XP-Pen Innovator 16           |  Missing Features | Wheel is unsupported.
-| XP-Pen Star 06                |  Missing Features | Wheel is unsupported.
-| XP-Pen Star 06C               |  Missing Features | Wheel is unsupported.
-| Huion H420                    |      Broken       | WinUSB implementation required.
+| Gaomon S56K                   |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
+| Gaomon S630                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Gaomon S830                   |    Has Quirks     | User may have to replug their tablet until it is detected.
+| Genius i405x                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
+| Genius i608x                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
+| Huion 420                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion H420                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion H580X                   |    Has Quirks     | User may have to replug their tablet until it is detected.
+| Huion H690                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion New 1060 Plus (2048)    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
+| Huion osu! Tablet             |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| KENTING K5540                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
+| Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order.
+| Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order.
+| UGTABLET M708                 |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
+| XP-Pen Artist 22HD            |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| XP-Pen Star G430              |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 1
+| Artisul AP604 (Pencil Small)  |  Missing Features | Aux buttons and eraser detection are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
+| Artisul A1201                 |  Missing Features | Touch bar is not yet supported.
+| Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are not yet supported.
+| Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
+| Gaomon M10K                   |  Missing Features | Wheel is not yet supported.
+| Gaomon M10K Pro               |  Missing Features | Wheel is not yet supported.
+| Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
+| Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
+| Huion GC610                   |  Missing Features | Touchpad is not yet supported.
+| Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
+| Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
+| Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
+| Huion HC16                    |  Missing Features | Wheel is not yet supported.
+| Huion HS610                   |  Missing Features | Wheel is not yet supported.
+| Huion HS611                   |  Missing Features | Touch bar is not yet supported.
+| Huion Kamvas Pro 12           |  Missing Features | Touch bar is not yet supported.
+| Huion Kamvas Pro 13           |  Missing Features | Touch bar is not yet supported.
+| Huion Kamvas Pro 16           |  Missing Features | Touch bar is not yet supported.
+| Huion Kamvas Pro 20           |  Missing Features | Touch bar is not yet supported.
+| Huion Kamvas Pro 24           |  Missing Features | Touch bar is not yet supported.
+| Huion Q620M                   |  Missing Features | Wheel is not yet supported.
+| Huion RTM-500                 |  Missing Features | Touch bar is not yet supported.
+| Lifetec LT9570                |  Missing Features | Aux buttons and tilt is not yet supported.
+| Monoprice MP1060-HA60         |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Parblo A610 Pro               |  Missing Features | Wheel is not yet supported.
+| Parblo Intangbo M             |  Missing Features | Wheel is not yet supported.
+| Parblo Intangbo S             |  Missing Features | Wheel is not yet supported.
+| UGEE EX08                     |  Missing Features | Tilt is not yet supported. Uses the same configuration as the XP-Pen Deco 01 V2.
+| VEIKK A15 Pro                 |  Missing Features | Wheel is not yet supported.
+| VEIKK A30                     |  Missing Features | Touchpad is not yet supported.
+| VEIKK A30 V2                  |  Missing Features | Touchpad is not yet supported.
+| VEIKK A50                     |  Missing Features | Touchpad is not yet supported.
+| VEIKK A50 V2                  |  Missing Features | Touchpad is not yet supported.
+| Wacom CTE-450                 |  Missing Features | Wheel is not yet supported.
+| Wacom CTE-650                 |  Missing Features | Wheel is not yet supported.
+| Wacom CTH-461                 |  Missing Features | Tablet buttons and touch are not yet supported.
+| Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
+| Wacom DTK-1300                |  Missing Features | Center button is not yet supported.
+| Wacom DTZ-1200W               |  Missing Features | Touch strips and top side buttons are not yet supported.
+| Wacom MTE-450                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-450                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-451                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-460                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-650                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-651                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-851                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-660                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-850                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-860                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-1240                |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-440                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-540WL               |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-640                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-840                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTZ-1230                |  Missing Features | Tablet buttons and touch bars are not yet supported.
+| Wacom PTZ-431W                |  Missing Features | Tablet buttons and touch bars are not yet supported.
+| Wacom PTZ-630                 |  Missing Features | Tablet buttons and touch bars are not yet supported.
+| Wacom PTZ-631W                |  Missing Features | Touch bars are not yet supported.
+| Wacom PTZ-930                 |  Missing Features | Touch bars are not yet supported.
+| Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
+| XP-Pen Artist 12              |  Missing Features | Touch bar is not yet supported
+| XP-Pen Artist 12 Pro          |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Artist 13.3 Pro        |  Missing Features | Wheel is not yet supported.
+| XP-Pen Artist 15.6 Pro        |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Artist 16 Pro          |  Missing Features | Wheel is not yet supported.
+| XP-Pen Artist Pro 16TP        |  Missing Features | Touch is not yet supported.
+| XP-Pen Deco 01 V2             |  Missing Features | Tilt is not yet supported.
+| XP-Pen Deco 01 V2 (variant 2) |  Missing Features | Tilt is not yet supported
+| XP-Pen Deco 02                |  Missing Features | Wheel is not yet supported.
+| XP-Pen Deco 03                |  Missing Features | Wheel is not yet supported.
+| XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Deco Pro Small         |  Missing Features | Tilt and wheel are not yet supported.
+| XP-Pen Deco Pro SW            |  Missing Features | Wheel is not yet supported.
+| XP-Pen Innovator 16           |  Missing Features | Wheel is not yet supported.
+| XP-Pen Star 06                |  Missing Features | Wheel is not yet supported.
+| XP-Pen Star 06C               |  Missing Features | Wheel is not yet supported.
 | Wacom ISD-V4                  |      Broken       | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
 | Huion G10T                    |     Untested      |
 | Wacom CTE-440                 |     Untested      |
-| Wacom GD-0912-U               |     Untested      |
 | Wacom GD-1218-U               |     Untested      |
 | Wacom PTK-450                 |     Untested      |
 | Wacom PTK-650                 |     Untested      |
-| Wacom PTZ-1231W               |     Untested      |
 | Wacom PTZ-430                 |     Untested      |
-| Wacom PTZ-631W                |     Untested      |
 | Wacom XD-0405-U               |     Untested      |
 | Wacom XD-0912-U               |     Untested      |
 | Wacom XD-1212-U               |     Untested      |
-| Wacom XD-1218-U               |     Untested      |

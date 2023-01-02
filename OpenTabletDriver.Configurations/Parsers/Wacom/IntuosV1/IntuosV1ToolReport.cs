@@ -1,8 +1,8 @@
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
-    public struct IntuosV1ToolReport : IToolReport, IEraserReport, IProximityReport
+    public struct IntuosV1ToolReport : IToolReport, IEraserReport, IHoverReport, IConfidenceReport
     {
         public IntuosV1ToolReport(byte[] report)
         {
@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 
             Eraser = Tool == ToolType.Eraser;
 
-            NearProximity = report[1].IsBitSet(6);
+            HighConfidence = report[1].IsBitSet(6);
             HoverDistance = (uint)report[9] >> 2;
         }
 
@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
         public uint RawToolID { set; get; }
         public ToolType Tool { set; get; }
         public bool Eraser { set; get; }
-        public bool NearProximity { set; get; }
+        public bool HighConfidence { set; get; }
         public uint HoverDistance { set; get; }
     }
 }

@@ -3,15 +3,13 @@
   "Specifications": {
     "Digitizer": {
       "Width": 147.2,
-      "Height": 92.0,
-      "MaxX": 14720.0,
-      "MaxY": 9200.0
+      "Height": 92,
+      "MaxX": 14720,
+      "MaxY": 9200
     },
     "Pen": {
       "MaxPressure": 1023,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
@@ -48,6 +46,19 @@
     },
     {
       "VendorID": 1386,
+      "ProductID": 215,
+      "InputReportLength": 9,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 1386,
       "ProductID": 218,
       "InputReportLength": 9,
       "OutputReportLength": null,
@@ -60,6 +71,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }

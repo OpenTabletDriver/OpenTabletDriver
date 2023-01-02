@@ -2,16 +2,14 @@
   "Name": "Huion New 1060 Plus (2048)",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.75,
-      "MaxX": 40000.0,
-      "MaxY": 25000.0
+      "MaxX": 40000,
+      "MaxY": 25000
     },
     "Pen": {
       "MaxPressure": 2047,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
@@ -34,9 +32,24 @@
       "InitializationStrings": [
         100
       ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T151_\\d{6}$"
+      },
+      "InitializationStrings": [
+        100
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

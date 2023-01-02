@@ -1,19 +1,20 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Devices;
-using OpenTabletDriver.Plugin.Tablet;
+using JetBrains.Annotations;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Devices
 {
+    [PublicAPI]
     public class DeviceReader<T> : IDisposable where T : IDeviceReport
     {
         public DeviceReader(IDeviceEndpoint endpoint, IReportParser<T> reportParser)
         {
             Endpoint = endpoint;
             Parser = reportParser;
-            workerThread = new Thread(Main)
+
+            _workerThread = new Thread(Main)
             {
                 Name = "OpenTabletDriver Device Reader",
                 IsBackground = true,
@@ -21,8 +22,8 @@ namespace OpenTabletDriver.Devices
             };
         }
 
-        private readonly Thread workerThread;
-        private bool initialized, connected;
+        private readonly Thread _workerThread;
+        private bool _initialized, _connected;
 
         /// <summary>
         /// The device endpoint in which is reporting data in the <see cref="ReportStream"/>.
@@ -32,12 +33,12 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// The raw device endpoint report stream.
         /// </summary>
-        public IDeviceEndpointStream ReportStream { protected set; get; }
+        public IDeviceEndpointStream? ReportStream { private set; get; }
 
         /// <summary>
-        /// The <see cref="IReportParser{T}"/> in which the device reports will be parsed with.
+        /// The <see cref="Tablet.IReportParser{T}"/> in which the device reports will be parsed with.
         /// </summary>
-        public IReportParser<T> Parser { private set; get; }
+        public IReportParser<T> Parser { get; }
 
         /// <summary>
         /// Whether or not to make an extra cloned report with data left unmodified.
@@ -47,7 +48,7 @@ namespace OpenTabletDriver.Devices
         /// <summary>
         /// Invoked when a new report comes in from the device.
         /// </summary>
-        public event EventHandler<T> Report;
+        public event EventHandler<T>? Report;
 
         /// <summary>
         /// Invoked when a new report comes in from the device.
@@ -56,7 +57,7 @@ namespace OpenTabletDriver.Devices
         /// This will only be invoked when <see cref="RawClone"/> is set to true.
         /// This report is not meant in any way to be modified, as it is supposed to represent the original data.
         /// </remarks>
-        public event EventHandler<T> RawReport;
+        public event EventHandler<T>? RawReport;
 
         /// <summary>
         /// Whether or not the device is actively emitting reports and being parsed.
@@ -65,23 +66,23 @@ namespace OpenTabletDriver.Devices
         {
             protected set
             {
-                connected = value;
+                _connected = value;
                 ConnectionStateChanged?.Invoke(this, Connected);
             }
-            get => connected;
+            get => _connected;
         }
 
         /// <summary>
         /// Invoked when <see cref="Connected"/> is changed.
         /// </summary>
-        public event EventHandler<bool> ConnectionStateChanged;
+        public event EventHandler<bool>? ConnectionStateChanged;
 
         protected virtual bool Initialize()
         {
             try
             {
                 ReportStream = Endpoint.Open();
-                return true;
+                return ReportStream != null;
             }
             catch (Exception ex)
             {
@@ -90,23 +91,23 @@ namespace OpenTabletDriver.Devices
             }
         }
 
-        protected virtual void Start()
+        protected void Start()
         {
-            if (!initialized)
-                initialized = Initialize();
+            if (!_initialized)
+                _initialized = Initialize();
 
-            if (initialized)
-                workerThread.Start();
+            if (_initialized)
+                _workerThread.Start();
         }
 
-        protected void Main()
+        private void Main()
         {
             try
             {
                 Connected = true;
                 while (Connected)
                 {
-                    var data = ReportStream.Read();
+                    var data = ReportStream!.Read();
                     if (Parser.Parse(data) is T report)
                         OnReport(report);
 
@@ -118,27 +119,26 @@ namespace OpenTabletDriver.Devices
             catch (ObjectDisposedException dex)
             {
                 Log.Debug("Device", $"{(string.IsNullOrWhiteSpace(dex.ObjectName) ? "A device stream" : dex.ObjectName)} was disposed.");
+                Connected = false;
             }
-            catch (IOException ioex) when (ioex.Message == "I/O disconnected." || ioex.Message == "Operation failed after some time.")
+            catch (IOException ioEx) when (ioEx.Message is "I/O disconnected." or "Operation failed after some time.")
             {
                 Log.Write("Device", "Device disconnected.");
+                Connected = false;
             }
             catch (ArgumentOutOfRangeException)
             {
                 Log.Write("Device", "Not enough report data returned by the device. Was it disconnected?");
+                Connected = false;
             }
             catch (Exception ex)
             {
-                Log.Exception(ex);
-            }
-            finally
-            {
-                Connected = false;
+                Log.Exception(ex, true);
             }
         }
 
-        protected virtual void OnReport(T report) => Report?.Invoke(this, report);
-        protected virtual void OnRawReport(T report) => RawReport?.Invoke(this, report);
+        private void OnReport(T report) => Report?.Invoke(this, report);
+        private void OnRawReport(T report) => RawReport?.Invoke(this, report);
 
         public void Dispose()
         {
