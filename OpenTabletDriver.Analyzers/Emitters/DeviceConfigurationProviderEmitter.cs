@@ -50,10 +50,10 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                     SyntaxFactory.SingletonList<MemberDeclarationSyntax>(
                                         SyntaxFactory.PropertyDeclaration(
                                             SyntaxFactory.GenericName(
-                                                SyntaxFactory.Identifier($"global::System.Collections.Generic.IEnumerable"))
+                                                SyntaxFactory.Identifier($"global::System.Collections.Immutable.ImmutableArray"))
                                             .WithTypeArgumentList(
                                                 SyntaxFactory.TypeArgumentList(
-                                                    SyntaxFactory.SingletonSeparatedList<TypeSyntax>(
+                                                    SyntaxFactory.SingletonSeparatedList(
                                                         SyntaxFactory.ParseTypeName(TabletConfigurationEmitter.CLASS_NAME)))),
                                             SyntaxFactory.Identifier("TabletConfigurations"))
                                         .WithModifiers(
@@ -68,11 +68,20 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                                         SyntaxFactory.Token(SyntaxKind.SemicolonToken)))))
                                         .WithInitializer(
                                             SyntaxFactory.EqualsValueClause(
-                                                SyntaxFactory.ImplicitArrayCreationExpression(
-                                                    SyntaxFactory.InitializerExpression(
-                                                        SyntaxKind.ArrayInitializerExpression,
-                                                        SyntaxFactory.SeparatedList<ExpressionSyntax>(
-                                                            _tabletConfigurations.Select(t => new TabletConfigurationEmitter(t).Emit()))))))
+                                                SyntaxFactory.InvocationExpression(
+                                                    SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        SyntaxFactory.IdentifierName($"global::System.Collections.Immutable.ImmutableArray"),
+                                                        SyntaxFactory.IdentifierName("Create")))
+                                                .WithArgumentList(
+                                                    SyntaxFactory.ArgumentList(
+                                                        SyntaxFactory.SingletonSeparatedList(
+                                                            SyntaxFactory.Argument(
+                                                                SyntaxFactory.ImplicitArrayCreationExpression(
+                                                                    SyntaxFactory.InitializerExpression(
+                                                                        SyntaxKind.ArrayInitializerExpression,
+                                                                        SyntaxFactory.SeparatedList<ExpressionSyntax>(
+                                                                            _tabletConfigurations.Select(t => new TabletConfigurationEmitter(t).Emit()))))))))))
                                         .WithSemicolonToken(
                                             SyntaxFactory.Token(SyntaxKind.SemicolonToken))))))))
                 .NormalizeWhitespace(eol: "\n");

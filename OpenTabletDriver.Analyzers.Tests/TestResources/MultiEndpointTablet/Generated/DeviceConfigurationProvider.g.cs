@@ -4,7 +4,7 @@ namespace OpenTabletDriver.Configurations
 {
     partial class DeviceConfigurationProvider : global::OpenTabletDriver.Components.IDeviceConfigurationProvider
     {
-        public global::System.Collections.Generic.IEnumerable<global::OpenTabletDriver.Tablet.TabletConfiguration> TabletConfigurations { get; } = new[]
+        public global::System.Collections.Immutable.ImmutableArray<global::OpenTabletDriver.Tablet.TabletConfiguration> TabletConfigurations { get; } = global::System.Collections.Immutable.ImmutableArray.Create(new[]
         {
             new global::OpenTabletDriver.Tablet.TabletConfiguration()
             {
@@ -80,6 +80,6 @@ namespace OpenTabletDriver.Configurations
                 },
                 Attributes = new global::System.Collections.Generic.Dictionary<string, string>()
             }
-        };
+        });
     }
 }
