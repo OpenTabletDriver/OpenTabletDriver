@@ -105,9 +105,6 @@ namespace OpenTabletDriver
                                 }
 
                                 var pair = pairList[pairIndex];
-                                if (pair.Digitizer is null)
-                                    Log.Write("Detect", $"Found tablet '{candidateConfig.Name}'");
-
                                 pair.Digitizer = digitizerEndpoint;
                                 break;
                             }
@@ -170,6 +167,8 @@ namespace OpenTabletDriver
                         }
 
                         var device = new InputDevice(config, pair.Digitizer, pair.Auxiliary);
+                        Log.Write("Detect", $"Found tablet '{config.Name}'");
+
                         if (config.AuxiliaryDeviceIdentifiers.Any() && pair.Auxiliary is null)
                         {
                             Log.Write("Detect", $"Auxiliary device not found for tablet '{config.Name}', express keys may not function properly", LogLevel.Warning);
