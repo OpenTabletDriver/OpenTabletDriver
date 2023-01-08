@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using OpenTabletDriver.Output;
@@ -11,17 +10,23 @@ namespace OpenTabletDriver
     /// A configured input device.
     /// </summary>
     [PublicAPI]
-    public class InputDevice
+    public class InputDevice : IDisposable
     {
-        public InputDevice(TabletConfiguration configuration, IList<InputDeviceEndpoint> endpoints)
+        public InputDevice(TabletConfiguration configuration, InputDeviceEndpoint digitizer, InputDeviceEndpoint? auxiliary)
         {
             Configuration = configuration;
-            Endpoints = endpoints;
+            Digitizer = digitizer;
+            Auxiliary = auxiliary;
 
-            foreach (var dev in Endpoints)
+            hookEndpoint(Digitizer);
+            hookEndpoint(Auxiliary);
+
+            void hookEndpoint(InputDeviceEndpoint? endpoint)
             {
-                // Hook endpoint states
-                dev.ConnectionStateChanged += (sender, reading) =>
+                if (endpoint is null)
+                    return;
+
+                endpoint.ConnectionStateChanged += (sender, reading) =>
                 {
                     if (_connected && !reading)
                     {
@@ -29,15 +34,15 @@ namespace OpenTabletDriver
                         Disconnected?.Invoke(this, EventArgs.Empty);
                     }
                 };
-                dev.Report += HandleReport;
+                endpoint.Report += HandleReport;
             }
         }
 
         [JsonConstructor]
         private InputDevice()
         {
-            Endpoints = Array.Empty<InputDeviceEndpoint>();
             Configuration = null!;
+            Digitizer = null!;
         }
 
         private bool _connected = true;
@@ -47,7 +52,10 @@ namespace OpenTabletDriver
         public TabletConfiguration Configuration { protected set; get; }
 
         [JsonIgnore]
-        public IList<InputDeviceEndpoint> Endpoints { get; }
+        public InputDeviceEndpoint Digitizer { get; }
+
+        [JsonIgnore]
+        public InputDeviceEndpoint? Auxiliary { get; }
 
         /// <summary>
         /// The active output mode at the end of the data pipeline for all data to be processed.
@@ -58,6 +66,13 @@ namespace OpenTabletDriver
         private void HandleReport(object? sender, IDeviceReport? report)
         {
             OutputMode?.Read(report!);
+        }
+
+        public void Dispose()
+        {
+            Digitizer.Dispose();
+            Auxiliary?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

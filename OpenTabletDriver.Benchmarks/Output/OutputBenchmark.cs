@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Benchmarks.Output
                 }
             };
 
-            var device = new InputDevice(config, new List<InputDeviceEndpoint>());
+            var device = new InputDevice(config, null!, null);
 
             _outputMode = _pluginFactory.Construct<AbsoluteOutputMode>(settings)!;
             _outputMode.Tablet = device;
