@@ -294,7 +294,8 @@ namespace OpenTabletDriver
                     if (!exists)
                         list = new List<TabletConfiguration>();
 
-                    list!.Add(config);
+                    if (!list!.Contains(config))
+                        list.Add(config);
                 }
             }
 
