@@ -27,8 +27,6 @@ namespace OpenTabletDriver
             Endpoint = device;
             Configuration = configuration;
             Identifier = identifier;
-
-            Start();
         }
 
         /// <summary>

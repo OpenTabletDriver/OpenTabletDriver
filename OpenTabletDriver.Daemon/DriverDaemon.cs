@@ -187,15 +187,21 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var tablet in _driver.InputDevices)
             {
-                foreach (var dev in tablet.Endpoints)
-                {
-                    dev.RawReport += (_, report) => PostDebugReport(dev.Configuration.Name, report);
-                    dev.RawClone = _debugging;
-                }
+                hookEndpoint(tablet.Digitizer);
+                hookEndpoint(tablet.Auxiliary);
             }
 
             await ApplySettings(_settingsManager.Settings);
             return await GetTablets();
+
+            void hookEndpoint(InputDeviceEndpoint? endpoint)
+            {
+                if (endpoint is null)
+                    return;
+
+                endpoint.RawReport += (_, report) => PostDebugReport(endpoint.Configuration.Name, report);
+                endpoint.RawClone = _debugging;
+            }
         }
 
         public async Task SaveSettings(Settings settings)
@@ -371,9 +377,12 @@ namespace OpenTabletDriver.Daemon
         public Task SetTabletDebug(bool enabled)
         {
             _debugging = enabled;
-            foreach (var endpoint in _driver.InputDevices.SelectMany(d => d.Endpoints))
+            foreach (var inputDevice in _driver.InputDevices)
             {
-                endpoint.RawClone = _debugging;
+                inputDevice.Digitizer.RawClone = _debugging;
+
+                if (inputDevice.Auxiliary is not null)
+                    inputDevice.Auxiliary.RawClone = _debugging;
             }
 
             Log.Debug("Tablet", $"Tablet debugging is {(_debugging ? "enabled" : "disabled")}");
