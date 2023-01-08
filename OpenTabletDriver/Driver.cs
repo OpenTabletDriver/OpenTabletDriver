@@ -156,7 +156,7 @@ namespace OpenTabletDriver
                 }
 
                 var deviceBuilder = ImmutableArray.CreateBuilder<InputDevice>(inputDeviceEndpoints.Count);
-                foreach (var (config, pairList) in inputDeviceEndpoints)
+                foreach (var (config, pairList) in inputDeviceEndpoints.Where(p => p.Value is not null))
                 {
                     foreach (var pair in pairList)
                     {
