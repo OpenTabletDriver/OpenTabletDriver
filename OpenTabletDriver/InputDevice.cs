@@ -26,6 +26,7 @@ namespace OpenTabletDriver
                 if (endpoint is null)
                     return;
 
+                endpoint.Start();
                 endpoint.ConnectionStateChanged += (sender, reading) =>
                 {
                     if (_connected && !reading)

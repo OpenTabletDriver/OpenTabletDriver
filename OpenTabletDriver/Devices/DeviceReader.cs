@@ -91,7 +91,7 @@ namespace OpenTabletDriver.Devices
             }
         }
 
-        protected void Start()
+        public void Start()
         {
             if (!_initialized)
                 _initialized = Initialize();

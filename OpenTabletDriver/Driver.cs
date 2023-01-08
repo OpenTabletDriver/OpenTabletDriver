@@ -106,6 +106,7 @@ namespace OpenTabletDriver
 
                                 var pair = pairList[pairIndex];
                                 pair.Digitizer = digitizerEndpoint;
+                                Log.Debug("Detect", $"Found '{candidateConfig.Name}' digitizer: '{deviceName}'");
                                 break;
                             }
 
@@ -125,6 +126,7 @@ namespace OpenTabletDriver
 
                                 var pair = pairList[pairIndex];
                                 pair.Auxiliary = digitizerEndpoint;
+                                Log.Debug("Detect", $"Found '{candidateConfig.Name}' auxiliary: '{deviceName}'");
                                 break;
                             }
                         }
@@ -166,8 +168,8 @@ namespace OpenTabletDriver
                             continue;
                         }
 
-                        var device = new InputDevice(config, pair.Digitizer, pair.Auxiliary);
                         Log.Write("Detect", $"Found tablet '{config.Name}'");
+                        var device = new InputDevice(config, pair.Digitizer, pair.Auxiliary);
 
                         if (config.AuxiliaryDeviceIdentifiers.Any() && pair.Auxiliary is null)
                         {
