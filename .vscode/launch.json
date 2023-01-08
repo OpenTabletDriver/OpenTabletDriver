@@ -8,7 +8,10 @@
             "preLaunchTask": "Build Daemon",
             "cwd": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net7.0",
             "program": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net7.0/OpenTabletDriver.Daemon.dll",
-            "args": [],
+            "args": [
+              "--config",
+              "${workspaceFolder}/bin/Configurations"
+            ],
             "console": "internalConsole",
             "stopAtEntry": false
         },

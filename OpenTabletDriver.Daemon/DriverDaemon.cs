@@ -87,6 +87,7 @@ namespace OpenTabletDriver.Daemon
                 Message?.Invoke(sender, message);
             };
 
+            Log.Write("Detect", $"Configuration overrides exist: '{_appInfo.ConfigurationDirectory}'", LogLevel.Debug);
             InitializePlatform();
             _driver.InputDevicesChanged += (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
             _deviceHub.DevicesChanged += (_, e) =>

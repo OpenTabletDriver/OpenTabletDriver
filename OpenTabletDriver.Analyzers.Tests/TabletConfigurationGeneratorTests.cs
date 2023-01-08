@@ -14,28 +14,37 @@ namespace OpenTabletDriver.Analyzers.Tests
         public Task Test(string tabletName)
         {
             GetResources(tabletName,
+                out var sources,
                 out var tabletJsonFiles,
                 out var generatedSources,
                 out var analyzerConfigOptions);
 
-            return TabletConfigurationVerifier.Verify(tabletJsonFiles, generatedSources, analyzerConfigOptions);
+            return TabletConfigurationVerifier.Verify(sources, tabletJsonFiles, generatedSources, analyzerConfigOptions);
         }
 
         [Fact]
         public Task TestAllConfigurations()
         {
+            GetResources("SingleEndpointTablet", out var sources, out _, out _, out _);
+
             var tabletJsonFiles = GetAllConfigurations();
             static string analyzerConfigOptionsFactory(string _) => "build_metadata.AdditionalFiles.TabletConfiguration = true";
 
-            return TabletConfigurationVerifier.Verify(tabletJsonFiles, analyzerConfigOptionsFactory);
+            return TabletConfigurationVerifier.Verify(sources, tabletJsonFiles, analyzerConfigOptionsFactory);
         }
 
         private static void GetResources(string resourceName,
+            out (string file, string content)[] sources,
             out (string file, string content)[] tabletJsonFiles,
             out (string file, string content)[] generatedFiles,
             out (string file, string content)[] analyzerConfigOptions)
         {
             var testResources = TestResourceHelper.GetGroupedTestResourcesContent(resourceName);
+
+            sources = testResources
+                .Single(g => g.Key == "Sources")
+                .Where(f => f.file.EndsWith(".cs"))
+                .ToArray();
 
             tabletJsonFiles = testResources
                 .Single(g => g.Key == "Configurations")
