@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenTabletDriver.Components;
@@ -70,31 +71,44 @@ namespace OpenTabletDriver.Desktop
         {
             if (Directory.Exists(_appInfo.ConfigurationDirectory))
             {
-                var files = Directory.EnumerateFiles(_appInfo.ConfigurationDirectory, "*.json", SearchOption.AllDirectories);
+                IEnumerable<TabletConfiguration> configOverrides = Directory.EnumerateFiles(_appInfo.ConfigurationDirectory, "*.json", SearchOption.AllDirectories)
+                    .Select(ParseConfiguration)
+                    .Where(config => config != null)!;
 
-                IEnumerable<(ConfigurationSource, TabletConfiguration)> jsonConfigurations = files
-                    .Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path)))
-                    .Select(jsonConfig => (ConfigurationSource.File, jsonConfig))!;
+                var configMap = new Dictionary<string, TabletConfiguration>();
 
-                return _inAssemblyConfigurationProvider.TabletConfigurations
-                    .Select(asmConfig => (ConfigurationSource.Assembly, asmConfig))
-                    .Concat(jsonConfigurations)
-                    .GroupBy(sourcedConfig => sourcedConfig.Item2.Name)
-                    .Select(multiSourcedConfig =>
-                    {
-                        var asmConfig = multiSourcedConfig.Where(m => m.Item1 == ConfigurationSource.Assembly)
-                            .Select(m => m.Item2)
-                            .FirstOrDefault();
-                        var jsonConfig = multiSourcedConfig.Where(m => m.Item1 == ConfigurationSource.File)
-                            .Select(m => m.Item2)
-                            .FirstOrDefault();
+                // populate configMap with all configurations from the assembly
+                // and then populate it with overrides from the user's config directory,
+                // replacing any existing configurations with the same name
+                PopulateMap(configMap, _inAssemblyConfigurationProvider.TabletConfigurations);
+                PopulateMap(configMap, configOverrides);
 
-                        return jsonConfig ?? asmConfig!;
-                    })
-                    .ToImmutableArray();
+                return configMap.Values.OrderBy(config => config.Name).ToImmutableArray();
             }
 
             return _inAssemblyConfigurationProvider.TabletConfigurations;
+        }
+
+        private static TabletConfiguration? ParseConfiguration(string path)
+        {
+            try
+            {
+                return Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path));
+            }
+            catch
+            {
+                Log.Write("Configuration", $"Failed to parse configuration at '{path}'", LogLevel.Error);
+                return null;
+            }
+        }
+
+        private static void PopulateMap(Dictionary<string, TabletConfiguration> configMap, IEnumerable<TabletConfiguration> configs)
+        {
+            foreach (var config in configs)
+            {
+                ref var configInMap = ref CollectionsMarshal.GetValueRefOrAddDefault(configMap, config.Name, out _);
+                configInMap = config;
+            }
         }
 
         private enum ConfigurationSource
