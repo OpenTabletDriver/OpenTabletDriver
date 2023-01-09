@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using OpenTabletDriver.Logging;
 
@@ -10,10 +11,37 @@ namespace OpenTabletDriver
     [PublicAPI]
     public static class Log
     {
+        private static List<LogMessage>? _backlog = new();
+        private static Action<LogMessage> _logAction = WriteBacklog;
+        private static event EventHandler<LogMessage>? _output;
+
         /// <summary>
         /// Event hook to receive log messages.
         /// </summary>
-        public static event EventHandler<LogMessage>? Output;
+        public static event EventHandler<LogMessage>? Output
+        {
+            add
+            {
+                if (_output == null && value != null)
+                {
+                    foreach (var message in _backlog!)
+                        value.Invoke(null, message);
+                    _backlog.Clear();
+                    _logAction = WriteLog;
+                }
+
+                _output += value;
+            }
+            remove
+            {
+                _output -= value;
+                if (_output == null)
+                {
+                    _backlog = new List<LogMessage>();
+                    _logAction = WriteBacklog;
+                }
+            }
+        }
 
         /// <summary>
         /// Invoke sending a log message.
@@ -21,7 +49,7 @@ namespace OpenTabletDriver
         /// <param name="message">The message to be passed to the <see cref="Output"/> event.</param>
         public static void Write(LogMessage message)
         {
-            Output?.Invoke(null, message);
+            _logAction(message);
         }
 
         /// <summary>
@@ -95,6 +123,16 @@ namespace OpenTabletDriver
 
             var message = new LogMessage(ex, notify);
             Write(message);
+        }
+
+        private static void WriteBacklog(LogMessage message)
+        {
+            _backlog!.Add(message);
+        }
+
+        private static void WriteLog(LogMessage message)
+        {
+            _output?.Invoke(null, message);
         }
     }
 }
