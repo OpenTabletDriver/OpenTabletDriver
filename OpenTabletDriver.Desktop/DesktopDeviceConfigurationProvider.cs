@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Configurations;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
@@ -71,9 +72,11 @@ namespace OpenTabletDriver.Desktop
         {
             if (Directory.Exists(_appInfo.ConfigurationDirectory))
             {
-                IEnumerable<TabletConfiguration> configOverrides = Directory.EnumerateFiles(_appInfo.ConfigurationDirectory, "*.json", SearchOption.AllDirectories)
-                    .Select(ParseConfiguration)
-                    .Where(config => config != null)!;
+                var jsonSerializer = new JsonSerializer();
+                TabletConfiguration[] configOverrides = Directory.EnumerateFiles(_appInfo.ConfigurationDirectory, "*.json", SearchOption.AllDirectories)
+                    .Select(f => ParseConfiguration(jsonSerializer, f))
+                    .Where(config => config != null)
+                    .ToArray()!;
 
                 var configMap = new Dictionary<string, TabletConfiguration>();
 
@@ -89,15 +92,17 @@ namespace OpenTabletDriver.Desktop
             return _inAssemblyConfigurationProvider.TabletConfigurations;
         }
 
-        private static TabletConfiguration? ParseConfiguration(string path)
+        private static TabletConfiguration? ParseConfiguration(JsonSerializer serializer, string path)
         {
             try
             {
-                return Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path));
+                using (var sr = new StreamReader(path))
+                using (var jr = new JsonTextReader(sr))
+                    return serializer.Deserialize<TabletConfiguration>(jr);
             }
-            catch
+            catch (Exception e)
             {
-                Log.Write("Configuration", $"Failed to parse configuration at '{path}'", LogLevel.Error);
+                Log.Write("Detect", $"Failed to parse configuration at '{path}': {e.Message}", LogLevel.Error);
                 return null;
             }
         }
