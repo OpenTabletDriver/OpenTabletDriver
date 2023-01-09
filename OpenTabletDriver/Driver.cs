@@ -179,8 +179,11 @@ namespace OpenTabletDriver
                             Log.Write("Detect", $"Auxiliary device not found for tablet '{config.Name}', express keys may not function properly", LogLevel.Warning);
                         }
 
-                        device.Disconnected += (sender, e) =>
+                        device.StateChanged += (sender, e) =>
                         {
+                            if (e < InputDeviceState.Disconnected)
+                                return;
+
                             // save the resulting immutable array for later use.
                             ImmutableArray<InputDevice> updatedDevices = default;
 
