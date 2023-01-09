@@ -39,8 +39,11 @@ namespace OpenTabletDriver
 
             if (_deviceConfigurationProvider.RaisesTabletConfigurationsChanged)
             {
-                _deviceConfigurationProvider.TabletConfigurationsChanged +=
-                    configs => _configHashMap = ConstructConfigHashMap(configs);
+                _deviceConfigurationProvider.TabletConfigurationsChanged += configs =>
+                {
+                    _configHashMap = ConstructConfigHashMap(configs);
+                    Detect();
+                };
             }
 
             _configHashMap = ConstructConfigHashMap(_deviceConfigurationProvider.TabletConfigurations);
