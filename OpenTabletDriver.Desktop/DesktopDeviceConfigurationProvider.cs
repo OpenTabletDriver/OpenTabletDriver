@@ -115,11 +115,5 @@ namespace OpenTabletDriver.Desktop
                 configInMap = config;
             }
         }
-
-        private enum ConfigurationSource
-        {
-            Assembly,
-            File
-        }
     }
 }
