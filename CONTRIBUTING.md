@@ -76,9 +76,7 @@ alive and pleasant to work on.
 
 The following rules apply to all code contributions:
 
-- The git branch should be based on and targeting the `master` branch (except for config
-  contributions, mentioned above). Even if a contribution is code, if it's related to configs (eg.
-  adding a parser), it should target the configs branch. You should also try to create the branch
+- The git branch should be based on and targeting the `master` branch. You should also try to create the branch
   from the most recent commit on master possible, to keep history clean.
 - The code you commit must adhere to the rules defined in the project's `.editorconfig` file.
   Some IDEs can recognize `.editorconfig` files and fix some of the broken rules on each file save.
