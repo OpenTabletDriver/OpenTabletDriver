@@ -20,35 +20,28 @@ namespace OpenTabletDriver.Desktop
 
     public class DesktopServiceCollection : ServiceCollection
     {
-        private static readonly IEnumerable<ServiceDescriptor> RequiredServices = new[]
-        {
-            // Core Services
-            Singleton<SynchronizationContext>(_ => new NonConcurrentSynchronizationContext(false)),
-            Singleton<IDriver, Driver>(),
-            Singleton<IReportParserProvider, ReportParserProvider>(),
-            Singleton<IDeviceHubsProvider, DeviceHubsProvider>(p => new DeviceHubsProvider(p)),
-            Singleton<ICompositeDeviceHub, RootHub>(RootHub.WithProvider),
-            Singleton<IDeviceConfigurationProvider, DesktopDeviceConfigurationProvider>(),
-            Singleton<IReportParserProvider, DesktopReportParserProvider>(),
-            // Desktop Services
-            Singleton<IGitHubClient>(new GitHubClient(ProductHeaderValue.Parse("OpenTabletDriver"))),
-            Transient<EnvironmentDictionary, EnvironmentDictionary>(),
-            Singleton<IPluginManager, PluginManager>(),
-            Singleton<ISettingsManager, SettingsManager>(),
-            Singleton<IPresetManager, PresetManager>(),
-            Singleton<IPluginFactory, PluginFactory>(),
-            Singleton<ISleepDetector, SleepDetector>(),
-            Transient(p => p.GetRequiredService<ISettingsManager>().Settings)
-        };
-
         public DesktopServiceCollection()
         {
-            this.AddServices(RequiredServices);
-        }
-
-        protected DesktopServiceCollection(IEnumerable<ServiceDescriptor> overridingServices) : this()
-        {
-            this.AddServices(overridingServices);
+            this.AddServices(new[]
+            {
+                // Core Services
+                Singleton<SynchronizationContext>(_ => new NonConcurrentSynchronizationContext(false)),
+                Singleton<IDriver, Driver>(),
+                Singleton<IReportParserProvider, ReportParserProvider>(),
+                Singleton<IDeviceHubsProvider, DeviceHubsProvider>(p => new DeviceHubsProvider(p)),
+                Singleton<ICompositeDeviceHub, RootHub>(RootHub.WithProvider),
+                Singleton<IDeviceConfigurationProvider, DesktopDeviceConfigurationProvider>(),
+                Singleton<IReportParserProvider, DesktopReportParserProvider>(),
+                // Desktop Services
+                Singleton<IGitHubClient>(new GitHubClient(ProductHeaderValue.Parse("OpenTabletDriver"))),
+                Transient<EnvironmentDictionary, EnvironmentDictionary>(),
+                Singleton<IPluginManager, PluginManager>(),
+                Singleton<ISettingsManager, SettingsManager>(),
+                Singleton<IPresetManager, PresetManager>(),
+                Singleton<IPluginFactory, PluginFactory>(),
+                Singleton<ISleepDetector, SleepDetector>(),
+                Transient(p => p.GetRequiredService<ISettingsManager>().Settings)
+            });
         }
 
         public static DesktopServiceCollection GetPlatformServiceCollection()

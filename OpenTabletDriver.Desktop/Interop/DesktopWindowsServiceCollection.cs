@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.Display;
@@ -19,21 +18,19 @@ namespace OpenTabletDriver.Desktop.Interop
 
     public sealed class DesktopWindowsServiceCollection : DesktopServiceCollection
     {
-        private static readonly IEnumerable<ServiceDescriptor> PlatformRequiredServices = new[]
+        public DesktopWindowsServiceCollection() : base()
         {
-            Transient<IEnvironmentHandler, WindowsEnvironmentHandler>(),
-            Transient<EnvironmentDictionary, WindowsEnvironmentDictionary>(),
-            Transient<ITimer, WindowsTimer>(),
-            Transient<IAbsolutePointer, WindowsAbsolutePointer>(),
-            Transient<IRelativePointer, WindowsRelativePointer>(),
-            Transient<IVirtualKeyboard, WindowsVirtualKeyboard>(),
-            Singleton<IKeysProvider, WindowsKeysProvider>(),
-            Transient<IVirtualScreen, WindowsDisplay>(),
-            Transient<IUpdater, WindowsUpdater>()
-        };
-
-        public DesktopWindowsServiceCollection() : base(PlatformRequiredServices)
-        {
+            this.AddServices(new[] {
+                Transient<IEnvironmentHandler, WindowsEnvironmentHandler>(),
+                Transient<EnvironmentDictionary, WindowsEnvironmentDictionary>(),
+                Transient<ITimer, WindowsTimer>(),
+                Transient<IAbsolutePointer, WindowsAbsolutePointer>(),
+                Transient<IRelativePointer, WindowsRelativePointer>(),
+                Transient<IVirtualKeyboard, WindowsVirtualKeyboard>(),
+                Singleton<IKeysProvider, WindowsKeysProvider>(),
+                Transient<IVirtualScreen, WindowsDisplay>(),
+                Transient<IUpdater, WindowsUpdater>()
+            });
         }
     }
 }
