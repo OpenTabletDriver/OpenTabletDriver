@@ -199,8 +199,8 @@ namespace OpenTabletDriver.Daemon
                 if (endpoint is null)
                     return;
 
-                endpoint.RawReport += (_, report) => PostDebugReport(endpoint.Configuration.Name, report);
-                endpoint.RawClone = _debugging;
+                endpoint.ReportCloned += (_, report) => PostDebugReport(endpoint.Configuration.Name, report);
+                endpoint.CloneReport = _debugging;
             }
         }
 
@@ -379,10 +379,10 @@ namespace OpenTabletDriver.Daemon
             _debugging = enabled;
             foreach (var inputDevice in _driver.InputDevices)
             {
-                inputDevice.Digitizer.RawClone = _debugging;
+                inputDevice.Digitizer.CloneReport = _debugging;
 
                 if (inputDevice.Auxiliary is not null)
-                    inputDevice.Auxiliary.RawClone = _debugging;
+                    inputDevice.Auxiliary.CloneReport = _debugging;
             }
 
             Log.Debug("Tablet", $"Tablet debugging is {(_debugging ? "enabled" : "disabled")}");
