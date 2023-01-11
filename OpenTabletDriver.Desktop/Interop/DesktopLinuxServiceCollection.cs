@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.Display;
@@ -24,7 +25,7 @@ namespace OpenTabletDriver.Desktop.Interop
             {
                 Transient<IEnvironmentHandler, LinuxEnvironmentHandler>(),
                 Transient<EnvironmentDictionary, LinuxEnvironmentDictionary>(),
-                Transient<ITimer, LinuxTimer>(),
+                Transient(GetTimer),
                 Singleton<IAbsolutePointer, EvdevAbsolutePointer>(),
                 Singleton<IRelativePointer, EvdevRelativePointer>(),
                 Singleton<IPressureHandler, EvdevVirtualTablet>(),
@@ -42,6 +43,14 @@ namespace OpenTabletDriver.Desktop.Interop
                 return Singleton<IVirtualScreen, XScreen>();
 
             throw new InvalidOperationException("Neither Wayland nor X11 environment variables were set");
+        }
+
+        private static ITimer GetTimer(IServiceProvider provider)
+        {
+            if (Debugger.IsAttached)
+                return new FallbackTimer();
+
+            return new LinuxTimer();
         }
 
         private static bool HasEnvironmentVariable(string variable)
