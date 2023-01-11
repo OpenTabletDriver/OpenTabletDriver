@@ -28,7 +28,6 @@ namespace OpenTabletDriver.Output
                     UpdateState();
                 }
             };
-            _scheduler.Start();
         }
 
         private readonly object _synchronizationObject = new object();

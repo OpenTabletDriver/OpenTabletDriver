@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Desktop.Interop
         {
             Transient<IEnvironmentHandler, LinuxEnvironmentHandler>(),
             Transient<EnvironmentDictionary, LinuxEnvironmentDictionary>(),
-            Transient<ITimer, FallbackTimer>(),
+            Transient<ITimer, LinuxTimer>(),
             Singleton<IAbsolutePointer, EvdevAbsolutePointer>(),
             Singleton<IRelativePointer, EvdevRelativePointer>(),
             Singleton<IPressureHandler, EvdevVirtualTablet>(),
