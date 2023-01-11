@@ -18,7 +18,9 @@ namespace OpenTabletDriver.Desktop.Contracts
     {
         event EventHandler<LogMessage> Message;
         event EventHandler<DebugReportData> DeviceReport;
-        event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
+        event EventHandler<int>? TabletAdded;
+        event EventHandler<int>? TabletRemoved;
+        event EventHandler<TabletState>? TabletStateChanged;
         event EventHandler<PluginEventType>? AssembliesChanged;
 
         Task WriteMessage(LogMessage message);
@@ -32,8 +34,9 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<IEnumerable<IDeviceEndpoint>> GetDevices();
         Task<IEnumerable<IDisplay>> GetDisplays();
 
-        Task<IEnumerable<TabletConfiguration>> GetTablets();
-        Task<IEnumerable<TabletConfiguration>> DetectTablets();
+        Task<IEnumerable<int>> GetTablets();
+        Task<TabletConfiguration> GetTabletConfiguration(int tabletId);
+        Task<IEnumerable<int>> DetectTablets();
 
         Task SaveSettings(Settings settings);
         Task ApplySettings(Settings settings);

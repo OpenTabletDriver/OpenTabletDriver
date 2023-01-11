@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using JetBrains.Annotations;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Tablet;
@@ -11,6 +12,7 @@ namespace OpenTabletDriver
     [PublicAPI]
     public sealed class InputDevice : IDisposable
     {
+        private static int _id;
         private InputDeviceState _state;
 
         public InputDevice(TabletConfiguration configuration, InputDeviceEndpoint digitizer, InputDeviceEndpoint? auxiliary)
@@ -53,6 +55,8 @@ namespace OpenTabletDriver
                 endpoint.ReportParsed += HandleReport;
             }
         }
+
+        public int Id { get; } = Interlocked.Increment(ref _id);
 
         public InputDeviceState State
         {

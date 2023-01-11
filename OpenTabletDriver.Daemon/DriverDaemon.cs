@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,8 +27,6 @@ using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Tablet;
-
-#nullable enable
 
 namespace OpenTabletDriver.Daemon
 {
@@ -89,20 +84,13 @@ namespace OpenTabletDriver.Daemon
 
             Log.Write("Detect", $"Configuration overrides exist: '{_appInfo.ConfigurationDirectory}'", LogLevel.Debug);
             InitializePlatform();
-            _driver.InputDevicesChanged += (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
-            _deviceHub.DevicesChanged += (_, e) =>
+            _driver.InputDeviceAdded += (sender, e) =>
             {
-                if (!e.Additions.Any())
-                    return;
-
-                // ReSharper disable once AsyncVoidLambda
-                _synchronizationContext.Post(async _ =>
-                {
-                    await DetectTablets();
-                    await ApplySettings(_settingsManager.Settings);
-                }, this);
+                TabletAdded?.Invoke(sender, e.Id);
+                e.StateChanged += (s, state) => TabletStateChanged?.Invoke(s, new TabletState(e.Id, state));
             };
 
+            _driver.InputDeviceRemoved += (sender, e) => TabletRemoved?.Invoke(sender, e.Id);
             _pluginManager.AssembliesChanged += (s, e) => AssembliesChanged?.Invoke(s, e);
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
@@ -129,7 +117,9 @@ namespace OpenTabletDriver.Daemon
 
         public event EventHandler<LogMessage>? Message;
         public event EventHandler<DebugReportData>? DeviceReport;
-        public event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
+        public event EventHandler<int>? TabletAdded;
+        public event EventHandler<int>? TabletRemoved;
+        public event EventHandler<TabletState>? TabletStateChanged;
         public event EventHandler<Settings>? SettingsChanged;
         public event EventHandler<PluginEventType>? AssembliesChanged;
 
@@ -176,14 +166,23 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(_pluginManager.Plugins.Select(p => p.GetMetadata()));
         }
 
-        public Task<IEnumerable<TabletConfiguration>> GetTablets()
+        public Task<IEnumerable<int>> GetTablets()
         {
-            return Task.FromResult(_driver.InputDevices.Select(c => c.Configuration));
+            return Task.FromResult(_driver.InputDevices.Select(c => c.Id));
         }
 
-        public async Task<IEnumerable<TabletConfiguration>> DetectTablets()
+        public Task<TabletConfiguration> GetTabletConfiguration(int id)
         {
-            _driver.Detect();
+            var tablet = _driver.InputDevices.FirstOrDefault(c => c.Id == id);
+            if (tablet == null)
+                throw new ArgumentException("Tablet not found", nameof(id));
+
+            return Task.FromResult(tablet.Configuration);
+        }
+
+        public async Task<IEnumerable<int>> DetectTablets()
+        {
+            _driver.ScanDevices();
 
             foreach (var tablet in _driver.InputDevices)
             {

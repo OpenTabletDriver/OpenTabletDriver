@@ -42,14 +42,30 @@ namespace OpenTabletDriver
                 _deviceConfigurationProvider.TabletConfigurationsChanged += configs =>
                 {
                     _configHashMap = ConstructConfigHashMap(configs);
-                    Detect();
+                    ScanDevices();
                 };
             }
 
             _configHashMap = ConstructConfigHashMap(_deviceConfigurationProvider.TabletConfigurations);
+            _compositeDeviceHub.DevicesChanged += (sender, d) =>
+            {
+                var additions = d.Additions.ToArray();
+                if (additions.Length == 0)
+                    return;
+
+                var addedDevices = ScanDevices(additions);
+                if (addedDevices.Length == 0)
+                    return;
+
+                ImmutableInterlocked.Update(ref _inputDevices, devices => devices.AddRange(addedDevices));
+
+                foreach (var device in _inputDevices)
+                    InputDeviceAdded?.Invoke(this, device);
+            };
         }
 
-        public event EventHandler<ImmutableArray<InputDevice>>? InputDevicesChanged;
+        public event EventHandler<InputDevice>? InputDeviceAdded;
+        public event EventHandler<InputDevice>? InputDeviceRemoved;
 
         public ImmutableArray<InputDevice> InputDevices => _inputDevices;
 
@@ -58,12 +74,26 @@ namespace OpenTabletDriver
             return _reportParserProvider.GetReportParser(identifier.ReportParser);
         }
 
-        public virtual void Detect()
+        public void ScanDevices()
+        {
+            Log.Write("Detect", "Searching for tablets...");
+
+            DisposeDevices(_inputDevices);
+            _inputDevices = ScanDevices(_compositeDeviceHub.GetDevices());
+
+            foreach (var device in _inputDevices)
+                InputDeviceAdded?.Invoke(this, device);
+
+            if (!InputDevices.Any())
+            {
+                Log.Write("Detect", "No tablets were detected.");
+            }
+        }
+
+        private ImmutableArray<InputDevice> ScanDevices(IEnumerable<IDeviceEndpoint> endpointsToScan)
         {
             lock (_detectLock)
             {
-                Log.Write("Detect", "Searching for tablets...");
-
                 // save a reference to avoid potential _configHashMap changes during detection
                 var tabletConfigurations = _configHashMap;
 
@@ -75,7 +105,7 @@ namespace OpenTabletDriver
                 var inputDeviceEndpoints = new Dictionary<TabletConfiguration, List<InputDeviceEndpointPair>>();
 
                 // loop over all devices
-                foreach (var device in _compositeDeviceHub.GetDevices())
+                foreach (var device in endpointsToScan)
                 {
                     try
                     {
@@ -184,34 +214,15 @@ namespace OpenTabletDriver
                             if (e < InputDeviceState.Disconnected)
                                 return;
 
-                            // save the resulting immutable array for later use.
-                            ImmutableArray<InputDevice> updatedDevices = default;
-
-                            ImmutableInterlocked.Update(ref _inputDevices, (devices, device) =>
-                            {
-                                updatedDevices = devices.Remove(device);
-                                return updatedDevices;
-                            }, device);
-
-                            // use the saved array here to invoke the event.
-                            // this ensures that the event is invoked with the correct state.
-                            InputDevicesChanged?.Invoke(this, updatedDevices);
+                            if (ImmutableInterlocked.Update(ref _inputDevices, (devices, device) => devices.Remove(device), device))
+                                InputDeviceRemoved?.Invoke(this, device);
                         };
 
                         deviceBuilder.Add(device);
                     }
                 }
 
-                // atomically update InputDevices
-                var oldDevices = _inputDevices;
-                _inputDevices = deviceBuilder.ToImmutable();
-                DisposeDevices(oldDevices);
-                InputDevicesChanged?.Invoke(this, InputDevices);
-
-                if (!InputDevices.Any())
-                {
-                    Log.Write("Detect", "No tablets were detected.");
-                }
+                return deviceBuilder.ToImmutable();
             }
         }
 
@@ -313,7 +324,9 @@ namespace OpenTabletDriver
         private static void DisposeDevices(IEnumerable<InputDevice> devices)
         {
             foreach (var device in devices)
+            {
                 device.Dispose();
+            }
         }
 
         public void Dispose()
