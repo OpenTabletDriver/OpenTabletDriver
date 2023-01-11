@@ -152,8 +152,9 @@ namespace OpenTabletDriver
                 if (!TryParse(data, out var report))
                     return;
 
-                if (!TryProcess(report))
-                    return;
+                // Create a clone even if processing the report and pushing it
+                // down the pipeline created an exception.
+                TryProcess(report);
 
                 // We create a clone of the report to avoid data being modified on the tablet debugger.
                 // No need to wrap in a try catch since this is guaranteed to not throw
