@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop.Interop.Display;
 using OpenTabletDriver.Desktop.Interop.Environment;
@@ -18,20 +17,18 @@ namespace OpenTabletDriver.Desktop.Interop
 
     public sealed class DesktopMacOSServiceCollection : DesktopServiceCollection
     {
-        private static readonly IEnumerable<ServiceDescriptor> PlatformRequiredServices = new[]
+        public DesktopMacOSServiceCollection() : base()
         {
-            Transient<ITimer, MacOSTimer>(),
-            Transient<IAbsolutePointer, MacOSAbsolutePointer>(),
-            Transient<IRelativePointer, MacOSRelativePointer>(),
-            Transient<IVirtualKeyboard, MacOSVirtualKeyboard>(),
-            Transient<IKeysProvider, MacOSKeysProvider>(),
-            Transient<IVirtualScreen, MacOSDisplay>(),
-            Transient<IEnvironmentHandler, MacOSEnvironmentHandler>(),
-            Transient<IUpdater, MacOSUpdater>()
-        };
-
-        public DesktopMacOSServiceCollection() : base(PlatformRequiredServices)
-        {
+            this.AddServices(new[] {
+                Transient<ITimer, MacOSTimer>(),
+                Transient<IAbsolutePointer, MacOSAbsolutePointer>(),
+                Transient<IRelativePointer, MacOSRelativePointer>(),
+                Transient<IVirtualKeyboard, MacOSVirtualKeyboard>(),
+                Transient<IKeysProvider, MacOSKeysProvider>(),
+                Transient<IVirtualScreen, MacOSDisplay>(),
+                Transient<IEnvironmentHandler, MacOSEnvironmentHandler>(),
+                Transient<IUpdater, MacOSUpdater>()
+            });
         }
     }
 }

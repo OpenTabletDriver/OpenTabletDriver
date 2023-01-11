@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.Display;
@@ -19,21 +18,20 @@ namespace OpenTabletDriver.Desktop.Interop
 
     public sealed class DesktopLinuxServiceCollection : DesktopServiceCollection
     {
-        private static readonly IEnumerable<ServiceDescriptor> PlatformRequiredServices = new[]
+        public DesktopLinuxServiceCollection() : base()
         {
-            Transient<IEnvironmentHandler, LinuxEnvironmentHandler>(),
-            Transient<EnvironmentDictionary, LinuxEnvironmentDictionary>(),
-            Transient<ITimer, LinuxTimer>(),
-            Singleton<IAbsolutePointer, EvdevAbsolutePointer>(),
-            Singleton<IRelativePointer, EvdevRelativePointer>(),
-            Singleton<IPressureHandler, EvdevVirtualTablet>(),
-            Singleton<IVirtualKeyboard, EvdevVirtualKeyboard>(),
-            Singleton<IKeysProvider, LinuxKeysProvider>(),
-            GetVirtualScreen()
-        };
-
-        public DesktopLinuxServiceCollection() : base(PlatformRequiredServices)
-        {
+            this.AddServices(new[]
+            {
+                Transient<IEnvironmentHandler, LinuxEnvironmentHandler>(),
+                Transient<EnvironmentDictionary, LinuxEnvironmentDictionary>(),
+                Transient<ITimer, LinuxTimer>(),
+                Singleton<IAbsolutePointer, EvdevAbsolutePointer>(),
+                Singleton<IRelativePointer, EvdevRelativePointer>(),
+                Singleton<IPressureHandler, EvdevVirtualTablet>(),
+                Singleton<IVirtualKeyboard, EvdevVirtualKeyboard>(),
+                Singleton<IKeysProvider, LinuxKeysProvider>(),
+                GetVirtualScreen()
+            });
         }
 
         private static ServiceDescriptor GetVirtualScreen()
