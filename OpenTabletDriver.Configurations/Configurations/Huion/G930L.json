@@ -1,0 +1,39 @@
+{
+  "Name": "Huion G930L",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 345.44,
+      "Height": 215.9,
+      "MaxX": 69088,
+      "MaxY": 43180
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 97,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T209_\\d{6}$"
+      },
+      "InitializationStrings": [
+    200
+    ]
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
