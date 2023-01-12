@@ -11,6 +11,7 @@
 | Gaomon S620                   |     Supported     |
 | Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons
 | Huion 1060 Plus               |     Supported     |
+| Huion G930L                   |     Supported     |
 | Huion GT-220 V2               |     Supported     |
 | Huion H320M                   |     Supported     |
 | Huion H420X                   |     Supported     |
