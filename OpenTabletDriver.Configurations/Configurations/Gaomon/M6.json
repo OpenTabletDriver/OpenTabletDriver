@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "OEM02_T183_\\d{6}$"
+        "201": "(OEM02_T183|GM001_T223)_\\d{6}$"
       },
       "InitializationStrings": [
         200
