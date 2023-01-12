@@ -30,8 +30,8 @@
         "201": "HUION_T209_\\d{6}$"
       },
       "InitializationStrings": [
-    200
-    ]
+        200
+      ]
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
