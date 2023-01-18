@@ -36,11 +36,10 @@ namespace OpenTabletDriver.Desktop
                 Singleton<IGitHubClient>(new GitHubClient(ProductHeaderValue.Parse("OpenTabletDriver"))),
                 Transient<EnvironmentDictionary, EnvironmentDictionary>(),
                 Singleton<IPluginManager, PluginManager>(),
-                Singleton<ISettingsManager, SettingsManager>(),
+                Singleton<ISettingsPersistenceManager, SettingsPersistenceManager>(),
                 Singleton<IPresetManager, PresetManager>(),
                 Singleton<IPluginFactory, PluginFactory>(),
                 Singleton<ISleepDetector, SleepDetector>(),
-                Transient(p => p.GetRequiredService<ISettingsManager>().Settings)
             });
         }
 

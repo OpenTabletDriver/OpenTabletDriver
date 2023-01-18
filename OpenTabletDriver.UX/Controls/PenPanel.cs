@@ -14,8 +14,8 @@ namespace OpenTabletDriver.UX.Controls
                 Spacing = 5,
                 Items =
                 {
-                    ButtonFor(p => p.BindingSettings.TipButton),
-                    SliderFor(p => p.BindingSettings.TipActivationThreshold)
+                    ButtonFor(p => p.Profile.Bindings.TipButton),
+                    SliderFor(p => p.Profile.Bindings.TipActivationThreshold)
                 }
             };
 
@@ -25,8 +25,8 @@ namespace OpenTabletDriver.UX.Controls
                 Spacing = 5,
                 Items =
                 {
-                    ButtonFor(p => p.BindingSettings.EraserButton),
-                    SliderFor(p => p.BindingSettings.EraserActivationThreshold)
+                    ButtonFor(p => p.Profile.Bindings.EraserButton),
+                    SliderFor(p => p.Profile.Bindings.EraserActivationThreshold)
                 }
             };
 
@@ -52,13 +52,12 @@ namespace OpenTabletDriver.UX.Controls
             {
                 buttons.Items.Clear();
 
-                if (DataContext is not Profile profile)
+                if (DataContext is not TabletHandler tabletHandler)
                     return;
 
-                var tablet = app.Tablets.First(t => t.Name == profile.Tablet);
-                var penButtonCount = tablet.Specifications.Pen?.ButtonCount ?? 0;
+                var penButtonCount = tabletHandler.Configuration.Specifications.Pen?.ButtonCount ?? 0;
 
-                foreach (var button in ButtonsFor(c => c.BindingSettings.PenButtons, penButtonCount))
+                foreach (var button in ButtonsFor(c => c.Profile.Bindings.PenButtons, penButtonCount))
                     buttons.Items.Add(button);
             };
 

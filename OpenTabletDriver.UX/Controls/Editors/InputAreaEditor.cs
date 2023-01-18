@@ -183,7 +183,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
         {
             get
             {
-                var area = ((Profile) DataContext).OutputMode[nameof(AbsoluteOutputMode.Input)].GetValue<AngledArea>()!;
+                var area = ((TabletHandler) DataContext).Profile.OutputMode[nameof(AbsoluteOutputMode.Input)].GetValue<AngledArea>()!;
                 var corners = area.GetCorners();
                 return RectangleF.FromSides(
                     corners.Min(t => t.X),
@@ -196,7 +196,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
         private void ConvertArea()
         {
-            var profile = (Profile)DataContext;
+            var profile = ((TabletHandler)DataContext).Profile;
             var tablet = _app.Tablets.First(t => t.Name == profile.Tablet);
 
             var dialog = _app.ShowDialog<AreaConverterDialog>(ParentWindow, tablet);

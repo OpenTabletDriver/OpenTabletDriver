@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -29,7 +30,7 @@ namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
             var profilesQuery = Profiles?.MigrateAll<Profile, Profiles.Profile>(serviceProvider);
             var tools = Tools?.MigrateAll<PluginSettingStore, PluginSettings>(serviceProvider);
 
-            var profiles = new ProfileCollection(profilesQuery ?? Array.Empty<Profiles.Profile>());
+            var profiles = new List<Profiles.Profile>(profilesQuery ?? Array.Empty<Profiles.Profile>());
             foreach (var profile in profiles)
             {
                 var outputModeType = pluginFactory.GetPluginType(profile.OutputMode.Path);

@@ -58,6 +58,7 @@ namespace OpenTabletDriver
                     return;
 
                 ImmutableInterlocked.Update(ref _inputDevices, devices => devices.AddRange(addedDevices));
+                InputDevice.AssignPersistentId(addedDevices);
 
                 foreach (var device in _inputDevices)
                     InputDeviceAdded?.Invoke(this, device);
@@ -80,6 +81,7 @@ namespace OpenTabletDriver
 
             DisposeDevices(_inputDevices);
             _inputDevices = ScanDevices(_compositeDeviceHub.GetDevices());
+            InputDevice.AssignPersistentId(_inputDevices);
 
             foreach (var device in _inputDevices)
                 InputDeviceAdded?.Invoke(this, device);

@@ -1,18 +1,17 @@
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Components;
 using Application = Eto.Forms.Application;
 
 namespace OpenTabletDriver.UX.Controls
 {
-    public class ProfilePanel : DesktopPanel
+    public class TabletPanel : DesktopPanel
     {
         private readonly IControlBuilder _controlBuilder;
         private TabPage? _prevPage;
 
-        public ProfilePanel(IDriverDaemon daemon, IControlBuilder controlBuilder, App app)
+        public TabletPanel(IDriverDaemon daemon, IControlBuilder controlBuilder, App app)
         {
             _controlBuilder = controlBuilder;
 
@@ -58,10 +57,9 @@ namespace OpenTabletDriver.UX.Controls
                 var pages = tabControl.Pages;
                 pages.Clear();
 
-                if (DataContext is Profile profile && app.Tablets.Any())
+                if (DataContext is TabletHandler tabletHandler && app.Tablets.Any())
                 {
-                    var tablet = app.Tablets.First(t => t.Name == profile.Tablet);
-                    var specifications = tablet.Specifications;
+                    var specifications = tabletHandler.Configuration.Specifications;
 
                     if (specifications.Digitizer != null)
                     {

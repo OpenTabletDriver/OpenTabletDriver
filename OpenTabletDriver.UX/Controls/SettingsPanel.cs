@@ -1,5 +1,6 @@
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.UX.Components;
 
 namespace OpenTabletDriver.UX.Controls
@@ -8,7 +9,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         public SettingsPanel(App app, IControlBuilder controlBuilder)
         {
-            var profilePicker = controlBuilder.Build<ProfilePicker>();
+            var tabletPicker = controlBuilder.Build<TabletPicker>();
 
             var toolbar = new StackLayout
             {
@@ -21,7 +22,7 @@ namespace OpenTabletDriver.UX.Controls
                     new Panel
                     {
                         MinimumSize = new Size(250, 0),
-                        Content = profilePicker
+                        Content = tabletPicker
                     },
                     new StackLayoutItem(null, true),
                     new Button((_, _) => app.DiscardSettings().Run())
@@ -39,8 +40,8 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            var profilePanel = controlBuilder.Build<ProfilePanel>();
-            profilePanel.DataContextBinding.Bind(profilePicker.SelectedValueBinding);
+            var tabletPanel = controlBuilder.Build<TabletPanel>();
+            tabletPanel.DataContextBinding.Bind(tabletPicker.SelectedValueBinding);
 
             Content = new StackLayout
             {
@@ -51,7 +52,7 @@ namespace OpenTabletDriver.UX.Controls
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = profilePanel
+                        Control = tabletPanel
                     },
                     new StackLayoutItem
                     {

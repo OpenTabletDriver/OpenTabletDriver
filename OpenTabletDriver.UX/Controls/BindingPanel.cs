@@ -20,12 +20,13 @@ namespace OpenTabletDriver.UX.Controls
             _controlBuilder = controlBuilder;
         }
 
-        protected IEnumerable<Control> ButtonsFor(Expression<Func<Profile, PluginSettingsCollection>> expression, uint count)
+        protected IEnumerable<Control> ButtonsFor(Expression<Func<TabletHandler, PluginSettingsCollection>> expression, uint count)
         {
-            // this.((TabletConfiguration)DataContext).<expression>
+            // this.((TabletHandler)DataContext).<expression>
             var thisExpr = Expression.Constant(this);
-            var dataContextExpr = Expression.Convert(Expression.Property(thisExpr, nameof(DataContext)), typeof(Profile));
-            var baseExpr = new ExpressionMemberAccessor().AccessMember(dataContextExpr, expression);
+            var dataContextExpr = Expression.Property(thisExpr, nameof(DataContext));
+            var castExpr = Expression.Convert(dataContextExpr, typeof(TabletHandler));
+            var baseExpr = new ExpressionMemberAccessor().AccessMember(castExpr, expression);
             var getExpr = Expression.Lambda<Func<PluginSettingsCollection>>(baseExpr);
             var get = getExpr.Compile();
 
@@ -53,9 +54,9 @@ namespace OpenTabletDriver.UX.Controls
         /// </summary>
         /// <param name="expression">Expression pointing to the plugin settings.</param>
         /// <param name="name">Friendly name for the button, otherwise pulled via reflection.</param>
-        protected Container ButtonFor(Expression<Func<Profile, PluginSettings?>> expression, string? name = null)
+        protected Container ButtonFor(Expression<Func<TabletHandler, PluginSettings?>> expression, string? name = null)
         {
-            var binding = DataContextBinding.Cast<Profile>().Child(expression);
+            var binding = DataContextBinding.Cast<TabletHandler>().Child(expression);
             var editor = _controlBuilder.Build<BindingEditor>(binding);
 
             return new LabeledGroup(name ?? GetName(expression), editor);
@@ -65,9 +66,9 @@ namespace OpenTabletDriver.UX.Controls
         /// Creates a <see cref="Slider"/> with a <see cref="NumericMaskedTextBox{T}"/> for fine tuning.
         /// </summary>
         /// <param name="expression">An expression pointing to a setting.</param>
-        protected Control SliderFor(Expression<Func<Profile, double>> expression)
+        protected Control SliderFor(Expression<Func<TabletHandler, double>> expression)
         {
-            var binding = DataContextBinding.Cast<Profile>().Child(expression);
+            var binding = DataContextBinding.Cast<TabletHandler>().Child(expression);
 
             var slider = new Slider
             {
@@ -107,7 +108,7 @@ namespace OpenTabletDriver.UX.Controls
         /// </summary>
         /// <param name="expression">The expression pointing to a target member.</param>
         /// <typeparam name="T">The target member type.</typeparam>
-        private static string GetName<T>(Expression<Func<Profile, T>> expression)
+        private static string GetName<T>(Expression<Func<TabletHandler, T>> expression)
         {
             var body = expression.Body switch
             {

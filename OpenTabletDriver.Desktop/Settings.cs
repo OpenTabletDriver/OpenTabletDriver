@@ -1,44 +1,47 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 
 namespace OpenTabletDriver.Desktop
 {
-    public class Settings : NotifyPropertyChanged
+    public class Settings
     {
-        private ProfileCollection _profiles = new ProfileCollection();
-        private PluginSettingsCollection _tools = new PluginSettingsCollection();
-
         /// <summary>
         /// Revision of the Settings file.
         /// This is used to assist in migrating versions.
         /// </summary>
         [JsonProperty(nameof(Revision))]
-        public Version? Revision { set; get; }
+        public Version? Revision { set; get; } = Version.Parse("0.7.0.0");
 
         [JsonProperty(nameof(Profiles))]
-        public ProfileCollection Profiles
-        {
-            set => RaiseAndSetIfChanged(ref _profiles!, value);
-            get => _profiles;
-        }
+        public List<Profile> Profiles { set; get; } = new();
 
         [JsonProperty(nameof(Tools))]
-        public PluginSettingsCollection Tools
+        public PluginSettingsCollection Tools { set; get; } = new();
+
+        public Profile GetProfile(IServiceProvider serviceProvider, InputDevice device)
         {
-            set => RaiseAndSetIfChanged(ref _tools!, value);
-            get => _tools;
+            var profile = Profiles.FirstOrDefault(p => p.Tablet == device.Configuration.Name && p.PersistentId == device.PersistentId!.Value);
+            if (profile is null)
+            {
+                profile = Profile.GetDefaults(serviceProvider, device);
+                Profiles.Add(profile);
+            }
+
+            return profile;
         }
 
-        public static Settings GetDefaults()
+        public void SetProfile(Profile profile)
         {
-            return new Settings
-            {
-                Revision = Version.Parse("0.7.0.0"),
-                Profiles = new ProfileCollection(),
-            };
+            var existingProfileIndex = Profiles.FindIndex(p => p.Tablet == profile.Tablet && p.PersistentId == profile.PersistentId);
+            if (existingProfileIndex != -1)
+                Profiles[existingProfileIndex] = profile;
+            else
+                Profiles.Add(profile);
         }
 
         static Settings()

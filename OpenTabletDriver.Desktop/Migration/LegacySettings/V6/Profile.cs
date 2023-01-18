@@ -84,7 +84,7 @@ namespace OpenTabletDriver.Desktop.Migration.LegacySettings.V6
                 Tablet = Tablet!,
                 OutputMode = outputMode,
                 Filters = new PluginSettingsCollection(filters),
-                BindingSettings = BindingSettings?.Migrate(serviceProvider) ?? new Profiles.BindingSettings(),
+                Bindings = BindingSettings?.Migrate(serviceProvider) ?? new Profiles.BindingSettings(),
             };
         }
 

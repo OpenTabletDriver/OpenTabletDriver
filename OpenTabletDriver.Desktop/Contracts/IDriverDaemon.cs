@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
+using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
@@ -20,7 +21,9 @@ namespace OpenTabletDriver.Desktop.Contracts
         event EventHandler<DebugReportData> DeviceReport;
         event EventHandler<int>? TabletAdded;
         event EventHandler<int>? TabletRemoved;
-        event EventHandler<TabletState>? TabletStateChanged;
+        event EventHandler<TabletProperty<InputDeviceState>>? TabletStateChanged;
+        event EventHandler<TabletProperty<Profile>>? TabletProfileChanged;
+        event EventHandler<Settings>? SettingsChanged;
         event EventHandler<PluginEventType>? AssembliesChanged;
 
         Task WriteMessage(LogMessage message);
@@ -30,21 +33,27 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<bool> UninstallPlugin(PluginMetadata metadata);
         Task<bool> DownloadPlugin(PluginMetadata metadata);
         Task<IEnumerable<PluginMetadata>> GetRemotePlugins(string owner = "OpenTabletDriver", string name = "Plugin-Repository", string gitRef = "master");
+        Task<IEnumerable<PluginMetadata>> GetInstalledPlugins();
 
         Task<IEnumerable<IDeviceEndpoint>> GetDevices();
         Task<IEnumerable<IDisplay>> GetDisplays();
 
+        Task DetectTablets();
         Task<IEnumerable<int>> GetTablets();
+        Task<int> GetPersistentId(int tabletId);
         Task<TabletConfiguration> GetTabletConfiguration(int tabletId);
-        Task<IEnumerable<int>> DetectTablets();
+        Task<InputDeviceState> GetTabletState(int tabletId);
+        Task<Profile> GetTabletProfile(int tabletId);
+        Task SetTabletProfile(int tabletId, Profile profile);
+        Task ResetTabletProfile(int tabletId);
 
-        Task SaveSettings(Settings settings);
+        Task SaveSettings();
         Task ApplySettings(Settings settings);
         Task<Settings> GetSettings();
         Task<Settings> ResetSettings();
 
-        Task ApplyPreset(string name);
         Task<IReadOnlyCollection<string>> GetPresets();
+        Task ApplyPreset(string name);
         Task SavePreset(string name, Settings settings);
 
         Task<IAppInfo> GetApplicationInfo();
@@ -56,15 +65,11 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<IEnumerable<LogMessage>> GetCurrentLog();
 
         Task<PluginSettings> GetDefaults(string path);
-
-        Task<TypeProxy> GetProxiedType(string typeName);
         Task<IEnumerable<TypeProxy>> GetMatchingTypes(string typeName);
 
         Task<SerializedUpdateInfo?> CheckForUpdates();
         Task InstallUpdate();
 
-        Task<IEnumerable<PluginMetadata>> GetInstalledPlugins();
-        event EventHandler<Settings>? SettingsChanged;
         Task Initialize();
     }
 }

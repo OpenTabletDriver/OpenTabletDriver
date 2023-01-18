@@ -41,8 +41,8 @@ namespace OpenTabletDriver.UX.Controls.Editors
             };
 
             var binding = new DelegateBinding<float>(
-                () => (DataContext as Profile)?.OutputMode.GetChild(expression) ?? 0,
-                v => (DataContext as Profile)?.OutputMode.SetChild(expression, v),
+                () => (DataContext as TabletHandler)?.Profile.OutputMode.GetChild(expression) ?? 0,
+                v => (DataContext as TabletHandler)?.Profile.OutputMode.SetChild(expression, v),
                 h => DataContextChanged += h,
                 h => DataContextChanged -= h
             );

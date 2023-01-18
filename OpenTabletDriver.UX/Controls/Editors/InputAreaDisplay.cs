@@ -27,9 +27,9 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
         private IList<RectangleF> GetBackgrounds()
         {
-            var profile = Parents.Select(w => w as IBindable).First(b => b?.DataContext is Profile)!.DataContext as Profile;
-            var tablet = _app.Tablets.First(t => t.Name == profile!.Tablet);
-            var digitizer = tablet.Specifications.Digitizer!;
+            var tabletHandler = Parents.Select(w => w as IBindable).First(b => b?.DataContext is TabletHandler)!.DataContext as TabletHandler;
+            var configuration = tabletHandler!.Configuration;
+            var digitizer = configuration.Specifications.Digitizer!;
             return new []
             {
                 new RectangleF(0, 0, digitizer.Width, digitizer.Height)

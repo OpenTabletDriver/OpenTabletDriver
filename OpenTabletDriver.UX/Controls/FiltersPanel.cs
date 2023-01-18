@@ -17,6 +17,6 @@ namespace OpenTabletDriver.UX.Controls
         {
         }
 
-        protected override PluginSettingsCollection? Settings => (DataContext as Profile)?.Filters;
+        protected override PluginSettingsCollection? Settings => (DataContext as TabletHandler)?.Profile.Filters;
     }
 }

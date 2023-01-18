@@ -14,12 +14,13 @@ namespace OpenTabletDriver.UX.Controls
             var editorPanel = new Panel();
 
             var outputModePicker = controlBuilder.Build<OutputModePicker>();
-            outputModePicker.SelectedKeyBinding.BindDataContext((Profile p) => p.OutputMode.Path);
+            outputModePicker.SelectedKeyBinding.BindDataContext((TabletHandler tabletHandler) => tabletHandler.Profile.OutputMode.Path);
             outputModePicker.SelectedKeyChanged += delegate
             {
-                if (DataContext is not Profile profile)
+                if (DataContext is not TabletHandler tabletHandler)
                     return;
 
+                var profile = tabletHandler.Profile;
                 var type = pluginFactory.GetPluginType(profile.OutputMode.Path)!;
                 if (type.IsAssignableTo(typeof(AbsoluteOutputMode)))
                 {

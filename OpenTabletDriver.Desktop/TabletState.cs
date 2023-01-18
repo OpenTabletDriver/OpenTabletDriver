@@ -2,20 +2,20 @@ using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Desktop
 {
-    public class TabletState
+    public class TabletProperty<T>
     {
         [JsonConstructor]
-        public TabletState()
+        public TabletProperty()
         {
         }
 
-        public TabletState(int id, InputDeviceState state)
+        public TabletProperty(int id, T value)
         {
             Id = id;
-            State = state;
+            Value = value;
         }
 
         public int Id { get; set; }
-        public InputDeviceState State { get; set; }
+        public T? Value { get; set; }
     }
 }

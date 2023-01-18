@@ -54,9 +54,10 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
             base.OnDataContextChanged(e);
 
-            if (DataContext is not Profile profile)
+            if (DataContext is not TabletHandler tabletHandler)
                 return;
 
+            var profile = tabletHandler.Profile;
             var settings = profile.OutputMode;
             var type = _pluginFactory.GetPluginType(settings.Path);
 
@@ -141,7 +142,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
         private AngledArea? GetInputArea()
         {
-            return (DataContext as Profile)?.OutputMode.Get((AbsoluteOutputMode f) => f.Input);
+            return (DataContext as TabletHandler)?.Profile.OutputMode.Get((AbsoluteOutputMode f) => f.Input);
         }
 
         private void HookAspectRatio(

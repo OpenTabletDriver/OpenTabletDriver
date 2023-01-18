@@ -10,6 +10,7 @@ namespace OpenTabletDriver.Desktop.Profiles
     public class Profile : NotifyPropertyChanged
     {
         private string _tablet = string.Empty;
+        private int _persistentId;
         private PluginSettings _outputMode = null!;
         private BindingSettings _bindings = new BindingSettings();
         private PluginSettingsCollection _filters = new PluginSettingsCollection();
@@ -19,6 +20,13 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             set => RaiseAndSetIfChanged(ref _tablet!, value);
             get => _tablet;
+        }
+
+        [JsonProperty("PersistentId")]
+        public int PersistentId
+        {
+            set => RaiseAndSetIfChanged(ref _persistentId, value);
+            get => _persistentId;
         }
 
         [JsonProperty("OutputMode")]
@@ -36,7 +44,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         }
 
         [JsonProperty("Bindings")]
-        public BindingSettings BindingSettings
+        public BindingSettings Bindings
         {
             set => RaiseAndSetIfChanged(ref _bindings!, value);
             get => _bindings;
@@ -50,8 +58,9 @@ namespace OpenTabletDriver.Desktop.Profiles
             return new Profile
             {
                 Tablet = tablet.Configuration.Name,
+                PersistentId = tablet.PersistentId!.Value,
                 OutputMode = serviceProvider.GetDefaultSettings(typeof(AbsoluteMode), digitizer!, screen),
-                BindingSettings = BindingSettings.GetDefaults(tablet.Configuration.Specifications)
+                Bindings = BindingSettings.GetDefaults(tablet.Configuration.Specifications)
             };
         }
 

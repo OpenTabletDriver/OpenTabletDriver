@@ -18,8 +18,8 @@ namespace OpenTabletDriver.UX.Controls
                     Spacing = 5,
                     Items =
                     {
-                        ButtonFor(p => p.BindingSettings.MouseScrollUp),
-                        ButtonFor(p => p.BindingSettings.MouseScrollDown)
+                        ButtonFor(p => p.Profile.Bindings.MouseScrollUp),
+                        ButtonFor(p => p.Profile.Bindings.MouseScrollDown)
                     }
                 }
             };
@@ -35,13 +35,12 @@ namespace OpenTabletDriver.UX.Controls
             {
                 buttons.Items.Clear();
 
-                if (DataContext is not Profile profile)
+                if (DataContext is not TabletHandler tabletHandler)
                     return;
 
-                var tablet = app.Tablets.First(t => t.Name == profile.Tablet);
-                var buttonCount = tablet.Specifications.MouseButtons?.ButtonCount ?? 0;
+                var buttonCount = tabletHandler.Configuration.Specifications.MouseButtons?.ButtonCount ?? 0;
 
-                foreach (var button in ButtonsFor(c => c.BindingSettings.MouseButtons, buttonCount))
+                foreach (var button in ButtonsFor(c => c.Profile.Bindings.MouseButtons, buttonCount))
                     buttons.Items.Add(button);
             };
 

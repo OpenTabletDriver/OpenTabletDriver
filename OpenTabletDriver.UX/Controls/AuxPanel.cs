@@ -18,13 +18,14 @@ namespace OpenTabletDriver.UX.Controls
             {
                 buttons.Items.Clear();
 
-                if (DataContext is not Profile profile)
+                if (DataContext is not TabletHandler handler)
                     return;
 
+                var profile = handler.Profile;
                 var tablet = app.Tablets.First(t => t.Name == profile.Tablet);
-                var buttonCount = tablet.Specifications.AuxiliaryButtons?.ButtonCount ?? 0;
+                var buttonCount = tablet.Configuration.Specifications.AuxiliaryButtons?.ButtonCount ?? 0;
 
-                foreach (var button in ButtonsFor(c => c.BindingSettings.AuxButtons, buttonCount))
+                foreach (var button in ButtonsFor(c => c.Profile.Bindings.AuxButtons, buttonCount))
                     buttons.Items.Add(button);
             };
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.Text;
@@ -91,8 +92,9 @@ namespace OpenTabletDriver.UX
         private Application _app = null!;
         private IServiceProvider _serviceProvider = null!;
         private Settings _settings = null!;
-        private ObservableCollection<TabletConfiguration> _tablets = new ObservableCollection<TabletConfiguration>();
-        private ObservableCollection<IDisplay> _displays = null!;
+        private ImmutableArray<TabletHandler> _tablets = ImmutableArray<TabletHandler>.Empty;
+        private TabletHandler? _focusedTablet;
+        private ImmutableArray<IDisplay> _displays = ImmutableArray<IDisplay>.Empty;
         private string _mainFormTitle = DefaultTitle;
 
         private static string DefaultTitle { get; } = $"OpenTabletDriver v{Metadata.FullVersion}";
@@ -130,25 +132,22 @@ namespace OpenTabletDriver.UX
         /// <summary>
         /// Collection of all currently connected tablets.
         /// </summary>
-        public ObservableCollection<TabletConfiguration> Tablets
+        public ImmutableArray<TabletHandler> Tablets
         {
-            set
-            {
-                RaiseAndSetIfChanged(ref _tablets!, value);
-
-                var sb = new StringBuilder(DefaultTitle);
-                if (_tablets.Any())
-                {
-                    sb.Append(" - ");
-                    sb.AppendJoin(", ", _tablets.Select(t => t.Name).Take(3));
-                }
-
-                MainFormTitle = sb.ToString();
-            }
+            set => RaiseAndSetIfChanged(ref _tablets!, value);
             get => _tablets;
         }
 
-        public ObservableCollection<IDisplay> Displays
+        public event EventHandler<TabletHandler>? TabletAdded;
+        public event EventHandler<TabletHandler>? TabletRemoved;
+
+        public TabletHandler? FocusedTablet
+        {
+            set => RaiseAndSetIfChanged(ref _focusedTablet!, value);
+            get => _focusedTablet;
+        }
+
+        public ImmutableArray<IDisplay> Displays
         {
             set => RaiseAndSetIfChanged(ref _displays!, value);
             get => _displays;
@@ -181,23 +180,56 @@ namespace OpenTabletDriver.UX
         public async Task Synchronize()
         {
             var daemon = _serviceProvider.GetRequiredService<IDriverDaemon>();
-            daemon.TabletsChanged += (_, t) => _app.AsyncInvoke(() => Tablets = new ObservableCollection<TabletConfiguration>(t));
+#pragma warning disable CS4014
+            daemon.TabletAdded += (_, t) => _app.AsyncInvoke(() => onTabletAdded(daemon, t));
+#pragma warning restore CS4014
+            daemon.TabletRemoved += (_, t) => _app.AsyncInvoke(() => onTabletRemoved(daemon, t));
             daemon.SettingsChanged += (_, s) => _app.AsyncInvoke(() => Settings = s);
             daemon.AssembliesChanged += (_, _) =>
             {
                 _app.AsyncInvoke(SynchronizePlugins(daemon).Run);
             };
 
-            Tablets = new ObservableCollection<TabletConfiguration>(await daemon.GetTablets());
-            Displays = new ObservableCollection<IDisplay>(await daemon.GetDisplays());
+            var tablets = ImmutableArray.CreateBuilder<TabletHandler>();
 
             Settings = await daemon.GetSettings();
+
+            foreach (var tablet in await daemon.GetTablets())
+            {
+                var tabletHandler = await TabletHandler.Create(daemon, tablet, Settings);
+                tablets.Add(tabletHandler);
+            }
+
+            Tablets = tablets.ToImmutable();
+            Displays = (await daemon.GetDisplays()).ToImmutableArray();
+
+            if (Tablets.Length > 0)
+            {
+                FocusedTablet = Tablets[0];
+            }
 
             var appInfo = await daemon.GetApplicationInfo();
             PluginManager = _serviceProvider.CreateInstance<PluginManager>(appInfo);
             PluginFactory = _serviceProvider.CreateInstance<PluginFactory>(PluginManager);
 
             await SynchronizePlugins(daemon);
+
+            async Task onTabletAdded(IDriverDaemon daemon, int tabletId)
+            {
+                var tabletHandler = await TabletHandler.Create(daemon, tabletId, Settings);
+                ImmutableInterlocked.Update(ref _tablets, t => t.Add(tabletHandler));
+                TabletAdded?.Invoke(this, tabletHandler);
+            }
+
+            void onTabletRemoved(IDriverDaemon daemon, int tabletId)
+            {
+                var tabletHandler = Tablets.FirstOrDefault(t => t.Id == tabletId);
+                if (tabletHandler != null)
+                {
+                    ImmutableInterlocked.Update(ref _tablets, t => t.Remove(tabletHandler));
+                    TabletRemoved?.Invoke(this, tabletHandler);
+                }
+            }
         }
 
         private async Task SynchronizePlugins(IDriverDaemon daemon)
@@ -215,7 +247,7 @@ namespace OpenTabletDriver.UX
         /// </summary>
         public void Desynchronize()
         {
-            Tablets.Clear();
+            _tablets = ImmutableArray<TabletHandler>.Empty;
             Settings = new Settings();
         }
 
@@ -238,7 +270,7 @@ namespace OpenTabletDriver.UX
         /// </summary>
         public async Task SaveSettings()
         {
-            await GetDriverDaemon().SaveSettings(Settings);
+            await GetDriverDaemon().SaveSettings();
         }
 
         /// <summary>

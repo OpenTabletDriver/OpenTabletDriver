@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using System.Threading;
 using JetBrains.Annotations;
 using OpenTabletDriver.Output;
@@ -10,13 +13,14 @@ namespace OpenTabletDriver
     /// A configured input device.
     /// </summary>
     [PublicAPI]
-    public sealed class InputDevice : IDisposable
+    public sealed partial class InputDevice : IDisposable
     {
         private static int _id;
         private InputDeviceState _state;
 
         public InputDevice(TabletConfiguration configuration, InputDeviceEndpoint digitizer, InputDeviceEndpoint? auxiliary)
         {
+            // PersistentId has to be set only after all devices are known
             Configuration = configuration;
             Digitizer = digitizer;
             Auxiliary = auxiliary;
@@ -56,7 +60,16 @@ namespace OpenTabletDriver
             }
         }
 
+        /// <summary>
+        /// A unique identifier assigned to this input device. This is valid only for the current runtime.
+        /// </summary>
         public int Id { get; } = Interlocked.Increment(ref _id);
+
+        /// <summary>
+        /// A unique identifier that is used in conjunction with the tablet name to identify a tablet.
+        /// This can be used across reboots and driver restarts.
+        /// </summary>
+        public int? PersistentId { get; private set; }
 
         public InputDeviceState State
         {
@@ -99,6 +112,32 @@ namespace OpenTabletDriver
             Digitizer.Dispose();
             Auxiliary?.Dispose();
             GC.SuppressFinalize(this);
+        }
+
+        internal static void AssignPersistentId(ImmutableArray<InputDevice> devices)
+        {
+            var persistentIdMap = new Dictionary<string, int>();
+
+            // find the highest index for each device name
+            foreach (var device in devices)
+            {
+                if (device.PersistentId is not int persistentId)
+                    continue;
+
+                ref var id = ref CollectionsMarshal.GetValueRefOrAddDefault(persistentIdMap, device.Configuration.Name, out _);
+                if (persistentId >= id)
+                    id = persistentId;
+            }
+
+            // assign incrementing persistent id to devices without one
+            foreach (var device in devices)
+            {
+                if (device.PersistentId is not null)
+                    continue;
+
+                var index = CollectionsMarshal.GetValueRefOrAddDefault(persistentIdMap, device.Configuration.Name, out _);
+                device.PersistentId = ++index;
+            }
         }
     }
 }

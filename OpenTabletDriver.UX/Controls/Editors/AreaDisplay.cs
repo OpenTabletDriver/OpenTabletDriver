@@ -40,9 +40,9 @@ namespace OpenTabletDriver.UX.Controls.Editors
         {
             base.OnDataContextChanged(e);
 
-            if (DataContext is Profile profile)
+            if (DataContext is TabletHandler tabletHandler)
             {
-                _getArea = profile.OutputMode.GetterFor(Foreground);
+                _getArea = tabletHandler.Profile.OutputMode.GetterFor(Foreground);
             }
             else
             {

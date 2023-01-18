@@ -37,14 +37,19 @@ namespace OpenTabletDriver.Daemon
         private readonly SynchronizationContext _synchronizationContext;
         private readonly ICompositeDeviceHub _deviceHub;
         private readonly IAppInfo _appInfo;
-        private readonly ISettingsManager _settingsManager;
+        private readonly ISettingsPersistenceManager _settingsManager;
         private readonly IPluginManager _pluginManager;
         private readonly IPluginFactory _pluginFactory;
         private readonly IPresetManager _presetManager;
         private readonly ISleepDetector _sleepDetector;
         private readonly IUpdater? _updater;
 
+        private readonly Collection<LogMessage> _logMessages = new();
+        private readonly Collection<ITool> _tools = new();
+
+        private Settings? _settings;
         private UpdateInfo? _updateInfo;
+        private bool _debugging;
 
         public DriverDaemon(
             IServiceProvider serviceProvider,
@@ -52,7 +57,7 @@ namespace OpenTabletDriver.Daemon
             SynchronizationContext synchronizationContext,
             ICompositeDeviceHub deviceHub,
             IAppInfo appInfo,
-            ISettingsManager settingsManager,
+            ISettingsPersistenceManager settingsManager,
             IPluginManager pluginManager,
             IPluginFactory pluginFactory,
             IPresetManager presetManager,
@@ -77,7 +82,7 @@ namespace OpenTabletDriver.Daemon
         {
             Log.Output += (sender, message) =>
             {
-                LogMessages.Add(message);
+                _logMessages.Add(message);
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
@@ -86,8 +91,20 @@ namespace OpenTabletDriver.Daemon
             InitializePlatform();
             _driver.InputDeviceAdded += (sender, e) =>
             {
+                hookEndpoint(e.Digitizer);
+                hookEndpoint(e.Auxiliary);
+
                 TabletAdded?.Invoke(sender, e.Id);
-                e.StateChanged += (s, state) => TabletStateChanged?.Invoke(s, new TabletState(e.Id, state));
+                e.StateChanged += (s, state) => TabletStateChanged?.Invoke(s, new TabletProperty<InputDeviceState>(e.Id, state));
+
+                void hookEndpoint(InputDeviceEndpoint? endpoint)
+                {
+                    if (endpoint is null)
+                        return;
+
+                    endpoint.ReportCloned += (_, report) => PostDebugReport(endpoint.Configuration.Name, report);
+                    endpoint.CloneReport = _debugging;
+                }
             };
 
             _driver.InputDeviceRemoved += (sender, e) => TabletRemoved?.Invoke(sender, e.Id);
@@ -102,7 +119,19 @@ namespace OpenTabletDriver.Daemon
                     Log.Write("Detect", $"Detected input coming from {driverInfo.Name} driver", LogLevel.Error);
             }
 
-            await LoadUserSettings();
+            var appdataDir = new DirectoryInfo(_appInfo.AppDataDirectory);
+            if (!appdataDir.Exists)
+            {
+                appdataDir.Create();
+                Log.Write("Settings", $"Created OpenTabletDriver application data directory: {appdataDir.FullName}");
+            }
+
+            _pluginManager.Clean();
+            _pluginManager.Load();
+
+            _settings = _settingsManager.Load(new FileInfo(_appInfo.SettingsFile));
+
+            await DetectTablets();
 
             _sleepDetector.Slept += async () =>
             {
@@ -119,14 +148,10 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<DebugReportData>? DeviceReport;
         public event EventHandler<int>? TabletAdded;
         public event EventHandler<int>? TabletRemoved;
-        public event EventHandler<TabletState>? TabletStateChanged;
+        public event EventHandler<TabletProperty<InputDeviceState>>? TabletStateChanged;
+        public event EventHandler<TabletProperty<Profile>>? TabletProfileChanged;
         public event EventHandler<Settings>? SettingsChanged;
         public event EventHandler<PluginEventType>? AssembliesChanged;
-
-        private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
-        private Collection<ITool> Tools { get; } = new Collection<ITool>();
-
-        private bool _debugging;
 
         public Task WriteMessage(LogMessage message)
         {
@@ -166,48 +191,72 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(_pluginManager.Plugins.Select(p => p.GetMetadata()));
         }
 
+        public Task<IEnumerable<IDeviceEndpoint>> GetDevices()
+        {
+            return Task.FromResult(_deviceHub.GetDevices());
+        }
+
+        public Task<IEnumerable<IDisplay>> GetDisplays()
+        {
+            return Task.FromResult(_serviceProvider.GetRequiredService<IVirtualScreen>().Displays
+                .Where(t => t is not IVirtualScreen));
+        }
+
+        public async Task DetectTablets()
+        {
+            _driver.ScanDevices();
+            await ApplySettings(_settings);
+        }
+
         public Task<IEnumerable<int>> GetTablets()
         {
             return Task.FromResult(_driver.InputDevices.Select(c => c.Id));
         }
 
-        public Task<TabletConfiguration> GetTabletConfiguration(int id)
+        public Task<int> GetPersistentId(int tabletId)
         {
-            var tablet = _driver.InputDevices.FirstOrDefault(c => c.Id == id);
-            if (tablet == null)
-                throw new ArgumentException("Tablet not found", nameof(id));
+            var tablet = FindTablet(tabletId);
+            return Task.FromResult(tablet.PersistentId!.Value);
+        }
 
+        public Task<TabletConfiguration> GetTabletConfiguration(int tabletId)
+        {
+            var tablet = FindTablet(tabletId);
             return Task.FromResult(tablet.Configuration);
         }
 
-        public async Task<IEnumerable<int>> DetectTablets()
+        public Task<InputDeviceState> GetTabletState(int tabletId)
         {
-            _driver.ScanDevices();
-
-            foreach (var tablet in _driver.InputDevices)
-            {
-                hookEndpoint(tablet.Digitizer);
-                hookEndpoint(tablet.Auxiliary);
-            }
-
-            await ApplySettings(_settingsManager.Settings);
-            return await GetTablets();
-
-            void hookEndpoint(InputDeviceEndpoint? endpoint)
-            {
-                if (endpoint is null)
-                    return;
-
-                endpoint.ReportCloned += (_, report) => PostDebugReport(endpoint.Configuration.Name, report);
-                endpoint.CloneReport = _debugging;
-            }
+            var tablet = FindTablet(tabletId);
+            return Task.FromResult(tablet.State);
         }
 
-        public async Task SaveSettings(Settings settings)
+        public Task<Profile> GetTabletProfile(int tabletId)
         {
-            settings.Serialize(new FileInfo(_appInfo.SettingsFile));
+            var profile = FindProfile(tabletId);
+            return Task.FromResult(profile);
+        }
+
+        public Task SetTabletProfile(int tabletId, Profile profile)
+        {
+            TabletProfileChanged?.Invoke(this, new TabletProperty<Profile>(tabletId, profile));
+            return Task.CompletedTask;
+        }
+
+        public async Task ResetTabletProfile(int tabletId)
+        {
+            var tablet = FindTablet(tabletId);
+            var profile = Profile.GetDefaults(_serviceProvider, tablet);
+            _settings!.SetProfile(profile);
+            await ApplySettings(_settings);
+            TabletProfileChanged?.Invoke(this, new TabletProperty<Profile>(tabletId, profile));
+        }
+
+        public async Task SaveSettings()
+        {
+            _settings!.Serialize(new FileInfo(_appInfo.SettingsFile));
             Log.Write("Settings", $"Settings saved to '{_appInfo.SettingsFile}'");
-            await ApplySettings(settings);
+            await ApplySettings(_settings);
         }
 
         public Task ApplySettings(Settings? settings)
@@ -218,13 +267,11 @@ namespace OpenTabletDriver.Daemon
                 if (obj is IDisposable disposable)
                     disposable.Dispose();
 
-            _settingsManager.Settings = settings ?? Settings.GetDefaults();
-
             foreach (var device in _driver.InputDevices)
             {
                 var group = device.Configuration.Name;
 
-                var profile = _settingsManager.Settings.Profiles.GetOrSetDefaults(_serviceProvider, device);
+                var profile = _settings!.GetProfile(_serviceProvider, device);
                 device.OutputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, device);
 
                 if (device.OutputMode != null)
@@ -242,7 +289,7 @@ namespace OpenTabletDriver.Daemon
                     var deps = new object?[]
                     {
                         device,
-                        profile.BindingSettings,
+                        profile.Bindings,
                         mouseButtonHandler
                     }.Where(o => o != null).ToArray() as object[];
 
@@ -258,32 +305,15 @@ namespace OpenTabletDriver.Daemon
 
             SetToolSettings();
 
-            SettingsChanged?.Invoke(this, _settingsManager.Settings);
+            SettingsChanged?.Invoke(this, _settings!);
 
             return Task.CompletedTask;
         }
 
         public async Task<Settings> ResetSettings()
         {
-            await ApplySettings(Settings.GetDefaults());
+            await ApplySettings(new Settings());
             return await GetSettings();
-        }
-
-        private async Task LoadUserSettings()
-        {
-            var appdataDir = new DirectoryInfo(_appInfo.AppDataDirectory);
-            if (!appdataDir.Exists)
-            {
-                appdataDir.Create();
-                Log.Write("Settings", $"Created OpenTabletDriver application data directory: {appdataDir.FullName}");
-            }
-
-            _pluginManager.Clean();
-            _pluginManager.Load();
-
-            _settingsManager.Load();
-
-            await DetectTablets();
         }
 
         private void SetOutputModeSettings(InputDevice dev, IOutputMode outputMode, Profile profile)
@@ -304,11 +334,11 @@ namespace OpenTabletDriver.Daemon
 
         private void SetToolSettings()
         {
-            foreach (var runningTool in Tools)
+            foreach (var runningTool in _tools)
                 runningTool.Dispose();
-            Tools.Clear();
+            _tools.Clear();
 
-            foreach (var settings in _settingsManager.Settings.Tools)
+            foreach (var settings in _settings!.Tools)
             {
                 if (settings is { Enable: false })
                     continue;
@@ -317,7 +347,7 @@ namespace OpenTabletDriver.Daemon
 
                 if (tool?.Initialize() ?? false)
                 {
-                    Tools.Add(tool);
+                    _tools.Add(tool);
                 }
                 else
                 {
@@ -329,7 +359,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<Settings> GetSettings()
         {
-            return Task.FromResult(_settingsManager.Settings);
+            return Task.FromResult(_settings!);
         }
 
         public async Task ApplyPreset(string name)
@@ -351,17 +381,6 @@ namespace OpenTabletDriver.Daemon
             return Task.CompletedTask;
         }
 
-        public Task<IEnumerable<IDeviceEndpoint>> GetDevices()
-        {
-            return Task.FromResult(_deviceHub.GetDevices());
-        }
-
-        public Task<IEnumerable<IDisplay>> GetDisplays()
-        {
-            return Task.FromResult(_serviceProvider.GetRequiredService<IVirtualScreen>().Displays
-                .Where(t => t is not IVirtualScreen));
-        }
-
         public Task<IAppInfo> GetApplicationInfo()
         {
             return Task.FromResult(_appInfo);
@@ -370,7 +389,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<IDiagnosticInfo> GetDiagnostics()
         {
             var devices = await GetDevices();
-            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, LogMessages, devices);
+            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, _logMessages, devices);
         }
 
         public Task SetTabletDebug(bool enabled)
@@ -400,7 +419,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            return Task.FromResult((IEnumerable<LogMessage>)LogMessages);
+            return Task.FromResult((IEnumerable<LogMessage>)_logMessages);
         }
 
         public Task<PluginSettings> GetDefaults(string path)
@@ -408,13 +427,6 @@ namespace OpenTabletDriver.Daemon
             var type = _pluginFactory.GetPluginType(path)!;
             var settings = _serviceProvider.GetDefaultSettings(type, this);
             return Task.FromResult(settings);
-        }
-
-        public Task<TypeProxy> GetProxiedType(string typeName)
-        {
-            var type = _pluginManager.ExportedTypes.First(t => t.GetPath() == typeName);
-            var proxy = ActivatorUtilities.CreateInstance<TypeProxy>(_serviceProvider, type);
-            return Task.FromResult(proxy);
         }
 
         public Task<IEnumerable<TypeProxy>> GetMatchingTypes(string typeName)
@@ -452,6 +464,21 @@ namespace OpenTabletDriver.Daemon
             {
                 _updateInfo = null;
             }
+        }
+
+        private InputDevice FindTablet(int tabletId)
+        {
+            var tablet = _driver.InputDevices.FirstOrDefault(c => c.Id == tabletId);
+            if (tablet == null)
+                throw new ArgumentException("Tablet not found", nameof(tabletId));
+
+            return tablet;
+        }
+
+        private Profile FindProfile(int tabletId)
+        {
+            var tablet = FindTablet(tabletId);
+            return _settings!.GetProfile(_serviceProvider, tablet);
         }
 
         private void PostDebugReport(string tablet, IDeviceReport report)
