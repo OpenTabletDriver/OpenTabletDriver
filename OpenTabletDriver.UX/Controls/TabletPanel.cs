@@ -59,6 +59,12 @@ namespace OpenTabletDriver.UX.Controls
 
                 if (DataContext is TabletHandler tabletHandler && app.Tablets.Any())
                 {
+                    tabletHandler.ProfileChanged += (_, p) =>
+                    {
+                        foreach (var page in pages)
+                            page.UpdateBindings();
+                    };
+
                     var specifications = tabletHandler.Configuration.Specifications;
 
                     if (specifications.Digitizer != null)

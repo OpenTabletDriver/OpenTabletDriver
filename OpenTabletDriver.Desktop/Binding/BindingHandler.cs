@@ -15,12 +15,10 @@ namespace OpenTabletDriver.Desktop.Binding
         private readonly IServiceProvider _serviceProvider;
         private bool _isEraser;
 
-        public BindingHandler(IServiceProvider serviceProvider, InputDevice device, BindingSettings settings, IMouseButtonHandler? mouseButtonHandler = null)
+        public BindingHandler(IServiceProvider serviceProvider, InputDevice device, OutputMode outputMode, BindingSettings settings, IMouseButtonHandler? mouseButtonHandler = null)
         {
             _serviceProvider = serviceProvider;
             _device = device;
-
-            var outputMode = _device.OutputMode!;
 
             // Force consume all reports from the last element
             var lastElement = outputMode.Elements?.LastOrDefault() ?? (IPipelineElement<IDeviceReport>)outputMode;
@@ -58,7 +56,7 @@ namespace OpenTabletDriver.Desktop.Binding
         public void Consume(IDeviceReport report)
         {
             Emit?.Invoke(report);
-            HandleBinding(_device.OutputMode!.Tablet, report);
+            HandleBinding(_device, report);
         }
 
         private void HandleBinding(InputDevice device, IDeviceReport report)

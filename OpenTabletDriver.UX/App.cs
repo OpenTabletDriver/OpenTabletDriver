@@ -1,8 +1,6 @@
 ﻿using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Text;
 using Eto.Forms;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +10,6 @@ using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Display;
-using OpenTabletDriver.Tablet;
 using OpenTabletDriver.UX.Components;
 using OpenTabletDriver.UX.Dialogs;
 
@@ -67,6 +64,16 @@ namespace OpenTabletDriver.UX
             var code = command.Invoke(Arguments);
             if (code != 0)
                 Exit(code);
+
+            PropertyChanged += (_, args) =>
+            {
+                if (args.PropertyName == nameof(Settings))
+                {
+                    var settings = Settings;
+                    foreach (var tablet in _tablets)
+                        tablet.ExtractProfile(settings);
+                }
+            };
 
             // Show the tray icon, if the platform supports it as intended.
             if (EnableTray)
@@ -270,6 +277,7 @@ namespace OpenTabletDriver.UX
         /// </summary>
         public async Task SaveSettings()
         {
+            await GetDriverDaemon().ApplySettings(Settings);
             await GetDriverDaemon().SaveSettings();
         }
 

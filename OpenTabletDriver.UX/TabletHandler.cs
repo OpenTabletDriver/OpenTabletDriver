@@ -59,5 +59,12 @@ namespace OpenTabletDriver.UX
 
             return new TabletHandler(daemon, tabletId, persistentId, state, tabletConfiguration, profile);
         }
+
+        public void ExtractProfile(Settings settings)
+        {
+            var profile = settings.Profiles.Find(p => p.Tablet == Configuration.Name && p.PersistentId == PersistentId);
+            Profile = profile!;
+            ProfileChanged?.Invoke(this, profile!);
+        }
     }
 }

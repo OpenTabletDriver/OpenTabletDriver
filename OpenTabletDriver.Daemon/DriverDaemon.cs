@@ -50,6 +50,7 @@ namespace OpenTabletDriver.Daemon
         private Settings? _settings;
         private UpdateInfo? _updateInfo;
         private bool _debugging;
+        private bool _isScanningDevices;
 
         public DriverDaemon(
             IServiceProvider serviceProvider,
@@ -94,6 +95,12 @@ namespace OpenTabletDriver.Daemon
                 hookEndpoint(e.Digitizer);
                 hookEndpoint(e.Auxiliary);
 
+                var profile = _settings!.GetProfile(_serviceProvider, e);
+
+                // avoid applying settings twice when "redetecting"
+                if (!_isScanningDevices)
+                    SetTabletSettings(e, profile);
+
                 TabletAdded?.Invoke(sender, e.Id);
                 e.StateChanged += (s, state) => TabletStateChanged?.Invoke(s, new TabletProperty<InputDeviceState>(e.Id, state));
 
@@ -107,7 +114,10 @@ namespace OpenTabletDriver.Daemon
                 }
             };
 
-            _driver.InputDeviceRemoved += (sender, e) => TabletRemoved?.Invoke(sender, e.Id);
+            _driver.InputDeviceRemoved += (sender, e) =>
+            {
+                TabletRemoved?.Invoke(sender, e.Id);
+            };
             _pluginManager.AssembliesChanged += (s, e) => AssembliesChanged?.Invoke(s, e);
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
@@ -129,7 +139,7 @@ namespace OpenTabletDriver.Daemon
             _pluginManager.Clean();
             _pluginManager.Load();
 
-            _settings = _settingsManager.Load(new FileInfo(_appInfo.SettingsFile));
+            _settings = _settingsManager.Load(new FileInfo(_appInfo.SettingsFile)) ?? new Settings();
 
             await DetectTablets();
 
@@ -204,8 +214,10 @@ namespace OpenTabletDriver.Daemon
 
         public async Task DetectTablets()
         {
+            _isScanningDevices = true;
             _driver.ScanDevices();
             await ApplySettings(_settings);
+            _isScanningDevices = false;
         }
 
         public Task<IEnumerable<int>> GetTablets()
@@ -239,17 +251,20 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetTabletProfile(int tabletId, Profile profile)
         {
+            var tablet = FindTablet(tabletId);
+            SetTabletSettings(tablet, profile);
             TabletProfileChanged?.Invoke(this, new TabletProperty<Profile>(tabletId, profile));
             return Task.CompletedTask;
         }
 
-        public async Task ResetTabletProfile(int tabletId)
+        public Task ResetTabletProfile(int tabletId)
         {
             var tablet = FindTablet(tabletId);
             var profile = Profile.GetDefaults(_serviceProvider, tablet);
             _settings!.SetProfile(profile);
-            await ApplySettings(_settings);
+            SetTabletSettings(tablet, profile);
             TabletProfileChanged?.Invoke(this, new TabletProperty<Profile>(tabletId, profile));
+            return Task.CompletedTask;
         }
 
         public async Task SaveSettings()
@@ -261,50 +276,13 @@ namespace OpenTabletDriver.Daemon
 
         public Task ApplySettings(Settings? settings)
         {
-            // Dispose filters that implement IDisposable interface
-            foreach (var obj in _driver.InputDevices.SelectMany(d =>
-                         d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
-                if (obj is IDisposable disposable)
-                    disposable.Dispose();
-
             foreach (var device in _driver.InputDevices)
             {
-                var group = device.Configuration.Name;
-
-                var profile = _settings!.GetProfile(_serviceProvider, device);
-                device.OutputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, device);
-
-                if (device.OutputMode != null)
-                {
-                    var outputModeName = _pluginFactory.GetName(profile.OutputMode);
-                    Log.Write(group, $"Output mode: {outputModeName}");
-                }
-
-                if (device.OutputMode is IOutputMode outputMode)
-                {
-                    SetOutputModeSettings(device, outputMode, profile);
-
-                    var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
-
-                    var deps = new object?[]
-                    {
-                        device,
-                        profile.Bindings,
-                        mouseButtonHandler
-                    }.Where(o => o != null).ToArray() as object[];
-
-                    var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
-
-                    var lastElement = outputMode.Elements?.LastOrDefault() ??
-                                      outputMode as IPipelineElement<IDeviceReport>;
-                    lastElement.Emit += bindingHandler.Consume;
-                }
+                var profile = settings!.GetProfile(_serviceProvider, device);
+                SetTabletSettings(device, profile);
             }
 
-            Log.Write("Settings", "Driver is enabled.");
-
             SetToolSettings();
-
             SettingsChanged?.Invoke(this, _settings!);
 
             return Task.CompletedTask;
@@ -314,47 +292,6 @@ namespace OpenTabletDriver.Daemon
         {
             await ApplySettings(new Settings());
             return await GetSettings();
-        }
-
-        private void SetOutputModeSettings(InputDevice dev, IOutputMode outputMode, Profile profile)
-        {
-            string group = dev.Configuration.Name;
-
-            var elements = from store in profile.Filters
-                where store.Enable
-                let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
-                where filter != null
-                select filter;
-
-            outputMode.Elements = elements.ToList();
-
-            if (outputMode.Elements.Any())
-                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
-        }
-
-        private void SetToolSettings()
-        {
-            foreach (var runningTool in _tools)
-                runningTool.Dispose();
-            _tools.Clear();
-
-            foreach (var settings in _settings!.Tools)
-            {
-                if (settings is { Enable: false })
-                    continue;
-
-                var tool = _pluginFactory.Construct<ITool>(settings!);
-
-                if (tool?.Initialize() ?? false)
-                {
-                    _tools.Add(tool);
-                }
-                else
-                {
-                    var name = _pluginFactory.GetName(settings);
-                    Log.Write("Tool", $"Failed to initialize {name} tool.", LogLevel.Error);
-                }
-            }
         }
 
         public Task<Settings> GetSettings()
@@ -479,6 +416,87 @@ namespace OpenTabletDriver.Daemon
         {
             var tablet = FindTablet(tabletId);
             return _settings!.GetProfile(_serviceProvider, tablet);
+        }
+
+        private void SetTabletSettings(InputDevice inputDevice, Profile profile)
+        {
+            var persistentName = inputDevice.PersistentName;
+            Log.Write("Settings", $"Applying settings for '{persistentName}'");
+            foreach (var element in inputDevice.OutputMode?.Elements ?? Enumerable.Empty<IDevicePipelineElement>())
+            {
+                if (element is IDisposable disposable)
+                    disposable.Dispose();
+            }
+
+            var outputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, inputDevice);
+
+            if (outputMode is not null)
+            {
+                var outputModeName = _pluginFactory.GetName(profile.OutputMode);
+                Log.Write("Settings", $"Output mode: {outputModeName}");
+
+                SetOutputModeSettings(inputDevice, outputMode, profile);
+                var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
+
+                var deps = new object?[]
+                {
+                    inputDevice,
+                    outputMode,
+                    profile.Bindings,
+                    mouseButtonHandler
+                }.Where(o => o != null).ToArray() as object[];
+
+                var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
+
+                var lastElement = outputMode.Elements?.LastOrDefault() ??
+                                    outputMode as IPipelineElement<IDeviceReport>;
+                lastElement.Emit += bindingHandler.Consume;
+            }
+
+            // set the output mode atomically
+            inputDevice.OutputMode = outputMode;
+            Log.Write("Settings", $"Settings applied for '{persistentName}'");
+        }
+
+        private void SetOutputModeSettings(InputDevice dev, IOutputMode outputMode, Profile profile)
+        {
+            string group = dev.Configuration.Name;
+
+            var elements = from store in profile.Filters
+                where store.Enable
+                let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
+                where filter != null
+                select filter;
+
+            outputMode.Elements = elements.ToList();
+
+            if (outputMode.Elements.Any())
+                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
+        }
+
+        private void SetToolSettings()
+        {
+            foreach (var runningTool in _tools)
+                runningTool.Dispose();
+            _tools.Clear();
+
+            foreach (var settings in _settings!.Tools)
+            {
+                if (settings is { Enable: false })
+                    continue;
+
+                var tool = _pluginFactory.Construct<ITool>(settings!);
+
+                if (tool?.Initialize() ?? false)
+                {
+                    _tools.Add(tool);
+                }
+                else
+                {
+                    var name = _pluginFactory.GetName(settings);
+                    Log.Write("Tool", $"Failed to initialize {name} tool.", LogLevel.Error);
+                }
+            }
         }
 
         private void PostDebugReport(string tablet, IDeviceReport report)

@@ -71,11 +71,18 @@ namespace OpenTabletDriver
         /// </summary>
         public int? PersistentId { get; private set; }
 
+        /// <summary>
+        /// Gets a persistent name for this input device.
+        /// </summary>
+        public string PersistentName => PersistentId != 1 ? $"{Configuration.Name} ({PersistentId})" : Configuration.Name;
+
         public InputDeviceState State
         {
             get => _state;
             set
             {
+                if (_state == InputDeviceState.Disposed && value != InputDeviceState.Disposed)
+                    throw new ObjectDisposedException(nameof(InputDevice));
                 if (_state == value)
                     return;
                 _state = value;
