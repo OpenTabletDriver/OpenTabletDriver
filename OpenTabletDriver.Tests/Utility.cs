@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop.AppInfo;
-using OpenTabletDriver.Desktop.Interop.Timer;
-using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Daemon;
+using OpenTabletDriver.Daemon.Interop.AppInfo;
+using OpenTabletDriver.Daemon.Interop.Timer;
+using OpenTabletDriver.Daemon.Reflection;
 
 namespace OpenTabletDriver.Tests
 {

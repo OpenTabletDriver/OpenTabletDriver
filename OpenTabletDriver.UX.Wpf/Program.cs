@@ -1,11 +1,13 @@
-﻿namespace OpenTabletDriver.UX.Wpf
+﻿using Eto;
+
+namespace OpenTabletDriver.UX.Wpf
 {
     public class Program
     {
         [STAThread]
         public static void Main(string[] args)
         {
-            new WindowsApp(args).Start();
+            new App(Platforms.Wpf).Start();
         }
     }
 }

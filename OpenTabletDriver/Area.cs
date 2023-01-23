@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.Linq;
 using System.Numerics;
 using JetBrains.Annotations;
 
@@ -9,49 +7,27 @@ namespace OpenTabletDriver
     /// A working area designating width and height based at a centered origin position.
     /// </summary>
     [PublicAPI]
-    public class Area : NotifyPropertyChanged
+    public class Area
     {
-        private float _width, _height, _xPosition, _yPosition;
-
         /// <summary>
         /// The width of the area.
         /// </summary>
-        [DisplayName(nameof(Width))]
-        public float Width
-        {
-            set => RaiseAndSetIfChanged(ref _width, value);
-            get => _width;
-        }
+        public float Width { get; set; }
 
         /// <summary>
         /// The height of the area.
         /// </summary>
-        [DisplayName(nameof(Height))]
-        public float Height
-        {
-            set => RaiseAndSetIfChanged(ref _height, value);
-            get => _height;
-        }
+        public float Height { get; set; }
 
         /// <summary>
         /// The X component of the area's center offset.
         /// </summary>
-        [DisplayName("X")]
-        public float XPosition
-        {
-            set => RaiseAndSetIfChanged(ref _xPosition, value);
-            get => _xPosition;
-        }
+        public float XPosition { get; set; }
 
         /// <summary>
         /// The Y component of the area's center offset.
         /// </summary>
-        [DisplayName("Y")]
-        public float YPosition
-        {
-            set => RaiseAndSetIfChanged(ref _yPosition, value);
-            get => _yPosition;
-        }
+        public float YPosition { get; set; }
 
         /// <summary>
         /// Returns the center offset of the area.
@@ -59,7 +35,7 @@ namespace OpenTabletDriver
         /// <remarks>
         /// This is also the rotation origin of the area where applicable.
         /// </remarks>
-        public Vector2 GetPosition() => new Vector2(XPosition, YPosition);
+        public Vector2 GetPosition() => new(XPosition, YPosition);
 
         /// <summary>
         /// Returns all corners of the area.
@@ -79,23 +55,6 @@ namespace OpenTabletDriver
                 new Vector2(x + halfWidth, y + halfHeight),
                 new Vector2(x + halfWidth, y - halfHeight)
             };
-        }
-
-        /// <summary>
-        /// Returns the center offset of the area.
-        /// </summary>
-        public virtual Vector2 GetCenterOffset()
-        {
-            var corners = GetCorners();
-            var max = new Vector2(
-                corners.Max(v => v.X),
-                corners.Max(v => v.Y)
-            );
-            var min = new Vector2(
-                corners.Min(v => v.X),
-                corners.Min(v => v.Y)
-            );
-            return (max - min) / 2;
         }
 
         public override string ToString() => $"[{Width}x{Height}@{GetPosition()}]";

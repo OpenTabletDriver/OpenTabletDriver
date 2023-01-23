@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
-using OpenTabletDriver.Desktop.Updater;
+using OpenTabletDriver.Daemon.Updater;
 using OpenTabletDriver.Tests.Fakes;
 using Xunit;
-using OTDUpdater = OpenTabletDriver.Desktop.Updater.Updater;
+using OTDUpdater = OpenTabletDriver.Daemon.Updater.Updater;
 
 namespace OpenTabletDriver.Tests.Updater
 {

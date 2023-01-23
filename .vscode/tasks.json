@@ -8,7 +8,7 @@
             "command": "dotnet",
             "args": [
                 "build",
-                "${workspaceFolder}/OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj",
+                "${workspaceFolder}/OpenTabletDriver.Daemon.Executable/OpenTabletDriver.Daemon.Executable.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

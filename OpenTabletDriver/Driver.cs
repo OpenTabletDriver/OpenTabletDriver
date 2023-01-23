@@ -61,7 +61,10 @@ namespace OpenTabletDriver
                 InputDevice.AssignPersistentId(addedDevices);
 
                 foreach (var device in _inputDevices)
+                {
+                    device.Initialize(true);
                     InputDeviceAdded?.Invoke(this, device);
+                }
             };
         }
 
@@ -84,7 +87,10 @@ namespace OpenTabletDriver
             InputDevice.AssignPersistentId(_inputDevices);
 
             foreach (var device in _inputDevices)
+            {
+                device.Initialize(true);
                 InputDeviceAdded?.Invoke(this, device);
+            }
 
             if (!InputDevices.Any())
             {
@@ -92,6 +98,12 @@ namespace OpenTabletDriver
             }
         }
 
+        /// <summary>
+        /// Returns an array of uninitialized <see cref="InputDevice"/>s from given <see cref="IDeviceEndpoint"/>s.
+        /// See <see cref="InputDevice.Initialize(bool)"/> for initialization.
+        /// </summary>
+        /// <param name="endpointsToScan">The endpoints to scan for</param>
+        /// <returns>An array of uninitialized <see cref="InputDevice"/>s.</returns>
         private ImmutableArray<InputDevice> ScanDevices(IEnumerable<IDeviceEndpoint> endpointsToScan)
         {
             lock (_detectLock)
@@ -101,7 +113,6 @@ namespace OpenTabletDriver
 
                 // the following detection algorithm exploits the fact that OTD only ever uses one digitizer and one
                 // auxiliary per tablet device. multiple devices of the exact same model will be detected properly
-                // however current OTD API design inhibits the ability to distinguish between them.
 
                 // create a hash map of configurations to their input device endpoint pairs
                 var inputDeviceEndpoints = new Dictionary<TabletConfiguration, List<InputDeviceEndpointPair>>();

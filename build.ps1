@@ -39,7 +39,7 @@ Write-Output "Building OpenTabletDriver with runtime $NetRuntime...";
 New-Item -ItemType Directory -Force -Path "./bin";
 
 Write-Output "${nl}Building Daemon...$nl";
-dotnet publish .\OpenTabletDriver.Daemon $Options;
+dotnet publish .\OpenTabletDriver.Daemon.Executable $Options;
 if ($LASTEXITCODE -ne 0) { exit 1; }
 
 Write-Output "${nl}Building Console...$nl";

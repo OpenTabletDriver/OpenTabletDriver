@@ -28,8 +28,6 @@ namespace OpenTabletDriver
             hookEndpoint(Digitizer);
             hookEndpoint(Auxiliary);
 
-            Initialize(true);
-
             void hookEndpoint(InputDeviceEndpoint? endpoint)
             {
                 if (endpoint is null)
@@ -69,7 +67,10 @@ namespace OpenTabletDriver
         /// A unique identifier that is used in conjunction with the tablet name to identify a tablet.
         /// This can be used across reboots and driver restarts.
         /// </summary>
-        public int? PersistentId { get; private set; }
+        /// <remarks>
+        /// This is set to -1 when the device has not been assigned a persistent id yet.
+        /// </remarks>
+        public int PersistentId { get; private set; } = -1;
 
         /// <summary>
         /// Gets a persistent name for this input device.
@@ -104,6 +105,7 @@ namespace OpenTabletDriver
 
         public void Initialize(bool process)
         {
+            Log.Write(PersistentName, $"Setting pipeline initialization state to '{process}'", LogLevel.Info);
             Digitizer.Initialize(process);
             Auxiliary?.Initialize(process);
         }
@@ -128,18 +130,18 @@ namespace OpenTabletDriver
             // find the highest index for each device name
             foreach (var device in devices)
             {
-                if (device.PersistentId is not int persistentId)
+                if (device.PersistentId == -1)
                     continue;
 
                 ref var id = ref CollectionsMarshal.GetValueRefOrAddDefault(persistentIdMap, device.Configuration.Name, out _);
-                if (persistentId >= id)
-                    id = persistentId;
+                if (device.PersistentId >= id)
+                    id = device.PersistentId;
             }
 
             // assign incrementing persistent id to devices without one
             foreach (var device in devices)
             {
-                if (device.PersistentId is not null)
+                if (device.PersistentId != -1)
                     continue;
 
                 var index = CollectionsMarshal.GetValueRefOrAddDefault(persistentIdMap, device.Configuration.Name, out _);

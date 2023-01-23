@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Daemon;
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Reflection;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Tablet;
 

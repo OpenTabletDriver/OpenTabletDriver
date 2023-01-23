@@ -1,3 +1,4 @@
+using Eto;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.MacOS
@@ -15,7 +16,7 @@ namespace OpenTabletDriver.UX.MacOS
                 return;
             }
 
-            new MacOSApp(args).Start();
+            new App(Platforms.Mac64).Start();
         }
     }
 }

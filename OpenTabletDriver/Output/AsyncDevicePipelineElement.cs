@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Output
     /// The pipeline element type.
     /// </typeparam>
     [PublicAPI]
+    [PluginInterface]
     public abstract class AsyncDevicePipelineElement : IDevicePipelineElement, IDisposable
     {
         private readonly ITimer _scheduler;

@@ -7,11 +7,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTabletDriver.Console.Attributes;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.Desktop.Updater;
+using OpenTabletDriver.Daemon;
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Profiles;
+using OpenTabletDriver.Daemon.Reflection;
+using OpenTabletDriver.Daemon.Updater;
 using OpenTabletDriver.Output;
 using static System.Console;
 

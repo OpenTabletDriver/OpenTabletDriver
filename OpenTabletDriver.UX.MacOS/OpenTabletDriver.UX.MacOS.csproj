@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>$(FrameworkLatest)</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.7.0" />
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.7.3" />
   </ItemGroup>
 
 </Project>

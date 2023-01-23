@@ -1,8 +1,7 @@
 using System.Reflection;
 using OpenTabletDriver.Attributes;
-using OpenTabletDriver.Desktop.Reflection;
-
-#nullable enable
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Reflection;
 
 namespace OpenTabletDriver.Daemon
 {
@@ -15,7 +14,7 @@ namespace OpenTabletDriver.Daemon
             if (path == null)
                 return null;
 
-            var type = pluginFactory.GetPluginType(path);
+            var type = pluginFactory.GetPlugin(path);
             var attr = type?.GetCustomAttribute<PluginNameAttribute>();
             return attr != null ? attr.Name : type?.Name;
         }

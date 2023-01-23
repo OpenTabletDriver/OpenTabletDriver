@@ -37,7 +37,7 @@ echo "Building OpenTabletDriver with runtime $runtime."
 mkdir -p ./bin
 
 echo -e "\nBuilding Daemon...\n"
-dotnet publish OpenTabletDriver.Daemon ${options[@]} $@ || exit 1
+dotnet publish OpenTabletDriver.Daemon.Executable ${options[@]} $@ || exit 1
 
 echo -e "\nBuilding Console...\n"
 dotnet publish OpenTabletDriver.Console ${options[@]} $@ || exit 2

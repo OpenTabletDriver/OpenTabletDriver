@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using JetBrains.Annotations;
@@ -12,17 +11,10 @@ namespace OpenTabletDriver
     [PublicAPI]
     public class AngledArea : Area
     {
-        private float _rotation;
-
         /// <summary>
         /// The rotation angle of the area.
         /// </summary>
-        [DisplayName(nameof(Rotation))]
-        public float Rotation
-        {
-            set => RaiseAndSetIfChanged(ref _rotation, value % 360);
-            get => _rotation;
-        }
+        public float Rotation { get; set; }
 
         public override Vector2[] GetCorners()
         {

@@ -14,11 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Daemon.Contracts\OpenTabletDriver.Daemon.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Forms" Version="2.5.11" />
+    <PackageReference Include="Eto.Forms" Version="2.7.3" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup Label="Resources">
