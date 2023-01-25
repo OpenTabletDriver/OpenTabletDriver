@@ -56,6 +56,7 @@
 | VEIKK VK640                   |     Supported     |
 | VEIKK VK1060                  |     Supported     |
 | ViewSonic WoodPad PF0730      |     Supported     |
+| ViewSonic Woodpad PF1030      |     Supported     | 
 | Wacom CTE-430                 |     Supported     |
 | Wacom CTE-630                 |     Supported     |
 | Wacom CTE-460                 |     Supported     |
