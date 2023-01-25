@@ -2,16 +2,14 @@
   "Name": "ViewSonic Woodpad PF1030",
   "Specifications": {
     "Digitizer": {
-      "Width": 225.0,
-      "Height": 141.0,
-      "MaxX": 44800.0,
-      "MaxY": 28000.0
+      "Width": 224,
+      "Height": 140,
+      "MaxX": 44800,
+      "MaxY": 28000
     },
     "Pen": {
       "MaxPressure": 4095,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -19,8 +17,8 @@
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 0x0543,
-      "ProductID": 0xE668,
+      "VendorID": 1347,
+      "ProductID": 58983,
       "InputReportLength": 14,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.ViewSonic.WoodPadReportParser",
@@ -32,6 +30,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {}
 }
