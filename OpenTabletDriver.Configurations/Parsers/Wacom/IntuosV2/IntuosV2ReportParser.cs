@@ -17,9 +17,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
                 return data[0] switch
                 {
                     0x10 => new IntuosV2Report(data),
-                    0x81 => new IntuosV2WirelessReport(data),
                     0x11 => new IntuosV2AuxReport(data),
                     0x21 => new IntuosV2TouchReport(data, ref _prevTouches),
+                    0x81 => new IntuosV2WirelessReport(data),
                     0xD2 => new IntuosV2TouchReport(data, ref _prevTouches),
                     _ => new DeviceReport(data)
                 };

@@ -4,7 +4,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
 {
-    public struct IntuosV2WirelessReport : ITabletReport, IHoverReport, IConfidenceReport, ITiltReport, IEraserReport
+    public struct IntuosV2WirelessReport : ITabletReport, IHoverReport, IConfidenceReport
     {
         public IntuosV2WirelessReport(byte[] report)
         {
@@ -12,8 +12,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
 
             Position = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | (report[3] << 8),
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[4]) | (report[5] << 8)
+                X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
 
