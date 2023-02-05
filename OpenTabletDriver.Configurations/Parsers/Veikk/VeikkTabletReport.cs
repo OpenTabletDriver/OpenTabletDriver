@@ -4,7 +4,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Veikk
 {
-    public struct VeikkTabletReport : ITabletReport
+    public struct VeikkTabletReport : ITabletReport, ITiltReport
     {
         public VeikkTabletReport(byte[] report)
         {
@@ -15,6 +15,11 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
                 X = Unsafe.ReadUnaligned<ushort>(ref report[3]) | (report[5] << 16),
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[6]) | (report[8] << 16)
             };
+            Tilt = new Vector2
+            {
+                X = unchecked((sbyte)report[11]),
+                Y = unchecked((sbyte)report[12])
+            }
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[9]);
             PenButtons = new bool[]
             {
@@ -25,6 +30,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
 
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
+        public Vector2 Tilt { set; get; }
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
     }
