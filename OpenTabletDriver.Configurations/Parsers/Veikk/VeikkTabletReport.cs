@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
             {
                 X = unchecked((sbyte)report[11]),
                 Y = unchecked((sbyte)report[12])
-            }
+            };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[9]);
             PenButtons = new bool[]
             {
