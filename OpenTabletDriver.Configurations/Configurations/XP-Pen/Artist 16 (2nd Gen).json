@@ -2,8 +2,8 @@
   "Name": "XP-Pen Artist 16 (2nd Gen)",
   "Specifications": {
     "Digitizer": {
-      "Width": 340.99,
-      "Height": 191.81,
+      "Width": 340.995,
+      "Height": 191.795,
       "MaxX": 68199.0,
       "MaxY": 38359.0
     },
@@ -12,7 +12,7 @@
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 9
+      "ButtonCount": 10
     },
     "MouseButtons": null,
     "Touch": null
