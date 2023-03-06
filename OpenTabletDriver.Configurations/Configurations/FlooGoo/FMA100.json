@@ -1,0 +1,35 @@
+{
+  "Name": "FlooGoo FMA100",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 262.128,
+      "Height": 196.596,
+      "MaxX": 20640,
+      "MaxY": 15480
+    },
+    "Pen": {
+      "MaxPressure": 32767,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 2578,
+      "ProductID": 16391,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.FlooGoo.FmaReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
