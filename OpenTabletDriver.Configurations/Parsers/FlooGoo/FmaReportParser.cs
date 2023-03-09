@@ -1,4 +1,3 @@
-using System;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.FlooGoo
@@ -7,8 +6,8 @@ namespace OpenTabletDriver.Configurations.Parsers.FlooGoo
     {
         public IDeviceReport Parse(byte[] report)
         {
-            if (report == null)
-                return new DeviceReport(Array.Empty<byte>());
+            if (report == null || report.Length == 0)
+                return null!; // returning null makes OTD ignore this report
             if (report.Length < 12 || report[0] != 0x01)
                 return new DeviceReport(report);
 
