@@ -20,8 +20,8 @@ namespace OpenTabletDriver.Configurations.Parsers.FlooGoo
             // Unit: [-9000..9000]x10^-3 degrees
             Tilt = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[8]) * 0.01f,
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[10]) * 0.01f
+                X = Unsafe.ReadUnaligned<short>(ref report[8]) * 0.01f,
+                Y = Unsafe.ReadUnaligned<short>(ref report[10]) * 0.01f
             };
 
             var penByte = report[1];
