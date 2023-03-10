@@ -63,6 +63,11 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private void HandleBinding(InputDevice device, IDeviceReport report)
         {
+            if (report is OutOfRangeReport oor)
+            {
+                ResetPenBindings(oor);
+                return;
+            }
             if (report is IEraserReport eraserReport)
                 _isEraser = eraserReport.Eraser;
             if (report is ITabletReport tabletReport)
@@ -71,6 +76,21 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleAuxiliaryReport(auxReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(mouseReport);
+        }
+
+        private void ResetPenBindings(OutOfRangeReport oor)
+        {
+            foreach (var binding in PenButtons.Values)
+            {
+                binding?.Invoke(oor, false);
+            }
+
+            if (_isEraser)
+                Eraser?.Invoke(oor, 0);
+            else
+                Tip?.Invoke(oor, 0);
+
+            _isEraser = false;
         }
 
         private void HandleTabletReport(PenSpecifications pen, ITabletReport report)
