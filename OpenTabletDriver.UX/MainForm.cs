@@ -20,6 +20,7 @@ namespace OpenTabletDriver.UX
         private readonly RpcClient<IDriverDaemon> _rpc;
         private readonly Placeholder _placeholder;
         private readonly IControlBuilder _controlBuilder;
+        private bool _reconnecting;
 
         public MainForm(App app, RpcClient<IDriverDaemon> rpc, IControlBuilder controlBuilder, IServiceProvider serviceProvider)
         {
@@ -181,6 +182,13 @@ namespace OpenTabletDriver.UX
                 foreach (var window in Application.Instance.Windows.SkipWhile(w => w == this).ToArray())
                     window.Close();
 
+                // We're manually reconnecting, so don't show the error dialog.
+                if (_reconnecting)
+                {
+                    _reconnecting = false;
+                    return;
+                }
+
                 MessageBox.Show(
                     "Lost connection to daemon. Exiting...",
                     MessageBoxType.Error
@@ -188,6 +196,9 @@ namespace OpenTabletDriver.UX
 
                 Environment.Exit(1);
             });
+
+            // Only reachable when manually reconnecting
+            await _rpc.Connect();
         }
 
         /// <summary>
@@ -291,6 +302,7 @@ namespace OpenTabletDriver.UX
         /// </summary>
         private void Reconnect()
         {
+            _reconnecting = true;
             _rpc.Disconnect();
         }
     }
