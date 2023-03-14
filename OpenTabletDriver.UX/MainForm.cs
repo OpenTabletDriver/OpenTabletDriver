@@ -180,9 +180,14 @@ namespace OpenTabletDriver.UX
             {
                 foreach (var window in Application.Instance.Windows.SkipWhile(w => w == this).ToArray())
                     window.Close();
-            });
 
-            await _rpc.Connect();
+                MessageBox.Show(
+                    "Lost connection to daemon. Exiting...",
+                    MessageBoxType.Error
+                );
+
+                Environment.Exit(1);
+            });
         }
 
         /// <summary>
