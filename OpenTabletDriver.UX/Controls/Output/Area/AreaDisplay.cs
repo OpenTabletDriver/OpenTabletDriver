@@ -10,7 +10,7 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Output.Area
 {
-    public class AreaDisplay : ScheduledDrawable
+    public class AreaDisplay : Drawable
     {
         /// <summary>
         /// Workaround for memory leaks on macos.
@@ -300,7 +300,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
-        protected override void OnNextFrame(PaintEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
             var graphics = e.Graphics;
 
