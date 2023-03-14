@@ -8,17 +8,12 @@ namespace OpenTabletDriver.UX
 {
     public static class EtoExtensions
     {
-        private static ExceptionDialog? _exceptionDialog;
-
         /// <summary>
         /// Shows an exception with a MessageBox dialog.
         /// </summary>
         /// <param name="ex">The exception to show.</param>
         public static void Show(this Exception ex)
         {
-            if (_exceptionDialog != null)
-                return;
-
             Application.Instance.Invoke(() =>
             {
                 try
@@ -27,9 +22,8 @@ namespace OpenTabletDriver.UX
                     while (ex.InnerException != null)
                         ex = ex.InnerException;
 
-                    _exceptionDialog = new ExceptionDialog(ex);
-                    _exceptionDialog.ShowModal(Application.Instance.MainForm);
-                    _exceptionDialog = null;
+                    var dialog = new ExceptionDialog(ex);
+                    dialog.ShowModal(Application.Instance.MainForm);
                 }
                 catch
                 {
