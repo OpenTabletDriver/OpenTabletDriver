@@ -16,11 +16,11 @@ namespace OpenTabletDriver.UX
         /// <param name="ex">The exception to show.</param>
         public static void Show(this Exception ex)
         {
+            if (_exceptionDialog != null)
+                return;
+
             Application.Instance.Invoke(() =>
             {
-                if (_exceptionDialog != null)
-                    return;
-
                 try
                 {
                     // Grab innermost exception
