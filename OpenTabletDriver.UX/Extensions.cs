@@ -13,7 +13,6 @@ namespace OpenTabletDriver.UX
     {
         public static void ShowMessageBox(this Exception exception)
         {
-            Log.Exception(exception);
             MessageBox.Show(
                 exception.Message + Environment.NewLine + exception.StackTrace,
                 $"Error: {exception.GetType().Name}",

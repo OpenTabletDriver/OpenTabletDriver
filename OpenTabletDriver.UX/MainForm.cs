@@ -380,14 +380,22 @@ namespace OpenTabletDriver.UX
                 SetTitle(tablets);
         });
 
-        private void HandleDaemonDisconnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
+        private void HandleDaemonDisconnected(object sender, EventArgs e)
         {
             // Hide all controls until reconnected
-            base.Content = placeholder;
-            base.Menu = null;
-            // Attempt to reconnect
-            await Driver.Connect();
-        });
+            Application.Instance.Invoke(() =>
+            {
+                base.Content = placeholder;
+                base.Menu = null;
+
+                MessageBox.Show(
+                    "Lost connection to daemon, exiting...",
+                    MessageBoxType.Error
+                );
+
+                Environment.Exit(1);
+            });
+        }
 
         private async Task ResetSettings()
         {
