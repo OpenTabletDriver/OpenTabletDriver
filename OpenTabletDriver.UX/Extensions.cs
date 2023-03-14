@@ -5,6 +5,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc.Protocol;
 
 namespace OpenTabletDriver.UX
@@ -13,12 +14,13 @@ namespace OpenTabletDriver.UX
     {
         public static void ShowMessageBox(this Exception exception)
         {
-            MessageBox.Show(
-                exception.Message + Environment.NewLine + exception.StackTrace,
-                $"Error: {exception.GetType().Name}",
-                MessageBoxButtons.OK,
-                MessageBoxType.Error
-            );
+            Application.Instance.Invoke(() =>
+            {
+                exception = exception.GetBaseException();
+
+                var dialog = new ExceptionDialog(exception);
+                dialog.ShowModal(Application.Instance.MainForm);
+            });
         }
 
         public static void ShowMessageBox(this CommonErrorData errorData)
