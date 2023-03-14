@@ -5,6 +5,7 @@ using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.UX.Controls.Generic.Text;
 using OpenTabletDriver.UX.Controls.Utilities;
 
@@ -104,6 +105,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             height.ValueBinding.Bind(heightBinding);
             x.ValueBinding.Bind(xBinding);
             y.ValueBinding.Bind(yBinding);
+
+            width.ValueChanged += (_, _) => Display.Invalidate();
+            height.ValueChanged += (_, _) => Display.Invalidate();
+            x.ValueChanged += (_, _) => Display.Invalidate();
+            y.ValueChanged += (_, _) => Display.Invalidate();
 
             Display.AreaBinding.Bind(AreaBinding);
             Display.LockToUsableAreaBinding.Bind(LockToUsableAreaBinding);
