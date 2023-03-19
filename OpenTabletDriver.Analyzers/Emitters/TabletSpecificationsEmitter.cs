@@ -43,6 +43,10 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                 new ButtonSpecificationsEmitter(_specifications.MouseButtons).Emit()),
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(nameof(TabletSpecifications.Wheel)),
+                                new WheelSpecificationsEmitter(_specifications.Wheel).Emit()),
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(TabletSpecifications.Touch)),
                                 new DigitizerSpecificationsEmitter(_specifications.Touch).Emit()),
                         })))

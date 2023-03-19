@@ -14,6 +14,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private readonly InputDevice _device;
         private readonly IServiceProvider _serviceProvider;
         private bool _isEraser;
+        private int? _lastWheelPosition = null;
 
         public BindingHandler(IServiceProvider serviceProvider, InputDevice device, BindingSettings settings, IMouseButtonHandler? mouseButtonHandler = null)
         {
@@ -37,6 +38,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
             PenButtons = CreateBindingStates(settings.PenButtons, device, mouseButtonHandler);
             AuxButtons = CreateBindingStates(settings.AuxButtons, device, mouseButtonHandler);
+            WheelAsButtons = CreateBindingStates(settings.Wheel, device, mouseButtonHandler);
             MouseButtons = CreateBindingStates(settings.MouseButtons, device, mouseButtonHandler);
 
             MouseScrollDown = CreateBindingState<BindingState>(settings.MouseScrollDown, device, mouseButtonHandler);
@@ -48,6 +50,8 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private Dictionary<int, BindingState?> PenButtons { get; }
         private Dictionary<int, BindingState?> AuxButtons { get; }
+
+        private Dictionary<int, BindingState?> WheelAsButtons { get; }
         private Dictionary<int, BindingState?> MouseButtons { get; }
 
         private BindingState? MouseScrollDown { get; }
@@ -74,6 +78,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleTabletReport(device.Configuration.Specifications.Pen!, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(auxReport);
+            if(report is IAbsoluteWheelReport absoluteWheelReport)
+                HandleAbsoluteWheelReport(absoluteWheelReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(mouseReport);
         }
@@ -107,6 +113,32 @@ namespace OpenTabletDriver.Desktop.Binding
         private void HandleAuxiliaryReport(IAuxReport report)
         {
             HandleBindingCollection(report, AuxButtons, report.AuxButtons);
+        }
+
+        private void HandleAbsoluteWheelReport(IAbsoluteWheelReport report)
+        {
+            var wheelMovement = report.WheelPosition != null && _lastWheelPosition != null;
+
+            bool clockWise = false;
+            bool antiClockwise = false;
+            if (wheelMovement && _device.Configuration.Specifications.Wheel != null)
+            {
+                var steps = _device.Configuration.Specifications.Wheel.StepCount;
+                var halfSteps = steps / 2;
+                var treeHalf = halfSteps * 3;
+
+                var movement = (report.WheelPosition - _lastWheelPosition + treeHalf) % steps - halfSteps;
+
+                clockWise = movement < 0;
+                antiClockwise = movement > 0;
+            }
+
+            var movementButtons = new[] { clockWise, antiClockwise };
+            var fixedButtons = WheelAsButtons.Keys.Select(key =>  report.WheelPosition != null && key == report.WheelPosition);
+            var allButtons = movementButtons.Concat(fixedButtons).ToList();
+
+            HandleBindingCollection(report, WheelAsButtons, allButtons);
+            _lastWheelPosition = report.WheelPosition;
         }
 
         private void HandleMouseReport(IMouseReport report)
