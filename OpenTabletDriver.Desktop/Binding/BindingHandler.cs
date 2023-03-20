@@ -134,10 +134,10 @@ namespace OpenTabletDriver.Desktop.Binding
             }
 
             var movementButtons = new[] { clockWise, antiClockwise };
-            var fixedButtons = WheelAsButtons.Keys.Select(key =>  report.WheelPosition != null && key == report.WheelPosition);
-            var allButtons = movementButtons.Concat(fixedButtons).ToList();
 
-            HandleBindingCollection(report, WheelAsButtons, allButtons);
+            //The wheel direction buttons are just handled as extra Auxiliary buttons. So we need to know how many buttons we skip
+            var auxiliaryButtons = (int)(_device.Configuration.Specifications.AuxiliaryButtons?.ButtonCount ?? 0u);
+            HandleBindingCollection(report, AuxButtons, movementButtons, auxiliaryButtons);
             _lastWheelPosition = report.WheelPosition;
         }
 
@@ -149,11 +149,18 @@ namespace OpenTabletDriver.Desktop.Binding
             MouseScrollUp?.Invoke(report, report.Scroll.Y > 0);
         }
 
-        private static void HandleBindingCollection(IDeviceReport report, IDictionary<int, BindingState?>? bindings, IList<bool> newStates)
+        /// <summary>
+        /// Updates the button(binding) states for a collection of bindings based upon an array of buttons reported by a device
+        /// </summary>
+        /// <param name="report">The report from the device</param>
+        /// <param name="bindings">The collection of bindings we are updating</param>
+        /// <param name="newStates">New states of the updated bindings</param>
+        /// <param name="offset">An offset into <paramref name="bindings"/> before <paramref name="newStates"/> applies</param>
+        private static void HandleBindingCollection(IDeviceReport report, IDictionary<int, BindingState?>? bindings, IList<bool> newStates, int offset = 0)
         {
             for (var i = 0; i < newStates.Count; i++)
             {
-                if (bindings != null && bindings.TryGetValue(i, out var binding))
+                if (bindings != null && bindings.TryGetValue(i + offset, out var binding))
                     binding?.Invoke(report, newStates[i]);
             }
         }

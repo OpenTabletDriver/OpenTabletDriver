@@ -23,8 +23,12 @@ namespace OpenTabletDriver.UX.Controls
 
                 var tablet = app.Tablets.First(t => t.Name == profile.Tablet);
                 var buttonCount = tablet.Specifications.AuxiliaryButtons?.ButtonCount ?? 0;
+                //The wheel provides two pseudo-buttons representing clockwise and counterclockwise turning
+                var wheelButtons = tablet.Specifications.Wheel != null ? 2u : 0u;
+                var totalButtons = buttonCount + wheelButtons;
 
-                foreach (var button in ButtonsFor(c => c.BindingSettings.AuxButtons, buttonCount))
+
+                foreach (var button in ButtonsFor(c => c.BindingSettings.AuxButtons, totalButtons))
                     buttons.Items.Add(button);
             };
 
