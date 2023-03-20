@@ -38,7 +38,6 @@ namespace OpenTabletDriver.Desktop.Binding
 
             PenButtons = CreateBindingStates(settings.PenButtons, device, mouseButtonHandler);
             AuxButtons = CreateBindingStates(settings.AuxButtons, device, mouseButtonHandler);
-            WheelAsButtons = CreateBindingStates(settings.Wheel, device, mouseButtonHandler);
             MouseButtons = CreateBindingStates(settings.MouseButtons, device, mouseButtonHandler);
 
             MouseScrollDown = CreateBindingState<BindingState>(settings.MouseScrollDown, device, mouseButtonHandler);
@@ -50,8 +49,6 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private Dictionary<int, BindingState?> PenButtons { get; }
         private Dictionary<int, BindingState?> AuxButtons { get; }
-
-        private Dictionary<int, BindingState?> WheelAsButtons { get; }
         private Dictionary<int, BindingState?> MouseButtons { get; }
 
         private BindingState? MouseScrollDown { get; }
