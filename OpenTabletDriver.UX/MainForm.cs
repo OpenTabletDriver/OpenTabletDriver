@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -648,6 +649,12 @@ namespace OpenTabletDriver.UX
                 if (result == DialogResult.Yes)
                     Current.UpdaterWindow.Show();
             }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Driver.Disconnected -= HandleDaemonDisconnected;
+            base.OnClosing(e);
         }
     }
 }
