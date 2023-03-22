@@ -15,10 +15,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
                 auxByte.IsBitSet(1),
                 auxByte.IsBitSet(2),
                 auxByte.IsBitSet(3),
-                auxByte.IsBitSet(4),
-                auxByte.IsBitSet(5),
-                auxByte.IsBitSet(6),
-                auxByte.IsBitSet(7),
             };
         }
 

@@ -8,21 +8,14 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            if (data.Length < 10)
+            return data[0] switch
             {
-                return new DeviceReport(data);
-            }
-            else
-            {
-                return data[0] switch
-                {
-                    0x10 => new IntuosV2Report(data),
-                    0x11 => new IntuosV2AuxReport(data),
-                    0x21 => new IntuosV2TouchReport(data, ref _prevTouches),
-                    0xD2 => new IntuosV2TouchReport(data, ref _prevTouches),
-                    _ => new DeviceReport(data)
-                };
-            }
+                0x10 => new IntuosV2Report(data),
+                0x11 => new IntuosV2AuxReport(data),
+                0x21 => new IntuosV2TouchReport(data, ref _prevTouches),
+                0xD2 => new IntuosV2TouchReport(data, ref _prevTouches),
+                _ => new DeviceReport(data)
+            };
         }
 
         private TouchPoint?[] _prevTouches = Array.Empty<TouchPoint?>();
