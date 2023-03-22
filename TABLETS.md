@@ -1,6 +1,7 @@
 | Tablet                        |      Status       | Notes |
 | ---------------------------   | :---------------: | ----- |
 | Acepen AP 1060                |     Supported     |
+| Acepen AP 906                 |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM156HD                |     Supported     |
 | Gaomon M106K Pro              |     Supported     |

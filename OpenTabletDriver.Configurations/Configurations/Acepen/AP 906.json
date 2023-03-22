@@ -1,0 +1,41 @@
+{
+  "Name": "Acepen AP 906",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 228.6,
+      "Height": 127.0,
+      "MaxX": 45720.0,
+      "MaxY": 25400.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 145,
+      "InputReportLength": 11,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Acepen.AcepenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "CQrhSgAAbD0A",
+        "CQEE",
+        "CQIC"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
