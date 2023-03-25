@@ -41,6 +41,7 @@
 | Monoprice 10594               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
+| Parblo Ninos N4               |     Supported     |
 | 10moon 1060N                  |     Supported     | Doesn't meet any of its advertised specs
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
