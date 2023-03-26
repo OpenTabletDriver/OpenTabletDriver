@@ -13,7 +13,6 @@ namespace OpenTabletDriver.Desktop.Profiles
         private PluginSettings? _tipButton, _eraserButton, _mouseScrollUp, _mouseScrollDown;
         private PluginSettingsCollection _penButtons = new PluginSettingsCollection(),
             _auxButtons = new PluginSettingsCollection(),
-            _wheel = new PluginSettingsCollection(),
             _mouseButtons = new PluginSettingsCollection();
 
         [DisplayName("Tip Activation Threshold"), JsonProperty("TipActivationThreshold")]
@@ -56,13 +55,6 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             set => RaiseAndSetIfChanged(ref _auxButtons!, value);
             get => _auxButtons;
-        }
-
-        [DisplayName("Wheel"), JsonProperty("Wheel")]
-        public PluginSettingsCollection Wheel
-        {
-            set => RaiseAndSetIfChanged(ref _wheel!, value);
-            get => _wheel;
         }
 
         [DisplayName("Mouse Button"), JsonProperty("MouseButtons")]
