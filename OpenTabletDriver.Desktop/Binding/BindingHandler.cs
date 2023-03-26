@@ -114,28 +114,40 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private void HandleAbsoluteWheelReport(IAbsoluteWheelReport report)
         {
-            var wheelMovement = report.WheelPosition != null && _lastWheelPosition != null;
-
-            bool clockWise = false;
-            bool antiClockwise = false;
-            if (wheelMovement && _device.Configuration.Specifications.Wheel != null)
-            {
-                var steps = _device.Configuration.Specifications.Wheel.StepCount;
-                var halfSteps = steps / 2;
-                var treeHalf = halfSteps * 3;
-
-                var movement = (report.WheelPosition - _lastWheelPosition + treeHalf) % steps - halfSteps;
-
-                clockWise = movement < 0;
-                antiClockwise = movement > 0;
-            }
-
-            var movementButtons = new[] { clockWise, antiClockwise };
+            var wheelSpec = _device.Configuration.Specifications.Wheel;
+            if (wheelSpec == null)
+                return;
 
             //The wheel direction buttons are just handled as extra Auxiliary buttons. So we need to know how many buttons we skip
             var auxiliaryButtons = (int)(_device.Configuration.Specifications.AuxiliaryButtons?.ButtonCount ?? 0u);
-            HandleBindingCollection(report, AuxButtons, movementButtons, auxiliaryButtons);
+
+            if (_lastWheelPosition == null || report.WheelPosition == null)
+            {
+                //First/last report, do nothing (technically could be a wheel pressed event)
+            }
+            else
+            {
+                var movement =
+                    ComputeShortCircleDistance(_lastWheelPosition.Value, report.WheelPosition.Value, wheelSpec.StepCount);
+
+                bool clockWise = movement < 0;
+                bool antiClockwise = movement > 0;
+
+                HandleBindingCollection(report, AuxButtons, new[] { clockWise, antiClockwise }, auxiliaryButtons);
+                //It should only be a momentary press, otherwise movement and stop with resting finger will be read as a long press
+                HandleBindingCollection(report, AuxButtons, new[] { false, false }, auxiliaryButtons);
+            }
+
             _lastWheelPosition = report.WheelPosition;
+        }
+
+        private long ComputeShortCircleDistance(uint from, uint to, uint steps)
+        {
+            var halfSteps = steps / 2;
+            var treeHalf = halfSteps * 3;
+
+            var movement = (((int)to - from + treeHalf) % steps) - halfSteps;
+            return movement;
         }
 
         private void HandleMouseReport(IMouseReport report)
