@@ -26,14 +26,30 @@ public class WheelSpecificationsEmitter
                     SyntaxFactory.ParseTypeName(CLASS_NAME))
                 .WithInitializer(
                     SyntaxFactory.InitializerExpression(
-                        SyntaxKind.ObjectInitializerExpression,
-                        SyntaxFactory.SingletonSeparatedList<ExpressionSyntax>(
+                        SyntaxKind.ObjectInitializerExpression, SyntaxFactory.SeparatedList<ExpressionSyntax>(new[]
+                        {
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(WheelSpecifications.StepCount)),
                                 SyntaxFactory.LiteralExpression(
                                     SyntaxKind.NumericLiteralExpression,
-                                    SyntaxFactory.Literal(_wheelSpecifications.StepCount))))))
+                                    SyntaxFactory.Literal(_wheelSpecifications.StepCount))),
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(nameof(WheelSpecifications.IsRelative)),
+                                SyntaxFactory.LiteralExpression(_wheelSpecifications.IsRelative ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression)),
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(nameof(WheelSpecifications.IsClockwise)),
+                                SyntaxFactory.LiteralExpression(_wheelSpecifications.IsClockwise ? SyntaxKind.TrueLiteralExpression : SyntaxKind.FalseLiteralExpression)),
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(nameof(WheelSpecifications.AngleOfZeroReading)),
+                                SyntaxFactory.LiteralExpression(
+                                    SyntaxKind.NumericLiteralExpression,
+                                    SyntaxFactory.Literal(_wheelSpecifications.AngleOfZeroReading))),
+
+                        })))
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList());
     }

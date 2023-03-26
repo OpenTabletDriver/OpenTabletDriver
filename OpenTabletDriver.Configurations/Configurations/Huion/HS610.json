@@ -15,7 +15,10 @@
       "ButtonCount": 13
     },
     "Wheel": {
-      "StepCount": 12
+      "StepCount": 12,
+      "IsRelative": false,
+      "IsClockwise": true,
+      "AngleOfZeroReading": 90
     },
     "MouseButtons": null,
     "Touch": null
