@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private readonly InputDevice _device;
         private readonly IServiceProvider _serviceProvider;
         private bool _isEraser;
-        private int? _lastWheelPosition = null;
+        private uint? _lastWheelPosition = null;
 
         public BindingHandler(IServiceProvider serviceProvider, InputDevice device, BindingSettings settings, IMouseButtonHandler? mouseButtonHandler = null)
         {

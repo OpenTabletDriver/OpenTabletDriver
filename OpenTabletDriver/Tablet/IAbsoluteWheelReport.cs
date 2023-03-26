@@ -3,14 +3,14 @@ using JetBrains.Annotations;
 namespace OpenTabletDriver.Tablet
 {
     /// <summary>
-    /// An auxiliary report containing states of express keys.
+    /// An auxiliary report containing states of a wheel/ring input.
     /// </summary>
     [PublicAPI]
     public interface IAbsoluteWheelReport : IDeviceReport
     {
         /// <summary>
-        /// The position of the wheel
+        /// The position reading of the wheel, or null to indicate an absence of touch.
         /// </summary>
-        int? WheelPosition { get; set; }
+        uint? WheelPosition { get; set; }
     }
 }

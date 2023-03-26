@@ -17,10 +17,10 @@ public class HuionWheelReport : IAbsoluteWheelReport
         else
         {
 
-            WheelPosition = wheelData - 1;
+            WheelPosition = wheelData - 1u;
         }
     }
 
     public byte[] Raw { get; set; }
-    public int? WheelPosition { get; set; }
+    public uint? WheelPosition { get; set; }
 }
