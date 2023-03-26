@@ -128,7 +128,7 @@ namespace OpenTabletDriver
                                 }
 
                                 var pair = pairList[pairIndex];
-                                pair.Auxiliary = digitizerEndpoint;
+                                pair.Auxiliary = auxEndpoint;
                                 Log.Debug("Detect", $"Found '{candidateConfig.Name}' auxiliary: '{deviceName}'");
                                 break;
                             }
