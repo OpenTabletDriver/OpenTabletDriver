@@ -42,6 +42,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
             MouseScrollDown = CreateBindingState<BindingState>(settings.MouseScrollDown, device, mouseButtonHandler);
             MouseScrollUp = CreateBindingState<BindingState>(settings.MouseScrollUp, device, mouseButtonHandler);
+
+            WheelClockwise = CreateBindingState<BindingState>(settings.WheelClockwise, device, mouseButtonHandler);
+            WheelCounterClockwise = CreateBindingState<BindingState>(settings.WheelCounterClockwise, device, mouseButtonHandler);
         }
 
         private ThresholdBindingState? Tip { get; }
@@ -53,6 +56,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private BindingState? MouseScrollDown { get; }
         private BindingState? MouseScrollUp { get; }
+
+        private BindingState? WheelClockwise { get; }
+        private BindingState? WheelCounterClockwise { get; }
 
         public event Action<IDeviceReport>? Emit;
 
@@ -118,9 +124,6 @@ namespace OpenTabletDriver.Desktop.Binding
             if (wheelSpec == null)
                 return;
 
-            //The wheel direction buttons are just handled as extra Auxiliary buttons. So we need to know how many buttons we skip
-            var auxiliaryButtons = (int)(_device.Configuration.Specifications.AuxiliaryButtons?.ButtonCount ?? 0u);
-
             if (_lastWheelPosition == null || report.WheelPosition == null)
             {
                 //First/last report, do nothing (technically could be a wheel pressed event)
@@ -130,12 +133,9 @@ namespace OpenTabletDriver.Desktop.Binding
                 var movement =
                     ComputeShortCircleDistance(_lastWheelPosition.Value, report.WheelPosition.Value, wheelSpec.StepCount);
 
-                bool clockWise = movement < 0;
-                bool antiClockwise = movement > 0;
-
-                HandleBindingCollection(report, AuxButtons, new[] { clockWise, antiClockwise }, auxiliaryButtons);
-                //It should only be a momentary press, otherwise movement and stop with resting finger will be read as a long press
-                HandleBindingCollection(report, AuxButtons, new[] { false, false }, auxiliaryButtons);
+                //If we ever support Relative Wheels, everything below could possibly be turned into a virtual relative wheel.
+                WheelClockwise?.Invoke(report, movement < 0);
+                WheelCounterClockwise?.Invoke(report, movement > 0);
             }
 
             _lastWheelPosition = report.WheelPosition;
@@ -165,11 +165,11 @@ namespace OpenTabletDriver.Desktop.Binding
         /// <param name="bindings">The collection of bindings we are updating</param>
         /// <param name="newStates">New states of the updated bindings</param>
         /// <param name="offset">An offset into <paramref name="bindings"/> before <paramref name="newStates"/> applies</param>
-        private static void HandleBindingCollection(IDeviceReport report, IDictionary<int, BindingState?>? bindings, IList<bool> newStates, int offset = 0)
+        private static void HandleBindingCollection(IDeviceReport report, IDictionary<int, BindingState?>? bindings, IList<bool> newStates)
         {
             for (var i = 0; i < newStates.Count; i++)
             {
-                if (bindings != null && bindings.TryGetValue(i + offset, out var binding))
+                if (bindings != null && bindings.TryGetValue(i, out var binding))
                     binding?.Invoke(report, newStates[i]);
             }
         }

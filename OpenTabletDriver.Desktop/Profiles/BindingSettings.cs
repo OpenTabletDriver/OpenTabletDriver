@@ -10,7 +10,9 @@ namespace OpenTabletDriver.Desktop.Profiles
     public class BindingSettings : NotifyPropertyChanged
     {
         private float _tP, _eP;
-        private PluginSettings? _tipButton, _eraserButton, _mouseScrollUp, _mouseScrollDown;
+        private PluginSettings? _tipButton, _eraserButton,
+            _mouseScrollUp, _mouseScrollDown,
+            _wheelClockwise, _wheelCounterClockwise;
         private PluginSettingsCollection _penButtons = new PluginSettingsCollection(),
             _auxButtons = new PluginSettingsCollection(),
             _mouseButtons = new PluginSettingsCollection();
@@ -76,6 +78,20 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             set => RaiseAndSetIfChanged(ref _mouseScrollDown, value);
             get => _mouseScrollDown;
+        }
+
+        [DisplayName("Wheel Clockwise"), JsonProperty("WheelClockwise")]
+        public PluginSettings? WheelClockwise
+        {
+            set => RaiseAndSetIfChanged(ref _wheelClockwise, value);
+            get => _wheelClockwise;
+        }
+
+        [DisplayName("Wheel Counterclockwise"), JsonProperty("WheelCounterClockwise")]
+        public PluginSettings? WheelCounterClockwise
+        {
+            set => RaiseAndSetIfChanged(ref _wheelCounterClockwise, value);
+            get => _wheelCounterClockwise;
         }
 
         public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
