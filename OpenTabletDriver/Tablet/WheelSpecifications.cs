@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Tablet
         public bool IsClockwise { get; set; }
 
         /// <summary>
-        /// For relative wheels, the angle on the unit circle, corresponding to a reading of zero from the sensor
+        /// For absolute wheels, the angle on the unit circle, corresponding to a reading of zero from the sensor
         /// </summary>
         public float AngleOfZeroReading { get; set; }
     }
