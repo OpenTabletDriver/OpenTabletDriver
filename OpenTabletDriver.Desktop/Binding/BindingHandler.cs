@@ -134,6 +134,8 @@ namespace OpenTabletDriver.Desktop.Binding
                     ComputeShortCircleDistance(_lastWheelPosition.Value, report.WheelPosition.Value, wheelSpec.StepCount);
 
                 //If we ever support Relative Wheels, everything below could possibly be turned into a virtual relative wheel.
+                movement *= wheelSpec.IsClockwise ? 1 : -1;
+
                 WheelClockwise?.Invoke(report, movement < 0);
                 WheelCounterClockwise?.Invoke(report, movement > 0);
             }
