@@ -37,8 +37,8 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Consume(IDeviceReport report)
         {
-            Emit?.Invoke(report);
             HandleBinding(outputMode.Tablet, report);
+            Emit?.Invoke(report);
         }
 
         public void HandleBinding(TabletReference tablet, IDeviceReport report)
