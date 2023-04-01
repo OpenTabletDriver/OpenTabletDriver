@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Deco 02",
+  "Name": "XP-Pen Artist 13.3",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
-      "Height": 142.875,
-      "MaxX": 22352.0,
-      "MaxY": 13970.0
+      "Width": 293.76,
+      "Height": 165.24,
+      "MaxX": 29376.0,
+      "MaxY": 16524.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -22,8 +22,8 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 2051,
-      "InputReportLength": 10,
+      "ProductID": 11,
+      "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
@@ -34,7 +34,21 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 11,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenDedicatedAuxReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": [
+        4
+      ]
+    }
+  ],
   "Attributes": {
     "libinputoverride": "1"
   }

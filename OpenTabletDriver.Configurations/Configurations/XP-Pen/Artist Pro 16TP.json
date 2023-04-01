@@ -1,41 +1,37 @@
 {
-  "Name": "XP-Pen Deco 02",
+  "Name": "XP-Pen Artist Pro 16TP",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
-      "Height": 142.875,
-      "MaxX": 22352.0,
-      "MaxY": 13970.0
+      "Width": 345.615,
+      "Height": 194.385,
+      "MaxX": 69123.0,
+      "MaxY": 38877.0
     },
     "Pen": {
       "MaxPressure": 8191,
       "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
+    }
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 6
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 2051,
-      "InputReportLength": 10,
-      "OutputReportLength": 8,
+      "ProductID": 2350,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAC"
+        "ArAE"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
-  "Attributes": {
-    "libinputoverride": "1"
-  }
+  "Attributes": {}
 }

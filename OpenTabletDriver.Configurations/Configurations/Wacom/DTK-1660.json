@@ -30,6 +30,19 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 942,
+      "InputReportLength": 192,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

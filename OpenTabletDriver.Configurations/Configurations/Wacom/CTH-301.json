@@ -1,29 +1,31 @@
 {
-  "Name": "Wacom CTF-430",
+  "Name": "Wacom CTH-301",
   "Specifications": {
     "Digitizer": {
-      "Width": 127.6,
-      "Height": 92.8,
-      "MaxX": 5104.0,
-      "MaxY": 3712.0
+      "Width": 107.0,
+      "Height": 67.0,
+      "MaxX": 10690.0,
+      "MaxY": 6680.0
     },
     "Pen": {
       "MaxPressure": 511,
       "Buttons": {
-        "ButtonCount": 2
+        "ButtonCount": 1
       }
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 2
+    },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
-      "ProductID": 105,
-      "InputReportLength": 8,
-      "OutputReportLength": 0,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
+      "ProductID": 792,
+      "InputReportLength": 64,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooPad.BambooPadReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
