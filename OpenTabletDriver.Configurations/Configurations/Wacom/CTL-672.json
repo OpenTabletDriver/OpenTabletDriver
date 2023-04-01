@@ -45,18 +45,6 @@
       "InitializationStrings": []
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
-    {
-      "VendorID": 1386,
-      "ProductID": 891,
-      "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
-    }
-  ],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {}
 }

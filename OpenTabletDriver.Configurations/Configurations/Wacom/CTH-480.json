@@ -17,7 +17,12 @@
       "ButtonCount": 4
     },
     "MouseButtons": null,
-    "Touch": null
+    "Touch": {
+      "Width": 152.0,
+      "Height": 95.0,
+      "MaxX": 4095.0,
+      "MaxY": 4095.0
+    }
   },
   "DigitizerIdentifiers": [
     {

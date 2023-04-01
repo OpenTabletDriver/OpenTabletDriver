@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Deco 02",
+  "Name": "VEIKK Viola (VO1060)",
   "Specifications": {
     "Digitizer": {
       "Width": 254.0,
-      "Height": 142.875,
-      "MaxX": 22352.0,
-      "MaxY": 13970.0
+      "Height": 158.75,
+      "MaxX": 50800.0,
+      "MaxY": 31750.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -14,21 +14,22 @@
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 6
+      "ButtonCount": 5
     },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 10429,
-      "ProductID": 2051,
-      "InputReportLength": 10,
-      "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "VendorID": 12267,
+      "ProductID": 11,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAC"
+        "CQEE",
+        "CQIC"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
