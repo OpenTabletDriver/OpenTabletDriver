@@ -24,6 +24,7 @@ namespace OpenTabletDriver.UX.Controls
                 {
                     ButtonFor(p => p.BindingSettings.WheelClockwise),
                     ButtonFor(p => p.BindingSettings.WheelCounterClockwise),
+                    ButtonFor(p => p.BindingSettings.WheelTouch),
                 }
             };
 
