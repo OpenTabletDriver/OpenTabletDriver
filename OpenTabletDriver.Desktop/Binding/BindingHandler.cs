@@ -45,7 +45,6 @@ namespace OpenTabletDriver.Desktop.Binding
 
             WheelClockwise = CreateBindingState<BindingState>(settings.WheelClockwise, device, mouseButtonHandler);
             WheelCounterClockwise = CreateBindingState<BindingState>(settings.WheelCounterClockwise, device, mouseButtonHandler);
-            WheelTouch = CreateBindingState<BindingState>(settings.WheelTouch, device, mouseButtonHandler);
         }
 
         private ThresholdBindingState? Tip { get; }
@@ -60,7 +59,6 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private BindingState? WheelClockwise { get; }
         private BindingState? WheelCounterClockwise { get; }
-        private BindingState? WheelTouch { get; }
 
         public event Action<IDeviceReport>? Emit;
 
@@ -128,8 +126,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
             if (_lastWheelPosition == null || report.WheelPosition == null)
             {
-                //First/last report
-                WheelTouch?.Invoke(report, report.WheelPosition != null);
+                //First/last report, do nothing (technically could be a wheel pressed event)
             }
             else
             {

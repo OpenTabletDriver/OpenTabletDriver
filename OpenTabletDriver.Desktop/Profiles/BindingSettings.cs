@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private float _tP, _eP;
         private PluginSettings? _tipButton, _eraserButton,
             _mouseScrollUp, _mouseScrollDown,
-            _wheelClockwise, _wheelCounterClockwise, _wheelTouch;
+            _wheelClockwise, _wheelCounterClockwise;
         private PluginSettingsCollection _penButtons = new PluginSettingsCollection(),
             _auxButtons = new PluginSettingsCollection(),
             _mouseButtons = new PluginSettingsCollection();
@@ -92,13 +92,6 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             set => RaiseAndSetIfChanged(ref _wheelCounterClockwise, value);
             get => _wheelCounterClockwise;
-        }
-
-        [DisplayName("Wheel Touch"), JsonProperty("WheelTouch")]
-        public PluginSettings? WheelTouch
-        {
-            set => RaiseAndSetIfChanged(ref _wheelTouch, value);
-            get => _wheelTouch;
         }
 
         public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
