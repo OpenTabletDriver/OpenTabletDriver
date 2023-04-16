@@ -146,6 +146,7 @@
 | Gaomon M10K Pro               |  Missing Features | Wheel is not yet supported.
 | Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
 | Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
+| Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
 | Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
