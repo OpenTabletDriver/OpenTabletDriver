@@ -1,0 +1,32 @@
+{
+  "Name": "ENSign 11",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 218.0,
+      "Height": 136.0,
+      "MaxX": 21800,
+      "MaxY": 13600
+    },
+    "Pen": {
+      "MaxPressure": 2048,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10194,
+      "ProductID": 4354,
+      "InputReportLength": 13,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Euronovate.ENSignReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
