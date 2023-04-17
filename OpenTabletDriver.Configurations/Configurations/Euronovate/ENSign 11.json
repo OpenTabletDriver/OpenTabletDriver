@@ -2,10 +2,10 @@
   "Name": "ENSign 11",
   "Specifications": {
     "Digitizer": {
-      "Width": 218.0,
-      "Height": 136.0,
-      "MaxX": 21800,
-      "MaxY": 13600
+      "Width": 136.0,
+      "Height": 218.0,
+      "MaxX": 13600,
+      "MaxY": 21800
     },
     "Pen": {
       "MaxPressure": 2048,
