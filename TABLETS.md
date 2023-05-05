@@ -20,6 +20,7 @@
 | Huion H610 Pro V2             |     Supported     |
 | Huion H610X                   |     Supported     |
 | Huion H640P                   |     Supported     |
+| Huion H641P                   |     Supported     |
 | Huion H642                    |     Supported     |
 | Huion H950P                   |     Supported     |
 | Huion H1060P                  |     Supported     |
