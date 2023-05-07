@@ -30,7 +30,7 @@
         "201": "HUION_T216_\\d{6}$"
       },
       "InitializationStrings": [
-	200
+        200
       ]
     }
   ],
