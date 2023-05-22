@@ -25,6 +25,7 @@ namespace OpenTabletDriver.Output
 
         private Vector2? _lastPos;
         private bool _skipReport;
+        private bool _outOfRange;
 
         /// <summary>
         /// The class in which the final relative positioned output is handled.
@@ -88,6 +89,10 @@ namespace OpenTabletDriver.Output
         protected override IAbsolutePositionReport? Transform(IAbsolutePositionReport report)
         {
             var deltaTime = _stopwatch.Restart();
+            if (_outOfRange && report.Position == _lastPos)
+                return null;
+
+            _outOfRange = false;
 
             var pos = Vector2.Transform(report.Position, TransformationMatrix);
             var delta = pos - _lastPos;
@@ -119,7 +124,10 @@ namespace OpenTabletDriver.Output
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
+                {
+                    _outOfRange = true;
                     synchronousPointer.Reset();
+                }
                 synchronousPointer.Flush();
             }
         }
