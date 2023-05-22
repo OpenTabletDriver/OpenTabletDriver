@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Octokit;
 using OpenTabletDriver.Desktop.Interop.Display;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
@@ -62,10 +63,12 @@ namespace OpenTabletDriver.Desktop.Interop
             }
         }
 
+        public static IGitHubClient GitHubClient => new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
+
         public static IUpdater Updater => CurrentPlatform switch
         {
-            PluginPlatform.Windows => updater ??= new WindowsUpdater(),
-            PluginPlatform.MacOS => updater ??= new MacOSUpdater(),
+            PluginPlatform.Windows => updater ??= new WindowsUpdater(AppInfo.Current, GitHubClient),
+            PluginPlatform.MacOS => updater ??= new MacOSUpdater(AppInfo.Current, GitHubClient),
             _ => null
         };
 

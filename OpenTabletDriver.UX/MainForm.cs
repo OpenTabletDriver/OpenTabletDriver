@@ -638,16 +638,9 @@ namespace OpenTabletDriver.UX
 
         private async Task CheckForUpdates()
         {
-            if (await Driver.Instance.HasUpdate())
+            if (await Driver.Instance.CheckForUpdates() is not null)
             {
-                var result = MessageBox.Show(
-                    "An update to OpenTabletDriver is available. Do you wish to install it?",
-                    "Update",
-                    MessageBoxButtons.YesNo
-                );
-
-                if (result == DialogResult.Yes)
-                    Current.UpdaterWindow.Show();
+                Current.UpdaterWindow.Show();
             }
         }
 
