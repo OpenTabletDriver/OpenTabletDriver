@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Octokit;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
@@ -66,16 +65,15 @@ namespace OpenTabletDriver.Daemon
 
             LoadUserSettings();
 
-#if !DEBUG
-            SleepDetection = new(async () =>
+            SleepDetector.Slept += async() =>
             {
-                Log.Write(nameof(SleepDetectionThread), "Sleep detected...", LogLevel.Info);
+                if (System.Diagnostics.Debugger.IsAttached)
+                    return;
+
+                Log.Write(nameof(DriverDaemon), "Sleep detected...", LogLevel.Info);
                 await DetectTablets();
                 await SetSettings(Settings);
-            });
-
-            SleepDetection.Start();
-#endif
+            };
         }
 
         public event EventHandler<LogMessage>? Message;
@@ -87,9 +85,7 @@ namespace OpenTabletDriver.Daemon
         private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private IUpdater Updater = DesktopInterop.Updater;
-#if !DEBUG
-        private readonly SleepDetectionThread SleepDetection;
-#endif
+        private readonly ISleepDetector? SleepDetector = new SleepDetector();
 
         private UpdateInfo? _updateInfo;
 
