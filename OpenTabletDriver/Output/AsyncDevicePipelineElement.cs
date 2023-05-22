@@ -99,7 +99,8 @@ namespace OpenTabletDriver.Output
         /// <returns>True if pen is in range</returns>
         protected bool PenIsInRange()
         {
-            return (float)_consumeWatch.Elapsed.TotalMilliseconds < Math.Max(3, (_reportMsAvg * 1.5f) ?? float.MaxValue);
+            return State is not OutOfRangeReport ||
+                ((float)_consumeWatch.Elapsed.TotalMilliseconds < Math.Max(3, (_reportMsAvg * 1.5f) ?? float.MaxValue));
         }
 
         /// <summary>
