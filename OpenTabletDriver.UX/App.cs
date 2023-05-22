@@ -101,6 +101,7 @@ namespace OpenTabletDriver.UX
 
         public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
         public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
+        public static DaemonWatchdog DaemonWatchdog;
 
         public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();
         public WindowSingleton<ConfigurationEditor> ConfigEditorWindow { get; } = new WindowSingleton<ConfigurationEditor>();

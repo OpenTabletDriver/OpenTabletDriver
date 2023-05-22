@@ -60,6 +60,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
                         new PaddingSpacerItem(),
                     }
                 };
+                _updateAvailable.SetResult(true);
             }
             else
             {
@@ -67,6 +68,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
                 {
                     Text = "No updates are available."
                 };
+                _updateAvailable.SetResult(false);
             }
         }
 
@@ -78,12 +80,18 @@ namespace OpenTabletDriver.UX.Windows.Updater
             await App.Driver.Instance.InstallUpdate();
 
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string path = SystemInterop.CurrentPlatform switch
+            string path = Directory.EnumerateFiles(basePath, "OpenTabletDriver.U*").FirstOrDefault(); // 0.7.x mirgration
+            path ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => Path.Join(basePath, "OpenTabletDriver.UX.Wpf.exe"),
                 PluginPlatform.MacOS => Path.Join(basePath, "OpenTabletDriver.UX.MacOS"),
-                _ => Directory.EnumerateFiles(basePath, "OpenTabletDriver.U*").FirstOrDefault()
+                _ => throw new NotSupportedException("Unsupported platform")
             };
+
+            if (App.DaemonWatchdog is not null)
+                App.DaemonWatchdog.Dispose();
+
+            Application.Instance.MainForm.Close();
 
             Process.Start(path);
 

@@ -54,12 +54,13 @@ namespace OpenTabletDriver.UX
         public void Stop()
         {
             this.daemonProcess?.Kill();
+            this.daemonProcess?.Dispose();
+            this.daemonProcess = null;
         }
 
         public void Dispose()
         {
             Stop();
-            this.daemonProcess?.Dispose();
         }
     }
 }
