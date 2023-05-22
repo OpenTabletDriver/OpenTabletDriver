@@ -152,6 +152,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 {
                     this.FullAreaBounds = RectangleF.Empty;
                 }
+
+                this.Invalidate();
             }
             get => this.areaBounds;
         }
