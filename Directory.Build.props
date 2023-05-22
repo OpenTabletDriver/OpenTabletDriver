@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <VersionBase>0.6.0.4</VersionBase>
+    <VersionBase>0.6.1.0</VersionBase>
     <FrameworkBase>net6.0</FrameworkBase>
     <LangVersion>preview</LangVersion>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
