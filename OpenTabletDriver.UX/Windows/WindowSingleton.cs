@@ -7,13 +7,20 @@ namespace OpenTabletDriver.UX.Windows
     {
         private T window;
 
-        public void Show()
+        public T GetWindow()
         {
             if (window == null)
             {
                 window = new T();
                 window.Closed += HandleWindowClosed;
             }
+
+            return window;
+        }
+
+        public void Show()
+        {
+            var window = GetWindow();
 
             switch (window)
             {

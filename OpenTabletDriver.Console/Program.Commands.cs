@@ -24,13 +24,13 @@ namespace OpenTabletDriver.Console
 
         private static async Task HasUpdate()
         {
-            var hasUpdate = await Driver.Instance.HasUpdate();
+            var hasUpdate = await Driver.Instance.CheckForUpdates() is not null;
             await Out.WriteLineAsync(hasUpdate.ToString().ToLowerInvariant());
         }
 
         private static async Task InstallUpdate()
         {
-            if (await Driver.Instance.HasUpdate())
+            if (await Driver.Instance.CheckForUpdates() is not null)
             {
                 await Driver.Instance.InstallUpdate();
             }

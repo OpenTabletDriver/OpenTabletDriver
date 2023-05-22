@@ -91,6 +91,8 @@ namespace OpenTabletDriver.Daemon
         private readonly SleepDetectionThread SleepDetection;
 #endif
 
+        private UpdateInfo? _updateInfo;
+
         private bool debugging;
 
         public Task WriteMessage(LogMessage message)
@@ -461,19 +463,33 @@ namespace OpenTabletDriver.Daemon
                 DeviceReport?.Invoke(this, new DebugReportData(tablet, report));
         }
 
-        public Task<bool> HasUpdate()
+        public async Task<SerializedUpdateInfo?> CheckForUpdates()
         {
-            return Updater?.CheckForUpdates() ?? Task.FromResult(false);
+            if (Updater == null)
+                return null;
+
+            _updateInfo = await Updater.CheckForUpdates();
+            return _updateInfo?.ToSerializedUpdateInfo();
         }
 
-        public async Task<Release> GetUpdateInfo()
+        public async Task InstallUpdate()
         {
-            return await Updater.GetRelease()!;
-        }
+            if (_updateInfo == null)
+                throw new InvalidOperationException("No update available"); // Misbehaving client
 
-        public Task InstallUpdate()
-        {
-            return Updater?.InstallUpdate() ?? Task.CompletedTask;
+            try
+            {
+                var update = await _updateInfo.GetUpdate();
+                Updater?.Install(update);
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                _updateInfo = null;
+            }
         }
 
         private static void InitializePlatform()

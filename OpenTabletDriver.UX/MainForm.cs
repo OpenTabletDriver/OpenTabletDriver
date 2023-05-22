@@ -56,7 +56,7 @@ namespace OpenTabletDriver.UX
                         Environment.Exit(1);
                     }
 
-                    await CheckForUpdates();
+                    CheckForUpdates();
                 }
                 catch (Exception ex)
                 {
@@ -143,6 +143,7 @@ namespace OpenTabletDriver.UX
                 {
                     var watchdog = new DaemonWatchdog();
                     watchdog.Start();
+                    App.DaemonWatchdog = watchdog;
                     watchdog.DaemonExited += (sender, e) =>
                     {
                         Application.Instance.AsyncInvoke(() =>
@@ -167,9 +168,17 @@ namespace OpenTabletDriver.UX
                             }
                         });
                     };
+
+                    AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+                    {
+                        App.DaemonWatchdog?.Dispose();
+                        App.DaemonWatchdog = null;
+                    };
+
                     this.Closing += (sender, e) =>
                     {
-                        watchdog.Dispose();
+                        App.DaemonWatchdog?.Dispose();
+                        App.DaemonWatchdog = null;
                     };
                 }
             }
@@ -511,14 +520,6 @@ namespace OpenTabletDriver.UX
 
         private Task LoadPresets()
         {
-            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
-
-            if (!presetDir.Exists)
-            {
-                presetDir.Create();
-                Log.Write("Settings", $"The preset directory '{presetDir.FullName}' has been created");
-            }
-
             AppInfo.PresetManager.Refresh();
             return Task.CompletedTask;
         }
@@ -636,19 +637,15 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private async Task CheckForUpdates()
+        private void CheckForUpdates()
         {
-            if (await Driver.Instance.HasUpdate())
+            Application.Instance.AsyncInvoke(async () =>
             {
-                var result = MessageBox.Show(
-                    "An update to OpenTabletDriver is available. Do you wish to install it?",
-                    "Update",
-                    MessageBoxButtons.YesNo
-                );
-
-                if (result == DialogResult.Yes)
+                if (await Current.UpdaterWindow.GetWindow().HasUpdates())
+                {
                     Current.UpdaterWindow.Show();
-            }
+                }
+            });
         }
 
         protected override void OnClosing(CancelEventArgs e)
