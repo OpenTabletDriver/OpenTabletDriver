@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Plugin.Output
         private Vector2? lastPos;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
         private bool skipReport;
+        private bool outOfRange;
 
         /// <summary>
         /// The class in which the final relative positioned output is handled.
@@ -76,6 +77,10 @@ namespace OpenTabletDriver.Plugin.Output
         protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
         {
             var deltaTime = stopwatch.Restart();
+            if (outOfRange && report.Position == lastPos)
+                return null;
+
+            outOfRange = false;
 
             var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
             var delta = pos - this.lastPos;
@@ -112,7 +117,10 @@ namespace OpenTabletDriver.Plugin.Output
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
+                {
+                    outOfRange = true;
                     synchronousPointer.Reset();
+                }
                 synchronousPointer.Flush();
             }
         }
