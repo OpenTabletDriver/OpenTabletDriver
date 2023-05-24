@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using Eto;
 using Eto.Forms;
@@ -305,5 +306,16 @@ namespace OpenTabletDriver.UX
             _reconnecting = true;
             _rpc.Disconnect();
         }
+        
+        /// <summary>
+        /// Move the exit function to the right-click operation of NotifyIcon.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            WindowState = WindowState.Minimized;
+        }
+        
     }
 }
