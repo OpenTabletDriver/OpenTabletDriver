@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
@@ -32,7 +33,7 @@ namespace OpenTabletDriver.UX
             InitializePlatform();
 
             SetTitle();
-            Menu = ConstructMenu();
+            Menu = ConstructLimitedMenu();
 
             base.Content = placeholder = new Placeholder
             {
@@ -52,7 +53,12 @@ namespace OpenTabletDriver.UX
                     var result = await Task.WhenAny(Driver.Connect(), timeout);
                     if (result == timeout)
                     {
-                        MessageBox.Show("Daemon connection timed out after some time. Verify that the daemon is running.", "Daemon Connection Timed Out");
+                        var message = SystemInterop.CurrentPlatform switch
+                        {
+                            PluginPlatform.Windows => "Connecting to daemon has timed out.\nVerify that OpenTabletDriver.Daemon is running or is in the same folder as OpenTabletDriver.UX",
+                            _ => "Connecting to daemon has timed out. Verify that OpenTabletDriver.Daemon is running."
+                        };
+                        MessageBox.Show(this, message, "Daemon Connection Error", MessageBoxType.Error);
                         Environment.Exit(1);
                     }
 
@@ -98,17 +104,20 @@ namespace OpenTabletDriver.UX
         {
             switch (DesktopInterop.CurrentPlatform)
             {
+                case PluginPlatform.Windows:
+                    var programPath = AppInfo.ProgramDirectory;
+                    var tempPath = Path.GetTempPath().Replace(@"\", @"\\");
+                    var regex = new Regex(@$"^{tempPath}Temp\d+.*?\.zip");
+                    if (regex.IsMatch(programPath))
+                    {
+                        MessageBox.Show(this, $"You are running OpenTabletDriver.UX from a zip file.\n\nPlease extract the zip file to a folder then run OpenTabletDriver.UX from there.", "Error", MessageBoxType.Error);
+                        Environment.Exit(1);
+                    }
+                    break;
                 case PluginPlatform.MacOS:
                     this.Padding = 10;
                     break;
             }
-
-            bool enableDaemonWatchdog = DesktopInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => true,
-                PluginPlatform.MacOS => true,
-                _ => false,
-            };
 
             if (App.EnableTrayIcon)
             {
@@ -182,6 +191,37 @@ namespace OpenTabletDriver.UX
                     };
                 }
             }
+        }
+
+        private MenuBar ConstructLimitedMenu()
+        {
+            var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
+            quitCommand.Executed += (sender, e) => Application.Instance.Quit();
+
+            var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
+            aboutCommand.Executed += (sender, e) => AboutDialog.ShowDialog(this);
+
+            var wikiUrl = new Command { MenuText = "Open Wiki..." };
+            wikiUrl.Executed += (sender, e) => DesktopInterop.Open(WikiUrl);
+
+            var menuBar = new MenuBar
+            {
+                Items =
+                {
+                    new ButtonMenuItem
+                    {
+                        Text = "&Help",
+                        Items =
+                        {
+                            wikiUrl,
+                        }
+                    }
+                },
+                QuitItem = quitCommand,
+                AboutItem = aboutCommand
+            };
+
+            return menuBar;
         }
 
         private MenuBar ConstructMenu()
@@ -345,6 +385,9 @@ namespace OpenTabletDriver.UX
             // Hook events after the instance is (re)instantiated
             Log.Output += async (sender, message) => { if (Driver.IsConnected) await Driver.Instance?.WriteMessage(message); };
             Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
+
+            // Load full menu
+            this.Menu = ConstructMenu();
 
             // Load the application information from the daemon
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
