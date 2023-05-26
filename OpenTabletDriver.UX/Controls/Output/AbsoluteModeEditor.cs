@@ -197,13 +197,31 @@ namespace OpenTabletDriver.UX.Controls.Output
                 handlingArLock = true;
 
                 if (sender == tabletWidth || sender == tabletAreaEditor)
-                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                {
+                    var fullHeight = tabletAreaEditor.FullAreaBounds.Height;
+                    var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                    if (tabletAreaEditor.FullAreaCommandExecuting && scaledHeight > fullHeight)
+                    {
+                        tabletHeight.DataValue = fullHeight;
+                        tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
+                    }
+                    else
+                    {
+                        tabletHeight.DataValue = scaledHeight;
+                    }
+                }
                 else if (sender == tabletHeight)
+                {
                     tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                }
                 else if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
+                {
                     tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
+                }
                 else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
+                {
                     tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
+                }
 
                 prevDisplayWidth = displayWidth.DataValue;
                 prevDisplayHeight = displayHeight.DataValue;

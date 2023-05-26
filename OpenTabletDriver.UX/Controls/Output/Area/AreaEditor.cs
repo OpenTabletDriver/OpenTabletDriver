@@ -132,6 +132,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public AreaDisplay Display { get; }
 
+        public bool FullAreaCommandExecuting { get; private set; }
+
         public override IEnumerable<RectangleF> AreaBounds
         {
             set
@@ -243,10 +245,12 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Full area",
                                 Action = () =>
                                 {
+                                    FullAreaCommandExecuting = true;
                                     Area.Height = FullAreaBounds.Height;
                                     Area.Width = FullAreaBounds.Width;
                                     Area.Y = FullAreaBounds.Center.Y;
                                     Area.X = FullAreaBounds.Center.X;
+                                    FullAreaCommandExecuting = false;
                                 }
                             },
                             new ActionCommand
