@@ -47,7 +47,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
             Device.Write(EventType.EV_REL, EventCode.REL_X, (int)delta.X);
             Device.Write(EventType.EV_REL, EventCode.REL_Y, (int)delta.Y);
-            Device.Sync();
         }
     }
 }
