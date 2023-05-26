@@ -80,7 +80,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
             await App.Driver.Instance.InstallUpdate();
 
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string path = Directory.EnumerateFiles(basePath, "OpenTabletDriver.U*").FirstOrDefault(); // 0.7.x mirgration
+            string path = Directory.EnumerateFiles(basePath, "OpenTabletDriver.UI*").FirstOrDefault(); // 0.7.x mirgration
             path ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => Path.Join(basePath, "OpenTabletDriver.UX.Wpf.exe"),
