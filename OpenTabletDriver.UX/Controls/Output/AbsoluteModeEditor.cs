@@ -76,6 +76,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         internal DisplayAreaEditor displayAreaEditor;
         internal TabletAreaEditor tabletAreaEditor;
 
+        private bool arLockHooked;
         private bool handlingArLock;
         private bool handlingForcedArConstraint;
         private bool handlingSettingsChanging;
@@ -122,26 +123,31 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HookAspectRatioLock(object sender, EventArgs args)
         {
-            if (Settings?.LockAspectRatio ?? false)
+            lock (this)
             {
-                lock (this)
+                if (Settings?.LockAspectRatio ?? false)
                 {
+                    if (arLockHooked)
+                        return;
+
                     HandleAspectRatioLock(tabletAreaEditor, EventArgs.Empty);
 
                     displayWidth.DataValueChanged += HandleAspectRatioLock;
                     displayHeight.DataValueChanged += HandleAspectRatioLock;
                     tabletWidth.DataValueChanged += HandleAspectRatioLock;
                     tabletHeight.DataValueChanged += HandleAspectRatioLock;
+                    arLockHooked = true;
                 }
-            }
-            else
-            {
-                lock (this)
+                else
                 {
+                    if (!arLockHooked)
+                        return;
+
                     displayWidth.DataValueChanged -= HandleAspectRatioLock;
                     displayHeight.DataValueChanged -= HandleAspectRatioLock;
                     tabletWidth.DataValueChanged -= HandleAspectRatioLock;
                     tabletHeight.DataValueChanged -= HandleAspectRatioLock;
+                    arLockHooked = false;
                 }
             }
         }
