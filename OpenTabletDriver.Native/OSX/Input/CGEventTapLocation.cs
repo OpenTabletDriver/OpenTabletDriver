@@ -1,4 +1,4 @@
-namespace OpenTabletDriver.Native.OSX.Generic
+namespace OpenTabletDriver.Native.OSX.Input
 {
     public enum CGEventTapLocation
     {

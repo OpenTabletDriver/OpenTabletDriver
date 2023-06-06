@@ -126,7 +126,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
         }
 
-        public void Reset()
+        public sealed override void Reset()
         {
             // Zero out everything except position and tilt
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
@@ -139,11 +139,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             isEraser = false;
             proximity = true; // we counterintuitively set this to true since its the initial state
-        }
-
-        public void Flush()
-        {
-            Device.Sync();
         }
 
         protected override EventCode? GetCode(MouseButton button) => null;
