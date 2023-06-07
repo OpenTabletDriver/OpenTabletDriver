@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "121": "^HA60"
+        "121": "^HA60$"
       },
       "InitializationStrings": []
     }
