@@ -7,7 +7,10 @@ namespace OpenTabletDriver.Native.OSX.IOkit
     {
         private const string libiokiot = "/System/Library/Frameworks/IOKit.framework/IOKit";
 
-        [DllImport(libiokiot, EntryPoint = "IOHIDCheckAccess")]
+        [DllImport(libiokiot)]
         public static extern IOHIDAccessType IOHIDCheckAccess(IOHIDRequestType requestType);
+
+        [DllImport(libiokiot)]
+        public static extern bool IOHIDRequestAccess(IOHIDRequestType requestType);
     }
 }
