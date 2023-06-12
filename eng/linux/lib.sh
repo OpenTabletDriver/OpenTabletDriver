@@ -15,7 +15,21 @@ GENERIC_FILES="$(readlink -f "$(dirname "${BASH_SOURCE[0]}")/Generic")"
 
 OTD_NAME="OpenTabletDriver"
 OTD_LNAME="opentabletdriver"
+
 OTD_DESC="cross-platform open-source tablet driver"
+
+OTD_LONG_DESC="${OTD_NAME} has the highest number of supported tablets with great
+compatibility across multiple platforms, packaged in an easy-to-use graphical
+user interface."
+
+OTD_LONG_DESC2="${OTD_NAME} has support for multiple tablets from the following (non-exhaustive) OEMs:
+ * Wacom
+ * Huion
+ * XP-Pen
+ * XenceLabs
+ * Gaomon
+ * Veikk"
+
 OTD_MAINTAINERS=(
   "InfinityGhost <infinityghostgit@gmail.com>" \
   "X9VoiD <oscar.silvestrexx@gmail.com>" \

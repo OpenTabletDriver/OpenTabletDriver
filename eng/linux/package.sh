@@ -7,6 +7,7 @@ config="Release"
 framework="net6.0"
 netRuntime="linux-x64"
 isRelease="true"
+build="true"
 packageGen=""
 isPortable="false"
 singleFile="true"
@@ -21,6 +22,7 @@ print_help() {
   echo "  -r, --runtime <runtime>       Target runtime (default: linux-x64)"
   echo "  --release <bool>              Whether to output production binaries (default: true)"
   echo "  --package <package>           Package generation script to run after build"
+  echo "  --build <bool>                Whether to build binaries (default: true)"
   echo "  --portable <bool>             Whether to build portable binaries (default: false)"
   echo "  --single-file <bool>          Whether to build single-file binaries (default: true)"
   echo "  --self-contained <bool>       Whether to build self-contained binaries, implies --single-file (default: false)"
@@ -73,6 +75,13 @@ while [ $# -gt 0 ]; do
       ;;
     --release)
       isRelease="$2"
+      shift
+      ;;
+    --build=*)
+      build="${1#*=}"
+      ;;
+    --build)
+      build="$2"
       shift
       ;;
     --package=*)
@@ -182,23 +191,26 @@ if [ -d "${output}" ]; then
   done
 fi
 
-echo "Restoring packages..."
-dotnet restore --verbosity quiet > /dev/null
-
-echo "Running dotnet clean..."
-dotnet clean --configuration "${config}" --verbosity quiet > /dev/null
-
 mkdir -p "${output}"
-if [ "${isPortable}" = "true" ]; then
-  mkdir -p "${output}/userdata"
+
+if [ "${build}" = "true" ]; then
+  echo "Restoring packages..."
+  dotnet restore --verbosity quiet > /dev/null
+
+  echo "Running dotnet clean..."
+  dotnet clean --configuration "${config}" --verbosity quiet > /dev/null
+
+  if [ "${isPortable}" = "true" ]; then
+    mkdir -p "${output}/userdata"
+  fi
+
+  for project in "${projects[@]}"; do
+    echo -e "\nBuilding ${project}...\n"
+    dotnet publish "${project}" "${options[@]}"
+  done
+
+  echo -e "\nBuild finished! Binaries created in ${output}\n"
 fi
-
-for project in "${projects[@]}"; do
-  echo -e "\nBuilding ${project}...\n"
-  dotnet publish "${project}" "${options[@]}"
-done
-
-echo -e "\nBuild finished! Binaries created in ${output}\n"
 
 if [ -n "${packageGen}" ]; then
   package_script="${script_root}/${packageGen}/package.sh"
@@ -210,7 +222,7 @@ if [ -n "${packageGen}" ]; then
 
   # child package.sh should expect to be run from the repo root and should write
   # the filename of the package generated to PKG_FILE
-  . "${package_script}" "${output}" "${netRuntime}"
+  . "${package_script}" "${output}"
 
   echo -e "\nPackaging finished! Package created at '${output}/${PKG_FILE}'"
 fi
