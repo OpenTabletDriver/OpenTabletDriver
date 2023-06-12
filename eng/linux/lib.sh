@@ -26,9 +26,9 @@ OTD_GIT="https://github.com/OpenTabletDriver/OpenTabletDriver.git"
 OTD_VERSION_BASE="$(sed -n 's|.*<VersionBase>\(.*\)</VersionBase>.*|\1|p' "${REPO_ROOT}/Directory.Build.props")"
 OTD_VERSION="${OTD_VERSION_BASE}${VERSION_SUFFIX}"
 
-OTD_DAEMON="/usr/bin/otd-daemon"
-OTD_GUI="/usr/bin/otd-gui"
-OTD_CLI="/usr/bin/otd"
+OTD_DAEMON="otd-daemon"
+OTD_GUI="otd-gui"
+OTD_CLI="otd"
 
 ### Helper functions
 

@@ -9,11 +9,11 @@ netRuntime="linux-x64"
 isRelease="true"
 packageGen=""
 isPortable="false"
-singleFile="false"
+singleFile="true"
 selfContained="false"
 
 print_help() {
-  echo "Usage: $0 [OPTIONS]..."
+  echo "Usage: ${BASH_SOURCE[0]} [OPTIONS]..."
   echo "Options:"
   echo "  -o, --output <path>           Output directory for build artifacts (default: ./dist/)"
   echo "  -c, --configuration <config>  Build configuration (default: Release)"
@@ -22,12 +22,23 @@ print_help() {
   echo "  --release <bool>              Whether to output production binaries (default: true)"
   echo "  --package <package>           Package generation script to run after build"
   echo "  --portable <bool>             Whether to build portable binaries (default: false)"
-  echo "  --single-file <bool>          Whether to build single-file binaries (default: false)"
+  echo "  --single-file <bool>          Whether to build single-file binaries (default: true)"
   echo "  --self-contained <bool>       Whether to build self-contained binaries, implies --single-file (default: false)"
   echo "  -h, --help                    Print this help message"
+  echo
+  echo "Remarks:"
+  echo "  Anything after '--', if it is specified, will be passed to dotnet publish as-is."
 }
 
+is_extra_args=false
+extra_options=()
+
 while [ $# -gt 0 ]; do
+  if $is_extra_args; then
+    extra_options=("$@")
+    break
+  fi
+
   case "$1" in
     -o=*|--output=*)
       output="${1#*=}"
@@ -92,6 +103,9 @@ while [ $# -gt 0 ]; do
       selfContained="$2"
       shift
       ;;
+    --)
+      is_extra_args=true
+      ;;
     *)
       echo "Unknown option: $1"
       print_help
@@ -142,14 +156,18 @@ exit_with_error() {
 trap handle_error ERR
 
 # Import helper functions
-. "$(dirname "$0")/lib.sh"
+. "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 # Change dir to repo root
 cd "${REPO_ROOT}"
 
-# Sanity check
+# Sanity checks
 if [ ! -d "OpenTabletDriver" ]; then
   exit_with_error "Could not find OpenTabletDriver folder!"
+fi
+
+if [ -n "${packageGen}" ] && [ "${isPortable}" = "true" ]; then
+  exit_with_error "Cannot build portable binaries and generate packages at the same time!"
 fi
 
 if [ -d "${output}" ]; then
