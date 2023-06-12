@@ -29,9 +29,7 @@ rmdir "${output}/usr"
 
 generate_rules "${output}/etc/udev/rules.d/99-opentabletdriver.rules"
 generate_desktop_file "${output}/share/applications/opentabletdriver.desktop"
-sed -i "s|/usr/bin|/bin|" "${output}/share/applications/opentabletdriver.desktop"
 sed -i "s|/usr/share|/share|" "${output}/share/applications/opentabletdriver.desktop"
-sed -i "s|/usr/share/OpenTabletDriver|/lib/opentabletdriver|" "${output}/etc/systemd/user/opentabletdriver.service"
 copy_pixmap_assets "${output}/share/pixmaps"
 
 echo "Creating binary tarball '${output}/${PKG_FILE}'..."
