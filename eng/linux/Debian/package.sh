@@ -34,12 +34,18 @@ echo "Copying Debian files..."
 cp -R "${script_root}/DEBIAN" "${output}"
 cp -R "${script_root}/usr" "${output}"
 
+generate_rules "${output}/usr/lib/udev/rules.d/99-opentabletdriver.rules"
+generate_desktop_file "${output}/usr/share/applications/opentabletdriver.desktop"
+copy_pixmap_assets "${output}/usr/share/pixmaps"
+
+echo "Generating DEBIAN/control..."
 cat << EOF > "${output}/DEBIAN/control"
 Package: ${OTD_LNAME}
 Version: ${OTD_VERSION}-${PKG_VER}
 Section: misc
 Priority: optional
 Architecture: amd64
+Installed-Size: $(du -s "${output}" | cut -f1)
 Pre-Depends: udev
 Depends: libevdev2, libgtk-3-0, dotnet-runtime-6.0, ${shlibdeps}
 Recommends: libx11-6, libxrandr2
@@ -62,10 +68,6 @@ Homepage: ${OTD_UPSTREAM_URL}
 Vcs-Browser: ${OTD_REPO_URL}
 Vcs-Git: ${OTD_GIT}
 EOF
-
-generate_rules "${output}/usr/lib/udev/rules.d/99-opentabletdriver.rules"
-generate_desktop_file "${output}/usr/share/applications/opentabletdriver.desktop"
-copy_pixmap_assets "${output}/usr/share/pixmaps"
 
 echo "Creating '${PKG_FILE}'..."
 
