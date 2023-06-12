@@ -9,6 +9,7 @@ netRuntime="linux-x64"
 isRelease="true"
 packageGen=""
 isPortable="false"
+singleFile="false"
 selfContained="false"
 
 print_help() {
@@ -21,7 +22,8 @@ print_help() {
   echo "  --release <bool>              Whether to output production binaries (default: true)"
   echo "  --package <package>           Package generation script to run after build"
   echo "  --portable <bool>             Whether to build portable binaries (default: false)"
-  echo "  --self-contained <bool>       Whether to build self-contained binaries (default: false)"
+  echo "  --single-file <bool>          Whether to build single-file binaries (default: false)"
+  echo "  --self-contained <bool>       Whether to build self-contained binaries, implies --single-file (default: false)"
   echo "  -h, --help                    Print this help message"
 }
 
@@ -76,6 +78,13 @@ while [ $# -gt 0 ]; do
       isPortable="$2"
       shift
       ;;
+    --single-file=*)
+      singleFile="${1#*=}"
+      ;;
+    --single-file)
+      singleFile="$2"
+      shift
+      ;;
     --self-contained=*)
       selfContained="${1#*=}"
       ;;
@@ -115,7 +124,7 @@ options=(
 if [ "${isRelease}" != "true" ]; then
   options+=( /p:SourceRevisionId=$(git rev-parse --short HEAD) )
 fi
-if [ "${selfContained}" == "true" ]; then
+if [ "${selfContained}" == "true" ] || [ "${singleFile}" == "true" ]; then
   options+=( /p:PublishSingleFile=true )
 fi
 
