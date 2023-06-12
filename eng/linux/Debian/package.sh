@@ -46,7 +46,7 @@ Section: misc
 Priority: optional
 Architecture: amd64
 Installed-Size: $(du -s "${output}" | cut -f1)
-Pre-Depends: udev
+Pre-Depends: udev, bash
 Depends: libevdev2, libgtk-3-0, dotnet-runtime-6.0, ${shlibdeps}
 Recommends: libx11-6, libxrandr2
 Conflicts: ${OTD_NAME}
