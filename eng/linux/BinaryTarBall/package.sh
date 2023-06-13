@@ -2,10 +2,7 @@
 
 PKG_FILE="${OTD_LNAME}-${OTD_VERSION}-x64.tar.gz"
 
-script_root="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
-
 output="${1}"
-netRuntime="${2}"
 
 move_to_nested "${output}" "${output}/lib/opentabletdriver"
 

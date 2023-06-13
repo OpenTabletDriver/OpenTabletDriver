@@ -9,7 +9,7 @@
 PKG_VER="1"
 PKG_FILE="${OTD_LNAME}-${OTD_VERSION}-${PKG_VER}-x64.deb"
 
-script_root="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
+debian_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
 output="${1}"
 
@@ -31,8 +31,8 @@ cd "${last_cwd}"
 mv "${output}"/{debian,DEBIAN}
 
 echo "Copying Debian files..."
-cp -R "${script_root}/DEBIAN" "${output}"
-cp -R "${script_root}/usr" "${output}"
+cp -R "${debian_src}/DEBIAN" "${output}"
+cp -R "${debian_src}/usr" "${output}"
 
 generate_rules "${output}/usr/lib/udev/rules.d/99-opentabletdriver.rules"
 generate_desktop_file "${output}/usr/share/applications/opentabletdriver.desktop"
