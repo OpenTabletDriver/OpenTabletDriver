@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 BOLD_YELLOW='\033[1;33m'
 RESET='\033[0m'
@@ -19,5 +19,5 @@ if [ "$1" = "configure" ]; then
           udevadm trigger --name-match=uinput --settle || true
      fi
 
-     echo -e "${BOLD_YELLOW}Run the daemon by invoking \`otd-daemon\`, or by enabling opentabletdriver.service${RESET}"
+     printf "${BOLD_YELLOW}Run the daemon by invoking 'otd-daemon', or by enabling opentabletdriver.service${RESET}"
 fi
