@@ -94,10 +94,8 @@ fi
 printf "\${BOLD_YELLOW}Run the daemon by invoking 'otd-daemon', or by enabling opentabletdriver.service\${RESET}"
 
 %preun
-%systemd_user_preun opentabletdriver.service
 
 %postun
-%systemd_user_postun opentabletdriver.service
 
 %files
 %defattr(-,root,root)
