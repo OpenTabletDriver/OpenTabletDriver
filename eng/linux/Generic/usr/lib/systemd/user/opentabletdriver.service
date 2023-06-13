@@ -1,6 +1,9 @@
 [Unit]
 Description=OpenTabletDriver Daemon
 PartOf=graphical-session.target
+After=graphical-session.target
+ConditionEnvironment=|WAYLAND_DISPLAY
+ConditionEnvironment=|DISPLAY
 
 [Service]
 ExecStart=otd-daemon
