@@ -124,23 +124,22 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-script_root="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
-prev_path=$(pwd)
+prev_path=${PWD}
 
 projects=(
-  "OpenTabletDriver.Daemon" \
-  "OpenTabletDriver.Console" \
-  "OpenTabletDriver.UX.Gtk" \
+  "OpenTabletDriver.Daemon"
+  "OpenTabletDriver.Console"
+  "OpenTabletDriver.UX.Gtk"
 )
 
 options=(
-  --configuration "${config}" \
-  --runtime "${netRuntime}" \
-  --framework "${framework}" \
-  --self-contained "${selfContained}" \
-  --output "${output}" \
-  /p:PublishTrimmed=false \
-  /p:DebugType=embedded \
+  --configuration "${config}"
+  --runtime "${netRuntime}"
+  --framework "${framework}"
+  --self-contained "${selfContained}"
+  --output "${output}"
+  /p:PublishTrimmed=false
+  /p:DebugType=embedded
   /p:SuppressNETCoreSdkPreviewMessage=true
 )
 
@@ -213,7 +212,7 @@ if [ "${build}" = "true" ]; then
 fi
 
 if [ -n "${packageGen}" ]; then
-  package_script="${script_root}/${packageGen}/package.sh"
+  package_script="${PKG_SCRIPT_ROOT}/${packageGen}/package.sh"
   if [ ! -f "${package_script}" ]; then
     exit_with_error "Could not find package generation script: ${package_script}"
   fi
