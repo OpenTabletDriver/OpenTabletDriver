@@ -26,8 +26,8 @@ jobs:
       - name: Debian Build
         run: ./eng/linux/package.sh --package Debian --output ./dist/debian
 
-      # - name: RPM Build
-      #   run: ./eng/linux/package.sh --package RedHat --output ./dist/redhat
+      - name: RPM Build
+        run: ./eng/linux/package.sh --package RedHat --output ./dist/redhat
 
       - name: Generic Linux Build
         run: ./eng/linux/package.sh --package BinaryTarBall --output ./dist/tarball
@@ -41,6 +41,7 @@ jobs:
         with:
           files: |
             ./dist/debian/*.deb
+            ./dist/redhat/*.rpm
             ./dist/tarball/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,12 +53,12 @@ jobs:
           name: OpenTabletDriver.deb
           path: ./dist/debian/*.deb
 
-      # - name: Upload RPM artifact (Dispatch)
-      #   if: ${{ github.event_name == 'workflow_dispatch' }}
-      #   uses: actions/upload-artifact@master
-      #   with:
-      #     name: OpenTabletDriver.rpm
-      #     path: ./dist/redhat/*.rpm
+      - name: Upload RPM artifact (Dispatch)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenTabletDriver.rpm
+          path: ./dist/redhat/*.rpm
 
       - name: Upload generic Linux artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
