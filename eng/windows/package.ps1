@@ -15,14 +15,16 @@ $nl = [Environment]::NewLine;
 
 $Projects = @(
     "OpenTabletDriver.Daemon",
-    "OpenTabletDriver.Console",
+    "OpenTabletDriver.Console"
+);
+
+$UIProjects = @(
     "OpenTabletDriver.UX.Wpf"
 );
 
 $Options = @(
     "--configuration", "$config",
     "--runtime", "$netRuntime",
-    "--framework", "$framework",
     "--self-contained", "$selfContained",
     "--output", "$output",
     "/p:PublishSingleFile=true",
@@ -75,7 +77,15 @@ if ($isPortable) {
 
 foreach ($project in $Projects) {
     Write-Output "${nl}Building $project...$nl";
-    dotnet publish $project $Options;
+    dotnet publish $project $Options --framework $framework;
+    if ($LASTEXITCODE -ne 0) {
+        exitWithError "Build failed!";
+    }
+}
+
+foreach ($project in $UIProjects) {
+    Write-Output "${nl}Building $project...$nl";
+    dotnet publish $project $Options --framework ${framework}-windows;
     if ($LASTEXITCODE -ne 0) {
         exitWithError "Build failed!";
     }
