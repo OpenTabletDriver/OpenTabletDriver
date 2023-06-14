@@ -86,7 +86,7 @@ if lsmod | grep wacom > /dev/null; then
     rmmod wacom || true
 fi
 
-if udevadm control --reload-rules; then
+if udevadm control --reload; then
     udevadm trigger --settle || true
     udevadm trigger --name-match=uinput --settle || true
 fi
@@ -98,6 +98,10 @@ printf "\${BOLD_YELLOW}Run the daemon by invoking 'otd-daemon', or by enabling o
 
 %postun
 %systemd_user_postun opentabletdriver.service
+
+if udevadm control --reload; then
+    udevadm trigger --settle || true
+fi
 
 %files
 %defattr(-,root,root)

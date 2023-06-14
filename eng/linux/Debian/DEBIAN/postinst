@@ -14,7 +14,7 @@ if [ "$1" = "configure" ]; then
           rmmod wacom || true
      fi
 
-     if udevadm control --reload-rules; then
+     if udevadm control --reload; then
           udevadm trigger --settle || true
           udevadm trigger --name-match=uinput --settle || true
      fi
