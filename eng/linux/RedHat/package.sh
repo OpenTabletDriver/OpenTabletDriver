@@ -43,6 +43,7 @@ License: LGPLv3
 URL: ${OTD_UPSTREAM_URL}
 
 AutoReq: 0
+BuildRequires: systemd-rpm-macros
 Requires: dotnet-runtime-6.0
 Requires: libevdev
 Requires: gtk3
@@ -69,7 +70,6 @@ ${OTD_LONG_DESC2}
 %install
 export DONT_STRIP=1
 
-mkdir -p %{buildroot}/usr/lib/${OTD_LNAME}
 cp -r %{_builddir}/* %{buildroot}
 
 %pre
@@ -94,8 +94,10 @@ fi
 printf "\${BOLD_YELLOW}Run the daemon by invoking 'otd-daemon', or by enabling opentabletdriver.service\${RESET}"
 
 %preun
+%systemd_user_preun opentabletdriver.service
 
 %postun
+%systemd_user_postun opentabletdriver.service
 
 %files
 %defattr(-,root,root)
@@ -113,7 +115,6 @@ printf "\${BOLD_YELLOW}Run the daemon by invoking 'otd-daemon', or by enabling o
 
 %changelog
 EOF
-
 
 moved_output="${output}/opentabletdriver"
 move_to_nested "${output}" "${moved_output}"
