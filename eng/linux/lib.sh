@@ -82,7 +82,7 @@ generate_desktop_file() {
   mkdir -p "$(dirname "${output}")"
   cat << EOF > "${output}"
 [Desktop Entry]
-Version=${OTD_VERSION}
+Version=1.5
 Name=${OTD_NAME}
 Comment=A ${OTD_DESC}
 Exec=${OTD_GUI}
