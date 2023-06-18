@@ -88,72 +88,72 @@ parse_build_args() {
   local -n remaining_options="$2"
 
   while [ ${#args[@]} -gt 0 ]; do
-    case "$1" in
+    case "${args[0]}" in
       -o=*|--output=*)
-        OUTPUT="${1#*=}"
+        OUTPUT="${args[0]#*=}"
         ;;
       -o|--output)
-        OUTPUT="$2"
+        OUTPUT="${args[1]}"
         shift_arr "args"
         ;;
       -c=*|--configuration=*)
-        CONFIG="${1#*=}"
+        CONFIG="${args[0]#*=}"
         ;;
       -c|--configuration)
-        CONFIG="$2"
+        CONFIG="${args[1]}"
         shift_arr "args"
         ;;
       -f=*|--framework=*)
-        FRAMEWORK="${1#*=}"
+        FRAMEWORK="${args[0]#*=}"
         ;;
       -f|--framework)
-        FRAMEWORK="$2"
+        FRAMEWORK="${args[1]}"
         shift_arr "args"
         ;;
       -r=*|--runtime=*)
-        NET_RUNTIME="${1#*=}"
+        NET_RUNTIME="${args[0]#*=}"
         ;;
       -r|--runtime)
-        NET_RUNTIME="$2"
+        NET_RUNTIME="${args[1]}"
         shift_arr "args"
         ;;
       --dog-food=*)
-        DOG_FOOD="${1#*=}"
+        DOG_FOOD="${args[0]#*=}"
         ;;
       --dog-food)
-        DOG_FOOD="$2"
+        DOG_FOOD="${args[1]}"
         shift_arr "args"
         ;;
       --build=*)
-        BUILD="${1#*=}"
+        BUILD="${args[0]#*=}"
         ;;
       --build)
-        BUILD="$2"
+        BUILD="${args[1]}"
         shift_arr "args"
         ;;
       --portable=*)
-        PORTABLE="${1#*=}"
+        PORTABLE="${args[0]#*=}"
         ;;
       --portable)
-        PORTABLE="$2"
+        PORTABLE="${args[1]}"
         shift_arr "args"
         ;;
       --single-file=*)
-        SINGLE_FILE="${1#*=}"
+        SINGLE_FILE="${args[0]#*=}"
         ;;
       --single-file)
-        SINGLE_FILE="$2"
+        SINGLE_FILE="${args[1]}"
         shift_arr "args"
         ;;
       --self-contained=*)
-        SELF_CONTAINED="${1#*=}"
+        SELF_CONTAINED="${args[0]#*=}"
         ;;
       --self-contained)
-        SELF_CONTAINED="$2"
+        SELF_CONTAINED="${args[1]}"
         shift_arr "args"
         ;;
       *)
-        remaining_options+=("$1")
+        remaining_options+=("${args[0]}")
         ;;
     esac
     shift_arr "args"
