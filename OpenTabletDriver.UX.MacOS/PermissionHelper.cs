@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
-using Eto.Forms;
-using MonoMac;
 using MonoMac.AppKit;
-using MonoMac.Darwin;
 using MonoMac.Foundation;
 using MonoMac.ObjCRuntime;
 using OpenTabletDriver.Native.OSX;
@@ -24,7 +19,7 @@ namespace OpenTabletDriver.UX.MacOS
             //https://source.chromium.org/chromium/chromium/src/+/refs/heads/main:base/process/process_info_mac.cc;drc=b0e89488c257ea10c5b433b7ff037150bacbade6;l=13
             //Permissions are inherited from parent application such as Terminal, Visual Studio if the app is not launched from finder/dock/etc...
             var responsiblePid = LibQuarantine.responsibility_get_pid_responsible_for_pid(Environment.ProcessId);
-            var selfResonsible = responsiblePid == Environment.ProcessId;
+            var selfResponsible = responsiblePid == Environment.ProcessId;
             var responsibleAppName = NSRunningApplication.GetRunningApplication(responsiblePid)?.LocalizedName ?? "OpenTabletDriver";
 
             //https://openradar.appspot.com/7381305
@@ -65,7 +60,7 @@ namespace OpenTabletDriver.UX.MacOS
 
             if (!hasAccessibility || !hasInputMonitoring)
             {
-                if (selfResonsible)
+                if (selfResponsible)
                 {
                     var process = Process.Start("open", new[] { NSBundle.MainBundle.BundlePath, "-n" });
                     process.WaitForExit();
