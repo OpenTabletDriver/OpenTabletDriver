@@ -30,7 +30,8 @@ $Options = @(
     "/p:PublishSingleFile=true",
     "/p:PublishTrimmed=false",
     "/p:DebugType=embedded",
-    "/p:SuppressNETCoreSdkPreviewMessage=true"
+    "/p:SuppressNETCoreSdkPreviewMessage=true",
+    "/p:VersionSuffix=$env:VERSION_SUFFIX"
 );
 
 if (!($isRelease)) {
