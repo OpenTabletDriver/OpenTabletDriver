@@ -6,8 +6,10 @@ on:
       version_suffix:
         description: 'The version suffix for this manual build.'
         required: false
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - "v*"
+
 jobs:
   unix:
     runs-on: ubuntu-latest
@@ -32,8 +34,8 @@ jobs:
       - name: Generic Linux Build
         run: ./eng/linux/package.sh --package BinaryTarBall --output ./dist/tarball
 
-      # - name: MacOS Build
-      #   run: ./eng/macos/package --output ./dist/macos
+      - name: MacOS Build
+        run: ./eng/macos/package.sh --package true --output ./dist/macos
 
       - name: Upload all artifacts (Release)
         uses: softprops/action-gh-release@v1
@@ -43,6 +45,7 @@ jobs:
             ./dist/debian/*.deb
             ./dist/redhat/*.rpm
             ./dist/tarball/*.tar.gz
+            ./dist/macos/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -67,12 +70,12 @@ jobs:
           name: OpenTabletDriver.linux-x64.tar.gz
           path: ./dist/tarball/*.tar.gz
 
-      # - name: Upload macOS artifact (Dispatch)
-      #   if: ${{ github.event_name == 'workflow_dispatch' }}
-      #   uses: actions/upload-artifact@master
-      #   with:
-      #     name: OpenTabletDriver.osx-x64.tar.gz
-      #     path: ./dist/macos/*.tar.gz
+      - name: Upload macOS artifact (Dispatch)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/upload-artifact@master
+        with:
+          name: OpenTabletDriver.osx-x64.tar.gz
+          path: ./dist/macos/*.tar.gz
 
   windows:
     runs-on: windows-latest
