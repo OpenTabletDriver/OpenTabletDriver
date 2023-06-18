@@ -103,11 +103,11 @@ namespace OpenTabletDriver.UX.MacOS
             alert.AddButton($"Cancel");
 
             var linkHandler = new UrlHandler(preferencesLink);
-            alert.Buttons[1].Action = new Selector("onCLlcik:");
+            alert.Buttons[1].Action = new Selector("onClick:");
             alert.Buttons[1].Target = linkHandler;
 
             var cancelHandler = new CancelHandler();
-            alert.Buttons[2].Action = new Selector("onCLlcik:");
+            alert.Buttons[2].Action = new Selector("onClick:");
             alert.Buttons[2].Target = cancelHandler;
 
             //Prevent our alert obscuring the system permission dialog.
@@ -163,7 +163,7 @@ namespace OpenTabletDriver.UX.MacOS
 
             private string _url;
 
-            [Export("onCLlcik:")]
+            [Export("onClick:")]
             private void onClick(NSObject target)
             {
                 NSWorkspace.SharedWorkspace.OpenUrl(new NSUrl(_url));
@@ -176,8 +176,8 @@ namespace OpenTabletDriver.UX.MacOS
             {
             }
 
-            [Export("onCLlcik:")]
-            private void onCLlcik(NSObject target)
+            [Export("onClick:")]
+            private void onClick(NSObject target)
             {
                 Process.GetCurrentProcess().Kill();
             }
