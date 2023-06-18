@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
     <key>CFBundleName</key>
     <string>OpenTabletDriver</string>
     <key>CFBundleIdentifier</key>
-    <string>com.infinityghost.opentabletdriver</string>
+    <string>net.opentabletdriver</string>
     <key>CFBundleShortVersionString</key>
     <string>1.0</string>
     <key>LSMinimumSystemVersion</key>
@@ -13,8 +13,21 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>NSHumanReadableCopyright</key>
-    <string></string>
+    <string>
+    </string>
     <key>CFBundleIconFile</key>
     <string>Icon.icns</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>CFBundleExecutable</key>
+    <string>OpenTabletDriver.UX.MacOS</string>
+    <key>NSRequiresAquaSystemAppearance</key>
+    <string>False</string>
   </dict>
 </plist>
