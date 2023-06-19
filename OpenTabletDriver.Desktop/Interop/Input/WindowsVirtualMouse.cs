@@ -82,6 +82,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             SendInput(1, inputs, INPUT.Size);
             inputs[0].U.mi.dwFlags = 0;
             inputs[0].U.mi.mouseData = 0;
+            inputs[0].U.mi.dx = 0;
+            inputs[0].U.mi.dy = 0;
         }
 
         public void Reset()
