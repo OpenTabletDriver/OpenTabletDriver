@@ -96,6 +96,8 @@ Write-Output "${nl}Build finished! Binaries created in $output";
 
 if ($isPackage) {
     Write-Output "${nl}Creating package...";
+    Copy-Item -Path $PSScriptRoot/convert_to_portable.ps1 -Destination $output;
+    Copy-Item -Path $PSScriptRoot/convert_to_portable.bat -Destination $output;
     $zipPath = "$output/OpenTabletDriver-$netRuntime.zip";
     if (Test-Path $zipPath) {
         Remove-Item $zipPath;
