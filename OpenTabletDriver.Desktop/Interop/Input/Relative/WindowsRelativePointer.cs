@@ -4,7 +4,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
-    public class WindowsRelativePointer : Input.WindowsVirtualMouse, IRelativePointer, ISynchronousPointer
+    public class WindowsRelativePointer : WindowsVirtualMouse, IRelativePointer
     {
         private Vector2 error;
 
@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             delta += error;
             error = new Vector2(delta.X % 1, delta.Y % 1);
 
-            inputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
+            inputs[0].U.mi.dwFlags |= MOUSEEVENTF.MOVE;
             inputs[0].U.mi.dx = (int)delta.X;
             inputs[0].U.mi.dy = (int)delta.Y;
         }
