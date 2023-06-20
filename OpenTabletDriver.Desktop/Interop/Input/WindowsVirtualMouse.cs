@@ -11,6 +11,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     [PluginIgnore]
     public abstract class WindowsVirtualMouse : IMouseButtonHandler, ISynchronousPointer
     {
+        private bool _dirty;
+
         protected INPUT[] inputs = new INPUT[]
         {
             new INPUT
@@ -29,6 +31,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         protected void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
+            SetDirty();
+
             inputs[0].U.mi.dwFlags |= arg;
             inputs[0].U.mi.mouseData |= dwData;
         }
@@ -77,13 +81,22 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             }
         }
 
+        protected void SetDirty()
+        {
+            _dirty = true;
+        }
+
         public void Flush()
         {
-            SendInput(1, inputs, INPUT.Size);
-            inputs[0].U.mi.dwFlags = 0;
-            inputs[0].U.mi.mouseData = 0;
-            inputs[0].U.mi.dx = 0;
-            inputs[0].U.mi.dy = 0;
+            if (_dirty)
+            {
+                SendInput(1, inputs, INPUT.Size);
+                inputs[0].U.mi.dwFlags = 0;
+                inputs[0].U.mi.mouseData = 0;
+                inputs[0].U.mi.dx = 0;
+                inputs[0].U.mi.dy = 0;
+                _dirty = false;
+            }
         }
 
         public void Reset()
