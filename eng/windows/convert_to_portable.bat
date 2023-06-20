@@ -19,6 +19,9 @@ if exist "%LOCALAPPDATA%\OpenTabletDriver" (
 
 if ERRORLEVEL == 0 (
     echo Done! If you want to start fresh, delete the contents of userdata folder and restart OpenTabletDriver.
+) else (
+    echo An error occured while converting to portable mode.
+    rmdir "userdata" /S /Q > nul
 )
 
 pause
