@@ -1,3 +1,25 @@
 @echo off
-powershell.exe -ExecutionPolicy Bypass -File "%~dp0\convert_to_portable.ps1"
+
+pushd "%~dp0"
+
+if exist "userdata" (
+    echo OpenTabletDriver is already in portable mode.
+    pause
+    popd
+    exit
+)
+
+echo Converting to portable mode...
+
+if exist "%LOCALAPPDATA%\OpenTabletDriver" (
+    robocopy "%LOCALAPPDATA%\OpenTabletDriver" "userdata" /E /R:0 /W:0 > nul
+) else (
+    mkdir "userdata" > nul
+)
+
+if ERRORLEVEL == 0 (
+    echo Done! If you want to start fresh, delete the contents of userdata folder and restart OpenTabletDriver.
+)
+
 pause
+popd
