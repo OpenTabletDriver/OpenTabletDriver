@@ -493,7 +493,7 @@ namespace OpenTabletDriver.Daemon
             switch (SystemInterop.CurrentPlatform)
             {
                 case PluginPlatform.Windows:
-                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+                    Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
                     var windows8 = new Version(6, 2, 9200, 0);
                     if (Environment.OSVersion.Version >= windows8)
@@ -504,12 +504,12 @@ namespace OpenTabletDriver.Daemon
                             state.ControlMask = (int)Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
 
                             if (!Windows.SetProcessInformation(
-                                System.Diagnostics.Process.GetCurrentProcess().Handle,
+                                Process.GetCurrentProcess().Handle,
                                 Windows.ProcessInformationClass.ProcessPowerThrottling,
                                 (IntPtr)Unsafe.AsPointer(ref state),
                                 Unsafe.SizeOf<Windows.PowerThrottlingState>()))
                             {
-                                Log.Write("Platform", "Failed to allow timer resolution, asynchronous filters may have lower resolution when OTD is minimized.", LogLevel.Error);
+                                Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
                             }
                         }
                     }
