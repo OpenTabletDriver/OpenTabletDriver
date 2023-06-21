@@ -38,7 +38,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: OpenTabletDriver v${{ github.ref_name }}
+          name: OpenTabletDriver ${{ github.ref_name }}
           draft: true
           files: |
             ./dist/debian/*.deb
@@ -89,7 +89,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: OpenTabletDriver v${{ github.ref_name }}
+          name: OpenTabletDriver ${{ github.ref_name }}
           draft: true
           files: ./dist/redhat/*.rpm
         env:
@@ -124,7 +124,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: OpenTabletDriver v${{ github.ref_name }}
+          name: OpenTabletDriver ${{ github.ref_name }}
           draft: true
           files: ./dist/*.zip
         env:
