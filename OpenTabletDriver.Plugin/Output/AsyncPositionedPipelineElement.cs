@@ -1,6 +1,8 @@
 using System;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.Plugin.Timers;
 using OpenTabletDriver.Plugin.Timing;
 
@@ -9,7 +11,7 @@ namespace OpenTabletDriver.Plugin.Output
     public abstract class AsyncPositionedPipelineElement<T> : IPositionedPipelineElement<T>, IDisposable
     {
         private readonly object synchronizationObject = new object();
-        private HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch();
+        private HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch(false);
         private ITimer scheduler;
         private float? reportMsAvg;
         private float frequency;
@@ -61,13 +63,17 @@ namespace OpenTabletDriver.Plugin.Output
 
         public void Consume(T value)
         {
+            // Block DeviceReport and ITouchReport from being consumed for now
+            if (value is DeviceReport or ITouchReport)
+                return;
+
             lock (synchronizationObject)
             {
                 State = value;
-                ConsumeState();
                 var consumeDelta = (float)consumeWatch.Restart().TotalMilliseconds;
-                if (consumeDelta < 150)
+                if (consumeDelta < 150 && consumeDelta != 0)
                     reportMsAvg = (reportMsAvg + ((consumeDelta - reportMsAvg) * 0.1f)) ?? consumeDelta;
+                ConsumeState();
             }
         }
 
