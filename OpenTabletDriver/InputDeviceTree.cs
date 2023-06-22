@@ -31,6 +31,7 @@ namespace OpenTabletDriver
         }
 
         private bool connected = true;
+        private object sync = new object();
         private IList<InputDevice> inputDevices;
 
         public event EventHandler<EventArgs>? Disconnected;
@@ -57,7 +58,10 @@ namespace OpenTabletDriver
 
         private void HandleReport(object? sender, IDeviceReport report)
         {
-            OutputMode?.Read(report);
+            lock (sync)
+            {
+                OutputMode?.Read(report);
+            }
         }
 
         public static implicit operator TabletReference(InputDeviceTree deviceGroup) => deviceGroup.CreateReference();
