@@ -63,8 +63,8 @@ namespace OpenTabletDriver.Desktop.Updater
             try
             {
                 UpdateInstalling?.Invoke(update);
-                PrepareForUpdate(update);
-                InstallUpdate(update);
+                PrepareForUpdate(update, out var binaryRollback);
+                InstallUpdate(update, binaryRollback);
                 installed = true;
             }
             finally
@@ -81,41 +81,62 @@ namespace OpenTabletDriver.Desktop.Updater
             return Task.CompletedTask;
         }
 
-        private void InstallUpdate(Update update)
+        private void InstallUpdate(Update update, string binaryRollback)
         {
-            foreach (var source in update.Paths)
+            try
             {
-                var destination = Path.Join(BinaryDirectory, Path.GetFileName(source));
+                foreach (var source in update.Paths)
+                {
+                    var destination = Path.Join(BinaryDirectory, Path.GetFileName(source));
 
-                if (File.Exists(source))
-                    File.Move(source, destination);
-                else if (Directory.Exists(source))
-                    Directory.Move(source, destination);
+                    if (File.Exists(source))
+                        File.Move(source, destination);
+                    else if (Directory.Exists(source))
+                        Directory.Move(source, destination);
+                }
+            }
+            catch (Exception ex)
+            {
+                // redo the binary rollback and this time copy the files instead of moving them
+                Backup(binaryRollback, update.Paths, Copy, Copy);
+
+                // and then run fallback procedure
+                InstallUpdateFallback(update, ex);
             }
         }
 
         protected abstract Task<UpdateInfo?> CheckForUpdatesCore();
 
-        protected void PrepareForUpdate(Update update)
+        protected virtual void InstallUpdateFallback(Update update, Exception ex)
+        {
+            // throw by default
+            throw new UpdateInstallFailedException(ex);
+        }
+
+        protected void PrepareForUpdate(Update update, out string binaryRollback)
         {
             string timestamp = DateTime.UtcNow.ToString("-yyyy-MM-dd_hh-mm-ss");
             var rollback = Path.Join(RollbackDirectory, CurrentVersion + timestamp);
-            var binaryRollback = Path.Join(rollback, "bin");
+            binaryRollback = Path.Join(rollback, "bin");
             var appDataRollback = Path.Join(rollback, "appdata");
 
             Directory.CreateDirectory(rollback);
             Directory.CreateDirectory(binaryRollback);
             Directory.CreateDirectory(appDataRollback);
 
-            Backup(binaryRollback, update.Paths);
+            // Moves files/directories that would be updated to a rollback directory.
+            // Doing a move is necessary for Windows to allow the update to overwrite the files.
+            Backup(binaryRollback, update.Paths, File.Move, Directory.Move);
             BackupAppData(appDataRollback);
 
             RollbackCreated?.Invoke(rollback);
         }
 
-        // Moves files/directories that would be updated to a rollback directory.
-        // Doing a move is necessary for Windows to allow the update to overwrite the files.
-        protected void Backup(string binaryRollback, ImmutableArray<string> pathsToUpdate)
+        private void Backup(
+            string binaryRollback,
+            ImmutableArray<string> pathsToUpdate,
+            Action<string, string> fileAction,
+            Action<string, string> directoryAction)
         {
             foreach (var path in pathsToUpdate.Select(f => Path.GetFileName(f)))
             {
@@ -123,9 +144,9 @@ namespace OpenTabletDriver.Desktop.Updater
                 var destination = Path.Join(binaryRollback, path);
 
                 if (File.Exists(source))
-                    File.Move(source, destination);
+                    fileAction(source, destination);
                 else if (Directory.Exists(source))
-                    Directory.Move(source, destination);
+                    directoryAction(source, destination);
             }
         }
 
@@ -181,6 +202,17 @@ namespace OpenTabletDriver.Desktop.Updater
     public class UpdateAlreadyInstalledException : Exception
     {
         public UpdateAlreadyInstalledException() : base("An update has already been installed.")
+        {
+        }
+    }
+
+    public class UpdateInstallFailedException : Exception
+    {
+        public UpdateInstallFailedException() : base("Failed to install update.")
+        {
+        }
+
+        public UpdateInstallFailedException(Exception innerException) : base("Failed to install update.", innerException)
         {
         }
     }
