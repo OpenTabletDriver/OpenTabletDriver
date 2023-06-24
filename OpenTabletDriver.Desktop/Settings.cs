@@ -1,9 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
@@ -74,35 +72,8 @@ namespace OpenTabletDriver.Desktop
         private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
             args.ErrorContext.Handled = true;
-            if (args.ErrorContext.Path is string path)
-            {
-                if (args.CurrentObject == null)
-                    return;
-
-                var property = args.CurrentObject.GetType().GetProperty(path);
-                if (property != null && property.PropertyType == typeof(PluginSettingStore))
-                {
-                    var match = propertyValueRegex.Match(args.ErrorContext.Error.Message);
-                    if (match.Success)
-                    {
-                        var objPath = SettingsMigrator.MigrateNamespace(match.Groups[1].Value);
-                        var newValue = PluginSettingStore.FromPath(objPath);
-                        if (newValue != null)
-                        {
-                            property.SetValue(args.CurrentObject, newValue);
-                            Log.Write("Settings", $"Migrated {path} to {nameof(PluginSettingStore)}");
-                            return;
-                        }
-                    }
-                }
-                Log.Write("Settings", $"Unable to migrate {path}", LogLevel.Error);
-                return;
-            }
             Log.Exception(args.ErrorContext.Error);
         }
-
-        private static Regex propertyValueRegex = new Regex(PROPERTY_VALUE_REGEX, RegexOptions.Compiled);
-        private const string PROPERTY_VALUE_REGEX = "\\\"(.+?)\\\"";
 
         public static Settings Deserialize(FileInfo file)
         {

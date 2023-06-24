@@ -10,7 +10,6 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Desktop.Migration;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
@@ -280,7 +279,6 @@ namespace OpenTabletDriver.Daemon
 
             if (settingsFile.Exists)
             {
-                SettingsMigrator.Migrate(AppInfo.Current);
                 var settings = Settings.Deserialize(settingsFile);
                 if (settings != null)
                 {
