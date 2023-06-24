@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
@@ -15,7 +16,7 @@ namespace OpenTabletDriver.UX.Tools
 
         public static string GetStringFormat(IDeviceReport report)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (report is IAbsolutePositionReport absolutePositionReport)
                 sb.AppendLines(GetStringFormat(absolutePositionReport));
@@ -37,6 +38,41 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(toolReport));
             if (report is OutOfRangeReport oorReport)
                 sb.AppendLines(GetStringFormat(oorReport));
+
+            return sb.ToString();
+        }
+
+        public static string GetStringFormatOneLine(IDeviceReport report, TimeSpan delta, string reportType)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append($"{{ {GetStringRaw(report)} }}");
+            sb.Append($", Delta:{delta.TotalMilliseconds:F3}ms");
+            if (report is IAbsolutePositionReport absolutePositionReport)
+                sb.AppendOneLine(GetStringFormat(absolutePositionReport));
+            if (report is ITabletReport tabletReport)
+                sb.AppendOneLine(GetStringFormat(tabletReport));
+            if (report is IAuxReport auxReport)
+                sb.AppendOneLine(GetStringFormat(auxReport));
+            if (report is IEraserReport eraserReport)
+                sb.AppendOneLine(GetStringFormat(eraserReport));
+            if (report is IProximityReport proximityReport)
+                sb.AppendOneLine(GetStringFormat(proximityReport));
+            if (report is ITiltReport tiltReport)
+                sb.AppendOneLine(GetStringFormat(tiltReport));
+            if (report is ITouchReport touchReport)
+                sb.AppendOneLine(GetStringFormat(touchReport));
+            if (report is IMouseReport mouseReport)
+                sb.AppendOneLine(GetStringFormat(mouseReport));
+            if (report is IToolReport toolReport)
+                sb.AppendOneLine(GetStringFormat(toolReport));
+            if (report is OutOfRangeReport oorReport)
+                sb.AppendOneLine(GetStringFormat(oorReport));
+
+            reportType = reportType.StartsWith("OpenTabletDriver.Configurations.Parsers")
+                ? reportType.Split('.').Last()
+                : reportType;
+            sb.Append(", ReportType:" + reportType);
 
             return sb.ToString();
         }
@@ -103,6 +139,15 @@ namespace OpenTabletDriver.UX.Tools
         {
             foreach (var line in lines)
                 sb.AppendLine(line);
+        }
+
+        private static void AppendOneLine(this StringBuilder sb, IEnumerable<string> lines)
+        {
+            foreach (var line in lines)
+            {
+                sb.Append(", ");
+                sb.Append(line);
+            }
         }
     }
 }
