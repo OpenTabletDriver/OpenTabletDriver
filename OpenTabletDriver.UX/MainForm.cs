@@ -486,8 +486,18 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        App.Current.Settings = Settings.Deserialize(file);
-                        await Driver.Instance.SetSettings(App.Current.Settings);
+                        if (Settings.TryDeserialize(file, out var settings))
+                        {
+                            App.Current.Settings = settings;
+                            await Driver.Instance.SetSettings(settings);
+                        }
+                        else
+                        {
+                            MessageBox.Show(
+                                "Invalid settings file.",
+                                MessageBoxType.Error
+                            );
+                        }
                     }
                     break;
             }

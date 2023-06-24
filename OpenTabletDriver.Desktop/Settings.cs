@@ -59,28 +59,32 @@ namespace OpenTabletDriver.Desktop
 
         #region Custom Serialization
 
-        static Settings()
-        {
-            serializer.Error += SerializationErrorHandler;
-        }
-
         private static readonly JsonSerializer serializer = new JsonSerializer
         {
             Formatting = Formatting.Indented
         };
 
-        private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+        public static bool TryDeserialize(FileInfo file, out Settings settings)
         {
-            args.ErrorContext.Handled = true;
-            Log.Exception(args.ErrorContext.Error);
-        }
+            try
+            {
+                settings = deserialize(file);
+                return settings != null;
+            }
+            catch (JsonException ex)
+            {
+                Log.Exception(ex);
+                settings = default;
+                return false;
+            }
 
-        public static Settings Deserialize(FileInfo file)
-        {
-            using (var stream = file.OpenRead())
-            using (var sr = new StreamReader(stream))
-            using (var jr = new JsonTextReader(sr))
-                return serializer.Deserialize<Settings>(jr);
+            static Settings deserialize(FileInfo file)
+            {
+                using (var stream = file.OpenRead())
+                using (var sr = new StreamReader(stream))
+                using (var jr = new JsonTextReader(sr))
+                    return serializer.Deserialize<Settings>(jr);
+            }
         }
 
         public static void Recover(FileInfo file, Settings settings)
@@ -94,8 +98,12 @@ namespace OpenTabletDriver.Desktop
                     var prop = settings.GetType().GetProperty(p.PropertyName).GetValue(settings);
                     Log.Write("Settings", $"Recovered '{p.PropertyName}'", LogLevel.Debug);
                 }
-
                 settings.PropertyChanged += propertyWatch;
+
+                var serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented
+                };
 
                 try
                 {
@@ -105,8 +113,10 @@ namespace OpenTabletDriver.Desktop
                 {
                     Log.Write("Settings", $"Recovery ended. Reason: {e.Message}", LogLevel.Debug);
                 }
-
-                settings.PropertyChanged -= propertyWatch;
+                finally
+                {
+                    settings.PropertyChanged -= propertyWatch;
+                }
             }
         }
 

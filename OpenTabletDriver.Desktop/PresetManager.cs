@@ -32,8 +32,7 @@ namespace OpenTabletDriver.Desktop
         {
             foreach (var preset in PresetDirectory.EnumerateFiles("*.json"))
             {
-                var settings = Settings.Deserialize(preset);
-                if (settings != null)
+                if (Settings.TryDeserialize(preset, out var settings))
                 {
                     Presets.Add(new Preset(preset.Name.Replace(preset.Extension, string.Empty), settings));
                     Log.Write("Settings", $"Loaded preset '{preset.Name}'", LogLevel.Info);

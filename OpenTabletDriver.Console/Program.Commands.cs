@@ -42,8 +42,10 @@ namespace OpenTabletDriver.Console
 
         private static async Task LoadSettings(FileInfo file)
         {
-            var settings = Settings.Deserialize(file);
-            await ApplySettings(settings);
+            if (Settings.TryDeserialize(file, out var settings))
+                await ApplySettings(settings);
+            else
+                await Out.WriteLineAsync("Invalid settings file");
         }
 
         private static async Task SaveSettings(FileInfo file)
