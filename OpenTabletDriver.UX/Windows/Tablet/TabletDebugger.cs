@@ -183,7 +183,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private double reportPeriod;
         private int numReportsRecorded;
 
-        private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
+        private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch();
         private TextWriter dataRecordingOutput;
 
         public DebugReportData ReportData
@@ -223,7 +223,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         protected virtual void OnReportDataChanged()
         {
             ReportDataChanged?.Invoke(this, new EventArgs());
-            ReportPeriod += (stopwatch.Restart().TotalMilliseconds - ReportPeriod) / 10.0f;
         }
 
         protected virtual void OnReportPeriodChanged() => ReportPeriodChanged?.Invoke(this, new EventArgs());
@@ -274,12 +273,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
             this.ReportData = data;
+            var timeDelta = stopwatch.Restart();
+            ReportPeriod += (timeDelta.TotalMilliseconds - ReportPeriod) * 0.01f;
 
             if (data.ToObject() is IDeviceReport deviceReport)
             {
                 if (enableDataRecording.Checked ?? false)
                 {
-                    var output = string.Join(' ', deviceReport.Raw.Select(d => d.ToString("X2")));
+                    var output = ReportFormatter.GetStringFormatOneLine(deviceReport, timeDelta, data.Path);
                     dataRecordingOutput?.WriteLine(output);
                     NumberOfReportsRecorded++;
                 }
