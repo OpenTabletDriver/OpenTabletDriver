@@ -205,12 +205,12 @@ namespace OpenTabletDriver.Daemon
                 try
                 {
                     SetSettings(lastValidSettings);
-                    Log.Write("Settings", "Failed to apply settings. Reverted to last valid settings.", LogLevel.Error);
+                    Log.Write("Settings", "Failed to apply settings. Reverted to last valid settings.", LogLevel.Error, true);
                 }
                 catch
                 {
                     RecoverSettings(settings);
-                    Log.Write("Settings", "Failed to apply settings. Attempted recovery. Some settings may have been lost.", LogLevel.Error);
+                    Log.Write("Settings", "Failed to apply settings. Attempted recovery. Some settings may have been lost.", LogLevel.Error, true);
                 }
 
                 Resynchronize?.Invoke(this, EventArgs.Empty);
