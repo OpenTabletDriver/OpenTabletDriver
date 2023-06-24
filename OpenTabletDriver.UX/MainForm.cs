@@ -153,30 +153,6 @@ namespace OpenTabletDriver.UX
                     var watchdog = new DaemonWatchdog();
                     watchdog.Start();
                     App.DaemonWatchdog = watchdog;
-                    watchdog.DaemonExited += (sender, e) =>
-                    {
-                        Application.Instance.AsyncInvoke(() =>
-                        {
-                            var dialogResult = MessageBox.Show(
-                                this,
-                                "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart it?",
-                                "OpenTabletDriver Fatal Error",
-                                MessageBoxButtons.YesNo,
-                                MessageBoxType.Error
-                            );
-                            switch (dialogResult)
-                            {
-                                case DialogResult.Yes:
-                                    watchdog.Dispose();
-                                    watchdog.Start();
-                                    break;
-                                case DialogResult.No:
-                                default:
-                                    Environment.Exit(0);
-                                    break;
-                            }
-                        });
-                    };
 
                     AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
                     {
