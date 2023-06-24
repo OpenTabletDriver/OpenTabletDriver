@@ -79,6 +79,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<LogMessage>? Message;
         public event EventHandler<DebugReportData>? DeviceReport;
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
+        public event EventHandler Resynchronize;
 
         public Driver Driver { get; }
         private Settings? Settings { set; get; }
@@ -86,6 +87,7 @@ namespace OpenTabletDriver.Daemon
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private IUpdater Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
+        private Settings? lastValidSettings;
 
         private UpdateInfo? _updateInfo;
 
@@ -156,45 +158,104 @@ namespace OpenTabletDriver.Daemon
 
         public Task SetSettings(Settings? settings)
         {
-            // Dispose filters that implement IDisposable interface
-            foreach (var obj in Driver.InputDevices.SelectMany(d => d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
-                if (obj is IDisposable disposable)
-                    disposable.Dispose();
-
-            Settings = settings ??= Settings.GetDefaults();
-
-            foreach (InputDeviceTree? dev in Driver.InputDevices)
+            try
             {
-                var tabletReference = dev.CreateReference();
-                string group = dev.Properties.Name;
-                var profile = Settings.Profiles[dev];
+                // Dispose filters that implement IDisposable interface
+                foreach (var obj in Driver.InputDevices.SelectMany(d => d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
+                    if (obj is IDisposable disposable)
+                        disposable.Dispose();
 
-                profile.BindingSettings.MatchSpecifications(dev.Properties.Specifications);
+                Settings = settings ??= Settings.GetDefaults();
 
-                dev.OutputMode = profile.OutputMode.Construct<IOutputMode>(tabletReference);
-
-                if (dev.OutputMode != null)
-                    Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
-
-                if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
-                    SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
-
-                if (dev.OutputMode is RelativeOutputMode relativeMode)
-                    SetRelativeModeSettings(dev, relativeMode, profile.RelativeModeSettings);
-
-                if (dev.OutputMode is IOutputMode outputMode)
+                foreach (InputDeviceTree? dev in Driver.InputDevices)
                 {
-                    SetOutputModeSettings(dev, outputMode, profile, tabletReference);
-                    SetBindingHandlerSettings(dev, outputMode, profile.BindingSettings, tabletReference);
+                    var tabletReference = dev.CreateReference();
+                    string group = dev.Properties.Name;
+                    var profile = Settings.Profiles[dev];
+
+                    profile.BindingSettings.MatchSpecifications(dev.Properties.Specifications);
+
+                    dev.OutputMode = profile.OutputMode.Construct<IOutputMode>(tabletReference);
+
+                    if (dev.OutputMode != null)
+                        Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
+
+                    if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
+                        SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
+
+                    if (dev.OutputMode is RelativeOutputMode relativeMode)
+                        SetRelativeModeSettings(dev, relativeMode, profile.RelativeModeSettings);
+
+                    if (dev.OutputMode is IOutputMode outputMode)
+                    {
+                        SetOutputModeSettings(dev, outputMode, profile, tabletReference);
+                        SetBindingHandlerSettings(dev, outputMode, profile.BindingSettings, tabletReference);
+                    }
+                }
+
+                if (Driver.InputDevices.Length > 0)
+                    Log.Write("Settings", "Driver is enabled.");
+
+                SetToolSettings();
+
+                lastValidSettings = settings;
+                return Task.CompletedTask;
+            }
+            catch
+            {
+                try
+                {
+                    SetSettings(lastValidSettings);
+                    Log.Write("Settings", "Failed to apply settings. Reverted to last valid settings.", LogLevel.Error);
+                }
+                catch
+                {
+                    RecoverSettings(settings);
+                    Log.Write("Settings", "Failed to apply settings. Attempted recovery. Some settings may have been lost.", LogLevel.Error);
+                }
+
+                Resynchronize?.Invoke(this, EventArgs.Empty);
+                return Task.CompletedTask;
+            }
+        }
+
+        private void RecoverSettings(Settings? settings)
+        {
+            var recoveredSettings = Settings.GetDefaults();
+
+            if (settings != null)
+            {
+                // Copy by value, not by reference
+                foreach (var profile in settings.Profiles)
+                {
+                    var recoveredProfile = recoveredSettings.Profiles.GetProfile(profile.Tablet);
+                    if (recoveredProfile != null)
+                    {
+                        recoveredProfile.AbsoluteModeSettings = new AbsoluteModeSettings
+                        {
+                            Display = new AreaSettings
+                            {
+                                Area = profile.AbsoluteModeSettings.Display.Area
+                            },
+                            Tablet = new AreaSettings
+                            {
+                                Area = profile.AbsoluteModeSettings.Tablet.Area
+                            },
+                            EnableClipping = profile.AbsoluteModeSettings.EnableClipping,
+                            EnableAreaLimiting = profile.AbsoluteModeSettings.EnableAreaLimiting,
+                            LockAspectRatio = profile.AbsoluteModeSettings.LockAspectRatio
+                        };
+                        recoveredProfile.RelativeModeSettings = new RelativeModeSettings
+                        {
+                            Sensitivity = profile.RelativeModeSettings.Sensitivity,
+                            RelativeRotation = profile.RelativeModeSettings.RelativeRotation,
+                            ResetTime = profile.RelativeModeSettings.ResetTime
+                        };
+                    }
                 }
             }
 
-            if (Driver.InputDevices.Length > 0)
-                Log.Write("Settings", "Driver is enabled.");
-
-            SetToolSettings();
-
-            return Task.CompletedTask;
+            SetSettings(recoveredSettings);
         }
 
         public async Task ResetSettings()

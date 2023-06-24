@@ -401,6 +401,7 @@ namespace OpenTabletDriver.UX
 
             // Synchronize settings
             await SyncSettings();
+            Driver.Resynchronize += async (sender, e) => await SyncSettings();
 
             // Set window content
             base.Menu = menu ??= ConstructMenu();
