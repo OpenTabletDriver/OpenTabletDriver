@@ -153,30 +153,6 @@ namespace OpenTabletDriver.UX
                     var watchdog = new DaemonWatchdog();
                     watchdog.Start();
                     App.DaemonWatchdog = watchdog;
-                    watchdog.DaemonExited += (sender, e) =>
-                    {
-                        Application.Instance.AsyncInvoke(() =>
-                        {
-                            var dialogResult = MessageBox.Show(
-                                this,
-                                "Fatal: The OpenTabletDriver Daemon has exited. Do you want to restart it?",
-                                "OpenTabletDriver Fatal Error",
-                                MessageBoxButtons.YesNo,
-                                MessageBoxType.Error
-                            );
-                            switch (dialogResult)
-                            {
-                                case DialogResult.Yes:
-                                    watchdog.Dispose();
-                                    watchdog.Start();
-                                    break;
-                                case DialogResult.No:
-                                default:
-                                    Environment.Exit(0);
-                                    break;
-                            }
-                        });
-                    };
 
                     AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
                     {
@@ -401,6 +377,7 @@ namespace OpenTabletDriver.UX
 
             // Synchronize settings
             await SyncSettings();
+            Driver.Resynchronize += async (sender, e) => await SyncSettings();
 
             // Set window content
             base.Menu = menu ??= ConstructMenu();
@@ -485,8 +462,18 @@ namespace OpenTabletDriver.UX
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                     {
-                        App.Current.Settings = Settings.Deserialize(file);
-                        await Driver.Instance.SetSettings(App.Current.Settings);
+                        if (Settings.TryDeserialize(file, out var settings))
+                        {
+                            App.Current.Settings = settings;
+                            await Driver.Instance.SetSettings(settings);
+                        }
+                        else
+                        {
+                            MessageBox.Show(
+                                "Invalid settings file.",
+                                MessageBoxType.Error
+                            );
+                        }
                     }
                     break;
             }

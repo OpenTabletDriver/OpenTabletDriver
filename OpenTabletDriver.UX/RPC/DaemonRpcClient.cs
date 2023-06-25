@@ -18,6 +18,7 @@ namespace OpenTabletDriver.UX.RPC
         public event EventHandler<LogMessage> Message;
         public event EventHandler<DebugReportData> DeviceReport;
         public event EventHandler<IEnumerable<TabletReference>> TabletsChanged;
+        public event EventHandler Resynchronize;
 
         protected override void OnConnected()
         {
@@ -29,6 +30,8 @@ namespace OpenTabletDriver.UX.RPC
                 Application.Instance.AsyncInvoke(() => DeviceReport?.Invoke(sender, e));
             Instance.TabletsChanged += (sender, e) =>
                 Application.Instance.AsyncInvoke(() => TabletsChanged?.Invoke(sender, e));
+            Instance.Resynchronize += (sender, e) =>
+                Application.Instance.AsyncInvoke(() => Resynchronize?.Invoke(sender, e));
         }
     }
 }

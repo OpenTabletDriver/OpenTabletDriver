@@ -43,6 +43,11 @@ namespace OpenTabletDriver.Desktop.Profiles
             return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
         }
 
+        public Profile? GetProfile(string tablet)
+        {
+            return this.FirstOrDefault(t => t.Tablet == tablet);
+        }
+
         public Profile Generate(TabletReference tablet)
         {
             var profile = Profile.GetDefaults(tablet);
