@@ -50,7 +50,10 @@ Suggests: libX11
 Suggests: libXrandr
 Requires(post): udev
 Requires(post): grep
+
+%if 0%{?suse_version}
 Requires(post): /usr/bin/lsmod
+%endif
 
 %description
 ${OTD_LONG_DESC}
