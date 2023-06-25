@@ -5,6 +5,7 @@
     <TargetFramework>$(FrameworkBase)</TargetFramework>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TieredPGO>true</TieredPGO>
   </PropertyGroup>
 
   <ItemGroup Label="Project References">
