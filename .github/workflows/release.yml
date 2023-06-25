@@ -77,7 +77,12 @@ jobs:
         VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
       - name: Install required packages
-        run: sudo dnf install -y rpm-build systemd-rpm-macros dotnet-sdk-7.0
+        run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '7.0'
 
       - name: Checkout OpenTabletDriver Repository
         uses: actions/checkout@v3
