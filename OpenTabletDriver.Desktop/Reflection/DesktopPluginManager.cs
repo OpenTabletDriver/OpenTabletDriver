@@ -81,25 +81,25 @@ namespace OpenTabletDriver.Desktop.Reflection
             // "Plugins" are directories that contain managed and unmanaged dll
             // These dlls are loaded into a PluginContext per directory
             directory.Refresh();
-            if (Plugins.All(p => p.Directory.Name != directory.Name))
-            {
-                if (directory.Exists)
-                {
-                    Log.Write("Plugin", $"Loading plugin '{directory.Name}'", LogLevel.Debug);
-                    var context = new DesktopPluginContext(directory);
-
-                    // Populate PluginTypes so desktop implementations can access them
-                    ImportTypes(context);
-                    Plugins.Add(context);
-                }
-                else
-                {
-                    Log.Write("Plugin", $"Tried to load a nonexistent plugin '{directory.Name}'", LogLevel.Warning);
-                }
-            }
-            else
+            if (Plugins.Any(p => p.Directory.Name == directory.Name))
             {
                 Log.Write("Plugin", $"Attempted to load the plugin {directory.Name} when it is already loaded.", LogLevel.Debug);
+                return;
+            }
+
+            Log.Write("Plugin", $"Loading plugin '{directory.Name}'", LogLevel.Debug);
+
+            try
+            {
+                var context = new DesktopPluginContext(directory);
+
+                // Populate PluginTypes so desktop implementations can access them
+                ImportTypes(context);
+                Plugins.Add(context);
+            }
+            catch
+            {
+                Log.Write("Plugin", $"Failed to completely load plugin '{directory.Name}'. Some problems may occur later. Please double check if this plugin is installed correctly or has any update.", LogLevel.Error, true);
             }
         }
 
