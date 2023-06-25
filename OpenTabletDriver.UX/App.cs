@@ -91,7 +91,7 @@ namespace OpenTabletDriver.UX
             WebsiteLabel = "OpenTabletDriver GitHub Repository",
             Website = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver"),
             Version = $"v{Version}",
-            Developers = new string[] { "InfinityGhost" },
+            Developers = new string[] { "InfinityGhost", "X9VoiD" },
             Designers = new string[] { "InfinityGhost" },
             Documenters = new string[] { "InfinityGhost" },
             License = string.Empty,
