@@ -78,7 +78,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<LogMessage>? Message;
         public event EventHandler<DebugReportData>? DeviceReport;
         public event EventHandler<IEnumerable<TabletReference>>? TabletsChanged;
-        public event EventHandler Resynchronize;
+        public event EventHandler? Resynchronize;
 
         public Driver Driver { get; }
         private Settings? Settings { set; get; }
