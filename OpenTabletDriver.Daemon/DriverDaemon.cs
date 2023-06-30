@@ -486,6 +486,30 @@ namespace OpenTabletDriver.Daemon
                         }
                     }
                     break;
+                case SystemPlatform.Linux:
+                    const string osReleasePath = "/etc/os-release";
+
+                    if (File.Exists(osReleasePath))
+                    {
+                        using (StreamReader reader = File.OpenText(osReleasePath))
+                        {
+                            string? line;
+                            while ((line = reader.ReadLine()) != null)
+                            {
+                                if (line.StartsWith("ID="))
+                                {
+                                    var distribution = line.Substring(3).Trim('"');
+                                    Log.Write("Platform", "Linux distribution: " + distribution, LogLevel.Info);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Log.Write("Platform", "Couldn't find /etc/os-release", LogLevel.Debug);
+                    }
+                    break;
             }
         }
     }
