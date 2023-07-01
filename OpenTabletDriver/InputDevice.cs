@@ -105,22 +105,5 @@ namespace OpenTabletDriver
 
             return true;
         }
-
-        private bool TryGetDeviceProperty<T>(Func<IDeviceEndpoint, T> predicate, out T value)
-        {
-            try
-            {
-                value = predicate(Endpoint);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Exception(ex);
-            }
-            value = default(T);
-            return false;
-        }
-
-        private T SafeGetDeviceProperty<T>(Func<IDeviceEndpoint, T> predicate, T fallback) => TryGetDeviceProperty(predicate, out var val) ? val : fallback;
     }
 }
