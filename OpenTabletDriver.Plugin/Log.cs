@@ -81,12 +81,12 @@ namespace OpenTabletDriver.Plugin
         /// Writes to the log event with an exception, encoding its stack trace.
         /// </summary>
         /// <param name="ex">The <see cref="System.Exception"/> object to create the <see cref="LogMessage"/> from.</param>
-        public static void Exception(Exception ex)
+        public static void Exception(Exception ex, LogLevel level = LogLevel.Error)
         {
             if (ex == null)
                 return;
 
-            var message = new LogMessage(ex);
+            var message = new LogMessage(ex, level);
             Write(message);
         }
     }

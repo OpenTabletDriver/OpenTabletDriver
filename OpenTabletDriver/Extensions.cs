@@ -14,7 +14,7 @@ namespace OpenTabletDriver
             }
             catch (Exception ex)
             {
-                Log.Exception(ex);
+                Log.Exception(ex, LogLevel.Debug);
             }
             value = default;
             return false;

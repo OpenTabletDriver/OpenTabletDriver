@@ -175,7 +175,7 @@ namespace OpenTabletDriver
                    select device;
         }
 
-        private bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string> deviceStrings)
+        private static bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string> deviceStrings)
         {
             if (deviceStrings == null || deviceStrings.Count == 0)
                 return true;
@@ -192,14 +192,14 @@ namespace OpenTabletDriver
                 }
                 catch (Exception ex)
                 {
-                    Log.Exception(ex);
+                    Log.Exception(ex, LogLevel.Debug);
                     return false;
                 }
             }
             return true;
         }
 
-        private bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
         {
             switch (SystemInterop.CurrentPlatform)
             {
