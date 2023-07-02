@@ -93,7 +93,7 @@ namespace OpenTabletDriver.Desktop
                 {
                     serializer.Populate(jr, settings);
                 }
-                catch (JsonReaderException e)
+                catch (JsonException e)
                 {
                     Log.Write("Settings", $"Recovery ended. Reason: {e.Message}", LogLevel.Debug);
                 }
