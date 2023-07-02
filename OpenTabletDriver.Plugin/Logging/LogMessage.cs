@@ -9,11 +9,11 @@ namespace OpenTabletDriver.Plugin.Logging
         {
         }
 
-        public LogMessage(Exception exception)
+        public LogMessage(Exception exception, LogLevel level = LogLevel.Error)
         {
             Group = exception.GetType().Name;
             Message = exception.Message;
-            Level = LogLevel.Error;
+            Level = level;
             StackTrace = exception.StackTrace;
         }
 
