@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
+using System.IO.Pipes;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -26,6 +28,23 @@ namespace OpenTabletDriver.UX
         }
 
         public static void Run(string platform, string[] args)
+        {
+            using (var mutex = new Mutex(true, @$"Global\{APPNAME}.Mutex", out var firstInstance))
+            {
+                if (firstInstance)
+                {
+                    RunInternal(platform, args);
+                }
+                else
+                {
+                    using var client = new NamedPipeClientStream(".", APPNAME + ".Singleton", PipeDirection.InOut);
+                    client.Connect();
+                    return;
+                }
+            }
+        }
+
+        private static void RunInternal(string platform, string[] args)
         {
             var root = new RootCommand("OpenTabletDriver UX")
             {
@@ -63,6 +82,30 @@ namespace OpenTabletDriver.UX
             app.NotificationActivated += Current.HandleNotification;
             app.UnhandledException += ShowUnhandledException;
 
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    using var ipcServer = new NamedPipeServerStream(
+                        APPNAME + ".Singleton",
+                        PipeDirection.InOut,
+                        1,
+                        PipeTransmissionMode.Byte,
+                        PipeOptions.Asynchronous);
+
+                    // if something connects to the pipe, it means another instance is trying to start
+                    // no need for any actual communication
+                    await ipcServer.WaitForConnectionAsync();
+
+                    app.AsyncInvoke(() =>
+                    {
+                        mainForm.Show();
+                        mainForm.BringToFront();
+                    });
+                    ipcServer.Disconnect();
+                }
+            });
+
             app.Run(mainForm);
         }
 
@@ -99,6 +142,7 @@ namespace OpenTabletDriver.UX
             Logo = Logo.WithSize(256, 256)
         };
 
+        private const string APPNAME = "OpenTabletDriver.UX";
         public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
         public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
         public static DaemonWatchdog DaemonWatchdog;
