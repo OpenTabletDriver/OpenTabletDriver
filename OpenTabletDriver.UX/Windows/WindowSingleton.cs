@@ -5,17 +5,21 @@ namespace OpenTabletDriver.UX.Windows
 {
     public class WindowSingleton<T> where T : Window, new()
     {
+        private readonly object sync = new();
         private T window;
 
         public T GetWindow()
         {
-            if (window == null)
+            lock (sync)
             {
-                window = new T();
-                window.Closed += HandleWindowClosed;
-            }
+                if (window == null)
+                {
+                    window = new T();
+                    window.Closed += HandleWindowClosed;
+                }
 
-            return window;
+                return window;
+            }
         }
 
         public void Show()

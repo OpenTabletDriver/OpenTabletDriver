@@ -2,10 +2,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls;
@@ -36,6 +36,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
             _ = InitializeAsync();
         }
 
+        private int _isUpdateRequested;
         private TaskCompletionSource<bool> _updateAvailable = new();
         public Task<bool> HasUpdates() => _updateAvailable.Task;
 
@@ -74,6 +75,9 @@ namespace OpenTabletDriver.UX.Windows.Updater
 
         private void Update(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
         {
+            if (Interlocked.Exchange(ref _isUpdateRequested, 1) != 0)
+                return;
+
             // Disallow multiple invocations
             (sender as Control)!.Enabled = false;
 
