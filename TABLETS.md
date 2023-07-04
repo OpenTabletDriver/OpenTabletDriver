@@ -13,6 +13,7 @@
 | Huion 1060 Plus               |     Supported     |
 | Huion G930L                   |     Supported     |
 | Huion GT-220 V2               |     Supported     |
+| Huion H1060P                  |     Supported     |
 | Huion H320M                   |     Supported     |
 | Huion H420X                   |     Supported     |
 | Huion H430P                   |     Supported     |
@@ -22,7 +23,6 @@
 | Huion H640P                   |     Supported     |
 | Huion H642                    |     Supported     |
 | Huion H950P                   |     Supported     |
-| Huion H1060P                  |     Supported     |
 | Huion HS64                    |     Supported     |
 | Huion HS95                    |     Supported     |
 | Huion Kamvas 12               |     Supported     |
@@ -41,7 +41,6 @@
 | Monoprice 10594               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
-| 10moon 1060N                  |     Supported     | Doesn't meet any of its advertised specs
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
@@ -52,13 +51,13 @@
 | VEIKK A15 V2                  |     Supported     |
 | VEIKK S640                    |     Supported     |
 | VEIKK S640 V2                 |     Supported     |
+| VEIKK VK1060                  |     Supported     |
 | VEIKK VK430                   |     Supported     |
 | VEIKK VK640                   |     Supported     |
-| VEIKK VK1060                  |     Supported     |
 | ViewSonic WoodPad PF0730      |     Supported     |
 | Wacom CTE-430                 |     Supported     |
-| Wacom CTE-630                 |     Supported     |
 | Wacom CTE-460                 |     Supported     |
+| Wacom CTE-630                 |     Supported     |
 | Wacom CTE-640                 |     Supported     |
 | Wacom CTE-660                 |     Supported     |
 | Wacom CTF-430                 |     Supported     |
@@ -78,11 +77,11 @@
 | Wacom CTL-472                 |     Supported     |
 | Wacom CTL-480                 |     Supported     |
 | Wacom CTL-490                 |     Supported     |
+| Wacom CTL-6100                |     Supported     |
 | Wacom CTL-671                 |     Supported     |
 | Wacom CTL-672                 |     Supported     |
 | Wacom CTL-680                 |     Supported     |
 | Wacom CTL-690                 |     Supported     |
-| Wacom CTL-6100                |     Supported     |
 | Wacom DTC-133                 |     Supported     |
 | Wacom DTK-1660                |     Supported     |
 | Wacom ET-0405-U               |     Supported     |
@@ -100,13 +99,13 @@
 | XENX X1-640                   |     Supported     |
 | XP-Pen Artist 10 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 12 (2nd Gen)    |     Supported     |
-| XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 13 (2nd Gen)    |     Supported     |
+| XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
-| XP-Pen CT430                  |     Supported     |
-| XP-Pen CT640                  |     Supported     |
-| XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
+| XP-Pen Deco Fun L (CT1060)    |     Supported     |
+| XP-Pen Deco Fun S (CT640)     |     Supported     |
+| XP-Pen Deco Fun XS (CT430)    |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
 | XP-Pen Deco mini7             |     Supported     |
 | XP-Pen Star 03                |     Supported     |
@@ -120,6 +119,7 @@
 | XP-Pen Star G960              |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
 | XP-Pen Star G960S Plus        |     Supported     |
+| 10moon 1060N                  |    Has Quirks     | Doesn't meet any of its advertised specs, pressure is not parsed correctly.
 | FlooGoo FMA100                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1. Might also need to change the configuration depending on the tablet used.
 | Gaomon S56K                   |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
 | Gaomon S630                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
@@ -133,19 +133,19 @@
 | Huion New 1060 Plus (2048)    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet             |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | KENTING K5540                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
-| Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order.
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order.
+| Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order.
 | UGTABLET M708                 |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 22HD            |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Star G430              |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 1
-| Artisul AP604 (Pencil Small)  |  Missing Features | Aux buttons and eraser detection are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
 | Artisul A1201                 |  Missing Features | Touch bar is not yet supported.
+| Artisul AP604 (Pencil Small)  |  Missing Features | Aux buttons and eraser detection are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are not yet supported.
-| Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
 | Gaomon M10K                   |  Missing Features | Wheel is not yet supported.
 | Gaomon M10K Pro               |  Missing Features | Wheel is not yet supported.
 | Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
 | Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
+| Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
 | Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
@@ -184,9 +184,9 @@
 | Wacom PTH-460                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-650                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-651                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-851                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-660                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-850                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTH-851                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-860                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-1240                |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-440                 |  Missing Features | Wheel is not yet supported.
@@ -194,11 +194,11 @@
 | Wacom PTK-640                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-840                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTZ-1230                |  Missing Features | Touch bars are not yet supported.
+| Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-431W                |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-630                 |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-631W                |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-930                 |  Missing Features | Touch bars are not yet supported.
-| Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | XP-Pen Artist 12              |  Missing Features | Touch bar is not yet supported
 | XP-Pen Artist 12 Pro          |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Artist 13.3 Pro        |  Missing Features | Wheel is not yet supported.
