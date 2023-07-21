@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
@@ -76,6 +77,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     MouseEvent(MOUSEEVENTF.XUP, (uint)XBUTTON.XBUTTON2);
                     return;
             }
+        }
+
+        public void Scroll(Vector2 delta)
+        {
+            throw new NotImplementedException();
         }
     }
 }

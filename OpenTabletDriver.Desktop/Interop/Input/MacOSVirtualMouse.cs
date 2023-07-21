@@ -96,6 +96,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             }
         }
 
+        public void Scroll(Vector2 delta)
+        {
+            throw new NotImplementedException();
+        }
+
         private bool GetMouseButtonState(MouseButton button)
         {
             return _inputDictionary.TryGetValue(button, out var state) ? state : false;

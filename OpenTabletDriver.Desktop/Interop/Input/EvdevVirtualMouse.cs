@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Platform.Pointer;
@@ -41,6 +42,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         public virtual void Dispose()
         {
             Device.Dispose();
+        }
+
+        public void Scroll(Vector2 delta)
+        {
+            Device.Write(EventType.EV_REL, EventCode.REL_HWHEEL, (int)delta.X);
+            Device.Write(EventType.EV_REL, EventCode.REL_WHEEL, (int)delta.Y);
         }
     }
 }

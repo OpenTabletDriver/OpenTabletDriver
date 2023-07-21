@@ -74,6 +74,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
 
+            // Vertical and horizontal scrolling
+            Device.EnableCodes(
+                EventType.EV_REL,
+                EventCode.REL_WHEEL,
+                EventCode.REL_HWHEEL
+            );
+
+            // Stylus and digitizer functions
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
                 eventCodes

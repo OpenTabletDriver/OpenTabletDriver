@@ -1,3 +1,4 @@
+using System.Numerics;
 using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Platform.Pointer
@@ -23,5 +24,13 @@ namespace OpenTabletDriver.Platform.Pointer
         /// The button to release.
         /// </param>
         void MouseUp(MouseButton button);
+
+        /// <summary>
+        /// Invokes a mouse scroll event.
+        /// </summary>
+        /// <param name="delta">
+        /// The relative position change.
+        /// </param>
+        void Scroll(Vector2 delta);
     }
 }
