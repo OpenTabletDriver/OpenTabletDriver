@@ -2,8 +2,8 @@
   "Name": "UGEE U1200",
   "Specifications": {
     "Digitizer": {
-      "Width": 263.5,
-      "Height": 147.5,
+      "Width": 263.22,
+      "Height": 148.055,
       "MaxX": 52644,
       "MaxY": 29611
     },
