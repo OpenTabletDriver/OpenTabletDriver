@@ -1,164 +1,166 @@
 using System;
-using System.Linq;
-using System.Numerics;
 using OpenTabletDriver.Native.MacOS;
-using OpenTabletDriver.Native.MacOS.Generic;
 using OpenTabletDriver.Native.MacOS.Input;
-using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static MacOS;
 
-    public abstract class MacOSVirtualMouse : IMouseButtonHandler
+    public abstract class MacOSVirtualMouse : IMouseButtonHandler, ISynchronousPointer
     {
-        protected MacOSVirtualMouse(IVirtualScreen virtualScreen)
-        {
-            var primary = virtualScreen.Displays.First();
-            Offset = new CGPoint(primary.Position.X, primary.Position.Y);
-        }
-
-        private readonly InputDictionary _inputDictionary = new InputDictionary();
-        protected CGEventType MoveEvent = CGEventType.kCGEventMouseMoved;
-        protected CGPoint Offset;
-        protected CGMouseButton PressedButtons;
+        private int _currButtonStates;
+        private int _prevButtonStates;
+        private float? _pendingX;
+        private float? _pendingY;
+        private CGMouseButton _lastButton;
+        private readonly IntPtr _mouseEvent = CGEventCreate(IntPtr.Zero);
 
         public void MouseDown(MouseButton button)
         {
-            if (!GetMouseButtonState(button))
-            {
-                CGEventType type;
-                CGMouseButton cgButton;
-                switch (button)
-                {
-                    case MouseButton.Left:
-                        type = CGEventType.kCGEventLeftMouseDown;
-                        cgButton = CGMouseButton.kCGMouseButtonLeft;
-                        break;
-                    case MouseButton.Middle:
-                        type = CGEventType.kCGEventOtherMouseDown;
-                        cgButton = CGMouseButton.kCGMouseButtonCenter;
-                        break;
-                    case MouseButton.Right:
-                        type = CGEventType.kCGEventRightMouseDown;
-                        cgButton = CGMouseButton.kCGMouseButtonRight;
-                        break;
-                    case MouseButton.Backward:
-                        type = CGEventType.kCGEventOtherMouseDown;
-                        cgButton = CGMouseButton.kCGMouseButtonBackward;
-                        break;
-                    case MouseButton.Forward:
-                        type = CGEventType.kCGEventOtherMouseDown;
-                        cgButton = CGMouseButton.kCGMouseButtonForward;
-                        break;
-                    default:
-                        return;
-                }
-                PostMouseEvent(type, cgButton);
-                SetMouseButtonState(button, true);
-            }
+            SetButtonState(ref _currButtonStates, ToCGMouseButton(button), true);
         }
 
         public void MouseUp(MouseButton button)
         {
-            if (GetMouseButtonState(button))
+            SetButtonState(ref _currButtonStates, ToCGMouseButton(button), false);
+        }
+
+        public void Flush()
+        {
+            if (_currButtonStates != _prevButtonStates)
             {
-                CGEventType type;
-                CGMouseButton cgButton;
-                switch (button)
-                {
-                    case MouseButton.Left:
-                        type = CGEventType.kCGEventLeftMouseUp;
-                        cgButton = CGMouseButton.kCGMouseButtonLeft;
-                        break;
-                    case MouseButton.Middle:
-                        type = CGEventType.kCGEventOtherMouseUp;
-                        cgButton = CGMouseButton.kCGMouseButtonCenter;
-                        break;
-                    case MouseButton.Right:
-                        type = CGEventType.kCGEventRightMouseUp;
-                        cgButton = CGMouseButton.kCGMouseButtonRight;
-                        break;
-                    case MouseButton.Backward:
-                        type = CGEventType.kCGEventOtherMouseUp;
-                        cgButton = CGMouseButton.kCGMouseButtonBackward;
-                        break;
-                    case MouseButton.Forward:
-                        type = CGEventType.kCGEventOtherMouseUp;
-                        cgButton = CGMouseButton.kCGMouseButtonForward;
-                        break;
-                    default:
-                        return;
-                }
-                PostMouseEvent(type, cgButton);
-                SetMouseButtonState(button, false);
+                // keys here just changed, no drag event should be sent
+                ProcessKeyStates(_prevButtonStates, _currButtonStates);
+                _prevButtonStates = _currButtonStates;
+            }
+            else if (DrainPendingPosition())
+            {
+                // can send drag here
+                var lastButtonSet = IsButtonSet(_currButtonStates, _lastButton);
+                var cgEventType = ToDragCGEventType(_lastButton, lastButtonSet);
+                CGEventSetType(_mouseEvent, cgEventType);
+                CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
             }
         }
 
-        private bool GetMouseButtonState(MouseButton button)
+        public void Reset()
         {
-            return _inputDictionary.TryGetValue(button, out var state) ? state : false;
+            // send a key up for all currently held keys
+            if (_currButtonStates > 0)
+            {
+                ProcessKeyStates(_currButtonStates, 0);
+                _prevButtonStates = 0;
+                _currButtonStates = 0;
+            }
         }
 
-        private void SetMouseButtonState(MouseButton button, bool newState)
+        protected abstract void SetPendingPosition(IntPtr mouseEvent, float x, float y);
+        protected abstract void ResetPendingPosition(IntPtr mouseEvent);
+
+        protected void QueuePendingPosition(float x, float y)
         {
-            _inputDictionary.UpdateState(button, newState);
-            MoveEvent = GetMoveEventType();
-            PressedButtons = GetPressedCgButtons();
+            _pendingX = x;
+            _pendingY = y;
         }
 
-        protected Vector2 GetPosition()
+        private bool DrainPendingPosition()
         {
-            var eventRef = CGEventCreate(IntPtr.Zero);
-            CGPoint cursor = CGEventGetLocation(eventRef) + Offset;
-            CFRelease(eventRef);
-            return new Vector2((float)cursor.x, (float)cursor.y);
+            if (_pendingX.HasValue)
+            {
+                SetPendingPosition(_mouseEvent, _pendingX.Value, _pendingY.Value);
+                _pendingX = null;
+                _pendingY = null;
+                return true;
+            }
+
+            return false;
         }
 
-        private CGEventType GetMoveEventType()
+        private void ProcessKeyStates(int prevButtonStates, int currButtonStates)
         {
-            CGEventType eventType = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                var button = (CGMouseButton)i;
+                var currState = IsButtonSet(currButtonStates, button);
+                var prevState = IsButtonSet(prevButtonStates, button);
 
-            if (GetMouseButtonState(MouseButton.Left))
-                eventType = CGEventType.kCGEventLeftMouseDragged;
-            else if (GetMouseButtonState(MouseButton.Right))
-                eventType = CGEventType.kCGEventRightMouseDragged;
-            else if (GetMouseButtonState(MouseButton.Middle))
-                eventType = CGEventType.kCGEventOtherMouseDragged;
-            else if (GetMouseButtonState(MouseButton.Forward))
-                eventType = CGEventType.kCGEventOtherMouseDragged;
-            else if (GetMouseButtonState(MouseButton.Backward))
-                eventType = CGEventType.kCGEventOtherMouseDragged;
+                if (currState != prevState)
+                {
+                    // prepare the mouse event, we reset it here in case
+                    // it's a relative event
+                    ResetPendingPosition(_mouseEvent);
 
-            return eventType == 0 ? CGEventType.kCGEventMouseMoved : eventType;
+                    // propagate pending position to mouseEvent
+                    DrainPendingPosition();
+                    var cgEventType = ToNoDragCGEventType(button, currState);
+
+                    CGEventSetType(_mouseEvent, cgEventType);
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, i);
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, 1); // clickState should be set to 1 (or more) during up, down, and drag events
+
+                    CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
+
+                    _lastButton = button;
+                }
+            }
+
+            if (currButtonStates == 0)
+            {
+                // no buttons are pressed, reset button and click state to 0
+                CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, 0);
+                CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, 0);
+            }
         }
 
-        private CGMouseButton GetPressedCgButtons()
+        private static CGMouseButton ToCGMouseButton(MouseButton button)
         {
-            CGMouseButton pressedButtons = 0;
-
-            if (GetMouseButtonState(MouseButton.Left))
-                pressedButtons |= CGMouseButton.kCGMouseButtonLeft;
-            if (GetMouseButtonState(MouseButton.Middle))
-                pressedButtons |= CGMouseButton.kCGMouseButtonCenter;
-            if (GetMouseButtonState(MouseButton.Right))
-                pressedButtons |= CGMouseButton.kCGMouseButtonRight;
-            if (GetMouseButtonState(MouseButton.Forward))
-                pressedButtons |= CGMouseButton.kCGMouseButtonForward;
-            if (GetMouseButtonState(MouseButton.Backward))
-                pressedButtons |= CGMouseButton.kCGMouseButtonBackward;
-
-            return pressedButtons;
+            return button switch
+            {
+                MouseButton.Left => CGMouseButton.kCGMouseButtonLeft,
+                MouseButton.Right => CGMouseButton.kCGMouseButtonRight,
+                MouseButton.Middle => CGMouseButton.kCGMouseButtonCenter,
+                MouseButton.Backward => CGMouseButton.kCGMouseButtonBackward,
+                MouseButton.Forward => CGMouseButton.kCGMouseButtonForward,
+                _ => throw new ArgumentException("Invalid mouse button", nameof(button))
+            };
         }
 
-        private void PostMouseEvent(CGEventType type, CGMouseButton cgButton)
+        private static CGEventType ToNoDragCGEventType(CGMouseButton button, bool state)
         {
-            var curPos = GetPosition();
-            var cgPos = new CGPoint(curPos.X, curPos.Y) - Offset;
-            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, type, cgPos, cgButton);
-            CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
-            CFRelease(mouseEventRef);
+            return (button, state) switch
+            {
+                (CGMouseButton.kCGMouseButtonLeft, true) => CGEventType.kCGEventLeftMouseDown,
+                (CGMouseButton.kCGMouseButtonLeft, false) => CGEventType.kCGEventLeftMouseUp,
+                (CGMouseButton.kCGMouseButtonRight, true) => CGEventType.kCGEventRightMouseDown,
+                (CGMouseButton.kCGMouseButtonRight, false) => CGEventType.kCGEventRightMouseUp,
+                (_, true) => CGEventType.kCGEventOtherMouseDown,
+                (_, false) => CGEventType.kCGEventOtherMouseUp,
+            };
+        }
+
+        private static CGEventType ToDragCGEventType(CGMouseButton button, bool state)
+        {
+            return (button, state) switch
+            {
+                (CGMouseButton.kCGMouseButtonLeft, true) => CGEventType.kCGEventLeftMouseDragged,
+                (CGMouseButton.kCGMouseButtonRight, true) => CGEventType.kCGEventRightMouseDragged,
+                (_, true) => CGEventType.kCGEventOtherMouseDragged,
+                (_, false) => CGEventType.kCGEventMouseMoved,
+            };
+        }
+
+        private static bool IsButtonSet(int buttonStates, CGMouseButton button)
+        {
+            return (buttonStates & (1 << (int)button)) != 0;
+        }
+
+        private static void SetButtonState(ref int buttonStates, CGMouseButton button, bool state)
+        {
+            if (state)
+                buttonStates |= 1 << (int)button;
+            else
+                buttonStates &= ~(1 << (int)button);
         }
     }
 }

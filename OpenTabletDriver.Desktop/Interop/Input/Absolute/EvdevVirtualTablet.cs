@@ -126,7 +126,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
         }
 
-        public void Reset()
+        public sealed override void Reset()
         {
             // Zero out everything except position and tilt
             foreach (var code in eventCodes)
@@ -134,11 +134,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
 
             _isEraser = false;
-        }
-
-        public void Flush()
-        {
-            Device.Sync();
         }
     }
 }
