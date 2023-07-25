@@ -47,7 +47,7 @@ Priority: optional
 Architecture: amd64
 Installed-Size: $(du -s "${output}" | cut -f1)
 Pre-Depends: udev
-Depends: libevdev2, libgtk-3-0, dotnet-runtime-6.0, ${shlibdeps}
+Depends: libevdev2, libgtk-3-0, dotnet-runtime-7.0, ${shlibdeps}
 Recommends: libx11-6, libxrandr2
 Conflicts: ${OTD_NAME}
 Replaces: ${OTD_NAME}

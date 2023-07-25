@@ -19,7 +19,7 @@ REPO_ROOT="$(readlink -f "${ENG_SCRIPT_ROOT}/../")"
 # with NET_RUNTIME (a global variable without initial value in lib.sh)
 declare -g OUTPUT="dist"
 declare -g CONFIG="Release"
-declare -g FRAMEWORK="net6.0"
+declare -g FRAMEWORK="net7.0"
 declare -g NET_RUNTIME
 declare -g DOG_FOOD="true"
 declare -g BUILD="true"

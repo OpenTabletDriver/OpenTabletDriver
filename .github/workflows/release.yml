@@ -75,7 +75,7 @@ jobs:
         VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
       - name: Install required packages
-        run: sudo dnf install -y rpm-build systemd-rpm-macros dotnet-sdk-6.0
+        run: sudo dnf install -y rpm-build systemd-rpm-macros dotnet-sdk-7.0
 
       - name: Checkout OpenTabletDriver Repository
         uses: actions/checkout@v3
