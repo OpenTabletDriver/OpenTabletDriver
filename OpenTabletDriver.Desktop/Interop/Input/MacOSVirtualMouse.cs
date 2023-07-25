@@ -40,9 +40,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 var lastButtonSet = IsButtonSet(_currButtonStates, _lastButton);
                 var cgEventType = ToDragCGEventType(_lastButton, lastButtonSet);
                 CGEventSetType(_mouseEvent, cgEventType);
-
-                if (lastButtonSet)
-                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, (int)_lastButton);
                 CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
             }
         }
@@ -100,10 +97,19 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
                     CGEventSetType(_mouseEvent, cgEventType);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, i);
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, 1); // clickState should be set to 1 (or more) during up, down, and drag events
+
                     CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
 
                     _lastButton = button;
                 }
+            }
+
+            if (currButtonStates == 0)
+            {
+                // no buttons are pressed, reset button and click state to 0
+                CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, 0);
+                CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, 0);
             }
         }
 
