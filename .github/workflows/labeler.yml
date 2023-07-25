@@ -4,12 +4,18 @@ on:
     types: [opened]
   pull_request:
     types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
 jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-    - uses: github/issue-labeler@v3.1
+    - uses: github/issue-labeler@v3.2
       with:
-        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        repo-token: "${{ github.token }}"
         configuration-path: .github/labeler.yml
         enable-versioned-regex: 0
