@@ -467,8 +467,7 @@ namespace OpenTabletDriver.Daemon
                 case SystemPlatform.Windows:
                     System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
 
-                    var windows8 = new Version(6, 2, 9200, 0);
-                    if (Environment.OSVersion.Version >= windows8)
+                    if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
                     {
                         unsafe
                         {
