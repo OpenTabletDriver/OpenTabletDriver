@@ -10,6 +10,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
         public void SetPosition(Vector2 delta)
         {
+            SetDirty();
+
             delta += error;
             error = new Vector2(delta.X % 1, delta.Y % 1);
 
