@@ -338,6 +338,11 @@ namespace OpenTabletDriver.UX
         public abstract void StartDaemon();
 
         /// <summary>
+        /// Stops OpenTabletDriver daemon, if running.
+        /// </summary>
+        public abstract void StopDaemon();
+
+        /// <summary>
         /// The event handler for all client <see cref="Log.Write(OpenTabletDriver.Logging.LogMessage)"/> calls.
         /// </summary>
         private static async Task LogOutputHandler(RpcClient<IDriverDaemon> rpc, LogMessage message)
