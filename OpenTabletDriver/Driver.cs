@@ -156,7 +156,7 @@ namespace OpenTabletDriver
                     }
                     catch (Exception ex)
                     {
-                        Log.Exception(ex);
+                        Log.Exception(ex, LogLevel.Warning);
                     }
                 }
 
@@ -255,7 +255,7 @@ namespace OpenTabletDriver
                 }
                 catch (Exception ex)
                 {
-                    Log.Exception(ex);
+                    Log.Exception(ex, LogLevel.Debug);
                     return false;
                 }
             }
