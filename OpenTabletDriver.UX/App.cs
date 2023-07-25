@@ -228,8 +228,8 @@ namespace OpenTabletDriver.UX
             if (File.Exists(filePath))
             {
                 var daemon = GetDriverDaemon();
-                var settings = Settings.Deserialize(new FileInfo(filePath))!;
-                await daemon.ApplySettings(settings);
+                if (Settings.TryDeserialize(new FileInfo(filePath), out var settings))
+                    await daemon.ApplySettings(settings);
             }
         }
 
