@@ -1,12 +1,9 @@
 using System.Numerics;
-using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
-    using static Windows;
-
     public class WindowsRelativePointer : WindowsVirtualMouse, IRelativePointer
     {
         private Vector2 error;
@@ -19,7 +16,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             inputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
             inputs[0].U.mi.dx = (int)delta.X;
             inputs[0].U.mi.dy = (int)delta.Y;
-            SendInput(1, inputs, INPUT.Size);
         }
     }
 }
