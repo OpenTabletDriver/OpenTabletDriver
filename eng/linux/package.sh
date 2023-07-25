@@ -33,23 +33,23 @@ parse_build_args "args" "remaining_args"
 
 while [ ${#remaining_args[@]} -gt 0 ]; do
   if $is_extra_args; then
-    extra_args=("$@")
+    extra_args=("${remaining_args[@]}")
     break
   fi
 
-  case "$1" in
+  case "${remaining_args[0]}" in
     --package=*)
-      PACKAGE_GEN="${1#*=}"
+      PACKAGE_GEN="${remaining_args[0]#*=}"
       ;;
     --package)
-      PACKAGE_GEN="$2"
+      PACKAGE_GEN="${remaining_args[1]}"
       shift_arr "remaining_args"
       ;;
     --)
       is_extra_args=true
       ;;
     *)
-      echo "Unknown option: $1"
+      echo "Unknown option: ${remaining_args[0]}"
       print_help
       exit 1
       ;;

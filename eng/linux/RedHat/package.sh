@@ -42,18 +42,25 @@ BuildArch: x86_64
 License: LGPLv3
 URL: ${OTD_UPSTREAM_URL}
 
-AutoReq: 0
 BuildRequires: systemd-rpm-macros
 Requires: dotnet-runtime-6.0
-Requires: libevdev
+Requires: libevdev.so.2()(64bit)
 Requires: gtk3
 Suggests: libX11
 Suggests: libXrandr
+Requires(post): udev
+Requires(post): grep
+
+%if 0%{?suse_version}
+Requires(post): /usr/bin/lsmod
+%endif
 
 %description
 ${OTD_LONG_DESC}
 
 ${OTD_LONG_DESC2}
+
+%global __requires_exclude_from ^/usr/lib/${OTD_LNAME}/.*$
 
 # No debug symbols
 %global debug_package %{nil}

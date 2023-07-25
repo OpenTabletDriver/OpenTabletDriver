@@ -116,12 +116,12 @@ namespace OpenTabletDriver
         /// </summary>
         /// <param name="ex">The <see cref="System.Exception"/> object to create the <see cref="LogMessage"/> from.</param>
         /// <param name="notify">Whether or not the log message should create a notification in the user's desktop environment.</param>
-        public static void Exception(Exception? ex, bool notify = false)
+        public static void Exception(Exception? ex, LogLevel level = LogLevel.Error, bool notify = false)
         {
             if (ex == null)
                 return;
 
-            var message = new LogMessage(ex, notify);
+            var message = new LogMessage(ex, level, notify);
             Write(message);
         }
 
