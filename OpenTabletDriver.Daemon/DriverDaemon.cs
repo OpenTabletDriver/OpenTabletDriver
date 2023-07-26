@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -484,7 +485,7 @@ namespace OpenTabletDriver.Daemon
             switch (SystemInterop.CurrentPlatform)
             {
                 case SystemPlatform.Windows:
-                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
                     if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
                     {
@@ -499,7 +500,7 @@ namespace OpenTabletDriver.Daemon
                                 (IntPtr)Unsafe.AsPointer(ref state),
                                 Unsafe.SizeOf<Windows.PowerThrottlingState>()))
                             {
-                                Log.Write("Platform", "Failed to allow timer resolution, asynchronous filters may have lower resolution when OTD is minimized.", LogLevel.Error);
+                                Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
                             }
                         }
                     }
