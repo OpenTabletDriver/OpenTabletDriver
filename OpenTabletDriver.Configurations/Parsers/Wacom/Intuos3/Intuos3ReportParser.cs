@@ -32,6 +32,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
 
         private uint _prevPressure = 0;
         private Vector2 _prevTilt = new Vector2();
-        private bool[] _prevPenButtons = new bool[] {};
+        private bool[] _prevPenButtons = Array.Empty<bool>();
     }
 }
