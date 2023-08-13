@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.CommandLine.Invocation;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -31,8 +32,6 @@ using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Daemon
 {
     public class DriverDaemon : IDriverDaemon
@@ -50,6 +49,7 @@ namespace OpenTabletDriver.Daemon
         private readonly IUpdater? _updater;
 
         private UpdateInfo? _updateInfo;
+        private Settings? _lastValidSettings;
 
         public DriverDaemon(
             IServiceProvider serviceProvider,
@@ -132,6 +132,7 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
         public event EventHandler<Settings>? SettingsChanged;
         public event EventHandler<PluginEventType>? AssembliesChanged;
+        public event EventHandler? Resynchronize;
 
         private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { get; } = new Collection<ITool>();
@@ -213,55 +214,74 @@ namespace OpenTabletDriver.Daemon
 
         public Task ApplySettings(Settings? settings)
         {
-            // Dispose filters that implement IDisposable interface
-            foreach (var obj in _driver.InputDevices.SelectMany(d =>
-                         d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
-                if (obj is IDisposable disposable)
-                    disposable.Dispose();
-
-            _settingsManager.Settings = settings ?? Settings.GetDefaults();
-
-            foreach (var device in _driver.InputDevices)
+            try
             {
-                var group = device.Configuration.Name;
+                // Dispose filters that implement IDisposable interface
+                foreach (var obj in _driver.InputDevices.SelectMany(d =>
+                            d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
+                    if (obj is IDisposable disposable)
+                        disposable.Dispose();
 
-                var profile = _settingsManager.Settings.Profiles.GetOrSetDefaults(_serviceProvider, device);
-                device.OutputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, device);
+                _settingsManager.Settings = settings ?? Settings.GetDefaults();
 
-                if (device.OutputMode != null)
+                foreach (var device in _driver.InputDevices)
                 {
-                    var outputModeName = _pluginFactory.GetName(profile.OutputMode);
-                    Log.Write(group, $"Output mode: {outputModeName}");
-                }
+                    var group = device.Configuration.Name;
 
-                if (device.OutputMode is IOutputMode outputMode)
-                {
-                    SetOutputModeSettings(device, outputMode, profile);
+                    var profile = _settingsManager.Settings.Profiles.GetOrSetDefaults(_serviceProvider, device);
+                    device.OutputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, device);
 
-                    var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
-
-                    var deps = new object?[]
+                    if (device.OutputMode != null)
                     {
-                        device,
-                        profile.BindingSettings,
-                        mouseButtonHandler
-                    }.Where(o => o != null).ToArray() as object[];
+                        var outputModeName = _pluginFactory.GetName(profile.OutputMode);
+                        Log.Write(group, $"Output mode: {outputModeName}");
 
-                    var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
+                        var outputMode = device.OutputMode;
+                        SetOutputModeSettings(device, outputMode, profile);
 
-                    var lastElement = outputMode.Elements?.LastOrDefault() ??
-                                      outputMode as IPipelineElement<IDeviceReport>;
-                    lastElement.Emit += bindingHandler.Consume;
+                        var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
+
+                        var deps = new object?[]
+                        {
+                            device,
+                            profile.BindingSettings,
+                            mouseButtonHandler
+                        }.Where(o => o != null).ToArray() as object[];
+
+                        var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
+
+                        var lastElement = outputMode.Elements?.LastOrDefault() ??
+                                        outputMode as IPipelineElement<IDeviceReport>;
+                        lastElement.Emit += bindingHandler.Consume;
+                    }
                 }
+
+                if (_driver.InputDevices.Length != 0)
+                    Log.Write("Settings", "Driver is enabled.");
+
+                SetToolSettings();
+
+                _lastValidSettings = settings;
+                SettingsChanged?.Invoke(this, _settingsManager.Settings);
+
+                return Task.CompletedTask;
             }
+            catch
+            {
+                try
+                {
+                    ApplySettings(_lastValidSettings);
+                    Log.WriteNotify("Settings", "Failed to apply settings. Reverted to last valid settings.", LogLevel.Warning);
+                }
+                catch
+                {
+                    ApplySettings(null);
+                    Log.WriteNotify("Settings", "Failed to apply last valid settings. Forcibly applied defaults.", LogLevel.Warning);
+                }
 
-            Log.Write("Settings", "Driver is enabled.");
-
-            SetToolSettings();
-
-            SettingsChanged?.Invoke(this, _settingsManager.Settings);
-
-            return Task.CompletedTask;
+                Resynchronize?.Invoke(this, EventArgs.Empty);
+                return Task.CompletedTask;
+            }
         }
 
         public async Task<Settings> ResetSettings()
@@ -465,10 +485,9 @@ namespace OpenTabletDriver.Daemon
             switch (SystemInterop.CurrentPlatform)
             {
                 case SystemPlatform.Windows:
-                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                    var windows8 = new Version(6, 2, 9200, 0);
-                    if (Environment.OSVersion.Version >= windows8)
+                    if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
                     {
                         unsafe
                         {
@@ -481,7 +500,7 @@ namespace OpenTabletDriver.Daemon
                                 (IntPtr)Unsafe.AsPointer(ref state),
                                 Unsafe.SizeOf<Windows.PowerThrottlingState>()))
                             {
-                                Log.Write("Platform", "Failed to allow timer resolution, asynchronous filters may have lower resolution when OTD is minimized.", LogLevel.Error);
+                                Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
                             }
                         }
                     }
