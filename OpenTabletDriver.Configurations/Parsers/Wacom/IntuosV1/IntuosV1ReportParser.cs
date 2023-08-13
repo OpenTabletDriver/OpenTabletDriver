@@ -35,8 +35,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
             return new DeviceReport(report);
         }
 
-        private uint _prevPressure = 0;
-        private Vector2 _prevTilt = new Vector2();
+        private uint _prevPressure;
+        private Vector2 _prevTilt;
         private bool[] _prevPenButtons = Array.Empty<bool>();
     }
 }
