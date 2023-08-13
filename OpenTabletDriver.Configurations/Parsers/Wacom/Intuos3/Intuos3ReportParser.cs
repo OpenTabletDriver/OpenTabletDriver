@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1;
 using OpenTabletDriver.Tablet;
@@ -30,8 +31,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
             return new DeviceReport(data);
         }
 
-        private uint _prevPressure = 0;
-        private Vector2 _prevTilt = new Vector2();
-        private bool[] _prevPenButtons = new bool[] {};
+        private uint _prevPressure;
+        private Vector2 _prevTilt;
+        private bool[] _prevPenButtons = Array.Empty<bool>();
     }
 }

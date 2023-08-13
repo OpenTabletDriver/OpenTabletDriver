@@ -17,7 +17,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
             Tilt = _prevTilt;
             Pressure = _prevPressure;
 
-            var penByte = report[1];
             PenButtons = _prevPenButtons;
             HighConfidence = report[1].IsBitSet(6);
             HoverDistance = (uint)report[9];
