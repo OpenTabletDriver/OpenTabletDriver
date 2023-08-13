@@ -1,0 +1,39 @@
+{
+  "Name": "Huion Kamvas Pro 24 (4K)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 527.04,
+      "Height": 296.46,
+      "MaxX": 105370.0,
+      "MaxY": 59270.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_M207_220823"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
