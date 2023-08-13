@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Desktop.Interop.AppInfo
@@ -77,7 +78,15 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             get => _trashDirectory ?? GetDefaultTrashDirectory();
         }
 
-        public static string ProgramDirectory => AppContext.BaseDirectory;
+        public static string ProgramDirectory => SystemInterop.CurrentPlatform switch
+        {
+            SystemPlatform.MacOS => Regex.Match(AppContext.BaseDirectory, "^(.*)/[^/]+\\.app/Contents/MacOS/?$", RegexOptions.IgnoreCase) switch
+            {
+                { Success: true } match => match.Groups[1].ToString(),
+                _ => AppContext.BaseDirectory
+            },
+            _ => AppContext.BaseDirectory
+        };
 
         public static IAppInfo GetPlatformAppInfo()
         {

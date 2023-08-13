@@ -25,12 +25,6 @@ namespace OpenTabletDriver.Native.MacOS
         public extern static CGPoint CGEventGetLocation(CGEventRef eventRef);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGWarpMouseCursorPosition(CGPoint newCursorPosition);
-
-        [DllImport(Quartz)]
-        public extern static CGError CGAssociateMouseAndMouseCursorPosition(int connected);
-
-        [DllImport(Quartz)]
         public extern static CGEventRef CGEventCreateMouseEvent(CGEventSourceRef source, CGEventType mouseType,
             CGPoint mouseCursorPosition, CGMouseButton mouseButton);
 
@@ -38,10 +32,19 @@ namespace OpenTabletDriver.Native.MacOS
         public extern static CGEventRef CGEventCreateKeyboardEvent(CGEventSourceRef source, CGKeyCode virtualKey, bool keyDown);
 
         [DllImport(Quartz)]
-        public extern static CGEventRef CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
+        public extern static CGEventRef CGEventSetType(CGEventRef eventRef, CGEventType type);
 
         [DllImport(Quartz)]
-        public extern static CGDirectDisplayID CGMainDisplayID();
+        public extern static CGEventRef CGEventSetIntegerValueField(CGEventRef eventRef, CGEventField field, long value);
+
+        [DllImport(Quartz)]
+        public extern static void CGEventSetDoubleValueField(CGEventRef eventRef, CGEventField field, double value);
+
+        [DllImport(Quartz)]
+        public extern static void CGEventSetLocation(CGEventRef eventRef, CGPoint location);
+
+        [DllImport(Quartz)]
+        public extern static CGEventRef CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
 
         [DllImport(Quartz)]
         public extern static CGError CGGetActiveDisplayList(uint maxDisplays,

@@ -1,6 +1,7 @@
 | Tablet                        |      Status       | Notes |
 | ---------------------------   | :---------------: | ----- |
 | Acepen AP 1060                |     Supported     |
+| Adesso Cybertablet K8         |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM156HD                |     Supported     |
 | Gaomon M106K Pro              |     Supported     |
@@ -21,6 +22,7 @@
 | Huion H610 Pro V2             |     Supported     |
 | Huion H610X                   |     Supported     |
 | Huion H640P                   |     Supported     |
+| Huion H641P                   |     Supported     |
 | Huion H642                    |     Supported     |
 | Huion H950P                   |     Supported     |
 | Huion HS64                    |     Supported     |
@@ -31,20 +33,26 @@
 | Huion Kamvas 16 (2021)        |     Supported     |
 | Huion Kamvas 20               |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
+| Huion Kamvas 24 Plus          |     Supported     |
 | Huion Kamvas Pro 13 (2.5k)    |     Supported     |
 | Huion Kamvas Pro 16 (2.5k)    |     Supported     |
+| Huion Kamvas Pro 24 (4K)      |     Supported     |
 | Huion New 1060 Plus           |     Supported     |
 | Huion Q11K                    |     Supported     |
 | Huion Q11K V2                 |     Supported     |
+| Huion RDS-160                 |     Supported     |
+| Huion RTE-100                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
 | Monoprice 10594               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
+| Parblo Ninos N7               |     Supported     |
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
 | UGEE S640                     |     Supported     |
+| UGEE U1200                    |     Supported     |
 | UGEE U1600                    |     Supported     |
 | UGTABLET M708 V2              |     Supported     |
 | VEIKK A15                     |     Supported     |
@@ -92,6 +100,7 @@
 | Wacom GD-0912-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
 | Wacom XD-1218-U               |     Supported     |
+| Waltop Slim Tablet 5.8"       |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
 | XenceLabs Pen Tablet Small    |     Supported     |
 | XENX P1-640                   |     Supported     |
@@ -102,10 +111,12 @@
 | XP-Pen Artist 13 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
+| XP-Pen Artist 16 (2nd Gen)    |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco Fun S (CT640)     |     Supported     |
 | XP-Pen Deco Fun XS (CT430)    |     Supported     |
+| XP-Pen Deco L                 |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
 | XP-Pen Deco mini7             |     Supported     |
 | XP-Pen Star 03                |     Supported     |
@@ -146,7 +157,9 @@
 | Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
 | Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
 | Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
+| Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
+| Huion GT-221                  |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
 | Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1

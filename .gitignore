@@ -6,10 +6,12 @@
 .idea/
 
 # Build Artifacts
-obj/
-bin/
+/*/obj/
+/*/bin/
+/bin/
 nupkg/
 [Bb]uild/
+/dist/
 
 # BenchmarkDotNet Artifacts
 BenchmarkDotNet.Artifacts/

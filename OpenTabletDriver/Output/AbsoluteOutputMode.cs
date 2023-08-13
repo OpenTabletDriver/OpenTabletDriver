@@ -168,19 +168,24 @@ namespace OpenTabletDriver.Output
             return report;
         }
 
-        [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
         protected override void OnOutput(IDeviceReport report)
         {
-            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
-                eraserHandler.SetEraser(eraserReport.Eraser);
-            if (report is IAbsolutePositionReport absReport)
-                Pointer.SetPosition(absReport.Position);
-            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
-                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Configuration.Specifications.Pen!.MaxPressure);
-            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
-                tiltHandler.SetTilt(tiltReport.Tilt);
+            // this should be ordered from least to most chance of having a
+            // dependency to another pointer property. for example, proximity
+            // should be set before position, because in LinuxArtistMode
+            // the SetPosition method is dependent on the proximity state.
             if (report is IHoverReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
                 hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
+                eraserHandler.SetEraser(eraserReport.Eraser);
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+                tiltHandler.SetTilt(tiltReport.Tilt);
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Configuration.Specifications.Pen!.MaxPressure);
+
+            // make sure to set the position last
+            if (report is IAbsolutePositionReport absReport)
+                Pointer.SetPosition(absReport.Position);
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)

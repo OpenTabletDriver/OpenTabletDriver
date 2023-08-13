@@ -1,0 +1,50 @@
+{
+  "Name": "Parblo Ninos N7",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 177.8,
+      "Height": 111.09,
+      "MaxX": 25200.0,
+      "MaxY": 15745.0
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 0
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1155,
+      "ProductID": 40992,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 1155,
+      "ProductID": 40992,
+      "InputReportLength": 1101,
+      "OutputReportLength": 1101,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

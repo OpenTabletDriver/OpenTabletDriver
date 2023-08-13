@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Native.MacOS;
-using OpenTabletDriver.Native.MacOS.Generic;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
@@ -11,16 +11,27 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
     public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
     {
-        public MacOSAbsolutePointer(IVirtualScreen virtualScreen) : base(virtualScreen)
+        private Vector2 offset;
+
+        public MacOSAbsolutePointer(IVirtualScreen virtualScreen)
         {
+            var primary = virtualScreen.Displays.First();
+            offset = primary.Position;
         }
 
         public void SetPosition(Vector2 pos)
         {
-            var newPos = new CGPoint(pos.X, pos.Y) - Offset;
-            var mouseEventRef = CGEventCreateMouseEvent(IntPtr.Zero, MoveEvent, newPos, PressedButtons);
-            CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEventRef);
-            CFRelease(mouseEventRef);
+            var newPos = pos - offset;
+            QueuePendingPosition(newPos.X, newPos.Y);
+        }
+
+        protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)
+        {
+            CGEventSetLocation(mouseEvent, new CGPoint(x, y));
+        }
+
+        protected override void ResetPendingPosition(IntPtr mouseEvent)
+        {
         }
     }
 }

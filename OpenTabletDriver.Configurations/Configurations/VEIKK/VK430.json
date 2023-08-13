@@ -30,7 +30,9 @@
         "CQIC",
         "CQMC"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "23": "^2022/3/21$"
+      },
       "InitializationStrings": []
     }
   ],

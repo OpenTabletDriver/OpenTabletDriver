@@ -161,6 +161,7 @@ namespace OpenTabletDriver.UX
 
             // Synchronize before building the main panel, this will avoid flickering
             await _app.Synchronize();
+            _rpc.Instance!.Resynchronize += (_, _) => Application.Instance.InvokeAsync(async () => await _app.Synchronize());
 
             await Application.Instance.InvokeAsync(() => Content = _controlBuilder.Build<SettingsPanel>());
 
