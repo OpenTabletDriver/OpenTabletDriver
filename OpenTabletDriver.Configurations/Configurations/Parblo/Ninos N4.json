@@ -1,34 +1,34 @@
 {
-  "Name": "XP-Pen Star 06C",
+  "Name": "Parblo Ninos N4",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
-      "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "Width": 108,
+      "Height": 81,
+      "MaxX": 21600,
+      "MaxY": 16200
     },
     "Pen": {
       "MaxPressure": 8191,
       "Buttons": {
-        "ButtonCount": 2
+        "ButtonCount": 0
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 6
+      "ButtonCount": 0
     },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 10429,
-      "ProductID": 98,
-      "InputReportLength": 8,
+      "VendorID": 1155,
+      "ProductID": 40985,
+      "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAC"
+        "ArAE"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []

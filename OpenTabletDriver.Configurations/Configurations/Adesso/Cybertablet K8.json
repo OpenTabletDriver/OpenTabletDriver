@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Star 06C",
+  "Name": "Adesso Cybertablet K8",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
-      "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "Width": 203.2,
+      "Height": 114.3,
+      "MaxX": 20320.0,
+      "MaxY": 11430.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -22,13 +22,13 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 98,
-      "InputReportLength": 8,
+      "ProductID": 2320,
+      "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAC"
+        "ArAE"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []

@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Star 06C",
+  "Name": "VEIKK VK430 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
-      "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "Width": 101.6,
+      "Height": 76.2,
+      "MaxX": 20320.0,
+      "MaxY": 15240.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -14,23 +14,27 @@
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 6
+      "ButtonCount": 4
     },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 10429,
-      "ProductID": 98,
-      "InputReportLength": 8,
-      "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "VendorID": 12267,
+      "ProductID": 9,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAC"
+        "CQEE",
+        "CQIC",
+        "CQMC"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "23": "^2022/12/9$"
+      },
       "InitializationStrings": []
     }
   ],
