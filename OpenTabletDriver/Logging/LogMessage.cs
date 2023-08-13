@@ -15,11 +15,11 @@ namespace OpenTabletDriver.Logging
         {
         }
 
-        public LogMessage(Exception exception, bool notify = false)
+        public LogMessage(Exception exception, LogLevel level = LogLevel.Error, bool notify = false)
         {
             Group = exception.GetType().Name;
             Message = exception.Message;
-            Level = LogLevel.Error;
+            Level = level;
             StackTrace = exception.StackTrace;
             Notification = notify;
         }

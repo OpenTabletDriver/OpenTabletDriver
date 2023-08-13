@@ -1,6 +1,7 @@
 | Tablet                        |      Status       | Notes |
 | ---------------------------   | :---------------: | ----- |
 | Acepen AP 1060                |     Supported     |
+| Adesso Cybertablet K8         |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM156HD                |     Supported     |
 | Gaomon M106K Pro              |     Supported     |
@@ -20,6 +21,7 @@
 | Huion H610 Pro V2             |     Supported     |
 | Huion H610X                   |     Supported     |
 | Huion H640P                   |     Supported     |
+| Huion H641P                   |     Supported     |
 | Huion H642                    |     Supported     |
 | Huion H950P                   |     Supported     |
 | Huion H1060P                  |     Supported     |
@@ -31,17 +33,20 @@
 | Huion Kamvas 16 (2021)        |     Supported     |
 | Huion Kamvas 20               |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
+| Huion Kamvas 24 Plus          |     Supported     |
 | Huion Kamvas Pro 13 (2.5k)    |     Supported     |
 | Huion Kamvas Pro 16 (2.5k)    |     Supported     |
 | Huion New 1060 Plus           |     Supported     |
 | Huion Q11K                    |     Supported     |
 | Huion Q11K V2                 |     Supported     |
 | Huion RDS-160                 |     Supported     |
+| Huion RTE-100                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
 | Monoprice 10594               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
+| Parblo Ninos N7               |     Supported     |
 | 10moon 1060N                  |     Supported     | Doesn't meet any of its advertised specs
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
@@ -104,6 +109,7 @@
 | XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 13 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
+| XP-Pen Artist 16 (2nd Gen)    |     Supported     |
 | XP-Pen CT430                  |     Supported     |
 | XP-Pen CT640                  |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
@@ -147,7 +153,9 @@
 | Gaomon M10K Pro               |  Missing Features | Wheel is not yet supported.
 | Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
 | Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
+| Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
+| Huion GT-221                  |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
 | Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
