@@ -14,7 +14,9 @@
       }
     },
     "AuxiliaryButtons": null,
-    "MouseButtons": null,
+    "MouseButtons": {
+      "ButtonCount": 3
+    },
     "Touch": null
   },
   "DigitizerIdentifiers": [
@@ -23,7 +25,7 @@
       "ProductID": 17,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
       "FeatureInitReport": [
         "AgI="
       ],
