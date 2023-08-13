@@ -99,6 +99,7 @@
 | Wacom GD-0912-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
 | Wacom XD-1218-U               |     Supported     |
+| Waltop Slim Tablet 5.8"       |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
 | XenceLabs Pen Tablet Small    |     Supported     |
 | XENX P1-640                   |     Supported     |
