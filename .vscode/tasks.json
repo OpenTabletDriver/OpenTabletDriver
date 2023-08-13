@@ -1,0 +1,62 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Daemon",
+            "type": "process",
+            "isBuildCommand": true,
+            "command": "dotnet",
+            "args": [
+                "build",
+                "${workspaceFolder}/OpenTabletDriver.Daemon/OpenTabletDriver.Daemon.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Build UX",
+            "type": "process",
+            "isBuildCommand": true,
+            "command": "dotnet",
+            "args": [],
+            "problemMatcher": "$msCompile",
+            "windows": {
+                "args": [
+                    "build",
+                    "${workspaceFolder}/OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj",
+                    "/property:GenerateFullPaths=true",
+                    "/consoleloggerparameters:NoSummary"
+                ]
+            },
+            "linux": {
+                "args": [
+                    "build",
+                    "${workspaceFolder}/OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj",
+                    "/property:GenerateFullPaths=true",
+                    "/consoleloggerparameters:NoSummary"
+                ]
+            },
+            "osx": {
+                "args": [
+                    "build",
+                    "${workspaceFolder}/OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj",
+                    "/property:GenerateFullPaths=true",
+                    "/consoleloggerparameters:NoSummary"
+                ]
+            }
+        },
+        {
+            "label": "Build Persistent Binaries",
+            "type": "process",
+            "isBuildCommand": true,
+            "windows": {
+                "command": "./build.ps1"
+            },
+            "linux": {
+                "command": "./build.sh"
+            },
+            "problemMatcher": "$msCompile"
+        },
+    ]
+}
