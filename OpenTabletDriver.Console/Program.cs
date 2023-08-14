@@ -26,14 +26,14 @@ namespace OpenTabletDriver.Console
                 Name = "otd"
             };
 
-            root.AddRange(IOCommands);
-            root.AddRange(ActionCommands);
-            root.AddRange(DebugCommands);
-            root.AddRange(ModifyCommands);
-            root.AddRange(RequestCommands);
-            root.AddRange(UpdateCommands);
-            root.AddRange(ListCommands);
-            root.AddRange(ScriptingCommands);
+            root.AddCommands(IOCommands);
+            root.AddCommands(ActionCommands);
+            root.AddCommands(DebugCommands);
+            root.AddCommands(ModifyCommands);
+            root.AddCommands(RequestCommands);
+            root.AddCommands(UpdateCommands);
+            root.AddCommands(ListCommands);
+            root.AddCommands(ScriptingCommands);
 
             return root;
         }

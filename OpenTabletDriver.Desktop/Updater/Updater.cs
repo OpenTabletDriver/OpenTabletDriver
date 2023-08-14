@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -63,8 +64,23 @@ namespace OpenTabletDriver.Desktop.Updater
             try
             {
                 UpdateInstalling?.Invoke(update);
-                PrepareForUpdate(update, out var binaryRollback);
-                InstallUpdate(update, binaryRollback);
+                var rollback = CreateRollback();
+                var hasAccess = ProbeAccessToBinaryPath();
+
+                if (!hasAccess)
+                {
+                    RunElevated(update, rollback.Binary);
+                    return Task.CompletedTask;
+                }
+
+                // Moves files/directories that would be updated to a rollback directory.
+                // Doing a move is necessary for Windows to allow the update to overwrite the files.
+                BackupAppData(rollback.AppData);
+                Backup(rollback.Binary, update.Paths, File.Move, Directory.Move);
+
+                RollbackCreated?.Invoke(rollback.Directory);
+
+                InstallUpdateFiles(update.Paths, BinaryDirectory);
                 installed = true;
             }
             finally
@@ -81,58 +97,59 @@ namespace OpenTabletDriver.Desktop.Updater
             return Task.CompletedTask;
         }
 
-        private void InstallUpdate(Update update, string binaryRollback)
+        private bool ProbeAccessToBinaryPath()
         {
             try
             {
-                foreach (var source in update.Paths)
-                {
-                    var destination = Path.Join(BinaryDirectory, Path.GetFileName(source));
-
-                    if (File.Exists(source))
-                        File.Move(source, destination);
-                    else if (Directory.Exists(source))
-                        Directory.Move(source, destination);
-                }
+                var filePath = Path.Join(BinaryDirectory, ".probe");
+                var file = File.OpenWrite(filePath);
+                file.Dispose();
+                File.Delete(filePath);
+                return true;
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException)
             {
-                // redo the binary rollback and this time copy the files instead of moving them
-                Backup(binaryRollback, update.Paths, Copy, Copy);
+                return false;
+            }
+        }
 
-                // and then run fallback procedure
-                InstallUpdateFallback(update, ex);
+        private static void InstallUpdateFiles<T>(T sources, string destinationDirectory)
+            where T : IEnumerable<string>
+        {
+            foreach (var source in sources)
+            {
+                var destination = Path.Join(destinationDirectory, Path.GetFileName(source));
+
+                if (File.Exists(source))
+                    File.Move(source, destination);
+                else if (Directory.Exists(source))
+                    Directory.Move(source, destination);
             }
         }
 
         protected abstract Task<UpdateInfo?> CheckForUpdatesCore();
 
-        protected virtual void InstallUpdateFallback(Update update, Exception ex)
+        protected virtual void RunElevated(Update update, string binaryRollback)
         {
             // throw by default
-            throw new UpdateInstallFailedException(ex);
+            throw new UpdateInstallFailedException($"Unauthorized access to '{binaryRollback}' and no elevation method was provided.");
         }
 
-        protected void PrepareForUpdate(Update update, out string binaryRollback)
+        private Rollback CreateRollback()
         {
             string timestamp = DateTime.UtcNow.ToString("-yyyy-MM-dd_hh-mm-ss");
             var rollback = Path.Join(RollbackDirectory, CurrentVersion + timestamp);
-            binaryRollback = Path.Join(rollback, "bin");
+            var binaryRollback = Path.Join(rollback, "bin");
             var appDataRollback = Path.Join(rollback, "appdata");
 
             Directory.CreateDirectory(rollback);
             Directory.CreateDirectory(binaryRollback);
             Directory.CreateDirectory(appDataRollback);
 
-            // Moves files/directories that would be updated to a rollback directory.
-            // Doing a move is necessary for Windows to allow the update to overwrite the files.
-            Backup(binaryRollback, update.Paths, File.Move, Directory.Move);
-            BackupAppData(appDataRollback);
-
-            RollbackCreated?.Invoke(rollback);
+            return new Rollback(rollback, binaryRollback, appDataRollback);
         }
 
-        private void Backup(
+        public void Backup(
             string binaryRollback,
             ImmutableArray<string> pathsToUpdate,
             Action<string, string> fileAction,
@@ -190,29 +207,54 @@ namespace OpenTabletDriver.Desktop.Updater
         {
             return Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         }
+
+        record Rollback(string Directory, string Binary, string AppData);
     }
 
-    public class UpdateInProgressException : Exception
+    public class UpdateException : Exception
+    {
+        public UpdateException() : base("An error has occurred during update")
+        {
+        }
+
+        public UpdateException(string msg) : base(msg)
+        {
+        }
+
+        public UpdateException(string msg, Exception innerException) : base(msg, innerException)
+        {
+        }
+    }
+
+    public class UpdateInProgressException : UpdateException
     {
         public UpdateInProgressException() : base("An update is already in progress.")
         {
         }
     }
 
-    public class UpdateAlreadyInstalledException : Exception
+    public class UpdateAlreadyInstalledException : UpdateException
     {
         public UpdateAlreadyInstalledException() : base("An update has already been installed.")
         {
         }
     }
 
-    public class UpdateInstallFailedException : Exception
+    public class UpdateInstallFailedException : UpdateException
     {
         public UpdateInstallFailedException() : base("Failed to install update.")
         {
         }
 
+        public UpdateInstallFailedException(string msg) : base(msg)
+        {
+        }
+
         public UpdateInstallFailedException(Exception innerException) : base("Failed to install update.", innerException)
+        {
+        }
+
+        public UpdateInstallFailedException(string msg, Exception innerException) : base(msg, innerException)
         {
         }
     }

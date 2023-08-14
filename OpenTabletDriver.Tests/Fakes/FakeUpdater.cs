@@ -32,7 +32,8 @@ namespace OpenTabletDriver.Tests.Updater
 
             _update = new Update(
                 version,
-                ImmutableArray.Create(Directory.GetFileSystemEntries(_downloadPath))
+                ImmutableArray.Create(Directory.GetFileSystemEntries(_downloadPath)),
+                BinaryDirectory
             );
         }
 

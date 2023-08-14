@@ -53,6 +53,7 @@ namespace OpenTabletDriver.UX
 
         public void Stop()
         {
+            DaemonExited = null; // unregister all event handlers
             this.daemonProcess?.Kill();
             this.daemonProcess?.Dispose();
             this.daemonProcess = null;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.IO.Pipes;
 using System.Reflection;
 using System.Threading;
@@ -21,6 +20,11 @@ using OpenTabletDriver.UX.Windows.Updater;
 
 namespace OpenTabletDriver.UX
 {
+    class CommandLineOptions
+    {
+        public bool StartMinimized { get; set; }
+    }
+
     public sealed class App : ViewModel
     {
         private App()
@@ -29,11 +33,13 @@ namespace OpenTabletDriver.UX
 
         public static void Run(string platform, string[] args)
         {
+            var commandLineOptions = ParseCmdLineOptions(args);
+
             using (var mutex = new Mutex(true, @$"Global\{APPNAME}.Mutex", out var firstInstance))
             {
                 if (firstInstance)
                 {
-                    RunInternal(platform, args);
+                    RunInternal(platform, commandLineOptions);
                 }
                 else
                 {
@@ -44,29 +50,11 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        private static void RunInternal(string platform, string[] args)
+        private static void RunInternal(string platform, CommandLineOptions options)
         {
-            var root = new RootCommand("OpenTabletDriver UX")
-            {
-                new Option<bool>(new string[] { "-m", "--minimized" }, "Start the application minimized")
-                {
-                    Argument = new Argument<bool>("minimized")
-                }
-            };
-
-            bool startMinimized = false;
-            root.Handler = CommandHandler.Create<bool>((minimized) =>
-            {
-                startMinimized = minimized;
-            });
-
-            int code = root.Invoke(args);
-            if (code != 0)
-                Environment.Exit(code);
-
             var app = new Application(platform);
             var mainForm = new MainForm();
-            if (startMinimized)
+            if (options.StartMinimized)
             {
                 mainForm.WindowState = WindowState.Minimized;
                 if (EnableTrayIcon)
@@ -107,6 +95,28 @@ namespace OpenTabletDriver.UX
             });
 
             app.Run(mainForm);
+        }
+
+        private static CommandLineOptions ParseCmdLineOptions(string[] args)
+        {
+            var commandLineOptions = new CommandLineOptions();
+
+            var minimizedOption = new Option<bool>(
+                aliases: new[] { "-m", "--minimized" },
+                description: "Start the application minimized");
+
+            var root = new RootCommand("OpenTabletDriver UX")
+            {
+                minimizedOption
+            };
+
+            root.SetHandler((minimized) =>
+            {
+                commandLineOptions.StartMinimized = minimized;
+            }, minimizedOption);
+
+            root.Invoke(args);
+            return commandLineOptions;
         }
 
         public static App Current { get; } = new App();
