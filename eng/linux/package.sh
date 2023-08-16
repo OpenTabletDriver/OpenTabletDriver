@@ -3,7 +3,15 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-NET_RUNTIME="linux-x64"
+# From https://github.com/dotnet/install-scripts/blob/main/src/dotnet-install.sh
+is_musl_based_distro() {
+  (ldd --version 2>&1 || true) | grep -q musl
+}
+if is_musl_based_distro; then
+  NET_RUNTIME="linux-musl-x64"
+else
+  NET_RUNTIME="linux-x64"
+fi
 
 PACKAGE_GEN=""
 PROJECTS=(
