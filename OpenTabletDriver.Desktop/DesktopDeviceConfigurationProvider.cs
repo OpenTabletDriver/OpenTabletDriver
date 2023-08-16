@@ -33,6 +33,7 @@ namespace OpenTabletDriver.Desktop
             if (!Directory.Exists(_appInfo.ConfigurationDirectory))
                 return;
 
+            Log.Write("Detect", $"Using configuration overrides: '{_appInfo.ConfigurationDirectory}'", LogLevel.Debug);
             _watcher = new FileSystemWatcher(_appInfo.ConfigurationDirectory)
             {
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
