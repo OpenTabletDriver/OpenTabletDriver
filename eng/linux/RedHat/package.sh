@@ -20,8 +20,7 @@ build_src="${output}/BUILD"
 move_to_nested "${output}/tmp" "${build_src}/usr/lib/${OTD_LNAME}"
 rm -r "${output}/tmp"
 
-echo "Copying generic files..."
-cp -R "${GENERIC_FILES}"/* "${build_src}"
+copy_generic_files "${build_src}"
 
 echo "Copying RedHat files..."
 cp -R "${redhat_src}/usr" "${build_src}"

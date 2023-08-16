@@ -14,9 +14,7 @@ debian_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 output="${1}"
 
 move_to_nested "${output}" "${output}/usr/lib/opentabletdriver"
-
-echo "Copying generic files..."
-cp -R "${GENERIC_FILES}"/* "${output}/"
+copy_generic_files "${output}"
 
 echo "Debianizing..."
 mkdir -p "${output}/debian"
