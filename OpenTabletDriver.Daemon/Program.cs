@@ -47,7 +47,7 @@ namespace OpenTabletDriver.Daemon
                 var destination = updateCommandOptions.Destination.FullName;
                 var ret = 0;
 
-                using (var file = File.Open(Path.Join(AppInfo.Current.AppDataDirectory, "daemon-update.log"), FileMode.Truncate))
+                using (var file = File.Open(Path.Join(AppInfo.Current.AppDataDirectory, "daemon-update.log"), FileMode.Create))
                 {
                     var logger = new StreamWriter(file) { AutoFlush = true };
 
