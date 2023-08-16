@@ -284,6 +284,14 @@ copy_pixmap_assets() {
   cp "${REPO_ROOT}/OpenTabletDriver.UX/Assets"/* "${output_folder}"
 }
 
+copy_manpage() {
+  local output_folder="${1}"
+
+  echo "Copying manpage(s) to '${output_folder}'..."
+  mkdir -p "${output_folder}"
+  cp "${REPO_ROOT}/docs/manpages"/* "${output_folder}"
+}
+
 create_source_tarball() {
   local output="${1}"
   output="$(readlink -f "${output}")"
