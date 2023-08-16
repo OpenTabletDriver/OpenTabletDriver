@@ -9,6 +9,18 @@ GENERIC_FILES="$(readlink -f "${PKG_SCRIPT_ROOT}/Generic")"
 
 ### Helper functions
 
+# From https://github.com/dotnet/install-scripts/blob/main/src/dotnet-install.sh
+is_musl_based_distro() {
+  (ldd --version 2>&1 || true) | grep -q musl
+}
+
+copy_generic_files() {
+  local output="${1}"
+
+  echo "Copying generic files..."
+  cp -R "${GENERIC_FILES}/usr/"* "${output}/usr/"
+}
+
 generate_rules() {
   local output_file="${1}"
 
