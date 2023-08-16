@@ -6,8 +6,7 @@ output="${1}"
 
 move_to_nested "${output}" "${output}/usr/local/lib/opentabletdriver"
 
-echo "Copying generic files..."
-cp -R "${GENERIC_FILES}"/* "${output}/"
+copy_generic_files "${output}"
 mv "${output}/usr/lib"/* "${output}/usr/local/lib"
 mkdir -p "${output}/etc/"
 mv "${output}/usr/local/lib/systemd" "${output}/etc"
