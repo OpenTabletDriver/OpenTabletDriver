@@ -3,7 +3,11 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-NET_RUNTIME="linux-x64"
+if is_musl_based_distro; then
+  NET_RUNTIME="linux-musl-x64"
+else
+  NET_RUNTIME="linux-x64"
+fi
 
 PACKAGE_GEN=""
 PROJECTS=(
