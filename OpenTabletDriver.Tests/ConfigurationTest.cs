@@ -120,6 +120,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public void Configurations_DeviceIdentifier_Equality_DeviceStrings_SelfTest()
         {
+            // both no device strings
             var identifier = new DeviceIdentifier
             {
                 VendorID = 1,
@@ -131,6 +132,30 @@ namespace OpenTabletDriver.Tests
             {
                 VendorID = 1,
                 ProductID = 1,
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+
+            var equality = IsEqual(identifier, otherIdentifier);
+
+            Assert.True(equality);
+
+            // both have the same device strings
+            identifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                DeviceStrings = new Dictionary<byte, string>
+                {
+                    [1] = "Test"
+                },
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+            otherIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
                 DeviceStrings = new Dictionary<byte, string>
                 {
                     [1] = "Test"
@@ -139,7 +164,34 @@ namespace OpenTabletDriver.Tests
                 OutputReportLength = 1
             };
 
-            var equality = IsEqual(identifier, otherIdentifier);
+            equality = IsEqual(identifier, otherIdentifier);
+
+            Assert.True(equality);
+
+            // one of them has no device strings
+            identifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                DeviceStrings = new Dictionary<byte, string>
+                {
+                },
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+            otherIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                DeviceStrings = new Dictionary<byte, string>
+                {
+                    [1] = "Test"
+                },
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+
+            equality = IsEqual(identifier, otherIdentifier);
 
             Assert.True(equality);
         }
@@ -153,7 +205,7 @@ namespace OpenTabletDriver.Tests
                 ProductID = 1,
                 DeviceStrings = new Dictionary<byte, string>
                 {
-                    [1] = "Test"
+                    [1] = "Test1"
                 },
                 InputReportLength = 1,
                 OutputReportLength = 1
@@ -165,7 +217,6 @@ namespace OpenTabletDriver.Tests
                 DeviceStrings = new Dictionary<byte, string>
                 {
                     [1] = "Test",
-                    [2] = "Test2"
                 },
                 InputReportLength = 1,
                 OutputReportLength = 1
@@ -243,7 +294,7 @@ namespace OpenTabletDriver.Tests
 
             if (pidMatch && inputMatch && outputMatch)
             {
-                if (a.DeviceStrings.Count == 0 && b.DeviceStrings.Count == 0)
+                if (a.DeviceStrings.Count == 0 || b.DeviceStrings.Count == 0)
                     return true;
 
                 var (longer, shorter) = a.DeviceStrings.Count > b.DeviceStrings.Count ? (a, b) : (b, a);
