@@ -80,6 +80,8 @@ namespace OpenTabletDriver.UX
         private Placeholder placeholder;
         private TrayIcon trayIcon;
 
+        public bool SilenceDaemonShutdown { get; set; }
+
         protected override void InitializeForm()
         {
             var bounds = Screen.FromPoint(Mouse.Position).Bounds;
@@ -412,6 +414,9 @@ namespace OpenTabletDriver.UX
 
         private void HandleDaemonDisconnected(object sender, EventArgs e)
         {
+            if (SilenceDaemonShutdown)
+                return;
+
             // Hide all controls until reconnected
             Application.Instance.Invoke(() =>
             {

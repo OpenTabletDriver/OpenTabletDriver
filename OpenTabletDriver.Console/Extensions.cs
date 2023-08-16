@@ -7,10 +7,10 @@ namespace OpenTabletDriver.Console
 {
     public static class Extensions
     {
-        public static void AddRange(this Command command, IEnumerable<Symbol> symbols)
+        public static void AddCommands(this Command command, IEnumerable<Command> commands)
         {
-            foreach (var sym in symbols)
-                command.Add(sym);
+            foreach (var addedCommand in commands)
+                command.AddCommand(addedCommand);
         }
 
         public static string Format(this PluginSetting setting)

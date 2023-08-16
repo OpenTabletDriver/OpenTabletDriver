@@ -46,7 +46,8 @@ namespace OpenTabletDriver.Desktop.Updater
 
             return new Update(
                 version,
-                ImmutableArray.Create(Directory.GetFileSystemEntries(downloadPath))
+                ImmutableArray.Create(Directory.GetFileSystemEntries(downloadPath)),
+                BinaryDirectory
             );
         }
     }

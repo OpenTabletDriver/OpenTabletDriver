@@ -81,7 +81,25 @@ namespace OpenTabletDriver.UX.Windows.Updater
             // Disallow multiple invocations
             (sender as Control)!.Enabled = false;
 
-            await App.Driver.Instance.InstallUpdate();
+            try
+            {
+                await App.Driver.Instance.InstallUpdate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, MessageBoxType.Error);
+                Close();
+                return;
+            }
+
+            var mainForm = (MainForm)Application.Instance.MainForm;
+            mainForm.SilenceDaemonShutdown = true;
+
+            Close();
+            mainForm.Close();
+
+            if (App.DaemonWatchdog is not null)
+                App.DaemonWatchdog.Dispose();
 
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string path = Directory.EnumerateFiles(basePath, "OpenTabletDriver.UI*").FirstOrDefault(); // 0.7.x mirgration
@@ -91,11 +109,6 @@ namespace OpenTabletDriver.UX.Windows.Updater
                 PluginPlatform.MacOS => Path.Join(basePath, "OpenTabletDriver.UX.MacOS"),
                 _ => throw new NotSupportedException("Unsupported platform")
             };
-
-            if (App.DaemonWatchdog is not null)
-                App.DaemonWatchdog.Dispose();
-
-            Application.Instance.MainForm.Close();
 
             Process.Start(path);
 
