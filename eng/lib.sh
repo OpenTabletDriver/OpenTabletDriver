@@ -15,6 +15,10 @@ PREV_PATH=${PWD}
 ENG_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 REPO_ROOT="$(readlink -f "${ENG_SCRIPT_ROOT}/../")"
 
+### Build Requirements
+
+DOTNET_VERSION="7.0"
+
 # could do away with declare -g, but did it anyway for all of them for consistency
 # with NET_RUNTIME (a global variable without initial value in lib.sh)
 declare -g OUTPUT="dist"
