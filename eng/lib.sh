@@ -244,7 +244,7 @@ build() {
   dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
 
   echo "Running dotnet clean..."
-  dotnet clean --runtime "${NET_RUNTIME}" --configuration "${CONFIG}" --verbosity quiet
+  dotnet clean --configuration "${CONFIG}" --verbosity quiet
 
   if [ "${PORTABLE}" = "true" ]; then
     mkdir -p "${OUTPUT}/userdata"
@@ -292,13 +292,13 @@ copy_manpage() {
   local output_folder="${1}"
 
   echo "Copying manpage(s) to '${output_folder}'..."
-  pushd "${REPO_ROOT}/docs/manpages"
+  pushd "${REPO_ROOT}/docs/manpages" > /dev/null
   for manpage in *; do
     local index="$(echo $manpage | rev | cut -d. -f1)"
     mkdir -p "${output_folder}/man${index}"
     gzip -c $manpage > "${output_folder}/man${index}/${manpage}.gz"
   done
-  popd
+  popd > /dev/null
 }
 
 create_source_tarball() {
