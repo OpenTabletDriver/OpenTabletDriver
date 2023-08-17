@@ -18,7 +18,7 @@ copy_generic_files() {
   local output="${1}"
 
   echo "Copying generic files..."
-  cp -R "${GENERIC_FILES}/usr/"* "${output}/usr/"
+  cp -Rv "${GENERIC_FILES}/usr/"* "${output}"
 }
 
 generate_rules() {
