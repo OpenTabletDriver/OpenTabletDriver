@@ -5,9 +5,11 @@ SHELL=/usr/bin/env bash
 	dh $@
 
 override_dh_auto_build:
-	./build.sh
+	./eng/linux/package.sh --output bin
 
 override_dh_auto_install:
-	PREFIX=/usr ./eng/linux/Generic/package.sh debian/tmp
+	PREFIX=usr ./eng/linux/package.sh --package Generic --build false
+	mv ./dist/files debian/tmp
+    rm -rf ./dist
 	mkdir -p debian/tmp/usr/lib/
 	cp -r bin debian/tmp/usr/lib/opentabletdriver
