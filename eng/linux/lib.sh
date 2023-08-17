@@ -25,7 +25,7 @@ generate_rules() {
   local output_file="${1}"
 
   echo "Generating udev rules..."
-	"${REPO_ROOT}/generate-rules.sh" -v "${REPO_ROOT}/OpenTabletDriver.Configurations/Configurations" "${output_file}" > /dev/null
+  "${REPO_ROOT}/generate-rules.sh" -v "${REPO_ROOT}/OpenTabletDriver.Configurations/Configurations" "${output_file}"
 }
 
 generate_desktop_file() {
