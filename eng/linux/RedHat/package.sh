@@ -55,11 +55,13 @@ ${OTD_LONG_DESC2}
 %autosetup
 
 %build
-./build.sh
+./eng/linux/package.sh --output bin
 
 %install
 export DONT_STRIP=1
-PREFIX="%{_prefix}" ./eng/linux/Generic/package.sh "%{buildroot}"
+PREFIX="%{_prefix}" ./eng/linux/package.sh --package Generic --build false
+mv ./dist/files "%{buildroot}"
+rm -rf ./dist
 mkdir -p "%{buildroot}/%{_prefix}/lib/"
 cp -r bin "%{buildroot}/%{_prefix}/lib/opentabletdriver"
 
