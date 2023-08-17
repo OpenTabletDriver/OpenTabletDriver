@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+SHELL=/usr/bin/env bash
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	./build.sh
+
+override_dh_auto_install:
+	PREFIX=/usr ./eng/linux/Generic/package.sh debian/tmp
+	mkdir -p debian/tmp/usr/lib/
+	cp -r bin debian/tmp/usr/lib/opentabletdriver

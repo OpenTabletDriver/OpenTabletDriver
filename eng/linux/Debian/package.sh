@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# in the future if we want to be part of official debian repos, we need to
-# provide a manpage for the binaries in /usr/bin, and add a source package
-# where the binaries could be built from.
-
 # increment this when releasing a new package of the same upstream version
 # where the only changes are to the packaging itself
 PKG_VER="1"
@@ -13,52 +9,48 @@ debian_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
 output="${1}"
 
-move_to_nested "${output}" "${output}/usr/lib/opentabletdriver"
-copy_generic_files "${output}"
+echo "Copying source files..."
+create_source_tarball "${OTD_LNAME}-${OTD_VERSION}" | tar -xf - -C "${output}"
 
 echo "Debianizing..."
-mkdir -p "${output}/debian"
-touch "${output}/debian/control"
+cp -R "${debian_src}/debian" "${output}/${OTD_LNAME}-${OTD_VERSION}"
+cp "${GENERIC_FILES}/postinst" "${output}/${OTD_LNAME}-${OTD_VERSION}/debian/${OTD_LNAME}.postinst"
+cp "${GENERIC_FILES}/postrm" "${output}/${OTD_LNAME}-${OTD_VERSION}/debian/${OTD_LNAME}.postrm"
 
-echo "Generating shlibdeps..."
-last_cwd="${PWD}"
-cd "${output}"
-shlibdeps="$(dpkg-shlibdeps -O "usr/lib/opentabletdriver/OpenTabletDriver.Daemon" 2> /dev/null)"
-shlibdeps="${shlibdeps#shlibs:Depends=}"
-cd "${last_cwd}"
-mv "${output}"/{debian,DEBIAN}
-
-echo "Copying Debian files..."
-cp -R "${debian_src}/DEBIAN" "${output}"
-cp -R "${debian_src}/usr" "${output}"
-
-generate_rules "${output}/usr/lib/udev/rules.d/99-opentabletdriver.rules"
-generate_desktop_file "${output}/usr/share/applications/opentabletdriver.desktop"
-copy_pixmap_assets "${output}/usr/share/pixmaps"
-
-echo "Generating DEBIAN/control..."
-cat << EOF > "${output}/DEBIAN/control"
-Package: ${OTD_LNAME}
-Version: ${OTD_VERSION}-${PKG_VER}
-Section: misc
+echo "Generating debian/control..."
+cat << EOF > "${output}/${OTD_LNAME}-${OTD_VERSION}/debian/control"
+Source: ${OTD_LNAME}
 Priority: optional
-Architecture: amd64
-Installed-Size: $(du -s "${output}" | cut -f1)
-Pre-Depends: udev
-Depends: libevdev2, libgtk-3-0, dotnet-runtime-7.0, ${shlibdeps}
-Recommends: libx11-6, libxrandr2
-Conflicts: ${OTD_NAME}
-Replaces: ${OTD_NAME}
+Build-Depends: dotnet-sdk-${DOTNET_VERSION}
 Maintainer: ${OTD_MAINTAINERS[1]}
+
+Package: opentabletdriver
+Section: base
+Architecture: amd64
+Pre-Depends: udev
+Depends: libevdev2, libgtk-3-0, dotnet-runtime-${DOTNET_VERSION}, \${shlibs:Depends}
+Recommends: libx11-6, libxrandr2
 Description: A ${OTD_DESC}
  $(echo "${OTD_LONG_DESC}" | sed '2,$s/^/ /')
  .
  $(echo "${OTD_LONG_DESC2}" | sed '2,$s/^/ /')
 Homepage: ${OTD_UPSTREAM_URL}
-Vcs-Browser: ${OTD_REPO_URL}
-Vcs-Git: ${OTD_GIT}
 EOF
 
+echo "Generating debian/changelog..."
+cat <<EOF > "${output}/${OTD_LNAME}-${OTD_VERSION}/debian/changelog"
+${OTD_LNAME} (${OTD_VERSION}-${PKG_VER}) unstable; urgency=low
+
+  * New version: ${OTD_VERSION}-${PKG_VER}
+
+ -- InfinityGhost <infinityghostgit@gmail.com>  `LANG=C date +"%a, %d %b %Y %X %z"`
+
+EOF
+
+PREV_DIR="${PWD}"
 echo "Creating '${PKG_FILE}'..."
-move_to_nested "${output}" "${output}/opentabletdriver"
-dpkg-deb --build --root-owner-group "${output}/opentabletdriver" "${output}/${PKG_FILE}"
+cd "${output}/${OTD_LNAME}-${OTD_VERSION}"
+# TODO: fix --no-sign
+dpkg-buildpackage --no-sign -b
+cd "${PREV_DIR}"
+mv "${output}/${OTD_LNAME}_${OTD_VERSION}-${PKG_VER}_amd64.deb" "${output}/${PKG_FILE}"
