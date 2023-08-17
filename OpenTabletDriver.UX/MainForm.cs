@@ -240,9 +240,6 @@ namespace OpenTabletDriver.UX
             var deviceStringReader = new Command { MenuText = "Device string reader..." };
             deviceStringReader.Executed += (sender, e) => App.Current.StringReaderWindow.Show();
 
-            var configurationEditor = new Command { MenuText = "Open Configuration Editor...", Shortcut = Application.Instance.CommonModifier | Keys.E };
-            configurationEditor.Executed += (sender, e) => App.Current.ConfigEditorWindow.Show();
-
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
             pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
 
@@ -299,7 +296,6 @@ namespace OpenTabletDriver.UX
                             detectTablet,
                             showTabletDebugger,
                             deviceStringReader,
-                            configurationEditor
                         }
                     },
                     // Plugins submenu
