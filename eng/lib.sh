@@ -297,66 +297,6 @@ copy_manpage() {
 }
 
 create_source_tarball() {
-  local output="${1}"
-  output="$(readlink -f "${output}")"
-
-  local tmp_dir="$(mktemp -d)"
-  local last_pwd="${PWD}"
-
-  local output_file_name="$(basename "${output}")"
-  output_file_name="${output_file_name%.tar.gz}"
-  local source_tmp_dir="${tmp_dir}/${output_file_name}"
-
-  echo "Creating source tarball..."
-
-  mkdir -p "${source_tmp_dir}"
-  cd "${tmp_dir}"
-
-  local source_files=(
-    "docs"
-    "eng"
-    "OpenTabletDriver"
-    "OpenTabletDriver.Benchmarks"
-    "OpenTabletDriver.Configurations"
-    "OpenTabletDriver.Console"
-    "OpenTabletDriver.Daemon"
-    "OpenTabletDriver.Desktop"
-    "OpenTabletDriver.Native"
-    "OpenTabletDriver.Plugin"
-    "OpenTabletDriver.Tests"
-    "OpenTabletDriver.Tools.udev"
-    "OpenTabletDriver.UX"
-    "OpenTabletDriver.UX.Gtk"
-    "OpenTabletDriver.UX.MacOS"
-    "OpenTabletDriver.UX.Wpf"
-    ".editorconfig"
-    "build.ps1"
-    "build.sh"
-    "CONTRIBUTING.md"
-    "Directory.Build.props"
-    "generate-rules.sh"
-    "LICENSE"
-    "nuget.config"
-    "OpenTabletDriver.Linux.slnf"
-    "OpenTabletDriver.MacOS.slnf"
-    "OpenTabletDriver.sln"
-    "OpenTabletDriver.Windows.slnf"
-    "README.md"
-    "TABLETS.md"
-  )
-
-  for file in "${source_files[@]}"; do
-    cp -r "${REPO_ROOT}/${file}" "${source_tmp_dir}"
-  done
-
-  find "${source_tmp_dir}" -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} +
-
-  if [ -f "${output}" ]; then
-    rm "${output}"
-  fi
-
-  tar -czf "${output}" "${output_file_name}"
-
-  cd "${last_pwd}"
-  rm -rf "${tmp_dir}"
+  local output_file_name="${1}"
+  git archive --format=tar --prefix="${output_file_name}/" HEAD
 }
