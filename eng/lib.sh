@@ -292,8 +292,13 @@ copy_manpage() {
   local output_folder="${1}"
 
   echo "Copying manpage(s) to '${output_folder}'..."
-  mkdir -p "${output_folder}"
-  cp "${REPO_ROOT}/docs/manpages"/* "${output_folder}"
+  pushd "${REPO_ROOT}/docs/manpages"
+  for manpage in *; do
+    local index="$(echo $manpage | rev | cut -d. -f1)"
+    mkdir -p "${output_folder}/man${index}"
+    gzip -c $manpage > "${output_folder}/man${index}/${manpage}.gz"
+  done
+  popd
 }
 
 create_source_tarball() {
