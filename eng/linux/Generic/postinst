@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+if lsmod | grep hid_uclogic > /dev/null; then
+    rmmod hid_uclogic || true
+fi
+
+if lsmod | grep wacom > /dev/null; then
+    rmmod wacom || true
+fi
+
+if udevadm control --reload-rules; then
+    udevadm trigger --settle || true
+    udevadm trigger --name-match=uinput --settle || true
+fi
+
+printf "Run the daemon by invoking 'otd-daemon', or by enabling opentabletdriver.service"
