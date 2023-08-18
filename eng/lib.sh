@@ -15,6 +15,10 @@ PREV_PATH=${PWD}
 ENG_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 REPO_ROOT="$(readlink -f "${ENG_SCRIPT_ROOT}/../")"
 
+### Build Requirements
+
+DOTNET_VERSION="7.0"
+
 # could do away with declare -g, but did it anyway for all of them for consistency
 # with NET_RUNTIME (a global variable without initial value in lib.sh)
 declare -g OUTPUT="dist"
@@ -240,7 +244,7 @@ build() {
   dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
 
   echo "Running dotnet clean..."
-  dotnet clean --runtime "${NET_RUNTIME}" --configuration "${CONFIG}" --verbosity quiet
+  dotnet clean --configuration "${CONFIG}" --verbosity quiet
 
   if [ "${PORTABLE}" = "true" ]; then
     mkdir -p "${OUTPUT}/userdata"
@@ -288,71 +292,16 @@ copy_manpage() {
   local output_folder="${1}"
 
   echo "Copying manpage(s) to '${output_folder}'..."
-  mkdir -p "${output_folder}"
-  cp "${REPO_ROOT}/docs/manpages"/* "${output_folder}"
+  pushd "${REPO_ROOT}/docs/manpages" > /dev/null
+  for manpage in *; do
+    local index="$(echo $manpage | rev | cut -d. -f1)"
+    mkdir -p "${output_folder}/man${index}"
+    gzip -c $manpage > "${output_folder}/man${index}/${manpage}.gz"
+  done
+  popd > /dev/null
 }
 
 create_source_tarball() {
-  local output="${1}"
-  output="$(readlink -f "${output}")"
-
-  local tmp_dir="$(mktemp -d)"
-  local last_pwd="${PWD}"
-
-  local output_file_name="$(basename "${output}")"
-  output_file_name="${output_file_name%.tar.gz}"
-  local source_tmp_dir="${tmp_dir}/${output_file_name}"
-
-  echo "Creating source tarball..."
-
-  mkdir -p "${source_tmp_dir}"
-  cd "${tmp_dir}"
-
-  local source_files=(
-    "docs"
-    "eng"
-    "OpenTabletDriver"
-    "OpenTabletDriver.Benchmarks"
-    "OpenTabletDriver.Configurations"
-    "OpenTabletDriver.Console"
-    "OpenTabletDriver.Daemon"
-    "OpenTabletDriver.Desktop"
-    "OpenTabletDriver.Native"
-    "OpenTabletDriver.Plugin"
-    "OpenTabletDriver.Tests"
-    "OpenTabletDriver.Tools.udev"
-    "OpenTabletDriver.UX"
-    "OpenTabletDriver.UX.Gtk"
-    "OpenTabletDriver.UX.MacOS"
-    "OpenTabletDriver.UX.Wpf"
-    ".editorconfig"
-    "build.ps1"
-    "build.sh"
-    "CONTRIBUTING.md"
-    "Directory.Build.props"
-    "generate-rules.sh"
-    "LICENSE"
-    "nuget.config"
-    "OpenTabletDriver.Linux.slnf"
-    "OpenTabletDriver.MacOS.slnf"
-    "OpenTabletDriver.sln"
-    "OpenTabletDriver.Windows.slnf"
-    "README.md"
-    "TABLETS.md"
-  )
-
-  for file in "${source_files[@]}"; do
-    cp -r "${REPO_ROOT}/${file}" "${source_tmp_dir}"
-  done
-
-  find "${source_tmp_dir}" -type d \( -name "bin" -o -name "obj" \) -exec rm -rf {} +
-
-  if [ -f "${output}" ]; then
-    rm "${output}"
-  fi
-
-  tar -czf "${output}" "${output_file_name}"
-
-  cd "${last_pwd}"
-  rm -rf "${tmp_dir}"
+  local output_file_name="${1}"
+  git archive --format=tar --prefix="${output_file_name}/" HEAD
 }
