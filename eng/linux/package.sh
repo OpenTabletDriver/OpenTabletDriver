@@ -16,6 +16,8 @@ PROJECTS=(
   "OpenTabletDriver.UX.Gtk"
 )
 
+MOVE_RULES_TO_ETC="false"
+
 print_help() {
   echo "Usage: ${BASH_SOURCE[0]} [OPTIONS]..."
   print_common_arg_help

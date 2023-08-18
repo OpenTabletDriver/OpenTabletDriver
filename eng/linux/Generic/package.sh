@@ -19,10 +19,10 @@ cp -v "${REPO_ROOT}/LICENSE" "${output}/${PREFIX}/share/doc/opentabletdriver/LIC
 copy_pixmap_assets "${output}/${PREFIX}/share/pixmaps"
 copy_manpage "${output}/${PREFIX}/share/man"
 
-if [ "${PREFIX}" == "usr" ]; then
-  generate_rules "${output}/usr/lib/udev/rules.d/90-opentabletdriver.rules"
-else
+if [ "${MOVE_RULES_TO_ETC}" == "true" ]; then
   generate_rules "${output}/etc/udev/rules.d/90-opentabletdriver.rules"
+else
+  generate_rules "${output}/${PREFIX}/lib/udev/rules.d/90-opentabletdriver.rules"
 fi
 
 generate_desktop_file "${output}/${PREFIX}/share/applications/opentabletdriver.desktop"
