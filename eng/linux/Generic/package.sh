@@ -6,7 +6,7 @@ PKG_FILE="files"
 output="$(readlink -f "${1}")"
 PREFIX="${PREFIX:-usr}"
 
-if ["${BUILD}" == "true"]; then
+if [ "${BUILD}" == "true" ]; then
   move_to_nested "${output}" "${output}/${PREFIX}/lib/opentabletdriver"
 else
   mkdir -p "${output}/${PREFIX}"
