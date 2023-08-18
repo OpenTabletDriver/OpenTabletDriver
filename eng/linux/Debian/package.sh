@@ -24,7 +24,7 @@ Priority: optional
 Build-Depends: dotnet-sdk-${DOTNET_VERSION}
 Maintainer: ${OTD_MAINTAINERS[1]}
 
-Package: opentabletdriver
+Package: ${OTD_LNAME}
 Section: base
 Architecture: amd64
 Pre-Depends: udev
