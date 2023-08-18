@@ -3,6 +3,7 @@
 PREFIX="usr/local"
 
 output="${1}"
+MOVE_RULES_TO_ETC="true"
 
 . "${GENERIC_FILES}/package.sh" "${output}"
 
