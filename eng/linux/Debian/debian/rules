@@ -9,7 +9,7 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	PREFIX=usr ./eng/linux/package.sh --package Generic --build false
-	mv ./dist/files debian/tmp
-    rm -rf ./dist
+	mv ./dist/files/* debian/tmp
+	rm -rf ./dist
 	mkdir -p debian/tmp/usr/lib/
 	cp -r bin debian/tmp/usr/lib/opentabletdriver
