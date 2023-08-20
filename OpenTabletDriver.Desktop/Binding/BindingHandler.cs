@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
@@ -9,6 +10,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
+    [PluginIgnore]
     public class BindingHandler : IDevicePipelineElement
     {
         private readonly InputDevice _device;
