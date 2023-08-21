@@ -16,6 +16,8 @@ PROJECTS=(
   "OpenTabletDriver.UX.Gtk"
 )
 
+MOVE_RULES_TO_ETC="false"
+
 print_help() {
   echo "Usage: ${BASH_SOURCE[0]} [OPTIONS]..."
   print_common_arg_help
@@ -64,7 +66,9 @@ done
 cd "${REPO_ROOT}"
 
 prepare_build
-build "PROJECTS" "extra_args"
+if ! [ -e "${PKG_SCRIPT_ROOT}/${PACKAGE_GEN:-BinaryTarBall}/no-build" ]; then
+  build "PROJECTS" "extra_args"
+fi
 
 if [ -n "${PACKAGE_GEN}" ]; then
   echo -e "\nCreating package with type '${PACKAGE_GEN}'..."

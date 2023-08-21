@@ -18,14 +18,15 @@ copy_generic_files() {
   local output="${1}"
 
   echo "Copying generic files..."
-  cp -R "${GENERIC_FILES}/usr/"* "${output}/usr/"
+  cp -Rv "${GENERIC_FILES}/usr/"* "${output}"
+  echo
 }
 
 generate_rules() {
   local output_file="${1}"
 
-  echo "Generating udev rules..."
-	"${REPO_ROOT}/generate-rules.sh" -v "${REPO_ROOT}/OpenTabletDriver.Configurations/Configurations" "${output_file}" > /dev/null
+  echo "Generating udev rules to ${output_file}..."
+  "${REPO_ROOT}/generate-rules.sh" "${REPO_ROOT}/OpenTabletDriver.Configurations/Configurations" "${output_file}" > /dev/null
 }
 
 generate_desktop_file() {
