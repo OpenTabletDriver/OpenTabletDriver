@@ -1,0 +1,39 @@
+{
+  "Name": "Parblo Ninos N4",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 108,
+      "Height": 81,
+      "MaxX": 21600,
+      "MaxY": 16200
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 0
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1155,
+      "ProductID": 40985,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
