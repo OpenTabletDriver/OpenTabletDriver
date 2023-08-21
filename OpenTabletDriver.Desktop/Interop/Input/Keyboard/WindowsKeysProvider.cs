@@ -88,7 +88,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "Space", VirtualKey.VK_SPACE },
             { "CapsLock", VirtualKey.VK_CAPITAL },
             { "ScrollLock", VirtualKey.VK_SCROLL },
-            { "PrintScreen", VirtualKey.VK_PRINT },
+            { "PrintScreen", VirtualKey.VK_SNAPSHOT },
             { "NumberLock", VirtualKey.VK_NUMLOCK },
             { "Enter", VirtualKey.VK_RETURN },
             { "Escape", VirtualKey.VK_ESCAPE },

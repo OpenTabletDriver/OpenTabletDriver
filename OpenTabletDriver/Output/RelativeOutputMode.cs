@@ -25,6 +25,7 @@ namespace OpenTabletDriver.Output
 
         private Vector2? _lastPos;
         private bool _skipReport;
+        private bool _outOfRange;
 
         /// <summary>
         /// The class in which the final relative positioned output is handled.
@@ -88,6 +89,10 @@ namespace OpenTabletDriver.Output
         protected override IAbsolutePositionReport? Transform(IAbsolutePositionReport report)
         {
             var deltaTime = _stopwatch.Restart();
+            if (_outOfRange && report.Position == _lastPos)
+                return null;
+
+            _outOfRange = false;
 
             var pos = Vector2.Transform(report.Position, TransformationMatrix);
             var delta = pos - _lastPos;
@@ -106,20 +111,29 @@ namespace OpenTabletDriver.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
-                eraserHandler.SetEraser(eraserReport.Eraser);
-            if (report is IAbsolutePositionReport absReport)
-                Pointer.SetPosition(absReport.Position);
-            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
-                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Configuration.Specifications.Pen!.MaxPressure);
-            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
-                tiltHandler.SetTilt(tiltReport.Tilt);
+            // this should be ordered from least to most chance of having a
+            // dependency to another pointer property. for example, proximity
+            // should be set before position, because in LinuxArtistMode
+            // the SetPosition method is dependent on the proximity state.
             if (report is IHoverReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
                 hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
+                eraserHandler.SetEraser(eraserReport.Eraser);
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+                tiltHandler.SetTilt(tiltReport.Tilt);
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Configuration.Specifications.Pen!.MaxPressure);
+
+            // make sure to set the position last
+            if (report is IAbsolutePositionReport absReport)
+                Pointer.SetPosition(absReport.Position);
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
+                {
+                    _outOfRange = true;
                     synchronousPointer.Reset();
+                }
                 synchronousPointer.Flush();
             }
         }

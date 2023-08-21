@@ -128,7 +128,7 @@ namespace OpenTabletDriver
                                 }
 
                                 var pair = pairList[pairIndex];
-                                pair.Auxiliary = digitizerEndpoint;
+                                pair.Auxiliary = auxEndpoint;
                                 Log.Debug("Detect", $"Found '{candidateConfig.Name}' auxiliary: '{deviceName}'");
                                 break;
                             }
@@ -156,7 +156,7 @@ namespace OpenTabletDriver
                     }
                     catch (Exception ex)
                     {
-                        Log.Exception(ex);
+                        Log.Exception(ex, LogLevel.Warning);
                     }
                 }
 
@@ -255,7 +255,7 @@ namespace OpenTabletDriver
                 }
                 catch (Exception ex)
                 {
-                    Log.Exception(ex);
+                    Log.Exception(ex, LogLevel.Debug);
                     return false;
                 }
             }

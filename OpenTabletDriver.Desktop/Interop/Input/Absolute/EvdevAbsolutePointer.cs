@@ -54,7 +54,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)pos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)pos.Y);
-            Device.Sync();
         }
     }
 }

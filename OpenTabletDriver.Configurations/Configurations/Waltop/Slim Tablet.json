@@ -1,0 +1,39 @@
+{
+  "Name": "Waltop Slim Tablet 5.8\"",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 127.0,
+      "Height": 76.2,
+      "MaxX": 10000.0,
+      "MaxY": 6000.0
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 5935,
+      "ProductID": 50,
+      "InputReportLength": 8,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParserV2",
+      "FeatureInitReport": [
+        "AgQA",
+        "AgIA",
+        "AhAB"
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

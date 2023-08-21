@@ -1,0 +1,12 @@
+usr/bin/otd
+usr/bin/otd-daemon
+usr/bin/otd-gui
+usr/lib/modprobe.d/99-opentabletdriver.conf
+usr/lib/opentabletdriver/*
+usr/lib/systemd/user/opentabletdriver.service
+usr/lib/udev/rules.d/90-opentabletdriver.rules
+usr/share/applications/opentabletdriver.desktop
+usr/share/man/man8/opentabletdriver.8.gz
+usr/share/doc/opentabletdriver/LICENSE
+usr/share/pixmaps/otd.ico
+usr/share/pixmaps/otd.png
