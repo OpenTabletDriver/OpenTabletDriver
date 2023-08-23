@@ -72,7 +72,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "GM001_T213_\\d{6}$"
+        "201": "GM001_(T213|T216)_\\d{6}$"
       },
       "InitializationStrings": [
         200
