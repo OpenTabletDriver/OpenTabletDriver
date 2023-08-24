@@ -28,6 +28,7 @@ namespace OpenTabletDriver.Configurations
                         ButtonCount = 6U
                     },
                     MouseButtons = null,
+                    Wheel = null,
                     Touch = null
                 },
                 DigitizerIdentifiers = new global::System.Collections.Generic.List<global::OpenTabletDriver.Tablet.DeviceIdentifier>()

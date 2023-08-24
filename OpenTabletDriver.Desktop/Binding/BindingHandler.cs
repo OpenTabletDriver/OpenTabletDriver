@@ -14,6 +14,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private readonly InputDevice _device;
         private readonly IServiceProvider _serviceProvider;
         private bool _isEraser;
+        private uint? _lastWheelPosition = null;
 
         public BindingHandler(IServiceProvider serviceProvider, InputDevice device, BindingSettings settings, IMouseButtonHandler? mouseButtonHandler = null)
         {
@@ -41,6 +42,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
             MouseScrollDown = CreateBindingState<BindingState>(settings.MouseScrollDown, device, mouseButtonHandler);
             MouseScrollUp = CreateBindingState<BindingState>(settings.MouseScrollUp, device, mouseButtonHandler);
+
+            WheelClockwise = CreateBindingState<BindingState>(settings.WheelClockwise, device, mouseButtonHandler);
+            WheelCounterClockwise = CreateBindingState<BindingState>(settings.WheelCounterClockwise, device, mouseButtonHandler);
         }
 
         private ThresholdBindingState? Tip { get; }
@@ -52,6 +56,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private BindingState? MouseScrollDown { get; }
         private BindingState? MouseScrollUp { get; }
+
+        private BindingState? WheelClockwise { get; }
+        private BindingState? WheelCounterClockwise { get; }
 
         public event Action<IDeviceReport>? Emit;
 
@@ -74,6 +81,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleTabletReport(device.Configuration.Specifications.Pen!, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(auxReport);
+            if(report is IAbsoluteWheelReport absoluteWheelReport)
+                HandleAbsoluteWheelReport(absoluteWheelReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(mouseReport);
         }
@@ -109,6 +118,40 @@ namespace OpenTabletDriver.Desktop.Binding
             HandleBindingCollection(report, AuxButtons, report.AuxButtons);
         }
 
+        private void HandleAbsoluteWheelReport(IAbsoluteWheelReport report)
+        {
+            var wheelSpec = _device.Configuration.Specifications.Wheel;
+            if (wheelSpec == null)
+                return;
+
+            if (_lastWheelPosition == null || report.WheelPosition == null)
+            {
+                //First/last report, do nothing (technically could be a wheel pressed event)
+            }
+            else
+            {
+                var movement =
+                    ComputeShortCircleDistance(_lastWheelPosition.Value, report.WheelPosition.Value, wheelSpec.StepCount);
+
+                //If we ever support Relative Wheels, everything below could possibly be turned into a virtual relative wheel.
+                movement *= wheelSpec.IsClockwise ? 1 : -1;
+
+                WheelClockwise?.Invoke(report, movement < 0);
+                WheelCounterClockwise?.Invoke(report, movement > 0);
+            }
+
+            _lastWheelPosition = report.WheelPosition;
+        }
+
+        private long ComputeShortCircleDistance(uint from, uint to, uint steps)
+        {
+            var halfSteps = steps / 2;
+            var treeHalf = halfSteps * 3;
+
+            var movement = (((int)to - from + treeHalf) % steps) - halfSteps;
+            return movement;
+        }
+
         private void HandleMouseReport(IMouseReport report)
         {
             HandleBindingCollection(report, MouseButtons, report.MouseButtons);
@@ -117,6 +160,13 @@ namespace OpenTabletDriver.Desktop.Binding
             MouseScrollUp?.Invoke(report, report.Scroll.Y > 0);
         }
 
+        /// <summary>
+        /// Updates the button(binding) states for a collection of bindings based upon an array of buttons reported by a device
+        /// </summary>
+        /// <param name="report">The report from the device</param>
+        /// <param name="bindings">The collection of bindings we are updating</param>
+        /// <param name="newStates">New states of the updated bindings</param>
+        /// <param name="offset">An offset into <paramref name="bindings"/> before <paramref name="newStates"/> applies</param>
         private static void HandleBindingCollection(IDeviceReport report, IDictionary<int, BindingState?>? bindings, IList<bool> newStates)
         {
             for (var i = 0; i < newStates.Count; i++)
