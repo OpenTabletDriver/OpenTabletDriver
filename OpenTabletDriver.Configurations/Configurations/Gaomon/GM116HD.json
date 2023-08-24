@@ -2,16 +2,14 @@
   "Name": "Gaomon GM116HD",
   "Specifications": {
     "Digitizer": {
-      "Width": 257.4,
-      "Height": 143.6,
-      "MaxX": 51480.0,
-      "MaxY": 28680.0
+      "Width": 256.3,
+      "Height": 144.2,
+      "MaxX": 51260,
+      "MaxY": 28840
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -36,7 +34,7 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }
