@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR
+[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR | [Nederlands](README_NL.md)
 
 OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de tablet configurável pelo usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
 
@@ -28,7 +28,7 @@ Todos os status dos tablets que estão suportados, não testados ou que estão e
 
 O OpenTabletDriver funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todos o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
 
-> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida. 
+> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida.
 
 ## Buildando OpenTabletDriver da fonte
 
