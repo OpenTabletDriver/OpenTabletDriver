@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [Português-BR](docs/README_PTBR.md) | Nederlands
+[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md) | Nederlands
 
 OpenTabletDriver is een open source, gebruikersmodus tablet-stuurprogramma voor meerdere platformen. Het doel van OpenTabletDriver is om zo veel mogelijk platformen te ondersteunem met de hoogste compatibiliteit in een makkelijk configureerbare grafische gebruikersinterface.
 
