@@ -13,7 +13,7 @@ echo "RPMizing..."
 mkdir -p "${output}"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 echo "Making a source tarball..."
-create_source_tarball "${OTD_LNAME}-${OTD_VERSION}" | gzip -c > "${output}/SOURCES/${OTD_LNAME}-${OTD_VERSION}.tar.gz"
+create_source_tarball_gz "${OTD_LNAME}-${OTD_VERSION}" > "${output}/SOURCES/${OTD_LNAME}-${OTD_VERSION}.tar.gz"
 
 echo "Generating ${OTD_LNAME}.spec..."
 cat << EOF > "${output}/SPECS/${OTD_LNAME}.spec"
@@ -60,7 +60,8 @@ ${OTD_LONG_DESC2}
 %install
 export DONT_STRIP=1
 PREFIX="%{_prefix}" ./eng/linux/package.sh --package Generic --build false
-mv ./dist/files/* "%{buildroot}"
+mkdir -p "%{buildroot}"
+mv ./dist/files/* "%{buildroot}"/
 rm -rf ./dist
 mkdir -p "%{buildroot}/%{_prefix}/lib/"
 cp -r bin "%{buildroot}/%{_prefix}/lib/opentabletdriver"
