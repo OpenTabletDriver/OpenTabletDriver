@@ -187,8 +187,9 @@ namespace OpenTabletDriver.Daemon
 
                     if (dev.OutputMode is IOutputMode outputMode)
                     {
-                        SetOutputModeSettings(dev, outputMode, profile, tabletReference);
-                        SetBindingHandlerSettings(dev, outputMode, profile.BindingSettings, tabletReference);
+                        outputMode.Tablet = tabletReference;
+                        var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
+                        SetOutputModeElements(dev, outputMode, profile, bindingHandler);
                     }
                 }
 
@@ -298,17 +299,16 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetOutputModeSettings(InputDeviceTree dev, IOutputMode outputMode, Profile profile, TabletReference tabletReference)
+        private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
         {
             string group = dev.Properties.Name;
-            outputMode.Tablet = dev;
 
             var elements = from store in profile.Filters
-                           where store.Enable == true
-                           let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(tabletReference)
+                           where store.Enable
+                           let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
                            where filter != null
                            select filter;
-            outputMode.Elements = elements.ToList();
+            outputMode.Elements = elements.Append(bindingHandler).ToList();
 
             if (outputMode.Elements != null && outputMode.Elements.Count > 0)
                 Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
@@ -360,10 +360,11 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void SetBindingHandlerSettings(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings, TabletReference tabletReference)
+        private static BindingHandler CreateBindingHandler(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings)
         {
             string group = dev.Properties.Name;
-            var bindingHandler = new BindingHandler(outputMode);
+            var tabletReference = outputMode.Tablet;
+            var bindingHandler = new BindingHandler(tabletReference);
 
             var bindingServiceProvider = new ServiceManager();
             object? pointer = outputMode switch
@@ -431,9 +432,11 @@ namespace OpenTabletDriver.Daemon
             {
                 Log.Write(group, $"Mouse Scroll: Up: [{scrollUp?.Binding}] Down: [{scrollDown?.Binding}]");
             }
+
+            return bindingHandler;
         }
 
-        private void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict, TabletReference tabletReference)
+        private static void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict, TabletReference tabletReference)
         {
             for (int index = 0; index < collection.Count; index++)
             {
