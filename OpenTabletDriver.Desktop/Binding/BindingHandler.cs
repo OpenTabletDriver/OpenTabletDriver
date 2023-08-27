@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
@@ -10,15 +9,11 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginIgnore]
-    public class BindingHandler : IPipelineElement<IDeviceReport>
+    public class BindingHandler : IPositionedPipelineElement<IDeviceReport>
     {
-        public BindingHandler(IOutputMode outputMode)
+        public BindingHandler(TabletReference tablet)
         {
-            this.outputMode = outputMode;
-
-            // Force consume all reports from the last element
-            var lastElement = this.outputMode.Elements?.LastOrDefault() ?? (IPipelineElement<IDeviceReport>)outputMode;
-            lastElement.Emit += Consume;
+            this.tablet = tablet;
         }
 
         public ThresholdBindingState? Tip { set; get; }
@@ -31,21 +26,20 @@ namespace OpenTabletDriver.Desktop.Binding
         public BindingState? MouseScrollDown { set; get; }
         public BindingState? MouseScrollUp { set; get; }
 
-        private readonly IOutputMode outputMode;
+        public PipelinePosition Position => PipelinePosition.PostTransform;
+
+        private readonly TabletReference tablet;
 
         public event Action<IDeviceReport>? Emit;
 
         public void Consume(IDeviceReport report)
         {
-            HandleBinding(outputMode.Tablet, report);
+            HandleBinding(report);
             Emit?.Invoke(report);
         }
 
-        public void HandleBinding(TabletReference tablet, IDeviceReport report)
+        public void HandleBinding(IDeviceReport report)
         {
-            if (tablet == null)
-                return;
-
             if (report is ITabletReport tabletReport)
                 HandleTabletReport(tablet, tablet.Properties.Specifications.Pen, tabletReport);
             if (report is IAuxReport auxReport)
