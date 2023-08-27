@@ -65,6 +65,7 @@
 | VEIKK VK640                   |     Supported     |
 | ViewSonic WoodPad PF0730      |     Supported     |
 | Wacom CTE-430                 |     Supported     |
+| Wacom CTE-440                 |     Supported     |
 | Wacom CTE-460                 |     Supported     |
 | Wacom CTE-630                 |     Supported     |
 | Wacom CTE-640                 |     Supported     |
@@ -99,7 +100,12 @@
 | Wacom GD-0405-U               |     Supported     |
 | Wacom GD-0608-U               |     Supported     |
 | Wacom GD-0912-U               |     Supported     |
+| Wacom GD-1212-U               |     Supported     |
+| Wacom GD-1218-U               |     Supported     |
+| Wacom XD-0405-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
+| Wacom XD-0912-U               |     Supported     |
+| Wacom XD-1212-U               |     Supported     |
 | Wacom XD-1218-U               |     Supported     |
 | Waltop Slim Tablet 5.8"       |     Supported     |
 | XenceLabs Pen Tablet Medium   |     Supported     |
@@ -159,6 +165,7 @@
 | Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
 | Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
 | Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
+| Huion G10T                    |  Missing Features | Touchpad is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
 | Huion GT-221                  |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
@@ -205,12 +212,15 @@
 | Wacom PTH-860                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-1240                |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-440                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-540WL               |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-640                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-650                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-840                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTZ-1230                |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-431W                |  Missing Features | Touch bars are not yet supported.
+| Wacom PTZ-430                 |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-630                 |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-631W                |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-930                 |  Missing Features | Touch bars are not yet supported.
@@ -230,13 +240,3 @@
 | XP-Pen Innovator 16           |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is not yet supported.
-| Wacom ISD-V4                  |      Broken       | [#394](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/394)
-| Huion G10T                    |     Untested      |
-| Wacom CTE-440                 |     Untested      |
-| Wacom GD-1218-U               |     Untested      |
-| Wacom PTK-450                 |     Untested      |
-| Wacom PTK-650                 |     Untested      |
-| Wacom PTZ-430                 |     Untested      |
-| Wacom XD-0405-U               |     Untested      |
-| Wacom XD-0912-U               |     Untested      |
-| Wacom XD-1212-U               |     Untested      |
