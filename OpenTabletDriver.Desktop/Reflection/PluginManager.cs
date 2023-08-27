@@ -88,6 +88,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             var children = from type in PluginTypes
                            where typeof(T).IsAssignableFrom(type)
+                           where !IsPluginIgnored(type)
                            select type;
 
             return children.ToArray();
