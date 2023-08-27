@@ -236,7 +236,6 @@ namespace OpenTabletDriver.Daemon
                         Log.Write(group, $"Output mode: {outputModeName}");
 
                         var outputMode = device.OutputMode;
-                        SetOutputModeSettings(device, outputMode, profile);
 
                         var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
 
@@ -248,10 +247,7 @@ namespace OpenTabletDriver.Daemon
                         }.Where(o => o != null).ToArray() as object[];
 
                         var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
-
-                        var lastElement = outputMode.Elements?.LastOrDefault() ??
-                                        outputMode as IPipelineElement<IDeviceReport>;
-                        lastElement.Emit += bindingHandler.Consume;
+                        SetOutputModeElements(device, outputMode, profile, bindingHandler);
                     }
                 }
 
@@ -306,7 +302,7 @@ namespace OpenTabletDriver.Daemon
             await DetectTablets();
         }
 
-        private void SetOutputModeSettings(InputDevice dev, IOutputMode outputMode, Profile profile)
+        private void SetOutputModeElements(InputDevice dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
         {
             string group = dev.Configuration.Name;
 
@@ -316,7 +312,7 @@ namespace OpenTabletDriver.Daemon
                 where filter != null
                 select filter;
 
-            outputMode.Elements = elements.ToList();
+            outputMode.Elements = elements.Append(bindingHandler).ToList();
 
             if (outputMode.Elements.Any())
                 Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");

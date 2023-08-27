@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
@@ -9,7 +10,8 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
-    public class BindingHandler : IPipelineElement<IDeviceReport>
+    [PluginIgnore]
+    public class BindingHandler : IDevicePipelineElement
     {
         private readonly InputDevice _device;
         private readonly IServiceProvider _serviceProvider;
@@ -19,12 +21,6 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             _serviceProvider = serviceProvider;
             _device = device;
-
-            var outputMode = _device.OutputMode!;
-
-            // Force consume all reports from the last element
-            var lastElement = outputMode.Elements?.LastOrDefault() ?? (IPipelineElement<IDeviceReport>)outputMode;
-            lastElement.Emit += Consume;
 
             Tip = CreateBindingState<ThresholdBindingState>(settings.TipButton, device, mouseButtonHandler);
 
@@ -52,6 +48,8 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private BindingState? MouseScrollDown { get; }
         private BindingState? MouseScrollUp { get; }
+
+        public PipelinePosition Position => PipelinePosition.PostTransform;
 
         public event Action<IDeviceReport>? Emit;
 
