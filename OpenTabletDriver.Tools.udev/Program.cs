@@ -37,7 +37,8 @@ namespace OpenTabletDriver.Tools.udev
                     new Token("KERNEL", Operator.Equal, "uinput"),
                     new Token("SUBSYSTEM", Operator.Equal, "misc"),
                     new Token("OPTIONS", Operator.Add, "static_node=uinput"),
-                    new Token("TAG", Operator.Add, "uaccess")
+                    new Token("TAG", Operator.Add, "uaccess"),
+                    new Token("TAG", Operator.Add, "udev-acl")
                 )
             );
 
@@ -52,10 +53,11 @@ namespace OpenTabletDriver.Tools.udev
 
                 Console.WriteLine(
                     new Rule(
-                        new Token("SUBSYSTEM", Operator.Equal, "hidraw"),
+                        new Token("KERNEL", Operator.Equal, "hidraw*"),
                         new ATTRS("idVendor", Operator.Equal, identifier.VendorId.ToHexFormat()),
                         new ATTRS("idProduct", Operator.Equal, identifier.ProductId.ToHexFormat()),
-                        new Token("MODE", Operator.Assign, "0666")
+                        new Token("TAG", Operator.Add, "uaccess"),
+                        new Token("TAG", Operator.Add, "udev-acl")
                     )
                 );
 
@@ -64,7 +66,8 @@ namespace OpenTabletDriver.Tools.udev
                         new Token("SUBSYSTEM", Operator.Equal, "usb"),
                         new ATTRS("idVendor", Operator.Equal, identifier.VendorId.ToHexFormat()),
                         new ATTRS("idProduct", Operator.Equal, identifier.ProductId.ToHexFormat()),
-                        new Token("MODE", Operator.Assign, "0666")
+                        new Token("TAG", Operator.Add, "uaccess"),
+                        new Token("TAG", Operator.Add, "udev-acl")
                     )
                 );
 
