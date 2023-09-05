@@ -36,13 +36,13 @@ jobs:
           path: build/linux-x64
 
       - name: Generate udev Rules
-        run: ./generate-rules.sh
+        run: ./generate-rules.sh > 70-opentabletdriver.rules
 
       - name: Upload udev Rules
         uses: actions/upload-artifact@master
         with:
           name: udev Rules
-          path: bin/99-opentabletdriver.rules
+          path: 70-opentabletdriver.rules
 
   macospublish:
     runs-on: ubuntu-latest
