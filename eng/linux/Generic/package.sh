@@ -6,6 +6,9 @@ PKG_FILE="files"
 output="$(readlink -f "${1}")"
 PREFIX="${PREFIX:-usr}"
 
+# strip last slash if present
+output="${output%/}"
+
 if [ "${BUILD}" == "true" ]; then
   move_to_nested "${output}" "${output}/${PREFIX}/lib/opentabletdriver"
 else
@@ -20,9 +23,9 @@ copy_pixmap_assets "${output}/${PREFIX}/share/pixmaps"
 copy_manpage "${output}/${PREFIX}/share/man"
 
 if [ "${MOVE_RULES_TO_ETC}" == "true" ]; then
-  generate_rules "${output}/etc/udev/rules.d/90-opentabletdriver.rules"
+  generate_rules "${output}/etc/udev/rules.d/70-opentabletdriver.rules"
 else
-  generate_rules "${output}/${PREFIX}/lib/udev/rules.d/90-opentabletdriver.rules"
+  generate_rules "${output}/${PREFIX}/lib/udev/rules.d/70-opentabletdriver.rules"
 fi
 
 generate_desktop_file "${output}/${PREFIX}/share/applications/opentabletdriver.desktop"
