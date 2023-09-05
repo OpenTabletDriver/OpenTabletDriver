@@ -78,6 +78,7 @@ cp -r bin "%{buildroot}/%{_prefix}/lib/opentabletdriver"
 %{_bindir}/otd-daemon
 %{_bindir}/otd-gui
 %{_prefix}/lib/modprobe.d/99-opentabletdriver.conf
+%{_prefix}/lib/modules-load.d/opentabletdriver.conf
 %{_prefix}/lib/opentabletdriver/*
 %{_prefix}/lib/systemd/user/opentabletdriver.service
 %{_prefix}/lib/udev/rules.d/99-opentabletdriver.rules
