@@ -81,7 +81,7 @@ cp -r bin "%{buildroot}/%{_prefix}/lib/opentabletdriver"
 %{_prefix}/lib/modules-load.d/opentabletdriver.conf
 %{_prefix}/lib/opentabletdriver/*
 %{_prefix}/lib/systemd/user/opentabletdriver.service
-%{_prefix}/lib/udev/rules.d/99-opentabletdriver.rules
+%{_prefix}/lib/udev/rules.d/70-opentabletdriver.rules
 %{_prefix}/share/applications/opentabletdriver.desktop
 %{_prefix}/share/man/man8/opentabletdriver.8.gz
 %{_prefix}/share/doc/opentabletdriver/LICENSE

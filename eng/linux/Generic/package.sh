@@ -23,9 +23,9 @@ copy_pixmap_assets "${output}/${PREFIX}/share/pixmaps"
 copy_manpage "${output}/${PREFIX}/share/man"
 
 if [ "${MOVE_RULES_TO_ETC}" == "true" ]; then
-  generate_rules "${output}/etc/udev/rules.d/99-opentabletdriver.rules"
+  generate_rules "${output}/etc/udev/rules.d/70-opentabletdriver.rules"
 else
-  generate_rules "${output}/${PREFIX}/lib/udev/rules.d/99-opentabletdriver.rules"
+  generate_rules "${output}/${PREFIX}/lib/udev/rules.d/70-opentabletdriver.rules"
 fi
 
 generate_desktop_file "${output}/${PREFIX}/share/applications/opentabletdriver.desktop"
