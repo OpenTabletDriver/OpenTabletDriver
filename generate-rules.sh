@@ -16,7 +16,7 @@ elif [ $# -ne 2 ]; then
     exit 1
 fi
 
-mkdir -p "$(basename "${RULES_FILE}")"
+mkdir -p "$(dirname "${RULES_FILE}")"
 
 if [ "${RULES_FILE}" = "-" ]; then
     RULES_FILE="/dev/stdout"
