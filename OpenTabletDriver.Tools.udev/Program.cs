@@ -36,14 +36,7 @@ namespace OpenTabletDriver.Tools.udev
                 new Rule(
                     new Token("KERNEL", Operator.Equal, "uinput"),
                     new Token("SUBSYSTEM", Operator.Equal, "misc"),
-                    new Token("OPTIONS", Operator.Add, "static_node=uinput")
-                )
-            );
-
-            Console.WriteLine(
-                new Rule(
-                    new Token("KERNEL", Operator.Equal, "uinput"),
-                    new Token("SUBSYSTEM", Operator.Equal, "misc"),
+                    new Token("OPTIONS", Operator.Add, "static_node=uinput"),
                     new Token("TAG", Operator.Add, "uaccess")
                 )
             );
