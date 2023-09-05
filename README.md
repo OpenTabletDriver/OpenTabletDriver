@@ -44,33 +44,27 @@ Run `build.ps1` to produce binary builds to 'bin' folder. These builds will run 
 
 #### Linux
 
-Required packages (some packages may be pre-installed for your distribution)
+Required packages (some packages may be pre-installed for your distribution):
 
 - libx11
 - libxrandr
 - libevdev2
 - GTK+3
 
-To build on Linux, run the provided 'build.sh' file. This will run the
-same 'dotnet publish' commands used for building the AUR package, and
-will produce usable binaries in 'OpenTabletDriver/bin'.
+Run `./eng/linux/package.sh`. If a "package" build is desired,
+there are official support for the following packaging formats:
 
-To build on ARM linux, run the provided 'build.sh' file with the
-appropriate runtime provided as an argument. For arm64, this is
-'linux-arm64'.
+| Package Format | Command |
+| --- | --- |
+| Generic binary tarball (`.tar.gz`) | `./eng/linux/package.sh --package BinaryTarBall` |
+| Debian package (`.deb`) | `./eng/linux/package.sh --package Debian` |
+| Red Hat package (`.rpm`) | `./eng/linux/package.sh --package RedHat` |
 
-Note: If building for the first time, run the included
-generate-rules.sh script. This will generate a set of udev rules in
-OpenTabletDriver/bin, called '99-opentabletdriver.rules'. This file
-should then be moved to `/etc/udev/rules.d/`:
-
-```
-sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
-```
+The generic binary tarball is designed to be extracted from the root directory.
 
 #### MacOS [Experimental]
 
-No other dependencies.
+Run `./eng/macos/package.sh --package true`.
 
 # Features
 
