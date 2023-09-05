@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Tablet;
+using udev.NET.Rules;
 
 namespace OpenTabletDriver.Tools.udev
 {
@@ -51,7 +52,18 @@ namespace OpenTabletDriver.Tools.udev
 
         static IEnumerable<string> CreateRules(DirectoryInfo directory)
         {
-            yield return RuleGenerator.CreateAccessRule("uinput", "misc");
+            yield return new Rule(
+                new Token("KERNEL", Operator.Equal, "uinput"),
+                new Token("SUBSYSTEM", Operator.Equal, "misc"),
+                new Token("OPTIONS", Operator.Add, "static_node=uinput")
+            );
+
+            yield return new Rule(
+                new Token("KERNEL", Operator.Equal, "uinput"),
+                new Token("SUBSYSTEM", Operator.Equal, "misc"),
+                new Token("TAG", Operator.Add, "uaccess")
+            );
+
             foreach (var tablet in GetAllConfigurations(directory))
             {
                 if (string.IsNullOrWhiteSpace(tablet.Name))

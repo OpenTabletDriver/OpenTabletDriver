@@ -9,16 +9,6 @@ namespace OpenTabletDriver.Tools.udev
 {
     internal static class RuleGenerator
     {
-        public static Rule CreateAccessRule(string module, string subsystem)
-        {
-            return new Rule(
-                new Token("KERNEL", Operator.Equal, module),
-                new Token("SUBSYSTEM", Operator.Equal, subsystem),
-                new Token("TAG", Operator.Add, "uaccess"),
-                new Token("OPTIONS", Operator.Add, $"static_node={module}")
-            );
-        }
-
         private static IEnumerable<DeviceIdentifier> GetDistinctIdentifiers(TabletConfiguration config)
         {
             var allIdentifiers = config.DigitizerIdentifiers.Concat(config.AuxilaryDeviceIdentifiers);
