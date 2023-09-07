@@ -12,12 +12,6 @@
     </NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>otd-udev</ToolCommandName>
-    <PackageOutputPath>./nupkg</PackageOutputPath>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="udev.NET" Version="1.0.0" />
   </ItemGroup>

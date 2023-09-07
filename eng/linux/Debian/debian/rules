@@ -6,9 +6,9 @@ SHELL=/usr/bin/env bash
 
 override_dh_auto_build:
 	./eng/linux/package.sh --output bin
+	PREFIX=usr ./eng/linux/package.sh --package Generic --build false
 
 override_dh_auto_install:
-	PREFIX=usr ./eng/linux/package.sh --package Generic --build false
 	mkdir -p ./debian/tmp
 	mv ./dist/files/* ./debian/tmp/
 	rm -rf ./dist
