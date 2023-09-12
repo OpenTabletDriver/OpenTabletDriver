@@ -171,6 +171,7 @@
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
 | Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
+| Huion H951P                   |  Missing Features | 'Wheel-up' and 'Wheel-down' duplicate two regular buttons. Switching groups is not yet supported; group selectors are mapped as regular buttons.
 | Huion HC16                    |  Missing Features | Wheel is not yet supported.
 | Huion HS610                   |  Missing Features | Wheel is not yet supported.
 | Huion HS611                   |  Missing Features | Touch bar is not yet supported.
