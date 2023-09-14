@@ -276,6 +276,7 @@ move_to_nested() {
   local nested="${2}"
 
   local contents="$(echo "${source}"/*)"
+  echo "Moving ${source} to ${nested}..."
   mkdir -p "${nested}"
   mv ${contents} "${nested}"
 }
@@ -302,6 +303,11 @@ copy_manpage() {
 }
 
 create_source_tarball() {
-  local output_file_name="${1}"
-  git archive --format=tar --prefix="${output_file_name}/" HEAD
+  local prefix="${1}"
+  git archive --format=tar --prefix="${prefix}/" HEAD
+}
+
+create_source_tarball_gz() {
+  local prefix="${1}"
+  git archive --format=tar.gz --prefix="${prefix}/" HEAD
 }

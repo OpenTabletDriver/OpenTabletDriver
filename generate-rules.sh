@@ -3,21 +3,23 @@
 set -eu
 
 SRC_ROOT=$(readlink -f $(dirname ${BASH_SOURCE[0]}))
-[ ! -d "${SRC_ROOT}" ] && exit 100;
-
 PROJECT="${SRC_ROOT}/OpenTabletDriver.Tools.udev"
 
-TABLET_CONFIGURATIONS="${SRC_ROOT}/OpenTabletDriver.Configurations/Configurations"
-RULES_FILE="${SRC_ROOT}/bin/99-opentabletdriver.rules"
-
-if [ "$#" -gt 0 ]; then
-  # Pass arguments to utility instead of using defaults
-  dotnet_args=($@)
-else
-  [ ! -d "${TABLET_CONFIGURATIONS}" ] && exit 101;
-  dotnet_args=("-v" "${TABLET_CONFIGURATIONS}" "${RULES_FILE}")
+if [ $# -eq 2 ]; then
+    TABLET_CONFIGURATIONS="${1}"
+    RULES_FILE="${2}"
+elif [ $# -eq 0 ]; then
+    TABLET_CONFIGURATIONS="${SRC_ROOT}/OpenTabletDriver.Configurations/Configurations"
+    RULES_FILE="-"
+elif [ $# -ne 2 ]; then
+    echo "Usage: ${0} <configuration folder> <output file>"
+    exit 1
 fi
 
-echo "Generating udev rules..."
+mkdir -p "$(dirname "${RULES_FILE}")"
 
-dotnet run --project "${PROJECT}" -- ${dotnet_args[@]}
+if [ "${RULES_FILE}" = "-" ]; then
+    RULES_FILE="/dev/stdout"
+fi
+
+dotnet run --project "${PROJECT}" -- "${TABLET_CONFIGURATIONS}" > "${RULES_FILE}"

@@ -29,3 +29,6 @@ dotnet_sort_system_directives_first = true
 
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2
+
+[**/debian/rules]
+indent_style = tab

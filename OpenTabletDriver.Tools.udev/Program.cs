@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using OpenTabletDriver.Tablet;
+using udev.NET.Rules;
+using udev.NET.Rules.Names;
 
 namespace OpenTabletDriver.Tools.udev
 {
@@ -15,63 +18,76 @@ namespace OpenTabletDriver.Tools.udev
         {
             var root = new RootCommand("OpenTabletDriver udev rule tool")
             {
-                new Argument<DirectoryInfo>("directory"),
-                new Argument<FileInfo>("output"),
-                new Option(new string[] { "--verbose", "-v" }, "Verbose output")
+                new Argument<DirectoryInfo>("directory")
             };
 
-            root.Handler = CommandHandler.Create<DirectoryInfo, FileInfo, bool>(WriteRules);
+            root.Handler = CommandHandler.Create<DirectoryInfo>(WriteRules);
             root.Invoke(args);
         }
 
-        private static async Task WriteRules(DirectoryInfo directory, FileInfo output, bool verbose = false)
+        static void WriteRules(DirectoryInfo directory)
         {
-            if (output.Exists)
-                output.Delete();
-            if (!output.Directory!.Exists)
-                output.Directory.Create();
+            Console.WriteLine(
+                "# Dynamically generated with the OpenTabletDriver.udev tool. " +
+                "https://github.com/OpenTabletDriver/OpenTabletDriver"
+            );
 
-            var path = output.FullName.Replace(Directory.GetCurrentDirectory(), string.Empty);
-            Console.WriteLine($"Writing all rules to '{path}'...");
-            await using (var sw = output.AppendText())
+            Console.WriteLine(
+                new Rule(
+                    new Token("KERNEL", Operator.Equal, "uinput"),
+                    new Token("SUBSYSTEM", Operator.Equal, "misc"),
+                    new Token("OPTIONS", Operator.Add, "static_node=uinput"),
+                    new Token("TAG", Operator.Add, "uaccess"),
+                    new Token("TAG", Operator.Add, "udev-acl")
+                )
+            );
+
+            var identifiers = GetAllIdentifiers(directory)
+                .OrderBy(x => x.Key.VendorId)
+                .ThenBy(x => x.Key.ProductId);
+
+            foreach (var (identifier, data) in identifiers)
             {
-                await sw.WriteLineAsync(
-                    "# Dynamically generated with the OpenTabletDriver.udev tool. " +
-                    "https://github.com/OpenTabletDriver/OpenTabletDriver"
+                foreach (var name in data.Names.OrderBy(name => name))
+                    Console.WriteLine($"# {name}");
+
+                Console.WriteLine(
+                    new Rule(
+                        new Token("KERNEL", Operator.Equal, "hidraw*"),
+                        new ATTRS("idVendor", Operator.Equal, identifier.VendorId.ToHexFormat()),
+                        new ATTRS("idProduct", Operator.Equal, identifier.ProductId.ToHexFormat()),
+                        new Token("TAG", Operator.Add, "uaccess"),
+                        new Token("TAG", Operator.Add, "udev-acl")
+                    )
                 );
-                foreach (var rule in CreateRules(directory))
+
+                Console.WriteLine(
+                    new Rule(
+                        new Token("SUBSYSTEM", Operator.Equal, "usb"),
+                        new ATTRS("idVendor", Operator.Equal, identifier.VendorId.ToHexFormat()),
+                        new ATTRS("idProduct", Operator.Equal, identifier.ProductId.ToHexFormat()),
+                        new Token("TAG", Operator.Add, "uaccess"),
+                        new Token("TAG", Operator.Add, "udev-acl")
+                    )
+                );
+
+                if (data.Flags.HasFlag(UdevDeviceFlags.LibInputOverride))
                 {
-                    await sw.WriteLineAsync(rule);
-                    if (verbose)
-                        Console.WriteLine(rule);
+                    Console.WriteLine(
+                        new Rule(
+                            new Token("SUBSYSTEM", Operator.Equal, "input"),
+                            new ATTRS("idVendor", Operator.Equal, identifier.VendorId.ToHexFormat()),
+                            new ATTRS("idProduct", Operator.Equal, identifier.ProductId.ToHexFormat()),
+                            new ENV("LIBINPUT_IGNORE_DEVICE", Operator.Assign, "1")
+                        )
+                    );
                 }
-            }
-            Console.WriteLine("Finished writing all rules.");
-        }
-
-        private static IEnumerable<string> CreateRules(DirectoryInfo directory)
-        {
-            yield return RuleGenerator.CreateAccessRule("uinput", "misc");
-            foreach (var tablet in GetAllConfigurations(directory))
-            {
-                if (string.IsNullOrWhiteSpace(tablet.Name))
-                    continue;
-                yield return string.Format("# {0}", tablet.Name);
-
-                foreach (var rule in RuleGenerator.CreateAccessRules(tablet, "hidraw", "0666"))
-                    yield return rule;
-
-                foreach (var rule in RuleGenerator.CreateAccessRules(tablet, "usb", "0666"))
-                    yield return rule;
-
-                if (tablet.Attributes.TryGetValue("libinputoverride", out var value) && (value == "1" || value.ToLower() == "true"))
-                    foreach (var rule in RuleGenerator.CreateOverrideRules(tablet))
-                        yield return rule;
             }
         }
 
         private static IEnumerable<TabletConfiguration> GetAllConfigurations(DirectoryInfo directory)
         {
+            var jsonSerializer = new JsonSerializer();
             var files = Directory.GetFiles(directory.FullName, "*.json", SearchOption.AllDirectories);
             foreach (var path in files)
             {
@@ -79,10 +95,41 @@ namespace OpenTabletDriver.Tools.udev
                 using (var fs = file.OpenRead())
                 using (var sr = new StreamReader(fs))
                 using (var jr = new JsonTextReader(sr))
-                    yield return JsonSerializer.Deserialize<TabletConfiguration>(jr)!;
+                    yield return jsonSerializer.Deserialize<TabletConfiguration>(jr)!;
             }
         }
 
-        private static readonly JsonSerializer JsonSerializer = new JsonSerializer();
+        static Dictionary<UdevDeviceIdentifier, UdevDeviceData> GetAllIdentifiers(DirectoryInfo directory)
+        {
+            var identifiers = new Dictionary<UdevDeviceIdentifier, UdevDeviceData>();
+            foreach (var tabletConfiguration in GetAllConfigurations(directory))
+            {
+                foreach (var identifier in tabletConfiguration.DigitizerIdentifiers)
+                    addIdentifier(tabletConfiguration, identifier);
+                foreach (var identifier in tabletConfiguration.AuxiliaryDeviceIdentifiers)
+                    addIdentifier(tabletConfiguration, identifier);
+            }
+
+            return identifiers;
+
+            void addIdentifier(TabletConfiguration config, DeviceIdentifier identifier)
+            {
+                var name = config.Name;
+                if (string.IsNullOrWhiteSpace(name))
+                    return;
+
+                var udevDeviceIdentifier = new UdevDeviceIdentifier(
+                    identifier.VendorID,
+                    identifier.ProductID
+                );
+
+                ref var data = ref CollectionsMarshal.GetValueRefOrAddDefault(identifiers, udevDeviceIdentifier, out _);
+                data ??= new UdevDeviceData();
+                data.Names.Add(name);
+
+                if (config.Attributes.TryGetValue("libinputoverride", out var value) && (value == "1" || value.ToLower() == "true"))
+                    data.Flags |= UdevDeviceFlags.LibInputOverride;
+            }
+        }
     }
 }
