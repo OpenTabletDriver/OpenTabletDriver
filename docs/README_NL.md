@@ -101,11 +101,11 @@ Geen andere afhankelijkheden.
 
 Bekijk de [issue tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/issues) als u wilt bijdragen aan OpenTabletDriver. Volg de richtlijnen zoals benoemd in onze [richtlijnen voor bijdragen](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md) wanneer u een pull request maakt.
 
-[Maak een issue ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) als u problemen of suggesties hebt. Vul de template in met relevante informatie. Zowel bug meldingen als tablets om te ondersteunen zijn welkom. Meestal is het ondersteunen van een tablet vrij eenvoudig.
+[Maak een issue ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) als u problemen of suggesties heeft. Vul de template in met relevante informatie. Zowel bug meldingen als tablets om te ondersteunen zijn welkom. Meestal is het ondersteunen van een tablet vrij eenvoudig.
 
-Voor problemen en PRs met betrekking tot de verpakking van OpenTabletDriver, bekijk alstublieft [hier](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging) de repository. 
+Voor problemen en PRs met betrekking tot de verpakking van OpenTabletDriver, bekijk alstublieft [hier](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging) de repository.
 
-Voor problemen en PRs met betrekking tot de webpagina van OpenTabletDriver, bekijk alstublieft [hier](https://github.com/OpenTabletDriver/OpenTabletDriver.Web) de repository. 
+Voor problemen en PRs met betrekking tot de webpagina van OpenTabletDriver, bekijk alstublieft [hier](https://github.com/OpenTabletDriver/OpenTabletDriver.Web) de repository.
 
 ### Een nieuwe tablet ondersteunen
 
