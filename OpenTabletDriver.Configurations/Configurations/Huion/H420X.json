@@ -40,7 +40,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T210_\\d{6}$"
+        "201": "HUION_(T210|T223)_\\d{6}$"
       },
       "InitializationStrings": [
         200
