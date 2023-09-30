@@ -30,7 +30,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 
-            Device.EnableType(EventType.INPUT_PROP_DIRECT);
+            Device.EnableProperty(InputProperty.INPUT_PROP_DIRECT);
+
             Device.EnableType(EventType.EV_ABS);
 
             var xAbs = new input_absinfo
