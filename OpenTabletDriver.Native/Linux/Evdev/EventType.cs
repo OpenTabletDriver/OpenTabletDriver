@@ -2,6 +2,7 @@ namespace OpenTabletDriver.Native.Linux.Evdev
 {
     public enum InputProperty : uint
     {
+        INPUT_PROP_POINTER = 0x00,
         INPUT_PROP_DIRECT = 0x01,
     }
 
