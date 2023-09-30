@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
@@ -26,7 +27,19 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
 
         [JsonProperty("Operating System")]
-        public OperatingSystem OperatingSystem { private set; get; } = Environment.OSVersion;
+        public IDictionary<string, string> OperatingSystem
+        {
+            get
+            {
+                switch (SystemInterop.CurrentPlatform)
+                {
+                    case SystemPlatform.Linux:
+                        return LinuxEtcOSRelease.Raw;
+                    default:
+                        return OSVersionToDict();
+                }
+            }
+        }
 
         [JsonProperty("Environment Variables")]
         public IDictionary<string, string> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
@@ -36,6 +49,17 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         [JsonProperty("Console Log")]
         public IEnumerable<LogMessage> ConsoleLog { private set; get; }
+
+        // behaves similarly to if Environment.OSVersion is passed directly to our serializer
+        private static IDictionary<string,string> OSVersionToDict()
+        {
+            IDictionary<string, string> rv = new Dictionary<string, string>();
+            rv.Add(nameof(Environment.OSVersion.Platform), Environment.OSVersion.Platform.ToString());
+            rv.Add(nameof(Environment.OSVersion.ServicePack), Environment.OSVersion.ServicePack);
+            rv.Add(nameof(Environment.OSVersion.Version), Environment.OSVersion.Version.ToString());
+            rv.Add(nameof(Environment.OSVersion.VersionString), Environment.OSVersion.VersionString);
+            return rv;
+        }
 
         private static string GetAppVersion()
         {
