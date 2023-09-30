@@ -31,6 +31,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 
             Device.EnableProperty(InputProperty.INPUT_PROP_DIRECT);
+            Device.EnableProperty(InputProperty.INPUT_PROP_POINTER);
 
             Device.EnableType(EventType.EV_ABS);
 
