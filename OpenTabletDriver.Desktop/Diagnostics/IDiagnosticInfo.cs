@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
     {
         string AppVersion { get; }
         string BuildDate { get; }
-        OperatingSystem OperatingSystem { get; }
+        IDictionary<string, string> OperatingSystem { get; }
         IDictionary<string, string> EnvironmentVariables { get; }
         IEnumerable<IDeviceEndpoint> Devices { get; }
         IEnumerable<LogMessage> ConsoleLog { get; }
