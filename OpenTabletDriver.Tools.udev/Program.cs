@@ -32,6 +32,16 @@ namespace OpenTabletDriver.Tools.udev
                 "https://github.com/OpenTabletDriver/OpenTabletDriver"
             );
 
+            //Prevent OpenTabletDriver from being recognized as joysticks.
+            Console.WriteLine(
+                new Rule(
+                    new Token("KERNEL", Operator.Equal, "js[0-9]*"),
+                    new Token("SUBSYSTEM", Operator.Equal, "input"),
+                    new ATTRS("name", Operator.Equal, "OpenTabletDriver Virtual Tablet"),
+                    new Token("RUN", Operator.Add, "/bin/rm %E{DEVNAME}")
+                )
+            );
+
             Console.WriteLine(
                 new Rule(
                     new Token("KERNEL", Operator.Equal, "uinput"),
