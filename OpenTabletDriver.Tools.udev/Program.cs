@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Tools.udev
                     new Token("KERNEL", Operator.Equal, "js[0-9]*"),
                     new Token("SUBSYSTEM", Operator.Equal, "input"),
                     new ATTRS("name", Operator.Equal, "OpenTabletDriver Virtual Tablet"),
-                    new Token("RUN", Operator.Add, "/bin/rm %E{DEVNAME}")
+                    new Token("RUN", Operator.Add, "/usr/bin/env rm %E{DEVNAME}")
                 )
             );
 
