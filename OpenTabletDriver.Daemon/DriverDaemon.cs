@@ -314,8 +314,8 @@ namespace OpenTabletDriver.Daemon
 
             outputMode.Elements = elements.Append(bindingHandler).ToList();
 
-            if (outputMode.Elements.Any())
-                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
+            if (outputMode.Elements.Count > 1)
+                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements.Where(e => e != bindingHandler))}");
         }
 
         private void SetToolSettings()
