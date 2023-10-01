@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -39,12 +40,15 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     .Where(p => WinProcessNames.Concat(Heuristics)
                     .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase)));
 
+                var status = DriverStatus.Blocking;
+                if (processes.Any())
+                    status |= DriverStatus.Active;
+
                 return new DriverInfo
                 {
                     Name = FriendlyName,
-                    Processes = processes.Any() ? processes.ToArray() : null,
-                    IsBlockingDriver = true,
-                    IsSendingInput = processes.Any()
+                    Processes = processes.Any() ? processes.ToArray() : Array.Empty<Process>(),
+                    Status = status
                 };
             }
 
@@ -58,8 +62,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 return new DriverInfo
                 {
                     Name = LinuxFriendlyName,
-                    IsBlockingDriver = true,
-                    IsSendingInput = true
+                    Status = DriverStatus.Active | DriverStatus.Blocking
                 };
             }
             else

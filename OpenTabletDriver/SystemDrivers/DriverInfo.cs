@@ -27,14 +27,9 @@ namespace OpenTabletDriver.SystemDrivers
         public Process[] Processes { get; internal set; }
 
         /// <summary>
-        /// Provides hints of whether this driver might interfere with OTD's detection mechanism, or prevent OTD from accessing the tablet.
+        /// Tells how this driver is currently affecting OpenTabletDriver's operations.
         /// </summary>
-        public bool IsBlockingDriver { get; internal set; }
-
-        /// <summary>
-        /// Returns true if this driver sends input to the operating system.
-        /// </summary>
-        public bool IsSendingInput { get; internal set; }
+        public DriverStatus Status { get; internal set; }
 
         /// <summary>
         /// Retrieves all the currently active tablet drivers.
