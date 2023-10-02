@@ -21,6 +21,8 @@ namespace OpenTabletDriver.Console
 
         public async Task Run(string[] args)
         {
+            System.Console.WriteLine("Connecting to the OpenTabletDriver daemon...");
+
             await _rpcClient.Connect();
 
             var commands = ActivatorUtilities.CreateInstance<ProgramCommands>(_serviceProvider);
