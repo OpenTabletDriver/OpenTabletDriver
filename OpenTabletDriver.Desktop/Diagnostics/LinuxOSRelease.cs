@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
-    public class LinuxEtcOSRelease
+    public class LinuxOSRelease
     {
         private static readonly string[] OS_RELEASE_PATHS = {
             "/etc/os-release",

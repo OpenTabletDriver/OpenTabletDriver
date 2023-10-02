@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
                 switch (SystemInterop.CurrentPlatform)
                 {
                     case SystemPlatform.Linux:
-                        return LinuxEtcOSRelease.Raw;
+                        return LinuxOSRelease.Raw;
                     default:
                         return OSVersionToDict();
                 }
