@@ -287,7 +287,12 @@ namespace OpenTabletDriver.UX
         private async Task OpenAppDirectory(Func<IAppInfo, string> getMember)
         {
             var appInfo = await _rpc.Instance!.GetApplicationInfo();
-            _app.Open(getMember(appInfo), true);
+
+            var path = getMember(appInfo);
+            if (!System.IO.Directory.Exists(path))
+                System.IO.Directory.CreateDirectory(path);
+
+            _app.Open(path, true);
         }
 
         /// <summary>
