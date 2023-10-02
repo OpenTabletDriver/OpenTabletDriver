@@ -27,19 +27,11 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
 
         [JsonProperty("Operating System")]
-        public IDictionary<string, string> OperatingSystem
+        public IDictionary<string, string> OperatingSystem => SystemInterop.CurrentPlatform switch
         {
-            get
-            {
-                switch (SystemInterop.CurrentPlatform)
-                {
-                    case SystemPlatform.Linux:
-                        return LinuxOSRelease.Raw;
-                    default:
-                        return OSVersionToDict();
-                }
-            }
-        }
+            SystemPlatform.Linux => LinuxOSRelease.Raw,
+            _ => OSVersionToDict(),
+        };
 
         [JsonProperty("Environment Variables")]
         public IDictionary<string, string> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
