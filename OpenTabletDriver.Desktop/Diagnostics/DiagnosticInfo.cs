@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using OpenTabletDriver.Attributes;
@@ -23,7 +22,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         public string AppVersion { get; } = GetAppVersion();
         public string BuildDate { get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>()?.BuildDate ?? string.Empty;
-        public OperatingSystem OperatingSystem { get; } = Environment.OSVersion;
+        public OSInfo OperatingSystem { get; } = OSInfo.GetOSInfo();
         public IDictionary<string, string> EnvironmentVariables { get; }
         public IEnumerable<IDeviceEndpoint> Devices { get; }
         public IEnumerable<LogMessage> ConsoleLog { get; }
