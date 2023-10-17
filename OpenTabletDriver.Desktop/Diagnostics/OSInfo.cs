@@ -83,6 +83,24 @@ namespace OpenTabletDriver.Desktop
                 }
             });
 
+            // add linux version
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "uname",
+                    Arguments = "-r",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                }
+            };
+
+            process.Start();
+            var output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+
+            attributes.Add("KERNEL_VERSION", output.Trim());
+
             return new OSInfo(name, version, attributes);
         }
 
