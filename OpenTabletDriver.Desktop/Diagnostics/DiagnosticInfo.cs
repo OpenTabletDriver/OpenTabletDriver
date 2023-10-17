@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using OpenTabletDriver.Interop;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Logging;
@@ -24,25 +22,10 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         public string AppVersion { get; } = GetAppVersion();
         public string BuildDate { get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>()?.BuildDate ?? string.Empty;
-        public IDictionary<string, string> OperatingSystem => SystemInterop.CurrentPlatform switch
-        {
-            SystemPlatform.Linux => LinuxOSRelease.Raw,
-            _ => OSVersionToDict(),
-        };
+        public OSInfo OperatingSystem { get; } = OSInfo.GetOSInfo();
         public IDictionary<string, string> EnvironmentVariables { get; }
         public IEnumerable<IDeviceEndpoint> Devices { get; }
         public IEnumerable<LogMessage> ConsoleLog { get; }
-
-        // behaves similarly to if Environment.OSVersion is passed directly to our serializer
-        private static IDictionary<string,string> OSVersionToDict()
-        {
-            IDictionary<string, string> rv = new Dictionary<string, string>();
-            rv.Add(nameof(Environment.OSVersion.Platform), Environment.OSVersion.Platform.ToString());
-            rv.Add(nameof(Environment.OSVersion.ServicePack), Environment.OSVersion.ServicePack);
-            rv.Add(nameof(Environment.OSVersion.Version), Environment.OSVersion.Version.ToString());
-            rv.Add(nameof(Environment.OSVersion.VersionString), Environment.OSVersion.VersionString);
-            return rv;
-        }
 
         private static string GetAppVersion()
         {
