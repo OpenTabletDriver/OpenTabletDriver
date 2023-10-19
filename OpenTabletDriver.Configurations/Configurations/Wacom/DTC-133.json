@@ -9,7 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 4095,
-      "ButtonCount": 1
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
