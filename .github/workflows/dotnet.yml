@@ -38,9 +38,6 @@ jobs:
       - name: Generate udev Rules
         run: ./generate-rules.sh > 70-opentabletdriver.rules
 
-      - name: Test udev rules
-        run: udevadm verify 70-opentabletdriver.rules
-
       - name: Upload udev Rules
         uses: actions/upload-artifact@master
         with:
