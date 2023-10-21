@@ -28,6 +28,11 @@ test_rules() {
     return 0
   fi
 
+  if ! udevadm verify --help >/dev/null; then
+    echo "INFO: test_rules: Your udevadm does not support 'udevadm verify'. Passing."
+    return 0
+  fi
+
   if [ ! -f "${1}" ]; then
     echo "test_rules: Not a file '${1}'"
     return 1
