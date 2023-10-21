@@ -24,7 +24,7 @@ copy_generic_files() {
 
 test_rules() {
   if ! hash udevadm 2>/dev/null; then
-    echo "WARN: test_rules: Cannot test rules without program 'udevadm'. Passing."
+    echo "INFO: test_rules: Cannot test rules without program 'udevadm'. Passing."
     return 0
   fi
 
