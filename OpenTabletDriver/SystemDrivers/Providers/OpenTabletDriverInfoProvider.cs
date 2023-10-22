@@ -10,7 +10,7 @@ namespace OpenTabletDriver.SystemDrivers.Providers
                 return new DriverInfo
                 {
                     Name = "OpenTabletDriver",
-                    IsSendingInput = true
+                    Status = DriverStatus.Active
                 };
             }
 

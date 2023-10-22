@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -106,11 +107,26 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
             {
-                Log.Write("Detect", $"Another tablet driver found: {driverInfo.Name}", LogLevel.Warning);
-                if (driverInfo.IsBlockingDriver)
-                    Log.Write("Detect", $"Detection for {driverInfo.Name} tablets might be impaired", LogLevel.Warning);
-                else if (driverInfo.IsSendingInput)
-                    Log.Write("Detect", $"Detected input coming from {driverInfo.Name} driver", LogLevel.Error);
+                var os = SystemInterop.CurrentPlatform switch
+                {
+                    SystemPlatform.Windows => "Windows",
+                    SystemPlatform.Linux => "Linux",
+                    SystemPlatform.MacOS => "MacOS",
+                    _ => null
+                };
+                var wikiUrl = $"https://opentabletdriver.net/Wiki/FAQ/{os}";
+
+                var message = new StringBuilder();
+                message.Append($"'{driverInfo.Name}' driver is detected.");
+
+                if (driverInfo.Status.HasFlag(DriverStatus.Blocking))
+                    message.Append(" It will block detection of tablets.");
+                if (driverInfo.Status.HasFlag(DriverStatus.Flaky))
+                    message.Append(" It will cause flaky support to tablets.");
+                if (os != null)
+                    message.Append($" If any problems arise, visit '{wikiUrl}'.");
+
+                Log.WriteNotify("Detect", message.ToString(), LogLevel.Warning);
             }
 
             await LoadUserSettings();

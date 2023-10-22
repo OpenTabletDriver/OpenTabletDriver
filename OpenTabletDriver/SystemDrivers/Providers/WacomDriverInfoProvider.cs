@@ -21,7 +21,15 @@ namespace OpenTabletDriver.SystemDrivers.Providers
         {
             var info = base.GetWinDriverInfo();
             if (info != null)
-                info.IsBlockingDriver = false;
+            {
+                // wacom drivers doesn't block access/detection.
+                info.Status &= ~DriverStatus.Blocking;
+
+                // wacom filter drivers causes feature reports to be blocked
+                // which causes issues when wacom driver is not running and the
+                // tablet has to be re-initialized using a feature report.
+                info.Status |= DriverStatus.Flaky;
+            }
 
             return info;
         }
@@ -30,7 +38,10 @@ namespace OpenTabletDriver.SystemDrivers.Providers
         {
             var info = base.GetLinuxDriverInfo();
             if (info != null)
-                info.IsBlockingDriver = false;
+            {
+                // wacom drivers doesn't block access/detection
+                info.Status &= ~DriverStatus.Blocking;
+            }
 
             return info;
         }

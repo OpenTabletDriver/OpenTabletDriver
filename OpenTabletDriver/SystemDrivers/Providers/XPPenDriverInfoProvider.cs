@@ -46,7 +46,7 @@ namespace OpenTabletDriver.SystemDrivers.Providers
                 {
                     Name = FriendlyName,
                     Processes = processes.ToArray(),
-                    IsSendingInput = true
+                    Status = DriverStatus.Active
                 };
             }
 
