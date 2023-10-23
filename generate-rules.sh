@@ -20,7 +20,9 @@ OTD_CONFIGURATIONS="${OTD_CONFIGURATIONS:="$(git rev-parse --show-toplevel)/Open
 
 script='[
   .[] | { Name:.Name, libinput:(.Attributes.libinputoverride // "0") } + (.DigitizerIdentifiers[] | { VendorID:.VendorID, ProductID:.ProductID })
-] | unique | sort_by(.VendorID,.ProductID) | .[] | "\(.Name):\(.VendorID):\(.ProductID):\(.libinput)"'
+] | unique | sort_by(.VendorID,.ProductID) | group_by(.VendorID, .ProductID) |
+  map({ Name: (map(.Name) | join(", ")), libinput: (map(.libinput) | max), VendorID: .[0].VendorID, ProductID: .[0].ProductID})
+| .[] | "\(.Name):\(.VendorID):\(.ProductID):\(.libinput)"'
 
 configs_arr=$(jq -s "$script" $OTD_CONFIGURATIONS/**/**.json | tr -d '"')
 
