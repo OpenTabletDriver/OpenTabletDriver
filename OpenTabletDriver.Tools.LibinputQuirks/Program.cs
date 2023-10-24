@@ -38,6 +38,8 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
 
         static async Task WriteQuirksAsync(TabletAttributes attr, FileInfo output, bool verbose)
         {
+            if (attr.TipUpPressurePermille.HasValue ^ attr.TipDownPressurePermille.HasValue)
+                Console.WriteLine("WARNING: Both Tip-down and Tip-up must be specified! Ignoring pressures.");
 
             if (attr.TipUpPressurePermille.HasValue
                     && attr.TipDownPressurePermille.HasValue
