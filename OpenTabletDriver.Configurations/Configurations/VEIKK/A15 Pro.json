@@ -36,7 +36,7 @@
       "ProductID": 6,
       "InputReportLength": 13,
       "OutputReportLength": 9,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkTiltReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "CQEE"
