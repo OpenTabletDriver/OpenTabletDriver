@@ -23,8 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Desktop", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Benchmarks", "OpenTabletDriver.Benchmarks\OpenTabletDriver.Benchmarks.csproj", "{0A55FC49-7713-45CA-A1BD-A1ECBFF91DA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Tools.udev", "OpenTabletDriver.Tools.udev\OpenTabletDriver.Tools.udev.csproj", "{E1894A5A-B7D8-4F6B-8816-DBF7C5E1AE10}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Configurations", "OpenTabletDriver.Configurations\OpenTabletDriver.Configurations.csproj", "{EF54AA9B-A725-44B5-96B5-AE526EF431CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX", "OpenTabletDriver.UX\OpenTabletDriver.UX.csproj", "{4879CD37-BB09-4238-8CB9-34074D589969}"
