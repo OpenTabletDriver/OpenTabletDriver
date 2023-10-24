@@ -39,15 +39,14 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
         {
             if (tipUpPressurePermille >= tipDownPressurePermille) throw new ArgumentOutOfRangeException("Tip-up pressure must be less than tip-down pressure");
 
-            bool unclean = false;
-
+            var filenameDoesntContainQuirks = !output.Name.EndsWith(".quirks");
+            if (filenameDoesntContainQuirks)
+            {
+                Console.WriteLine("INFO: File name does not end with '.quirks' - this has been added!");
+                output = new FileInfo(output.FullName + ".quirks");
+            }
             var path = output.FullName.Contains(Directory.GetCurrentDirectory()) ? output.Name : output.FullName;
             Console.WriteLine($"Writing quirks to '{path}'");
-
-            var filenameContainsQuirks = !output.Name.EndsWith(".quirks");
-            if (filenameContainsQuirks)
-                Console.WriteLine("WARNING: File name does not end with '.quirks'. Your file will not be parsed by libinput!");
-            unclean |= filenameContainsQuirks;
 
             if (output.Exists)
                 output.Delete();
@@ -64,7 +63,6 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
                     await sw.WriteLineAsync(line);
                 }
             }
-            if (unclean) Console.WriteLine("WARNING: The generator encountered warnings and your file may not work correctly");
         }
 
         static IEnumerable<string> CreateQuirks(bool smoothing, bool skipPressure, uint tipDownPressurePermille, uint tipUpPressurePermille)
