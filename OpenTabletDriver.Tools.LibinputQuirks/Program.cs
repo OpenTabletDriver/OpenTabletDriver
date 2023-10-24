@@ -67,22 +67,22 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
 
         static IEnumerable<string> CreateQuirks(bool smoothing, bool skipPressure, uint tipDownPressurePermille, uint tipUpPressurePermille)
         {
-            yield return GenerateKeyValue(CONFIG_KEY_NAME_STRING, EvdevVirtualTablet.TABLET_NAME);
-            yield return GenerateKeyValue(CONFIG_KEY_TABLET_SMOOTHING, Convert.ToInt32(smoothing).ToString());
+            yield return FormatKeyValue(CONFIG_KEY_NAME_STRING, EvdevVirtualTablet.TABLET_NAME);
+            yield return FormatKeyValue(CONFIG_KEY_TABLET_SMOOTHING, Convert.ToInt32(smoothing).ToString());
 
             if (!skipPressure)
             {
-                yield return GenerateKeyValue(CONFIG_KEY_PRESSURE_RANGE,
-                        GeneratePressureRange(
+                yield return FormatKeyValue(CONFIG_KEY_PRESSURE_RANGE,
+                        FormatPressureRange(
                             PressureConvertPermilleToUnits(tipDownPressurePermille),
                             PressureConvertPermilleToUnits(tipUpPressurePermille)
                         ));
             }
         }
 
-        static string GenerateKeyValue(string left, string right) => left + "=" + right;
+        static string FormatKeyValue(string left, string right) => left + "=" + right;
 
-        static string GeneratePressureRange(uint tipDownPressure, uint tipUpPressure) => tipDownPressure + ":" + tipUpPressure;
+        static string FormatPressureRange(uint tipDownPressure, uint tipUpPressure) => tipDownPressure + ":" + tipUpPressure;
 
         static uint PressureConvertPermilleToUnits(uint permille) => (uint)(EvdevVirtualTablet.MAX_PRESSURE * ((double)permille / 1000));
     }
