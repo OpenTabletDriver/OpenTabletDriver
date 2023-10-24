@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # dependencies: git, jq, tr (coreutils), awk (gawk), sed (gnused)
 
-for c in git jq tr awk; do
+for c in git jq tr awk sed; do
   command -v $c > /dev/null
   if [[ $? > 0 ]]; then
     echo "Error: Command $c not found in \$PATH."
