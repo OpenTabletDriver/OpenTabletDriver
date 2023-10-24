@@ -12,8 +12,6 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
     class Program
     {
         static readonly bool DEFAULT_SMOOTHING = false;
-        static readonly uint DEFAULT_TIPDOWN_PRESSURE_PERMILLE = 10;
-        static readonly uint DEFAULT_TIPUP_PRESSURE_PERMILLE = 9;
         static readonly string LIBINPUT_HEADER = "[OpenTabletDriver]";
         static readonly string CONFIG_KEY_NAME_STRING = "MatchName";
         static readonly string CONFIG_KEY_TABLET_SMOOTHING = "AttrTabletSmoothing";
@@ -23,21 +21,28 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
         {
             var root = new RootCommand("OpenTabletDriver libinput quirks generator")
             {
-                new Option<uint>(new[] { "--tip-down-pressure-permille", "-pd" }, () => DEFAULT_TIPDOWN_PRESSURE_PERMILLE, "Pressure threshold for tip down in permille (1/1000)"),
-                new Option<uint>(new[] { "--tip-up-pressure-permille", "-pu" }, () => DEFAULT_TIPUP_PRESSURE_PERMILLE, "Pressure threshold for tip up in permille (1/1000)"),
-                new Option<bool>(new[] { "--smoothing", "-s" }, () => DEFAULT_SMOOTHING, "Allow libinput tablet smoothing"),
-                new Option(new[] { "--no-pressure", "-np" }, $"Do not include '{CONFIG_KEY_PRESSURE_RANGE}'"),
+                new Option<bool>(new[] { "--enable-smoothing", "-s" },
+                        () => DEFAULT_SMOOTHING,
+                        "Enable libinput tablet smoothing"),
                 new Argument<FileInfo>("output", "Resulting .quirks file"),
-                new Option(new[] { "--verbose", "-v" }, "Verbose output")
+                new Option<uint?>(new[] { "--tip-down-pressure-permille", "-pd" },
+                        "Pressure threshold for tip down in permille (1/1000)"),
+                new Option<uint?>(new[] { "--tip-up-pressure-permille", "-pu" },
+                        "Pressure threshold for tip up in permille (1/1000)"),
+                new Option<bool>(new[] { "--verbose", "-v" }, "Verbose output")
             };
 
-            root.Handler = CommandHandler.Create<uint, uint, bool, bool, FileInfo, bool>(WriteQuirksAsync);
+            root.Handler = CommandHandler.Create<TabletAttributes, FileInfo, bool>(WriteQuirksAsync);
             root.Invoke(args);
         }
 
-        static async Task WriteQuirksAsync(uint tipDownPressurePermille, uint tipUpPressurePermille, bool smoothing, bool skipPressure, FileInfo output, bool verbose)
+        static async Task WriteQuirksAsync(TabletAttributes attr, FileInfo output, bool verbose)
         {
-            if (tipUpPressurePermille >= tipDownPressurePermille) throw new ArgumentOutOfRangeException("Tip-up pressure must be less than tip-down pressure");
+
+            if (attr.TipUpPressurePermille.HasValue
+                    && attr.TipDownPressurePermille.HasValue
+                    && attr.TipUpPressurePermille.Value >= attr.TipDownPressurePermille.Value)
+                throw new ArgumentOutOfRangeException("Tip-up pressure must be less than tip-down pressure");
 
             var filenameDoesntContainQuirks = !output.Name.EndsWith(".quirks");
             if (filenameDoesntContainQuirks)
@@ -57,7 +62,7 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
             {
                 if (verbose) Console.WriteLine("Adding header");
                 await sw.WriteLineAsync(LIBINPUT_HEADER);
-                foreach (var line in CreateQuirks(smoothing, skipPressure, tipDownPressurePermille, tipUpPressurePermille))
+                foreach (var line in CreateQuirks(attr))
                 {
                     if (verbose) Console.WriteLine($"Adding {line.Substring(0,line.IndexOf("="))}");
                     await sw.WriteLineAsync(line);
@@ -65,17 +70,17 @@ namespace OpenTabletDriver.Tools.LibinputQuirks
             }
         }
 
-        static IEnumerable<string> CreateQuirks(bool smoothing, bool skipPressure, uint tipDownPressurePermille, uint tipUpPressurePermille)
+        static IEnumerable<string> CreateQuirks(TabletAttributes attr)
         {
             yield return FormatKeyValue(CONFIG_KEY_NAME_STRING, EvdevVirtualTablet.TABLET_NAME);
-            yield return FormatKeyValue(CONFIG_KEY_TABLET_SMOOTHING, Convert.ToInt32(smoothing).ToString());
+            yield return FormatKeyValue(CONFIG_KEY_TABLET_SMOOTHING, Convert.ToInt32(attr.EnableSmoothing).ToString());
 
-            if (!skipPressure)
+            if (attr.TipDownPressurePermille.HasValue && attr.TipUpPressurePermille.HasValue)
             {
                 yield return FormatKeyValue(CONFIG_KEY_PRESSURE_RANGE,
                         FormatPressureRange(
-                            PressureConvertPermilleToUnits(tipDownPressurePermille),
-                            PressureConvertPermilleToUnits(tipUpPressurePermille)
+                            PressureConvertPermilleToUnits(attr.TipDownPressurePermille.Value),
+                            PressureConvertPermilleToUnits(attr.TipUpPressurePermille.Value)
                         ));
             }
         }
