@@ -104,7 +104,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            if (_usesConfidence && !_isConfident)
+            // we also check for toolSerial to extend lift off height position reporting, since it is unlikely another tool can "take over"
+            if (_usesConfidence && !_isConfident && toolSerial == 0)
                 return;
 
             Device.Write(EventType.EV_KEY, _isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, 1);
