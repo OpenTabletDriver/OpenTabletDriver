@@ -8,7 +8,7 @@ using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IConfidenceHandler
     {
         // order seems important due to reset ordering (to satisfy libinput)
         // tools -> touch -> buttons
@@ -23,7 +23,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         };
 
         private const int RESOLUTION = 1000; // subpixels per screen pixel
-
+        private bool _usesConfidence; // if set, _isConfident must also be set to emit any events
+        private bool _isConfident; // toggles whether events are sent when _usesConfidence is set
         private bool _isEraser;
 
         public unsafe EvdevVirtualTablet(IVirtualScreen virtualScreen)
@@ -97,6 +98,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
+            if (_usesConfidence && !_isConfident)
+                return;
+
             Device.Write(EventType.EV_KEY, _isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, 1);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
@@ -104,11 +108,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPressure(float percentage)
         {
+            if (_usesConfidence && !_isConfident)
+                return;
+
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MAX_PRESSURE * percentage));
         }
 
         public void SetTilt(Vector2 tilt)
         {
+            if (_usesConfidence && !_isConfident)
+                return;
+
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_X, (int)tilt.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_Y, (int)tilt.Y);
         }
@@ -120,12 +130,21 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetHoverDistance(uint distance)
         {
+            if (_usesConfidence && !_isConfident)
+                return;
+
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
         public void SetKeyState(EventCode eventCode, bool state)
         {
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
+        }
+
+        public void SetConfidence(bool highConfidence)
+        {
+            _usesConfidence = true;
+            _isConfident = highConfidence;
         }
 
         public sealed override void Reset()
@@ -136,6 +155,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
 
             _isEraser = false;
+            _isConfident = false;
         }
     }
 }
