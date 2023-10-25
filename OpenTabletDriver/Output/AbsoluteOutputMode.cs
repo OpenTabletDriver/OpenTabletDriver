@@ -184,6 +184,8 @@ namespace OpenTabletDriver.Output
                 tiltHandler.SetTilt(tiltReport.Tilt);
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Configuration.Specifications.Pen!.MaxPressure);
+            if (report is IToolReport toolReport && Pointer is IToolHandler toolHandler)
+                toolHandler.RegisterTool(toolReport.RawToolID, toolReport.Serial);
 
             // make sure to set the position last
             if (report is IAbsolutePositionReport absReport)

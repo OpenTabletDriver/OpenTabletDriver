@@ -8,7 +8,7 @@ using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IConfidenceHandler
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IConfidenceHandler, IToolHandler
     {
         // order seems important due to reset ordering (to satisfy libinput)
         // tools -> touch -> buttons
@@ -26,6 +26,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         private bool _usesConfidence; // if set, _isConfident must also be set to emit any events
         private bool _isConfident; // toggles whether events are sent when _usesConfidence is set
         private bool _isEraser;
+        private int toolID, toolSerial, lastToolSerial;
 
         public unsafe EvdevVirtualTablet(IVirtualScreen virtualScreen)
         {
@@ -76,6 +77,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             };
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
+
+            var emptyStruct = new input_absinfo();
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_MISC, (IntPtr)((input_absinfo*)&emptyStruct));
+            Device.EnableType(EventType.EV_MSC);
+            Device.EnableCode(EventType.EV_MSC, EventCode.MSC_SERIAL);
 
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
@@ -147,15 +153,39 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             _isConfident = highConfidence;
         }
 
+        public void RegisterTool(uint toolID, ulong toolSerial)
+        {
+            this.toolID = (int)toolID;
+            this.toolSerial = (int)toolSerial;
+        }
+
         public sealed override void Reset()
         {
             // Zero out everything except position and tilt
             foreach (var code in eventCodes)
                 Device.Write(EventType.EV_KEY, code, 0);
-            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
 
             _isEraser = false;
             _isConfident = false;
+            lastToolSerial = toolSerial;
+            toolID = toolSerial = 0;
+        }
+
+
+        public override void Flush()
+        {
+            Device.Write(EventType.EV_ABS, EventCode.ABS_MISC, toolID);
+            if (toolSerial > 0)
+            {
+                Device.Write(EventType.EV_MSC, EventCode.MSC_SERIAL, toolSerial);
+            }
+            else if (lastToolSerial != 0) // we must report serial on last out report
+            {
+                Device.Write(EventType.EV_MSC, EventCode.MSC_SERIAL, lastToolSerial);
+                lastToolSerial = 0;
+            }
+
+            base.Flush();
         }
     }
 }
