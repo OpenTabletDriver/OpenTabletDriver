@@ -83,4 +83,4 @@ body:
         - label: I have written a concise and meaningful title.
           required: true
         - label: I am on the latest version of OpenTabletDriver.
-          required: true
+          required: false
