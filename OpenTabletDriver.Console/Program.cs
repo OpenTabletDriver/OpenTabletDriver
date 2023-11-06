@@ -12,6 +12,9 @@ namespace OpenTabletDriver.Console
     {
         public static async Task Main(string[] args)
         {
+            if (!Instance.Exists("OpenTabletDriver.Daemon"))
+                throw new ("Daemon not running");
+
             await Driver.Connect();
             await Root.InvokeAsync(args);
         }
