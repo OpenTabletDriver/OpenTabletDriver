@@ -21,7 +21,8 @@ namespace OpenTabletDriver.Console
 
         public async Task Run(string[] args)
         {
-            System.Console.WriteLine("Connecting to the OpenTabletDriver daemon...");
+            if (!Instance.Exists("OpenTabletDriver.Daemon"))
+                throw new ("Daemon not running");
 
             await _rpcClient.Connect();
 
