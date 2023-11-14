@@ -16,19 +16,19 @@ OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de t
 
 Todos os status dos tablets que estão suportados, não testados ou que estão em planejamento para serem testados estão aqui. Soluções de problemas comuns podem ser encontrados na wiki.
 
-- [Tablets suportados](https://opentabletdriver.net/Tablets)
+- [Tablets suportados](https://opentabletdriver.github.io/Tablets)
 
 # Instalação
 
-- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
-- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
-- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
+- [Windows](https://opentabletdriver.github.io/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.github.io/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.github.io/Wiki/Install/MacOS)
 
 # Executando OpenTabletDriver
 
 O OpenTabletDriver funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todos o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
 
-> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida. 
+> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida.
 
 ## Buildando OpenTabletDriver da fonte
 
@@ -108,7 +108,7 @@ Somos gratos aos relatos de bugs quanto aos pedidos de novos tablets para adicio
 
 Para issues (problemas) e PRs relacionados aos pacotes do OpenTabletDriver, por favor veja neste repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
 
-Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https://opentabletdriver.net), veja este repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https://opentabletdriver.github.io), veja este repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
 
 ### Adicionando suporte a um novo tablet
 

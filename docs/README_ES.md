@@ -16,13 +16,13 @@ OpenTabletDriver es un driver de tabletas multiplataforma, open-source y en modo
 
 Los estados de las tabletas que son soportadas, no probadas y planeadas para ser soportadas se pueden encontrar aquí. Las soluciones a los problemas más comunes pueden ser encontradas en la wiki de su plataforma.
 
-- [Tabletas compatibles](https://opentabletdriver.net/Tablets)
+- [Tabletas compatibles](https://opentabletdriver.github.io/Tablets)
 
 # Instalación
 
-- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
-- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
-- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
+- [Windows](https://opentabletdriver.github.io/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.github.io/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.github.io/Wiki/Install/MacOS)
 
 # Ejecución de los binarios de OpenTabletDriver
 

@@ -54,7 +54,7 @@ OTD_MAINTAINERS=(
   "InfinityGhost <infinityghostgit@gmail.com>" \
   "X9VoiD <oscar.silvestrexx@gmail.com>" \
 )
-OTD_UPSTREAM_URL="https://opentabletdriver.net"
+OTD_UPSTREAM_URL="https://opentabletdriver.github.io"
 OTD_REPO_URL="https://github.com/OpenTabletDriver/OpenTabletDriver"
 OTD_GIT="https://github.com/OpenTabletDriver/OpenTabletDriver.git"
 OTD_VERSION_BASE="$(sed -n 's|.*<VersionBase>\(.*\)</VersionBase>.*|\1|p' "${REPO_ROOT}/Directory.Build.props")"

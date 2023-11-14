@@ -114,7 +114,7 @@ namespace OpenTabletDriver.Daemon
                     SystemPlatform.MacOS => "MacOS",
                     _ => null
                 };
-                var wikiUrl = $"https://opentabletdriver.net/Wiki/FAQ/{os}";
+                var wikiUrl = $"https://opentabletdriver.github.io/Wiki/FAQ/{os}";
 
                 var message = new StringBuilder();
                 message.Append($"'{driverInfo.Name}' driver is detected.");

@@ -10,7 +10,7 @@ namespace OpenTabletDriver.UX.Dialogs
             ProgramName = "OpenTabletDriver";
             ProgramDescription = "Open source, cross-platform tablet configurator";
             WebsiteLabel = "OpenTabletDriver";
-            Website = new Uri(@"https://opentabletdriver.net");
+            Website = new Uri(@"https://opentabletdriver.github.io");
             Version = $"v{Metadata.FullVersion}";
             Developers = new[] { "InfinityGhost" };
             Designers = new[] { "InfinityGhost" };

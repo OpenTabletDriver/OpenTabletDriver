@@ -140,7 +140,7 @@ namespace OpenTabletDriver
                         Log.Write(
                             "Driver",
                             "The current user does not have the permissions to open the device stream. " +
-                            "Follow the instructions from https://opentabletdriver.net/Wiki/FAQ/Linux#fail-device-streams to resolve this issue.",
+                            "Follow the instructions from https://opentabletdriver.github.io/Wiki/FAQ/Linux#fail-device-streams to resolve this issue.",
                             LogLevel.Error
                         );
                     }
@@ -150,7 +150,7 @@ namespace OpenTabletDriver
                         Log.Write(
                             "Driver",
                             "Device is currently in use by another kernel module. " +
-                            "Follow the instructions from https://opentabletdriver.net/Wiki/FAQ/Linux#argumentoutofrangeexception to resolve this issue.",
+                            "Follow the instructions from https://opentabletdriver.github.io/Wiki/FAQ/Linux#argumentoutofrangeexception to resolve this issue.",
                             LogLevel.Error
                         );
                     }

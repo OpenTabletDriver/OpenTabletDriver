@@ -18,7 +18,7 @@ device, also referred to as a digitizer, functional.
 ## Adding a Configuration
 
 Documentation for the fields within configurations can be found on the official OpenTabletDriver
-website, [here](https://opentabletdriver.net/Wiki/Development/Configurations).
+website, [here](https://opentabletdriver.github.io/Wiki/Development/Configurations).
 
 When adding a new tablet configuration file to the `OpenTabletDriver.Configurations` project, these
 rules must be followed:

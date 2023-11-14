@@ -16,13 +16,13 @@ OpenTabletDriver is an open source, cross platform, user mode tablet driver. The
 
 All statuses of tablets that are supported, untested, and planned to be supported can be found here. Common issue workarounds can be found in the wiki for your platform.
 
-- [Supported Tablets](https://opentabletdriver.net/Tablets)
+- [Supported Tablets](https://opentabletdriver.github.io/Tablets)
 
 # Installation
 
-- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
-- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
-- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
+- [Windows](https://opentabletdriver.github.io/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.github.io/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.github.io/Wiki/Install/MacOS)
 
 # Running OpenTabletDriver binaries
 
@@ -113,7 +113,7 @@ for a new tablet is quite easy.
 
 For issues and PRs related to OpenTabletDriver's packaging, please see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
 
-For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.github.io), see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
 
 ### Supporting a new tablet
 

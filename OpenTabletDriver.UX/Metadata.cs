@@ -5,7 +5,7 @@ namespace OpenTabletDriver.UX
 {
     public static class Metadata
     {
-        public const string WIKI_URL = "https://opentabletdriver.net/Wiki";
+        public const string WIKI_URL = "https://opentabletdriver.github.io/Wiki";
 
         public static string FullVersion { get; } =
             Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;

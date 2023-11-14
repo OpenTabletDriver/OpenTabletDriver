@@ -14,7 +14,7 @@ OpenTabletDriver — кроссплатформенный драйвер с от
 
 # Поддерживаемые планшеты
 
-Статус поддержки различных моделей можно найти по [этой ссылке](https://opentabletdriver.net/Tablets).
+Статус поддержки различных моделей можно найти по [этой ссылке](https://opentabletdriver.github.io/Tablets).
 
 Возможные типы статуса поддержки:
 
@@ -28,9 +28,9 @@ OpenTabletDriver — кроссплатформенный драйвер с от
 
 # Установка
 
-- [Windows](https://opentabletdriver.net/Wiki/Install/Windows)
-- [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
-- [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
+- [Windows](https://opentabletdriver.github.io/Wiki/Install/Windows)
+- [Linux](https://opentabletdriver.github.io/Wiki/Install/Linux)
+- [MacOS](https://opentabletdriver.github.io/Wiki/Install/MacOS)
 
 # Запуск и использование OpenTabletDriver
 
