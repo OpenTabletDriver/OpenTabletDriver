@@ -15,7 +15,7 @@ if [ $(lsmod | grep -c uinput) -eq 0 ]; then
 fi
 
 if udevadm control --reload-rules; then
-    udevadm trigger --settle || true
+    udevadm trigger || true
 fi
 
 printf "Run the daemon by invoking 'otd-daemon', or by enabling opentabletdriver.service"
