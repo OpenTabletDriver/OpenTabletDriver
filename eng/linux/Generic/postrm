@@ -3,6 +3,5 @@
 set -e
 
 if udevadm control --reload-rules; then
-     udevadm trigger --settle || true
-     udevadm trigger --name-match=uinput --settle || true
+     udevadm trigger && udevadm settle -t 15 || true
 fi
