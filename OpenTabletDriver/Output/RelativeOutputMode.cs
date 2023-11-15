@@ -23,8 +23,8 @@ namespace OpenTabletDriver.Output
             Pointer = relativePointer;
         }
 
-        private Vector2? _lastPos;
-        private bool _skipReport;
+        private Vector2? _lastTransformedPos;
+        private Vector2 _lastReadPos;
         private bool _outOfRange;
 
         /// <summary>
@@ -75,8 +75,6 @@ namespace OpenTabletDriver.Output
 
         protected override Matrix3x2 CreateTransformationMatrix()
         {
-            _skipReport = true; // Prevents cursor from jumping on sensitivity change
-
             var transform = Matrix3x2.CreateRotation(
                 (float)(-Rotation * Math.PI / 180));
 
@@ -86,25 +84,43 @@ namespace OpenTabletDriver.Output
                 _sensitivity.Y * ((digitizer?.Height / digitizer?.MaxY) ?? 0.01f));
         }
 
-        protected override IAbsolutePositionReport? Transform(IAbsolutePositionReport report)
+        public override void Read(IDeviceReport deviceReport)
         {
-            var deltaTime = _stopwatch.Restart();
-            if (_outOfRange && report.Position == _lastPos)
-                return null;
-
-            _outOfRange = false;
-
-            var pos = Vector2.Transform(report.Position, TransformationMatrix);
-            var delta = pos - _lastPos;
-
-            _lastPos = pos;
-            report.Position = deltaTime < ResetDelay ? delta.GetValueOrDefault() : Vector2.Zero;
-
-            if (_skipReport)
+            // intercept positional reports
+            if (deviceReport is IAbsolutePositionReport report)
             {
-                _skipReport = false;
-                return null;
+                var deltaTime = _stopwatch.Restart();
+
+                // reset origin when exceeding the reset delay
+                if (deltaTime > ResetDelay)
+                {
+                    _outOfRange = true;
+                    _lastTransformedPos = null;
+                }
+
+                // skip duplicate reports sent by tablets right after going into
+                // range from an out of range state.
+                if (_outOfRange && report.Position == _lastReadPos)
+                    return;
+
+                _outOfRange = false;
+                _lastReadPos = report.Position;
             }
+            else if (deviceReport is OutOfRangeReport)
+            {
+                _outOfRange = true;
+            }
+
+            base.Read(deviceReport);
+        }
+
+        protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
+        {
+            var pos = Vector2.Transform(report.Position, TransformationMatrix);
+            var delta = pos - _lastTransformedPos;
+
+            _lastTransformedPos = pos;
+            report.Position = delta.GetValueOrDefault();
 
             return report;
         }
@@ -130,10 +146,7 @@ namespace OpenTabletDriver.Output
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
-                {
-                    _outOfRange = true;
                     synchronousPointer.Reset();
-                }
                 synchronousPointer.Flush();
             }
         }
