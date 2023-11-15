@@ -13,9 +13,9 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : OutputMode
     {
-        private Vector2? lastPos;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
-        private bool skipReport;
+        private Vector2? lastTransformedPos;
+        private Vector2 lastReadPos;
         private bool outOfRange;
 
         /// <summary>
@@ -63,8 +63,6 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override Matrix3x2 CreateTransformationMatrix()
         {
-            this.skipReport = true; // Prevents cursor from jumping on sensitivity change
-
             var transform = Matrix3x2.CreateRotation(
                 (float)(-Rotation * System.Math.PI / 180));
 
@@ -74,25 +72,43 @@ namespace OpenTabletDriver.Plugin.Output
                 sensitivity.Y * ((digitizer?.Height / digitizer?.MaxY) ?? 0.01f));
         }
 
+        public override void Read(IDeviceReport deviceReport)
+        {
+            // intercept positional reports
+            if (deviceReport is IAbsolutePositionReport report)
+            {
+                var deltaTime = stopwatch.Restart();
+
+                // reset origin when exceeding the reset delay
+                if (deltaTime > ResetTime)
+                {
+                    outOfRange = true;
+                    lastTransformedPos = null;
+                }
+
+                // skip duplicate reports sent by tablets right after going into
+                // range from an out of range state.
+                if (outOfRange && report.Position == lastReadPos)
+                    return;
+
+                outOfRange = false;
+                lastReadPos = report.Position;
+            }
+            else if (deviceReport is OutOfRangeReport)
+            {
+                outOfRange = true;
+            }
+
+            base.Read(deviceReport);
+        }
+
         protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
         {
-            var deltaTime = stopwatch.Restart();
-            if (outOfRange && report.Position == lastPos)
-                return null;
+            var pos = Vector2.Transform(report.Position, TransformationMatrix);
+            var delta = pos - lastTransformedPos;
 
-            outOfRange = false;
-
-            var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
-            var delta = pos - this.lastPos;
-
-            this.lastPos = pos;
-            report.Position = deltaTime < ResetTime ? delta.GetValueOrDefault() : Vector2.Zero;
-
-            if (skipReport)
-            {
-                skipReport = false;
-                return null;
-            }
+            lastTransformedPos = pos;
+            report.Position = delta.GetValueOrDefault();
 
             return report;
         }
@@ -123,10 +139,7 @@ namespace OpenTabletDriver.Plugin.Output
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
-                {
-                    outOfRange = true;
                     synchronousPointer.Reset();
-                }
                 synchronousPointer.Flush();
             }
         }
