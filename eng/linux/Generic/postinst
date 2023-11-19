@@ -18,4 +18,4 @@ if udevadm control --reload-rules; then
     udevadm trigger && udevadm settle -t 15 || true
 fi
 
-printf "Run the daemon by invoking 'otd-daemon', or by enabling opentabletdriver.service"
+printf "Run the daemon by invoking 'otd-daemon', or by enabling the systemd user service opentabletdriver.service"
