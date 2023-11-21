@@ -193,6 +193,7 @@
 | VEIKK A50                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50 V2                  |  Missing Features | Touchpad is not yet supported.
 | VEIKK Viola (VO1060)          |  Missing Features | Wheel is not yet supported.
+| VEIKK VK1060PRO               |  Missing Features | Wheels not yet supported.
 | Wacom CTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom CTE-650                 |  Missing Features | Wheel is not yet supported.
 | Wacom CTH-301                 |  Missing Features | Touch is not yet supported.
