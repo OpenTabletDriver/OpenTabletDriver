@@ -2,10 +2,10 @@
   "Name": "Huion Q11K",
   "Specifications": {
     "Digitizer": {
-      "Width": 258.4,
-      "Height": 165.1,
-      "MaxX": 51680,
-      "MaxY": 33020
+      "Width": 279.4,
+      "Height": 174.625,
+      "MaxX": 55880,
+      "MaxY": 34925
     },
     "Pen": {
       "MaxPressure": 8191,
