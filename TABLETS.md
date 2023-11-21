@@ -4,6 +4,7 @@
 | Adesso Cybertablet K8         |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM156HD                |     Supported     |
+| Gaomon M106K                  |     Supported     |
 | Gaomon M106K Pro              |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
