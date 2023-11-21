@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.PTU
                 report[1].IsBitSet(4)
             };
             Eraser = report[1].IsBitSet(2);
-            HighConfidence = report[1].IsBitSet(5);
+            NearProximity = report[1].IsBitSet(5);
             HoverDistance = 0;
         }
 
