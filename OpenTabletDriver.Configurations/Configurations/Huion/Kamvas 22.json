@@ -1,11 +1,11 @@
 {
-  "Name": "Huion Kamvas 20",
+  "Name": "Huion Kamvas 22",
   "Specifications": {
     "Digitizer": {
-      "Width": 434.75,
-      "Height": 238.75,
-      "MaxX": 86950.0,
-      "MaxY": 47750.0
+      "Width": 476.76,
+      "Height": 268.225,
+      "MaxX": 95352,
+      "MaxY": 53645
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -13,21 +13,23 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 0
+    },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 110,
+      "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_(M192|M189)_\\d{6}$"
+        "201": "HUION_M19g_\\d{6}$"
       },
       "InitializationStrings": [
         200

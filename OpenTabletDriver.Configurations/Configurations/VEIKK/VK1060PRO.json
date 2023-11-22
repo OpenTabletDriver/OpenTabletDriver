@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Star 05 V3",
+  "Name": "VEIKK VK1060PRO",
   "Specifications": {
     "Digitizer": {
-      "Width": 203.2,
-      "Height": 127.0,
-      "MaxX": 40640.0,
-      "MaxY": 25400.0
+      "Width": 254,
+      "Height": 158.75,
+      "MaxX": 50800,
+      "MaxY": 31750
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -14,21 +14,23 @@
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 6
+      "ButtonCount": 8
     },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 10429,
-      "ProductID": 113,
-      "InputReportLength": 8,
-      "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "VendorID": 12267,
+      "ProductID": 7,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "ArAC"
+        "CQEE",
+        "CQIC",
+        "CQMC"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
