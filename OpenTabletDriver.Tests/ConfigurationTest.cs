@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Tablet;
 using Xunit;
@@ -268,6 +271,45 @@ namespace OpenTabletDriver.Tests
                     AssertInequal(identificationContext, otherIdentificationContext);
                 }
             }
+        }
+
+        // JSONPath expressions
+        [SuppressMessage("ReSharper", "StringLiteralTypo")]
+        private readonly string[] _outdatedPaths = {
+            "$.AuxilaryDeviceIdentifiers", // 0.6.x naming
+            "$.Specifications.Pen.Buttons" // `{ Buttons { ButtonCount: int } }` -> `{ ButtonCount: int }`
+        };
+
+        [Fact]
+        public void Configurations_CheckForOutdatedPaths()
+        {
+            var configurationProjectDir = Path.GetFullPath(Path.Join("../../../..", "OpenTabletDriver.Configurations"));
+            var configurationDir = Path.Join(configurationProjectDir, "Configurations");
+
+            Debug.Assert(Directory.Exists(configurationDir));
+
+            var failed = false;
+
+            var configFiles = Directory.EnumerateFiles(configurationDir, "*.json", SearchOption.AllDirectories)
+                .Select(f => (Path.GetRelativePath(configurationDir, f), File.ReadAllText(f)));
+
+            foreach (var config in configFiles)
+            {
+                var tabletFilename = config.Item1;
+                var tabletConfig = JObject.Parse(config.Item2);
+
+                foreach (var outdatedPath in _outdatedPaths)
+                {
+                    var token = tabletConfig.SelectToken(outdatedPath);
+                    if (token != null)
+                    {
+                        _testOutputHelper.WriteLine($"Configuration file '{tabletFilename}' has outdated path: {token.Path}");
+                        failed = true;
+                    }
+                }
+            }
+
+            Assert.False(failed);
         }
 
         private static void AssertInequal(IdentificationContext a, IdentificationContext b)
