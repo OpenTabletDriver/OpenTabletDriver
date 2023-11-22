@@ -1,9 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Tablet;
 using Xunit;
@@ -267,6 +270,78 @@ namespace OpenTabletDriver.Tests
                 {
                     AssertInequal(identificationContext, otherIdentificationContext);
                 }
+            }
+        }
+
+        private static readonly string ConfigurationProjectDir = Path.GetFullPath(Path.Join("../../../..", "OpenTabletDriver.Configurations"));
+        private static readonly string ConfigurationDir = Path.Join(ConfigurationProjectDir, "Configurations");
+        private static readonly IEnumerable<(string,string)> ConfigFiles = Directory.EnumerateFiles(ConfigurationDir, "*.json", SearchOption.AllDirectories)
+            .Select(f => (Path.GetRelativePath(ConfigurationDir, f), File.ReadAllText(f)));
+
+        // JSONPath paths that do not need to be traversed but must still be presented as a key
+        private static readonly string[] AllowedNullablePaths = {
+            "$." + nameof(TabletConfiguration.AuxiliaryDeviceIdentifiers),
+            "$." + nameof(TabletConfiguration.Specifications) + "." + nameof(TabletConfiguration.Specifications.Touch),
+            "$." + nameof(TabletConfiguration.Specifications) + "." + nameof(TabletConfiguration.Specifications.AuxiliaryButtons),
+            "$." + nameof(TabletConfiguration.Specifications) + "." + nameof(TabletConfiguration.Specifications.MouseButtons),
+        };
+
+        // Check all tablet configurations for JSON template deviations
+        // Useful for ensuring that all interesting configuration fields have been filled out
+        [Fact]
+        public void Configurations_Matches_Template()
+        {
+            var jsonPaths = GetTabletConfigJsonPaths();
+            var failed = false;
+
+            foreach (var (tabletFilename, tabletConfigString) in ConfigFiles)
+            {
+                var obj = JObject.Parse(tabletConfigString);
+                foreach (var path in jsonPaths.Where(path => obj.SelectToken(path) == null))
+                {
+                    _testOutputHelper.WriteLine($"Configuration file '{tabletFilename}' is missing JSON Path {path}");
+                    failed = true;
+                }
+            }
+
+            Assert.False(failed);
+        }
+
+        // Get all JSONPaths that a tablet configuration must have without exceptions
+        private static IEnumerable<string> GetTabletConfigJsonPaths()
+        {
+            return GetAllJsonPathsFromInternalRecursive(typeof(TabletConfiguration), true)
+                .Where(path =>
+                {
+                    foreach (var allowedPath in AllowedNullablePaths)
+                    {
+                        if (path.Contains(allowedPath))
+                            // only retain specific allowedPath, paths nested below it are rejected
+                            return path.Equals(allowedPath);
+                    }
+
+                    return true;
+                });
+        }
+
+        // Recursively get all JSONPaths from supplied type
+        private static IEnumerable<string> GetAllJsonPathsFromInternalRecursive(Type type, bool firstCall = true)
+        {
+            var prependString = firstCall ? "$." : "."; // valid JsonPath starts with $, e.g. '$.Path.To.Object'
+            foreach (var member in type.GetProperties())
+            {
+                var isInternal = member.Module.Name.Contains("OpenTabletDriver");
+                if (isInternal) // ensures we only emit our types
+                    yield return prependString + member.Name;
+
+                var memberType = member.PropertyType;
+                var isArray = memberType.IsArray || (typeof(IEnumerable).IsAssignableFrom(memberType) && memberType != typeof(string));
+                var memberName = member.Name + (isArray ? "[0]" : "");
+
+                foreach (var innerMemberName in GetAllJsonPathsFromInternalRecursive(member.PropertyType, false))
+                    yield return isInternal ?
+                        prependString + memberName + innerMemberName :
+                        innerMemberName;
             }
         }
 
