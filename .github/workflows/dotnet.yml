@@ -98,7 +98,7 @@ jobs:
           path: build/win-x64
 
   linter:
-    name: dotnet format
+    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
