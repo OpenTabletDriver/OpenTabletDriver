@@ -116,7 +116,6 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '7.0'
-          include-prerelease: True
 
       - name: Package
         run: ./eng/windows/package.ps1
