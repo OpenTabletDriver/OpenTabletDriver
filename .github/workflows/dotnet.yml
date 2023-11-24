@@ -113,8 +113,11 @@ jobs:
           dotnet-version: '7.0'
 
       - name: Lint Changed Files
+        env:
+          PR_BASE_REF: ${{ github.base_ref }}
         run: |
-          mapfile -t files < <(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '.*\.cs$')
+          mapfile -t files < <(git diff --name-only --diff-filter=AM $PR_BASE_REF HEAD | grep '.*\.cs$')
+          echo "New .cs files in $PR_BASE_REF: ${#files[@]}"
           if [ ${#files[@]} -ne 0 ]; then dotnet format OpenTabletDriver --verify-no-changes --include "${files[@]}"; fi
 
   unittests:
