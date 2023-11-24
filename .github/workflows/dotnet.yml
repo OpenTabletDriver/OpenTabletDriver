@@ -114,7 +114,7 @@ jobs:
 
       - name: Lint Changed Files
         env:
-          PR_BASE_REF: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.sha }}
         run: |
           mapfile -t files < <(git diff --name-only --diff-filter=AM $PR_BASE_REF HEAD | grep '.*\.cs$')
           echo "New .cs files in $PR_BASE_REF: ${#files[@]}"
