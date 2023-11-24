@@ -21,7 +21,7 @@ jobs:
         run: sudo apt install -y debhelper dotnet-sdk-7.0
 
       - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Debian Build
         run: ./eng/linux/package.sh --package Debian --output ./dist/debian
@@ -78,7 +78,7 @@ jobs:
         run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-7.0 tree
 
       - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # https://github.com/actions/checkout/issues/1169
       - run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
@@ -110,7 +110,7 @@ jobs:
       VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
       - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
