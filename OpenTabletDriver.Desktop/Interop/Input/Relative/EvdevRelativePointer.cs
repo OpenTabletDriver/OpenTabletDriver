@@ -23,8 +23,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
                 EventCode.BTN_LEFT,
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
-                EventCode.BTN_FORWARD,
-                EventCode.BTN_BACK);
+                EventCode.BTN_SIDE,
+                EventCode.BTN_EXTRA);
 
             var result = Device.Initialize();
             switch (result)
