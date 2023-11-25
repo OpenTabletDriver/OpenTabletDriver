@@ -117,7 +117,7 @@ jobs:
           PR_BASE_REF: ${{ github.event.pull_request.base.sha }} # latest commit on target branch
         run: |
           mapfile -t files < <(git diff --name-only --diff-filter=AM $PR_BASE_REF HEAD | grep '.*\.cs$')
-          if [ ${#files[@]} -ne 0 ]; then dotnet format OpenTabletDriver --verify-no-changes --include "${files[@]}"; fi
+          if [ ${#files[@]} -ne 0 ]; then dotnet format OpenTabletDriver.sln --verify-no-changes --include "${files[@]}"; fi
 
   unittests:
     name: Unit Tests
