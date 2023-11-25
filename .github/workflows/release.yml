@@ -21,7 +21,7 @@ jobs:
         run: sudo apt install -y debhelper dotnet-sdk-6.0
 
       - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Debian Build
         run: ./eng/linux/package.sh --package Debian --output ./dist/debian
@@ -47,21 +47,21 @@ jobs:
 
       - name: Upload Debian artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.deb
           path: ./dist/debian/*.deb
 
       - name: Upload generic Linux artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.linux-x64.tar.gz
           path: ./dist/tarball/*.tar.gz
 
       - name: Upload macOS artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.osx-x64.tar.gz
           path: ./dist/macos/*.tar.gz
@@ -78,7 +78,7 @@ jobs:
         run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-6.0 tree
 
       - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # https://github.com/actions/checkout/issues/1169
       - run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
@@ -98,7 +98,7 @@ jobs:
 
       - name: Upload RPM artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.rpm
           path: ./dist/redhat/*.rpm
@@ -110,13 +110,12 @@ jobs:
       VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
       - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3.2.0
         with:
           dotnet-version: '6.0'
-          include-prerelease: True
 
       - name: Package
         run: ./eng/windows/package.ps1
@@ -133,7 +132,7 @@ jobs:
 
       - name: Upload Windows asset (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.win-x64.zip
           path: ./dist/*.zip
