@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Schema.Generation;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 using Xunit;
+using Xunit.Abstractions;
 
 #nullable enable
 
@@ -13,6 +19,13 @@ namespace OpenTabletDriver.Tests
 {
     public class ConfigurationTest
     {
+        private readonly ITestOutputHelper _testOutputHelper;
+
+        public ConfigurationTest(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         public static IEnumerable<object[]> Configurations_Have_ExistentParsers_Data
         {
             get
@@ -170,6 +183,46 @@ namespace OpenTabletDriver.Tests
             var equality = IsEqual(identifier, otherIdentifier, new DeviceStringsComparer());
 
             Assert.False(equality);
+        }
+
+        private static readonly string ConfigurationProjectDir = Path.GetFullPath(Path.Join("../../../..", "OpenTabletDriver.Configurations"));
+        private static readonly string ConfigurationDir = Path.Join(ConfigurationProjectDir, "Configurations");
+        private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(ConfigurationDir, "*.json", SearchOption.AllDirectories)
+            .Select(f => (Path.GetRelativePath(ConfigurationDir, f), File.ReadAllText(f)));
+
+        [Fact]
+        public void Configurations_Verify_Configs_With_Schema()
+        {
+            var gen = new JSchemaGenerator();
+            var schema = gen.Generate(typeof(TabletConfiguration));
+            DisallowAdditionalItemsAndProperties(schema);
+
+            var failed = false;
+
+            foreach (var (tabletFilename, tabletConfigString) in ConfigFiles)
+            {
+                var tabletConfig = JObject.Parse(tabletConfigString);
+                if (tabletConfig.IsValid(schema, out IList<string> errors)) continue;
+
+                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:\r\n{string.Join("\r\n", errors)}\r\n");
+                failed = true;
+            }
+
+            Assert.False(failed);
+        }
+
+        private static void DisallowAdditionalItemsAndProperties(JSchema schema)
+        {
+            schema.AllowAdditionalItems = false;
+            schema.AllowAdditionalProperties = false;
+            schema.AllowUnevaluatedItems = false;
+            schema.AllowUnevaluatedProperties = false;
+
+            foreach (var child in schema.Properties)
+            {
+                if (child.Key == nameof(TabletConfiguration.Attributes)) continue;
+                DisallowAdditionalItemsAndProperties(child.Value);
+            }
         }
 
         public static IEnumerable<object[]> Configurations_DeviceIdentifier_IsNotConflicting_Data

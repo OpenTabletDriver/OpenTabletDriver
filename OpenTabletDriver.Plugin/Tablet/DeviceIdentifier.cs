@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 #nullable enable
 
@@ -9,11 +10,15 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The Vendor ID of the device.
         /// </summary>
+        [Required(ErrorMessage = $"{nameof(VendorID)} identifier must be defined")]
+        [Range(0, 0xFFFF)]
         public int VendorID { set; get; }
 
         /// <summary>
         /// The Product ID of the device.
         /// </summary>
+        [Required(ErrorMessage = $"{nameof(ProductID)} identifier must be defined")]
+        [Range(0, 0xFFFF)]
         public int ProductID { set; get; }
 
         /// <summary>
@@ -29,6 +34,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The device report parser used by the detected device.
         /// </summary>
+        [RegularExpression(@"^OpenTabletDriver(\.[\w\d]+)+$", ErrorMessage = $"{nameof(ReportParser)} for identifier must match regular expression")]
         public string ReportParser { set; get; } = string.Empty;
 
         /// <summary>
