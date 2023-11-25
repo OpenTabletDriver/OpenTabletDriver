@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Tablet
         /// The device report parser used by the detected device.
         /// </summary>
         [DisplayName("Report Parser")]
-        [RegularExpression(@"^OpenTabletDriver(\.[\w\d]+)+$", ErrorMessage = $"{nameof(ReportParser)} for identifier must match regular expression")]
+        [RegularExpression(@"^([A-Za-z]+\w*)(\.[A-Za-z]+\w*)+$", ErrorMessage = $"{nameof(ReportParser)} for identifier must match regular expression")]
         public string ReportParser { set; get; } = string.Empty;
 
         /// <summary>
