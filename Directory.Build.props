@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package Information">
-    <Authors>InfinityGhost</Authors>
+    <Authors>InfinityGhost;X9VoiD</Authors>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 </Project>

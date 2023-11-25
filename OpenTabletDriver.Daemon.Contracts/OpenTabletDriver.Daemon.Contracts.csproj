@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(FrameworkLatest)</TargetFramework>
+    <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup Label="NuGet Packages">
+    <PackageReference Include="StreamJsonRpc" Version="2.6.121" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
+  </ItemGroup>
+
+</Project>

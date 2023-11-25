@@ -1,0 +1,12 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <StyleInclude Source="ActivatableUserControl.axaml" />
+  <StyleInclude Source="BooleanInput.axaml" />
+  <StyleInclude Source="DoubleInput.axaml" />
+  <StyleInclude Source="EnumInput.axaml" />
+  <StyleInclude Source="ListBox.axaml" />
+  <StyleInclude Source="RangedInput.axaml" />
+  <StyleInclude Source="Section.axaml" />
+  <StyleInclude Source="StringInput.axaml" />
+</Styles>

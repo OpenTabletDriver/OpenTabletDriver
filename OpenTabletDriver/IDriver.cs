@@ -11,9 +11,10 @@ namespace OpenTabletDriver
     [PublicAPI]
     public interface IDriver
     {
-        event EventHandler<ImmutableArray<InputDevice>>? InputDevicesChanged;
+        event EventHandler<InputDevice> InputDeviceAdded;
+        event EventHandler<InputDevice> InputDeviceRemoved;
         ImmutableArray<InputDevice> InputDevices { get; }
         IReportParser<IDeviceReport> GetReportParser(DeviceIdentifier identifier);
-        void Detect();
+        void ScanDevices();
     }
 }

@@ -199,5 +199,12 @@ namespace OpenTabletDriver.Devices.WinUSB
                 _activeFileHandle = null;
             }
         }
+
+        public bool IsSibling(IDeviceEndpoint other)
+        {
+            // TODO: For now we assume that all WinUSB interfaces are not siblings.
+            //       Can probably be implemented with CM_Get_Parent until a USB device is found.
+            return false;
+        }
     }
 }

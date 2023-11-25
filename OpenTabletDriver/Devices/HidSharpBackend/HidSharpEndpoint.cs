@@ -26,5 +26,13 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
 
         public IDeviceEndpointStream? Open() => _device.TryOpen(out var stream) ? new HidSharpEndpointStream(stream) : null;
         public string GetDeviceString(byte index) => _device.GetDeviceString(index);
+
+        public bool IsSibling(IDeviceEndpoint other)
+        {
+            if (other is HidSharpEndpoint endpoint)
+                return _device.IsSibling(endpoint._device);
+
+            return false;
+        }
     }
 }

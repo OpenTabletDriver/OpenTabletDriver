@@ -10,15 +10,15 @@ namespace OpenTabletDriver.Attributes
     [PublicAPI]
     public class RangeSettingAttribute : SettingAttribute
     {
-        public RangeSettingAttribute(string displayName, float min, float max, float defaultValue = 0f) : base(displayName)
+        public RangeSettingAttribute(string displayName, float min, float max, float step) : base(displayName)
         {
             Min = min;
             Max = max;
-            DefaultValue = defaultValue;
+            Step = step;
         }
 
         public float Min { get; }
         public float Max { get; }
-        public float DefaultValue { get; }
+        public float Step { get; }
     }
 }

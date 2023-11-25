@@ -88,5 +88,12 @@ namespace OpenTabletDriver.Devices
         /// The requested string from device firmware, or null.
         /// </returns>
         string? GetDeviceString(byte index);
+
+        /// <summary>
+        /// Whether this and another device endpoint are of the same device.
+        /// </summary>
+        /// <param name="other">The other device endpoint</param>
+        /// <returns>Returns <c>true</c> if same device.</returns>
+        bool IsSibling(IDeviceEndpoint other);
     }
 }

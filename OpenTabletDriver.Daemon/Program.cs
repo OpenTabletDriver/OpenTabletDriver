@@ -6,12 +6,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Interop.AppInfo;
-using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Interop;
+using OpenTabletDriver.Daemon.Contracts.RPC;
+using OpenTabletDriver.Interop;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Executable
 {
     public class Program
     {
@@ -38,15 +38,15 @@ namespace OpenTabletDriver.Daemon
                     }
                 };
 
-                rootCommand.Handler = CommandHandler.Create<string, string>(Invoke);
+                rootCommand.Handler = CommandHandler.Create<string, string>(InvokeAsync);
                 await rootCommand.InvokeAsync(args);
             }
         }
 
-        private static async Task Invoke(string appdata, string config)
+        private static async Task InvokeAsync(string appdata, string config)
         {
             var serviceCollection = DesktopServiceCollection.GetPlatformServiceCollection();
-            var appInfo = AppInfo.GetPlatformAppInfo();
+            var appInfo = GetPlatformAppInfo();
 
             if (!string.IsNullOrWhiteSpace(appdata))
                 appInfo.AppDataDirectory = FileUtilities.InjectEnvironmentVariables(appdata);
@@ -73,10 +73,10 @@ namespace OpenTabletDriver.Daemon
                 );
             };
 
-            await Run(serviceCollection.BuildServiceProvider());
+            await RunAsync(serviceCollection.BuildServiceProvider());
         }
 
-        private static async Task Run(IServiceProvider serviceProvider)
+        private static async Task RunAsync(IServiceProvider serviceProvider)
         {
             var daemon = serviceProvider.GetRequiredService<IDriverDaemon>();
             var rpcHost = serviceProvider.GetRequiredService<RpcHost<IDriverDaemon>>();
@@ -85,6 +85,17 @@ namespace OpenTabletDriver.Daemon
 
             await daemon.Initialize();
             await rpcHost.Run(daemon);
+        }
+
+        private static AppInfo GetPlatformAppInfo()
+        {
+            return SystemInterop.CurrentPlatform switch
+            {
+                SystemPlatform.Windows => new WindowsAppInfo(),
+                SystemPlatform.Linux => new LinuxAppInfo(),
+                SystemPlatform.MacOS => new MacOSAppInfo(),
+                _ => throw new PlatformNotSupportedException("This platform is not supported by OpenTabletDriver.")
+            };
         }
     }
 }
