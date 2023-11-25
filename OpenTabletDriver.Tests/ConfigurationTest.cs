@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using Newtonsoft.Json.Schema.Generation;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Tablet;
 using Xunit;
@@ -28,9 +32,9 @@ namespace OpenTabletDriver.Tests
             var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
 
             var parsers = from configuration in configurationProvider.TabletConfigurations
-                from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers)
-                orderby identifier.ReportParser
-                select identifier.ReportParser;
+                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers)
+                          orderby identifier.ReportParser
+                          select identifier.ReportParser;
 
             var failed = false;
 
@@ -235,12 +239,12 @@ namespace OpenTabletDriver.Tests
                 .GetRequiredService<IDeviceConfigurationProvider>();
 
             var digitizerIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
+                                                  from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                                  select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
 
             var auxIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                from identifier in config.AuxiliaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
+                                            from identifier in config.AuxiliaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                            select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
 
             var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts);
 
@@ -267,6 +271,46 @@ namespace OpenTabletDriver.Tests
                 {
                     AssertInequal(identificationContext, otherIdentificationContext);
                 }
+            }
+        }
+
+        private static readonly string ConfigurationProjectDir = Path.GetFullPath(Path.Join("../../../..", "OpenTabletDriver.Configurations"));
+        private static readonly string ConfigurationDir = Path.Join(ConfigurationProjectDir, "Configurations");
+        private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(ConfigurationDir, "*.json", SearchOption.AllDirectories)
+            .Select(f => (Path.GetRelativePath(ConfigurationDir, f), File.ReadAllText(f)));
+
+        [Fact]
+        public void Configurations_Verify_Configs_With_Schema()
+        {
+            var gen = new JSchemaGenerator();
+            var schema = gen.Generate(typeof(TabletConfiguration));
+            DisallowAdditionalItemsAndProperties(schema);
+
+            var failed = false;
+
+            foreach (var (tabletFilename, tabletConfigString) in ConfigFiles)
+            {
+                var tabletConfig = JObject.Parse(tabletConfigString);
+                if (tabletConfig.IsValid(schema, out IList<string> errors)) continue;
+
+                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:\r\n{string.Join("\r\n", errors)}\r\n");
+                failed = true;
+            }
+
+            Assert.False(failed);
+        }
+
+        private static void DisallowAdditionalItemsAndProperties(JSchema schema)
+        {
+            schema.AllowAdditionalItems = false;
+            schema.AllowAdditionalProperties = false;
+            schema.AllowUnevaluatedItems = false;
+            schema.AllowUnevaluatedProperties = false;
+
+            foreach (var child in schema.Properties)
+            {
+                if (child.Key == nameof(TabletConfiguration.Attributes)) continue;
+                DisallowAdditionalItemsAndProperties(child.Value);
             }
         }
 
