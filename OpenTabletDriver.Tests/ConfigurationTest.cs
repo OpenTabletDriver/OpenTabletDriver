@@ -32,9 +32,9 @@ namespace OpenTabletDriver.Tests
             var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
 
             var parsers = from configuration in configurationProvider.TabletConfigurations
-                from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers)
-                orderby identifier.ReportParser
-                select identifier.ReportParser;
+                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers)
+                          orderby identifier.ReportParser
+                          select identifier.ReportParser;
 
             var failed = false;
 
@@ -239,12 +239,12 @@ namespace OpenTabletDriver.Tests
                 .GetRequiredService<IDeviceConfigurationProvider>();
 
             var digitizerIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
+                                                  from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                                  select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
 
             var auxIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                from identifier in config.AuxiliaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
+                                            from identifier in config.AuxiliaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                            select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
 
             var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts);
 
