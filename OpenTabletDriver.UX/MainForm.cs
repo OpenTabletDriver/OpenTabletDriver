@@ -341,17 +341,19 @@ namespace OpenTabletDriver.UX
 
         private void SetTitle(IEnumerable<TabletReference> tablets = null)
         {
-            string prefix = $"OpenTabletDriver v{App.Version} - ";
+            string prefix = $"OpenTabletDriver v{App.Version}";
+            string affix = string.Empty;
+
             if (tablets?.Any() ?? false)
             {
                 // Limit to 3 tablets in the title
                 int numTablets = Math.Min(tablets.Count(), 3);
-                this.Title = prefix + string.Join(", ", tablets.Take(numTablets).Select(t => t.Properties.Name));
+                affix = string.Join(", ", tablets.Take(numTablets).Select(t => t.Properties.Name));
             }
-            else
-            {
-                this.Title = prefix + "No tablets detected.";
-            }
+
+            this.Title = !string.IsNullOrEmpty(affix)
+                ? $"{prefix} - {affix}"
+                : prefix;
         }
 
         private void HandleDaemonConnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
