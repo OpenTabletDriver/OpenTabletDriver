@@ -13,8 +13,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private int prevButtonStates;
         private float? pendingX;
         private float? pendingY;
-        private float? _lastX;
-        private float? _lastY;
         private CGMouseButton lastButton;
         private IntPtr mouseEvent = CGEventCreate(IntPtr.Zero);
 
@@ -41,16 +39,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 // can send drag here
                 var lastButtonSet = IsButtonSet(currButtonStates, lastButton);
                 var cgEventType = ToDragCGEventType(lastButton, lastButtonSet);
-
-                if (pendingX.HasValue && _lastX.HasValue && pendingY.HasValue && _lastY.HasValue)
-                {
-                    // set mouse delta between current and previous mouse position
-                    var deltaX = pendingX.Value - _lastX.Value;
-                    var deltaY = pendingY.Value - _lastY.Value;
-                    CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, deltaX);
-                    CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, deltaY);
-                }
-
                 CGEventSetType(mouseEvent, cgEventType);
                 CGEventPost(CGEventTapLocation.kCGHIDEventTap, mouseEvent);
             }
@@ -64,10 +52,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 ProcessKeyStates(currButtonStates, 0);
                 prevButtonStates = 0;
                 currButtonStates = 0;
-                pendingX = null;
-                pendingY = null;
-                _lastX = null;
-                _lastY = null;
             }
         }
 
@@ -76,8 +60,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         protected void QueuePendingPosition(float x, float y)
         {
-            _lastX = pendingX;
-            _lastY = pendingY;
             pendingX = x;
             pendingY = y;
         }
@@ -87,6 +69,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             if (pendingX.HasValue)
             {
                 SetPendingPosition(mouseEvent, pendingX.Value, pendingY.Value);
+                pendingX = null;
+                pendingY = null;
                 return true;
             }
 
