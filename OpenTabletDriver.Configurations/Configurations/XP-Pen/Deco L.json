@@ -25,7 +25,7 @@
       "OutputReportLength": 33,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport":  [
+      "OutputInitReport": [
         "ArAE"
       ],
       "DeviceStrings": {},
