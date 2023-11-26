@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
@@ -298,6 +301,85 @@ namespace OpenTabletDriver.Tests
             }
 
             Assert.False(failed);
+        }
+
+        /// <summary>
+        /// Ensures that configuration formatting/linting matches expectations, which are:
+        /// - 2 space indentation
+        /// - Newline at end of file
+        /// - Consistent newline format
+        /// </summary>
+        [Fact]
+        public void Configurations_Are_Linted()
+        {
+            const int maxLinesToOutput = 3;
+
+            var serializer = new JsonSerializer();
+            var failedFiles = 0;
+
+            var ourJsonSb = new StringBuilder();
+            using var strw = new StringWriter(ourJsonSb);
+            using var jtw = new JsonTextWriter(strw);
+            jtw.Formatting = Formatting.Indented;
+            jtw.Indentation = 2;
+
+            foreach (var (tabletFilename, theirJson) in ConfigFiles)
+            {
+                ourJsonSb.Clear();
+                var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(theirJson);
+
+                serializer.Serialize(jtw, ourJsonObj);
+                ourJsonSb.AppendLine(); // otherwise we won't have an EOL at EOF
+
+                var ourJson = ourJsonSb.ToString();
+
+                var failedLines = DoesJsonMatch(ourJson, theirJson);
+
+                if (failedLines.Any() || !string.Equals(theirJson, ourJson)) // second check ensures EOL markers are equivalent
+                {
+                    failedFiles++;
+                    _testOutputHelper.WriteLine(
+                        $"- Tablet Configuration '{tabletFilename}' lint check failed with the following errors:");
+
+                    foreach (var (line, error) in failedLines.Take(maxLinesToOutput))
+                        _testOutputHelper.WriteLine($"    Line {line}: {error}");
+                    if (failedLines.Count > maxLinesToOutput)
+                        _testOutputHelper.WriteLine($"    Truncated an additional {failedLines.Count - maxLinesToOutput} mismatching lines - wrong indent?");
+                    else if (failedLines.Count == 0)
+                        _testOutputHelper.WriteLine("     Generic mismatch (line endings?)");
+                }
+            }
+
+            Assert.Equal(0, failedFiles);
+        }
+
+        private static IList<(int, string)> DoesJsonMatch(string ourJson, string theirJson)
+        {
+            int line = 0;
+            var rv = new List<(int, string)>();
+
+            using var ourSr = new StringReader(ourJson);
+            using var theirSr = new StringReader(theirJson);
+            while (true)
+            {
+                var ourLine = ourSr.ReadLine();
+                var theirLine = theirSr.ReadLine();
+                line++;
+
+                if (ourLine == null && theirLine == null)
+                    break; // success for file
+
+                var ourLineOutput = ourLine ?? "EOF";
+                var theirLineOutput = theirLine ?? "EOF";
+
+                if (ourLine == null || theirLine == null || !string.Equals(ourLine, theirLine))
+                    rv.Add((line, $"Expected '{ourLineOutput}' got '{theirLineOutput}'"));
+
+                if (ourLine == null || theirLine == null)
+                    break;
+            }
+
+            return rv;
         }
 
         private static void DisallowAdditionalItemsAndProperties(JSchema schema)
