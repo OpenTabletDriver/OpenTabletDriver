@@ -31,7 +31,7 @@ namespace OpenTabletDriver.UX.MacOS
             {
                 handlePermission(
                     type: "Input Monitoring",
-                    message: "To use OpenTabletDriver, you need to grant the \"Input Monitoring\" permission so that input from the tablet can be received By OpenTabletDriover.\n\n" +
+                    message: "To use OpenTabletDriver, you need to grant the \"Input Monitoring\" permission so that input from the tablet can be received By OpenTabletDriver.\n\n" +
                         $"To enable this permission, please click on \"Open Input Monitoring Preferences\" below. In the Input Preferences Monitoring panel that opens, tick the box next to \"{responsibleAppName}\".\n\n" +
                         $"If \"{responsibleAppName}\" is already selected, you can remove it from the list by clicking on the \"-\" button, and then add it back to the list.",
                     preferencesLink: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent",
