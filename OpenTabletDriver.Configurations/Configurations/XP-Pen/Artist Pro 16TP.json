@@ -1,36 +1,35 @@
 {
-    "Name": "XP-Pen Artist Pro 16TP",
-    "Specifications": {
-      "Digitizer": {
-        "Width": 345.615,
-        "Height": 194.385,
-        "MaxX": 69123,
-        "MaxY": 38877
-      },
-      "Pen": {
-        "MaxPressure": 8191,
-        "ButtonCount": 2
-      },
-      "AuxiliaryButtons": null,
-      "MouseButtons": null,
-      "Touch": null
+  "Name": "XP-Pen Artist Pro 16TP",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 345.615,
+      "Height": 194.385,
+      "MaxX": 69123,
+      "MaxY": 38877
     },
-    "DigitizerIdentifiers": [
-      {
-        "VendorID": 10429,
-        "ProductID": 2350,
-        "InputReportLength": 12,
-        "OutputReportLength": 12,
-        "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-        "FeatureInitReport": null,
-        "OutputInitReport": [
-          "ArAE"
-        ],
-        "DeviceStrings": {},
-        "InitializationStrings": []
-      }
-    ],
-    "AuxiliaryDeviceIdentifiers": [],
-    "Attributes": {}
-  }
-  
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2350,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
