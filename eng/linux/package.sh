@@ -3,10 +3,18 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-if is_musl_based_distro; then
-  NET_RUNTIME="linux-musl-x64"
+if [ "$(uname -m)" = "aarch64" ]
+then
+  arch="arm64"
 else
-  NET_RUNTIME="linux-x64"
+  arch="x64"
+fi
+# TODO include more architectures here? Does it build on anything else?
+
+if is_musl_based_distro; then
+  NET_RUNTIME="linux-musl-$arch"
+else
+  NET_RUNTIME="linux-$arch"
 fi
 
 PACKAGE_GEN=""
