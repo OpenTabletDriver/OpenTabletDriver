@@ -3,13 +3,16 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-if [ "$(uname -m)" = "aarch64" ]
+if [ -z "$OTD_BUILD_ARCH" ]
 then
-  arch="arm64"
-else
-  arch="x64"
+  if [ "$(uname -m)" = "aarch64" ]
+  then
+    OTD_BUILD_ARCH="arm64"
+  else
+    OTD_BUILD_ARCH="x64"
+  fi
+  # TODO include more architectures here? Does it build on anything else?
 fi
-# TODO include more architectures here? Does it build on anything else?
 
 if is_musl_based_distro; then
   NET_RUNTIME="linux-musl-$arch"
