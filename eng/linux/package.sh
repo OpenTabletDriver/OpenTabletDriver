@@ -4,14 +4,12 @@ set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 arch="${OTD_BUILD_ARCH:=}"
-if [ -z "$arch" ]
-then
-  echo "detecting architecture using uname..."
+if [ -z "$arch" ]; then
   uname_m="$(uname -m)"
   case "$uname_m" in
     "aarch64")
       arch="arm64";;
-    "amd64")
+    "x86_64")
       arch="x64";;
     # include more architectures here. Does OTD build on anything else?
     *)
@@ -19,7 +17,7 @@ then
       arch="x64";;
   esac
 else
-  echo "using envirnoment supplied architecture $arch"
+  echo "using environment supplied architecture $arch"
 fi
 
 if is_musl_based_distro; then
