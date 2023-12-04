@@ -28,7 +28,7 @@ Todos os status dos tablets que estão suportados, não testados ou que estão e
 
 O OpenTabletDriver funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todos o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
 
-> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida. 
+> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida.
 
 ## Buildando OpenTabletDriver da fonte
 
@@ -36,7 +36,7 @@ Os requisitos para buildar o OpenTabletDriver são referentes à todas as plataf
 
 ### Todas as plataformas
 
-- .NET 6 SDK (pode ser obtida [aqui](https://dotnet.microsoft.com/download/dotnet/6.0) - Você precisa do SDK para sua plataforma, usuários Linux devem instalar via gerenciador de pacotes se possível)
+- .NET 7 SDK (pode ser obtida [aqui](https://dotnet.microsoft.com/download/dotnet/7.0) - Você precisa do SDK para sua plataforma, usuários Linux devem instalar via gerenciador de pacotes se possível)
 
 #### Windows
 
