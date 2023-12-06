@@ -7,15 +7,25 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
     {
         public IDeviceReport Parse(byte[] data)
         {
-            return data[1] switch
+            switch (data[1])
             {
-                0xe0 => new UCLogicAuxReport(data),
-                // Group buttons, no way to use them properly for now
-                0xe3 => new UCLogicAuxReport(data),
-                // Wheel data, reported in data[5], ignoring
-                0xf1 => new DeviceReport(data),
-                _ => new TiltTabletReport(data)
+                case 0xe0:
+                    return new UCLogicAuxReport(data);
+                case 0xe3:
+                    // Group buttons, no way to use them properly for now
+                    return new UCLogicAuxReport(data);
+                case 0xf1:
+                    // Wheel data, reported in data[5], ignoring
+                    return new DeviceReport(data);
+                case 0x00:
+                    return new OutOfRangeReport(data);
             };
+
+            if (data[1].IsBitSet(7)) {
+                return new TiltTabletReport(data);
+            }
+
+            return new DeviceReport(data);
         }
     }
 }
