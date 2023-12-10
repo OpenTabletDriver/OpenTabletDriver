@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -26,7 +25,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
 
         [JsonProperty("Operating System")]
-        public OperatingSystem OperatingSystem { private set; get; } = Environment.OSVersion;
+        public OSInfo OperatingSystem => OSInfo.GetOSInfo();
 
         [JsonProperty("Environment Variables")]
         public IDictionary<string, string> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
