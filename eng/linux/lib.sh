@@ -22,12 +22,33 @@ copy_generic_files() {
   echo
 }
 
+test_rules() {
+  if ! hash udevadm 2>/dev/null; then
+    echo "INFO: test_rules: Cannot test rules without program 'udevadm'. Passing."
+    return 0
+  fi
+
+  if ! udevadm verify --help >/dev/null; then
+    echo "INFO: test_rules: Your udevadm does not support 'udevadm verify'. Passing."
+    return 0
+  fi
+
+  if [ ! -f "${1}" ]; then
+    echo "test_rules: Not a file '${1}'"
+    return 1
+  fi
+
+  udevadm verify "${1}"
+}
+
 generate_rules() {
   local output_file="${1}"
 
   echo "Generating udev rules to ${output_file}..."
   mkdir -p $(dirname "$output_file")
   "${REPO_ROOT}/generate-rules.sh" > "${output_file}"
+
+  test_rules "$output_file"
 }
 
 generate_desktop_file() {
