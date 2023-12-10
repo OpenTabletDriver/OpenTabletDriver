@@ -1,0 +1,35 @@
+{
+  "Name": "Wacom DTH-1320",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 297.76,
+      "Height": 169.24,
+      "MaxX": 59552,
+      "MaxY": 33848
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 847,
+      "InputReportLength": 192,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
