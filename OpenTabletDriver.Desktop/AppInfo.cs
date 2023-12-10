@@ -16,6 +16,7 @@ namespace OpenTabletDriver.Desktop
             settingsFile,
             pluginDirectory,
             presetDirectory,
+            logDirectory,
             temporaryDirectory,
             cacheDirectory,
             backupDirectory,
@@ -76,6 +77,12 @@ namespace OpenTabletDriver.Desktop
         {
             set => this.presetDirectory = value;
             get => this.presetDirectory ?? GetDefaultPresetDirectory();
+        }
+
+        public string LogDirectory
+        {
+            set => this.logDirectory = value;
+            get => this.logDirectory ?? GetDefaultLogDirectory();
         }
 
         public string TemporaryDirectory
@@ -139,6 +146,7 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultSettingsFile() => Path.Join(AppDataDirectory, "settings.json");
         private string GetDefaultPluginDirectory() => Path.Join(AppDataDirectory, "Plugins");
         private string GetDefaultPresetDirectory() => Path.Join(AppDataDirectory, "Presets");
+        private string GetDefaultLogDirectory() => Path.Join(AppDataDirectory, "Logs");
         private string GetDefaultTemporaryDirectory() => Path.Join(AppDataDirectory, "Temp");
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
