@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.CommandLine.Invocation;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,6 +45,7 @@ namespace OpenTabletDriver.Daemon
         private readonly IPresetManager _presetManager;
         private readonly ISleepDetector _sleepDetector;
         private readonly IUpdater? _updater;
+        private readonly LogFile _logFile;
 
         private UpdateInfo? _updateInfo;
         private Settings? _lastValidSettings;
@@ -75,6 +73,7 @@ namespace OpenTabletDriver.Daemon
             _pluginFactory = pluginFactory;
             _presetManager = presetManager;
             _sleepDetector = sleepDetector;
+            _logFile = new LogFile(_appInfo.LogDirectory);
 
             _updater = serviceProvider.GetService<IUpdater>();
         }
@@ -83,7 +82,7 @@ namespace OpenTabletDriver.Daemon
         {
             Log.Output += (sender, message) =>
             {
-                LogMessages.Add(message);
+                _logFile.Write(message);
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
@@ -149,7 +148,6 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<PluginEventType>? AssembliesChanged;
         public event EventHandler? Resynchronize;
 
-        private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { get; } = new Collection<ITool>();
 
         private bool _debugging;
@@ -402,7 +400,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<IDiagnosticInfo> GetDiagnostics()
         {
             var devices = await GetDevices();
-            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, LogMessages, devices);
+            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, _logFile.Read(), devices);
         }
 
         public Task SetTabletDebug(bool enabled)
@@ -432,7 +430,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            return Task.FromResult((IEnumerable<LogMessage>)LogMessages);
+            return Task.FromResult(_logFile.Read());
         }
 
         public Task<PluginSettings> GetDefaults(string path)
