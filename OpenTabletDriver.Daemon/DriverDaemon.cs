@@ -64,7 +64,7 @@ namespace OpenTabletDriver.Daemon
 
             LoadUserSettings();
 
-            SleepDetector.Slept += async() =>
+            SleepDetector.Slept += async () =>
             {
                 if (System.Diagnostics.Debugger.IsAttached)
                     return;
