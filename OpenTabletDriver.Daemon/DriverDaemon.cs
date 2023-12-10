@@ -60,9 +60,9 @@ namespace OpenTabletDriver.Daemon
             {
                 var os = SystemInterop.CurrentPlatform switch
                 {
-                    SystemPlatform.Windows => "Windows",
-                    SystemPlatform.Linux => "Linux",
-                    SystemPlatform.MacOS => "MacOS",
+                    PluginPlatform.Windows => "Windows",
+                    PluginPlatform.Linux => "Linux",
+                    PluginPlatform.MacOS => "MacOS",
                     _ => null
                 };
                 var wikiUrl = $"https://opentabletdriver.net/Wiki/FAQ/{os}";
