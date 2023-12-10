@@ -35,6 +35,8 @@ namespace OpenTabletDriver.Native.Linux.Evdev
             }
         }
 
+        public void EnableProperty(InputProperty prop) => libevdev_enable_property(this.device, (uint)prop);
+
         public void EnableType(EventType type) => libevdev_enable_event_type(this.device, (uint)type);
 
         public void EnableCode(EventType type, EventCode code) => libevdev_enable_event_code(this.device, (uint)type, (uint)code, IntPtr.Zero);

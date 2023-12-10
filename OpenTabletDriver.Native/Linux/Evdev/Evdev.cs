@@ -14,6 +14,9 @@ namespace OpenTabletDriver.Native.Linux.Evdev
         public extern static void libevdev_set_name(IntPtr dev, string name);
 
         [DllImport(libevdev)]
+        public extern static int libevdev_enable_property(IntPtr dev, uint prop);
+
+        [DllImport(libevdev)]
         public extern static int libevdev_enable_event_type(IntPtr dev, uint type);
 
         [DllImport(libevdev)]
