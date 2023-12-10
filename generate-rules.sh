@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 # dependencies: git, jq, tr (coreutils), awk (gawk), sed (gnused)
 
+print_help() {
+  echo "Usage: ${BASH_SOURCE[0]} [OPTIONS]..."
+  echo "Options:"
+  echo "  -c, --configurations <configurations>   Source configurations directory"
+  echo "  -h, --help                              Print this help message"
+}
+
 for c in git jq tr awk sed; do
   command -v $c > /dev/null
   if [[ $? > 0 ]]; then
@@ -17,6 +24,23 @@ shopt -s globstar
 set -eu
 
 OTD_CONFIGURATIONS="${OTD_CONFIGURATIONS:="$(git rev-parse --show-toplevel)/OpenTabletDriver.Configurations/Configurations"}"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -c=*|--configurations=*)
+      OTD_CONFIGURATIONS="${1#*=}"
+      ;;
+    -c|--configurations)
+      OTD_CONFIGURATIONS="$2"
+      shift
+      ;;
+    *)
+      print_help
+      exit 1
+      ;;
+  esac
+  shift
+done
 
 script='[
   .[] | { Name:.Name, libinput:(.Attributes.libinputoverride // "0") } + (.DigitizerIdentifiers[] | { VendorID:.VendorID, ProductID:.ProductID })
