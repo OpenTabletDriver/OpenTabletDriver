@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -71,7 +72,7 @@ namespace OpenTabletDriver.Tests
                 OutputReportLength = 1
             };
 
-            var equality = IsEqual(identifier, identifier, new DeviceStringsComparer());
+            var equality = IsEqual(identifier, identifier);
 
             Assert.True(equality);
         }
@@ -94,7 +95,7 @@ namespace OpenTabletDriver.Tests
                 OutputReportLength = 1
             };
 
-            var equality = IsEqual(identifier, otherIdentifier, new DeviceStringsComparer());
+            var equality = IsEqual(identifier, otherIdentifier);
 
             Assert.True(equality);
         }
@@ -117,7 +118,7 @@ namespace OpenTabletDriver.Tests
                 OutputReportLength = null
             };
 
-            var equality = IsEqual(identifier, otherIdentifier, new DeviceStringsComparer());
+            var equality = IsEqual(identifier, otherIdentifier);
 
             Assert.True(equality);
         }
@@ -125,6 +126,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public void Configurations_DeviceIdentifier_Equality_DeviceStrings_SelfTest()
         {
+            // both no device strings
             var identifier = new DeviceIdentifier
             {
                 VendorID = 1,
@@ -136,6 +138,30 @@ namespace OpenTabletDriver.Tests
             {
                 VendorID = 1,
                 ProductID = 1,
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+
+            var equality = IsEqual(identifier, otherIdentifier);
+
+            Assert.True(equality);
+
+            // both have the same device strings
+            identifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                DeviceStrings = new Dictionary<byte, string>
+                {
+                    [1] = "Test"
+                },
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+            otherIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
                 DeviceStrings = new Dictionary<byte, string>
                 {
                     [1] = "Test"
@@ -144,7 +170,34 @@ namespace OpenTabletDriver.Tests
                 OutputReportLength = 1
             };
 
-            var equality = IsEqual(identifier, otherIdentifier, new DeviceStringsComparer());
+            equality = IsEqual(identifier, otherIdentifier);
+
+            Assert.True(equality);
+
+            // one of them has no device strings
+            identifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                DeviceStrings = new Dictionary<byte, string>
+                {
+                },
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+            otherIdentifier = new DeviceIdentifier
+            {
+                VendorID = 1,
+                ProductID = 1,
+                DeviceStrings = new Dictionary<byte, string>
+                {
+                    [1] = "Test"
+                },
+                InputReportLength = 1,
+                OutputReportLength = 1
+            };
+
+            equality = IsEqual(identifier, otherIdentifier);
 
             Assert.True(equality);
         }
@@ -158,7 +211,7 @@ namespace OpenTabletDriver.Tests
                 ProductID = 1,
                 DeviceStrings = new Dictionary<byte, string>
                 {
-                    [1] = "Test"
+                    [1] = "Test1"
                 },
                 InputReportLength = 1,
                 OutputReportLength = 1
@@ -170,13 +223,12 @@ namespace OpenTabletDriver.Tests
                 DeviceStrings = new Dictionary<byte, string>
                 {
                     [1] = "Test",
-                    [2] = "Test2"
                 },
                 InputReportLength = 1,
                 OutputReportLength = 1
             };
 
-            var equality = IsEqual(identifier, otherIdentifier, new DeviceStringsComparer());
+            var equality = IsEqual(identifier, otherIdentifier);
 
             Assert.False(equality);
         }
@@ -228,58 +280,74 @@ namespace OpenTabletDriver.Tests
                 .BuildServiceProvider()
                 .GetRequiredService<IDeviceConfigurationProvider>();
 
-            var digitizerIdentificationContexts = (from config in configurationProvider.TabletConfigurations
-                                                   from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                                                   select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index)).ToArray();
+            var digitizerIdentificationContexts = from config in configurationProvider.TabletConfigurations
+                                                  from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                                  select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
 
-            var auxIdentificationContexts = (from config in configurationProvider.TabletConfigurations
-                                             from identifier in config.AuxilaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
-                                             select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index)).ToArray();
+            var auxIdentificationContexts = from config in configurationProvider.TabletConfigurations
+                                            from identifier in config.AuxilaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                            select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
 
-            var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts).ToList();
+            var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts);
 
-            var encounteredPairs = new HashSet<IdentificationContextPair>();
+            // group similar identifiers
+            var groups = new Dictionary<IdentificationContext, List<IdentificationContext>>(IdentificationContextComparer.Default);
 
             foreach (var identificationContext in identificationContexts)
             {
-                foreach (var otherIdentificationContext in identificationContexts.Where(c => !ReferenceEquals(identificationContext, c)))
+                ref var group = ref CollectionsMarshal.GetValueRefOrAddDefault(groups, identificationContext, out var exists);
+                if (group is not null)
                 {
-                    // Yield return if unique pair
-                    encounteredPairs.Add(new IdentificationContextPair(identificationContext, otherIdentificationContext));
+                    AssertGroup(group, identificationContext);
+                    group.Add(identificationContext);
+                }
+                else
+                {
+                    group = new List<IdentificationContext> { identificationContext };
                 }
             }
 
-            var comparer = new DeviceStringsComparer();
-
-            foreach (var context in encounteredPairs)
+            static void AssertGroup(List<IdentificationContext> identificationContexts, IdentificationContext identificationContext)
             {
-                var deviceIdentifier = context.A;
-                var otherIdentifier = context.B;
-                var equality = IsEqual(deviceIdentifier.Identifier, otherIdentifier.Identifier, comparer);
-
-                if (equality)
+                foreach (var otherIdentificationContext in identificationContexts)
                 {
-                    var message = string.Format("'{0}' {1} (index: {2}) conflicts with '{3}' {4} (index: {5})",
-                        deviceIdentifier.TabletConfiguration.Name,
-                        deviceIdentifier.IdentifierType,
-                        deviceIdentifier.IdentifierIndex,
-                        otherIdentifier.TabletConfiguration.Name,
-                        otherIdentifier.IdentifierType,
-                        otherIdentifier.IdentifierIndex);
-
-                    throw new Exception(message);
+                    AssertInequal(identificationContext, otherIdentificationContext);
                 }
             }
         }
 
-        private static bool IsEqual(DeviceIdentifier a, DeviceIdentifier b, DeviceStringsComparer comparerInstance)
+        private static void AssertInequal(IdentificationContext a, IdentificationContext b)
+        {
+            if (IsEqual(a.Identifier, b.Identifier))
+            {
+                var message = string.Format("'{0}' {1} (index: {2}) conflicts with '{3}' {4} (index: {5})",
+                    a.TabletConfiguration.Name,
+                    a.IdentifierType,
+                    a.IdentifierIndex,
+                    b.TabletConfiguration.Name,
+                    b.IdentifierType,
+                    b.IdentifierIndex);
+
+                throw new Exception(message);
+            }
+        }
+
+        private static bool IsEqual(DeviceIdentifier a, DeviceIdentifier b)
         {
             var pidMatch = a.VendorID == b.VendorID && a.ProductID == b.ProductID;
-            var stringMatch = !a.DeviceStrings.Any() || !b.DeviceStrings.Any() || a.DeviceStrings.SequenceEqual(b.DeviceStrings, comparerInstance);
             var inputMatch = a.InputReportLength == b.InputReportLength || a.InputReportLength is null || b.InputReportLength is null;
             var outputMatch = a.OutputReportLength == b.OutputReportLength || a.OutputReportLength is null || b.OutputReportLength is null;
 
-            return pidMatch && stringMatch && inputMatch && outputMatch;
+            if (pidMatch && inputMatch && outputMatch)
+            {
+                if (a.DeviceStrings.Count == 0 || b.DeviceStrings.Count == 0)
+                    return true;
+
+                var (longer, shorter) = a.DeviceStrings.Count > b.DeviceStrings.Count ? (a, b) : (b, a);
+                return shorter.DeviceStrings.All(kv => longer.DeviceStrings.TryGetValue(kv.Key, out var otherValue) && otherValue == kv.Value);
+            }
+
+            return false;
         }
 
         public enum IdentifierType
@@ -295,29 +363,26 @@ namespace OpenTabletDriver.Tests
             int IdentifierIndex
         );
 
-        private struct IdentificationContextPair
+        private class IdentificationContextComparer : IEqualityComparer<IdentificationContext>
         {
-            public IdentificationContext A { get; }
-            public IdentificationContext B { get; }
+            public static readonly IdentificationContextComparer Default = new IdentificationContextComparer();
 
-            public IdentificationContextPair(IdentificationContext a, IdentificationContext b)
+            public bool Equals(IdentificationContext? x, IdentificationContext? y)
             {
-                // Order by name
-                (A, B) = string.Compare(a.TabletConfiguration.Name, b.TabletConfiguration.Name, StringComparison.Ordinal) < 0 ? (a, b) : (b, a);
-            }
-        }
+                if (x is null && y is null)
+                    return true;
+                if (x is null || y is null)
+                    return false;
 
-        private class DeviceStringsComparer : IEqualityComparer<KeyValuePair<byte, string>>
-        {
-            public bool Equals(KeyValuePair<byte, string> x, KeyValuePair<byte, string> y)
-            {
-                return x.Key == y.Key
-                    && x.Value == y.Value;
+                return IsEqual(x.Identifier, y.Identifier);
             }
 
-            public int GetHashCode([DisallowNull] KeyValuePair<byte, string> obj)
+            public int GetHashCode([DisallowNull] IdentificationContext obj)
             {
-                return HashCode.Combine(obj.Key, obj.Value);
+                return HashCode.Combine(
+                    obj.Identifier.VendorID,
+                    obj.Identifier.ProductID,
+                    obj.Identifier.InputReportLength);
             }
         }
     }
