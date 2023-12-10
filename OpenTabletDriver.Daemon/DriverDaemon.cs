@@ -64,7 +64,7 @@ namespace OpenTabletDriver.Daemon
 
             LoadUserSettings();
 
-            SleepDetector.Slept += async() =>
+            SleepDetector.Slept += async () =>
             {
                 if (System.Diagnostics.Debugger.IsAttached)
                     return;
@@ -310,8 +310,8 @@ namespace OpenTabletDriver.Daemon
                            select filter;
             outputMode.Elements = elements.Append(bindingHandler).ToList();
 
-            if (outputMode.Elements != null && outputMode.Elements.Count > 0)
-                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
+            if (outputMode.Elements.Count > 1)
+                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements.Where(e => e != bindingHandler))}");
         }
 
         private void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)
