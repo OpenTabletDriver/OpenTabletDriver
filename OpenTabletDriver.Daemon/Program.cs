@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.CommandLine;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -88,27 +87,25 @@ namespace OpenTabletDriver.Daemon
                     return;
                 }
 
-                AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+                TaskScheduler.UnobservedTaskException += (_, e) =>
                 {
-                    var exception = (Exception)e.ExceptionObject;
-                    File.WriteAllLines(Path.Join(AppInfo.Current.AppDataDirectory, "daemon.log"),
-                        new string[]
-                        {
-                            DateTime.Now.ToString(),
-                            exception.GetType().FullName,
-                            exception.Message,
-                            exception.Source,
-                            exception.StackTrace,
-                            exception.TargetSite.Name
-                        }
-                    );
+                    Log.Exception(e.Exception);
+                    e.SetObserved();
                 };
 
                 var host = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
                 host.ConnectionStateChanged += (sender, state) =>
                     Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
 
-                await host.Run(BuildDaemon());
+                try
+                {
+                    await host.Run(BuildDaemon());
+                }
+                catch (Exception e)
+                {
+                    Log.Exception(e, LogLevel.Fatal);
+                    Environment.Exit(1);
+                }
             }
         }
 

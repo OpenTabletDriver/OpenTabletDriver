@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,10 +36,11 @@ namespace OpenTabletDriver.Daemon
         public DriverDaemon(Driver driver)
         {
             Driver = driver;
+            _logFile = new LogFile(AppInfo.Current.LogDirectory);
 
             Log.Output += (sender, message) =>
             {
-                LogMessages.Add(message);
+                _logFile.Write(message);
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
@@ -100,13 +100,13 @@ namespace OpenTabletDriver.Daemon
 
         public Driver Driver { get; }
         private Settings? Settings { set; get; }
-        private Collection<LogMessage> LogMessages { set; get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private IUpdater Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
 
         private UpdateInfo? _updateInfo;
+        private LogFile _logFile;
 
         private bool debugging;
 
@@ -529,7 +529,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            return Task.FromResult((IEnumerable<LogMessage>)LogMessages);
+            return Task.FromResult(_logFile.Read());
         }
 
         private void PostDebugReport(TabletReference tablet, IDeviceReport report)

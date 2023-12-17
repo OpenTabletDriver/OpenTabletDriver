@@ -20,7 +20,7 @@ namespace OpenTabletDriver.Plugin.Logging
         /// <summary>
         /// The time in which a log message was created.
         /// </summary>
-        public DateTime Time { private set; get; } = DateTime.Now;
+        public DateTime Time { set; get; } = DateTime.Now;
 
         /// <summary>
         /// The group in which the log message belongs to.
