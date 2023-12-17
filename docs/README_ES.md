@@ -36,7 +36,7 @@ Los requisitos para compilar OpenTabletDriver son consistentes en todas las plat
 
 ### Todas las plataformas
 
-- .NET 6 SDK (Puede ser obtenido desde [aquí](https://dotnet.microsoft.com/download/dotnet/6.0) - Usted necesita el SDK compatible con su plataforma, los usuarios de Linux deben de instalarlo a través del gestor de paquetes siempre que sea posible)
+- .NET 7 SDK (Puede ser obtenido desde [aquí](https://dotnet.microsoft.com/download/dotnet/7.0) - Usted necesita el SDK compatible con su plataforma, los usuarios de Linux deben de instalarlo a través del gestor de paquetes siempre que sea posible)
 
 #### Windows
 

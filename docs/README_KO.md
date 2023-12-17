@@ -36,7 +36,7 @@ OpenTabletDriver를 빌드하기 위해 필요한 것들은 모든 플랫폼에�
 
 ### 모든 플랫폼
 
-- .NET 6 SDK
+- .NET 7 SDK
 
 #### Windows
 
