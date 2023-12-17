@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using OpenTabletDriver.Native.Windows;
@@ -110,6 +111,8 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         public bool CanOpen => true;
 
+        public IDictionary<string, string> DeviceAttributes { get; }
+
         public unsafe string GetDeviceString(byte index)
         {
             return WithHandle(winUsbHandle =>
@@ -199,6 +202,18 @@ namespace OpenTabletDriver.Devices.WinUSB
                 activeWinUsbHandle = null;
                 activeFileHandle = null;
             }
+        }
+
+        private IDictionary<string, string> GetDeviceAttributes()
+        {
+            var deviceAttributes = new Dictionary<string, string>
+            {
+                ["USB_INTERFACE_NUMBER"] = InterfaceNum.ToString()
+            };
+
+            // cannot extract HID_REPORTS from WinUSB for now
+
+            return deviceAttributes;
         }
     }
 }
