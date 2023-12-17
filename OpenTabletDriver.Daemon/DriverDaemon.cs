@@ -321,10 +321,10 @@ namespace OpenTabletDriver.Daemon
             string group = dev.Configuration.Name;
 
             var elements = from store in profile.Filters
-                where store.Enable
-                let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
-                where filter != null
-                select filter;
+                           where store.Enable
+                           let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
+                           where filter != null
+                           select filter;
 
             outputMode.Elements = elements.Append(bindingHandler).ToList();
 
@@ -451,7 +451,7 @@ namespace OpenTabletDriver.Daemon
         {
             var baseType = _pluginManager.ExportedTypes.First(t => t.GetPath() == typeName);
             var matchingTypes = from type in _pluginFactory.GetMatchingTypes(baseType)
-                select ActivatorUtilities.CreateInstance<TypeProxy>(_serviceProvider, type);
+                                select ActivatorUtilities.CreateInstance<TypeProxy>(_serviceProvider, type);
             return Task.FromResult(matchingTypes);
         }
 
