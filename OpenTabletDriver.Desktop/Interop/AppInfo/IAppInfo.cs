@@ -8,6 +8,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
         string BinaryDirectory { set; get; }
         string PluginDirectory { set; get; }
         string PresetDirectory { set; get; }
+        string LogDirectory { set; get; }
         string TemporaryDirectory { set; get; }
         string CacheDirectory { set; get; }
         string BackupDirectory { set; get; }
