@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using OpenTabletDriver.Devices;
 
 namespace OpenTabletDriver.Desktop.Json.Converters.Implementations
@@ -15,6 +16,7 @@ namespace OpenTabletDriver.Desktop.Json.Converters.Implementations
         public string SerialNumber { set; get; } = string.Empty;
         public string DevicePath { set; get; } = string.Empty;
         public bool CanOpen { set; get; }
+        public IDictionary<string, string>? DeviceAttributes { set; get; }
 
         public IDeviceEndpointStream Open() => throw NotSupported();
         public string GetDeviceString(byte index) => throw NotSupported();

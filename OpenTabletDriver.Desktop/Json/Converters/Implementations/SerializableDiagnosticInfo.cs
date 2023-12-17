@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Devices;

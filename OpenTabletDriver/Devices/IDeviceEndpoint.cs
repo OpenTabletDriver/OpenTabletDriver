@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Devices
@@ -69,6 +70,11 @@ namespace OpenTabletDriver.Devices
         /// When false, it may indicate permission issues or that the device is exclusively opened elsewhere.
         /// </remarks>
         bool CanOpen { get; }
+
+        /// <summary>
+        /// Gets the device's attributes.
+        /// </summary>
+        IDictionary<string, string>? DeviceAttributes { get; }
 
         /// <summary>
         /// Opens the device endpoint stream for read/write.
