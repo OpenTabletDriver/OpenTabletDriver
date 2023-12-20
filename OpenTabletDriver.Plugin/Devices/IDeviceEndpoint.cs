@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace OpenTabletDriver.Plugin.Devices
@@ -18,6 +19,7 @@ namespace OpenTabletDriver.Plugin.Devices
 
         string DevicePath { get; }
         bool CanOpen { get; }
+        IDictionary<string, string> DeviceAttributes { get; }
 
         IDeviceEndpointStream Open();
 

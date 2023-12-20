@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace OpenTabletDriver.Plugin.Devices
 {
     public class SerializedDeviceEndpoint
@@ -42,5 +44,7 @@ namespace OpenTabletDriver.Plugin.Devices
         public int FeatureReportLength { get; set; }
 
         public bool CanOpen { get; set; }
+
+        public IDictionary<string, string> DeviceAttributes { get; set; }
     }
 }
