@@ -19,7 +19,7 @@ echo "Generating ${OTD_LNAME}.spec..."
 cat << EOF > "${output}/SPECS/${OTD_LNAME}.spec"
 Name: ${OTD_LNAME}
 Version: ${OTD_VERSION}
-Release: ${PKG_VER}%{?dist}
+Release: ${PKG_VER}
 Summary: A ${OTD_DESC}
 
 Source0: ${OTD_LNAME}-${OTD_VERSION}.tar.gz
