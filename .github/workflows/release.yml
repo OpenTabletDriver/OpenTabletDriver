@@ -75,7 +75,7 @@ jobs:
         VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
       - name: Install required packages
-        run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-6.0 tree
+        run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-6.0 tree jq
 
       - name: Checkout OpenTabletDriver Repository
         uses: actions/checkout@v4
