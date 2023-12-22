@@ -55,7 +55,7 @@ while [ ${#remaining_args[@]} -gt 0 ]; do
       is_extra_args=true
       ;;
     *)
-      echo "Unknown option: ${remaining_args[0]}"
+      echo "Unknown option: ${remaining_args[0]}" >&2
       print_help
       exit 1
       ;;

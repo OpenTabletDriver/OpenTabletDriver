@@ -11,7 +11,7 @@ print_help() {
 for c in git jq tr awk sed; do
   command -v $c > /dev/null
   if [[ $? > 0 ]]; then
-    echo "Error: Command $c not found in \$PATH."
+    echo "Error: Command $c not found in \$PATH." >&2
     exit 1
   fi
 done

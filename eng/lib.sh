@@ -67,7 +67,7 @@ OTD_CLI="otd"
 ### Automatically handle errors and exit
 
 handle_error() {
-  echo "Build failed!"
+  echo "Build failed!" >&2
   cd "${PREV_PATH}"
   exit 1
 }
@@ -82,7 +82,7 @@ trap handle_exit EXIT
 ### Helper functions
 
 exit_with_error() {
-  echo "$1"
+  echo "$1" >&2
   handle_error
 }
 

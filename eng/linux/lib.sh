@@ -34,7 +34,7 @@ test_rules() {
   fi
 
   if [ ! -f "${1}" ]; then
-    echo "test_rules: Not a file '${1}'"
+    echo "test_rules: Not a file '${1}'" >&2
     return 1
   fi
 
