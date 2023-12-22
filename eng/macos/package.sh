@@ -52,7 +52,7 @@ while [ ${#remaining_args[@]} -gt 0 ]; do
       is_extra_args=true
       ;;
     *)
-      echo "Unknown option: $1"
+      echo "Unknown option: $1" >&2
       print_help
       exit 1
       ;;
