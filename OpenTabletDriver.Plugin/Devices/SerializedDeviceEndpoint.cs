@@ -21,6 +21,7 @@ namespace OpenTabletDriver.Plugin.Devices
             FeatureReportLength = endpoint.FeatureReportLength;
             SerialNumber = endpoint.SerialNumber;
             CanOpen = endpoint.CanOpen;
+            DeviceAttributes = endpoint.DeviceAttributes;
         }
 
         public string DevicePath { get; set; }
