@@ -86,6 +86,8 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
                 while (enumerator.MoveNext())
                 {
                     hidReportsBuilder.Append(", ");
+                    reportId = enumerator.Current.Item1;
+                    extendedUsage = enumerator.Current.Item2;
                     appendHidReport(hidReportsBuilder, reportId, extendedUsage);
                 }
 
