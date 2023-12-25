@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
@@ -387,8 +386,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
                     {
                         var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
-                        var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING * 2, SPACING * 2));
                         var drawPen = new Pen(AccentColor, SPACING / 2);
+                        var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING * 2, SPACING * 2));
                         graphics.DrawEllipse(drawPen, drawRect);
                     }
                 }
