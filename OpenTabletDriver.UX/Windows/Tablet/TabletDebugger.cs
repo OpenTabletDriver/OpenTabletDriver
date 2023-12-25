@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
@@ -10,6 +11,7 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.Plugin.Timing;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
@@ -341,6 +343,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                         DrawBackground(graphics, finalScale, tablet);
                         DrawPosition(graphics, finalScale, tablet);
+                        DrawTouchPoints(graphics, finalScale, tablet);
                     }
                 }
             }
@@ -363,14 +366,39 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                 if (report is IAbsolutePositionReport absReport)
                 {
-                    var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
-                    var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);
-                    var tabletScale = tabletMm / tabletPx * scale;
+                    var tabletScale = calculateTabletScale(digitizer, scale);
                     var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
 
                     var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
                     graphics.FillEllipse(AccentColor, drawRect);
                 }
+            }
+
+            protected void DrawTouchPoints(Graphics graphics, float scale, TabletReference tablet)
+            {
+                var report = ReportData?.ToObject();
+                var specifications = ReportData.Tablet.Properties.Specifications;
+                var digitizer = specifications.Touch;
+
+                if (report is ITouchReport touchReport)
+                {
+                    var tabletScale = calculateTabletScale(digitizer, scale);
+
+                    foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
+                    {
+                        var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
+                        var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING * 2, SPACING * 2));
+                        var drawPen = new Pen(AccentColor, SPACING / 2);
+                        graphics.DrawEllipse(drawPen, drawRect);
+                    }
+                }
+            }
+
+            protected SizeF calculateTabletScale(DigitizerSpecifications digitizer, float scale)
+            {
+                var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
+                var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);
+                return tabletMm / tabletPx * scale;
             }
         }
     }
