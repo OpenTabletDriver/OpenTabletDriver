@@ -34,6 +34,23 @@
         "23": "^2022/3/21$"
       },
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 12267,
+      "ProductID": 9,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "CQEE",
+        "CQIC",
+        "CQMC"
+      ],
+      "DeviceStrings": {
+        "23": "^2022/4/25$"
+      },
+      "InitializationStrings": []
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
