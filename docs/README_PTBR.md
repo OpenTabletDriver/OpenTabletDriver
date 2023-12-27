@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR
+[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR
 
 OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de tablet configurável pelo usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
 
@@ -113,17 +113,10 @@ Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https:/
 ### Adicionando suporte a um novo tablet
 
 Se você gostaria de adicionar suporte a um novo tablet, abra uma issue ou entre em nosso
-[discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte. *Nós geralmente preferimos as
-solicitações por um novo tablet sejam feitas via discord, devido as
-trocas de ideias envolvidas*.
+[discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte. *Nós geralmente preferimos as solicitações por um novo tablet sejam feitas via discord, devido as trocas de ideias envolvidas*.
 
-Nós precisaremos que você faça algumas coisas como gravar os dados enviados pelo seu tablet
-utilizando nossa ferramenta de debug integrada, testando funcionalidades do tablet
-(botões do tablet, botões da caneta, pressão da caneta, etc) com uma configuração diferente que
-nós iremos enviar a você para testar.
+Nós precisaremos que você faça algumas coisas como gravar os dados enviados pelo seu tablet utilizando nossa ferramenta de debug integrada, testando funcionalidades do tablet (botões do tablet, botões da caneta, pressão da caneta, etc) com uma configuração diferente quenós iremos enviar a você para testar.
 
-Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,
-caso tenha uma boa compreensão do que está desenvolvido.
+Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,caso tenha uma boa compreensão do que está desenvolvido.
 
-Geralmente esse processo é relativamente fácil, especialmente se a fabricante
-do seu tablet já exisitr em algum outro tablet que já tenha suporte.
+Geralmente esse processo é relativamente fácil, especialmente se a fabricante do seu tablet já exisitr em algum outro tablet que já tenha suporte.
