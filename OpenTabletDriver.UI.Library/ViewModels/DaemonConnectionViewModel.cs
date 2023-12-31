@@ -13,6 +13,8 @@ public partial class DaemonConnectionViewModel : ActivatableViewModelBase
     Click the "Help" button for more information.
     """;
 
+    private const int MAX_QOL_HINT_TEXT = 8;
+
     private readonly IDaemonService _daemonService;
     private UISettings _settings = null!; // non-null during and after WhenLoaded
     private int _retryCount = 0;
@@ -193,6 +195,16 @@ public partial class DaemonConnectionViewModel : ActivatableViewModelBase
             case > 75:
                 qolHintText.Add(GetRandomKaomojiedText());
                 break;
+        }
+
+        if (retryCount <= 75 && qolHintText.Count > MAX_QOL_HINT_TEXT)
+        {
+            qolHintText.RemoveAt(0);
+        }
+        else if (retryCount > 75)
+        {
+            while (qolHintText.Count > 1)
+                qolHintText.RemoveAt(0);
         }
     }
 
