@@ -250,3 +250,4 @@
 | XP-Pen Innovator 16           |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is not yet supported.
+| Artisul D16                   |  Missing Features | Wheel is not yet supported.
