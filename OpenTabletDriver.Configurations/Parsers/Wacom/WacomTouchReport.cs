@@ -3,19 +3,32 @@ using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 
+
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
     public struct WacomTouchReport : ITouchReport, IAuxReport
     {
-        public WacomTouchReport(byte[] report, ref TouchPoint[] prevTouches)
+
+        public WacomTouchReport(byte[] report, ref TouchPoint[] prevTouches, ref bool[] auxButtons)
         {
             Raw = report;
-            AuxButtons = Array.Empty<bool>();
+
+            if (auxButtons == null)
+            {
+                AuxButtons = Array.Empty<bool>();
+            }
+            else
+            {
+                AuxButtons = (bool[])auxButtons.Clone();
+            }
+
             Touches = prevTouches ?? new TouchPoint[MAX_POINTS];
+
             if (report[2] == 0x81)
             {
                 ApplyTouchMask((ushort)(Raw[3] | (Raw[4] << 8)));
                 prevTouches = (TouchPoint[])Touches.Clone();
+                auxButtons = (bool[])AuxButtons.Clone();
                 return;
             }
 
@@ -27,6 +40,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
                 if (touchID == 0x80)
                 {
                     var auxByte = report[1 + offset];
+
                     AuxButtons = new bool[]
                     {
                         auxByte.IsBitSet(0),
@@ -34,6 +48,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
                         auxByte.IsBitSet(2),
                         auxByte.IsBitSet(3),
                     };
+
+                    auxButtons = (bool[])AuxButtons.Clone();
                     continue;
                 }
                 touchID -= 2;
