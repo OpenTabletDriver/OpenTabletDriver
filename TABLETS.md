@@ -55,10 +55,11 @@
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
+| UGEE M708 V2                  |     Supported     |
+| UGEE M808                     |     Supported     |
 | UGEE S640                     |     Supported     |
 | UGEE U1200                    |     Supported     |
 | UGEE U1600                    |     Supported     |
-| UGTABLET M708 V2              |     Supported     |
 | VEIKK A15                     |     Supported     |
 | VEIKK A15 V2                  |     Supported     |
 | VEIKK S640                    |     Supported     |
@@ -159,7 +160,7 @@
 | KENTING K5540                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order.
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order.
-| UGTABLET M708                 |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
+| UGEE M708                     |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
 | Wacom PTU-600U                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | XP-Pen Artist 22HD            |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Star G430              |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 1
