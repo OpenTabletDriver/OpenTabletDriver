@@ -60,6 +60,7 @@
 | UGEE M708 V2                  |     Supported     |
 | UGEE M808                     |     Supported     |
 | UGEE S640                     |     Supported     |
+| UGEE S1060                    |     Supported     |
 | UGEE U1200                    |     Supported     |
 | UGEE U1600                    |     Supported     |
 | VEIKK A15                     |     Supported     |
