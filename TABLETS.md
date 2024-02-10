@@ -56,6 +56,7 @@
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
 | UGEE S640                     |     Supported     |
+| UGEE S1060                    |     Supported     |
 | UGEE U1200                    |     Supported     |
 | UGEE U1600                    |     Supported     |
 | UGTABLET M708 V2              |     Supported     |
