@@ -97,9 +97,6 @@ Aucune autre dépendance.
   - Plugin de raccourcis externe
 - Sauvegarder et charger des paramètres
   - Charge automatiquement les paramètres utilisateur via `settings.json` dans l'utilisateur actif `%localappdata%` ou le `.config` du dossier répertoire racine des paramètres.
-- Éditeur de configuration
-  - Vous permets de créer, modifier ou supprimer des configurations.
-  - Génère des configurations venant des appareils HID visibles
 - Plugins
   - Filtres
   - Modes de sorties

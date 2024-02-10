@@ -96,9 +96,6 @@ Keine weiteren Abhängigkeiten.
   - Belegung mit pluginabhängigen Einstellungen
 - Speichern und Laden von Einstellungen
   - Autoladen von Benutzereinstellungen aus `settings.json` in den momentan aktiven Benutzer `%localappdata%` oder `.config` in das Root-Verzeichnis.
-- Konfigurationseditor
-  - Erlaubt es, Konfigurationsdateien zu erstellen, ändern und löschen.
-  - Generiert Konfigurationen für sichtbare HID-Geräte.
 - Plugins
   - Filter
   - Ausgabemodi
