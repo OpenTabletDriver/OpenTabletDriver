@@ -28,11 +28,11 @@
       "OutputInitReport": [
         "ArAE"
       ],
-      "DeviceStrings": { },
-      "InitializationStrings": [ ]
+      "DeviceStrings": {},
+      "InitializationStrings": []
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [ ],
+  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }
