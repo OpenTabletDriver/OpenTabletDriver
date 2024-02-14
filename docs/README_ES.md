@@ -89,9 +89,6 @@ No hay otras dependencias.
   - Asignaciones a plugins externos
 - Guarda y carga las configuraciones
   - Carga automáticamente la configuración del usuario a través de `settings.json` en `%localappdata%` del usuario activo o en `.config` de la carpeta raíz de configuraciones.
-- Editor de configuraciones
-  - Permite crear, modificar y eliminar configuraciones
-  - Genera configuraciones a partir de dispositivos HID visibles
 - Plugins
   - Filtros
   - Modos de salida

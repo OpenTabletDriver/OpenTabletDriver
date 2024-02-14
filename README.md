@@ -90,9 +90,6 @@ Run `./eng/macos/package.sh --package true`.
   - External plugin bindings
 - Saving and loading settings
   - Auto-loads user settings via `settings.json` in the active user `%localappdata%` or `.config` settings root directory.
-- Configuration Editor
-  - Allows you to create, modify, and delete configurations.
-  - Generate configurations from visible HID devices
 - Plugins
   - Filters
   - Output modes

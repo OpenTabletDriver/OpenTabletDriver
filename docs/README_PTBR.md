@@ -91,9 +91,6 @@ Sem outras dependências.
   - Binding de plugins externos
 - Salvando e carregando informações
   - Carregamento automático pelas configurações do usuário via `settings.json` no usuário ativo no diretório raiz de configurações `%localappdata%` ou `.config`
-- Editor de configurações
-  - Permite você criar, modificar e deletar configurações
-  - Gerar configurações pelos dispositivos HID visíveis
 - Plugins
   - Filtros
   - Modos de saída
