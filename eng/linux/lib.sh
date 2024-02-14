@@ -66,5 +66,6 @@ Terminal=false
 Type=Application
 Categories=Settings;
 StartupNotify=true
+StartupWMClass=OpenTabletDriver.UX
 EOF
 }
