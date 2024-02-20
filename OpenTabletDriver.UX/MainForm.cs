@@ -108,8 +108,9 @@ namespace OpenTabletDriver.UX
             {
                 case PluginPlatform.Windows:
                     var programPath = AppInfo.ProgramDirectory;
-                    var tempPath = Path.GetTempPath().Replace(@"\", @"\\");
+                    var tempPath = Regex.Escape(Path.GetTempPath());
                     var regex = new Regex(@$"^{tempPath}Temp\d+.*?\.zip");
+
                     if (regex.IsMatch(programPath))
                     {
                         MessageBox.Show(this, $"You are running OpenTabletDriver.UX from a zip file.\n\nPlease extract the zip file to a folder then run OpenTabletDriver.UX from there.", "Error", MessageBoxType.Error);
