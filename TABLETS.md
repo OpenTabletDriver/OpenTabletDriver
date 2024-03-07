@@ -1,6 +1,7 @@
 | Tablet                        |      Status       | Notes |
 | ---------------------------   | :---------------: | ----- |
-| Acepen AP 1060                |     Supported     |
+| Acepen AP906                  |     Supported     |
+| Acepen AP1060                 |     Supported     |
 | Adesso Cybertablet K8         |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM116HD                |     Supported     |
