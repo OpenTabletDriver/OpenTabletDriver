@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | Deutsch | [Português-BR](README_PTBR.md)
+[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [Français](README_FR.md) | Deutsch | [Português-BR](README_PTBR.md)
 
 OpenTabletDriver ist ein plattformübergreifender Open Source Benutzermodustreiber für Grafiktabletts. Das Ziel von OpenTabletDriver ist es, so Cross-Plattform wie möglich zu sein, mit der höchsten Kompatibilität und mit einer einfach zu konfigurierenden grafischen Benutzeroberfläche.
 
@@ -50,7 +50,6 @@ Benötigte Packages (manche Packages können bei Ihrer Distribution vorinstallie
 - libxrandr
 - libevdev2
 - GTK+3
-
 
 Um auf Linux zu kompilieren, führen Sie 'build.sh' aus. Es werden die gleichen
 'dotnet publish' Befehle ausgeführt, die auch für das AUR-Package verwendet werden.
