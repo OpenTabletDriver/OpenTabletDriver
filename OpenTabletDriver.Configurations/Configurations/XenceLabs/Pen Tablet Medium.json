@@ -30,6 +30,19 @@
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 20993,
+      "InputReportLength": 10,
+      "OutputReportLength": 33,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XenceLabs.XenceLabsReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
