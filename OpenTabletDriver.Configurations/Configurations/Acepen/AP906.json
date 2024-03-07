@@ -1,11 +1,11 @@
 {
-  "Name": "Acepen AP 1060",
+  "Name": "Acepen AP906",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
-      "Height": 152.4,
-      "MaxX": 50800,
-      "MaxY": 30480
+      "Width": 229.87,
+      "Height": 142.24,
+      "MaxX": 45974,
+      "MaxY": 28448
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -20,7 +20,7 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 21827,
-      "ProductID": 130,
+      "ProductID": 145,
       "InputReportLength": 11,
       "OutputReportLength": 9,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Acepen.AcepenReportParser",
