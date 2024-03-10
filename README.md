@@ -52,7 +52,7 @@ Required packages (some packages may be pre-installed for your distribution):
 - GTK+3
 
 Run `./eng/linux/package.sh`. If a "package" build is desired,
-there are official support for the following packaging formats:
+there is official support for the following packaging formats:
 
 | Package Format | Command |
 | --- | --- |
@@ -108,9 +108,7 @@ and fill out the template with relevant information. We welcome both bug
 reports, as well as new tablets to add support for. In many cases adding support
 for a new tablet is quite easy.
 
-For issues and PRs related to OpenTabletDriver's packaging, please see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
-
-For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/opentabletdriver.github.io).
 
 ### Supporting a new tablet
 
