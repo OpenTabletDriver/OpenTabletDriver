@@ -77,13 +77,13 @@ namespace OpenTabletDriver
                 // loop over all devices
                 foreach (var device in _compositeDeviceHub.GetDevices())
                 {
+                    var deviceHash = (device.VendorID, device.ProductID);
+                    var deviceName = device.FriendlyName == null
+                        ? device.DevicePath
+                        : $"{device.FriendlyName} ({device.DevicePath})";
+
                     try
                     {
-                        var deviceHash = (device.VendorID, device.ProductID);
-                        var deviceName = device.FriendlyName == null
-                            ? device.DevicePath
-                            : $"{device.FriendlyName} ({device.DevicePath})";
-
                         // loop over configurations that has an identifier that matches the device's VID/PID
                         if (!tabletConfigurations.TryGetValue(deviceHash, out var candidateConfigs))
                             continue;
@@ -158,6 +158,10 @@ namespace OpenTabletDriver
                     {
                         Log.Exception(ex, LogLevel.Warning);
                     }
+                    if (SystemInterop.CurrentPlatform == SystemPlatform.Linux &&
+                            !inputDeviceEndpoints.Any(p => p.Value is not null) &&
+                            (device.InputReportLength == -1 || device.OutputReportLength == -1))
+                        Log.Write("Driver", $"You might be missing udev rules for {deviceName}, or another tablet driver is using it", LogLevel.Warning);
                 }
 
                 var deviceBuilder = ImmutableArray.CreateBuilder<InputDevice>(inputDeviceEndpoints.Count);
