@@ -1,5 +1,7 @@
+
 ﻿using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
+
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
@@ -7,9 +9,11 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
-            return new WacomTouchReport(data, ref prevTouches);
-        }
 
-        private TouchPoint[] prevTouches;
+            return new WacomTouchReport(data, ref _prevTouches, ref _auxButtons);
+        }
+        private bool[] _auxButtons;
+        private TouchPoint[] _prevTouches;
+
     }
 }
