@@ -20,6 +20,8 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
                 report[index].IsBitSet(7),
                 report[index + 1].IsBitSet(0),
                 report[index + 1].IsBitSet(1),
+                report[index + 1].IsBitSet(2),
+                report[index + 1].IsBitSet(3),
             };
         }
 

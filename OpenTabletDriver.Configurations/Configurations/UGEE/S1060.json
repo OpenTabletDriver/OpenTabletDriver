@@ -1,0 +1,39 @@
+{
+  "Name": "UGEE S1060",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 160,
+      "MaxX": 50800,
+      "MaxY": 32000
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 12
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2360,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
