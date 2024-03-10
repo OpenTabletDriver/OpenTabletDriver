@@ -5,6 +5,7 @@ using OpenTabletDriver.Native.MacOS.Input;
 
 namespace OpenTabletDriver.Native.MacOS
 {
+    using static ObjectiveCRuntime;
     using CGDirectDisplayID = UInt32;
     using CGError = Int32;
     using CGEventRef = IntPtr;
@@ -12,8 +13,17 @@ namespace OpenTabletDriver.Native.MacOS
 
     public static class MacOS
     {
+        public const int CGEventSourceStateHIDSystemState = 1;
+
         private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
         private const string Foundation = "/System/Library/Frameworks/Foundation.framework/Foundation";
+        private const string AppKit = "/System/Library/Frameworks/AppKit.framework/AppKit";
+
+        static MacOS()
+        {
+            LibSystem.dlopen(AppKit, 0);
+        }
+
 
         [DllImport(Foundation)]
         public static extern void CFRelease(IntPtr handle);
@@ -44,6 +54,15 @@ namespace OpenTabletDriver.Native.MacOS
         public extern static void CGEventSetLocation(CGEventRef eventRef, CGPoint location);
 
         [DllImport(Quartz)]
+        public extern static void CGEventSetFlags(CGEventRef eventRef, ulong flags);
+
+        [DllImport(Quartz)]
+        public extern static CGEventSourceRef CGEventSourceCreate(int stateID);
+
+        [DllImport(Quartz)]
+        public extern static ulong CGEventSourceFlagsState(int stateID);
+
+        [DllImport(Quartz)]
         public extern static CGEventRef CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
 
         [DllImport(Quartz)]
@@ -52,5 +71,10 @@ namespace OpenTabletDriver.Native.MacOS
 
         [DllImport(Quartz)]
         public extern static CGRect CGDisplayBounds(CGDirectDisplayID displayID);
+
+        public static double GetDoubleClickInterval()
+        {
+            return objc_msgSend_double(objc_getClass("NSEvent"), sel_registerName("doubleClickInterval"));
+        }
     }
 }
