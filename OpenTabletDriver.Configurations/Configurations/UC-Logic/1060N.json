@@ -8,7 +8,7 @@
       "MaxY": 30480
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 2047,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -22,7 +22,7 @@
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
-      "OutputReportLength": null,
+      "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
