@@ -15,8 +15,6 @@ namespace OpenTabletDriver.Desktop
             _settingsFile = new FileInfo(appInfo.SettingsFile);
 
             Settings = Settings.GetDefaults();
-
-            Migrate(appInfo);
         }
 
         private static readonly Version SupportedRevision = Version.Parse("0.7.0.0");
@@ -33,8 +31,7 @@ namespace OpenTabletDriver.Desktop
             if (!file.Exists)
                 return false;
 
-            var newSettings = Migrate(file) ?? Settings.Deserialize(file);
-            if (newSettings != null)
+            if (Settings.TryDeserialize(file, out var newSettings))
                 Settings = newSettings;
 
             return newSettings != null;
@@ -46,38 +43,38 @@ namespace OpenTabletDriver.Desktop
             file.Refresh();
         }
 
-        private void Migrate(IAppInfo appInfo)
-        {
-            var file = new FileInfo(appInfo.SettingsFile);
+        // private void Migrate(IAppInfo appInfo)
+        // {
+        //     var file = new FileInfo(appInfo.SettingsFile);
 
-            if (Migrate(file) is Settings settings)
-            {
-                // Back up existing settings file for safety
-                var backupDir = appInfo.BackupDirectory;
-                if (!Directory.Exists(backupDir))
-                    Directory.CreateDirectory(backupDir);
+        //     if (Migrate(file) is Settings settings)
+        //     {
+        //         // Back up existing settings file for safety
+        //         var backupDir = appInfo.BackupDirectory;
+        //         if (!Directory.Exists(backupDir))
+        //             Directory.CreateDirectory(backupDir);
 
-                var timestamp = DateTime.UtcNow.ToString(".yyyy-MM-dd_hh-mm-ss");
-                var backupPath = Path.Join(backupDir, file.Name + timestamp + ".old");
-                file.CopyTo(backupPath, true);
+        //         var timestamp = DateTime.UtcNow.ToString(".yyyy-MM-dd_hh-mm-ss");
+        //         var backupPath = Path.Join(backupDir, file.Name + timestamp + ".old");
+        //         file.CopyTo(backupPath, true);
 
-                Serialization.Serialize(file, settings);
-            }
-        }
+        //         Serialization.Serialize(file, settings);
+        //     }
+        // }
 
-        private Settings? Migrate(FileInfo file)
-        {
-            file.Refresh();
-            if (!file.Exists)
-                return null;
+        // private Settings? Migrate(FileInfo file)
+        // {
+        //     file.Refresh();
+        //     if (!file.Exists)
+        //         return null;
 
-            if (Settings.Deserialize(file)?.Revision < SupportedRevision)
-            {
-                var settingsV6 = Serialization.Deserialize<Migration.LegacySettings.V6.Settings>(file);
-                return settingsV6?.Migrate(_serviceProvider);
-            }
+        //     if (Settings.Deserialize(file)?.Revision < SupportedRevision)
+        //     {
+        //         var settingsV6 = Serialization.Deserialize<Migration.LegacySettings.V6.Settings>(file);
+        //         return settingsV6?.Migrate(_serviceProvider);
+        //     }
 
-            return null;
-        }
+        //     return null;
+        // }
     }
 }

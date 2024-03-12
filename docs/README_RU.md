@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | Русский | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md)
+[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | Русский | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md)
 
 OpenTabletDriver — кроссплатформенный драйвер с открытым исходным кодом для графических планшетов. Целью проекта является поддержка максимального числа устройств и платформ, а также создание простого и удобного интерфейса для настройки драйвера.
 
@@ -44,7 +44,7 @@ OpenTabletDriver работает в двух процессах, взаимод
 
 ### Все платформы
 
-- .NET 6 SDK
+- .NET 7 SDK
 
 #### Windows
 
@@ -85,9 +85,6 @@ OpenTabletDriver работает в двух процессах, взаимод
   - Внешние бинды плагинов
 - Сохранение и загрузка настроек
   - Автозагрузка настроек из файла `settings.json` в `%localappdata%` или `.config` пользователя
-- Редактор конфигураций планшета
-  - Создание, редактирование и удаление конфигураций
-  - Создание конфигурации из видимых HID устройств
 - Плагины
   - Фильтры
   - Режимы вывода

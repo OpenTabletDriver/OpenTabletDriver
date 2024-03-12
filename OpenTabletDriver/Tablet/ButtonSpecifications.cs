@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Tablet
@@ -13,6 +14,7 @@ namespace OpenTabletDriver.Tablet
         /// The amount of buttons.
         /// </summary>
         [DisplayName("Buttons")]
+        [Required(ErrorMessage = $"{nameof(ButtonCount)} must be defined")]
         public uint ButtonCount { set; get; }
     }
 }

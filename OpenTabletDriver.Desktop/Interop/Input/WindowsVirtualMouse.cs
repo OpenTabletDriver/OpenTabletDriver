@@ -9,8 +9,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     using static Windows;
 
     [PluginIgnore]
-    public abstract class WindowsVirtualMouse : IMouseButtonHandler
+    public abstract class WindowsVirtualMouse : IMouseButtonHandler, ISynchronousPointer
     {
+        private bool _dirty;
+
         protected INPUT[] inputs = new INPUT[]
         {
             new INPUT
@@ -29,9 +31,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         protected void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {
-            inputs[0].U.mi.dwFlags = arg;
-            inputs[0].U.mi.mouseData = dwData;
-            SendInput(1, inputs, INPUT.Size);
+            SetDirty();
+
+            inputs[0].U.mi.dwFlags |= arg;
+            inputs[0].U.mi.mouseData |= dwData;
         }
 
         public void MouseDown(MouseButton button)
@@ -76,6 +79,28 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     MouseEvent(MOUSEEVENTF.XUP, (uint)XBUTTON.XBUTTON2);
                     return;
             }
+        }
+
+        protected void SetDirty()
+        {
+            _dirty = true;
+        }
+
+        public void Flush()
+        {
+            if (_dirty)
+            {
+                SendInput(1, inputs, INPUT.Size);
+                inputs[0].U.mi.dwFlags = 0;
+                inputs[0].U.mi.mouseData = 0;
+                inputs[0].U.mi.dx = 0;
+                inputs[0].U.mi.dy = 0;
+                _dirty = false;
+            }
+        }
+
+        public void Reset()
+        {
         }
     }
 }

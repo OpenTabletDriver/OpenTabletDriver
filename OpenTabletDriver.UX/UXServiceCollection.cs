@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX
             Singleton<IKeysProvider, EtoKeysProvider>(),
             Singleton<MainForm>(),
             Singleton<TrayIcon>(),
-            Transient<AboutDialog, OfflineAboutDialog>()
+            Singleton<AboutDialog, OfflineAboutDialog>()
         };
 
         public UXServiceCollection(App app)

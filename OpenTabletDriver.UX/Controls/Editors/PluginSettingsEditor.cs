@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Controls.Editors
 
             var enableToggle = new CheckBox
             {
-                Text = "Enable"
+                Text = $"Enable {type.GetFriendlyName()}"
             };
 
             enableToggle.CheckedBinding.BindDataContext((PluginSettings s) => s.Enable);

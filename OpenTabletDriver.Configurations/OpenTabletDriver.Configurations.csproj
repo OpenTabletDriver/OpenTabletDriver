@@ -14,17 +14,18 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver\OpenTabletDriver.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Analyzers\OpenTabletDriver.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Label="Configurations">
-    <EmbeddedResource Include=".\Configurations\*\*.json">
-      <IncludeInPackage>true</IncludeInPackage>
-    </EmbeddedResource>
+    <AdditionalFiles Include=".\Configurations\**\*.json" TabletConfiguration="true" />
   </ItemGroup>
+
+  <Import Project="..\OpenTabletDriver.Analyzers\TabletConfigurationGenerator.props" />
 
 </Project>

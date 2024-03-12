@@ -4,7 +4,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos
 {
-    public struct IntuosTabletReport : ITabletReport, IEraserReport, IProximityReport
+    public struct IntuosTabletReport : ITabletReport, IEraserReport, IHoverReport, IConfidenceReport
     {
         public IntuosTabletReport(byte[] report)
         {
@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos
                 report[1].IsBitSet(2)
             };
             Eraser = report[1].IsBitSet(3);
-            NearProximity = report[1].IsBitSet(7);
+            HighConfidence = report[1].IsBitSet(7);
             HoverDistance = (uint)report[8];
         }
 
@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos
         public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
         public bool Eraser { set; get; }
-        public bool NearProximity { set; get; }
+        public bool HighConfidence { set; get; }
         public uint HoverDistance { set; get; }
     }
 }

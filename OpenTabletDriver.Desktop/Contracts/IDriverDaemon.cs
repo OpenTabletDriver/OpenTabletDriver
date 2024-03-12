@@ -20,6 +20,7 @@ namespace OpenTabletDriver.Desktop.Contracts
         event EventHandler<DebugReportData> DeviceReport;
         event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
         event EventHandler<PluginEventType>? AssembliesChanged;
+        event EventHandler? Resynchronize;
 
         Task WriteMessage(LogMessage message);
 
@@ -57,9 +58,9 @@ namespace OpenTabletDriver.Desktop.Contracts
         Task<TypeProxy> GetProxiedType(string typeName);
         Task<IEnumerable<TypeProxy>> GetMatchingTypes(string typeName);
 
-        Task<bool> HasUpdate();
-        Task<UpdateInfo?> GetUpdateInfo();
+        Task<SerializedUpdateInfo?> CheckForUpdates();
         Task InstallUpdate();
+
         Task<IEnumerable<PluginMetadata>> GetInstalledPlugins();
         event EventHandler<Settings>? SettingsChanged;
         Task Initialize();

@@ -6,77 +6,102 @@ on:
       version_suffix:
         description: 'The version suffix for this manual build.'
         required: false
-  release:
-    types: [ published ]
+  push:
+    tags:
+      - "v*"
+
 jobs:
-  unix:
+  ubuntu:
     runs-on: ubuntu-latest
-    name: Unix Release
+    name: Unix Release (Ubuntu Host)
     env:
       VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
-      - name: Checkout Packaging Repository
-        uses: actions/checkout@v2
-        with:
-          repository: 'OpenTabletDriver/OpenTabletDriver.Packaging'
-      - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v2
-        with:
-          repository: 'OpenTabletDriver/OpenTabletDriver'
-          path: 'src/OpenTabletDriver'
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '7.0'
-          include-prerelease: True
-      - name: Debian Build
-        run: ./Debian/package
-      - name: RPM Build
-        run: ./Redhat/package
-      - name: Generic Linux Build
-        run: ./Linux/package
-      - name: MacOS Build
-        run: ./MacOS/package
+      - name: Install required packages
+        run: sudo apt install -y debhelper dotnet-sdk-7.0
 
-      - name: Upload all assets (Release)
+      - name: Checkout OpenTabletDriver Repository
+        uses: actions/checkout@v4
+
+      - name: Debian Build
+        run: ./eng/linux/package.sh --package Debian --output ./dist/debian
+
+      - name: Generic Linux Build
+        run: ./eng/linux/package.sh --package BinaryTarBall --output ./dist/tarball
+
+      - name: MacOS Build
+        run: ./eng/macos/package.sh --package true --output ./dist/macos
+
+      - name: Upload all artifacts (Release)
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          name: OpenTabletDriver v${{ github.ref_name }}
+          draft: true
           files: |
-            ./Debian/OpenTabletDriver.deb
-            ./Redhat/OpenTabletDriver.rpm
-            ./Linux/OpenTabletDriver.linux-x64.tar.gz
-            ./MacOS/OpenTabletDriver.osx-x64.tar.gz
+            ./dist/debian/*.deb
+            ./dist/tarball/*.tar.gz
+            ./dist/macos/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Debian asset (Dispatch)
+      - name: Upload Debian artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.deb
-          path: ./Debian/OpenTabletDriver.deb
+          path: ./dist/debian/*.deb
 
-      - name: Upload RPM asset (Dispatch)
+      - name: Upload generic Linux artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
-        with:
-          name: OpenTabletDriver.rpm
-          path: ./Redhat/OpenTabletDriver.rpm
-
-      - name: Upload generic Linux asset (Dispatch)
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.linux-x64.tar.gz
-          path: ./Linux/OpenTabletDriver.linux-x64.tar.gz
+          path: ./dist/tarball/*.tar.gz
 
-      - name: Upload macOS asset (Dispatch)
+      - name: Upload macOS artifact (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.osx-x64.tar.gz
-          path: ./MacOS/OpenTabletDriver.osx-x64.tar.gz
+          path: ./dist/macos/*.tar.gz
+
+  fedora:
+    runs-on: ubuntu-latest
+    name: Unix Release (Fedora Host)
+    container:
+      image: fedora
+      env:
+        VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
+    steps:
+      - name: Install required packages
+        run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-7.0 tree jq
+
+      - name: Checkout OpenTabletDriver Repository
+        uses: actions/checkout@v4
+
+      # https://github.com/actions/checkout/issues/1169
+      - run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
+
+      - name: RPM Build
+        run: ./eng/linux/package.sh --package RedHat --output ./dist/redhat
+
+      - name: Upload all artifacts (Release)
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: OpenTabletDriver v${{ github.ref_name }}
+          draft: true
+          files: ./dist/redhat/*.rpm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload RPM artifact (Dispatch)
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/upload-artifact@v3.1.3
+        with:
+          name: OpenTabletDriver.rpm
+          path: ./dist/redhat/*.rpm
 
   windows:
     runs-on: windows-latest
@@ -84,34 +109,30 @@ jobs:
     env:
       VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
-      - name: Checkout Packaging Repository
-        uses: actions/checkout@v2
-        with:
-          repository: 'OpenTabletDriver/OpenTabletDriver.Packaging'
       - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v2
-        with:
-          repository: 'OpenTabletDriver/OpenTabletDriver'
-          path: 'src/OpenTabletDriver'
+        uses: actions/checkout@v4
+
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3.2.0
         with:
           dotnet-version: '7.0'
-          include-prerelease: True
+
       - name: Package
-        run: ./Windows/package.ps1
+        run: ./eng/windows/package.ps1
 
       - name: Upload Windows asset (Release)
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ./Windows/OpenTabletDriver.win-x64.zip
+          name: OpenTabletDriver v${{ github.ref_name }}
+          draft: true
+          files: ./dist/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Windows asset (Dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver.win-x64.zip
-          path: ./Windows/OpenTabletDriver.win-x64.zip
+          path: ./dist/*.zip

@@ -45,6 +45,18 @@
                     "/consoleloggerparameters:NoSummary"
                 ]
             }
-        }
+        },
+        {
+            "label": "Build Persistent Binaries",
+            "type": "process",
+            "isBuildCommand": true,
+            "windows": {
+                "command": "./build.ps1"
+            },
+            "linux": {
+                "command": "./build.sh"
+            },
+            "problemMatcher": "$msCompile"
+        },
     ]
 }

@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T167_\\d{6}$"
+        "201": "HUION_T(167|205)_\\d{6}$"
       },
       "InitializationStrings": [
         200
@@ -50,21 +50,6 @@
     },
     {
       "VendorID": 9580,
-      "ProductID": 109,
-      "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {
-        "201": "HUION_T205_\\d{6}$"
-      },
-      "InitializationStrings": [
-        200
-      ]
-    },
-    {
-      "VendorID": 9580,
       "ProductID": 100,
       "InputReportLength": 12,
       "OutputReportLength": null,
@@ -72,7 +57,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_T205_\\d{6}$"
+        "201": "HUION_T(205|219)_\\d{6}$"
       },
       "InitializationStrings": [
         200

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -16,19 +18,20 @@ namespace OpenTabletDriver.Desktop.Updater
         public MacOSUpdater(IAppInfo appInfo, IGitHubClient client)
             : base(AssemblyVersion, appInfo, client)
         {
+            UpdateInstalled += _ => PostInstall();
         }
 
-        protected override void PostInstall()
+        private void PostInstall()
         {
             // Mark the binaries executable, SharpZipLib doesn't do this.
-            var subPath = Path.Join(DownloadDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
+            var subPath = Path.Join(BinaryDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
             Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.UX.MacOS");
             Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.Daemon");
-            Move(subPath, BinaryDirectory);
         }
 
-        protected override async Task Download(Release release)
+        protected override async Task<Update> Download(Release release, Version version)
         {
+            var downloadPath = GetDownloadPath();
             var asset = release.Assets.First(r => r.Name.Contains("osx-x64"));
 
             // Download and extract tar gzip
@@ -37,8 +40,13 @@ namespace OpenTabletDriver.Desktop.Updater
             await using (var decompressionStream = new GZipStream(httpStream, CompressionMode.Decompress))
             using (var tar = TarArchive.CreateInputTarArchive(decompressionStream))
             {
-                tar.ExtractContents(DownloadDirectory);
+                tar.ExtractContents(downloadPath);
             }
+
+            return new Update(
+                version,
+                ImmutableArray.Create(Directory.GetFileSystemEntries(downloadPath))
+            );
         }
     }
 }

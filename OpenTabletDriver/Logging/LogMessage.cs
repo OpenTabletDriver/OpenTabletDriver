@@ -15,11 +15,11 @@ namespace OpenTabletDriver.Logging
         {
         }
 
-        public LogMessage(Exception exception, bool notify = false)
+        public LogMessage(Exception exception, LogLevel level = LogLevel.Error, bool notify = false)
         {
             Group = exception.GetType().Name;
             Message = exception.Message;
-            Level = LogLevel.Error;
+            Level = level;
             StackTrace = exception.StackTrace;
             Notification = notify;
         }
@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Logging
         /// <summary>
         /// The time in which a log message was created.
         /// </summary>
-        public DateTime Time { private set; get; } = DateTime.Now;
+        public DateTime Time { set; get; } = DateTime.Now;
 
         /// <summary>
         /// The group in which the log message belongs to.

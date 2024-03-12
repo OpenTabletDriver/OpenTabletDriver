@@ -50,6 +50,21 @@
     },
     {
       "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "OEM02_T174_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "VendorID": 9580,
       "ProductID": 100,
       "InputReportLength": 12,
       "OutputReportLength": null,
@@ -57,7 +72,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "GM001_T213_\\d{6}$"
+        "201": "GM001_(T213|T216)_\\d{6}$"
       },
       "InitializationStrings": [
         200

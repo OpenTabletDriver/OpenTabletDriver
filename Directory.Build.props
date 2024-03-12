@@ -5,6 +5,7 @@
     <FrameworkLatest>net7.0</FrameworkLatest>
     <LangVersion>preview</LangVersion>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Package Information">

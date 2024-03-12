@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.Display;
@@ -18,21 +19,20 @@ namespace OpenTabletDriver.Desktop.Interop
 
     public sealed class DesktopLinuxServiceCollection : DesktopServiceCollection
     {
-        private static readonly IEnumerable<ServiceDescriptor> PlatformRequiredServices = new[]
+        public DesktopLinuxServiceCollection() : base()
         {
-            Transient<IEnvironmentHandler, LinuxEnvironmentHandler>(),
-            Transient<EnvironmentDictionary, LinuxEnvironmentDictionary>(),
-            Transient<ITimer, FallbackTimer>(),
-            Singleton<IAbsolutePointer, EvdevAbsolutePointer>(),
-            Singleton<IRelativePointer, EvdevRelativePointer>(),
-            Singleton<IPressureHandler, EvdevVirtualTablet>(),
-            Singleton<IVirtualKeyboard, EvdevVirtualKeyboard>(),
-            Singleton<IKeysProvider, LinuxKeysProvider>(),
-            GetVirtualScreen()
-        };
-
-        public DesktopLinuxServiceCollection() : base(PlatformRequiredServices)
-        {
+            this.AddServices(new[]
+            {
+                Transient<IEnvironmentHandler, LinuxEnvironmentHandler>(),
+                Transient<EnvironmentDictionary, LinuxEnvironmentDictionary>(),
+                Transient(GetTimer),
+                Singleton<IAbsolutePointer, EvdevAbsolutePointer>(),
+                Singleton<IRelativePointer, EvdevRelativePointer>(),
+                Singleton<IPressureHandler, EvdevVirtualTablet>(),
+                Singleton<IVirtualKeyboard, EvdevVirtualKeyboard>(),
+                Singleton<IKeysProvider, LinuxKeysProvider>(),
+                GetVirtualScreen()
+            });
         }
 
         private static ServiceDescriptor GetVirtualScreen()
@@ -42,8 +42,15 @@ namespace OpenTabletDriver.Desktop.Interop
             if (HasEnvironmentVariable("DISPLAY"))
                 return Singleton<IVirtualScreen, XScreen>();
 
-            Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
-            return Singleton<IVirtualScreen, XScreen>();
+            throw new InvalidOperationException("Neither Wayland nor X11 environment variables were set");
+        }
+
+        private static ITimer GetTimer(IServiceProvider provider)
+        {
+            if (Debugger.IsAttached)
+                return new FallbackTimer();
+
+            return new LinuxTimer();
         }
 
         private static bool HasEnvironmentVariable(string variable)

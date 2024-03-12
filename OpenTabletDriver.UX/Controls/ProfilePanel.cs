@@ -89,6 +89,7 @@ namespace OpenTabletDriver.UX.Controls
                 else
                 {
                     pages.Add(placeholderPage);
+                    pages.Add(toolsPage);
                     pages.Add(logPage);
 
                     tabControl.SelectedPage = placeholderPage;

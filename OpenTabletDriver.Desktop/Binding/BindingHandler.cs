@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Output;
@@ -9,21 +10,17 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding
 {
-    public class BindingHandler : IPipelineElement<IDeviceReport>
+    [PluginIgnore]
+    public class BindingHandler : IDevicePipelineElement
     {
         private readonly InputDevice _device;
         private readonly IServiceProvider _serviceProvider;
+        private bool _isEraser;
 
         public BindingHandler(IServiceProvider serviceProvider, InputDevice device, BindingSettings settings, IMouseButtonHandler? mouseButtonHandler = null)
         {
             _serviceProvider = serviceProvider;
             _device = device;
-
-            var outputMode = _device.OutputMode!;
-
-            // Force consume all reports from the last element
-            var lastElement = outputMode.Elements?.LastOrDefault() ?? (IPipelineElement<IDeviceReport>)outputMode;
-            lastElement.Emit += Consume;
 
             Tip = CreateBindingState<ThresholdBindingState>(settings.TipButton, device, mouseButtonHandler);
 
@@ -52,16 +49,25 @@ namespace OpenTabletDriver.Desktop.Binding
         private BindingState? MouseScrollDown { get; }
         private BindingState? MouseScrollUp { get; }
 
+        public PipelinePosition Position => PipelinePosition.PostTransform;
+
         public event Action<IDeviceReport>? Emit;
 
         public void Consume(IDeviceReport report)
         {
-            Emit?.Invoke(report);
             HandleBinding(_device.OutputMode!.Tablet, report);
+            Emit?.Invoke(report);
         }
 
         private void HandleBinding(InputDevice device, IDeviceReport report)
         {
+            if (report is OutOfRangeReport oor)
+            {
+                ResetPenBindings(oor);
+                return;
+            }
+            if (report is IEraserReport eraserReport)
+                _isEraser = eraserReport.Eraser;
             if (report is ITabletReport tabletReport)
                 HandleTabletReport(device.Configuration.Specifications.Pen!, tabletReport);
             if (report is IAuxReport auxReport)
@@ -70,10 +76,25 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleMouseReport(mouseReport);
         }
 
+        private void ResetPenBindings(OutOfRangeReport oor)
+        {
+            foreach (var binding in PenButtons.Values)
+            {
+                binding?.Invoke(oor, false);
+            }
+
+            if (_isEraser)
+                Eraser?.Invoke(oor, 0);
+            else
+                Tip?.Invoke(oor, 0);
+
+            _isEraser = false;
+        }
+
         private void HandleTabletReport(PenSpecifications pen, ITabletReport report)
         {
             var pressurePercent = report.Pressure / (float)pen.MaxPressure * 100f;
-            if (report is IEraserReport { Eraser: true })
+            if (_isEraser)
                 Eraser?.Invoke(report, pressurePercent);
             else
                 Tip?.Invoke(report, pressurePercent);

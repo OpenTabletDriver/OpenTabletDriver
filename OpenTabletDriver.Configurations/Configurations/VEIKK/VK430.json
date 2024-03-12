@@ -11,7 +11,9 @@
       "MaxPressure": 8191,
       "ButtonCount": 2
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    },
     "MouseButtons": null,
     "Touch": null
   },
@@ -24,9 +26,13 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "CQEE"
+        "CQEE",
+        "CQIC",
+        "CQMC"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "23": "^2022/3/21$"
+      },
       "InitializationStrings": []
     }
   ],

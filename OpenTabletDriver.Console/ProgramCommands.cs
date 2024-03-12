@@ -9,6 +9,7 @@ using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Output;
 using static System.Console;
 
@@ -26,8 +27,10 @@ namespace OpenTabletDriver.Console
         [Command("load", "Load settings from a file")]
         public async Task LoadSettings(FileInfo file)
         {
-            var settings = Settings.Deserialize(file)!;
-            await ApplySettings(settings);
+            if (Settings.TryDeserialize(file, out var settings))
+                await ApplySettings(settings);
+            else
+                await Out.WriteLineAsync("Invalid settings file");
         }
 
         [Command("save", "Save settings to a file")]
@@ -377,7 +380,7 @@ namespace OpenTabletDriver.Console
         [Command("update", "Install OpenTabletDriver update if available")]
         public async Task InstallUpdate()
         {
-            if (await _driverDaemon.HasUpdate())
+            if (await _driverDaemon.CheckForUpdates() is not null)
             {
                 await _driverDaemon.InstallUpdate();
             }

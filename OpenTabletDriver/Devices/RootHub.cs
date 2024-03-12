@@ -112,7 +112,7 @@ namespace OpenTabletDriver.Devices
                 _endpoints.AddRange(eventArgs.Additions);
             }
 
-            await Task.Delay(20);
+            await Task.Delay(100);
 
             if (_version == lastVersion)
             {

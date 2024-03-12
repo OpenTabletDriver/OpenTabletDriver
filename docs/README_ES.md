@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | Español | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md)
+[English](../README.md) | [한국어](README_KO.md) | Español | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md)
 
 OpenTabletDriver es un driver de tabletas multiplataforma, open-source y en modo de usuario. El objetivo de OpenTabletDriver es ser lo más multiplataforma posible con la mayor compatibilidad en una interfaz de usuario fácil de configurar.
 
@@ -36,7 +36,7 @@ Los requisitos para compilar OpenTabletDriver son consistentes en todas las plat
 
 ### Todas las plataformas
 
-- .NET 6 SDK (Puede ser obtenido desde [aquí](https://dotnet.microsoft.com/download/dotnet/6.0) - Usted necesita el SDK compatible con su plataforma, los usuarios de Linux deben de instalarlo a través del gestor de paquetes siempre que sea posible)
+- .NET 7 SDK (Puede ser obtenido desde [aquí](https://dotnet.microsoft.com/download/dotnet/7.0) - Usted necesita el SDK compatible con su plataforma, los usuarios de Linux deben de instalarlo a través del gestor de paquetes siempre que sea posible)
 
 #### Windows
 
@@ -89,9 +89,6 @@ No hay otras dependencias.
   - Asignaciones a plugins externos
 - Guarda y carga las configuraciones
   - Carga automáticamente la configuración del usuario a través de `settings.json` en `%localappdata%` del usuario activo o en `.config` de la carpeta raíz de configuraciones.
-- Editor de configuraciones
-  - Permite crear, modificar y eliminar configuraciones
-  - Genera configuraciones a partir de dispositivos HID visibles
 - Plugins
   - Filtros
   - Modos de salida

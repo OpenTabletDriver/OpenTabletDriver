@@ -7,22 +7,6 @@ body:
       value: |
         Fill out the fields below adequately so that we have an easier time solving your issue. Thank you.
 
-  - type: checkboxes
-    id: acknowledgements
-    attributes:
-      label: Acknowledgements
-      description: |
-        Please make sure you are able to tick the items below, so that all parties involved have an easier time.
-        Your issue is very likely to be closed and ignored if these conditions are not met.
-      options:
-        - label: I have installed OpenTabletDriver by following its [official installation instructions](https://opentabletdriver.net/).
-        - label: I have checked the [OpenTabletDriver Wiki](https://opentabletdriver.net/Wiki) and respective FAQ pages, and my issue was not covered or actually fixed.
-          required: true
-        - label: I have searched the existing issues and this new issue is not a duplicate of any.
-          required: true
-        - label: I have written a concise and meaningful title.
-          required: true
-
   - type: textarea
     id: steps-to-reproduce
     attributes:
@@ -82,3 +66,21 @@ body:
         (Notice the triple backticks)
     validations:
       required: true
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Acknowledgements
+      description: |
+        Please make sure you are able to tick the items below, so that all parties involved have an easier time.
+        Your issue is very likely to be closed and ignored if these conditions are not met.
+      options:
+        - label: I have installed OpenTabletDriver by following its [official installation instructions](https://opentabletdriver.net/).
+        - label: I have checked the [OpenTabletDriver Wiki](https://opentabletdriver.net/Wiki) and respective FAQ pages, and my issue was not covered or actually fixed.
+          required: true
+        - label: I have searched the existing issues and this new issue is not a duplicate of any.
+          required: true
+        - label: I have written a concise and meaningful title.
+          required: true
+        - label: I am on the latest version of OpenTabletDriver.
+          required: false

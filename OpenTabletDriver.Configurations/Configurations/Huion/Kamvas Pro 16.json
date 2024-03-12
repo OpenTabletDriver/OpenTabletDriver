@@ -32,6 +32,21 @@
       "InitializationStrings": [
         200
       ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_M20m_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

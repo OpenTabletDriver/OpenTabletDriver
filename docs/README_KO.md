@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | 한국어 | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md)
+[English](../README.md) | 한국어 | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md)
 
 OpenTabletDriver는 관리자 권한 없이 여러 플랫폼에서 작동하는 오픈 소스 타블렛 드라이버입니다. OpenTabletDriver는 쉽게 사용 가능한 유저 인터페이스를 제공함과 동시에 가능한 한 여러 플랫폼에서 무리 없이 작동하도록 하는 것을 목표로 하고 있습니다.
 
@@ -36,7 +36,7 @@ OpenTabletDriver를 빌드하기 위해 필요한 것들은 모든 플랫폼에�
 
 ### 모든 플랫폼
 
-- .NET 6 SDK
+- .NET 7 SDK
 
 #### Windows
 
@@ -77,9 +77,6 @@ OpenTabletDriver를 빌드하기 위해 필요한 것들은 모든 플랫폼에�
   - 외부 플러그인 할당
 - 설정 저장 및 불러오기
   - 사용자 설정을 `%localappdata%`나 `.config`에 있는 `settings.json`을 통해 자동으로 유지
-- 타블렛 구성 에디터
-  - 타블렛 구성을 관리
-  - 존재하는 HID 기기로부터 구성 생성
 - 플러그인
   - 필터
   - 출력 모드

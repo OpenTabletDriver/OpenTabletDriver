@@ -9,6 +9,7 @@ namespace OpenTabletDriver.Desktop.Json.Converters.Implementations
         public string BinaryDirectory { get; set; } = string.Empty;
         public string PluginDirectory { get; set; } = string.Empty;
         public string PresetDirectory { get; set; } = string.Empty;
+        public string LogDirectory { get; set; } = string.Empty;
         public string TemporaryDirectory { get; set; } = string.Empty;
         public string CacheDirectory { get; set; } = string.Empty;
         public string BackupDirectory { get; set; } = string.Empty;

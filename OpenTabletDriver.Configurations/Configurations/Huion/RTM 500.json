@@ -32,6 +32,21 @@
       "InitializationStrings": [
         200
       ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T19h_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

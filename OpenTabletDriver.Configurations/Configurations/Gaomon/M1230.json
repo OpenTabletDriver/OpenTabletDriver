@@ -32,6 +32,21 @@
       "InitializationStrings": [
         200
       ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 111,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "GM001_T202_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

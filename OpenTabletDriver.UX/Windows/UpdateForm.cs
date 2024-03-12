@@ -4,6 +4,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
 using OpenTabletDriver.Desktop.Updater;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.UX.Components;
 
 namespace OpenTabletDriver.UX.Windows
@@ -12,8 +13,9 @@ namespace OpenTabletDriver.UX.Windows
     {
         private readonly IDriverDaemon _daemon;
         private readonly App _app;
+        private int _isUpdateRequested;
 
-        public UpdateForm(IDriverDaemon daemon, App app, UpdateInfo update)
+        public UpdateForm(IDriverDaemon daemon, App app, SerializedUpdateInfo update)
         {
             _daemon = daemon;
             _app = app;
@@ -50,13 +52,31 @@ namespace OpenTabletDriver.UX.Windows
 
         private async Task InstallUpdate()
         {
+            if (Interlocked.Exchange(ref _isUpdateRequested, 1) != 0)
+                return;
+
             Enabled = false;
-            var executable = Process.GetCurrentProcess().ProcessName;
-            var path = Path.Join(AppInfo.ProgramDirectory, executable);
 
             await _daemon.InstallUpdate();
-            Process.Start(path, _app.Arguments);
-            _app.Exit();
+
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            var path = Directory.EnumerateFiles(basePath, "OpenTabletDriver.UI*").FirstOrDefault(); // 0.7.x avalonia mirgration
+            path ??= SystemInterop.CurrentPlatform switch
+            {
+                SystemPlatform.Windows => Path.Join(basePath, "OpenTabletDriver.UX.Wpf.exe"),
+                SystemPlatform.MacOS => Path.Join(basePath, "OpenTabletDriver.UX.MacOS"),
+                _ => throw new NotSupportedException("Unsupported platform")
+            };
+
+            _app.StopDaemon();
+            Application.Instance.MainForm.Close();
+
+            Process.Start(path);
+
+            if (Application.Instance.QuitIsSupported)
+                Application.Instance.Quit();
+            else
+                Environment.Exit(0);
         }
     }
 }
