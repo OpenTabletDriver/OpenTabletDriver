@@ -37,6 +37,7 @@
   ],
   "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
-    "libinputoverride": "1"
+    "libinputoverride": "1",
+    "LinuxInterface": "0"
   }
 }

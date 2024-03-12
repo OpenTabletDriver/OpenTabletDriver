@@ -269,7 +269,6 @@ namespace OpenTabletDriver
                 case SystemPlatform.Windows:
                 {
                     var devName = device.DevicePath;
-
                     var interfaceMatches = !attributes.ContainsKey("WinInterface") || Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}");
                     var keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
 
@@ -279,6 +278,14 @@ namespace OpenTabletDriver
                 {
                     var devName = device.DevicePath;
                     bool interfaceMatches = !attributes.ContainsKey("MacInterface") || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}");
+                    return interfaceMatches;
+                }
+                case SystemPlatform.Linux:
+                {
+                    var devName = device.DevicePath;
+                    var match = Regex.Match(devName, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
+                    bool interfaceMatches = !attributes.ContainsKey("LinuxInterface") || match.Groups["interface"].Value == attributes["LinuxInterface"];
+
                     return interfaceMatches;
                 }
                 default:
