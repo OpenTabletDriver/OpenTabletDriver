@@ -69,5 +69,8 @@ namespace OpenTabletDriver.Tablet
         /// </summary>
         [DisplayName("Initialization Strings")]
         public List<byte> InitializationStrings { set; get; } = new List<byte>();
+
+        [Required(ErrorMessage = $"Tablet {nameof(Attributes)} must be present")]
+        public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
     }
 }
