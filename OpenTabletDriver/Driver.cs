@@ -225,7 +225,7 @@ namespace OpenTabletDriver
                     (identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength) &&
                     (identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength) &&
                     DeviceMatchesStrings(device, identifier.DeviceStrings) &&
-                    DeviceMatchesAttribute(device, configuration.Attributes);
+                    DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes);
 
                 if (match)
                 {
@@ -262,11 +262,21 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes,  Dictionary<string, string> config_attributes)
         {
             // The name of the attribute which is used to enforce a device interface whitelist.
             var interfaceKey = "Interface";
             var devName = device.DevicePath;
+
+            Dictionary<string, string> attributes = new(identifier_attributes);
+
+            foreach (var kvp in config_attributes)
+            {
+                if (!attributes.ContainsKey(kvp.Key))
+                {
+                    attributes.Add(kvp.Key, kvp.Value);
+                }
+            }
 
             switch (SystemInterop.CurrentPlatform)
             {
