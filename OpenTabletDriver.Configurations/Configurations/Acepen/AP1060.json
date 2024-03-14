@@ -31,7 +31,8 @@
         "CQIC"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

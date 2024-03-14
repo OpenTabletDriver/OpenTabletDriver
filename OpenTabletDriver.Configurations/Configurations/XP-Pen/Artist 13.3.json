@@ -29,7 +29,8 @@
         "ArAC"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [
@@ -44,7 +45,8 @@
       "DeviceStrings": {},
       "InitializationStrings": [
         4
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "Attributes": {

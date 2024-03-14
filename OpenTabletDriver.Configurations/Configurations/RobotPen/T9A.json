@@ -27,7 +27,8 @@
         "qhAC"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

@@ -30,7 +30,8 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     },
     {
       "VendorID": 9580,
@@ -47,12 +48,13 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1",
-    "Interface": 0
+    "Interface": "0"
   }
 }
