@@ -201,27 +201,28 @@ namespace OpenTabletDriver
 
         private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
         {
+            // The name of the attribute which is used to enforce a device interface whitelist.
+            var interfaceKey = "Interface";
+            var devName = device.DevicePath;
+
             switch (SystemInterop.CurrentPlatform)
             {
                 case PluginPlatform.Windows:
                 {
-                    var devName = device.DevicePath;
-                    bool interfaceMatches = !attributes.ContainsKey("WinInterface") || Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}");
-                    bool keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
+                    var interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"&mi_{attributes[interfaceKey]}");
+                    var keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
 
                     return interfaceMatches && keyMatches;
                 }
                 case PluginPlatform.MacOS:
                 {
-                    var devName = device.DevicePath;
-                    bool interfaceMatches = !attributes.ContainsKey("MacInterface") || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}");
+                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes[interfaceKey]}");
                     return interfaceMatches;
                 }
                 case PluginPlatform.Linux:
                 {
-                    var devName = device.DevicePath;
                     var match = Regex.Match(devName, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
-                    bool interfaceMatches = !attributes.ContainsKey("LinuxInterface") || match.Groups["interface"].Value == attributes["LinuxInterface"];
+                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || match.Groups["interface"].Value == attributes[interfaceKey];
 
                     return interfaceMatches;
                 }
