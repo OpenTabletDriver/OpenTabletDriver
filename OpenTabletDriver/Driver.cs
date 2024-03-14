@@ -262,7 +262,7 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes,  Dictionary<string, string> config_attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes, Dictionary<string, string> config_attributes)
         {
             // The name of the attribute which is used to enforce a device interface whitelist.
             var interfaceKey = "Interface";
