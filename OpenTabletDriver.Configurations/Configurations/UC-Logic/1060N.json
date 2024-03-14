@@ -33,12 +33,13 @@
       },
       "InitializationStrings": [
         100
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1",
-    "MacInterface": "0"
+    "Interface": "0"
   }
 }
