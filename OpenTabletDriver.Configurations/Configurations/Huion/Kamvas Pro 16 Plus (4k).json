@@ -2,8 +2,8 @@
   "Name": "Huion Kamvas Pro 16 Plus (4k)",
   "Specifications": {
     "Digitizer": {
-      "Width": 344.75422,
-      "Height": 193.85432,
+      "Width": 344.2,
+      "Height": 193.6,
       "MaxX": 68840,
       "MaxY": 38720
     },
@@ -11,9 +11,7 @@
       "MaxPressure": 8191,
       "ButtonCount": 2
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 0
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
@@ -29,7 +27,9 @@
       "DeviceStrings": {
         "201": "HUION_M20a_\\d{6}$"
       },
-      "InitializationStrings": [200]
+      "InitializationStrings": [
+        200
+      ]
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
