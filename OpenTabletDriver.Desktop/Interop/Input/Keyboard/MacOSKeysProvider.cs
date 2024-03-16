@@ -121,6 +121,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "Alt", CGKeyCode.kVK_Command },
             { "Control", CGKeyCode.kVK_Control },
             { "Application", CGKeyCode.kVK_Option },
+            { "Mute", CGKeyCode.kVK_Mute },
+            { "VolumeDown", CGKeyCode.kVK_VolumeDown },
+            { "VolumeUp", CGKeyCode.kVK_VolumeUp },
         };
     }
 }
