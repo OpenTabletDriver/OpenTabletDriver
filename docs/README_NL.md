@@ -28,7 +28,7 @@ Alle statussen van tablets die ondersteund, ongetest of waarvan ondersteuning ge
 
 OpenTabletDriver functioneert als twee aparte processen die onmerkbaar met elkaar communiceren. Het actieve programma dat de data van de tablet verwerkt is `OpenTabletDriver.Daemon`, de GUI is `OpenTabletDriver.UX.*`, waar `*` afhankelijk is van uw platform<sup>1</sup>. De daemon moet aan staan om het programma te laten werken, de GUI is optioneel. Als u bestaande instellingen heeft, zouden ze moeten worden toegepast wanneer de daemon start.
 
-> <sup>1</sup>Windows gebruikt `Wpf`, Linux gebruikt `Gtk` en MacOS gebruikt respectievelijk `MacOS`. Dit kan voor het grootste deel genegeerd worden als u het niet van de broncode bouwt, aangezien de juiste versie zal worden gegeven.
+> <sup>1</sup>Windows gebruikt `Wpf`, Linux gebruikt `Gtk` en MacOS gebruikt `MacOS`. Dit kan voor het grootste deel genegeerd worden als u het niet van de broncode bouwt, aangezien de juiste versie zal worden gegeven.
 
 ## OpenTabletDriver bouwen van de broncode
 
@@ -36,7 +36,7 @@ De benodigdheden om OpenTabletDriver te bouwen zijn hetzelfde voor alle platform
 
 ### Alle platformen
 
-- .NET 6 SDK (kan [hier](https://dotnet.microsoft.com/download/dotnet/6.0) verkregen worden - U heeft de SDK voor uw platform nodig, Linux gebruikers kunnen het via hun package manager installeren waar mogelijk)
+- .NET 7 SDK (kan [hier](https://dotnet.microsoft.com/download/dotnet/7.0) verkregen worden - U heeft de SDK voor uw platform nodig, Linux gebruikers kunnen het via hun package manager installeren waar mogelijk)
 
 #### Windows
 
@@ -77,17 +77,17 @@ Voer `./eng/macos/package.sh --package true` uit.
 - Absolute cursorpositie
   - Scherm- en tabletgebied
   - Gecentreerde verplaatsingen
-  - Precieze gebiedsdraaiing
+  - Precieze gebiedsdraaiingen
 - Relatieve cursorpositie
   - px/mm horizontale en verticale gevoeligheid
-- Peninstellingen
+- Pen instellingen
   - Drukafhankelijke toewijzing van de penpunt
   - ExpressKeys toewijzen
   - Pen knoppen toewijzen
   - Muis knoppen toewijzen
   - Toetsenbordtoetsen toewijzen
   - Toewijzingen voor externe plugins
-- Instelingen opslaan en laden
+- Instellingen opslaan en laden
   - OpenTabletDriver laadt automatisch de gebruikersinstellingen via `settings.json` in de `%localappdata%` van de actieve gebruiker of uit de `.config` map van de gebruiker.
 - Plugins
   - Filters
@@ -100,14 +100,14 @@ Bekijk de [issue tracker](https://github.com/OpenTabletDriver/OpenTabletDriver/i
 
 [Maak een issue ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) als u problemen of suggesties heeft. Vul de template in met relevante informatie. Zowel bug meldingen als tablets om te ondersteunen zijn welkom. Meestal is het ondersteunen van een tablet vrij eenvoudig.
 
-Voor problemen en PRs met betrekking tot de [webpagina](https://opentabletdriver.net) van OpenTabletDriver, bekijk alstublieft [hier](https://github.com/OpenTabletDriver/opentabletdriver.github.io) de repository.
+Voor problemen en PRs met betrekking tot de [website](https://opentabletdriver.net) van OpenTabletDriver, bekijk alstublieft [hier](https://github.com/OpenTabletDriver/opentabletdriver.github.io) de repository.
 
 ### Een nieuwe tablet ondersteunen
 
-Als u wilt dat wij ondersteuning toevoegen voor een nieuwe tablet, open dan een issue of join onze [Discord](https://discord.gg/9bcMaPkVAR) om ondersteuning te vragen. *Over het algemeen is Discord handiger voor het ondersteunen van een tablet, om communicatie makkelijker te maken.*
+Als u wilt dat wij ondersteuning toevoegen voor een nieuwe tablet, open dan een issue of sluit u aan bij onze [Discord](https://discord.gg/9bcMaPkVAR) om ondersteuning te vragen. *Over het algemeen is Discord handiger voor het ondersteunen van een tablet, om communicatie makkelijker te maken.*
 
 Wij zullen een aantal dingen van u vragen, zoals het opnemen van de data die door uw tablet wordt verstuurd met behulp van het ingebouwde tablet debugging programma en wij zullen u vragen om de functies van de tablet (knoppen op de tablet en pen, druk van de pen, etc.) te testen met verschillende configuraties die wij u sturen om te proberen.
 
-U mag natuurlijk ook zelf een PR openen om ondersteuning toe te voegen, indien u een goed begrip heeft over de werking ervan.
+U mag natuurlijk ook zelf een pull request openen om ondersteuning toe te voegen, indien u een goed begrip heeft over de werking ervan.
 
-Over het algemeen is het proces relatief eenvoudig, vooral als het voor een tablet fabrikant is waarvoor wij al ondersteuning hebben bij andere tablets.
+Over het algemeen is het proces relatief eenvoudig, vooral als het voor een tablet fabrikant is waar al ondersteuning is voor andere tablets.
