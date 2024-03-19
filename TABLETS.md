@@ -125,6 +125,7 @@
 | XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
 | XP-Pen Artist 16 (2nd Gen)    |     Supported     |
+| XP-Pen Artist Pro 16 (Gen2)   |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco Fun S (CT640)     |     Supported     |
