@@ -133,6 +133,7 @@
 | XP-Pen Deco L                 |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
 | XP-Pen Deco mini7             |     Supported     |
+| XP-Pen Deco Pro LW Gen2       |     Supported     |
 | XP-Pen Deco Pro XLW Gen2      |     Supported     |
 | XP-Pen Star 03                |     Supported     |
 | XP-Pen Star 05 V3             |     Supported     |
