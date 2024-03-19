@@ -10,19 +10,10 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
         {
             Raw = report;
 
-            const float tiltCorrectionFactor = 4.0f; // Experiment with this value for accurate alignment
-            Tilt = new Vector2
-            {
-                X = (sbyte)report[8],
-                Y = (sbyte)report[9]
-            };
-
             Position = new Vector2
             {
-                X = (Unsafe.ReadUnaligned<ushort>(ref report[2]) | report[10] << 16)
-                - (int)(tiltCorrectionFactor * Tilt.X), // Adjust X position based on tilt angle
+                X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | report[10] << 16,
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[4]) | report[11] << 16
-                - (int)(tiltCorrectionFactor * Tilt.Y) // Adjust Y position based on tilt angle
             };
             Pressure = (uint)((Unsafe.ReadUnaligned<ushort>(ref report[6]) - 16384) | (report[13] & 0x01) << 13);
             Eraser = report[1].IsBitSet(3);
@@ -31,6 +22,12 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
             {
                 report[1].IsBitSet(1),
                 report[1].IsBitSet(2)
+            };
+
+            Tilt = new Vector2
+            {
+                X = (sbyte)report[8],
+                Y = (sbyte)report[9]
             };
         }
 
