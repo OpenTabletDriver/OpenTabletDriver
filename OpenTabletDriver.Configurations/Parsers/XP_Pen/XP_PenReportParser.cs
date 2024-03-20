@@ -6,10 +6,11 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
     {
         public IDeviceReport Parse(byte[] report)
         {
-            if (report[1] == 0xC0 || report[1] == 0xF2)
-                // Report[1] == 0xF2 seems to be some sort of an error state for
-                // UGEE S1060W Specifically the string 02 F2 01 64 01
+            if (report[1] == 0xC0)
                 return new OutOfRangeReport(report);
+
+            if (report[1] == 0xF2)
+                return new XP_PenBatteryReport(report);
 
             if (report[1].IsBitSet(4))
                 return new XP_PenAuxReport(report);
