@@ -22,6 +22,19 @@
       "VendorID": 10429,
       "ProductID": 2360,
       "InputReportLength": 12,
+      "OutputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2360,
+      "InputReportLength": 12,
       "OutputReportLength": 20,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
