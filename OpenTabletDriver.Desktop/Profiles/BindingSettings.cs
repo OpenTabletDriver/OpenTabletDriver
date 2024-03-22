@@ -13,7 +13,8 @@ namespace OpenTabletDriver.Desktop.Profiles
         private PluginSettings? _tipButton, _eraserButton, _mouseScrollUp, _mouseScrollDown;
         private PluginSettingsCollection _penButtons = new PluginSettingsCollection(),
             _auxButtons = new PluginSettingsCollection(),
-            _mouseButtons = new PluginSettingsCollection();
+            _mouseButtons = new PluginSettingsCollection(),
+            _touchGestures = new PluginSettingsCollection();
 
         [DisplayName("Tip Activation Threshold"), JsonProperty("TipActivationThreshold")]
         public float TipActivationThreshold
@@ -57,6 +58,13 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => _auxButtons;
         }
 
+        [DisplayName("Touch Gestures"), JsonProperty("TouchGestures")]
+        public PluginSettingsCollection TouchGestures
+        {
+            set => RaiseAndSetIfChanged(ref _touchGestures!, value);
+            get => _touchGestures;
+        }
+
         [DisplayName("Mouse Button"), JsonProperty("MouseButtons")]
         public PluginSettingsCollection MouseButtons
         {
@@ -91,7 +99,8 @@ namespace OpenTabletDriver.Desktop.Profiles
                 ),
                 PenButtons = new PluginSettingsCollection(),
                 AuxButtons = new PluginSettingsCollection(),
-                MouseButtons = new PluginSettingsCollection()
+                MouseButtons = new PluginSettingsCollection(),
+                TouchGestures = new PluginSettingsCollection()
             };
             bindingSettings.MatchSpecifications(tabletSpecifications);
             return bindingSettings;
@@ -102,10 +111,11 @@ namespace OpenTabletDriver.Desktop.Profiles
             var penButtonCount = tabletSpecifications.Pen?.ButtonCount ?? 0;
             var auxButtonCount = tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
             var mouseButtonCount = tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
-
+            var touchGestureCount = tabletSpecifications.GestureTouchpad?.GestureCount ?? 0;
             PenButtons = PenButtons.SetLength(penButtonCount);
             AuxButtons = AuxButtons.SetLength(auxButtonCount);
             MouseButtons = MouseButtons.SetLength(mouseButtonCount);
+            TouchGestures = TouchGestures.SetLength(touchGestureCount);
         }
     }
 }
