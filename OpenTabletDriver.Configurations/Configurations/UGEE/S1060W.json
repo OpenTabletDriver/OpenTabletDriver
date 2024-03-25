@@ -28,7 +28,9 @@
       "OutputInitReport": [
         "ArAE"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "UGEE S1060W"
+      },
       "InitializationStrings": []
     },
     {
@@ -41,7 +43,9 @@
       "OutputInitReport": [
       "ArAE"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "UGEE S1060W"
+      },
       "InitializationStrings": []
     },
     {
@@ -54,7 +58,9 @@
       "OutputInitReport": [
         "ArAE"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "UGEE S1060W"
+      },
       "InitializationStrings": []
     },
     {
@@ -67,7 +73,9 @@
       "OutputInitReport": [
         "ArAE"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "UGEE S1060W"
+      },
       "InitializationStrings": []
     }
 

@@ -22,13 +22,45 @@
       "VendorID": 10429,
       "ProductID": 2360,
       "InputReportLength": 12,
-      "OutputReportLength": null,
+      "OutputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+      "ArAE"
+      ],
+      "DeviceStrings": {
+        "2": "UGEE S1060"
+      },
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2360,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
       ],
-      "DeviceStrings": {},
+      "DeviceStrings": {
+        "2": "UGEE S1060"
+      },
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2360,
+      "InputReportLength": 10,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {
+        "2": "UGEE S1060"
+      },
       "InitializationStrings": []
     }
   ],
