@@ -45,8 +45,7 @@
         },
         {
             "label": "Build Persistent Binaries",
-            "type": "process",
-            "isBuildCommand": true,
+            "type": "shell",
             "command": "",
             "windows": {
                 "command": "./build.ps1"
