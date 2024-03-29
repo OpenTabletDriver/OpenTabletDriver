@@ -112,14 +112,16 @@ public partial class TabletViewModel : ActivatableViewModelBase
         _profile = _tabletService.Profile;
 
         // propagate daemon-broadcasted profile changes to the UI
-        // TODO: there's currently no fast way to check if this profile is the one
-        // that UI just sent to daemon, so disable this for now to save CPU cycles
 
-        _tabletService.HandleProperty(
-            nameof(_tabletService.Profile),
-            s => s.Profile,
-            (s, p) => Profile = p,
-            invokeOnCreation: false);
+        this.WhenActivated(d =>
+        {
+            _tabletService.HandleProperty(
+                nameof(_tabletService.Profile),
+                s => s.Profile,
+                (s, p) => Profile = p,
+                invokeOnCreation: false)
+            .DisposeWith(d);
+        });
 
         // propagate plugin changes as well
         _daemonService.PluginContexts.CollectionChanged += (s, e) =>
