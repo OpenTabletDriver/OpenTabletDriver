@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using OpenTabletDriver.Tests.Fakes;
-using OTDUpdater = OpenTabletDriver.Desktop.Updater.Updater;
+using OTDUpdater = OpenTabletDriver.Daemon.Updater.Updater;
 
 namespace OpenTabletDriver.Tests.Updater
 {

@@ -13,56 +13,35 @@
               "${workspaceFolder}/bin/Configurations"
             ],
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
         },
         {
-            "name": "UX",
+            "name": "UI",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "Build UX",
-            "program": "",
+            "preLaunchTask": "Build UI",
+            "cwd": "${workspaceFolder}/OpenTabletDriver.UI/bin/Debug/net7.0",
+            "program": "${workspaceFolder}/OpenTabletDriver.UI/bin/Debug/net7.0/OpenTabletDriver.UI.dll",
             "args": [],
             "console": "internalConsole",
             "stopAtEntry": false,
-            "windows": {
-                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0-windows",
-                "program": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0-windows/OpenTabletDriver.UX.Wpf.dll",
-            },
-            "linux": {
-                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/",
-                "program": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/OpenTabletDriver.UX.Gtk.dll",
-            },
-            "osx": {
-                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/",
-                "program": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/OpenTabletDriver.UX.MacOS.dll",
-            }
         },
         {
             "name": "Daemon (Persistent)",
             "type": "coreclr",
             "request": "launch",
             "cwd": "${workspaceFolder}/bin",
-            "windows": {
-                "program": "${workspaceFolder}/bin/OpenTabletDriver.Daemon.exe",
-            },
-            "linux": {
-                "program": "${workspaceFolder}/bin/OpenTabletDriver.Daemon",
-            },
+            "program": "${workspaceFolder}/bin/OpenTabletDriver.Daemon.dll",
             "args": [],
             "console": "internalConsole",
             "stopAtEntry": false
         },
         {
-            "name": "UX (Persistent)",
+            "name": "UI (Persistent)",
             "type": "coreclr",
             "request": "launch",
             "cwd": "${workspaceFolder}/bin",
-            "windows": {
-                "program": "${workspaceFolder}/bin/OpenTabletDriver.UX.Wpf.exe",
-            },
-            "linux": {
-                "program": "${workspaceFolder}/bin/OpenTabletDriver.UX.Gtk",
-            },
+            "program": "${workspaceFolder}/bin/OpenTabletDriver.UI.dll",
             "args": [],
             "console": "internalConsole",
             "stopAtEntry": false

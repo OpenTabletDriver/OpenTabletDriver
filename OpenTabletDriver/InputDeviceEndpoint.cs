@@ -82,7 +82,6 @@ namespace OpenTabletDriver
             if (reportStream is null)
                 return;
 
-            Log.Debug("Device", $"Initializing device '{Endpoint.GetDetailedName()}'");
             Log.Debug("Device", $"Using report parser type '{Identifier.ReportParser}'");
 
             foreach (byte index in Identifier.InitializationStrings ?? Enumerable.Empty<byte>())
@@ -178,7 +177,6 @@ namespace OpenTabletDriver
             }
             catch (IOException ioEx) when (ioEx.Message is "I/O disconnected." or "Operation failed after some time.")
             {
-                Log.Write("Device", "Device disconnected.");
                 State = InputDeviceState.Disconnected;
                 data = null;
                 return false;

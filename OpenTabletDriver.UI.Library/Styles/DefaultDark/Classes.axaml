@@ -1,0 +1,135 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:c="using:OpenTabletDriver.UI.Controls"
+    xmlns:tc="using:OpenTabletDriver.UI.TemplatedControls">
+
+  <Style Selector="Border.Container">
+    <Setter Property="Background" Value="#0effffff"/>
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Height" Value="44" />
+    <Setter Property="Padding" Value="12, 4" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Background" Duration="0:0:0:0.2"/>
+      </Transitions>
+    </Setter>
+
+    <Style Selector="^:pointerover">
+      <Setter Property="Background" Value="#12ffffff"/>
+    </Style>
+
+    <Style Selector="^ > Grid">
+      <Style Selector="^ > :is(Control)">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+      </Style>
+      <Style Selector="^ > Slider">
+        <!-- check this when changing Container's Height -->
+        <Setter Property="Margin" Value="0, -14, 24, 0"/>
+      </Style>
+    </Style>
+  </Style>
+
+  <Style Selector="TextBlock.Label">
+    <Setter Property="Margin" Value="0, 0, 12, 0"/>
+    <Setter Property="HorizontalAlignment" Value="Left" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector=":is(Control).HorizontalGridMargin">
+    <Setter Property="Margin" Value="{DynamicResource OTD_HorizontalGridMargin}"/>
+  </Style>
+
+  <Style Selector=":is(Control).HorizontalGridMarginSmall">
+    <Setter Property="Margin" Value="{DynamicResource OTD_HorizontalGridMarginSmall}"/>
+  </Style>
+
+  <Style Selector=":is(Control).HorizontalGridMarginTight">
+    <Setter Property="Margin" Value="{DynamicResource OTD_HorizontalGridMarginTight}"/>
+  </Style>
+
+  <Style Selector="StackPanel.CommandBar">
+    <Setter Property="Orientation" Value="Horizontal" />
+    <Setter Property="Spacing" Value="8" />
+    <Setter Property="Margin" Value="0,4" />
+    <Setter Property="HorizontalAlignment" Value="Right" />
+  </Style>
+
+  <Style Selector="Button.Icon">
+    <Setter Property="Width" Value="24" />
+    <Setter Property="Height" Value="24" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="HorizontalAlignment" Value="Center" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+
+    <Style Selector="^ PathIcon">
+      <Setter Property="Width" Value="12" />
+      <Setter Property="Height" Value="12" />
+      <Setter Property="Opacity" Value="1" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="^:disabled PathIcon">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+
+    <Style Selector="^:pointerover">
+      <Style Selector="^ /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+      </Style>
+      <Style Selector="^:not(:disabled) PathIcon">
+        <Setter Property="Opacity" Value="0.8" />
+      </Style>
+    </Style>
+    <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="^:pressed PathIcon">
+      <Setter Property="RenderTransform" Value="scale(0.9)" />
+      <Setter Property="Opacity" Value="0.9" />
+    </Style>
+  </Style>
+
+  <Style Selector="tc|Section.Emphasized">
+    <Setter Property="Margin" Value="{DynamicResource OTD_SectionEmphasizedMargin}" />
+    <Style Selector="^:nth-child(1)">
+      <Setter Property="Margin" Value="{DynamicResource OTD_SectionEmphasizedMargin1st}" />
+    </Style>
+
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition
+                Width="*"
+                MinWidth="0"
+                MaxWidth="{DynamicResource OTD_SectionEmphasizedAutoMarginWidth}" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition
+                Width="*"
+                MinWidth="0"
+                MaxWidth="{DynamicResource OTD_SectionEmphasizedAutoMarginWidth}"/>
+          </Grid.ColumnDefinitions>
+
+          <ContentPresenter
+              Name="PART_ContentPresenter"
+              Background="{TemplateBinding Background}"
+              BorderBrush="{TemplateBinding BorderBrush}"
+              BorderThickness="{TemplateBinding BorderThickness}"
+              CornerRadius="{TemplateBinding CornerRadius}"
+              ContentTemplate="{TemplateBinding ContentTemplate}"
+              Content="{TemplateBinding Content}"
+              Padding="{TemplateBinding Padding}"
+              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+              Grid.Column="1" />
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+
+</Styles>

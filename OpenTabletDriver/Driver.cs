@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -42,14 +41,44 @@ namespace OpenTabletDriver
                 _deviceConfigurationProvider.TabletConfigurationsChanged += configs =>
                 {
                     _configHashMap = ConstructConfigHashMap(configs);
-                    Detect();
+                    ScanDevices();
                 };
             }
 
             _configHashMap = ConstructConfigHashMap(_deviceConfigurationProvider.TabletConfigurations);
+            _compositeDeviceHub.DevicesChanged += (sender, d) =>
+            {
+                var additions = d.Additions.ToArray();
+                if (additions.Length == 0)
+                    return;
+
+                var addedDevices = ScanDevices(additions);
+                if (addedDevices.Length == 0)
+                    return;
+
+                ImmutableInterlocked.Update(ref _inputDevices, devices => devices.AddRange(addedDevices));
+                InputDevice.AssignPersistentId(_inputDevices);
+
+                foreach (var device in addedDevices)
+                {
+                    device.Initialize(true);
+                    OnInputDeviceAdded(this, device);
+                }
+            };
         }
 
-        public event EventHandler<ImmutableArray<InputDevice>>? InputDevicesChanged;
+        public event EventHandler<InputDevice>? InputDeviceAdded;
+        public event EventHandler<InputDevice>? InputDeviceRemoved;
+
+        protected virtual void OnInputDeviceAdded(object? sender, InputDevice device)
+        {
+            InputDeviceAdded?.Invoke(sender, device);
+        }
+
+        protected virtual void OnInputDeviceRemoved(object? sender, InputDevice device)
+        {
+            InputDeviceRemoved?.Invoke(sender, device);
+        }
 
         public ImmutableArray<InputDevice> InputDevices => _inputDevices;
 
@@ -58,160 +87,158 @@ namespace OpenTabletDriver
             return _reportParserProvider.GetReportParser(identifier.ReportParser);
         }
 
-        public virtual void Detect()
+        public void ScanDevices()
+        {
+            Log.Write("Detect", "Searching for tablets...");
+
+            DisposeDevices(_inputDevices);
+            _inputDevices = ScanDevices(_compositeDeviceHub.GetDevices().ToArray());
+            InputDevice.AssignPersistentId(_inputDevices);
+
+            if (InputDevices.Any())
+                Log.Write("Detect", "Search done");
+            else
+                Log.Write("Detect", "Search done. No tablets were detected.");
+
+            foreach (var device in _inputDevices)
+            {
+                device.Initialize(true);
+                OnInputDeviceAdded(this, device);
+            }
+        }
+
+        /// <summary>
+        /// Returns an array of uninitialized <see cref="InputDevice"/>s from given <see cref="IDeviceEndpoint"/>s.
+        /// See <see cref="InputDevice.Initialize(bool)"/> for initialization.
+        /// </summary>
+        /// <param name="endpointsToScan">The endpoints to scan for</param>
+        /// <returns>An array of uninitialized <see cref="InputDevice"/>s.</returns>
+        private ImmutableArray<InputDevice> ScanDevices(IDeviceEndpoint[] endpointsToScan)
         {
             lock (_detectLock)
             {
-                Log.Write("Detect", "Searching for tablets...");
-
                 // save a reference to avoid potential _configHashMap changes during detection
                 var tabletConfigurations = _configHashMap;
 
-                // the following detection algorithm exploits the fact that OTD only ever uses one digitizer and one
-                // auxiliary per tablet device. multiple devices of the exact same model will be detected properly
-                // however current OTD API design inhibits the ability to distinguish between them.
+                // group device endpoints of the same device
+                var deviceEndpointGroups = new List<List<IDeviceEndpoint>>();
 
-                // create a hash map of configurations to their input device endpoint pairs
-                var inputDeviceEndpoints = new Dictionary<TabletConfiguration, List<InputDeviceEndpointPair>>();
-
-                // loop over all devices
-                foreach (var device in _compositeDeviceHub.GetDevices())
+                foreach (var endpoint in endpointsToScan)
                 {
-                    try
+                    static bool isGroup(IDeviceEndpoint a, IDeviceEndpoint b)
                     {
-                        var deviceHash = (device.VendorID, device.ProductID);
-                        var deviceName = device.FriendlyName == null
-                            ? device.DevicePath
-                            : $"{device.FriendlyName} ({device.DevicePath})";
+                        return a.VendorID == b.VendorID
+                            && a.ProductID == b.ProductID
+                            && a.IsSibling(b);
+                    }
 
-                        // loop over configurations that has an identifier that matches the device's VID/PID
-                        if (!tabletConfigurations.TryGetValue(deviceHash, out var candidateConfigs))
-                            continue;
+                    var group = deviceEndpointGroups.FirstOrDefault(g => isGroup(endpoint, g[0]));
+
+                    if (group is null)
+                    {
+                        group = new List<IDeviceEndpoint>();
+                        deviceEndpointGroups.Add(group);
+                    }
+
+                    group.Add(endpoint);
+                }
+
+                var inputDevices = new List<InputDevice>();
+                foreach (var device in deviceEndpointGroups)
+                {
+                    var deviceHash = (device[0].VendorID, device[0].ProductID);
+                    var deviceName = device[0].FriendlyName;
+
+                    // loop over configurations that has an identifier that matches the device's VID/PID
+                    if (!tabletConfigurations.TryGetValue(deviceHash, out var candidateConfigs))
+                        continue;
+
+                    TabletConfiguration? tabletConfiguration = null;
+                    InputDeviceEndpoint? digitizerEndpoint = null;
+                    InputDeviceEndpoint? auxiliaryEndpoint = null;
+
+                    var enumerator = device.GetEnumerator();
+
+                    // Find matching configuration
+                    while (enumerator.MoveNext())
+                    {
+                        var endpoint = enumerator.Current;
 
                         foreach (var candidateConfig in candidateConfigs)
                         {
-                            ref var pairList = ref CollectionsMarshal.GetValueRefOrAddDefault(inputDeviceEndpoints, candidateConfig, out _);
-                            Log.Debug("Detect", $"Attempting to match config '{candidateConfig.Name}' to device '{deviceName}'");
-
-                            // check if the device matches a digitizer identifier
-                            if (TryMatch(device, candidateConfig, candidateConfig.DigitizerIdentifiers, out var digitizerEndpoint))
+                            if (TryMatch(endpoint, candidateConfig, candidateConfig.DigitizerIdentifiers, out digitizerEndpoint))
                             {
-                                // find the first pair that has no digitizer endpoint
-                                // if none is found, create a new pair
-                                pairList ??= new List<InputDeviceEndpointPair>();
-                                var pairIndex = pairList.FindIndex(p => p.Digitizer is null);
+                                tabletConfiguration = candidateConfig;
+                                if (candidateConfig.AuxiliaryDeviceIdentifiers.Count == 0)
+                                    goto build_device;
 
-                                if (pairIndex == -1)
-                                {
-                                    pairList.Add(new InputDeviceEndpointPair());
-                                    pairIndex = pairList.Count - 1;
-                                }
-
-                                var pair = pairList[pairIndex];
-                                pair.Digitizer = digitizerEndpoint;
-                                Log.Debug("Detect", $"Found '{candidateConfig.Name}' digitizer: '{deviceName}'");
-                                break;
+                                goto found_config;
                             }
 
-                            // check if the device matches an auxiliary identifier
-                            if (TryMatch(device, candidateConfig, candidateConfig.AuxiliaryDeviceIdentifiers, out var auxEndpoint))
+                            if (TryMatch(endpoint, candidateConfig, candidateConfig.AuxiliaryDeviceIdentifiers, out auxiliaryEndpoint))
                             {
-                                // find the first pair that has no auxiliary endpoint
-                                // if none is found, create a new pair
-                                pairList ??= new List<InputDeviceEndpointPair>();
-                                var pairIndex = pairList.FindIndex(p => p.Auxiliary is null);
-
-                                if (pairIndex == -1)
-                                {
-                                    pairList.Add(new InputDeviceEndpointPair());
-                                    pairIndex = pairList.Count - 1;
-                                }
-
-                                var pair = pairList[pairIndex];
-                                pair.Auxiliary = auxEndpoint;
-                                Log.Debug("Detect", $"Found '{candidateConfig.Name}' auxiliary: '{deviceName}'");
-                                break;
+                                tabletConfiguration = candidateConfig;
+                                goto found_config;
                             }
                         }
                     }
-                    catch (IOException iex) when (iex.Message.Contains("Unable to open HID class device")
-                        && SystemInterop.CurrentPlatform == SystemPlatform.Linux)
-                    {
-                        Log.Write(
-                            "Driver",
-                            "The current user does not have the permissions to open the device stream. " +
-                            "Follow the instructions from https://opentabletdriver.net/Wiki/FAQ/Linux#fail-device-streams to resolve this issue.",
-                            LogLevel.Error
-                        );
-                    }
-                    catch (ArgumentOutOfRangeException aex) when (aex.Message.Contains("Value range is [0, 15]")
-                        && SystemInterop.CurrentPlatform == SystemPlatform.Linux)
-                    {
-                        Log.Write(
-                            "Driver",
-                            "Device is currently in use by another kernel module. " +
-                            "Follow the instructions from https://opentabletdriver.net/Wiki/FAQ/Linux#argumentoutofrangeexception to resolve this issue.",
-                            LogLevel.Error
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Exception(ex, LogLevel.Warning);
-                    }
-                }
 
-                var deviceBuilder = ImmutableArray.CreateBuilder<InputDevice>(inputDeviceEndpoints.Count);
-                foreach (var (config, pairList) in inputDeviceEndpoints.Where(p => p.Value is not null))
-                {
-                    foreach (var pair in pairList)
+                    // no matching configuration found, move on to the next device
+                    continue;
+
+                found_config:
+
+                    // we found a matching configuration, now search for the other endpoint
+                    while ((digitizerEndpoint is null || auxiliaryEndpoint is null) && enumerator.MoveNext())
                     {
-                        if (pair.Digitizer is null)
-                        {
-                            Log.Write("Detect", $"Digitizer device not found for tablet '{config.Name}', skipping...", LogLevel.Warning);
+                        var endpoint = enumerator.Current;
+
+                        if (digitizerEndpoint is null && TryMatch(endpoint, tabletConfiguration!, tabletConfiguration!.DigitizerIdentifiers, out digitizerEndpoint))
                             continue;
-                        }
 
-                        Log.Write("Detect", $"Found tablet '{config.Name}'");
-                        var device = new InputDevice(config, pair.Digitizer, pair.Auxiliary);
-
-                        if (config.AuxiliaryDeviceIdentifiers.Any() && pair.Auxiliary is null)
-                        {
-                            Log.Write("Detect", $"Auxiliary device not found for tablet '{config.Name}', express keys may not function properly", LogLevel.Warning);
-                        }
-
-                        device.StateChanged += (sender, e) =>
-                        {
-                            if (e < InputDeviceState.Disconnected)
-                                return;
-
-                            // save the resulting immutable array for later use.
-                            ImmutableArray<InputDevice> updatedDevices = default;
-
-                            ImmutableInterlocked.Update(ref _inputDevices, (devices, device) =>
-                            {
-                                updatedDevices = devices.Remove(device);
-                                return updatedDevices;
-                            }, device);
-
-                            // use the saved array here to invoke the event.
-                            // this ensures that the event is invoked with the correct state.
-                            InputDevicesChanged?.Invoke(this, updatedDevices);
-                        };
-
-                        deviceBuilder.Add(device);
+                        if (auxiliaryEndpoint is null && TryMatch(endpoint, tabletConfiguration!, tabletConfiguration!.AuxiliaryDeviceIdentifiers, out auxiliaryEndpoint))
+                            continue;
                     }
+
+                    if (digitizerEndpoint is null)
+                    {
+                        Log.Write("Detect", $"'{tabletConfiguration!.Name}' digitizer not found", LogLevel.Warning);
+                        continue;
+                    }
+
+                build_device:
+
+                    // whole log should be Warning when auxiliary is unexpectedly null
+                    var warning = tabletConfiguration!.AuxiliaryDeviceIdentifiers.Count > 0 && auxiliaryEndpoint is null
+                        ? LogLevel.Warning
+                        : LogLevel.Info;
+
+                    Log.Write("Detect", $"{tabletConfiguration.Name} detected", warning);
+                    Log.Write("Detect", $"{tabletConfiguration.Name} digitizer: {digitizerEndpoint.Endpoint.DevicePath}", warning);
+
+                    if (auxiliaryEndpoint is not null)
+                        Log.Write("Detect", $"{tabletConfiguration.Name} auxiliary: {auxiliaryEndpoint.Endpoint.DevicePath}", warning);
+                    else if (tabletConfiguration!.AuxiliaryDeviceIdentifiers.Count > 0) // aux is null
+                        Log.Write("Detect", $"{tabletConfiguration.Name} auxiliary: N/A, express keys on tablet may not work", warning);
+
+                    var inputDevice = new InputDevice(tabletConfiguration!, digitizerEndpoint, auxiliaryEndpoint);
+
+                    inputDevice.StateChanged += (sender, e) =>
+                    {
+                        if (e < InputDeviceState.Disconnected)
+                            return;
+
+                        if (ImmutableInterlocked.Update(ref _inputDevices, (devices, device) => devices.Remove(device), inputDevice))
+                            OnInputDeviceRemoved(this, inputDevice);
+
+                        if (e == InputDeviceState.Disconnected)
+                            Log.Write("Detect", $"{inputDevice.PersistentName} disconnected", LogLevel.Info);
+                    };
+
+                    inputDevices.Add(inputDevice);
                 }
 
-                // atomically update InputDevices
-                var oldDevices = _inputDevices;
-                _inputDevices = deviceBuilder.ToImmutable();
-                DisposeDevices(oldDevices);
-                InputDevicesChanged?.Invoke(this, InputDevices);
-
-                if (!InputDevices.Any())
-                {
-                    Log.Write("Detect", "No tablets were detected.");
-                }
+                return inputDevices.ToImmutableArray();
             }
         }
 
@@ -313,7 +340,9 @@ namespace OpenTabletDriver
         private static void DisposeDevices(IEnumerable<InputDevice> devices)
         {
             foreach (var device in devices)
+            {
                 device.Dispose();
+            }
         }
 
         public void Dispose()

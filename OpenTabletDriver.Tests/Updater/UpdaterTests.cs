@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using OpenTabletDriver.Desktop.Updater;
+using OpenTabletDriver.Daemon.Updater;
 using OpenTabletDriver.Tests.Fakes;
 using OpenTabletDriver.Tests.Updater;
 using Xunit;

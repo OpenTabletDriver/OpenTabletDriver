@@ -11,8 +11,8 @@ namespace OpenTabletDriver.Output
     /// <summary>
     /// A relative positioned output mode.
     /// </summary>
-    [PluginIgnore]
     [PublicAPI]
+    [PluginInterface]
     public abstract class RelativeOutputMode : OutputMode
     {
         private readonly HPETDeltaStopwatch _stopwatch = new HPETDeltaStopwatch();

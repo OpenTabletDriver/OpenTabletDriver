@@ -11,14 +11,14 @@ namespace OpenTabletDriver.Devices
     [PublicAPI]
     public class DevicesChangedEventArgs : EventArgs
     {
-        public DevicesChangedEventArgs(IEnumerable<IDeviceEndpoint>? oldList, IEnumerable<IDeviceEndpoint> newList)
+        public DevicesChangedEventArgs(IList<IDeviceEndpoint>? oldList, IList<IDeviceEndpoint> newList)
         {
             Previous = oldList;
             Current = newList;
         }
 
-        public IEnumerable<IDeviceEndpoint>? Previous { get; }
-        public IEnumerable<IDeviceEndpoint> Current { get; }
+        public IList<IDeviceEndpoint>? Previous { get; }
+        public IList<IDeviceEndpoint> Current { get; }
 
         public IEnumerable<IDeviceEndpoint> Additions => Current.Except(Previous ?? Array.Empty<IDeviceEndpoint>(), Comparer);
         public IEnumerable<IDeviceEndpoint> Removals => Previous?.Except(Current, Comparer) ?? Current;

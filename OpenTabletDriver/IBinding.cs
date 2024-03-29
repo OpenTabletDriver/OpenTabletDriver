@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using OpenTabletDriver.Attributes;
 
 namespace OpenTabletDriver
 {
@@ -6,6 +7,7 @@ namespace OpenTabletDriver
     /// A base binding interface.
     /// </summary>
     [PublicAPI]
+    [PluginInterface]
     public interface IBinding
     {
     }
