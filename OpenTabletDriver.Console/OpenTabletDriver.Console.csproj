@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="Project References">
-    <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
+    <ProjectReference Include="..\OpenTabletDriver.Daemon\OpenTabletDriver.Daemon.csproj" />
   </ItemGroup>
 
 </Project>

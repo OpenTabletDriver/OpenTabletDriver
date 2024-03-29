@@ -1,0 +1,51 @@
+﻿<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Controls.NavigationPaneView"
+    x:DataType="vm:NavigationPaneViewModel"
+    x:CompileBindings="True">
+  <UserControl.Styles>
+    <Style Selector="TextBlock">
+      <Setter Property="FontSize" Value="{DynamicResource OTD_UIFontSize}" />
+    </Style>
+    <Style Selector="ListBox">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+    <Style Selector="ListBox#VIEW_NavigationList ListBoxItem" x:DataType="vm:NavigationItem">
+      <Setter
+          Property="IsEnabled"
+          Value="{Binding IsEnabled}" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,*,Auto">
+    <ListBox
+        Name="VIEW_NavigationList"
+        ItemsSource="{Binding Navigations}"
+        SelectedItem="{Binding SelectedNavigation}"
+        Grid.Row="0">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel />
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="vm:NavigationItem">
+          <TextBlock Text="{Binding Name}" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <ListBoxItem
+        Name="VIEW_SettingsButton"
+        IsSelected="{Binding SettingsOpened, Mode=OneWay}"
+        Grid.Row="2">
+      <TextBlock Text="Settings" />
+    </ListBoxItem>
+  </Grid>
+</UserControl>

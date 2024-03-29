@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup Label="Project Properties">
+    <TargetFramework>$(FrameworkLatest)</TargetFramework>
+    <RootNamespace>OpenTabletDriver.UI</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaVersion>11.0.4</AvaloniaVersion>
+    <AvaloniaExtensionsVersion>11.0.0</AvaloniaExtensionsVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Warnings">
+    <NoWarn>
+      VSTHRD100,
+      VSTHRD101,
+      VSTHRD200,  <!-- Ignore Async suffix -->
+      VSTHRD105,   <!-- Ignore Default Task Scheduler -->
+    </NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <TrimmerRootDescriptor Include="Roots.xml" />
+  </ItemGroup>
+
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\OpenTabletDriver.Daemon.Contracts\OpenTabletDriver.Daemon.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Nuget Packages">
+    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="Avalonia.Svg.Skia" Version="$(AvaloniaExtensionsVersion)" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+  </ItemGroup>
+
+  <!-- TODO -->
+  <ItemGroup Label="Windows-specific Nuget Packages">
+    <PackageReference Include="WindowsShortcutFactory" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenTabletDriver.UI.Tests" />
+  </ItemGroup>
+</Project>

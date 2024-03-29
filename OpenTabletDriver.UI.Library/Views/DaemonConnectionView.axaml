@@ -1,0 +1,63 @@
+﻿<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Views.DaemonConnectionView"
+    x:DataType="vm:DaemonConnectionViewModel"
+    x:CompileBindings="True">
+  <RelativePanel
+      VerticalAlignment="Stretch"
+      HorizontalAlignment="Stretch"
+      ClipToBounds="False">
+    <TextBlock
+        Name="VIEW_MainTextBlock"
+        Text="{Binding MainText}"
+        FontSize="16"
+        RelativePanel.AlignVerticalCenterWithPanel="True"
+        RelativePanel.AlignHorizontalCenterWithPanel="True" />
+    <StackPanel
+        IsVisible="{Binding ShowButtons}"
+        Orientation="Horizontal"
+        RelativePanel.Below="VIEW_MainTextBlock"
+        RelativePanel.AlignHorizontalCenterWithPanel="True">
+      <Button
+          Content="Retry"
+          Command="{Binding ConnectCommand}"
+          Margin="8, 12" />
+      <Button
+          Content="Help"
+          Command="{Binding GoToHelpWebsiteCommand}"
+          Margin="8, 12" />
+    </StackPanel>
+    <Panel
+        RelativePanel.AlignBottomWithPanel="True"
+        RelativePanel.AlignHorizontalCenterWithPanel="True"
+        Margin="48, 16"
+        IsHitTestVisible="False"
+        ClipToBounds="False">
+      <ScrollViewer
+          Name="VIEW_Scroller"
+          VerticalScrollBarVisibility="Hidden">
+        <ItemsControl
+            ItemsSource="{Binding QolHintText}"
+            IsVisible="{Binding ShowQolHintText}"
+            RelativePanel.AlignBottomWithPanel="True">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <TextBlock
+                  Text="{Binding}"
+                  IsHitTestVisible="False"
+                  FontSize="12"
+                  HorizontalAlignment="Center" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Panel>
+  </RelativePanel>
+</UserControl>

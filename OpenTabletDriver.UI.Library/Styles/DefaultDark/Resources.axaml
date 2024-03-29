@@ -1,0 +1,11 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Thickness x:Key="OTD_HorizontalGridMargin">0,0,12,0</Thickness>
+  <Thickness x:Key="OTD_HorizontalGridMarginSmall">0,0,8,0</Thickness>
+  <Thickness x:Key="OTD_HorizontalGridMarginTight">0,0,5,0</Thickness>
+  <Thickness x:Key="OTD_SectionEmphasizedMargin">0,32,0,0</Thickness>
+  <Thickness x:Key="OTD_SectionEmphasizedMargin1st">0,12,0,8</Thickness>
+  <x:Int32 x:Key="OTD_SectionEmphasizedAutoMarginWidth">32</x:Int32>
+  <x:Int32 x:Key="OTD_UIFontSize">14</x:Int32>
+</ResourceDictionary>

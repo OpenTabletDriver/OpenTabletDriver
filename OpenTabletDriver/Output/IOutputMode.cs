@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using JetBrains.Annotations;
+using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Output
@@ -9,6 +10,7 @@ namespace OpenTabletDriver.Output
     /// An output mode in which all reports are ultimately transformed and subsequently handled.
     /// </summary>
     [PublicAPI]
+    [PluginInterface]
     public interface IOutputMode : IPipelineElement<IDeviceReport>
     {
         /// <summary>

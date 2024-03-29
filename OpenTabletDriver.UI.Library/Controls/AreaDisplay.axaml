@@ -1,0 +1,25 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Controls.AreaDisplay"
+    x:DataType="vm:AreaDisplayViewModel"
+    x:CompileBindings="true">
+  <Border
+      Name="VIEW_AreaBorder"
+      Background="{DynamicResource OTD_ControlBackgroundBrush}"
+      CornerRadius="6"
+      Padding="12"
+      ClipToBounds="True">
+    <Canvas
+        Name="VIEW_AreaCanvas"
+        Background="Transparent"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center" />
+  </Border>
+</UserControl>

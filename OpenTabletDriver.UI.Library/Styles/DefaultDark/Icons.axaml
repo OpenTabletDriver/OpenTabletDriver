@@ -1,0 +1,9 @@
+<ResourceDictionary
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <StreamGeometry x:Key="generic_tablet">m 38.438706,94.60806 c -21.22094,0 -38.43871,17.21777 -38.43871,38.43871 v 245.90646 c 0,21.22094 17.21777,38.43871 38.43871,38.43871 H 473.56129 C 494.78223,417.39194 512,400.17417 512,378.95323 V 133.04677 c 0,-21.22094 -17.21777,-38.43871 -38.43871,-38.43871 z m 0,8.5703 h 7.588982 v 305.64328 h -7.588982 c -16.621246,0 -29.8684115,-13.24715 -29.8684115,-29.86841 V 133.04677 c 0,-16.62126 13.2471655,-29.86841 29.8684115,-29.86841 z m 16.15928,0 H 473.56129 c 16.62126,0 29.86841,13.24715 29.86841,29.86841 v 245.90646 c 0,16.62126 -13.24715,29.86841 -29.86841,29.86841 H 54.597986 Z</StreamGeometry>
+
+  <!-- These icons are from https://fonts.google.com/icons?icon.platform=web -->
+  <StreamGeometry x:Key="menu">M120-240v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z</StreamGeometry>
+  <StreamGeometry x:Key="arrow_back">M24 40 8 24 24 8l2.1 2.1-12.4 12.4H40v3H13.7l12.4 12.4Z</StreamGeometry>
+</ResourceDictionary>

@@ -2,9 +2,9 @@ using System;
 using System.CommandLine;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Daemon;
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Contracts.RPC;
 
 namespace OpenTabletDriver.Console
 {
@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Console
                 Environment.Exit(1);
             }
 
-            await _rpcClient.Connect();
+            await _rpcClient.ConnectAsync();
 
             var commands = ActivatorUtilities.CreateInstance<ProgramCommands>(_serviceProvider);
             var root = commands.Build("otd");

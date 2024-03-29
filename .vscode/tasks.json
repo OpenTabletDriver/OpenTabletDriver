@@ -12,51 +12,57 @@
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "presentation": {
+              "echo": true,
+              "reveal": "never",
+              "focus": false,
+              "panel": "shared",
+              "showReuseMessage": true,
+              "clear": false
+            },
         },
         {
-            "label": "Build UX",
+            "label": "Build UI",
             "type": "process",
             "isBuildCommand": true,
             "command": "dotnet",
-            "args": [],
+            "args": [
+                "build",
+                "${workspaceFolder}/OpenTabletDriver.UI/OpenTabletDriver.UI.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
             "problemMatcher": "$msCompile",
-            "windows": {
-                "args": [
-                    "build",
-                    "${workspaceFolder}/OpenTabletDriver.UX.Wpf/OpenTabletDriver.UX.Wpf.csproj",
-                    "/property:GenerateFullPaths=true",
-                    "/consoleloggerparameters:NoSummary"
-                ]
+            "presentation": {
+              "echo": true,
+              "reveal": "never",
+              "focus": false,
+              "panel": "shared",
+              "showReuseMessage": true,
+              "clear": false
             },
-            "linux": {
-                "args": [
-                    "build",
-                    "${workspaceFolder}/OpenTabletDriver.UX.Gtk/OpenTabletDriver.UX.Gtk.csproj",
-                    "/property:GenerateFullPaths=true",
-                    "/consoleloggerparameters:NoSummary"
-                ]
-            },
-            "osx": {
-                "args": [
-                    "build",
-                    "${workspaceFolder}/OpenTabletDriver.UX.MacOS/OpenTabletDriver.UX.MacOS.csproj",
-                    "/property:GenerateFullPaths=true",
-                    "/consoleloggerparameters:NoSummary"
-                ]
-            }
         },
         {
             "label": "Build Persistent Binaries",
             "type": "process",
             "isBuildCommand": true,
+            "command": "",
             "windows": {
                 "command": "./build.ps1"
             },
             "linux": {
                 "command": "./build.sh"
             },
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "presentation": {
+              "echo": true,
+              "reveal": "never",
+              "focus": false,
+              "panel": "shared",
+              "showReuseMessage": true,
+              "clear": false
+            },
         },
     ]
 }
