@@ -31,7 +31,7 @@
             "type": "coreclr",
             "request": "launch",
             "cwd": "${workspaceFolder}/bin",
-            "program": "${workspaceFolder}/bin/OpenTabletDriver.Daemon.dll",
+            "program": "${workspaceFolder}/bin/OpenTabletDriver.Daemon.exe",
             "args": [],
             "console": "internalConsole",
             "stopAtEntry": false
@@ -41,7 +41,7 @@
             "type": "coreclr",
             "request": "launch",
             "cwd": "${workspaceFolder}/bin",
-            "program": "${workspaceFolder}/bin/OpenTabletDriver.UI.dll",
+            "program": "${workspaceFolder}/bin/OpenTabletDriver.UI.exe",
             "args": [],
             "console": "internalConsole",
             "stopAtEntry": false
