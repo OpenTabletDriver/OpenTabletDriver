@@ -28,13 +28,8 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": [
-        98,
-        122,
         123,
-        102,
-        100,
-        101,
-        110
+        100
       ]
     }
   ],
