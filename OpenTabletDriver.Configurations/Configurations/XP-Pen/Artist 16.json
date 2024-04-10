@@ -2,8 +2,8 @@
   "Name": "XP-Pen Artist 16",
   "Specifications": {
     "Digitizer": {
-      "Width": 340.99,
-      "Height": 191.81,
+      "Width": 344.16,
+      "Height": 193.59,
       "MaxX": 34416,
       "MaxY": 19359
     },
@@ -28,8 +28,8 @@
       "OutputInitReport": null,
       "DeviceStrings": {},
       "InitializationStrings": [
-        123,
-        100
+        100,
+        123
       ]
     }
   ],
