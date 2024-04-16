@@ -27,7 +27,8 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [
@@ -45,7 +46,8 @@
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "Attributes": {

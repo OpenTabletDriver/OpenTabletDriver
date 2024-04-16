@@ -225,7 +225,7 @@ namespace OpenTabletDriver
                     (identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength) &&
                     (identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength) &&
                     DeviceMatchesStrings(device, identifier.DeviceStrings) &&
-                    DeviceMatchesAttribute(device, configuration.Attributes);
+                    DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes);
 
                 if (match)
                 {
@@ -262,23 +262,41 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes, Dictionary<string, string> config_attributes)
         {
+            // The name of the attribute which is used to enforce a device interface whitelist.
+            var interfaceKey = "Interface";
+            var devName = device.DevicePath;
+
+            Dictionary<string, string> attributes = new(identifier_attributes);
+
+            foreach (var kvp in config_attributes)
+            {
+                if (!attributes.ContainsKey(kvp.Key))
+                {
+                    attributes.Add(kvp.Key, kvp.Value);
+                }
+            }
+
             switch (SystemInterop.CurrentPlatform)
             {
                 case SystemPlatform.Windows:
                 {
-                    var devName = device.DevicePath;
-
-                    var interfaceMatches = !attributes.ContainsKey("WinInterface") || Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}");
+                    var interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"&mi_{attributes[interfaceKey]}");
                     var keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
 
                     return interfaceMatches && keyMatches;
                 }
                 case SystemPlatform.MacOS:
                 {
-                    var devName = device.DevicePath;
-                    bool interfaceMatches = !attributes.ContainsKey("MacInterface") || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}");
+                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes[interfaceKey]}");
+                    return interfaceMatches;
+                }
+                case SystemPlatform.Linux:
+                {
+                    var match = Regex.Match(devName, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
+                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || match.Groups["interface"].Value == attributes[interfaceKey];
+
                     return interfaceMatches;
                 }
                 default:
