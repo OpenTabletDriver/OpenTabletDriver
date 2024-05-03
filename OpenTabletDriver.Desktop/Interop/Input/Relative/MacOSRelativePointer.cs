@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
         {
             base.setPressure(percentage);
         }
-        
+
         protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)
         {
             CGEventSetLocation(mouseEvent, GetCursorPosition() + new CGPoint(x, y));
