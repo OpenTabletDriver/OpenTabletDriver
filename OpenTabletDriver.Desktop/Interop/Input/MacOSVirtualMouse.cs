@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             _doubleClickStopWatch = new Stopwatch();
             _stopWatch = new Stopwatch();
             _stopWatch.Start();
-            _eventSource = CGEventSourceCreate(CGEventSourceStateHIDSystemState);
+            _eventSource = CGEventSourceCreate(CGEventSourceStatePrivate);
             mouseEvent = CGEventCreate(_eventSource);
         }
 

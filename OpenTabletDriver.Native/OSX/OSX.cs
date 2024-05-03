@@ -14,6 +14,7 @@ namespace OpenTabletDriver.Native.OSX
     public static class OSX
     {
         public const int CGEventSourceStateHIDSystemState = 1;
+        public const int CGEventSourceStatePrivate = -1;
 
         private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
         private const string Foundation = "/System/Library/Frameworks/Foundation.framework/Foundation";
