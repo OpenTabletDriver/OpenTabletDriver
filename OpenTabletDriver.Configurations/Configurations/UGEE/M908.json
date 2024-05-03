@@ -1,0 +1,39 @@
+{
+  "Name": "UGEE M908",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 158.75,
+      "MaxX": 50800,
+      "MaxY": 31750
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 10498,
+      "InputReportLength": 12,
+      "OutputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
