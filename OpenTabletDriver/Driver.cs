@@ -206,18 +206,26 @@ namespace OpenTabletDriver
                 case PluginPlatform.Windows:
                 {
                     var devName = device.DevicePath;
-
-                    bool interfaceMatches = attributes.ContainsKey("WinInterface") ? Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}") : true;
-                    bool keyMatches = attributes.ContainsKey("WinUsage") ? Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}") : true;
+                    bool interfaceMatches = !attributes.ContainsKey("WinInterface") || Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}");
+                    bool keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
 
                     return interfaceMatches && keyMatches;
                 }
                 case PluginPlatform.MacOS:
                 {
                     var devName = device.DevicePath;
-                    bool interfaceMatches = attributes.ContainsKey("MacInterface") ? Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}") : true;
+                    bool interfaceMatches = !attributes.ContainsKey("MacInterface") || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}");
                     return interfaceMatches;
                 }
+                case PluginPlatform.Linux:
+                {
+                    var devName = device.DevicePath;
+                    var match = Regex.Match(devName, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
+                    bool interfaceMatches = !attributes.ContainsKey("LinuxInterface") || match.Groups["interface"].Value == attributes["LinuxInterface"];
+
+                    return interfaceMatches;
+                }
+
                 default:
                 {
                     return true;
