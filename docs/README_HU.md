@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md) | [Nederlands](README_NL.md) | [Ελληνικά](README_EL.md) | Magyar
+[English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md) | [Nederlands](README_NL.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Ελληνικά](README_EL.md) | Magyar
 
 Az OpenTabletDriver egy nyílt forráskódú, cross-platform, felhasználóbarát tablet driver. A program célja, hogy a lehető legtöbb ember elérhesse a lehető legoptimalizáltabb kompatibilitásával, mindezt egy egyszerűen konfigurálható GUI-val.
 

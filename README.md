@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-English | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [Português-BR](docs/README_PTBR.md) | [Nederlands](docs/README_NL.md) | [Ελληνικά](docs/README_EL.md) | [Magyar](docs/README_HU.md)
+English | [Español](docs/README_ES.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [Português-BR](docs/README_PTBR.md) | [Nederlands](docs/README_NL.md) | [한국어](docs/README_KO.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Ελληνικά](docs/README_EL.md) | [Magyar](docs/README_HU.md)
 
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
