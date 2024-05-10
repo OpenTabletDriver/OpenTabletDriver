@@ -100,6 +100,7 @@
 | Wacom CTL-690                 |     Supported     |
 | Wacom DTC-133                 |     Supported     |
 | Wacom DTK-1660                |     Supported     |
+| Wacom DTK-2200                |     Supported     |
 | Wacom ET-0405-U               |     Supported     |
 | Wacom ET-0405A-U              |     Supported     |
 | Wacom FT-0405-U               |     Supported     |
