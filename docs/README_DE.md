@@ -51,7 +51,6 @@ Benötigte Packages (manche Packages können bei Ihrer Distribution vorinstallie
 - libevdev2
 - GTK+3
 
-
 Um auf Linux zu kompilieren, führen Sie 'build.sh' aus. Es werden die gleichen
 'dotnet publish' Befehle ausgeführt, die auch für das AUR-Package verwendet werden.
 Die ausführbaren Dateien werden dann in dem 'OpenTabletDriver/bin' Ordner erstellt.

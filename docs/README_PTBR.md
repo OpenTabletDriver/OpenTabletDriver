@@ -110,17 +110,10 @@ Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https:/
 ### Adicionando suporte a um novo tablet
 
 Se você gostaria de adicionar suporte a um novo tablet, abra uma issue ou entre em nosso
-[discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte. *Nós geralmente preferimos as
-solicitações por um novo tablet sejam feitas via discord, devido as
-trocas de ideias envolvidas*.
+[discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte. *Nós geralmente preferimos as solicitações por um novo tablet sejam feitas via discord, devido as trocas de ideias envolvidas*.
 
-Nós precisaremos que você faça algumas coisas como gravar os dados enviados pelo seu tablet
-utilizando nossa ferramenta de debug integrada, testando funcionalidades do tablet
-(botões do tablet, botões da caneta, pressão da caneta, etc) com uma configuração diferente que
-nós iremos enviar a você para testar.
+Nós precisaremos que você faça algumas coisas como gravar os dados enviados pelo seu tablet utilizando nossa ferramenta de debug integrada, testando funcionalidades do tablet (botões do tablet, botões da caneta, pressão da caneta, etc) com uma configuração diferente quenós iremos enviar a você para testar.
 
-Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,
-caso tenha uma boa compreensão do que está desenvolvido.
+Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,caso tenha uma boa compreensão do que está desenvolvido.
 
-Geralmente esse processo é relativamente fácil, especialmente se a fabricante
-do seu tablet já exisitr em algum outro tablet que já tenha suporte.
+Geralmente esse processo é relativamente fácil, especialmente se a fabricante do seu tablet já exisitr em algum outro tablet que já tenha suporte.
