@@ -1,4 +1,4 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [! [總下載統計](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [! [總下載統計](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
@@ -103,9 +103,7 @@ OpenTabletDriver有兩個獨立的程序共同運作。主程式 `OpenTabletDriv
 
 如果你有任何問題或建議，[開啟問題票](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)並在範本中填寫相關資訊。我們歡迎bugs報告以及新增其他電繪板的支援。在許多情況支援一台新的電繪板是非常容易的。
 
-有關OpenTabletDriver的packaging的問題與PR，請參閱[此處](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging)的儲存庫。
-
-有關OpenTabletDriver[網頁](https://opentabletdriver.net)相關的問題與PR，請參閱[此處](https://github.com/OpenTabletDriver/OpenTabletDriver.Web)的儲存庫。
+有關OpenTabletDriver[網頁](https://opentabletdriver.net)相關的問題與PR，請參閱[此處](https://github.com/OpenTabletDriver/opentabletdriver.github.io)的儲存庫。
 
 ### 支援一台新的電繪板
 
