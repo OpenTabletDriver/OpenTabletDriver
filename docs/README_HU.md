@@ -111,9 +111,7 @@ egy hibajegyet](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/
 hibabejelentéseket, és az új tableteket is, amikhez támogatást szeretnétek.
 Általában nagyon egyszerűen lehet új tableteket támogatni.
 
-A hibajegyeket és az OpenTabletDriver csomagolásához kapcsolódó PR-eket [itt találod](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
-
-A hibajegyeket és az OpenTabletDriver [weboldalához](https://opentabletdriver.net) kapcsolódó PR-eket [ebben](https://github.com/OpenTabletDriver/OpenTabletDriver.Web) a repository-ban találhatod meg.
+A hibajegyeket és az OpenTabletDriver [weboldalához](https://opentabletdriver.net) kapcsolódó PR-eket [ebben](https://github.com/OpenTabletDriver/opentabletdriver.github.io) a repository-ban találhatod meg.
 
 ### Új tablet támogatása
 

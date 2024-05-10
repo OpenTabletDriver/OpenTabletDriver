@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-[English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | Ελληνικά | [Magyar](README_HU.md)
+[English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md) | [Nederlands](README_NL.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | Ελληνικά | [Magyar](README_HU.md)
 
 Το OpenTabletDriver είναι ένα open source, cross platform, user mode driver για γραφίδες. Ο στόχος του OpenTabletDriver είναι το να είναι οσο πιο cross platform γίνετε με την περρισότερη προσβασιμότιτα σε ένα εύκολο και γρήγορο gui.
 
@@ -103,9 +103,7 @@
 
 Αν αντιμετωπίζετε προβλήματα ή προτάσεις, [ανοίξτε ένα πρόβλημα εισιτήριο](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) και συμπληρώστε το πρότυπο με σχετικές πληροφορίες. Χαιρετίζουμε και τα δύο σφάλματα αναφορές, καθώς και νέα tablet για να προσθέσετε υποστήριξη. Σε πολλές περιπτώσεις προσθήκη υποστήριξης Για ένα νέο tablet είναι αρκετά εύκολο.
 
-Για ζητήματα και δημόσιες σχέσεις που σχετίζονται με τη συσκευασία του OpenTabletDriver, ανατρέξτε στο αποθετήριο [εδώ](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
-
-Για θέματα και δημόσιες σχέσεις που σχετίζονται με την [ιστοσελίδα του OpenTabletDriver](https://opentabletdriver.net), δείτε το αποθετήριο [εδώ](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+Για θέματα και δημόσιες σχέσεις που σχετίζονται με την [ιστοσελίδα του OpenTabletDriver](https://opentabletdriver.net), δείτε το αποθετήριο [εδώ](https://github.com/OpenTabletDriver/opentabletdriver.github.io).
 
 ### Υποστήριξη νέας γραφίδας
 
