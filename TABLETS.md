@@ -175,6 +175,7 @@
 | Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
 | Huion G10T                    |  Missing Features | Touchpad is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
+| Huion GT-156HD V2             |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221                  |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
 | Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
