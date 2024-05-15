@@ -1,0 +1,37 @@
+{
+  "Name": "Huion Kamvas Pro 16 Plus (4k)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 344.2,
+      "Height": 193.6,
+      "MaxX": 68840,
+      "MaxY": 38720
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_M20a_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
