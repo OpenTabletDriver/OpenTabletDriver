@@ -105,6 +105,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         private void GetDeviceAttributesWindows(Dictionary<string, string> deviceAttributes)
         {
             GetInterfaceNumberFromPath(deviceAttributes, DevicePath, @"&mi_(?<interface>\d+)");
+
         }
 
         private void GetDeviceAttributesLinux(Dictionary<string, string> deviceAttributes)
@@ -114,6 +115,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
 
         private void GetDeviceAttributesMacOS(Dictionary<string, string> deviceAttributes)
         {
+            GetInterfaceNumberFromPath(deviceAttributes, DevicePath, @"IOUSBHostInterface@(?<interface>\d+)");
         }
 
         private static void GetInterfaceNumberFromPath(Dictionary<string, string> attributes, string path, string regex)
