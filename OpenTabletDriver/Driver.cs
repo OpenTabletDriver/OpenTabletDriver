@@ -266,6 +266,8 @@ namespace OpenTabletDriver
         {
             // The name of the attribute which is used to enforce a device interface whitelist.
             var interfaceKey = "Interface";
+            // The name used in the device identifiers.
+            var deviceInterfaceKey = "USB_INTERFACE_NUMBER";
             var devName = device.DevicePath;
 
             Dictionary<string, string> attributes = new(identifier_attributes);
@@ -278,32 +280,33 @@ namespace OpenTabletDriver
                 }
             }
 
-            switch (SystemInterop.CurrentPlatform)
+            // Windows only configuration attribute.
+            if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)
             {
-                case SystemPlatform.Windows:
+                if (attributes.TryGetValue("WinUsage", out var winUsage))
                 {
-                    var interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"&mi_{attributes[interfaceKey]}");
-                    var keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
-
-                    return interfaceMatches && keyMatches;
-                }
-                case SystemPlatform.MacOS:
-                {
-                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes[interfaceKey]}");
-                    return interfaceMatches;
-                }
-                case SystemPlatform.Linux:
-                {
-                    var match = Regex.Match(devName, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
-                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || match.Groups["interface"].Value == attributes[interfaceKey];
-
-                    return interfaceMatches;
-                }
-                default:
-                {
-                    return true;
+                    // If it isn't a match there is no point proceeding.
+                    if (!Regex.IsMatch(devName, $"&col{winUsage}"))
+                    {
+                        return false;
+                    }
                 }
             }
+
+            var device_attributes = device.DeviceAttributes;
+            if (device_attributes != null)
+            {
+                if (attributes.TryGetValue(interfaceKey, out var required_interface))
+                {
+                    if (device_attributes.TryGetValue(deviceInterfaceKey, out var usb_interface))
+                    {
+                        return required_interface == usb_interface;
+                    }
+
+                }
+            }
+
+            return true;
         }
 
         private static Dictionary<(int, int), List<TabletConfiguration>> ConstructConfigHashMap(ImmutableArray<TabletConfiguration> configs)
