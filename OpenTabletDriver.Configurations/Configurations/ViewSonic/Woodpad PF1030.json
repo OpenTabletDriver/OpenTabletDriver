@@ -18,7 +18,7 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 1347,
-      "ProductID": 58983,
+      "ProductID": 58984,
       "InputReportLength": 14,
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.ViewSonic.WoodPadReportParser",
