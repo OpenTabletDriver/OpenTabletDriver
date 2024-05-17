@@ -215,6 +215,7 @@
 | VEIKK VK1060PRO               |  Missing Features | Wheels not yet supported.
 | Wacom CTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom CTE-650                 |  Missing Features | Wheel is not yet supported.
+| Wacom CTH-300                 |  Missing Features | Touch is not yet supported.
 | Wacom CTH-301                 |  Missing Features | Touch is not yet supported.
 | Wacom CTH-461                 |  Missing Features | Tablet buttons and touch are not yet supported.
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
