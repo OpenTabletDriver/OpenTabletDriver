@@ -58,6 +58,7 @@
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
+| UC-Logic TWMNA62              |     Supported     |
 | UGEE M708 V2                  |     Supported     |
 | UGEE M808                     |     Supported     |
 | UGEE S640                     |     Supported     |
