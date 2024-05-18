@@ -1,0 +1,39 @@
+{
+  "Name": "Trust Flex Design Tablet",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 153.6,
+      "Height": 115.2,
+      "MaxX": 12288,
+      "MaxY": 9216
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 5935,
+      "ProductID": 55,
+      "InputReportLength": 64,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParserV2",
+      "FeatureInitReport": [
+        "AgQA",
+        "AgIA",
+        "AhAB"
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
