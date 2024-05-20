@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
 
             return (report[1], report[2]) switch
             {
-                (0x41, _ ) when (report[2] & 0xF0) == 0xA0 => new TabletReport(report[1..]),
+                (0x41, byte x) when (x & 0xF0) == 0xA0 => new TabletReport(report[1..]),
                 (0x41, 0xC0) => new OutOfRangeReport(report),
                 _ => new DeviceReport(report)
             };
