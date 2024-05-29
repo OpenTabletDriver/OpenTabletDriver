@@ -6,7 +6,7 @@ namespace OpenTabletDriver.Tablet
     /// A report containing battery information.
     /// </summary>
     [PublicAPI]
-    public interface IBatteryReport  : IDeviceReport
+    public interface IBatteryReport : IDeviceReport
     {
         /// <summary>
         /// Charge percentage of device

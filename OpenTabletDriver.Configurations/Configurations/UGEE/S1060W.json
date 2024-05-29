@@ -41,7 +41,7 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-      "ArAE"
+        "ArAE"
       ],
       "DeviceStrings": {
         "2": "UGEE S1060W"
@@ -78,7 +78,6 @@
       },
       "InitializationStrings": []
     }
-
   ],
   "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
