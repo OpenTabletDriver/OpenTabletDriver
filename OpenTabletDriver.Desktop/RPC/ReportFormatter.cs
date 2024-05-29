@@ -53,6 +53,8 @@ namespace OpenTabletDriver.Desktop.RPC
                 sb.AppendLines(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
                 sb.AppendLines(GetStringFormat(toolReport));
+            if (report is IBatteryReport batteryReport)
+                sb.AppendLines(GetStringFormat(batteryReport));
             if (report is OutOfRangeReport)
                 sb.AppendLine("Out of range");
 
@@ -114,6 +116,11 @@ namespace OpenTabletDriver.Desktop.RPC
             yield return $"Tool:{Enum.GetName(toolReport.Tool)}";
             yield return $"RawToolID:{toolReport.RawToolID}";
             yield return $"Serial:{toolReport.Serial}";
+        }
+        private static IEnumerable<string> GetStringFormat(IBatteryReport batteryReport)
+        {
+            yield return $"ChargePercent:{batteryReport.ChargePercent}";
+            yield return $"PluggedIn:{batteryReport.PluggedIn}";
         }
 
         private static void AppendLines(this StringBuilder sb, IEnumerable<string> lines)
