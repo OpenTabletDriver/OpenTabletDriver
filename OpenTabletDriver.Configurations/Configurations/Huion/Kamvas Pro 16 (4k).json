@@ -1,19 +1,17 @@
 {
-  "Name": "Huion Kamvas 13",
+  "Name": "Huion Kamvas Pro 16 (4k)",
   "Specifications": {
     "Digitizer": {
-      "Width": 293.76,
-      "Height": 165.24,
-      "MaxX": 58752,
-      "MaxY": 33048
+      "Width": 344.2,
+      "Height": 193.6,
+      "MaxX": 68840,
+      "MaxY": 38720
     },
     "Pen": {
       "MaxPressure": 8191,
       "ButtonCount": 2
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 10
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
@@ -23,11 +21,11 @@
       "ProductID": 109,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_(?:M20h|M19f|M215)_\\d{6}$"
+        "201": "HUION_M202_\\d{6}$"
       },
       "InitializationStrings": [
         200
@@ -35,7 +33,5 @@
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
-  "Attributes": {
-    "libinputoverride": "1"
-  }
+  "Attributes": {}
 }

@@ -1,18 +1,18 @@
 {
-  "Name": "Wacom Cintiq 12WX (DTZ-1200W)",
+  "Name": "Wacom CTH-300",
   "Specifications": {
     "Digitizer": {
-      "Width": 261.1,
-      "Height": 163.2,
-      "MaxX": 52220,
-      "MaxY": 32640
+      "Width": 107,
+      "Height": 67,
+      "MaxX": 10690,
+      "MaxY": 6680
     },
     "Pen": {
-      "MaxPressure": 2046,
-      "ButtonCount": 2
+      "MaxPressure": 511,
+      "ButtonCount": 1
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 10
+      "ButtonCount": 2
     },
     "MouseButtons": null,
     "Touch": null
@@ -20,10 +20,10 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
-      "ProductID": 198,
-      "InputReportLength": 10,
+      "ProductID": 793,
+      "InputReportLength": 32,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ExtraAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooPad.BambooPadReportParser",
       "FeatureInitReport": [
         "AgI="
       ],

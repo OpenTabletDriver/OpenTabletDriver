@@ -1,15 +1,15 @@
 {
-  "Name": "Parblo Ninos N4",
+  "Name": "Parblo A640",
   "Specifications": {
     "Digitizer": {
-      "Width": 108,
-      "Height": 81,
-      "MaxX": 21600,
-      "MaxY": 16200
+      "Width": 155,
+      "Height": 93,
+      "MaxX": 29616,
+      "MaxY": 17170
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ButtonCount": 0
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
@@ -17,17 +17,17 @@
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 1155,
-      "ProductID": 40985,
+      "VendorID": 21827,
+      "ProductID": 97,
       "InputReportLength": 10,
-      "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": [
-        "ArAE"
-      ],
+      "OutputInitReport": null,
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [
+        100
+      ]
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

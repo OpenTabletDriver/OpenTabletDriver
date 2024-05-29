@@ -1,30 +1,32 @@
 {
-  "Name": "VEIKK S640",
+  "Name": "XP-Pen Artist 24 Pro",
   "Specifications": {
     "Digitizer": {
-      "Width": 152.4,
-      "Height": 101.6,
-      "MaxX": 30480,
-      "MaxY": 20320
+      "Width": 526.85,
+      "Height": 296.35,
+      "MaxX": 105370,
+      "MaxY": 59270
     },
     "Pen": {
       "MaxPressure": 8191,
       "ButtonCount": 2
     },
-    "AuxiliaryButtons": null,
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 12267,
-      "ProductID": 1,
-      "InputReportLength": 9,
-      "OutputReportLength": 9,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkV1ReportParser",
+      "VendorID": 10429,
+      "ProductID": 2349,
+      "InputReportLength": 12,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "CQEE"
+        "ArAE"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []

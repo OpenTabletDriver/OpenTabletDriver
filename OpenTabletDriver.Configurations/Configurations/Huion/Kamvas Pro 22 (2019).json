@@ -1,18 +1,18 @@
 {
-  "Name": "Huion Kamvas 13",
+  "Name": "Huion Kamvas Pro 22 (2019)",
   "Specifications": {
     "Digitizer": {
-      "Width": 293.76,
-      "Height": 165.24,
-      "MaxX": 58752,
-      "MaxY": 33048
+      "Width": 476.75,
+      "Height": 268.22,
+      "MaxX": 95350,
+      "MaxY": 53644
     },
     "Pen": {
       "MaxPressure": 8191,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 10
+      "ButtonCount": 20
     },
     "MouseButtons": null,
     "Touch": null
@@ -20,14 +20,14 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
-      "ProductID": 109,
+      "ProductID": 110,
       "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "HUION_(?:M20h|M19f|M215)_\\d{6}$"
+        "201": "HUION_M194_\\d{6}$"
       },
       "InitializationStrings": [
         200
