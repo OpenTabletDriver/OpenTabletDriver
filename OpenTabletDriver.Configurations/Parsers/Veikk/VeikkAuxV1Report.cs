@@ -23,7 +23,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
 
         private static int MapToButton(byte report1, byte buttonId)
         {
-            return buttonId switch {
+            return buttonId switch
+            {
                 0x3E => 0,
                 0x0C => 1,
                 0x2C => 2,
