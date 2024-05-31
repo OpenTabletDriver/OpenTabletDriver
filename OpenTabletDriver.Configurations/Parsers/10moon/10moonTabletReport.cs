@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 using OpenTabletDriver.Tablet;
 
@@ -10,20 +9,30 @@ namespace OpenTabletDriver.Configurations.Parsers.TenMoon
         {
             Raw = report;
 
-            Position = new Vector2
-            {
-                X = report[1] << 8 | report[2],
-                Y = Math.Max((short)(report[3] << 8 | report[4]), (short)0)
-            };
+            var x = report[1] << 8 | report[2];
+            var y = report[3] << 8 | report[4];
 
-            var buttonPressed = (report[9] & 6) != 0;
-            var prePressure = report[5] << 8 | report[6];
-            Pressure = (uint)(0x0672 - (prePressure - (buttonPressed ? 50 : 0)));
+            // don't ask me why it's like this
+            if ((y & 0x8000) != 0)
+                y = (ushort)(0x8F - (ushort)(y & 0x7FFF));
+            else
+                y += 0x8F;
+
+            Position = new Vector2(x, y);
+
+            ushort prePressure = (ushort)(report[5] << 8 | report[6]);
+            ushort calibratedMax = (ushort)(report[7] << 8 | report[8]);
+
+            ushort pressure = (ushort)(calibratedMax - prePressure);
+            if ((pressure & 0x8000) != 0)
+                pressure = 0;
+
+            Pressure = pressure;
 
             PenButtons = new bool[]
             {
-                report[9].IsBitSet(2),
-                (report[9] & 6) == 6
+                (report[9] & 0b110) == 0b100,
+                (report[9] & 0b110) == 0b110
             };
         }
 
