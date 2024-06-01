@@ -12,5 +12,6 @@ namespace OpenTabletDriver.Native.Linux.Evdev
         EV_KEY = 0x01,
         EV_REL = 0x02,
         EV_ABS = 0x03,
+        EV_MSC = 0x04,
     }
 }
