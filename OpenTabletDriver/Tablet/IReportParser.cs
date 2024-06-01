@@ -1,4 +1,5 @@
 using JetBrains.Annotations;
+using OpenTabletDriver.Attributes;
 
 namespace OpenTabletDriver.Tablet
 {
@@ -9,6 +10,7 @@ namespace OpenTabletDriver.Tablet
     /// The parsed report type.
     /// </typeparam>
     [PublicAPI]
+    [PluginInterface]
     public interface IReportParser<out T> where T : IDeviceReport
     {
         /// <summary>

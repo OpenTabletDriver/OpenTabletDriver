@@ -1,0 +1,66 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:c="using:OpenTabletDriver.UI.Controls"
+    xmlns:vmp="using:OpenTabletDriver.UI.ViewModels.Plugin"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Controls.BindingSetting"
+    x:DataType="vmp:BindingSettingViewModel"
+    x:CompileBindings="True">
+  <Border
+      Name="VIEW_Background"
+      Classes="Container"
+      ToolTip.Tip="{Binding Description}"
+      KeyDown="OnKeyDown"
+      PointerReleased="OnReleased">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition
+            Width="Auto"
+            SharedSizeGroup="Input_LabelColumn" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition
+            Width="10*"
+            MinWidth="80"
+            MaxWidth="200"/>
+      </Grid.ColumnDefinitions>
+
+      <TextBlock
+          Text="{Binding BindableName}"
+          Classes="Label"
+          Grid.Column="0"/>
+      <Button
+          Name="VIEW_BindingButton"
+          Content="{Binding BindingDescription}"
+          Grid.Column="2"
+          HorizontalAlignment="Stretch"
+          PointerEntered="OnPointerEntered"
+          PointerExited="OnPointerExited" />
+    </Grid>
+  </Border>
+  <UserControl.Styles>
+    <Style Selector="c|BindingSetting">
+      <Style Selector="^ Border#VIEW_Background">
+        <Setter
+            Property="Background"
+            Value="#10ffffff" />
+        <Setter Property="Transitions">
+          <Transitions>
+            <BrushTransition
+                Property="Background"
+                Duration="0:0:0:0.2" />
+          </Transitions>
+        </Setter>
+      </Style>
+      <Style Selector="^:pointerover Border#VIEW_Background">
+        <Setter
+            Property="Background"
+            Value="#15ffffff" />
+      </Style>
+    </Style>
+  </UserControl.Styles>
+</UserControl>

@@ -27,7 +27,7 @@ csharp_space_before_semicolon_in_for_statement = false
 csharp_space_around_declaration_statements = false
 dotnet_sort_system_directives_first = true
 
-[*.{sh,md,csproj,json,yml}]
+[*.{sh,md,csproj,json,yml,axaml}]
 indent_size = 2
 
 [**/debian/rules]

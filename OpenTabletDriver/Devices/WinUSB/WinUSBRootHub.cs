@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Threading;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Native.Windows.CM;
 using OpenTabletDriver.Native.Windows.SetupApiStructs;
@@ -25,8 +26,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         private readonly CM_NOTIFY_CALLBACK _callback;
         private GCHandle _callbackPin;
-        private List<WinUSBInterface>? _oldDevices;
-        private List<WinUSBInterface> _currentDevices;
+        private List<IDeviceEndpoint> _currentDevices;
         private readonly Dictionary<Guid, SafeCmNotificationHandle> _notificationHandles = new();
 
         public unsafe WinUSBRootHub()
@@ -44,10 +44,12 @@ namespace OpenTabletDriver.Devices.WinUSB
                 Log.Write(nameof(WinUSBRootHub), $"WinUSB device connections or disconnections won't be detected automatically.", LogLevel.Warning);
             }
 
-            _currentDevices = new List<WinUSBInterface>();
+            var newList = new List<IDeviceEndpoint>();
 
             foreach (var guid in WinUsbGuids)
-                EnumerateAllDevicesWithGuid(_currentDevices, guid);
+                EnumerateAllDevicesWithGuid(newList, guid);
+
+            _currentDevices = newList;
         }
 
         public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
@@ -59,16 +61,16 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         private void Enumerate()
         {
-            _oldDevices = _currentDevices;
-            _currentDevices = new List<WinUSBInterface>();
-
+            var newList = new List<IDeviceEndpoint>();
             foreach (var guid in WinUsbGuids)
-                EnumerateAllDevicesWithGuid(_currentDevices, guid);
+                EnumerateAllDevicesWithGuid(newList, guid);
 
-            DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(_oldDevices, _currentDevices));
+            var oldList = Interlocked.Exchange(ref _currentDevices, newList);
+
+            DevicesChanged?.Invoke(this, new DevicesChangedEventArgs(newList, oldList));
         }
 
-        private static void EnumerateAllDevicesWithGuid(List<WinUSBInterface> list, Guid guid)
+        private static void EnumerateAllDevicesWithGuid(List<IDeviceEndpoint> list, Guid guid)
         {
             var deviceInfoSet = SetupDiGetClassDevs(in guid, IntPtr.Zero, IntPtr.Zero, DIGCF.Present | DIGCF.DeviceInterface);
 
@@ -100,7 +102,7 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
-        private static void TryAdd(List<WinUSBInterface> list, string devicePath)
+        private static void TryAdd(List<IDeviceEndpoint> list, string devicePath)
         {
             try
             {

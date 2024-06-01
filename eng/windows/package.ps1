@@ -15,11 +15,12 @@ $nl = [Environment]::NewLine;
 
 $Projects = @(
     "OpenTabletDriver.Daemon",
-    "OpenTabletDriver.Console"
+    "OpenTabletDriver.UI"
+    # "OpenTabletDriver.Console"
 );
 
 $UIProjects = @(
-    "OpenTabletDriver.UX.Wpf"
+    # "OpenTabletDriver.UI"
 );
 
 $Options = @(
