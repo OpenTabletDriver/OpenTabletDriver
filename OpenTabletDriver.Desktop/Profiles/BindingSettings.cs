@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private PluginSettings? _tipButton, _eraserButton, _mouseScrollUp, _mouseScrollDown;
         private PluginSettingsCollection _penButtons = new PluginSettingsCollection(),
             _auxButtons = new PluginSettingsCollection(),
+            _touchStrips = new PluginSettingsCollection(),
             _mouseButtons = new PluginSettingsCollection();
 
         [DisplayName("Tip Activation Threshold"), JsonProperty("TipActivationThreshold")]
@@ -57,6 +58,13 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => _auxButtons;
         }
 
+        [DisplayName("Touch Strip Direction"), JsonProperty("TouchStrips")]
+        public PluginSettingsCollection TouchStrips
+        {
+            set => RaiseAndSetIfChanged(ref _touchStrips!, value);
+            get => _touchStrips;
+        }
+
         [DisplayName("Mouse Button"), JsonProperty("MouseButtons")]
         public PluginSettingsCollection MouseButtons
         {
@@ -91,6 +99,7 @@ namespace OpenTabletDriver.Desktop.Profiles
                 ),
                 PenButtons = new PluginSettingsCollection(),
                 AuxButtons = new PluginSettingsCollection(),
+                TouchStrips = new PluginSettingsCollection(),
                 MouseButtons = new PluginSettingsCollection()
             };
             bindingSettings.MatchSpecifications(tabletSpecifications);
@@ -101,10 +110,12 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             var penButtonCount = tabletSpecifications.Pen?.ButtonCount ?? 0;
             var auxButtonCount = tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
+            var touchStripsCount = tabletSpecifications.TouchStrips?.Count ?? 0;
             var mouseButtonCount = tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
 
             PenButtons = PenButtons.SetLength(penButtonCount);
             AuxButtons = AuxButtons.SetLength(auxButtonCount);
+            TouchStrips = TouchStrips.SetLength(touchStripsCount * 2);
             MouseButtons = MouseButtons.SetLength(mouseButtonCount);
         }
     }
