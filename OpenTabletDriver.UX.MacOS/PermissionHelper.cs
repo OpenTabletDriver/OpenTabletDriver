@@ -132,7 +132,7 @@ namespace OpenTabletDriver.UX.MacOS
 
         private class KillOnQuitHandler : NSObject
         {
-            static KillOnQuitHandler handler;
+            static KillOnQuitHandler? handler;
 
             [Export("handleQuitEvent:withReplyEvent:")]
             private void handleQuitEvent(NSAppleEventDescriptor evt, NSAppleEventDescriptor replyEvt)
