@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "OEM02_M171_\\d{6}$"
+        "201": "(OEM02_M171|GM001_M21t)_\\d{6}$"
       },
       "InitializationStrings": [
         200
