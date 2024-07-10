@@ -23,8 +23,7 @@ BenchmarkDotNet.Artifacts/
 *.DS_Store
 
 # Nix
-.envrc
-shell.nix
+[Rr]esult
 
 # Nuget local feed
 .local_feed/**
