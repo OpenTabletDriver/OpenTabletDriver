@@ -1,4 +1,4 @@
-using OpenTabletDriver.Tablet;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Veikk
 {
