@@ -58,6 +58,7 @@
 | RobotPen T9A                  |     Supported     |
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
+| UC-Logic TWMNA62              |     Supported     |
 | UGEE M708 V2                  |     Supported     |
 | UGEE M808                     |     Supported     |
 | UGEE S640                     |     Supported     |
@@ -132,6 +133,7 @@
 | XP-Pen Artist 15.6            |     Supported     |
 | XP-Pen Artist 16 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 22 (2nd Gen)    |     Supported     |
+| XP-Pen Artist Pro 16 (Gen2)   |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco Fun S (CT640)     |     Supported     |
@@ -140,6 +142,8 @@
 | XP-Pen Deco L                 |     Supported     |
 | XP-Pen Deco mini4             |     Supported     |
 | XP-Pen Deco mini7             |     Supported     |
+| XP-Pen Deco Pro LW Gen2       |     Supported     |
+| XP-Pen Deco Pro XLW Gen2      |     Supported     |
 | XP-Pen Star 03                |     Supported     |
 | XP-Pen Star 05 V3             |     Supported     |
 | XP-Pen Star G430S             |     Supported     |
@@ -207,6 +211,7 @@
 | Parblo Intangbo M             |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo S             |  Missing Features | Wheel is not yet supported.
 | UGEE EX08                     |  Missing Features | Tilt is not yet supported. Uses the same configuration as the XP-Pen Deco 01 V2.
+| UGEE M908                     |  Missing Features | Wheel is not yet supported.
 | VEIKK A15 Pro                 |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A30 V2                  |  Missing Features | Touchpad is not yet supported.
@@ -215,6 +220,7 @@
 | VEIKK VK1060PRO               |  Missing Features | Wheels not yet supported.
 | Wacom CTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom CTE-650                 |  Missing Features | Wheel is not yet supported.
+| Wacom CTH-300                 |  Missing Features | Touch is not yet supported.
 | Wacom CTH-301                 |  Missing Features | Touch is not yet supported.
 | Wacom CTH-461                 |  Missing Features | Tablet buttons and touch are not yet supported.
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
