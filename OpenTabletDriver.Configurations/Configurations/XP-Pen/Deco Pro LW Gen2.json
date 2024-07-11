@@ -1,0 +1,39 @@
+{
+  "Name": "XP-Pen Deco Pro LW Gen2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 278.99,
+      "Height": 173.99,
+      "MaxX": 55798,
+      "MaxY": 34798
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2371,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
