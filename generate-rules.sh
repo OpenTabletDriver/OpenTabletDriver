@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# dependencies: git, jq, tr (coreutils), awk (gawk), sed (gnused)
+# dependencies: jq, tr (coreutils), awk (gawk), sed (gnused)
 
 print_help() {
   echo "Usage: ${BASH_SOURCE[0]} [OPTIONS]..."
@@ -8,7 +8,7 @@ print_help() {
   echo "  -h, --help                              Print this help message"
 }
 
-for c in git jq tr awk sed; do
+for c in jq tr awk sed; do
   command -v $c > /dev/null
   if [[ $? > 0 ]]; then
     echo "Error: Command $c not found in \$PATH." >&2
@@ -23,7 +23,7 @@ tohex() {
 shopt -s globstar
 set -eu
 
-OTD_CONFIGURATIONS="${OTD_CONFIGURATIONS:="$(git rev-parse --show-toplevel)/OpenTabletDriver.Configurations/Configurations"}"
+OTD_CONFIGURATIONS="${OTD_CONFIGURATIONS:="$(dirname ${BASH_SOURCE[0]})/OpenTabletDriver.Configurations/Configurations"}"
 
 while [ $# -gt 0 ]; do
   case "$1" in

@@ -23,5 +23,4 @@ BenchmarkDotNet.Artifacts/
 *.DS_Store
 
 # Nix
-.envrc
-shell.nix
+[Rr]esult
