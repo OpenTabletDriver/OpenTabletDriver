@@ -21,7 +21,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
                     return new OutOfRangeReport(data);
             };
 
-            if (data[1].IsBitSet(7)) {
+            if (data[1].IsBitSet(7))
+            {
                 return new TiltTabletReport(data);
             }
 
