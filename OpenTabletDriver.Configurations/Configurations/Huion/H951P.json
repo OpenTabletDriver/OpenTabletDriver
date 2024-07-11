@@ -9,7 +9,9 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "ButtonCount": 2
+      "Buttons": {
+        "ButtonCount": 2
+      }
     },
     "AuxiliaryButtons": {
       "ButtonCount": 11
@@ -34,7 +36,7 @@
       ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
+  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }
