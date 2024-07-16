@@ -1,9 +1,9 @@
 {
-  "Name": "UGEE M708",
+  "Name": "Parblo A610",
   "Specifications": {
     "Digitizer": {
-      "Width": 200.0,
-      "Height": 120.0,
+      "Width": 254.0,
+      "Height": 152.4,
       "MaxX": 40000.0,
       "MaxY": 24000.0
     },
@@ -29,9 +29,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "4": "F401-20111028",
-        "5": "UC-LOIC",
-        "6": "TABLET 1060"
+        "201": "F401-HK708-STD"
       },
       "InitializationStrings": [
         100,
