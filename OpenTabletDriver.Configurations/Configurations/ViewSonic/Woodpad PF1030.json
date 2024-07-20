@@ -1,33 +1,31 @@
 {
-  "Name": "Wacom Cintiq 12WX (DTZ-1200W)",
+  "Name": "ViewSonic Woodpad PF1030",
   "Specifications": {
     "Digitizer": {
-      "Width": 261.1,
-      "Height": 163.2,
-      "MaxX": 52220.0,
-      "MaxY": 32640
+      "Width": 224,
+      "Height": 140,
+      "MaxX": 44800,
+      "MaxY": 28000
     },
     "Pen": {
-      "MaxPressure": 2046,
+      "MaxPressure": 4095,
       "Buttons": {
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 10
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 1386,
-      "ProductID": 198,
-      "InputReportLength": 10,
+      "VendorID": 1347,
+      "ProductID": 58984,
+      "InputReportLength": 14,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ExtraAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.ViewSonic.WoodPadReportParser",
       "FeatureInitReport": [
-        "AgI="
+        "AhABAAA="
       ],
       "OutputInitReport": null,
       "DeviceStrings": {},

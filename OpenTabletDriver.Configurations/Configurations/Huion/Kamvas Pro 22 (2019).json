@@ -1,40 +1,38 @@
 {
-  "Name": "UGTABLET M708",
+  "Name": "Huion Kamvas Pro 22 (2019)",
   "Specifications": {
     "Digitizer": {
-      "Width": 200.0,
-      "Height": 120.0,
-      "MaxX": 40000.0,
-      "MaxY": 24000.0
+      "Width": 476.75,
+      "Height": 268.22,
+      "MaxX": 95350.0,
+      "MaxY": 53644.0
     },
     "Pen": {
-      "MaxPressure": 2047,
+      "MaxPressure": 8191,
       "Buttons": {
         "ButtonCount": 2
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 8
+      "ButtonCount": 20
     },
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 21827,
-      "ProductID": 129,
-      "InputReportLength": 8,
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "5": "UC-LOIC",
-        "6": "TABLET 1060"
+        "201": "HUION_M194_\\d{6}$"
       },
       "InitializationStrings": [
-        100,
-        123
+        200
       ]
     }
   ],

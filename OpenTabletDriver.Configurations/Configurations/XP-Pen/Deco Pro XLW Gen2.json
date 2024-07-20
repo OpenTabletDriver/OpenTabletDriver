@@ -1,16 +1,16 @@
 {
-  "Name": "Parblo Ninos N4",
+  "Name": "XP-Pen Deco Pro XLW Gen2",
   "Specifications": {
     "Digitizer": {
-      "Width": 108,
-      "Height": 81,
-      "MaxX": 21600,
-      "MaxY": 16200
+      "Width": 381,
+      "Height": 229.005,
+      "MaxX": 76200,
+      "MaxY": 45801
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 16383,
       "Buttons": {
-        "ButtonCount": 0
+        "ButtonCount": 2
       }
     },
     "AuxiliaryButtons": null,
@@ -19,11 +19,11 @@
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 1155,
-      "ProductID": 40985,
-      "InputReportLength": 10,
-      "OutputReportLength": 8,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "VendorID": 10429,
+      "ProductID": 2372,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"

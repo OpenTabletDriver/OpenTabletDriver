@@ -1,16 +1,16 @@
 {
-  "Name": "Parblo Ninos N4",
+  "Name": "XP-Pen Artist 22 (2nd Gen)",
   "Specifications": {
     "Digitizer": {
-      "Width": 108,
-      "Height": 81,
-      "MaxX": 21600,
-      "MaxY": 16200
+      "Width": 476.64,
+      "Height": 267.78,
+      "MaxX": 47664.0,
+      "MaxY": 26778.0
     },
     "Pen": {
       "MaxPressure": 8191,
       "Buttons": {
-        "ButtonCount": 0
+        "ButtonCount": 2
       }
     },
     "AuxiliaryButtons": null,
@@ -19,8 +19,8 @@
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 1155,
-      "ProductID": 40985,
+      "VendorID": 10429,
+      "ProductID": 2351,
       "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
@@ -33,7 +33,5 @@
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
-  "Attributes": {
-    "libinputoverride": "1"
-  }
+  "Attributes": {}
 }
