@@ -12,9 +12,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
             {
                 var buttonId = MapToButton(report[1], report[i]);
                 if (buttonId >= 0)
-                {
                     AuxButtons[buttonId] = true;
-                }
             }
         }
 
