@@ -22,6 +22,6 @@ BenchmarkDotNet.Artifacts/
 # MacOS Cache
 *.DS_Store
 
-# Nix
-.envrc
-shell.nix
+# Nix environment
+[Rr]esult
+.data/
