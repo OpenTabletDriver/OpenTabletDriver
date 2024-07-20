@@ -4,7 +4,7 @@
   inputs.nixpkgs.url = "nixpkgs/nixos-unstable";
 
   outputs = inputs @ { self, nixpkgs }: let
-    inherit (nixpkgs.lib) genAttrs mapAttrsToList;
+    inherit (nixpkgs.lib) attrValues genAttrs;
 
     supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
 
@@ -15,7 +15,7 @@
     # Nixpkgs instantiated for supported system types.
     nixpkgsFor = forAllSystems (system: import nixpkgs {
       inherit system;
-      overlays = mapAttrsToList (n: v: v) self.overlays;
+      overlays = attrValues self.overlays;
     });
 
     # Nixpkgs overlay
