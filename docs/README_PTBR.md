@@ -103,9 +103,8 @@ Se você deseja contribuir para o OpenTabletDriver, confira a aba de [problemas]
 Se você tiver algum problema ou sugestão, [relate um problema](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) e preencha o template com informações relevantes.
 Somos gratos aos relatos de bugs quanto aos pedidos de novos tablets para adicionar suporte. Em alguns casos, adicionar um novo tablet pode ser fácil.
 
-Para issues (problemas) e PRs relacionados aos pacotes do OpenTabletDriver, por favor veja neste repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
 
-Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https://opentabletdriver.net), veja este repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https://opentabletdriver.net), veja este repositório [aqui](https://github.com/OpenTabletDriver/opentabletdriver.github.io).
 
 ### Adicionando suporte a um novo tablet
 
