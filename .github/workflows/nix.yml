@@ -1,0 +1,29 @@
+name: nix build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+jobs:
+  nixbuild:
+    runs-on: ubuntu-latest
+    name: Nix Build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v27
+        with:
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v14
+        with:
+          name: opentabletdriver
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Build
+        run: nix build
