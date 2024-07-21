@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Threading;
 using OpenTabletDriver.Plugin.Timers;
 
+using ITimer = OpenTabletDriver.Plugin.Timers.ITimer;
+
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     internal class FallbackTimer : ITimer, IDisposable
