@@ -17,13 +17,13 @@ REPO_ROOT="$(readlink -f "${ENG_SCRIPT_ROOT}/../")"
 
 ### Build Requirements
 
-DOTNET_VERSION="7.0"
+DOTNET_VERSION="8.0"
 
 # could do away with declare -g, but did it anyway for all of them for consistency
 # with NET_RUNTIME (a global variable without initial value in lib.sh)
 declare -g OUTPUT="dist"
 declare -g CONFIG="Release"
-declare -g FRAMEWORK="net7.0"
+declare -g FRAMEWORK="net$DOTNET_VERSION"
 declare -g NET_RUNTIME
 declare -g DOG_FOOD="true"
 declare -g BUILD="true"
