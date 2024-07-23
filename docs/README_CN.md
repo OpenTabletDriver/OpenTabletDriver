@@ -36,7 +36,7 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
 
 ### 所有平台
 
-- .NET 7 SDK
+- .NET 8 SDK
 
 #### Windows
 
