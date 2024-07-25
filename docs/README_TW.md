@@ -36,7 +36,7 @@ OpenTabletDriver有兩個獨立的程序共同運作。主程式 `OpenTabletDriv
 
 ### 所有平台
 
-- .NET 7 SDK（請參閱[這裡](https://dotnet.microsoft.com/download/dotnet/7.0) - 需要與平台相容的SDK，在Linux建議使用package manager安裝）
+- .NET 8 SDK（請參閱[這裡](https://dotnet.microsoft.com/download/dotnet/8.0) - 需要與平台相容的SDK，在Linux建議使用package manager安裝）
 
 #### Windows
 
