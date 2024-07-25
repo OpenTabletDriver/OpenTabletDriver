@@ -17,7 +17,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '8.0'
 
       - name: Linux Publish
         env:
@@ -53,7 +53,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '8.0'
 
       - name: MacOS Publish
         env:
@@ -80,7 +80,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '8.0'
 
       - name: Windows Publish
         env:
@@ -110,7 +110,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '8.0'
 
       - name: Lint Changed Files
         run: |
@@ -127,7 +127,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '8.0'
 
       - name: Run tests
         run: dotnet test
@@ -142,7 +142,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '6.0'
+          dotnet-version: '8.0'
 
       - name: Windows
         run: dotnet restore OpenTabletDriver.Windows.slnf
