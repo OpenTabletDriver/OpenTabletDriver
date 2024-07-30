@@ -172,6 +172,7 @@
 | KENTING K5540                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order.
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order.
+| Trust Flex Design Tablet      |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | UGEE M708                     |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
 | Wacom PTU-600U                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | XP-Pen Artist 22HD            |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
