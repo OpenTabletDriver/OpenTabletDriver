@@ -207,6 +207,7 @@
 | Huion Q620M                   |  Missing Features | Wheel is not yet supported.
 | Huion Q630M                   |  Missing Features | Dials/Wheels are not yet supported.
 | Huion RTM-500                 |  Missing Features | Touch bar is not yet supported.
+| Huion RTP-700                 |  Missing Features | Touch bar is not yet supported.
 | Lifetec LT9570                |  Missing Features | Aux buttons and tilt is not yet supported.
 | Monoprice MP1060-HA60         |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Parblo A610 Pro               |  Missing Features | Wheel is not yet supported.
