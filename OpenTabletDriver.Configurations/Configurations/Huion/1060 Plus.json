@@ -1,5 +1,5 @@
 {
-  "Name": "Monoprice 10594",
+  "Name": "Huion 1060 Plus",
   "Specifications": {
     "Digitizer": {
       "Width": 254.0,
@@ -14,7 +14,7 @@
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 8
+      "ButtonCount": 12
     },
     "MouseButtons": null,
     "Touch": null
@@ -29,7 +29,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "6": "10594",
+        "6": "1060PRO",
         "121": "HA60-F400"
       },
       "InitializationStrings": [
