@@ -6,8 +6,8 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "Build Daemon",
-            "cwd": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net7.0",
-            "program": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net7.0/OpenTabletDriver.Daemon.dll",
+            "cwd": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net8.0",
+            "program": "${workspaceFolder}/OpenTabletDriver.Daemon/bin/Debug/net8.0/OpenTabletDriver.Daemon.dll",
             "args": [
               "--config",
               "${workspaceFolder}/bin/Configurations"
@@ -25,16 +25,16 @@
             "console": "internalConsole",
             "stopAtEntry": false,
             "windows": {
-                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0-windows",
-                "program": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net7.0-windows/OpenTabletDriver.UX.Wpf.dll",
+                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net8.0-windows",
+                "program": "${workspaceFolder}/OpenTabletDriver.UX.Wpf/bin/Debug/net8.0-windows/OpenTabletDriver.UX.Wpf.dll",
             },
             "linux": {
-                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/",
-                "program": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net7.0/OpenTabletDriver.UX.Gtk.dll",
+                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net8.0/",
+                "program": "${workspaceFolder}/OpenTabletDriver.UX.Gtk/bin/Debug/net8.0/OpenTabletDriver.UX.Gtk.dll",
             },
             "osx": {
-                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/",
-                "program": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net7.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/OpenTabletDriver.UX.MacOS.dll",
+                "cwd": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net8.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/",
+                "program": "${workspaceFolder}/OpenTabletDriver.UX.MacOS/bin/Debug/net8.0/OpenTabletDriver.UX.MacOS.app/Contents/MacOS/OpenTabletDriver.UX.MacOS.dll",
             }
         },
         {

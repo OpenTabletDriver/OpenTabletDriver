@@ -21,7 +21,7 @@
       "ProductID": 110,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -37,7 +37,7 @@
       "ProductID": 110,
       "InputReportLength": 8,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
@@ -52,6 +52,7 @@
   ],
   "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
-    "libinputoverride": "1"
+    "libinputoverride": "1",
+    "LinuxInterface": "0"
   }
 }

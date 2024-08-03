@@ -1,14 +1,14 @@
 {
-  "Name": "UGTABLET M708",
+  "Name": "Artisul D16 Pro",
   "Specifications": {
     "Digitizer": {
-      "Width": 200,
-      "Height": 120,
-      "MaxX": 40000,
-      "MaxY": 24000
+      "Width": 344.17,
+      "Height": 193.57,
+      "MaxX": 68834,
+      "MaxY": 38714
     },
     "Pen": {
-      "MaxPressure": 2047,
+      "MaxPressure": 8191,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -19,20 +19,18 @@
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 21827,
-      "ProductID": 129,
-      "InputReportLength": 8,
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetAuxReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "5": "UC-LOIC",
-        "6": "TABLET 1060"
+        "201": "OEM16_M193_\\d{6}$"
       },
       "InitializationStrings": [
-        100,
-        123
+        200
       ]
     }
   ],

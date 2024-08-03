@@ -1,0 +1,37 @@
+{
+  "Name": "Wacom CTH-300",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 107,
+      "Height": 67,
+      "MaxX": 10690,
+      "MaxY": 6680
+    },
+    "Pen": {
+      "MaxPressure": 511,
+      "ButtonCount": 1
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 2
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 793,
+      "InputReportLength": 32,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooPad.BambooPadReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ],
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
