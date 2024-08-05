@@ -1,0 +1,37 @@
+{
+  "Name": "Huion Kamvas Pro 19 (4K)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 408.96,
+      "Height": 230.03,
+      "MaxX": 81792,
+      "MaxY": 46006
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": null,
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 107,
+      "InputReportLength": 14,
+      "OutputReportLength": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_M220_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {}
+}
