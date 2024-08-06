@@ -14,10 +14,10 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         private Thread? _timerThread;
         private readonly object _stateLock = new object();
         private int _timerFD;
-        private ITimerSpec _timeSpec;
+        private ITimerSpec _timerSpec;
 
-        private volatile bool enabled;
-        public bool Enabled => enabled;
+        private volatile bool _enabled;
+        public bool Enabled => _enabled;
 
         public float Interval { set; get; } = 1;
 
@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             lock (_stateLock)
             {
-                if (!enabled)
+                if (!_enabled)
                 {
                     int timerFD = TimerCreate(ClockID.Monotonic, 0);
 
@@ -42,7 +42,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                     long seconds = (long)Interval;
                     long nseconds = (long)((Interval - seconds) * 1000.0 * 1000.0 * 1000.0);
 
-                    _timeSpec = new ITimerSpec
+                    _timerSpec = new ITimerSpec
                     {
                         it_interval = new TimeSpec
                         {
@@ -56,7 +56,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                         }
                     };
 
-                    if (TimerSetTime(_timerFD, TimerFlag.Default, ref _timeSpec, IntPtr.Zero) != ERRNO.NONE)
+                    if (TimerSetTime(_timerFD, TimerFlag.Default, ref _timerSpec, IntPtr.Zero) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed activating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
@@ -64,26 +64,23 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
                     _timerThread = new Thread(() =>
                     {
-                        while (enabled)
+                        while (_enabled)
                         {
                             ulong timerExpirations = 0;
 
-                            if (TimerGetTime(_timerFD, ref timerExpirations, sizeof(ulong)) == sizeof(ulong) && enabled)
+                            if (TimerGetTime(_timerFD, ref timerExpirations, sizeof(ulong)) == sizeof(ulong) && _enabled)
                             {
-                                for (ulong i = 0; i < timerExpirations; i++)
+                                try
                                 {
-                                    try
-                                    {
-                                        Elapsed?.Invoke();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Write("LinuxTimer", $"Elapsed delegate returned an exception", LogLevel.Error);
-                                        Log.Exception(ex);
-                                    }
+                                    Elapsed?.Invoke();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Write("LinuxTimer", $"Elapsed delegate returned an exception", LogLevel.Error);
+                                    Log.Exception(ex);
                                 }
                             }
-                            else if (enabled)
+                            else if (_enabled)
                             {
                                 Log.Write("LinuxTimer", $"Unexpected timer error: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                                 break;
@@ -91,7 +88,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                         }
                     });
 
-                    enabled = true;
+                    _enabled = true;
 
                     _timerThread.Priority = ThreadPriority.Highest;
                     _timerThread.Start();
@@ -103,11 +100,11 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             lock (_stateLock)
             {
-                if (enabled)
+                if (_enabled)
                 {
-                    enabled = false;
+                    _enabled = false;
 
-                    var timeSpec = new ITimerSpec
+                    var timerSpec = new ITimerSpec
                     {
                         it_interval = new TimeSpec
                         {
@@ -121,7 +118,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
                         }
                     };
 
-                    if (TimerSetTime(_timerFD, TimerFlag.Default, ref timeSpec, IntPtr.Zero) != ERRNO.NONE)
+                    if (TimerSetTime(_timerFD, TimerFlag.Default, ref timerSpec, IntPtr.Zero) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed deactivating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
