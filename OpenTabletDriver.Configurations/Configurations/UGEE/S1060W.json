@@ -1,10 +1,10 @@
 {
-  "Name": "UGEE S1060",
+  "Name": "UGEE S1060W",
   "Specifications": {
     "Digitizer": {
-      "Width": 254,
+      "Width": 250,
       "Height": 160,
-      "MaxX": 50800,
+      "MaxX": 50901,
       "MaxY": 32000
     },
     "Pen": {
@@ -22,6 +22,21 @@
       "VendorID": 10429,
       "ProductID": 2360,
       "InputReportLength": 12,
+      "OutputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {
+        "2": "UGEE S1060W"
+      },
+      "InitializationStrings": []
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2360,
+      "InputReportLength": 12,
       "OutputReportLength": 20,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
@@ -29,7 +44,7 @@
         "ArAE"
       ],
       "DeviceStrings": {
-        "2": "UGEE S1060"
+        "2": "UGEE S1060W"
       },
       "InitializationStrings": []
     },
@@ -44,7 +59,7 @@
         "ArAE"
       ],
       "DeviceStrings": {
-        "2": "UGEE S1060"
+        "2": "UGEE S1060W"
       },
       "InitializationStrings": []
     },
@@ -59,7 +74,7 @@
         "ArAE"
       ],
       "DeviceStrings": {
-        "2": "UGEE S1060"
+        "2": "UGEE S1060W"
       },
       "InitializationStrings": []
     }
