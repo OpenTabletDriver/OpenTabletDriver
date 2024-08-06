@@ -194,6 +194,7 @@
 | Artisul AP604 (Pencil Small)  |  Missing Features | Aux buttons and eraser detection are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
 | Artisul D16 Pro               |  Missing Features | Wheel is not yet supported.
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are not yet supported.
+| Gaomon 1061 Pro               |  Missing Features | Soft-buttons are not yet supported.
 | Gaomon M10K                   |  Missing Features | Wheel is not yet supported.
 | Gaomon M10K Pro               |  Missing Features | Wheel is not yet supported.
 | Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
