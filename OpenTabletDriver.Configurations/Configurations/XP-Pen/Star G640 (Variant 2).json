@@ -1,11 +1,11 @@
 {
-  "Name": "VEIKK A50 V2",
+  "Name": "XP-Pen Star G640 (Variant 2)",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
-      "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "Width": 160.0,
+      "Height": 100.0,
+      "MaxX": 15999.0,
+      "MaxY": 9999.0
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -13,22 +13,20 @@
         "ButtonCount": 2
       }
     },
-    "AuxiliaryButtons": {
-      "ButtonCount": 4
-    },
+    "AuxiliaryButtons": null,
     "MouseButtons": null,
     "Touch": null
   },
   "DigitizerIdentifiers": [
     {
-      "VendorID": 12267,
-      "ProductID": 3,
-      "InputReportLength": 13,
-      "OutputReportLength": 9,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "VendorID": 10429,
+      "ProductID": 2324,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "CQEE"
+        "ArAE"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []
