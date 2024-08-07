@@ -132,6 +132,7 @@
 | Huion H690                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion New 1060 Plus (2048)    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet             |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion WH1409 V2 (Variant 2)   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | KENTING K5540                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order.
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order.
