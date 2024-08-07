@@ -69,7 +69,6 @@
 | UGEE U1600                    |     Supported     |
 | VEIKK A15                     |     Supported     |
 | VEIKK A15 V2                  |     Supported     |
-| VEIKK A50                     |     Supported     |
 | VEIKK S640                    |     Supported     |
 | VEIKK S640 V2                 |     Supported     |
 | VEIKK VK1060                  |     Supported     |
@@ -222,6 +221,7 @@
 | VEIKK A15 Pro                 |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A30 V2                  |  Missing Features | Touchpad is not yet supported.
+| VEIKK A50                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A50 V2                  |  Missing Features | Touchpad is not yet supported.
 | VEIKK Viola (VO1060)          |  Missing Features | Wheel is not yet supported.
 | VEIKK VK1060PRO               |  Missing Features | Wheels not yet supported.
