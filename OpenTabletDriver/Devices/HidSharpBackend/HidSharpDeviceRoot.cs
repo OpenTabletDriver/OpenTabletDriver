@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using HidSharp;
 using JetBrains.Annotations;
 using OpenTabletDriver.Attributes;
@@ -17,23 +18,31 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         {
             DeviceList.Local.Changed += (sender, e) =>
             {
-                var newList = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
-                var changes = new DevicesChangedEventArgs(_hidDevices, newList);
+                var newList = EnumerateDevices();
+                var oldList = Interlocked.Exchange(ref _hidDevices, newList);
+                var changes = new DevicesChangedEventArgs(oldList, newList);
+
                 if (changes.Changes.Any())
-                {
                     DevicesChanged?.Invoke(this, changes);
-                    _hidDevices = newList;
-                }
             };
+
+            _hidDevices = EnumerateDevices();
         }
 
-        private IEnumerable<IDeviceEndpoint> _hidDevices = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
-
+        private IDeviceEndpoint[] _hidDevices;
         public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
         public IEnumerable<IDeviceEndpoint> GetDevices()
         {
-            return DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
+            return _hidDevices;
+        }
+
+        private static IDeviceEndpoint[] EnumerateDevices()
+        {
+            return DeviceList.Local.GetHidDevices()
+                .Select(d => new HidSharpEndpoint(d))
+                .OrderBy(d => d.DevicePath)
+                .ToArray();
         }
     }
 }

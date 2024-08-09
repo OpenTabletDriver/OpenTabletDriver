@@ -1,0 +1,43 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    xmlns:c="using:OpenTabletDriver.UI.Controls"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Views.TabletsOverview"
+    x:DataType="vm:TabletsOverviewViewModel"
+    x:CompileBindings="True">
+  <Grid RowDefinitions="*,Auto">
+    <ListBox
+        ItemsSource="{Binding Tablets}"
+        SelectedItem="{Binding SelectedTablet}"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Grid.Row="0">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel />
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="vm:TabletViewModel">
+          <c:TabletItem
+              Width="140"
+              Height="140" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <!-- TODO: bind -->
+    <StackPanel
+        Classes="CommandBar"
+        Grid.Row="1">
+      <Button Content="Scan" />
+      <Button Content="Help" />
+    </StackPanel>
+  </Grid>
+</UserControl>
