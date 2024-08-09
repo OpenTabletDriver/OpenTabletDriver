@@ -1,128 +1,150 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Timers;
 using OpenTabletDriver.Native.Linux.Timers.Structs;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     using static Timers;
+    using ITimer = Plugin.Timers.ITimer;
 
     internal class LinuxTimer : ITimer, IDisposable
     {
-        public LinuxTimer()
-        {
-            callbackDelegate = Callback;
-            callbackHandle = GCHandle.Alloc(callbackDelegate);
-        }
+        private Thread _timerThread;
+        private readonly object _stateLock = new object();
+        private int _timerFD;
+        private ITimerSpec _timerSpec;
 
-        private IntPtr timerID;
-        private readonly TimerCallback callbackDelegate;
-        private GCHandle callbackHandle;
-        private readonly object stateLock = new object();
-        private TimerSpec timeSpec;
-        private SigEvent sigEvent;
+        private volatile bool _enabled;
+        public bool Enabled => _enabled;
 
-        public bool Enabled { private set; get; }
         public float Interval { set; get; } = 1;
 
         public event Action Elapsed;
 
         public void Start()
         {
-            lock (stateLock)
+            lock (_stateLock)
             {
-                if (!Enabled)
+                if (!_enabled)
                 {
-                    sigEvent = new SigEvent
-                    {
-                        notify = SigEv.Thread,
-                        thread = new SigEvThread
-                        {
-                            function = Marshal.GetFunctionPointerForDelegate(callbackDelegate),
-                            attribute = IntPtr.Zero
-                        },
-                        value = new SigVal()
-                    };
+                    int timerFD = TimerCreate(ClockID.Monotonic, 0);
 
-                    if (TimerCreate(ClockID.Monotonic, ref sigEvent, out timerID) != ERRNO.NONE)
+                    if (timerFD == -1)
                     {
                         Log.Write("LinuxTimer", $"Failed creating timer: {(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
                     }
 
-                    double interval = Interval * 1000 * 1000;
+                    _timerFD = timerFD;
 
-                    timeSpec = new TimerSpec
+                    long seconds = (long)Interval;
+                    long nseconds = (long)((Interval - seconds) * 1000.0 * 1000.0 * 1000.0);
+
+                    _timerSpec = new ITimerSpec
                     {
-                        interval = new TimeSpec
+                        it_interval = new TimeSpec
                         {
-                            sec = 0,
-                            nsec = (long)interval
+                            sec = seconds,
+                            nsec = nseconds
                         },
-                        value = new TimeSpec
+                        it_value = new TimeSpec
                         {
-                            sec = 0,
-                            nsec = 100
+                            sec = seconds,
+                            nsec = nseconds
                         }
                     };
 
-                    var oldTimeSpec = new TimerSpec();
-                    if (TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, ref oldTimeSpec) != ERRNO.NONE)
+                    if (TimerSetTime(_timerFD, TimerFlag.Default, ref _timerSpec, IntPtr.Zero) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed activating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
                     }
 
-                    Enabled = true;
+                    _timerThread = new Thread(() =>
+                    {
+                        while (_enabled)
+                        {
+                            ulong timerExpirations = 0;
+
+                            if (TimerGetTime(_timerFD, ref timerExpirations, sizeof(ulong)) == sizeof(ulong) && _enabled)
+                            {
+                                try
+                                {
+                                    Elapsed?.Invoke();
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Write("LinuxTimer", $"Elapsed delegate returned an exception", LogLevel.Error);
+                                    Log.Exception(ex);
+                                }
+                            }
+                            else if (_enabled)
+                            {
+                                Log.Write("LinuxTimer", $"Unexpected timer error: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
+                                break;
+                            }
+                        }
+                    });
+
+                    _enabled = true;
+
+                    _timerThread.Priority = ThreadPriority.Highest;
+                    _timerThread.Start();
                 }
             }
         }
 
         public void Stop()
         {
-            lock (stateLock)
+            lock (_stateLock)
             {
-                if (Enabled)
+                if (_enabled)
                 {
-                    var timeSpec = new TimerSpec
+                    _enabled = false;
+
+                    var timerSpec = new ITimerSpec
                     {
-                        interval = new TimeSpec
+                        it_interval = new TimeSpec
                         {
                             sec = 0,
                             nsec = 0
+                        },
+                        it_value = new TimeSpec
+                        {
+                            sec = 0,
+                            nsec = 1 // makes it loop once more to safely close
                         }
                     };
 
-                    if (TimerSetTime(timerID, TimerFlag.Default, ref timeSpec, IntPtr.Zero) != ERRNO.NONE)
+                    if (TimerSetTime(_timerFD, TimerFlag.Default, ref timerSpec, IntPtr.Zero) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed deactivating the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
                     }
 
-                    if (TimerDelete(timerID) != ERRNO.NONE)
+                    _timerThread?.Join();
+                    _timerThread = null;
+
+                    if (CloseTimer(_timerFD) != ERRNO.NONE)
                     {
                         Log.Write("LinuxTimer", $"Failed deleting the timer: ${(ERRNO)Marshal.GetLastWin32Error()}", LogLevel.Error);
                         return;
                     }
 
-                    Enabled = false;
+                    _timerFD = -1;
                 }
             }
-        }
-
-        private void Callback(SigVal _)
-        {
-            Elapsed?.Invoke();
         }
 
         public void Dispose()
         {
             if (Enabled)
                 Stop();
-            callbackHandle.Free();
+
             GC.SuppressFinalize(this);
         }
     }

@@ -1,12 +1,11 @@
-using System;
 using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.Linux.Timers.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct SigEvThread
+    public struct ITimerSpec
     {
-        public IntPtr function;
-        public IntPtr attribute;
+        public TimeSpec it_interval;
+        public TimeSpec it_value;
     }
 }
