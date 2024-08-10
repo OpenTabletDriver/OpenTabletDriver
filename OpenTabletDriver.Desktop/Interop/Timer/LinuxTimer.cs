@@ -41,8 +41,8 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
                     _timerFD = timerFD;
 
-                    long seconds = (long)Interval;
-                    long nseconds = (long)((Interval - seconds) * 1000.0 * 1000.0 * 1000.0);
+                    long seconds = (long)(Interval / 1000.0f);
+                    long nseconds = (long)((Interval - seconds * 1000) * 1000.0 * 1000.0);
 
                     _timerSpec = new ITimerSpec
                     {
