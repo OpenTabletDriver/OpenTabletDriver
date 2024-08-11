@@ -264,48 +264,39 @@ namespace OpenTabletDriver
 
         private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes, Dictionary<string, string> config_attributes)
         {
-            // The name of the attribute which is used to enforce a device interface whitelist.
-            var interfaceKey = "Interface";
-            // The name used in the device identifiers.
-            var deviceInterfaceKey = "USB_INTERFACE_NUMBER";
-            var devName = device.DevicePath;
-
-            Dictionary<string, string> attributes = new(identifier_attributes);
-
+            var attributes = new Dictionary<string, string>(identifier_attributes);
             foreach (var kvp in config_attributes)
-            {
-                if (!attributes.ContainsKey(kvp.Key))
-                {
-                    attributes.Add(kvp.Key, kvp.Value);
-                }
-            }
+                attributes.TryAdd(kvp.Key, kvp.Value);
 
             // Windows only configuration attribute.
             if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)
             {
-                if (attributes.TryGetValue("WinUsage", out var winUsage))
+                if (attributes.TryGetValue("WinUsage", out var winUsage)
+                    && !Regex.IsMatch(device.DevicePath, $"&col{winUsage}"))
                 {
                     // If it isn't a match there is no point proceeding.
-                    if (!Regex.IsMatch(devName, $"&col{winUsage}"))
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
             var device_attributes = device.DeviceAttributes;
             if (device_attributes != null)
             {
-                if (attributes.TryGetValue(interfaceKey, out var required_interface))
-                {
-                    if (device_attributes.TryGetValue(deviceInterfaceKey, out var usb_interface))
-                    {
-                        return required_interface == usb_interface;
-                    }
-                }
+                return matchInterface(attributes, device_attributes);
             }
 
             return true;
+
+            static bool matchInterface(Dictionary<string, string> identifierAttributes, IDictionary<string, string> deviceAttributes)
+            {
+                if (!identifierAttributes.TryGetValue("Interface", out var identifierInterface))
+                    return true; // No interface specified, match.
+
+                if (!deviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var usbInterface))
+                    return false; // Device doesn't have an interface number, not a match.
+
+                return identifierInterface == usbInterface;
+            }
         }
 
         private static Dictionary<(int, int), List<TabletConfiguration>> ConstructConfigHashMap(ImmutableArray<TabletConfiguration> configs)
