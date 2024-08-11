@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using HidSharp;
@@ -27,12 +28,12 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         public string? SerialNumber => _device.SafeGet(d => d.GetSerialNumber(), null);
         public string DevicePath => _device.SafeGet(d => d.DevicePath, "Invalid Device Path");
         public bool CanOpen => _device.SafeGet(d => d.CanOpen, false);
-        public IDictionary<string, string>? DeviceAttributes => GetDeviceAttributes(DevicePath, _device.GetReportDescriptor());
+        public IDictionary<string, string>? DeviceAttributes => GetDeviceAttributes(DevicePath, () => _device.GetReportDescriptor());
 
         public IDeviceEndpointStream? Open() => _device.TryOpen(out var stream) ? new HidSharpEndpointStream(stream) : null;
         public string GetDeviceString(byte index) => _device.GetDeviceString(index);
 
-        private IDictionary<string, string>? GetDeviceAttributes(string devicePath, ReportDescriptor reportDescriptor)
+        private static IDictionary<string, string>? GetDeviceAttributes(string devicePath, Func<ReportDescriptor> reportDescriptorFunc)
         {
             var deviceAttributes = new Dictionary<string, string>();
 
@@ -50,7 +51,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
                     break;
             }
 
-            reportDescriptor.ExtractHidUsages(deviceAttributes);
+            Extensions.ExtractHidUsages(deviceAttributes, reportDescriptorFunc);
 
             return deviceAttributes;
         }

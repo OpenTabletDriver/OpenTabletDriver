@@ -93,11 +93,18 @@ namespace OpenTabletDriver.Devices.WinUSB
                     if (!WinUsb_ControlTransfer(winUsbHandle!, reportDescriptorPacket, reportDescriptorPtr, 256, out var lengthTransferred, null))
                         throw new IOException("Failed to retrieve report descriptor");
 
-                    byte[] reportDescriptorTrimmed = new byte[lengthTransferred];
-                    Array.Copy(reportDescriptorBuffer, reportDescriptorTrimmed, lengthTransferred);
+                    _reportDescriptor = new byte[lengthTransferred];
+                    Array.Copy(reportDescriptorBuffer, _reportDescriptor, lengthTransferred);
 
-                    _reportDescriptor = new ReportDescriptor(reportDescriptorTrimmed);
-                    FeatureReportLength = _reportDescriptor.MaxFeatureReportLength;
+                    try
+                    {
+                        var reportDescriptor = new ReportDescriptor(_reportDescriptor);
+                        FeatureReportLength = reportDescriptor.MaxFeatureReportLength;
+                    }
+                    catch
+                    {
+                        // Ignore
+                    }
                 }
                 ArrayPool<byte>.Shared.Return(reportDescriptorBuffer);
             });
@@ -106,7 +113,7 @@ namespace OpenTabletDriver.Devices.WinUSB
         private int _referenceCount;
         private SafeFileHandle? _activeFileHandle;
         private SafeWinUsbInterfaceHandle? _activeWinUsbHandle;
-        private ReportDescriptor? _reportDescriptor;
+        private byte[]? _reportDescriptor;
 
         internal int InterfaceNum { private set; get; }
         internal byte? InputPipe { private set; get; }
@@ -234,7 +241,7 @@ namespace OpenTabletDriver.Devices.WinUSB
                 ["USB_INTERFACE_NUMBER"] = InterfaceNum.ToString()
             };
 
-            _reportDescriptor!.ExtractHidUsages(deviceAttributes);
+            Extensions.ExtractHidUsages(deviceAttributes, () => new ReportDescriptor(_reportDescriptor));
 
             return deviceAttributes;
         }

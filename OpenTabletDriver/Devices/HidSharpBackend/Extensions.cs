@@ -35,10 +35,11 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         ) => TryGet(source, predicate, out var value) ? value! : fallback;
 
         // - HID_REPORTS (report_id:usage_page:usage_id, ...)
-        public static void ExtractHidUsages(this ReportDescriptor reportDescriptor, Dictionary<string, string> deviceAttributes)
+        public static void ExtractHidUsages(Dictionary<string, string> deviceAttributes, Func<ReportDescriptor> reportDescriptorFunc)
         {
             try
             {
+                var reportDescriptor = reportDescriptorFunc();
                 var usages = new List<(byte, uint)>();
                 foreach (var inputReport in reportDescriptor.InputReports)
                 {
