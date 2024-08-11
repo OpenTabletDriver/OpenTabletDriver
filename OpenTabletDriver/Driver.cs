@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Devices;
+using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Tablet;
 
@@ -271,7 +272,8 @@ namespace OpenTabletDriver
             // Windows only configuration attribute.
             if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)
             {
-                if (attributes.TryGetValue("WinUsage", out var winUsage)
+                if (device is HidSharpEndpoint
+                    && attributes.TryGetValue("WinUsage", out var winUsage)
                     && !Regex.IsMatch(device.DevicePath, $"&col{winUsage}"))
                 {
                     // If it isn't a match there is no point proceeding.
