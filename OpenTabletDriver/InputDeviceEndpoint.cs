@@ -15,7 +15,6 @@ namespace OpenTabletDriver
     [PublicAPI]
     public sealed class InputDeviceEndpoint : IDisposable
     {
-
         private readonly uint _featureInitDelayMs;
         private const string DELAY_ATTRIBUTE_KEY_NAME = "FeatureInitDelayMs";
         private InputDeviceState _state;
@@ -38,8 +37,6 @@ namespace OpenTabletDriver
                 if (!uint.TryParse(delayStr, out _featureInitDelayMs))
                     Log.Write("Device", $"Could not parse '{delayStr}' from attribute {DELAY_ATTRIBUTE_KEY_NAME}", LogLevel.Warning);
         }
-
-
 
         /// <summary>
         /// The tablet configuration referring to this device.
@@ -110,7 +107,6 @@ namespace OpenTabletDriver
 
                 try
                 {
-
                     if (_featureInitDelayMs != 0)
                         Thread.Sleep((int)_featureInitDelayMs);
                     reportStream!.SetFeature(report);

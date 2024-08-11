@@ -302,7 +302,6 @@ namespace OpenTabletDriver
                     {
                         return required_interface == usb_interface;
                     }
-
                 }
             }
 

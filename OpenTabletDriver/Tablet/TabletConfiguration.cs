@@ -29,19 +29,19 @@ namespace OpenTabletDriver.Tablet
         [Required(ErrorMessage = $"Tablet {nameof(DigitizerIdentifiers)} are required")]
         [DisplayName("Digitizer Identifiers")]
         [MinLength(1, ErrorMessage = "Requires at least 1 identifier")]
-        public List<DeviceIdentifier> DigitizerIdentifiers { set; get; } = [];
+        public List<DeviceIdentifier> DigitizerIdentifiers { set; get; } = new List<DeviceIdentifier>();
 
         /// <summary>
         /// The auxiliary device identifier.
         /// </summary>
         [Required(ErrorMessage = $"Tablet {nameof(AuxiliaryDeviceIdentifiers)} must be present")]
         [DisplayName("Auxiliary Identifiers")]
-        public List<DeviceIdentifier> AuxiliaryDeviceIdentifiers { set; get; } = [];
+        public List<DeviceIdentifier> AuxiliaryDeviceIdentifiers { set; get; } = new List<DeviceIdentifier>();
 
         /// <summary>
         /// Other information about the tablet that can be used in tools or other applications.
         /// </summary>
         [Required(ErrorMessage = $"Tablet {nameof(Attributes)} must be present")]
-        public Dictionary<string, string> Attributes { set; get; } = [];
+        public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
     }
 }

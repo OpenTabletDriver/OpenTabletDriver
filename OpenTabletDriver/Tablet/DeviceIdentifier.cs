@@ -62,18 +62,18 @@ namespace OpenTabletDriver.Tablet
         /// Device strings to match against, used for identification.
         /// </summary>
         [DisplayName("Device Strings")]
-        public Dictionary<byte, string> DeviceStrings { set; get; } = [];
+        public Dictionary<byte, string> DeviceStrings { set; get; } = new Dictionary<byte, string>();
 
         /// <summary>
         /// Device strings to query to initialize device endpoints.
         /// </summary>
         [DisplayName("Initialization Strings")]
-        public List<byte> InitializationStrings { set; get; } = [];
+        public List<byte> InitializationStrings { set; get; } = new List<byte>();
 
         /// <summary>
         /// Other information specific to the tablet configurations identifier that can be used in tools or other applications.
         /// </summary>
         [Required(ErrorMessage = $"Tablet {nameof(Attributes)} must be present")]
-        public Dictionary<string, string> Attributes { set; get; } = [];
+        public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
     }
 }

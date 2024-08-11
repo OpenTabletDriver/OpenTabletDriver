@@ -105,7 +105,6 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         private void GetDeviceAttributesWindows(Dictionary<string, string> deviceAttributes)
         {
             GetInterfaceNumberFromPath(deviceAttributes, DevicePath, @"&mi_(?<interface>\d+)");
-
         }
 
         private void GetDeviceAttributesLinux(Dictionary<string, string> deviceAttributes)
