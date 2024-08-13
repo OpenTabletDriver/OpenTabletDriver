@@ -23,7 +23,9 @@
       "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.DTU.DTUReportParser",
       "FeatureInitReport": null,
-      "OutputInitReport": null
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": []
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
