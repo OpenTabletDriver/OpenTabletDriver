@@ -1,10 +1,10 @@
 [![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
-# OpenTabletDriver
+# OpenTabletDriver - OTD
 
 [English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR | [Nederlands](README_NL.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [Ελληνικά](README_EL.md) | [Magyar](README_HU.md)
 
-OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de tablet configurável pelo usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
+OpenTabletDriver é um programa código aberto, multi-plataforma, driver de mesas digitalizadoras (tablets) configurado pelo usuário. O objetivo do OTD é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
 
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
@@ -12,11 +12,9 @@ OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de t
   <img src="https://i.imgur.com/ZLCy6wz.png" width="410" align="middle"/>
 </p>
 
-# Tablets suportados
+# Tablets compatíveis
 
-Todos os status dos tablets que estão suportados, não testados ou que estão em planejamento para serem testados estão aqui. Soluções de problemas comuns podem ser encontrados na wiki.
-
-- [Tablets suportados](https://opentabletdriver.net/Tablets)
+Todos os tablets que são compatíveis, não testados ou que estão em planejamento para testes estão [aqui](https://opentabletdriver.net/Tablets). Soluções de problemas comuns podem ser encontrados na wiki.
 
 # Instalação
 
@@ -26,13 +24,13 @@ Todos os status dos tablets que estão suportados, não testados ou que estão e
 
 # Executando OpenTabletDriver
 
-O OpenTabletDriver funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todos o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
+O OTD funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todos o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
 
 > <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida.
 
 ## Buildando OpenTabletDriver da fonte
 
-Os requisitos para buildar o OpenTabletDriver são referentes à todas as plataformas. Rodando OpenTabletDriver em cada plataforma requer dependências diferentes.
+Os requisitos para buildar o OTD são referentes à todas as plataformas. Cada plataforma requer dependências diferentes.
 
 ### Todas as plataformas
 
