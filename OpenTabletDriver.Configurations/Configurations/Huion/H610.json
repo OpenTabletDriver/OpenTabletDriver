@@ -63,7 +63,7 @@
         ]
       }
   ],
-    "AuxilaryDeviceIdentifiers": [],
+    "AuxiliaryDeviceIdentifiers": [],
     "Attributes": {
       "libinputoverride": "1"
     }
