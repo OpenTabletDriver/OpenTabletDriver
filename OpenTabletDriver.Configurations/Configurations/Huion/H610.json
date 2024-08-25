@@ -11,28 +11,55 @@
         "MaxPressure": 2047,
         "ButtonCount" : 2
       },
-        "ActiveReportID": {
-          "Start": 64,
-          "StartInclusive": true,
-          "End": null,
-          "EndInclusive": false
-        }
+      "AuxiliaryButtons": null,
+      "Touch": null
       },
       "DigitizerIdentifiers" : [
       {
         "VendorID": 9580,
         "ProductID": 110,
-        "InputReportLength": 8,
+        "InputReportLength": 2,
         "OutputReportLength": null,
-        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogicReportParser",
+        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
         "FeatureInitReport": null,
         "OutputInitReport": null,
-        "DeviceStrings": {
+        "DeviceStrings": {  
+      "6": "Huion",
+          "121": "M508"
+        }
+      },
+      {
+        "VendorID": 9580,
+        "ProductID": 110,
+        "InputReportLength": 3,
+        "OutputReportLength": null,
+        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+        "FeatureInitReport": null,
+        "OutputInitReport": null,
+        "DeviceStrings": {  
       "6": "Huion",
           "121": "M508"
         },
         "InitializationStrings": [
-          "100"
+          100,
+          123
+        ]
+      },
+       {
+        "VendorID": 9580,
+        "ProductID": 110,
+        "InputReportLength": 8,
+        "OutputReportLength": null,
+        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+        "FeatureInitReport": null,
+        "OutputInitReport": null,
+        "DeviceStrings": {
+      "6": "Huion",
+      "121" : "M508"
+        },
+        "InitializationStrings": [
+          100,
+          123
         ]
       }
   ],
