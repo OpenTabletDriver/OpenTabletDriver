@@ -21,6 +21,7 @@
 | Huion H320M                   |     Supported     |
 | Huion H420X                   |     Supported     |
 | Huion H430P                   |     Supported     |
+| Huion H610                    |     Has Quirks    | Buttons not currently assignable on Windows Platform. Application thinks there is an eraser on pen. 
 | Huion H610 Pro                |     Supported     |
 | Huion H610 Pro V2             |     Supported     |
 | Huion H610X                   |     Supported     |

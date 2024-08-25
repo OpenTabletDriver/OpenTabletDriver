@@ -61,40 +61,6 @@
           100,
           123
         ]
-      },
-      {
-        "VendorID": 9580,
-        "ProductID": 110,
-        "InputReportLength": 8,
-        "OutputReportLength": null,
-        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-        "FeatureInitReport": null,
-        "OutputInitReport": null,
-        "DeviceStrings": {
-      "6": "Huion",
-      "121" : "M508"
-        },
-        "InitializationStrings": [
-          100,
-          123
-        ]
-      },
-      {
-        "VendorID": 9580,
-        "ProductID": 110,
-        "InputReportLength": 8,
-        "OutputReportLength": null,
-        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-        "FeatureInitReport": null,
-        "OutputInitReport": null,
-        "DeviceStrings": {
-      "6": "Huion",
-      "121" : "M508"
-        },
-        "InitializationStrings": [
-          100,
-          123
-        ]
       }
   ],
     "AuxilaryDeviceIdentifiers": [],
