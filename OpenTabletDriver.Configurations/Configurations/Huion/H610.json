@@ -12,7 +12,8 @@
         "ButtonCount" : 2
       },
       "AuxiliaryButtons": null,
-      "Touch": null
+      "Touch": null,
+      "Eraser" : null
       },
       "DigitizerIdentifiers" : [
       {
