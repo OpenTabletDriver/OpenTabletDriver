@@ -8,8 +8,16 @@
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
-  <PropertyGroup Label="Package Information">
+  <PropertyGroup Label="NuGet Package">
     <Authors>InfinityGhost</Authors>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <RepositoryUrl>https://www.github.com/OpenTabletDriver/OpenTabletDriver.git</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageOutputPath>..\nupkg</PackageOutputPath>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup Label="NuGet Metadata">
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>

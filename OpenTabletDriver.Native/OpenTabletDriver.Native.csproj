@@ -4,6 +4,11 @@
     <TargetFrameworks>$(FrameworkLTS);$(FrameworkLatest)</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup Label="Nuget Package">
+    <IsPackable>true</IsPackable>
+    <PackageId>OpenTabletDriver.Native</PackageId>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\OpenTabletDriver.Native.Linux\OpenTabletDriver.Native.Linux.csproj" />
     <ProjectReference Include="..\OpenTabletDriver.Native.MacOS\OpenTabletDriver.Native.MacOS.csproj" />
