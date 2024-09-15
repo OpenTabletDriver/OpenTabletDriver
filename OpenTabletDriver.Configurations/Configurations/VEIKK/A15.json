@@ -23,10 +23,12 @@
       "ProductID": 4,
       "InputReportLength": 9,
       "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.SkipByteTabletReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkA15ReportParser",
       "FeatureInitReport": null,
       "OutputInitReport": [
-        "CQEE"
+        "CQEE",
+        "CQIC",
+        "CQMC"
       ],
       "DeviceStrings": {},
       "InitializationStrings": []

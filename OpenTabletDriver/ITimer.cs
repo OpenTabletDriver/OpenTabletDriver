@@ -25,7 +25,7 @@ namespace OpenTabletDriver
         bool Enabled { get; }
 
         /// <summary>
-        /// The timer's interval for invoking <see cref="Elapsed"/>
+        /// The timer's interval for invoking <see cref="Elapsed"/> in milliseconds.
         /// </summary>
         float Interval { set; get; }
 

@@ -66,7 +66,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         private bool DrainPendingPosition()
         {
-            if (_pendingX.HasValue)
+            if (_pendingX.HasValue && _pendingY.HasValue)
             {
                 SetPendingPosition(_mouseEvent, _pendingX.Value, _pendingY.Value);
                 _pendingX = null;

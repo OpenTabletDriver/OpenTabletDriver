@@ -38,9 +38,11 @@
 | Huion Kamvas 22               |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
 | Huion Kamvas 24 Plus          |     Supported     |
-| Huion Kamvas Pro 13 (2.5k)    |     Supported     |
-| Huion Kamvas Pro 16 (2.5k)    |     Supported     |
-| Huion Kamvas Pro 16 (4k)      |     Supported     |
+| Huion Kamvas Pro 13 (2.5K)    |     Supported     |
+| Huion Kamvas Pro 16 (2.5K)    |     Supported     |
+| Huion Kamvas Pro 16 (4K)      |     Supported     |
+| Huion Kamvas Pro 16 Plus (4K) |     Supported     |
+| Huion Kamvas Pro 19 (4K)      |     Supported     |
 | Huion Kamvas Pro 24 (4K)      |     Supported     |
 | Huion New 1060 Plus           |     Supported     |
 | Huion Q11K                    |     Supported     |
@@ -66,7 +68,6 @@
 | UGEE U1600                    |     Supported     |
 | VEIKK A15                     |     Supported     |
 | VEIKK A15 V2                  |     Supported     |
-| VEIKK A50                     |     Supported     |
 | VEIKK S640                    |     Supported     |
 | VEIKK S640 V2                 |     Supported     |
 | VEIKK VK1060                  |     Supported     |
@@ -150,7 +151,7 @@
 | XP-Pen Star G540              |     Supported     |
 | XP-Pen Star G540 Pro          |     Supported     |
 | XP-Pen Star G640              |     Supported     |
-| XP-Pen Star G640 V2           |     Supported     |
+| XP-Pen Star G640 (Variant 2)  |     Supported     |
 | XP-Pen Star G640S             |     Supported     |
 | XP-Pen Star G960              |     Supported     |
 | XP-Pen Star G960S             |     Supported     |
@@ -168,8 +169,9 @@
 | Huion H690                    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Huion New 1060 Plus (2048)    |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion osu! Tablet             |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
-| Monoprice 10594               |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
+| Huion WH1409 V2 (Variant 2)   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | KENTING K5540                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
+| Monoprice 10594               |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Parblo Ninos M                |    Has Quirks     | Aux buttons are not in order.
 | Parblo Ninos S                |    Has Quirks     | Aux buttons are not in order.
 | Trust Flex Design Tablet      |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
@@ -220,8 +222,9 @@
 | VEIKK A15 Pro                 |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                     |  Missing Features | Touchpad is not yet supported.
 | VEIKK A30 V2                  |  Missing Features | Touchpad is not yet supported.
-| VEIKK A50 V2                  |  Missing Features | Touchpad is not yet supported.
-| VEIKK Viola (VO1060)          |  Missing Features | Wheel is not yet supported.
+| VEIKK A50                     |  Missing Features | Touchpad is not yet supported.
+| VEIKK A50 (Variant 2)         |  Missing Features | Touchpad is not yet supported.
+| VEIKK Voila (VO1060)          |  Missing Features | Wheel is not yet supported.
 | VEIKK VK1060PRO               |  Missing Features | Wheels not yet supported.
 | Wacom CTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom CTE-650                 |  Missing Features | Wheel is not yet supported.
@@ -264,7 +267,7 @@
 | XP-Pen Artist 24 Pro          |  Missing Features | Wheel is not yet supported.
 | XP-Pen Artist Pro 16TP        |  Missing Features | Touch is not yet supported.
 | XP-Pen Deco 01 V2             |  Missing Features | Tilt is not yet supported.
-| XP-Pen Deco 01 V2 (variant 2) |  Missing Features | Tilt is not yet supported
+| XP-Pen Deco 01 V2 (Variant 2) |  Missing Features | Tilt is not yet supported
 | XP-Pen Deco 02                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco 03                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are not yet supported.
