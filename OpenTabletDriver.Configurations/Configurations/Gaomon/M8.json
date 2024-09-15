@@ -1,5 +1,5 @@
 {
-  "Name": "Gaomon M8",
+  "Name": "Gaomon M6",
   "Specifications": {
     "Digitizer": {
       "Width": 258.465,
@@ -8,7 +8,7 @@
       "MaxY": 32307
     },
     "Pen": {
-      "MaxPressure": 16384,
+      "MaxPressure": 8191,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
@@ -27,7 +27,7 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
-        "201": "(GM001_T208|GM001_T201|GM001_T221)_\\d{6}$"
+        "201": "GM001_T208_\\d{6}$"
       },
       "InitializationStrings": [
         200
