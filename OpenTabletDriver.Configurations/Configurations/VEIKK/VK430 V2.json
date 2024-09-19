@@ -33,7 +33,8 @@
       "DeviceStrings": {
         "23": "^2022/12/9$"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
