@@ -31,7 +31,8 @@
         "ArEE"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

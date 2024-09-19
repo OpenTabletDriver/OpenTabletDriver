@@ -31,7 +31,8 @@
       "DeviceStrings": {
         "2": "G430S"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

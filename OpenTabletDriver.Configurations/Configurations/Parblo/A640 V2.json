@@ -31,7 +31,8 @@
         "ArAEAAAAAAA="
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
