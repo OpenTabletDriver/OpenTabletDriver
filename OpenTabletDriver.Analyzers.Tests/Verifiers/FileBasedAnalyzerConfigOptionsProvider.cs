@@ -103,7 +103,7 @@ namespace OpenTabletDriver.Analyzers.Tests.Verifiers
             return options;
         }
 
-        [GeneratedRegex(@"^(?<key>(?:\w|_|-|\.)+) = (?<value>(?:\w|_|-|\.)+)$", RegexOptions.Multiline | RegexOptions.NonBacktracking)]
+        [GeneratedRegex(@"^(?<key>(?:\w|_|-|\.)+) = (?<value>(?:\w|_|-|\.)+)\s*$", RegexOptions.Multiline | RegexOptions.NonBacktracking)]
         private static partial Regex ValuePair();
 
         private class CustomAnalyzerConfigOptions : AnalyzerConfigOptions

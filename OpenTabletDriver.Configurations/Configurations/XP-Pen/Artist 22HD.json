@@ -27,7 +27,8 @@
       "DeviceStrings": {},
       "InitializationStrings": [
         100
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

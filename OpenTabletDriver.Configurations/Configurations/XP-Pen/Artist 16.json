@@ -30,11 +30,13 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
-    "libinputoverride": "1"
+    "libinputoverride": "1",
+    "Interface": "0"
   }
 }
