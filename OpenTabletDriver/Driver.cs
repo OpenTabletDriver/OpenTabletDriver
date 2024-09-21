@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
@@ -171,7 +172,7 @@ namespace OpenTabletDriver
                    where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                    where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
                    where DeviceMatchesStrings(device, identifier.DeviceStrings)
-                   where DeviceMatchesAttribute(device, configuration.Attributes)
+                   where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
                    select device;
         }
 
@@ -199,38 +200,41 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes, Dictionary<string, string> config_attributes)
         {
-            // The name of the attribute which is used to enforce a device interface whitelist.
-            var interfaceKey = "Interface";
-            var devName = device.DevicePath;
+            var attributes = new Dictionary<string, string>(identifier_attributes);
+            foreach (var kvp in config_attributes)
+                attributes.TryAdd(kvp.Key, kvp.Value);
 
-            switch (SystemInterop.CurrentPlatform)
+            // Windows only configuration attribute.
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
             {
-                case PluginPlatform.Windows:
+                if (device is HidSharpEndpoint
+                    && attributes.TryGetValue("WinUsage", out var winUsage)
+                    && !Regex.IsMatch(device.DevicePath, $"&col{winUsage}"))
                 {
-                    var interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"&mi_{attributes[interfaceKey]}");
-                    var keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
+                    // If it isn't a match there is no point proceeding.
+                    return false;
+                }
+            }
 
-                    return interfaceMatches && keyMatches;
-                }
-                case PluginPlatform.MacOS:
-                {
-                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes[interfaceKey]}");
-                    return interfaceMatches;
-                }
-                case PluginPlatform.Linux:
-                {
-                    var match = Regex.Match(devName, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
-                    bool interfaceMatches = !attributes.ContainsKey(interfaceKey) || match.Groups["interface"].Value == attributes[interfaceKey];
+            var device_attributes = device.DeviceAttributes;
+            if (device_attributes != null)
+            {
+                return matchInterface(attributes, device_attributes);
+            }
 
-                    return interfaceMatches;
-                }
+            return true;
 
-                default:
-                {
-                    return true;
-                }
+            static bool matchInterface(Dictionary<string, string> identifierAttributes, IDictionary<string, string> deviceAttributes)
+            {
+                if (!identifierAttributes.TryGetValue("Interface", out var identifierInterface))
+                    return true; // No interface specified, match.
+
+                if (!deviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var usbInterface))
+                    return false; // Device doesn't have an interface number, not a match.
+
+                return identifierInterface == usbInterface;
             }
         }
 
