@@ -4,13 +4,13 @@
     "Digitizer": {
       "Width": 344.68,
       "Height": 215.42,
-      "MaxX": 68920,
-      "MaxY": 43078
+      "MaxX": 68920.0,
+      "MaxY": 43078.0
     },
     "Pen": {
       "MaxPressure": 16383,
       "Buttons": {
-          "ButtonCount": 2
+        "ButtonCount": 2
       }
     },
     "AuxiliaryButtons": null,
@@ -19,19 +19,19 @@
   },
   "DigitizerIdentifiers": [
     {
-    "VendorID": 10429,
-    "ProductID": 2395,
-    "InputReportLength": 14,
-    "OutputReportLength": 14,
-    "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
-    "FeatureInitReport": null,
-    "OutputInitReport": [
-      "ArAE"
-    ],
-    "DeviceStrings": {},
-    "InitializationStrings": [],
-    "Attributes": {}
-  }
+      "VendorID": 10429,
+      "ProductID": 2395,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {},
+      "InitializationStrings": [],
+      "Attributes": {}
+    }
   ],
   "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
