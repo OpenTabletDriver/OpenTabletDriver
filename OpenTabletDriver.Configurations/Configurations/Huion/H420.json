@@ -34,12 +34,13 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1",
-    "LinuxInterface": "0"
+    "Interface": "0"
   }
 }

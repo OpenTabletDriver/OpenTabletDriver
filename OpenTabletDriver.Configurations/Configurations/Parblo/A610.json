@@ -34,7 +34,8 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

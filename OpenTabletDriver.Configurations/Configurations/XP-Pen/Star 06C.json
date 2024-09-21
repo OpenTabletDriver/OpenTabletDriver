@@ -31,7 +31,8 @@
         "ArAC"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

@@ -29,7 +29,8 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     },
     {
       "VendorID": 1386,
@@ -40,7 +41,8 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
