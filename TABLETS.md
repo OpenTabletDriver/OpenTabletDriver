@@ -237,6 +237,7 @@
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                |  Missing Features | Touch is not yet supported.
 | Wacom DTK-1300                |  Missing Features | Center button is not yet supported.
+| Wacom DTU-1031X               |  Missing Features | Pen buttons are not yet supported.
 | Wacom DTZ-1200W               |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom MTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-450                 |  Missing Features | Wheel is not yet supported.
