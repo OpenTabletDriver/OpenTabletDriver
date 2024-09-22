@@ -53,6 +53,7 @@
 | Huion WH1409 V2               |     Supported     |
 | Parblo A609                   |     Supported     |
 | Parblo A640 V2                |     Supported     |
+| Parblo A640 V2(F1)            |     Supported     | Fix for some of Pablo A640 tablets
 | Parblo Ninos N4               |     Supported     |
 | Parblo Ninos N7               |     Supported     |
 | Parblo Ninos N7B              |     Supported     |
