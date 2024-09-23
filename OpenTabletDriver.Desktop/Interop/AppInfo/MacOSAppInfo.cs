@@ -13,6 +13,9 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             if (match.Success)
                 BinaryDirectory = match.Groups[1].ToString();
 
+            if (GetExistingPath(ConfigurationDirectory, "~/Library/Application Support/OpenTabletDriver/Configurations") is string config)
+                ConfigurationDirectory = config;
+
             if (GetPath(AppDataDirectory, "~/Library/Application Support/OpenTabletDriver") is string appdata)
                 AppDataDirectory = appdata;
 
