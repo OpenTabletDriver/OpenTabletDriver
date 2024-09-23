@@ -41,6 +41,7 @@ namespace OpenTabletDriver.Desktop
                 },
                 PluginPlatform.MacOS => new AppInfo()
                 {
+                    ConfigurationDirectory = GetExistingPath("~/Library/Application Support/OpenTabletDriver/Configurations"),
                     AppDataDirectory = GetPath("~/Library/Application Support/OpenTabletDriver"),
                     TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
                     CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")
