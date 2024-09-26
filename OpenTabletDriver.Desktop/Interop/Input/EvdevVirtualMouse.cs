@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             _ => null
         };
 
-        public void Flush()
+        public virtual void Flush()
         {
             Device.Sync();
         }
