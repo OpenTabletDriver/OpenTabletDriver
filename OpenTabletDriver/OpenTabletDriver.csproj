@@ -7,15 +7,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup Label="NuGet Package Information">
+  <PropertyGroup Label="NuGet Package">
+    <IsPackable>true</IsPackable>
     <PackageId>OpenTabletDriver</PackageId>
     <Description>OpenTabletDriver core library</Description>
-    <PackageOutputPath>../nupkg</PackageOutputPath>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
     <PackageReference Include="HidSharpCore" Version="1.2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-rc.1.21451.13" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
