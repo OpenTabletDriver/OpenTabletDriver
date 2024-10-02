@@ -1,4 +1,3 @@
-
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Fansjoy
@@ -17,7 +16,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Fansjoy
                 }
                 else
                 {
-                    return null!; // returning null makes OTD ignore this report
+                    return new OutOfRangeReport(report);
                 }
             }
             else // report.Length is 14 for aux buttons

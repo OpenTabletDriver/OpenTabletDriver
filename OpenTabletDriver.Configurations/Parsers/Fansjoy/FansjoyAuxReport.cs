@@ -1,5 +1,3 @@
-using System;
-using System.Numerics;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Fansjoy
