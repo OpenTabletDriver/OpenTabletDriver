@@ -2,8 +2,8 @@
   "Name": "Fansjoy FJ-S2",
   "Specifications": {
     "Digitizer": {
-      "Width": 115,
-      "Height": 72,
+      "Width": 160,
+      "Height": 100,
       "MaxX": 10500,
       "MaxY": 16800
     },
