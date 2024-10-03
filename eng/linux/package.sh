@@ -3,10 +3,27 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-if is_musl_based_distro; then
-  NET_RUNTIME="linux-musl-x64"
+arch="${OTD_BUILD_ARCH:=}"
+if [ -z "$arch" ]; then
+  uname_m="$(uname -m)"
+  case "$uname_m" in
+    "aarch64")
+      arch="arm64";;
+    "x86_64")
+      arch="x64";;
+    # include more architectures here. Does OTD build on anything else?
+    *)
+      echo "unknown result '$uname_m' of 'uname -m'. falling back to x64."
+      arch="x64";;
+  esac
 else
-  NET_RUNTIME="linux-x64"
+  echo "using environment supplied architecture $arch"
+fi
+
+if is_musl_based_distro; then
+  NET_RUNTIME="linux-musl-$arch"
+else
+  NET_RUNTIME="linux-$arch"
 fi
 
 PACKAGE_GEN=""
