@@ -24,9 +24,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Fansjoy
             };
         }
 
-        public byte[] Raw { get; set; }
+        public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
-        public uint Pressure { get; set; }
+        public uint Pressure { set; get; }
         public bool[] PenButtons { set; get; }
     }
 }

@@ -14,15 +14,11 @@ namespace OpenTabletDriver.Configurations.Parsers.Fansjoy
                 {
                     return new FansjoyTabletReport(report);
                 }
-                else
-                {
-                    return new OutOfRangeReport(report);
-                }
+                return new OutOfRangeReport(report);
             }
-            else // report.Length is 14 for aux buttons
-            {
-                return new FansjoyAuxReport(report);
-            }
+
+            // report.Length is 14 for aux buttons
+            return new FansjoyAuxReport(report);
         }
     }
 }
