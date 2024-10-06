@@ -28,14 +28,15 @@ namespace OpenTabletDriver.Daemon
 
                 var rootCommand = new RootCommand("OpenTabletDriver")
                 {
-                    new Option(new[] { "--appdata", "-a" }, "Application data directory")
+                    new Option<string>(new[] { "--appdata", "-a" }, "Application data directory")
                     {
                         Argument = new Argument<string>("appdata")
                     },
-                    new Option(new[] { "--config", "-c" }, "Configuration directory")
+                    new Option<string>(new[] { "--config", "-c" }, "Configuration directory")
                     {
                         Argument = new Argument<string> ("config")
-                    }
+                    },
+                    new Option<bool>(new[] { "--hidden", "-h" }, "Console hidden")
                 };
 
                 rootCommand.Handler = CommandHandler.Create<string, string>(Invoke);
@@ -43,7 +44,10 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private static async Task Invoke(string appdata, string config)
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern void FreeConsole();
+
+        private static async Task Invoke(string appdata, string config, bool hidden)
         {
             var serviceCollection = DesktopServiceCollection.GetPlatformServiceCollection();
             var appInfo = AppInfo.GetPlatformAppInfo();
@@ -52,7 +56,14 @@ namespace OpenTabletDriver.Daemon
                 appInfo.AppDataDirectory = FileUtilities.InjectEnvironmentVariables(appdata);
             if (!string.IsNullOrWhiteSpace(config))
                 appInfo.ConfigurationDirectory = FileUtilities.InjectEnvironmentVariables(config);
-
+            if (hidden)
+            {
+                if (OperatingSystem.IsWindows())
+                    FreeConsole();
+                else
+                    Console.WriteLine("Console hiding is not yet supported on this OS.");
+            }
+            
             serviceCollection.AddSingleton(appInfo)
                 .AddSingleton(s => s.CreateInstance<RpcHost<IDriverDaemon>>("OpenTabletDriver.Daemon"))
                 .AddSingleton<IDriverDaemon, DriverDaemon>();
