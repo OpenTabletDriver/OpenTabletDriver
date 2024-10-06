@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.CommandLine;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,7 @@ namespace OpenTabletDriver.Daemon
         public object SpecialCommand { get; set; }
         public DirectoryInfo AppDataDirectory { get; set; }
         public DirectoryInfo ConfigurationDirectory { get; set; }
+        public bool ConsoleHidden { get; set; }
     }
 
     class UpdateCommandOptions
@@ -31,6 +33,9 @@ namespace OpenTabletDriver.Daemon
 
     partial class Program
     {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern void FreeConsole();
+
         static async Task Main(string[] args)
         {
             var cmdLineOptions = ParseCmdLineOptions(args);
@@ -39,6 +44,13 @@ namespace OpenTabletDriver.Daemon
                 AppInfo.Current.AppDataDirectory = cmdLineOptions.AppDataDirectory.FullName;
             if (!string.IsNullOrWhiteSpace(cmdLineOptions?.ConfigurationDirectory?.FullName))
                 AppInfo.Current.ConfigurationDirectory = cmdLineOptions.ConfigurationDirectory.FullName;
+            if (cmdLineOptions.ConsoleHidden)
+            {
+                if (OperatingSystem.IsWindows())
+                    FreeConsole();
+                else
+                    Console.WriteLine("Console hiding is not yet supported on this OS.");
+            }
 
             if (cmdLineOptions.SpecialCommand is UpdateCommandOptions updateCommandOptions)
             {
@@ -132,10 +144,16 @@ namespace OpenTabletDriver.Daemon
                 description: "Configuration directory"
             );
 
+            var hiddenOption = new Option<bool>(
+                aliases: new[] { "--hidden", "-h" },
+                description: "Console hidden"
+            );
+
             rootCommand.AddGlobalOption(appDataOption);
             rootCommand.AddGlobalOption(configOption);
+            rootCommand.AddGlobalOption(hiddenOption);
 
-            rootCommand.SetHandler(setupGlobalOptions, appDataOption, configOption);
+            rootCommand.SetHandler(setupGlobalOptions, appDataOption, configOption, hiddenOption);
 
             var sourcesArg = new Option<List<DirectoryInfo>>("--sources")
             {
@@ -150,24 +168,25 @@ namespace OpenTabletDriver.Daemon
             updateCommand.AddOption(sourcesArg);
             updateCommand.AddOption(destArg);
 
-            updateCommand.SetHandler((appData, config, src, dest) =>
+            updateCommand.SetHandler((appData, config, hidden, src, dest) =>
             {
-                setupGlobalOptions(appData, config);
+                setupGlobalOptions(appData, config, hidden);
                 cmdLineOptions.SpecialCommand = new UpdateCommandOptions
                 {
                     Sources = src,
                     Destination = dest
                 };
-            }, appDataOption, configOption, sourcesArg, destArg);
+            }, appDataOption, configOption, hiddenOption, sourcesArg, destArg);
 
             rootCommand.Invoke(args);
 
             return cmdLineOptions;
 
-            void setupGlobalOptions(DirectoryInfo appData, DirectoryInfo config)
+            void setupGlobalOptions(DirectoryInfo appData, DirectoryInfo config, bool hidden)
             {
                 cmdLineOptions.AppDataDirectory = appData;
                 cmdLineOptions.ConfigurationDirectory = config;
+                cmdLineOptions.ConsoleHidden = hidden;
             }
         }
 
