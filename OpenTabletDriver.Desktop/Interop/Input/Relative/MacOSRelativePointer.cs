@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static MacOS;
 
-    public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer
+    public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer, IPressureHandler
     {
         private CGPoint offset;
 
@@ -23,6 +23,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
         public void SetPosition(Vector2 delta)
         {
             QueuePendingPosition(delta.X, delta.Y);
+        }
+
+        public void SetPressure(float percentage)
+        {
+            base.setPressure(percentage);
         }
 
         protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)
