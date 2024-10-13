@@ -31,14 +31,14 @@ namespace OpenTabletDriver.UX
 
         public static void ShowMessageBox(this CommonErrorData errorData)
         {
-            if (MessageBoxActive)
-                return;
             string message = errorData.Message + Environment.NewLine + errorData.StackTrace;
             Log.Write(
                 errorData.TypeName,
                 message,
                 LogLevel.Error
             );
+            if (MessageBoxActive)
+                return;
             MessageBoxActive = true;
             MessageBox.Show(
                 message,
