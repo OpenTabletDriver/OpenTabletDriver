@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Fansjoy
                 Y = 16800 - (report[3] << 8 | report[2])
             };
 
-            Pressure = (uint)(report[7] << 8 | report [6]);
+            Pressure = (uint)(report[7] << 8 | report[6]);
 
             PenButtons = new bool[]
             {
