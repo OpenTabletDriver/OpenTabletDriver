@@ -3,6 +3,7 @@
 | Acepen AP906                  |     Supported     |
 | Acepen AP1060                 |     Supported     |
 | Adesso Cybertablet K8         |     Supported     |
+| Fansjoy FJ-S2                 |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM116HD                |     Supported     |
 | Gaomon GM156HD                |     Supported     |
@@ -186,7 +187,6 @@
 | Artisul AP604 (Pencil Small)  |  Missing Features | Aux buttons and eraser detection are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1.
 | Artisul D16 Pro               |  Missing Features | Wheel is not yet supported.
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are not yet supported.
-| Fansjoy FJ-S2                 |  Missing Features | Eraser is not yet supported. Only tested on Linux.
 | Gaomon M10K                   |  Missing Features | Wheel is not yet supported.
 | Gaomon M10K Pro               |  Missing Features | Wheel is not yet supported.
 | Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
