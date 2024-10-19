@@ -63,7 +63,7 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendOneLine(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendOneLine(GetStringFormat(touchReport));
-            if(report is IAbsoluteWheelReport absoluteWheelReport)
+            if (report is IAbsoluteWheelReport absoluteWheelReport)
                 sb.AppendLines(GetStringFormat(absoluteWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendOneLine(GetStringFormat(mouseReport));
