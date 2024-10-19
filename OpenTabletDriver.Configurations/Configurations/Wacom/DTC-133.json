@@ -15,7 +15,8 @@
     },
     "AuxiliaryButtons": null,
     "MouseButtons": null,
-    "Touch": null
+    "Touch": null,
+    "Wheel": null
   },
   "DigitizerIdentifiers": [
     {

@@ -17,7 +17,8 @@
         "ButtonCount": 10
       },
       "MouseButtons": null,
-      "Touch": null
+      "Touch": null,
+    "Wheel": null
     },
     "DigitizerIdentifiers": [
       {
