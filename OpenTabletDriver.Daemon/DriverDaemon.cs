@@ -492,9 +492,9 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        public Task<Settings?> GetSettings()
+        public Task<Settings> GetSettings()
         {
-            return Task.FromResult(Settings);
+            return Task.FromResult(Settings!);
         }
 
         public Task<IEnumerable<SerializedDeviceEndpoint>> GetDevices()
