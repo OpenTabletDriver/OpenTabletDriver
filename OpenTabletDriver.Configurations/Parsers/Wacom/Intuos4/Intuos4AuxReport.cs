@@ -28,8 +28,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
             };
 
             // Wheel Start at Position zero (0x80) and Provides a value between 0x80 & 0xC7 on PTK 440, 640 & 840
-            if (report[2].IsBitSet(7))
-                WheelPosition = (uint)report[2] - 0x80;
+            if (report[1].IsBitSet(7))
+                WheelPosition = (uint)report[1] - 0x80;
         }
 
         public byte[] Raw { set; get; }
