@@ -35,7 +35,8 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     },
     {
       "VendorID": 9580,
@@ -51,7 +52,8 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

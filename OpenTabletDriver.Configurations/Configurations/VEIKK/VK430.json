@@ -36,7 +36,8 @@
       "DeviceStrings": {
         "23": "^2022/3/21$"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     },
     {
       "VendorID": 12267,
@@ -53,7 +54,8 @@
       "DeviceStrings": {
         "23": "^2022/4/25$"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

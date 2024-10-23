@@ -32,7 +32,8 @@
       "DeviceStrings": {
         "2": "TABLET G3 5x4"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

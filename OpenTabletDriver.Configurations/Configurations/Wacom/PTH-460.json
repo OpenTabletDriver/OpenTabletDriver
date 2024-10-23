@@ -34,7 +34,8 @@
       "DeviceStrings": {},
       "InitializationStrings": [
         0
-      ]
+      ],
+      "Attributes": {}
     },
     {
       "VendorID": 1386,
@@ -47,7 +48,8 @@
       "DeviceStrings": {},
       "InitializationStrings": [
         0
-      ]
+      ],
+      "Attributes": {}
     },
     {
       "VendorID": 1386,
@@ -60,7 +62,8 @@
       "DeviceStrings": {},
       "InitializationStrings": [
         0
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [
@@ -73,7 +76,8 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "Attributes": {}

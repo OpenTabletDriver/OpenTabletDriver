@@ -58,5 +58,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// Device strings to query to initialize device endpoints.
         /// </summary>
         public List<byte> InitializationStrings { set; get; } = new List<byte>();
+
+        public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
     }
 }
