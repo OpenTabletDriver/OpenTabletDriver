@@ -1,8 +1,9 @@
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
 {
-    public struct IntuosV1AuxReport : IAuxReport
+    public struct IntuosV1AuxReport : IAuxReport, IAbsoluteWheelReport
     {
         public IntuosV1AuxReport(byte[] report)
         {
@@ -20,9 +21,14 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
                 auxByte.IsBitSet(6),
                 auxByte.IsBitSet(7),
             };
+
+            // Wheel Start at Position zero (0x80) and Provides a value between 0x80 & 0xC7 on PTH-x50 & PTH-x51     
+            if (report[2].IsBitSet(7))
+                WheelPosition = (uint)report[2] - 0x80;
         }
 
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
+        public uint? WheelPosition { set; get; }
     }
 }
