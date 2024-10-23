@@ -94,6 +94,10 @@ namespace OpenTabletDriver.UX.Tools
         private static IEnumerable<string> GetStringFormat(IAuxReport auxReport)
         {
             yield return $"AuxButtons:[{string.Join(" ", auxReport.AuxButtons)}]";
+            
+            if (auxReport is IAbsoluteWheelReport absoluteWheelReport)
+                foreach(var line in GetStringFormat(absoluteWheelReport))
+                    yield return line;
         }
 
         private static IEnumerable<string> GetStringFormat(IEraserReport eraserReport)
