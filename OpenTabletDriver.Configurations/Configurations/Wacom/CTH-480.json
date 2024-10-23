@@ -22,7 +22,8 @@
       "Height": 95.0,
       "MaxX": 4095.0,
       "MaxY": 4095.0
-    }
+    },
+    "Wheel": null
   },
   "DigitizerIdentifiers": [
     {

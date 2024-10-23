@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.UX.Tools
 {
@@ -62,6 +63,8 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendOneLine(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendOneLine(GetStringFormat(touchReport));
+            if (report is IAbsoluteWheelReport absoluteWheelReport)
+                sb.AppendLines(GetStringFormat(absoluteWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendOneLine(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
@@ -91,6 +94,9 @@ namespace OpenTabletDriver.UX.Tools
         private static IEnumerable<string> GetStringFormat(IAuxReport auxReport)
         {
             yield return $"AuxButtons:[{string.Join(" ", auxReport.AuxButtons)}]";
+            if (auxReport is IAbsoluteWheelReport absoluteWheelReport)
+                foreach (var line in GetStringFormat(absoluteWheelReport))
+                    yield return line;
         }
 
         private static IEnumerable<string> GetStringFormat(IEraserReport eraserReport)
@@ -115,6 +121,11 @@ namespace OpenTabletDriver.UX.Tools
             foreach (var touch in touchReport.Touches)
                 if (touch != null)
                     yield return touch.ToString();
+        }
+
+        private static IEnumerable<string> GetStringFormat(IAbsoluteWheelReport toolReport)
+        {
+            yield return $"Wheel:{toolReport.WheelPosition?.ToString() ?? "Idle"}";
         }
 
         private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)
