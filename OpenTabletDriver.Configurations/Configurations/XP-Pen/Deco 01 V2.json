@@ -34,7 +34,8 @@
         "4": "UG901_BPU1002",
         "5": "^(?!2020-10-23_Release3$).*$"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     },
     {
       "VendorID": 10429,
@@ -49,7 +50,8 @@
       "DeviceStrings": {
         "4": "UG901_BPU1002"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

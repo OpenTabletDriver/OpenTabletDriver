@@ -29,7 +29,8 @@
       "DeviceStrings": {
         "121": "^HA60$"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],

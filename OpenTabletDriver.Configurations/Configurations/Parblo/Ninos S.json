@@ -31,7 +31,8 @@
         "ArAE"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     },
     {
       "VendorID": 1155,
@@ -44,7 +45,8 @@
         "ArAE"
       ],
       "DeviceStrings": {},
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     }
   ],
   "AuxilaryDeviceIdentifiers": [],
