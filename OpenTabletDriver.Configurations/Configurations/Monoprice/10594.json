@@ -27,12 +27,14 @@
       "FeatureInitReport": null,
       "OutputInitReport": null,
       "DeviceStrings": {
+        "6": "10594",
         "121": "HA60-F400"
       },
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],

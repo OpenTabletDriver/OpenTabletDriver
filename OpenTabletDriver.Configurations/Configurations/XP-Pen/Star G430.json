@@ -29,7 +29,8 @@
       "DeviceStrings": {
         "2": "TABLET G3 4x3"
       },
-      "InitializationStrings": []
+      "InitializationStrings": [],
+      "Attributes": {}
     },
     {
       "VendorID": 10429,
@@ -44,7 +45,8 @@
       },
       "InitializationStrings": [
         100
-      ]
+      ],
+      "Attributes": {}
     }
   ],
   "AuxiliaryDeviceIdentifiers": [],
