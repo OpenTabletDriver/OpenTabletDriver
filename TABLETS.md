@@ -62,6 +62,7 @@
 | UC-Logic TWMNA62              |     Supported     |
 | UGEE M708 V2                  |     Supported     |
 | UGEE M808                     |     Supported     |
+| UGEE M808 V2                  |     Supported     |
 | UGEE S640                     |     Supported     |
 | UGEE S1060                    |     Supported     |
 | UGEE U1200                    |     Supported     |
