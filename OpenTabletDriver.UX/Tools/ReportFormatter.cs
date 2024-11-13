@@ -33,6 +33,10 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendLines(GetStringFormat(touchReport));
+            if (report is IAbsoluteWheelReport absoluteWheelReport)
+                sb.AppendLines(GetStringFormat(absoluteWheelReport));
+            if (report is IRelativeWheelReport relativeWheelReport)
+                sb.AppendLines(GetStringFormat(relativeWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendLines(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
@@ -64,7 +68,9 @@ namespace OpenTabletDriver.UX.Tools
             if (report is ITouchReport touchReport)
                 sb.AppendOneLine(GetStringFormat(touchReport));
             if (report is IAbsoluteWheelReport absoluteWheelReport)
-                sb.AppendLines(GetStringFormat(absoluteWheelReport));
+                sb.AppendOneLine(GetStringFormat(absoluteWheelReport));
+            if (report is IRelativeWheelReport relativeWheelReport)
+                sb.AppendOneLine(GetStringFormat(relativeWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendOneLine(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
@@ -94,12 +100,6 @@ namespace OpenTabletDriver.UX.Tools
         private static IEnumerable<string> GetStringFormat(IAuxReport auxReport)
         {
             yield return $"AuxButtons:[{string.Join(" ", auxReport.AuxButtons)}]";
-            if (auxReport is IAbsoluteWheelReport absoluteWheelReport)
-                foreach (var line in GetStringFormat(absoluteWheelReport))
-                    yield return line;
-            if (auxReport is IRelativeWheelReport relativeWheelReport)
-                foreach (var line in GetStringFormat(relativeWheelReport))
-                    yield return line;
         }
 
         private static IEnumerable<string> GetStringFormat(IEraserReport eraserReport)
