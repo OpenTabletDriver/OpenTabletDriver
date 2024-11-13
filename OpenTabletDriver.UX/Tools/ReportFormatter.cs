@@ -97,6 +97,9 @@ namespace OpenTabletDriver.UX.Tools
             if (auxReport is IAbsoluteWheelReport absoluteWheelReport)
                 foreach (var line in GetStringFormat(absoluteWheelReport))
                     yield return line;
+            if (auxReport is IRelativeWheelReport relativeWheelReport)
+                foreach (var line in GetStringFormat(relativeWheelReport))
+                    yield return line;
         }
 
         private static IEnumerable<string> GetStringFormat(IEraserReport eraserReport)
@@ -126,6 +129,11 @@ namespace OpenTabletDriver.UX.Tools
         private static IEnumerable<string> GetStringFormat(IAbsoluteWheelReport toolReport)
         {
             yield return $"Wheel:{toolReport.WheelPosition?.ToString() ?? "Idle"}";
+        }
+
+        private static IEnumerable<string> GetStringFormat(IRelativeWheelReport toolReport)
+        {
+            yield return $"Wheel Delta:{toolReport.WheelDelta?.ToString() ?? "Idle"}";
         }
 
         private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)
