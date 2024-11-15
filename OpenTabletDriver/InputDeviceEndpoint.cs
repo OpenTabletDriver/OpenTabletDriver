@@ -33,7 +33,7 @@ namespace OpenTabletDriver
             Configuration = configuration;
             Identifier = identifier;
 
-            if (Configuration.Attributes.TryGetValue(DELAY_ATTRIBUTE_KEY_NAME, out var delayStr))
+            if (Configuration.Attributes?.TryGetValue(DELAY_ATTRIBUTE_KEY_NAME, out var delayStr) ?? false)
                 if (!uint.TryParse(delayStr, out _featureInitDelayMs))
                     Log.Write("Device", $"Could not parse '{delayStr}' from attribute {DELAY_ATTRIBUTE_KEY_NAME}", LogLevel.Warning);
         }

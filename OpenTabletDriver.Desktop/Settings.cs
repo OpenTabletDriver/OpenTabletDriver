@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Newtonsoft.Json;
+using OpenTabletDriver.Desktop.Json;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 
@@ -43,10 +44,7 @@ namespace OpenTabletDriver.Desktop
             };
         }
 
-        private static readonly JsonSerializer _serializer = new JsonSerializer
-        {
-            Formatting = Formatting.Indented
-        };
+        private static readonly JsonSerializer _serializer = new AdvancedJsonSerializer();
 
         public static bool TryDeserialize(FileInfo file, [NotNullWhen(true)] out Settings? settings)
         {

@@ -36,15 +36,21 @@ namespace OpenTabletDriver.Analyzers.Emitters
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(TabletSpecifications.AuxiliaryButtons)),
-                                new ButtonSpecificationsEmitter(_specifications.AuxiliaryButtons).Emit()),
+                                _specifications.AuxiliaryButtons == null
+                                    ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                    : new ButtonSpecificationsEmitter(_specifications.AuxiliaryButtons).Emit()),
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(TabletSpecifications.MouseButtons)),
-                                new ButtonSpecificationsEmitter(_specifications.MouseButtons).Emit()),
+                                _specifications.MouseButtons == null
+                                    ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                    : new ButtonSpecificationsEmitter(_specifications.MouseButtons).Emit()),
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(TabletSpecifications.Touch)),
-                                new DigitizerSpecificationsEmitter(_specifications.Touch).Emit()),
+                                _specifications.Touch == null
+                                    ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                    : new DigitizerSpecificationsEmitter(_specifications.Touch).Emit()),
                         })))
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList());

@@ -13,9 +13,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 5
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -24,17 +22,12 @@
       "InputReportLength": 13,
       "OutputReportLength": 9,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "CQEE",
         "CQIC"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

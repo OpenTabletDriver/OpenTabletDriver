@@ -10,10 +10,7 @@
     "Pen": {
       "MaxPressure": 1023,
       "ButtonCount": 1
-    },
-    "AuxiliaryButtons": null,
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -22,16 +19,11 @@
       "InputReportLength": 64,
       "OutputReportLength": 64,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.RobotPen.RobotPenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "qhAC"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

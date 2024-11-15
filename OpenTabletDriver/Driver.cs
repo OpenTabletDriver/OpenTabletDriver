@@ -175,7 +175,7 @@ namespace OpenTabletDriver
                         Log.Write("Detect", $"Found tablet '{config.Name}'");
                         var device = new InputDevice(config, pair.Digitizer, pair.Auxiliary);
 
-                        if (config.AuxiliaryDeviceIdentifiers.Any() && pair.Auxiliary is null)
+                        if ((config.AuxiliaryDeviceIdentifiers?.Count ?? 0) > 0 && pair.Auxiliary is null)
                         {
                             Log.Write("Detect", $"Auxiliary device not found for tablet '{config.Name}', express keys may not function properly", LogLevel.Warning);
                         }
@@ -216,9 +216,9 @@ namespace OpenTabletDriver
             }
         }
 
-        private bool TryMatch(IDeviceEndpoint device, TabletConfiguration configuration, List<DeviceIdentifier> identifiers, [NotNullWhen(true)] out InputDeviceEndpoint? endpoint)
+        private bool TryMatch(IDeviceEndpoint device, TabletConfiguration configuration, List<DeviceIdentifier>? identifiers, [NotNullWhen(true)] out InputDeviceEndpoint? endpoint)
         {
-            foreach (var identifier in identifiers)
+            foreach (var identifier in identifiers ?? Enumerable.Empty<DeviceIdentifier>())
             {
                 var match = device.VendorID == identifier.VendorID &&
                     device.ProductID == identifier.ProductID &&
@@ -263,11 +263,15 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes, Dictionary<string, string> config_attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string>? identifier_attributes, Dictionary<string, string>? config_attributes)
         {
-            var attributes = new Dictionary<string, string>(identifier_attributes);
-            foreach (var kvp in config_attributes)
-                attributes.TryAdd(kvp.Key, kvp.Value);
+            var attributes = new Dictionary<string, string>(identifier_attributes ?? Enumerable.Empty<KeyValuePair<string, string>>());
+
+            if (config_attributes != null)
+            {
+                foreach (var kvp in config_attributes)
+                    attributes.TryAdd(kvp.Key, kvp.Value);
+            }
 
             // Windows only configuration attribute.
             if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)

@@ -288,6 +288,7 @@ namespace OpenTabletDriver.Tests
             var gen = new JSchemaGenerator();
             var schema = gen.Generate(typeof(TabletConfiguration));
             DisallowAdditionalItemsAndProperties(schema);
+            DisallowNullsAndEmptyCollections(schema);
 
             var failed = false;
 
@@ -296,7 +297,11 @@ namespace OpenTabletDriver.Tests
                 var tabletConfig = JObject.Parse(tabletConfigString);
                 if (tabletConfig.IsValid(schema, out IList<string> errors)) continue;
 
-                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:\r\n{string.Join("\r\n", errors)}\r\n");
+                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:");
+                foreach (var error in errors)
+                    _testOutputHelper.WriteLine(error);
+                _testOutputHelper.WriteLine(string.Empty);
+
                 failed = true;
             }
 
@@ -393,6 +398,28 @@ namespace OpenTabletDriver.Tests
             {
                 if (child.Key == nameof(TabletConfiguration.Attributes)) continue;
                 DisallowAdditionalItemsAndProperties(child.Value);
+            }
+        }
+
+        private static void DisallowNullsAndEmptyCollections(JSchema schema)
+        {
+            var schemaType = schema.Type!.Value;
+
+            if (schemaType.HasFlag(JSchemaType.Array))
+            {
+                schema.MinimumItems = 1;
+            }
+            else if (schemaType.HasFlag(JSchemaType.Object))
+            {
+                schema.MinimumProperties = 1;
+            }
+
+            if (schema.Properties is not null)
+            {
+                foreach (var property in schema.Properties)
+                {
+                    DisallowNullsAndEmptyCollections(property.Value);
+                }
             }
         }
 
