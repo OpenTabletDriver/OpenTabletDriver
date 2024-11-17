@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Profiles
@@ -42,6 +43,13 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => _bindings;
         }
 
+        private static Type DefaultOutputModeType =>
+            SystemInterop.CurrentPlatform switch
+            {
+                SystemPlatform.Linux => typeof(LinuxArtistMode),
+                _ => typeof(AbsoluteMode)
+            };
+
         public static Profile GetDefaults(IServiceProvider serviceProvider, InputDevice tablet)
         {
             var screen = serviceProvider.GetRequiredService<IVirtualScreen>();
@@ -50,7 +58,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             return new Profile
             {
                 Tablet = tablet.Configuration.Name,
-                OutputMode = serviceProvider.GetDefaultSettings(typeof(AbsoluteMode), digitizer!, screen),
+                OutputMode = serviceProvider.GetDefaultSettings(DefaultOutputModeType, digitizer!, screen),
                 BindingSettings = BindingSettings.GetDefaults(tablet.Configuration.Specifications)
             };
         }
