@@ -25,6 +25,16 @@
       "DeviceStrings": {
         "2": "G430S"
       }
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2323,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
     }
   ],
   "Attributes": {
