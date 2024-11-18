@@ -133,7 +133,7 @@ namespace OpenTabletDriver.UX.Tools
 
         private static IEnumerable<string> GetStringFormat(IRelativeWheelReport toolReport)
         {
-            yield return $"Wheel Delta:{toolReport.WheelDelta?.ToString() ?? "Idle"}";
+            yield return $"Wheel Delta:{toolReport.WheelDelta.ToString() ?? "Idle"}";
         }
 
         private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)
