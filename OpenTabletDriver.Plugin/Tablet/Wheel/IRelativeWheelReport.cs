@@ -8,6 +8,6 @@ namespace OpenTabletDriver.Plugin.Tablet.Wheel
         /// <summary>
         /// The relative wheel movement from its previous state, or null to indicate an absence of touch.
         /// </summary>
-        uint? WheelDelta { get; set; }
+        int WheelDelta { get; set; }
     }
 }
