@@ -39,8 +39,11 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
                     _timerFD = timerFD;
 
-                    long seconds = (long)(Interval / 1000.0f);
-                    long nseconds = (long)((Interval - seconds * 1000) * 1000.0 * 1000.0);
+                    long totalNS = (long)(Interval * 1000.0 * 1000.0);
+                    const long ns_per_second = 1000 * 1000 * 1000;
+
+                    long seconds = totalNS / ns_per_second;
+                    long nseconds = totalNS % ns_per_second;
 
                     _timerSpec = new ITimerSpec
                     {
