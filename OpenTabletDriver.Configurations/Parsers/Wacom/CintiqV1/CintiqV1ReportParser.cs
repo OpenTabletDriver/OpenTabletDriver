@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
-using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1;
+using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
 {
