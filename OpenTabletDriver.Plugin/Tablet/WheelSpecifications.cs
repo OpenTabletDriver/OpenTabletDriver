@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         public bool IsClockwise { get; set; }
 
         /// <summary>
-        /// For absolute wheels, the physical angle on the wheel's unit circle, corresponding to a reading of zero
+        /// For Absolute Wheels, The physical angle on the wheel's unit circle, corresponding to a reading of zero
         /// </summary>
         [Required(ErrorMessage = $"{nameof(AngleOfZeroReading)} must be defined")]
         [Range(0, 360)]
