@@ -10,10 +10,7 @@
     "Pen": {
       "MaxPressure": 8191,
       "ButtonCount": 2
-    },
-    "AuxiliaryButtons": null,
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -22,16 +19,11 @@
       "InputReportLength": 13,
       "OutputReportLength": 9,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "CQEE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

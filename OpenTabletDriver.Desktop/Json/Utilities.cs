@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop.AppInfo;
@@ -12,14 +11,15 @@ namespace OpenTabletDriver.Desktop.Json
 {
     internal static class Utilities
     {
-        internal static readonly IEnumerable<JsonConverter> Converters = new JsonConverter[]
+        internal static readonly JsonConverter[] Converters = new JsonConverter[]
         {
             new InterfaceConverter<IReportParser<IDeviceReport>, SerializableDeviceReportParser>(),
             new InterfaceConverter<IDeviceEndpoint, SerializableDeviceEndpoint>(),
             new InterfaceConverter<IDeviceEndpointStream, SerializableDeviceEndpointStream>(),
             new InterfaceConverter<IAppInfo, SerializableAppInfo>(),
             new InterfaceConverter<IDiagnosticInfo, SerializableDiagnosticInfo>(),
-            new InterfaceConverter<IDisplay, SerializableDisplay>()
+            new InterfaceConverter<IDisplay, SerializableDisplay>(),
+            new VersionConverter()
         };
     }
 }

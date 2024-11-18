@@ -96,28 +96,50 @@ namespace OpenTabletDriver.Analyzers.Emitters
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(DeviceIdentifier.DeviceStrings)),
-                                EmitterHelper.CreateDictionary(
+                                _deviceIdentifier.DeviceStrings is null
+                                    ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                    : EmitterHelper.CreateDictionary(
                                     SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ByteKeyword)),
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.StringKeyword)),
-                                    _deviceIdentifier.DeviceStrings.Select(a =>
-                                        (SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(a.Key)),
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.StringLiteralExpression,
-                                            SyntaxFactory.Literal(a.Value)))))),
+                                            SyntaxFactory.Token(SyntaxKind.ByteKeyword)),
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                        _deviceIdentifier.DeviceStrings.Select(a =>
+                                            (SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NumericLiteralExpression,
+                                                SyntaxFactory.Literal(a.Key)),
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(a.Value)))))),
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(DeviceIdentifier.InitializationStrings)),
-                                EmitterHelper.CreateList(
-                                    SyntaxFactory.PredefinedType(
-                                        SyntaxFactory.Token(SyntaxKind.ByteKeyword)),
-                                    _deviceIdentifier.InitializationStrings.Select(a =>
-                                        SyntaxFactory.LiteralExpression(
-                                            SyntaxKind.NumericLiteralExpression,
-                                            SyntaxFactory.Literal(a)))))
+                                _deviceIdentifier.InitializationStrings is null
+                                    ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                    : EmitterHelper.CreateList(
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.ByteKeyword)),
+                                        _deviceIdentifier.InitializationStrings.Select(a =>
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.NumericLiteralExpression,
+                                                SyntaxFactory.Literal(a))))),
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(nameof(DeviceIdentifier.Attributes)),
+                                _deviceIdentifier.Attributes is null
+                                    ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                    : EmitterHelper.CreateDictionary(
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                        SyntaxFactory.PredefinedType(
+                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                        _deviceIdentifier.Attributes.Select(a =>
+                                            (SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(a.Key)),
+                                            SyntaxFactory.LiteralExpression(
+                                                SyntaxKind.StringLiteralExpression,
+                                                SyntaxFactory.Literal(a.Value))))))
+
                         })))
                 .WithArgumentList(
                     SyntaxFactory.ArgumentList());
