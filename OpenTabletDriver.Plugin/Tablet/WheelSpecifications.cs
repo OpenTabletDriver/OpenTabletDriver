@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         public bool IsRelative { get; set; }
 
         /// <summary>
-        /// Does a increment/positive movement indicate clockwise movement?
+        /// For Relative Wheels, Does a increment/positive movement indicate clockwise movement?
         /// </summary>
         [Required(ErrorMessage = $"{nameof(IsClockwise)} must be defined")]
         public bool IsClockwise { get; set; }
