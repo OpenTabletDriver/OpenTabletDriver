@@ -1,6 +1,6 @@
 using System;
 using System.Numerics;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tablet;
 using OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
