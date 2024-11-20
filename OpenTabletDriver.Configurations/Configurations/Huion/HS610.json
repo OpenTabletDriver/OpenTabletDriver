@@ -19,7 +19,6 @@
     "Wheel": {
       "StepCount": 12,
       "IsRelative": false,
-      "IsClockwise": true,
       "AngleOfZeroReading": 90
     }
   },

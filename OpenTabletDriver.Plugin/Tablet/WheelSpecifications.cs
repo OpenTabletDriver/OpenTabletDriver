@@ -21,12 +21,6 @@ namespace OpenTabletDriver.Plugin.Tablet
         public bool IsRelative { get; set; }
 
         /// <summary>
-        /// For Relative Wheels, Does a increment/positive movement indicate clockwise movement?
-        /// </summary>
-        [Required(ErrorMessage = $"{nameof(IsClockwise)} must be defined")]
-        public bool IsClockwise { get; set; }
-
-        /// <summary>
         /// For Absolute Wheels, The physical angle on the wheel's unit circle, corresponding to a reading of zero
         /// </summary>
         [Required(ErrorMessage = $"{nameof(AngleOfZeroReading)} must be defined")]
