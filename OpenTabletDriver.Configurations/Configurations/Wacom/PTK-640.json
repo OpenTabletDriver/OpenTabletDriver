@@ -15,6 +15,12 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 9
+    },
+    "Wheel": {
+      "StepCount": 71,
+      "IsRelative": false,
+      "IsClockwise": false,
+      "AngleOfZeroReading": 180
     }
   },
   "DigitizerIdentifiers": [
