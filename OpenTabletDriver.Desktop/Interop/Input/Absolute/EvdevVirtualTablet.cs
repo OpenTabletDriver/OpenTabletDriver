@@ -30,7 +30,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 
-            Device.EnableType(EventType.INPUT_PROP_DIRECT);
+            Device.EnableProperty(InputProperty.INPUT_PROP_DIRECT);
+            Device.EnableProperty(InputProperty.INPUT_PROP_POINTER);
+
             Device.EnableType(EventType.EV_ABS);
 
             var xAbs = new input_absinfo
@@ -126,7 +128,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
         }
 
-        public void Reset()
+        public sealed override void Reset()
         {
             // Zero out everything except position and tilt
             foreach (var code in eventCodes)
@@ -134,11 +136,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
 
             _isEraser = false;
-        }
-
-        public void Flush()
-        {
-            Device.Sync();
         }
     }
 }

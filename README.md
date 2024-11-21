@@ -1,8 +1,8 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
-English | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [Português-BR](docs/README_PTBR.md)
+English | [Español](docs/README_ES.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [Português-BR](docs/README_PTBR.md) | [Nederlands](docs/README_NL.md) | [한국어](docs/README_KO.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [繁體中文](docs/README_TW.md) | [Ελληνικά](docs/README_EL.md) | [Magyar](docs/README_HU.md)
 
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
@@ -36,7 +36,7 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 ### All platforms
 
-- .NET 6 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/6.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
+- .NET 8 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/8.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
 
 #### Windows
 
@@ -44,33 +44,27 @@ Run `build.ps1` to produce binary builds to 'bin' folder. These builds will run 
 
 #### Linux
 
-Required packages (some packages may be pre-installed for your distribution)
+Required packages (some packages may be pre-installed for your distribution):
 
 - libx11
 - libxrandr
 - libevdev2
 - GTK+3
 
-To build on Linux, run the provided 'build.sh' file. This will run the
-same 'dotnet publish' commands used for building the AUR package, and
-will produce usable binaries in 'OpenTabletDriver/bin'.
+Run `./eng/linux/package.sh`. If a "package" build is desired,
+there is official support for the following packaging formats:
 
-To build on ARM linux, run the provided 'build.sh' file with the
-appropriate runtime provided as an argument. For arm64, this is
-'linux-arm64'.
+| Package Format | Command |
+| --- | --- |
+| Generic binary tarball (`.tar.gz`) | `./eng/linux/package.sh --package BinaryTarBall` |
+| Debian package (`.deb`) | `./eng/linux/package.sh --package Debian` |
+| Red Hat package (`.rpm`) | `./eng/linux/package.sh --package RedHat` |
 
-Note: If building for the first time, run the included
-generate-rules.sh script. This will generate a set of udev rules in
-OpenTabletDriver/bin, called '99-opentabletdriver.rules'. This file
-should then be moved to `/etc/udev/rules.d/`:
-
-```
-sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
-```
+The generic binary tarball is designed to be extracted from the root directory.
 
 #### MacOS [Experimental]
 
-No other dependencies.
+Run `./eng/macos/package.sh --package true`.
 
 # Features
 
@@ -96,9 +90,6 @@ No other dependencies.
   - External plugin bindings
 - Saving and loading settings
   - Auto-loads user settings via `settings.json` in the active user `%localappdata%` or `.config` settings root directory.
-- Configuration Editor
-  - Allows you to create, modify, and delete configurations.
-  - Generate configurations from visible HID devices
 - Plugins
   - Filters
   - Output modes
@@ -117,9 +108,7 @@ and fill out the template with relevant information. We welcome both bug
 reports, as well as new tablets to add support for. In many cases adding support
 for a new tablet is quite easy.
 
-For issues and PRs related to OpenTabletDriver's packaging, please see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
-
-For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/opentabletdriver.github.io).
 
 ### Supporting a new tablet
 

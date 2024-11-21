@@ -18,14 +18,14 @@ get_csproj() {
     if [ -d "$path" ]; then
         local csproj=$(find "$path" -name "*.csproj" | head -n 1)
         if [ -z "$csproj" ]; then
-            echo "No csproj file found in $path"
+            echo "No csproj file found in $path" >&2
             exit 1
         fi
         echo "$csproj"
     elif [ -f "$path" ]; then
         echo "$path"
     else
-        echo "Invalid path: $path"
+        echo "Invalid path: $path" >&2
         exit 1
     fi
 }
@@ -76,7 +76,7 @@ main() {
             shift
         done
     else
-        echo "Invalid command: $command"
+        echo "Invalid command: $command" >&2
         exit 1
     fi
 }
@@ -86,7 +86,7 @@ pack() {
     local package=$(dotnet pack "$csproj" -o "$feed" | grep -oP "(?<=Successfully created package ').*?(?=')")
 
     if [ -z "$package" ]; then
-        echo "Failed to pack $csproj"
+        echo "Failed to pack $csproj" >&2
         exit 1
     fi
 

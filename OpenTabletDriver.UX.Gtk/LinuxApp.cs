@@ -56,14 +56,18 @@ namespace OpenTabletDriver.UX.Gtk
             }
         }
 
-        public override void Exit(int code)
+        public override void StopDaemon()
         {
             if (_daemon != null)
             {
                 _daemon.Exited -= HandleDaemonExited;
                 _daemon.Close();
             }
+        }
 
+        public override void Exit(int code)
+        {
+            StopDaemon();
             base.Exit(code);
         }
 

@@ -1,8 +1,8 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![总下载统计](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![总下载统计](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | 简体中文 | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md)
+[English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md) | [Nederlands](README_NL.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | 简体中文 | [繁體中文](README_TW.md) | [Ελληνικά](README_EL.md) | [Magyar](README_HU.md)
 
 OpenTabletDriver是一个开源的，跨平台的数位板驱动。其目标是在拥有直观的可自定义的界面的同时能跨平台并兼容尽可能多的设备。
 
@@ -36,7 +36,7 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
 
 ### 所有平台
 
-- .NET 6 SDK
+- .NET 8 SDK
 
 #### Windows
 
@@ -71,9 +71,6 @@ OpenTabletDriver有两个独立的进程共同工作。主程序`OpenTabletDrive
 - 支持将笔尖压力、笔的快捷按钮和数位板上的快捷键映射为鼠标按键、键盘按键或插件提供的操作
 - 保存以及加载设置
   - 自动加载当前用户的 `%localappdata%` 或者 `.config` 中 `settings.json` 保存的设置
-- 配置文件编辑器
-  - 让您创建、修改、以及删除配置文件
-  - 从可见的HID设备中生成配置文件
 - 插件
   - 过滤器
   - 输出模式

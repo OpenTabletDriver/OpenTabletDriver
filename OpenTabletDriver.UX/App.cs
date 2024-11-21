@@ -228,8 +228,8 @@ namespace OpenTabletDriver.UX
             if (File.Exists(filePath))
             {
                 var daemon = GetDriverDaemon();
-                var settings = Settings.Deserialize(new FileInfo(filePath))!;
-                await daemon.ApplySettings(settings);
+                if (Settings.TryDeserialize(new FileInfo(filePath), out var settings))
+                    await daemon.ApplySettings(settings);
             }
         }
 
@@ -336,6 +336,11 @@ namespace OpenTabletDriver.UX
         /// Starts the OpenTabletDriver daemon, if applicable.
         /// </summary>
         public abstract void StartDaemon();
+
+        /// <summary>
+        /// Stops OpenTabletDriver daemon, if running.
+        /// </summary>
+        public abstract void StopDaemon();
 
         /// <summary>
         /// The event handler for all client <see cref="Log.Write(OpenTabletDriver.Logging.LogMessage)"/> calls.

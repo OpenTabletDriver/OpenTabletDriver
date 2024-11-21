@@ -57,23 +57,21 @@ namespace OpenTabletDriver.Daemon
                 .AddSingleton(s => s.CreateInstance<RpcHost<IDriverDaemon>>("OpenTabletDriver.Daemon"))
                 .AddSingleton<IDriverDaemon, DriverDaemon>();
 
-            AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+            TaskScheduler.UnobservedTaskException += (_, e) =>
             {
-                var exception = (Exception)e.ExceptionObject;
-                File.AppendAllLines(Path.Join(appInfo.AppDataDirectory, "daemon.log"),
-                    new[]
-                    {
-                        DateTime.Now.ToString(CultureInfo.InvariantCulture),
-                        exception.GetType().FullName!,
-                        exception.Message,
-                        exception.Source ?? string.Empty,
-                        exception.StackTrace ?? string.Empty,
-                        exception.TargetSite?.Name ?? string.Empty
-                    }
-                );
+                Log.Exception(e.Exception);
+                e.SetObserved();
             };
 
-            await Run(serviceCollection.BuildServiceProvider());
+            try
+            {
+                await Run(serviceCollection.BuildServiceProvider());
+            }
+            catch (Exception e)
+            {
+                Log.Exception(e, LogLevel.Fatal);
+                Environment.Exit(1);
+            }
         }
 
         private static async Task Run(IServiceProvider serviceProvider)

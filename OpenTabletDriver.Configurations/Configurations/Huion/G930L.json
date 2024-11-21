@@ -13,19 +13,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 97,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T209_\\d{6}$"
       },
@@ -33,7 +28,5 @@
         200
       ]
     }
-  ],
-  "AuxiliaryDeviceIdentifiers": [],
-  "Attributes": {}
+  ]
 }

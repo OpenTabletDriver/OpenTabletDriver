@@ -3,6 +3,7 @@ using System.ComponentModel;
 using JetBrains.Annotations;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Tablet;
+using OpenTabletDriver.Tablet.Touch;
 
 namespace OpenTabletDriver.Output
 {
@@ -16,7 +17,7 @@ namespace OpenTabletDriver.Output
     public abstract class AsyncDevicePipelineElement : IDevicePipelineElement, IDisposable
     {
         private readonly ITimer _scheduler;
-        private readonly HPETDeltaStopwatch _consumeWatch = new HPETDeltaStopwatch();
+        private readonly HPETDeltaStopwatch _consumeWatch = new HPETDeltaStopwatch(false);
 
         protected AsyncDevicePipelineElement(ITimer scheduler)
         {
@@ -59,13 +60,17 @@ namespace OpenTabletDriver.Output
 
         public void Consume(IDeviceReport value)
         {
+            // Block DeviceReport and ITouchReport from being consumed for now
+            if (value is DeviceReport or ITouchReport)
+                return;
+
             lock (_synchronizationObject)
             {
                 State = value;
-                ConsumeState();
                 var consumeDelta = (float)_consumeWatch.Restart().TotalMilliseconds;
-                if (consumeDelta < 150)
+                if (consumeDelta < 150 && consumeDelta != 0)
                     _reportMsAvg = (_reportMsAvg + ((consumeDelta - _reportMsAvg) * 0.1f)) ?? consumeDelta;
+                ConsumeState();
             }
         }
 

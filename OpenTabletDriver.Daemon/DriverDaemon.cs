@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.CommandLine.Invocation;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,8 +30,6 @@ using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Daemon
 {
     public class DriverDaemon : IDriverDaemon
@@ -48,8 +45,10 @@ namespace OpenTabletDriver.Daemon
         private readonly IPresetManager _presetManager;
         private readonly ISleepDetector _sleepDetector;
         private readonly IUpdater? _updater;
+        private readonly LogFile _logFile;
 
         private UpdateInfo? _updateInfo;
+        private Settings? _lastValidSettings;
 
         public DriverDaemon(
             IServiceProvider serviceProvider,
@@ -74,6 +73,7 @@ namespace OpenTabletDriver.Daemon
             _pluginFactory = pluginFactory;
             _presetManager = presetManager;
             _sleepDetector = sleepDetector;
+            _logFile = new LogFile(_appInfo.LogDirectory);
 
             _updater = serviceProvider.GetService<IUpdater>();
         }
@@ -82,12 +82,11 @@ namespace OpenTabletDriver.Daemon
         {
             Log.Output += (sender, message) =>
             {
-                LogMessages.Add(message);
+                _logFile.Write(message);
                 Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
 
-            Log.Write("Detect", $"Configuration overrides exist: '{_appInfo.ConfigurationDirectory}'", LogLevel.Debug);
             InitializePlatform();
             _driver.InputDevicesChanged += (sender, e) => TabletsChanged?.Invoke(sender, e.Select(c => c.Configuration));
             _deviceHub.DevicesChanged += (_, e) =>
@@ -107,11 +106,26 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var driverInfo in DriverInfo.GetDriverInfos())
             {
-                Log.Write("Detect", $"Another tablet driver found: {driverInfo.Name}", LogLevel.Warning);
-                if (driverInfo.IsBlockingDriver)
-                    Log.Write("Detect", $"Detection for {driverInfo.Name} tablets might be impaired", LogLevel.Warning);
-                else if (driverInfo.IsSendingInput)
-                    Log.Write("Detect", $"Detected input coming from {driverInfo.Name} driver", LogLevel.Error);
+                var os = SystemInterop.CurrentPlatform switch
+                {
+                    SystemPlatform.Windows => "Windows",
+                    SystemPlatform.Linux => "Linux",
+                    SystemPlatform.MacOS => "MacOS",
+                    _ => null
+                };
+                var wikiUrl = $"https://opentabletdriver.net/Wiki/FAQ/{os}";
+
+                var message = new StringBuilder();
+                message.Append($"'{driverInfo.Name}' driver is detected.");
+
+                if (driverInfo.Status.HasFlag(DriverStatus.Blocking))
+                    message.Append(" It will block detection of tablets.");
+                if (driverInfo.Status.HasFlag(DriverStatus.Flaky))
+                    message.Append(" It will cause flaky support to tablets.");
+                if (os != null)
+                    message.Append($" If any problems arise, visit '{wikiUrl}'.");
+
+                Log.WriteNotify("Detect", message.ToString(), LogLevel.Warning);
             }
 
             await LoadUserSettings();
@@ -132,8 +146,8 @@ namespace OpenTabletDriver.Daemon
         public event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
         public event EventHandler<Settings>? SettingsChanged;
         public event EventHandler<PluginEventType>? AssembliesChanged;
+        public event EventHandler? Resynchronize;
 
-        private Collection<LogMessage> LogMessages { get; } = new Collection<LogMessage>();
         private Collection<ITool> Tools { get; } = new Collection<ITool>();
 
         private bool _debugging;
@@ -213,55 +227,70 @@ namespace OpenTabletDriver.Daemon
 
         public Task ApplySettings(Settings? settings)
         {
-            // Dispose filters that implement IDisposable interface
-            foreach (var obj in _driver.InputDevices.SelectMany(d =>
-                         d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
-                if (obj is IDisposable disposable)
-                    disposable.Dispose();
-
-            _settingsManager.Settings = settings ?? Settings.GetDefaults();
-
-            foreach (var device in _driver.InputDevices)
+            try
             {
-                var group = device.Configuration.Name;
+                // Dispose filters that implement IDisposable interface
+                foreach (var obj in _driver.InputDevices.SelectMany(d =>
+                            d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
+                    if (obj is IDisposable disposable)
+                        disposable.Dispose();
 
-                var profile = _settingsManager.Settings.Profiles.GetOrSetDefaults(_serviceProvider, device);
-                device.OutputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, device);
+                _settingsManager.Settings = settings ?? Settings.GetDefaults();
 
-                if (device.OutputMode != null)
+                foreach (var device in _driver.InputDevices)
                 {
-                    var outputModeName = _pluginFactory.GetName(profile.OutputMode);
-                    Log.Write(group, $"Output mode: {outputModeName}");
-                }
+                    var group = device.Configuration.Name;
 
-                if (device.OutputMode is IOutputMode outputMode)
-                {
-                    SetOutputModeSettings(device, outputMode, profile);
+                    var profile = _settingsManager.Settings.Profiles.GetOrSetDefaults(_serviceProvider, device);
+                    device.OutputMode = _pluginFactory.Construct<IOutputMode>(profile.OutputMode, device);
 
-                    var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
-
-                    var deps = new object?[]
+                    if (device.OutputMode != null)
                     {
-                        device,
-                        profile.BindingSettings,
-                        mouseButtonHandler
-                    }.Where(o => o != null).ToArray() as object[];
+                        var outputModeName = _pluginFactory.GetName(profile.OutputMode);
+                        Log.Write(group, $"Output mode: {outputModeName}");
 
-                    var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
+                        var outputMode = device.OutputMode;
 
-                    var lastElement = outputMode.Elements?.LastOrDefault() ??
-                                      outputMode as IPipelineElement<IDeviceReport>;
-                    lastElement.Emit += bindingHandler.Consume;
+                        var mouseButtonHandler = (outputMode as IMouseButtonSource)?.MouseButtonHandler;
+
+                        var deps = new object?[]
+                        {
+                            device,
+                            profile.BindingSettings,
+                            mouseButtonHandler
+                        }.Where(o => o != null).ToArray() as object[];
+
+                        var bindingHandler = _serviceProvider.CreateInstance<BindingHandler>(deps);
+                        SetOutputModeElements(device, outputMode, profile, bindingHandler);
+                    }
                 }
+
+                if (_driver.InputDevices.Length != 0)
+                    Log.Write("Settings", "Driver is enabled.");
+
+                SetToolSettings();
+
+                _lastValidSettings = settings;
+                SettingsChanged?.Invoke(this, _settingsManager.Settings);
+
+                return Task.CompletedTask;
             }
+            catch
+            {
+                try
+                {
+                    ApplySettings(_lastValidSettings);
+                    Log.WriteNotify("Settings", "Failed to apply settings. Reverted to last valid settings.", LogLevel.Warning);
+                }
+                catch
+                {
+                    ApplySettings(null);
+                    Log.WriteNotify("Settings", "Failed to apply last valid settings. Forcibly applied defaults.", LogLevel.Warning);
+                }
 
-            Log.Write("Settings", "Driver is enabled.");
-
-            SetToolSettings();
-
-            SettingsChanged?.Invoke(this, _settingsManager.Settings);
-
-            return Task.CompletedTask;
+                Resynchronize?.Invoke(this, EventArgs.Empty);
+                return Task.CompletedTask;
+            }
         }
 
         public async Task<Settings> ResetSettings()
@@ -287,20 +316,20 @@ namespace OpenTabletDriver.Daemon
             await DetectTablets();
         }
 
-        private void SetOutputModeSettings(InputDevice dev, IOutputMode outputMode, Profile profile)
+        private void SetOutputModeElements(InputDevice dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
         {
             string group = dev.Configuration.Name;
 
             var elements = from store in profile.Filters
-                where store.Enable
-                let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
-                where filter != null
-                select filter;
+                           where store.Enable
+                           let filter = _pluginFactory.Construct<IDevicePipelineElement>(store, dev)
+                           where filter != null
+                           select filter;
 
-            outputMode.Elements = elements.ToList();
+            outputMode.Elements = elements.Append(bindingHandler).ToList();
 
-            if (outputMode.Elements.Any())
-                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
+            if (outputMode.Elements.Count > 1)
+                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements.Where(e => e != bindingHandler))}");
         }
 
         private void SetToolSettings()
@@ -371,7 +400,7 @@ namespace OpenTabletDriver.Daemon
         public async Task<IDiagnosticInfo> GetDiagnostics()
         {
             var devices = await GetDevices();
-            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, LogMessages, devices);
+            return ActivatorUtilities.CreateInstance<DiagnosticInfo>(_serviceProvider, _logFile.Read(), devices);
         }
 
         public Task SetTabletDebug(bool enabled)
@@ -401,7 +430,7 @@ namespace OpenTabletDriver.Daemon
 
         public Task<IEnumerable<LogMessage>> GetCurrentLog()
         {
-            return Task.FromResult((IEnumerable<LogMessage>)LogMessages);
+            return Task.FromResult(_logFile.Read());
         }
 
         public Task<PluginSettings> GetDefaults(string path)
@@ -422,7 +451,7 @@ namespace OpenTabletDriver.Daemon
         {
             var baseType = _pluginManager.ExportedTypes.First(t => t.GetPath() == typeName);
             var matchingTypes = from type in _pluginFactory.GetMatchingTypes(baseType)
-                select ActivatorUtilities.CreateInstance<TypeProxy>(_serviceProvider, type);
+                                select ActivatorUtilities.CreateInstance<TypeProxy>(_serviceProvider, type);
             return Task.FromResult(matchingTypes);
         }
 
@@ -465,10 +494,9 @@ namespace OpenTabletDriver.Daemon
             switch (SystemInterop.CurrentPlatform)
             {
                 case SystemPlatform.Windows:
-                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.High;
+                    System.Diagnostics.Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
 
-                    var windows8 = new Version(6, 2, 9200, 0);
-                    if (Environment.OSVersion.Version >= windows8)
+                    if (Environment.OSVersion.Version.Build >= 22000) // Windows 11
                     {
                         unsafe
                         {
@@ -481,7 +509,7 @@ namespace OpenTabletDriver.Daemon
                                 (IntPtr)Unsafe.AsPointer(ref state),
                                 Unsafe.SizeOf<Windows.PowerThrottlingState>()))
                             {
-                                Log.Write("Platform", "Failed to allow timer resolution, asynchronous filters may have lower resolution when OTD is minimized.", LogLevel.Error);
+                                Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
                             }
                         }
                     }

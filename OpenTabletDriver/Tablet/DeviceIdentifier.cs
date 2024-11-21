@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Tablet
@@ -14,12 +15,16 @@ namespace OpenTabletDriver.Tablet
         /// The Vendor ID of the device.
         /// </summary>
         [DisplayName("Vendor ID")]
+        [Required(ErrorMessage = $"{nameof(VendorID)} identifier must be defined")]
+        [Range(0, 0xFFFF)]
         public int VendorID { set; get; }
 
         /// <summary>
         /// The Product ID of the device.
         /// </summary>
         [DisplayName("Product ID")]
+        [Required(ErrorMessage = $"{nameof(ProductID)} identifier must be defined")]
+        [Range(0, 0xFFFF)]
         public int ProductID { set; get; }
 
         /// <summary>
@@ -38,6 +43,7 @@ namespace OpenTabletDriver.Tablet
         /// The device report parser used by the detected device.
         /// </summary>
         [DisplayName("Report Parser")]
+        [RegularExpression(@"^([A-Za-z]+\w*)(\.[A-Za-z]+\w*)+$", ErrorMessage = $"{nameof(ReportParser)} for identifier must match regular expression")]
         public string ReportParser { set; get; } = string.Empty;
 
         /// <summary>
@@ -56,12 +62,17 @@ namespace OpenTabletDriver.Tablet
         /// Device strings to match against, used for identification.
         /// </summary>
         [DisplayName("Device Strings")]
-        public Dictionary<byte, string> DeviceStrings { set; get; } = new Dictionary<byte, string>();
+        public Dictionary<byte, string>? DeviceStrings { set; get; }
 
         /// <summary>
         /// Device strings to query to initialize device endpoints.
         /// </summary>
         [DisplayName("Initialization Strings")]
-        public List<byte> InitializationStrings { set; get; } = new List<byte>();
+        public List<byte>? InitializationStrings { set; get; }
+
+        /// <summary>
+        /// Other information specific to the tablet configurations identifier that can be used in tools or other applications.
+        /// </summary>
+        public Dictionary<string, string>? Attributes { set; get; }
     }
 }

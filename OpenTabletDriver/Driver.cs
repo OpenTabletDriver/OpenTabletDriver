@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Devices;
+using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Tablet;
 
@@ -128,7 +129,7 @@ namespace OpenTabletDriver
                                 }
 
                                 var pair = pairList[pairIndex];
-                                pair.Auxiliary = digitizerEndpoint;
+                                pair.Auxiliary = auxEndpoint;
                                 Log.Debug("Detect", $"Found '{candidateConfig.Name}' auxiliary: '{deviceName}'");
                                 break;
                             }
@@ -156,7 +157,7 @@ namespace OpenTabletDriver
                     }
                     catch (Exception ex)
                     {
-                        Log.Exception(ex);
+                        Log.Exception(ex, LogLevel.Warning);
                     }
                 }
 
@@ -174,7 +175,7 @@ namespace OpenTabletDriver
                         Log.Write("Detect", $"Found tablet '{config.Name}'");
                         var device = new InputDevice(config, pair.Digitizer, pair.Auxiliary);
 
-                        if (config.AuxiliaryDeviceIdentifiers.Any() && pair.Auxiliary is null)
+                        if ((config.AuxiliaryDeviceIdentifiers?.Count ?? 0) > 0 && pair.Auxiliary is null)
                         {
                             Log.Write("Detect", $"Auxiliary device not found for tablet '{config.Name}', express keys may not function properly", LogLevel.Warning);
                         }
@@ -215,9 +216,9 @@ namespace OpenTabletDriver
             }
         }
 
-        private bool TryMatch(IDeviceEndpoint device, TabletConfiguration configuration, List<DeviceIdentifier> identifiers, [NotNullWhen(true)] out InputDeviceEndpoint? endpoint)
+        private bool TryMatch(IDeviceEndpoint device, TabletConfiguration configuration, List<DeviceIdentifier>? identifiers, [NotNullWhen(true)] out InputDeviceEndpoint? endpoint)
         {
-            foreach (var identifier in identifiers)
+            foreach (var identifier in identifiers ?? Enumerable.Empty<DeviceIdentifier>())
             {
                 var match = device.VendorID == identifier.VendorID &&
                     device.ProductID == identifier.ProductID &&
@@ -225,7 +226,7 @@ namespace OpenTabletDriver
                     (identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength) &&
                     (identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength) &&
                     DeviceMatchesStrings(device, identifier.DeviceStrings) &&
-                    DeviceMatchesAttribute(device, configuration.Attributes);
+                    DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes);
 
                 if (match)
                 {
@@ -255,36 +256,52 @@ namespace OpenTabletDriver
                 }
                 catch (Exception ex)
                 {
-                    Log.Exception(ex);
+                    Log.Exception(ex, LogLevel.Debug);
                     return false;
                 }
             }
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string>? identifier_attributes, Dictionary<string, string>? config_attributes)
         {
-            switch (SystemInterop.CurrentPlatform)
+            var attributes = new Dictionary<string, string>(identifier_attributes ?? Enumerable.Empty<KeyValuePair<string, string>>());
+
+            if (config_attributes != null)
             {
-                case SystemPlatform.Windows:
-                {
-                    var devName = device.DevicePath;
+                foreach (var kvp in config_attributes)
+                    attributes.TryAdd(kvp.Key, kvp.Value);
+            }
 
-                    var interfaceMatches = !attributes.ContainsKey("WinInterface") || Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}");
-                    var keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
+            // Windows only configuration attribute.
+            if (SystemInterop.CurrentPlatform == SystemPlatform.Windows)
+            {
+                if (device is HidSharpEndpoint
+                    && attributes.TryGetValue("WinUsage", out var winUsage)
+                    && !Regex.IsMatch(device.DevicePath, $"&col{winUsage}"))
+                {
+                    // If it isn't a match there is no point proceeding.
+                    return false;
+                }
+            }
 
-                    return interfaceMatches && keyMatches;
-                }
-                case SystemPlatform.MacOS:
-                {
-                    var devName = device.DevicePath;
-                    bool interfaceMatches = !attributes.ContainsKey("MacInterface") || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}");
-                    return interfaceMatches;
-                }
-                default:
-                {
-                    return true;
-                }
+            var device_attributes = device.DeviceAttributes;
+            if (device_attributes != null)
+            {
+                return matchInterface(attributes, device_attributes);
+            }
+
+            return true;
+
+            static bool matchInterface(Dictionary<string, string> identifierAttributes, IDictionary<string, string> deviceAttributes)
+            {
+                if (!identifierAttributes.TryGetValue("Interface", out var identifierInterface))
+                    return true; // No interface specified, match.
+
+                if (!deviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var usbInterface))
+                    return false; // Device doesn't have an interface number, not a match.
+
+                return identifierInterface == usbInterface;
             }
         }
 

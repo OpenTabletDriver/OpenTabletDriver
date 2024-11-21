@@ -1,8 +1,8 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | Русский | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md)
+[English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [Português-BR](README_PTBR.md) | [Nederlands](README_NL.md) | [한국어](README_KO.md) | Русский | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [Ελληνικά](README_EL.md) | [Magyar](README_HU.md)
 
 OpenTabletDriver — кроссплатформенный драйвер с открытым исходным кодом для графических планшетов. Целью проекта является поддержка максимального числа устройств и платформ, а также создание простого и удобного интерфейса для настройки драйвера.
 
@@ -44,7 +44,7 @@ OpenTabletDriver работает в двух процессах, взаимод
 
 ### Все платформы
 
-- .NET 6 SDK
+- .NET 8 SDK
 
 #### Windows
 
@@ -85,9 +85,6 @@ OpenTabletDriver работает в двух процессах, взаимод
   - Внешние бинды плагинов
 - Сохранение и загрузка настроек
   - Автозагрузка настроек из файла `settings.json` в `%localappdata%` или `.config` пользователя
-- Редактор конфигураций планшета
-  - Создание, редактирование и удаление конфигураций
-  - Создание конфигурации из видимых HID устройств
 - Плагины
   - Фильтры
   - Режимы вывода

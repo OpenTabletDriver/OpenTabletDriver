@@ -1,6 +1,9 @@
 using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Newtonsoft.Json;
+using OpenTabletDriver.Desktop.Json;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
 
@@ -41,36 +44,62 @@ namespace OpenTabletDriver.Desktop
             };
         }
 
-        static Settings()
-        {
-            Serializer.Error += SerializationErrorHandler;
-        }
+        private static readonly JsonSerializer _serializer = new AdvancedJsonSerializer();
 
-        private static readonly JsonSerializer Serializer = new JsonSerializer
+        public static bool TryDeserialize(FileInfo file, [NotNullWhen(true)] out Settings? settings)
         {
-            Formatting = Formatting.Indented
-        };
-
-        private static void SerializationErrorHandler(object? sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
-        {
-            args.ErrorContext.Handled = true;
-            if (args.ErrorContext.Path is string path)
+            try
             {
-                if (args.CurrentObject == null)
-                    return;
-
-                Log.Write("Settings", $"Failed to load setting: {path}", LogLevel.Error);
-                return;
+                settings = deserialize(file);
+                return settings != null;
             }
-            Log.Exception(args.ErrorContext.Error);
+            catch (JsonException ex)
+            {
+                Log.Exception(ex);
+                settings = default;
+                return false;
+            }
+
+            static Settings? deserialize(FileInfo file)
+            {
+                using (var stream = file.OpenRead())
+                using (var sr = new StreamReader(stream))
+                using (var jr = new JsonTextReader(sr))
+                    return _serializer.Deserialize<Settings>(jr);
+            }
         }
 
-        public static Settings? Deserialize(FileInfo file)
+        public static void Recover(FileInfo file, Settings settings)
         {
             using (var stream = file.OpenRead())
             using (var sr = new StreamReader(stream))
             using (var jr = new JsonTextReader(sr))
-                return Serializer.Deserialize<Settings>(jr);
+            {
+                void propertyWatch(object? _, PropertyChangedEventArgs p)
+                {
+                    var prop = settings.GetType().GetProperty(p.PropertyName!)!.GetValue(settings);
+                    Log.Write("Settings", $"Recovered '{p.PropertyName}'", LogLevel.Debug);
+                }
+                settings.PropertyChanged += propertyWatch;
+
+                var serializer = new JsonSerializer
+                {
+                    Formatting = Formatting.Indented
+                };
+
+                try
+                {
+                    serializer.Populate(jr, settings);
+                }
+                catch (JsonException e)
+                {
+                    Log.Write("Settings", $"Recovery ended. Reason: {e.Message}", LogLevel.Debug);
+                }
+                finally
+                {
+                    settings.PropertyChanged -= propertyWatch;
+                }
+            }
         }
 
         public void Serialize(FileInfo file)
@@ -82,7 +111,7 @@ namespace OpenTabletDriver.Desktop
 
                 using (var sw = file.CreateText())
                 using (var jw = new JsonTextWriter(sw))
-                    Serializer.Serialize(jw, this);
+                    _serializer.Serialize(jw, this);
             }
             catch (UnauthorizedAccessException)
             {

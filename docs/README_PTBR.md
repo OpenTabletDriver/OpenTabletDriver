@@ -1,10 +1,10 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR
+[English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | Português-BR | [Nederlands](README_NL.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [Ελληνικά](README_EL.md) | [Magyar](README_HU.md)
 
-OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de tablet configurável pelo usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
+OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de mesas digitalizadoras (tablets) configurado pelo usuário. O objetivo do OpenTabletDriver é ser compatível em múltiplas plataformas em uma interface gráfica amigável e de fácil utilização para o usuário.
 
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
@@ -12,11 +12,9 @@ OpenTabletDriver é um programa de código aberto, multi-plataforma, driver de t
   <img src="https://i.imgur.com/ZLCy6wz.png" width="410" align="middle"/>
 </p>
 
-# Tablets suportados
+# Tablets compatíveis
 
-Todos os status dos tablets que estão suportados, não testados ou que estão em planejamento para serem testados estão aqui. Soluções de problemas comuns podem ser encontrados na wiki.
-
-- [Tablets suportados](https://opentabletdriver.net/Tablets)
+Todos os tablets que são compatíveis, não testados ou que estão em planejamento para testes estão [aqui](https://opentabletdriver.net/Tablets). Soluções de problemas comuns podem ser encontrados na wiki.
 
 # Instalação
 
@@ -28,15 +26,15 @@ Todos os status dos tablets que estão suportados, não testados ou que estão e
 
 O OpenTabletDriver funciona como dois processos separados que comunicam-se entre si para poder funcionar perfeitamente. O programa ativo que lida com todos o manuseio de dados é `OpenTabletDriver.Daemon`, enquanto o GUI (interface) é `OpenTabletDriver.UX.*`, onde `*` depende da plataforma<sup>1</sup>. O daemon deve ser inicializado para que tudo possa rodar sem problemas, enquanto o GUI não é necessário. Se você possui uma configuração já pronta, elas devem ser aplicadas quando o daemon iniciar.
 
-> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida. 
+> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk`, e MacOS usa `MacOS`. O que pode ser ignorado por grande parte da aplicação se você não compilar a partir da fonte, já que apenas a versão correta será fornecida.
 
 ## Buildando OpenTabletDriver da fonte
 
-Os requisitos para buildar o OpenTabletDriver são referentes à todas as plataformas. Rodando OpenTabletDriver em cada plataforma requer dependências diferentes.
+Os requisitos para buildar o OpenTabletDriver são referentes à todas as plataformas. Cada plataforma requer dependências diferentes.
 
 ### Todas as plataformas
 
-- .NET 6 SDK (pode ser obtida [aqui](https://dotnet.microsoft.com/download/dotnet/6.0) - Você precisa do SDK para sua plataforma, usuários Linux devem instalar via gerenciador de pacotes se possível)
+- .NET 8 SDK (pode ser obtida [aqui](https://dotnet.microsoft.com/download/dotnet/8.0) - Você precisa do SDK para sua plataforma, usuários Linux devem instalar via gerenciador de pacotes se possível)
 
 #### Windows
 
@@ -91,9 +89,6 @@ Sem outras dependências.
   - Binding de plugins externos
 - Salvando e carregando informações
   - Carregamento automático pelas configurações do usuário via `settings.json` no usuário ativo no diretório raiz de configurações `%localappdata%` ou `.config`
-- Editor de configurações
-  - Permite você criar, modificar e deletar configurações
-  - Gerar configurações pelos dispositivos HID visíveis
 - Plugins
   - Filtros
   - Modos de saída
@@ -106,24 +101,16 @@ Se você deseja contribuir para o OpenTabletDriver, confira a aba de [problemas]
 Se você tiver algum problema ou sugestão, [relate um problema](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose) e preencha o template com informações relevantes.
 Somos gratos aos relatos de bugs quanto aos pedidos de novos tablets para adicionar suporte. Em alguns casos, adicionar um novo tablet pode ser fácil.
 
-Para issues (problemas) e PRs relacionados aos pacotes do OpenTabletDriver, por favor veja neste repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
 
-Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https://opentabletdriver.net), veja este repositório [aqui](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+Para issues e PRs relacionados ao site do OpenTabletDriver [página web](https://opentabletdriver.net), veja este repositório [aqui](https://github.com/OpenTabletDriver/opentabletdriver.github.io).
 
 ### Adicionando suporte a um novo tablet
 
 Se você gostaria de adicionar suporte a um novo tablet, abra uma issue ou entre em nosso
-[discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte. *Nós geralmente preferimos as
-solicitações por um novo tablet sejam feitas via discord, devido as
-trocas de ideias envolvidas*.
+[discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte. *Nós geralmente preferimos as solicitações por um novo tablet sejam feitas via discord, devido as trocas de ideias envolvidas*.
 
-Nós precisaremos que você faça algumas coisas como gravar os dados enviados pelo seu tablet
-utilizando nossa ferramenta de debug integrada, testando funcionalidades do tablet
-(botões do tablet, botões da caneta, pressão da caneta, etc) com uma configuração diferente que
-nós iremos enviar a você para testar.
+Nós precisaremos que você faça algumas coisas como gravar os dados enviados pelo seu tablet utilizando nossa ferramenta de debug integrada, testando funcionalidades do tablet (botões do tablet, botões da caneta, pressão da caneta, etc) com uma configuração diferente quenós iremos enviar a você para testar.
 
-Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,
-caso tenha uma boa compreensão do que está desenvolvido.
+Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,caso tenha uma boa compreensão do que está desenvolvido.
 
-Geralmente esse processo é relativamente fácil, especialmente se a fabricante
-do seu tablet já exisitr em algum outro tablet que já tenha suporte.
+Geralmente esse processo é relativamente fácil, especialmente se a fabricante do seu tablet já exisitr em algum outro tablet que já tenha suporte.

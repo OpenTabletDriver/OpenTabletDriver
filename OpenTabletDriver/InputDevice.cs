@@ -12,6 +12,7 @@ namespace OpenTabletDriver
     public sealed class InputDevice : IDisposable
     {
         private InputDeviceState _state;
+        private object _sync = new object();
 
         public InputDevice(TabletConfiguration configuration, InputDeviceEndpoint digitizer, InputDeviceEndpoint? auxiliary)
         {
@@ -86,8 +87,11 @@ namespace OpenTabletDriver
 
         private void HandleReport(object? sender, IDeviceReport? report)
         {
-            // no need to try catch here, it's handled by the InputDeviceEndpoints
-            OutputMode?.Read(report!);
+            lock (_sync)
+            {
+                // no need to try catch here, it's handled by the InputDeviceEndpoints
+                OutputMode?.Read(report!);
+            }
         }
 
         public void Dispose()

@@ -1,0 +1,37 @@
+{
+  "Name": "Huion 1060 Plus",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 158.75,
+      "MaxX": 40000,
+      "MaxY": 25000
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 12
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 16,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "DeviceStrings": {
+        "6": "1060PRO",
+        "121": "HA60-F400"
+      },
+      "InitializationStrings": [
+        100,
+        123
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

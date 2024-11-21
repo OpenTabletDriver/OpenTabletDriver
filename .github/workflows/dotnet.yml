@@ -12,13 +12,12 @@ jobs:
     name: Linux Publish
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '7.0'
-          include-prerelease: True
+          dotnet-version: '8.0'
 
       - name: Linux Publish
         env:
@@ -30,32 +29,31 @@ jobs:
           dotnet publish OpenTabletDriver.UX.Gtk "${options[@]}" --runtime "$runtime" -o "build/$runtime"
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
 
       - name: Generate udev Rules
-        run: ./generate-rules.sh
+        run: ./generate-rules.sh > 70-opentabletdriver.rules
 
       - name: Upload udev Rules
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: udev Rules
-          path: bin/99-opentabletdriver.rules
+          path: 70-opentabletdriver.rules
 
   macospublish:
     runs-on: ubuntu-latest
     name: MacOS Publish
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '7.0'
-          include-prerelease: True
+          dotnet-version: '8.0'
 
       - name: MacOS Publish
         env:
@@ -67,7 +65,7 @@ jobs:
           dotnet publish OpenTabletDriver.UX.MacOS "${options[@]}" --runtime "$runtime" -o "build/$runtime"
 
       - name: Upload MacOS artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver osx-x64
           path: build/osx-x64
@@ -77,13 +75,12 @@ jobs:
     name: Windows Publish
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '7.0'
-          include-prerelease: True
+          dotnet-version: '8.0'
 
       - name: Windows Publish
         env:
@@ -95,44 +92,42 @@ jobs:
           dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
 
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: OpenTabletDriver win-x64
           path: build/win-x64
 
   linter:
-    name: dotnet format
+    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           # Full git history is needed to get a proper list of changed files
           fetch-depth: 0
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '7.0'
-          include-prerelease: True
+          dotnet-version: '8.0'
 
       - name: Lint Changed Files
         run: |
           mapfile -t files < <(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '.*\.cs$')
-          if [ ${#files[@]} -ne 0 ]; then dotnet format OpenTabletDriver --verify-no-changes --include "${files[@]}"; fi
+          if [ ${#files[@]} -ne 0 ]; then dotnet format OpenTabletDriver.sln --verify-no-changes --include "${files[@]}"; fi
 
   unittests:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '7.0'
-          include-prerelease: True
+          dotnet-version: '8.0'
 
       - name: Run tests
         run: dotnet test
@@ -142,13 +137,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v3.2.0
         with:
-          dotnet-version: '7.0'
-          include-prerelease: True
+          dotnet-version: '8.0'
 
       - name: Windows
         run: dotnet restore OpenTabletDriver.Windows.slnf

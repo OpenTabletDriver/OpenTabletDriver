@@ -31,9 +31,7 @@ rules must be followed:
   name,* with a `.json` extension. Spaces are acceptable, and
   preferable to underscores.
 - The file must be located in the directory dedicated to an individual manufacturer.
-- All trailing whitespace must be trimmed before committing. When using the configuration editor
-  within the OpenTabletDriver UI, this will be performed automatically. We recommend using it to
-  generate new configs, as it will also format the json correctly with correct indentation, etc.
+- All trailing whitespace must be trimmed before committing.
 - The current formatting of the `TABLETS.md` document must be strictly followed as below:
 
   | Column | Contents                                                                                          |
@@ -137,7 +135,7 @@ review comment. Resolve applied fixes, if they are not resolved by GitHub automa
 
 ## Unit-Testing OpenTabletDriver
 
-Our CI runs unit tests on each new commit pushed on a PR, but if you'd like to test OpenTabletDriver locally, you can do so by running the command `dotnet test OpenTabletDriver` from the project root, which will run all tests and report status.
+Our CI runs unit tests on each new commit pushed on a PR, but if you'd like to test OpenTabletDriver locally, you can do so by running the command `dotnet test` from the project root, which will run all tests and report status.
 The unit tests for the most part concern the daemon part of the driver, which performs the bulk of the "work" and thus is critical to test.
 Of course, we also welcome contributions adding more unit testing, our coverage is weaker outside of
 critical areas.

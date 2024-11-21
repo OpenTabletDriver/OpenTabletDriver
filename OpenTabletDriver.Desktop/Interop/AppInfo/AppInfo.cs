@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Desktop.Interop.AppInfo
@@ -12,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             _settingsFile,
             _pluginDirectory,
             _presetDirectory,
+            _logDirectory,
             _temporaryDirectory,
             _cacheDirectory,
             _backupDirectory,
@@ -53,6 +55,12 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             get => _presetDirectory ?? GetDefaultPresetDirectory();
         }
 
+        public string LogDirectory
+        {
+            set => _logDirectory = value;
+            get => _logDirectory ?? GetDefaultLogDirectory();
+        }
+
         public string TemporaryDirectory
         {
             set => _temporaryDirectory = value;
@@ -77,7 +85,15 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             get => _trashDirectory ?? GetDefaultTrashDirectory();
         }
 
-        public static string ProgramDirectory => AppContext.BaseDirectory;
+        public static string ProgramDirectory => SystemInterop.CurrentPlatform switch
+        {
+            SystemPlatform.MacOS => Regex.Match(AppContext.BaseDirectory, "^(.*)/[^/]+\\.app/Contents/MacOS/?$", RegexOptions.IgnoreCase) switch
+            {
+                { Success: true } match => match.Groups[1].ToString(),
+                _ => AppContext.BaseDirectory
+            },
+            _ => AppContext.BaseDirectory
+        };
 
         public static IAppInfo GetPlatformAppInfo()
         {
@@ -103,6 +119,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
         private string GetDefaultSettingsFile() => Path.Join(AppDataDirectory, "settings.json");
         private string GetDefaultPluginDirectory() => Path.Join(AppDataDirectory, "Plugins");
         private string GetDefaultPresetDirectory() => Path.Join(AppDataDirectory, "Presets");
+        private string GetDefaultLogDirectory() => Path.Join(AppDataDirectory, "Logs");
         private string GetDefaultTemporaryDirectory() => Path.Join(AppDataDirectory, "Temp");
         private string GetDefaultCacheDirectory() => Path.Join(AppDataDirectory, "Cache");
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");

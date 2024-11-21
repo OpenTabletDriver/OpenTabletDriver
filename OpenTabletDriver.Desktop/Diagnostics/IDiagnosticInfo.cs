@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using OpenTabletDriver.Devices;
@@ -11,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
     {
         string AppVersion { get; }
         string BuildDate { get; }
-        OperatingSystem OperatingSystem { get; }
+        OSInfo OperatingSystem { get; }
         IDictionary<string, string> EnvironmentVariables { get; }
         IEnumerable<IDeviceEndpoint> Devices { get; }
         IEnumerable<LogMessage> ConsoleLog { get; }

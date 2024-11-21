@@ -8,31 +8,24 @@
       "MaxY": 24999
     },
     "Pen": {
-        "MaxPressure": 1023,
-        "ButtonCount": 2
-      },
+      "MaxPressure": 1023,
+      "ButtonCount": 2
+    },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 21827,
       "ProductID": 1921,
       "InputReportLength": 8,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
       "InitializationStrings": [
         100
       ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

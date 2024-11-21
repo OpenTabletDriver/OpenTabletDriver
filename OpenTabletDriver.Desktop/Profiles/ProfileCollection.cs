@@ -24,6 +24,11 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => GetProfile(tablet);
         }
 
+        public Profile? GetProfile(string tablet)
+        {
+            return this.FirstOrDefault(t => t.Tablet == tablet);
+        }
+
         private void SetProfile(InputDevice tablet, Profile? profile)
         {
             if (profile == null)

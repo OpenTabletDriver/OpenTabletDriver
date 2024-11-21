@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+SHELL=/usr/bin/env bash
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	./eng/linux/package.sh --output bin
+	PREFIX=usr ./eng/linux/package.sh --package Generic --build false
+
+override_dh_auto_install:
+	mkdir -p ./debian/tmp
+	mv ./dist/files/* ./debian/tmp/
+	rm -rf ./dist
+	mkdir -p ./debian/tmp/usr/lib/
+	cp -r ./bin ./debian/tmp/usr/lib/opentabletdriver
+
+override_dh_strip:

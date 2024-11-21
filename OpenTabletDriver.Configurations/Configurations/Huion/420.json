@@ -10,20 +10,14 @@
     "Pen": {
       "MaxPressure": 2047,
       "ButtonCount": 2
-    },
-    "AuxiliaryButtons": null,
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 8,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "DeviceStrings": {
         "6": "^420"
       },
@@ -36,10 +30,7 @@
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 8,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "DeviceStrings": {
         "6": "^$",
         "121": "^H850_F210$"
@@ -50,8 +41,8 @@
       ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
-    "libinputoverride": "1"
+    "libinputoverride": "1",
+    "Interface": "0"
   }
 }

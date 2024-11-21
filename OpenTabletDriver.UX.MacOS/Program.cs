@@ -1,9 +1,11 @@
+using System;
 using Eto.Forms;
 
 namespace OpenTabletDriver.UX.MacOS
 {
     public class Program
     {
+        [STAThread]
         public static void Main(string[] args)
         {
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -15,7 +17,10 @@ namespace OpenTabletDriver.UX.MacOS
                 return;
             }
 
-            new MacOSApp(args).Start();
+            if (PermissionHelper.HasPermissions())
+            {
+                new MacOSApp(args).Start();
+            }
         }
     }
 }

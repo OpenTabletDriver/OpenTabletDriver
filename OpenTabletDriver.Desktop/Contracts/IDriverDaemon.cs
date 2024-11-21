@@ -20,6 +20,7 @@ namespace OpenTabletDriver.Desktop.Contracts
         event EventHandler<DebugReportData> DeviceReport;
         event EventHandler<IEnumerable<TabletConfiguration>>? TabletsChanged;
         event EventHandler<PluginEventType>? AssembliesChanged;
+        event EventHandler? Resynchronize;
 
         Task WriteMessage(LogMessage message);
 

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Tablet
@@ -12,12 +13,14 @@ namespace OpenTabletDriver.Tablet
         /// <summary>
         /// Specifications for the tablet digitizer.
         /// </summary>
-        public DigitizerSpecifications? Digitizer { set; get; }
+        [Required(ErrorMessage = $"{nameof(Digitizer)} specifications must be defined")]
+        public DigitizerSpecifications Digitizer { set; get; } = new DigitizerSpecifications();
 
         /// <summary>
         /// Specifications for the tablet's pen.
         /// </summary>
-        public PenSpecifications? Pen { set; get; }
+        [Required(ErrorMessage = $"{nameof(Pen)} specifications must be defined")]
+        public PenSpecifications Pen { set; get; } = new PenSpecifications();
 
         /// <summary>
         /// Specifications for the auxiliary buttons.

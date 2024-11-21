@@ -1,10 +1,11 @@
 <Project>
   <PropertyGroup>
     <VersionBase>0.7.0.0</VersionBase>
-    <FrameworkLTS>net6.0</FrameworkLTS>
-    <FrameworkLatest>net7.0</FrameworkLatest>
+    <FrameworkLTS>net8.0</FrameworkLTS>
+    <FrameworkLatest>net8.0</FrameworkLatest>
     <LangVersion>preview</LangVersion>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Package Information">

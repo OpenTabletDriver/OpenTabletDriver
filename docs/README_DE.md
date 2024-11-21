@@ -1,8 +1,8 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20Core/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
-[English](../README.md) | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md) | Deutsch | [Português-BR](README_PTBR.md)
+[English](../README.md) | [Español](README_ES.md) | [Français](README_FR.md) | Deutsch | [Português-BR](README_PTBR.md) | [Nederlands](README_NL.md) | [한국어](README_KO.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [繁體中文](README_TW.md) | [Ελληνικά](README_EL.md) | [Magyar](README_HU.md)
 
 OpenTabletDriver ist ein plattformübergreifender Open Source Benutzermodustreiber für Grafiktabletts. Das Ziel von OpenTabletDriver ist es, so Cross-Plattform wie möglich zu sein, mit der höchsten Kompatibilität und mit einer einfach zu konfigurierenden grafischen Benutzeroberfläche.
 
@@ -36,7 +36,7 @@ Die Voraussetzungen für OpenTabletDriver sind auf allen Plattformen gleich, die
 
 ### Alle Plattformen
 
-- .NET 6 SDK (kann [hier](https://dotnet.microsoft.com/download/dotnet/6.0) heruntergeladen werden - Die SDK für die jeweilige Plattform wird benötigt, Linux-Nutzer sollten die SDK nach Möglichkeit mithilfe eines Package-Managers installieren)
+- .NET 8 SDK (kann [hier](https://dotnet.microsoft.com/download/dotnet/8.0) heruntergeladen werden - Die SDK für die jeweilige Plattform wird benötigt, Linux-Nutzer sollten die SDK nach Möglichkeit mithilfe eines Package-Managers installieren)
 
 #### Windows
 
@@ -50,7 +50,6 @@ Benötigte Packages (manche Packages können bei Ihrer Distribution vorinstallie
 - libxrandr
 - libevdev2
 - GTK+3
-
 
 Um auf Linux zu kompilieren, führen Sie 'build.sh' aus. Es werden die gleichen
 'dotnet publish' Befehle ausgeführt, die auch für das AUR-Package verwendet werden.
@@ -96,9 +95,6 @@ Keine weiteren Abhängigkeiten.
   - Belegung mit pluginabhängigen Einstellungen
 - Speichern und Laden von Einstellungen
   - Autoladen von Benutzereinstellungen aus `settings.json` in den momentan aktiven Benutzer `%localappdata%` oder `.config` in das Root-Verzeichnis.
-- Konfigurationseditor
-  - Erlaubt es, Konfigurationsdateien zu erstellen, ändern und löschen.
-  - Generiert Konfigurationen für sichtbare HID-Geräte.
 - Plugins
   - Filter
   - Ausgabemodi

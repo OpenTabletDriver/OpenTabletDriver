@@ -7,6 +7,17 @@ body:
       value: |
         Fill out the fields below adequately so that we have an easier time responding to your request. Thank you.
 
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        List what you would like to see added or changed.
+        Be descriptive and use images or video when possible.
+      placeholder: ex. I would like a new feature such that...
+    validations:
+      required: true
+
   - type: checkboxes
     id: acknowledgements
     attributes:
@@ -19,14 +30,5 @@ body:
           required: true
         - label: I have written a concise and meaningful title.
           required: true
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Description
-      description: |
-        List what you would like to see added or changed.
-        Be descriptive and use images or video when possible.
-      placeholder: ex. I would like a new feature such that...
-    validations:
-      required: true
+        - label: I am on the latest version of OpenTabletDriver.
+          required: false

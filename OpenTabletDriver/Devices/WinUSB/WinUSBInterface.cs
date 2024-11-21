@@ -1,7 +1,10 @@
 using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using HidSharp.Reports;
+using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.USB;
 using static OpenTabletDriver.Native.Windows.Windows;
@@ -76,12 +79,41 @@ namespace OpenTabletDriver.Devices.WinUSB
                 SerialNumber = deviceDescriptor.iSerialNumber != 0
                     ? GetDeviceString(deviceDescriptor.iSerialNumber)
                     : "Unknown Serial Number";
+
+                var reportDescriptorBuffer = ArrayPool<byte>.Shared.Rent(256);
+                fixed (void* reportDescriptorPtr = &reportDescriptorBuffer[0])
+                {
+                    var reportDescriptorPacket = SetupPacket.MakeGetDescriptor(
+                        RequestInternalType.Standard,
+                        RequestRecipient.Interface,
+                        DescriptorType.Report, 0,
+                        256
+                    );
+
+                    if (!WinUsb_ControlTransfer(winUsbHandle!, reportDescriptorPacket, reportDescriptorPtr, 256, out var lengthTransferred, null))
+                        throw new IOException("Failed to retrieve report descriptor");
+
+                    _reportDescriptor = new byte[lengthTransferred];
+                    Array.Copy(reportDescriptorBuffer, _reportDescriptor, lengthTransferred);
+
+                    try
+                    {
+                        var reportDescriptor = new ReportDescriptor(_reportDescriptor);
+                        FeatureReportLength = reportDescriptor.MaxFeatureReportLength;
+                    }
+                    catch
+                    {
+                        // Ignore
+                    }
+                }
+                ArrayPool<byte>.Shared.Return(reportDescriptorBuffer);
             });
         }
 
         private int _referenceCount;
         private SafeFileHandle? _activeFileHandle;
         private SafeWinUsbInterfaceHandle? _activeWinUsbHandle;
+        private byte[]? _reportDescriptor;
 
         internal int InterfaceNum { private set; get; }
         internal byte? InputPipe { private set; get; }
@@ -95,7 +127,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         public int OutputReportLength { private set; get; }
 
-        public int FeatureReportLength => 0; // requires parsing report descriptor to determine feature report length
+        public int FeatureReportLength { private set; get; }
 
         public string? Manufacturer { private set; get; }
 
@@ -108,6 +140,8 @@ namespace OpenTabletDriver.Devices.WinUSB
         public string DevicePath { get; }
 
         public bool CanOpen => true;
+
+        public IDictionary<string, string>? DeviceAttributes => GetDeviceAttributes();
 
         public unsafe string? GetDeviceString(byte index)
         {
@@ -198,6 +232,18 @@ namespace OpenTabletDriver.Devices.WinUSB
                 _activeWinUsbHandle = null;
                 _activeFileHandle = null;
             }
+        }
+
+        private IDictionary<string, string> GetDeviceAttributes()
+        {
+            var deviceAttributes = new Dictionary<string, string>
+            {
+                ["USB_INTERFACE_NUMBER"] = InterfaceNum.ToString()
+            };
+
+            Extensions.ExtractHidUsages(deviceAttributes, () => new ReportDescriptor(_reportDescriptor));
+
+            return deviceAttributes;
         }
     }
 }
