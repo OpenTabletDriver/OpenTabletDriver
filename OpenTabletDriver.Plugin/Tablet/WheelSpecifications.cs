@@ -26,5 +26,11 @@ namespace OpenTabletDriver.Plugin.Tablet
         [Required(ErrorMessage = $"{nameof(AngleOfZeroReading)} must be defined")]
         [Range(0, 360)]
         public float AngleOfZeroReading { get; set; }
+
+        /// <summary>
+        /// Specifications for the wheel buttons
+        /// </summary>
+        [Required(ErrorMessage = $"{nameof(Buttons)} must be defined")]
+        public ButtonSpecifications Buttons { set; get; } = new ButtonSpecifications();
     }
 }
