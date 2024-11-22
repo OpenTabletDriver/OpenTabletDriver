@@ -41,7 +41,7 @@ namespace OpenTabletDriver.Desktop
                 },
                 PluginPlatform.MacOS => new AppInfo()
                 {
-                    AppDataDirectory = GetPath(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
+                    AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
                     TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
                     CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")
                 },
