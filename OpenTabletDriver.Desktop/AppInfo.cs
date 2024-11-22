@@ -35,13 +35,13 @@ namespace OpenTabletDriver.Desktop
                 PluginPlatform.Linux => new AppInfo
                 {
                     ConfigurationDirectory = GetExistingPath("$XDG_DATA_HOME/OpenTabletDriver/Configurations", "~/.local/share/OpenTabletDriver/Configurations"),
-                    AppDataDirectory = GetPath("$XDG_CONFIG_HOME/OpenTabletDriver", "~/.config/OpenTabletDriver"),
+                    AppDataDirectory = GetPath(Path.Join(ProgramDirectory, "userdata"), "$XDG_CONFIG_HOME/OpenTabletDriver", "~/.config/OpenTabletDriver"),
                     TemporaryDirectory = GetPath("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver"),
                     CacheDirectory = GetPath("$XDG_CACHE_HOME/OpenTabletDriver", "~/.cache/OpenTabletDriver"),
                 },
                 PluginPlatform.MacOS => new AppInfo()
                 {
-                    AppDataDirectory = GetPath("~/Library/Application Support/OpenTabletDriver"),
+                    AppDataDirectory = GetPath(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
                     TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
                     CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")
                 },
