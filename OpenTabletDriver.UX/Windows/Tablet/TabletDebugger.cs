@@ -7,8 +7,8 @@ using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.Plugin.Timing;
@@ -310,6 +310,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             private static readonly Color AccentColor = SystemColors.Highlight;
 
             public DebugReportData ReportData { set; get; }
+            private List<int> _warnedDigitizers = [];
 
             public BindableBinding<TabletVisualizer, DebugReportData> ReportDataBinding
             {
@@ -358,12 +359,13 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             protected void DrawPosition(Graphics graphics, float scale, TabletReference tablet)
             {
                 var report = ReportData?.ToObject();
-                var specifications = ReportData.Tablet.Properties.Specifications;
                 var pen = specifications.Pen;
-                var touchDigitizerSpecification = specifications.Touch;
-                var absDigitizerSpecification = specifications.Digitizer;
+                var specifications = ReportData?.Tablet.Properties.Specifications;
+                var tabletName = ReportData?.Tablet.Properties.Name;
+                var touchDigitizerSpecification = specifications?.Touch;
+                var absDigitizerSpecification = specifications?.Digitizer;
 
-                if (report is IAbsolutePositionReport absReport)
+                if (report is IAbsolutePositionReport absReport && absDigitizerSpecification != null)
                 {
                     var tabletScale = calculateTabletScale(absDigitizerSpecification, scale);
                     var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
@@ -371,8 +373,21 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
                     graphics.FillEllipse(AccentColor, drawRect);
                 }
+                else if (absDigitizerSpecification == null)
+                {
+                    var absHashName = tabletName + "abs";
+                    var absHash = absHashName.GetHashCode();
+                    if (!_warnedDigitizers.Contains(absHash))
+                    {
+                        _warnedDigitizers.Add(absHash);
+                        Log.Write("TabletDebugger",
+                            "Digitizer undefined in tablet configuration - unable to draw points",
+                            LogLevel.Warning);
+                    }
+                }
 
-                if (report is ITouchReport touchReport)
+                // touch reports
+                if (report is ITouchReport touchReport && touchDigitizerSpecification != null)
                 {
                     var tabletScale = calculateTabletScale(touchDigitizerSpecification, scale);
 
@@ -382,6 +397,18 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                         var drawPen = new Pen(AccentColor, SPACING / 2);
                         var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING * 2, SPACING * 2));
                         graphics.DrawEllipse(drawPen, drawRect);
+                    }
+                }
+                else if (touchDigitizerSpecification == null)
+                {
+                    var touchHashName = tabletName + "touch";
+                    var touchHash = touchHashName.GetHashCode();
+                    if (!_warnedDigitizers.Contains(touchHash))
+                    {
+                        _warnedDigitizers.Add(touchHash);
+                        Log.Write("TabletDebugger",
+                            "Touch undefined in tablet configuration - unable to draw touch points",
+                            LogLevel.Warning);
                     }
                 }
             }
