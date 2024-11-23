@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Native.OSX;
-using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
@@ -16,6 +15,18 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             if (EtoKeysymToVK.TryGetValue(key, out var code))
             {
                 var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
+                var flag = FromCGKeyCode((CGKeyCode)code);
+                var currentFlag = CGEventSourceFlagsState(CGEventSourceStateHIDSystemState) & (0xffffffff ^ 0x20000100);
+
+                if (flag != 0)
+                {
+                    if (!isPress)
+                        currentFlag &= ~(ulong)flag;
+                    else
+                        currentFlag |= (ulong)flag;
+                }
+
+                CGEventSetFlags(keyEvent, currentFlag);
                 CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
                 CFRelease(keyEvent);
             }
@@ -44,6 +55,21 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
         }
 
         public IEnumerable<string> SupportedKeys => EtoKeysymToVK.Keys;
+
+        private static CGEventFlags FromCGKeyCode(CGKeyCode code)
+        {
+            return code switch
+            {
+                CGKeyCode.kVK_CapsLock => CGEventFlags.kCGEventFlagMaskAlphaShift,
+                CGKeyCode.kVK_Command or CGKeyCode.kVK_RightCommand => CGEventFlags.kCGEventFlagMaskCommand,
+                CGKeyCode.kVK_Control or CGKeyCode.kVK_RightControl => CGEventFlags.kCGEventFlagMaskControl,
+                CGKeyCode.kVK_Function => CGEventFlags.kCGEventFlagMaskSecondaryFn,
+                CGKeyCode.kVK_Help => CGEventFlags.kCGEventFlagMaskHelp,
+                CGKeyCode.kVK_Option or CGKeyCode.kVK_RightOption => CGEventFlags.kCGEventFlagMaskAlternate,
+                CGKeyCode.kVK_Shift or CGKeyCode.kVK_RightShift => CGEventFlags.kCGEventFlagMaskShift,
+                _ => 0
+            };
+        }
 
         internal static readonly Dictionary<string, CGKeyCode> EtoKeysymToVK = new Dictionary<string, CGKeyCode>
         {
