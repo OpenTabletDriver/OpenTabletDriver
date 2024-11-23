@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static OSX;
 
-    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
+    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer, IPressureHandler
     {
         private Vector2 offset;
         private Vector2? lastPos;
