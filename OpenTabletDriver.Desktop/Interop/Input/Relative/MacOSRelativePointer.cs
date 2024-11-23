@@ -11,12 +11,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
     public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer, IPressureHandler
     {
-        private CGPoint offset;
+        private CGPoint _offset;
 
         public MacOSRelativePointer()
         {
             var primary = DesktopInterop.VirtualScreen.Displays.First();
-            offset = new CGPoint(primary.Position.X, primary.Position.Y);
+            _offset = new CGPoint(primary.Position.X, primary.Position.Y);
         }
 
         public void SetPosition(Vector2 delta)
@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
         private CGPoint GetCursorPosition()
         {
             var eventRef = CGEventCreate(IntPtr.Zero);
-            var pos = CGEventGetLocation(eventRef) + offset;
+            var pos = CGEventGetLocation(eventRef) + _offset;
             CFRelease(eventRef);
             return pos;
         }
