@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static OSX;
 
-    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer, IPressureHandler
+    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
     {
         private Vector2 _offset;
         private Vector2? _lastPos;
@@ -28,11 +28,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             _lastPos = newPos;
 
             QueuePendingPosition(newPos.X, newPos.Y);
-        }
-
-        public void SetPressure(float percentage)
-        {
-            base.setPressure(percentage);
         }
 
         protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)

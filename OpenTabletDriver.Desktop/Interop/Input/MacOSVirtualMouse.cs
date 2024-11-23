@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
-    public abstract class MacOSVirtualMouse : IMouseButtonHandler, ISynchronousPointer, ITiltHandler, IEraserHandler
+    public abstract class MacOSVirtualMouse : IMouseButtonHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
     {
         private const int DoubleClickMoveTolerance = 8;
         private const int ProximityExpiresDurationInMs = 200;
@@ -108,7 +108,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             }
         }
 
-        protected void setPressure(float percentage)
+        public void SetPressure(float percentage)
         {
             _pressure = percentage;
         }
