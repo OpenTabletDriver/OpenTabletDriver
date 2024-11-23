@@ -359,7 +359,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             protected void DrawPosition(Graphics graphics, float scale, TabletReference tablet)
             {
                 var report = ReportData?.ToObject();
-                var pen = specifications.Pen;
                 var specifications = ReportData?.Tablet.Properties.Specifications;
                 var tabletName = ReportData?.Tablet.Properties.Name;
                 var touchDigitizerSpecification = specifications?.Touch;
