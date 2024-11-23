@@ -5,17 +5,18 @@ using OpenTabletDriver.Native.OSX.Input;
 
 namespace OpenTabletDriver.Native.OSX
 {
+    using static ObjectiveCRuntime;
+
     using CGDirectDisplayID = UInt32;
     using CGError = Int32;
     using CGEventRef = IntPtr;
     using CGEventSourceRef = IntPtr;
-    using static ObjectiveCRuntime;
 
     public static class OSX
     {
         public const int CGEventSourceStateHIDSystemState = 1;
         public const int CGEventSourceStatePrivate = -1;
-        
+
         private const string Quartz = "/System/Library/Frameworks/Quartz.framework/Versions/Current/Quartz";
         private const string Foundation = "/System/Library/Frameworks/Foundation.framework/Foundation";
         private const string AppKit = "/System/Library/Frameworks/AppKit.framework/AppKit";
