@@ -342,7 +342,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
                         DrawBackground(graphics, finalScale, tablet);
                         DrawPosition(graphics, finalScale, tablet);
-                        DrawTouchPoints(graphics, finalScale, tablet);
                     }
                 }
             }
@@ -360,28 +359,22 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 var report = ReportData?.ToObject();
                 var specifications = ReportData.Tablet.Properties.Specifications;
-                var digitizer = specifications.Digitizer;
                 var pen = specifications.Pen;
+                var touchDigitizerSpecification = specifications.Touch;
+                var absDigitizerSpecification = specifications.Digitizer;
 
                 if (report is IAbsolutePositionReport absReport)
                 {
-                    var tabletScale = calculateTabletScale(digitizer, scale);
+                    var tabletScale = calculateTabletScale(absDigitizerSpecification, scale);
                     var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
 
                     var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
                     graphics.FillEllipse(AccentColor, drawRect);
                 }
-            }
-
-            protected void DrawTouchPoints(Graphics graphics, float scale, TabletReference tablet)
-            {
-                var report = ReportData?.ToObject();
-                var specifications = ReportData.Tablet.Properties.Specifications;
-                var digitizer = specifications.Touch;
 
                 if (report is ITouchReport touchReport)
                 {
-                    var tabletScale = calculateTabletScale(digitizer, scale);
+                    var tabletScale = calculateTabletScale(touchDigitizerSpecification, scale);
 
                     foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
                     {
