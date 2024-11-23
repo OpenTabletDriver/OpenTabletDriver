@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     using static OSX;
 
-    public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer
+    public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer, IPressureHandler
     {
         private CGPoint offset;
 
