@@ -4,6 +4,13 @@
     <TargetFrameworks>$(FrameworkBase)</TargetFrameworks>
   </PropertyGroup>
 
+  <PropertyGroup Label="NuGet Package">
+    <PackageId>OpenTabletDriver.Plugin</PackageId>
+    <Description>Library used to create OpenTabletDriver plugins.</Description>
+    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
   <PropertyGroup>
     <BuildDate>$([System.DateTime]::UtcNow.ToString("d"))</BuildDate>
   </PropertyGroup>
@@ -17,11 +24,5 @@
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
-
-  <PropertyGroup Label="NuGet Package Information">
-    <PackageId>OpenTabletDriver.Plugin</PackageId>
-    <Description>Library used to create OpenTabletDriver plugins.</Description>
-    <PackageOutputPath>../nupkg</PackageOutputPath>
-  </PropertyGroup>
 
 </Project>

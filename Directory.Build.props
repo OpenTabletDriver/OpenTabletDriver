@@ -1,4 +1,5 @@
 <Project>
+
   <PropertyGroup>
     <VersionBase>0.6.4.0</VersionBase>
     <FrameworkBase>net8.0</FrameworkBase>
@@ -7,8 +8,19 @@
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
-  <PropertyGroup Label="Package Information">
+  <PropertyGroup Label="NuGet Package">
     <Authors>InfinityGhost;X9VoiD</Authors>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+    <ProjectUrl>https://www.opentabletdriver.net/</ProjectUrl>
+    <RepositoryUrl>https://www.github.com/OpenTabletDriver/OpenTabletDriver</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageOutputPath>..\nupkg</PackageOutputPath>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup Label="NuGet Metadata">
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
 </Project>
