@@ -66,6 +66,15 @@ jobs:
           name: OpenTabletDriver.osx-x64.tar.gz
           path: ./dist/macos/*.tar.gz
 
+      - name: Publish NuGet package
+        if: ${{ github.event_name != 'workflow_dispatch' }}
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
+          SOURCE: https://api.nuget.org/v3/index.json
+        run: |
+          dotnet pack
+          dotnet nuget push ./nupkg/*.nupkg -s "$SOURCE" -k "$NUGET_AUTH_TOKEN"
+
   fedora:
     runs-on: ubuntu-latest
     name: Unix Release (Fedora Host)
