@@ -14,9 +14,7 @@ namespace OpenTabletDriver.Native.Posix
             {
                 ret = func();
             }
-            while (ret == -1 
-                && (ERRNO)Marshal.GetLastWin32Error() == ERRNO.EINTR 
-                && count++ < 100);
+            while (ret == -1 && (ERRNO)Marshal.GetLastWin32Error() == ERRNO.EINTR && count++ < 100);
 
             return ret;
         }

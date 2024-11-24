@@ -1,14 +1,14 @@
 using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.OSX.Timers;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Timers;
+using Thread = System.Threading.Thread;
+
 using static OpenTabletDriver.Native.Posix.Utility;
 using static OpenTabletDriver.Native.OSX.Timers.Timers;
-using Thread = System.Threading.Thread;
 
 #nullable enable
 
