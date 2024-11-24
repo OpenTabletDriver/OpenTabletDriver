@@ -45,13 +45,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         public void MouseDown(MouseButton button)
         {
-            QueuePendingPositionFromSystem();
+            if (!_pendingX.HasValue)
+                QueuePendingPositionFromSystem();
             SetButtonState(ref _currButtonStates, ToCGMouseButton(button), true);
         }
 
         public void MouseUp(MouseButton button)
         {
-            QueuePendingPositionFromSystem();
+            if (!_pendingX.HasValue)
+                QueuePendingPositionFromSystem();
             SetButtonState(ref _currButtonStates, ToCGMouseButton(button), false);
         }
 
@@ -98,6 +100,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         protected abstract void SetPendingPosition(IntPtr mouseEvent, float x, float y);
         protected abstract void ResetPendingPosition(IntPtr mouseEvent);
 
+        // binding can be triggered by auxiliary buttons and cursor might be moved by other devices.
+        // in such case we fetch the position from system.
+        protected abstract void QueuePendingPositionFromSystem();
+
         protected void QueuePendingPosition(float x, float y)
         {
             _pendingX = x;
@@ -142,7 +148,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     {
                         if (_pendingX.HasValue && (_clickState == 0 || doubleClickInvalidated))
                         {
-                            _doubleClickStopWatch.Reset();
+                            _doubleClickStopWatch.Restart();
                             _lastMouseDownPosition = new Vector2(_pendingX.Value, _pendingY!.Value);
                             _mouseMovedSinceLastDown = false;
                             _clickState = 1;
@@ -288,19 +294,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             // set keyboard modifier and filter out `nonCoalesced` and 0x20000000 flags
             // see https://github.com/Hammerspoon/hammerspoon/blob/0ccc9d07641a660140d1d2f05b76f682b501a0e8/extensions/eventtap/libeventtap_event.m#L1558-L1560
             CGEventSetFlags(_mouseEvent, CGEventSourceFlagsState(CGEventSourceStateHIDSystemState) & (0xffffffff ^ 0x20000100));
-        }
-
-        // binding can be triggered by auxiliary buttons and cursor might be moved by other devices.
-        // in such case we fetch the position from system.
-        private void QueuePendingPositionFromSystem()
-        {
-            if (!_pendingX.HasValue)
-            {
-                var eventRef = CGEventCreate(IntPtr.Zero);
-                var pos = CGEventGetLocation(eventRef);
-                CFRelease(eventRef);
-                QueuePendingPosition((float)pos.x, (float)pos.y);
-            }
         }
 
         ~MacOSVirtualMouse()

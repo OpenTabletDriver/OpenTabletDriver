@@ -37,6 +37,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, 0);
         }
 
+        protected override void QueuePendingPositionFromSystem()
+        {
+            QueuePendingPosition(0, 0);
+        }
+
         private CGPoint GetCursorPosition()
         {
             var eventRef = CGEventCreate(IntPtr.Zero);

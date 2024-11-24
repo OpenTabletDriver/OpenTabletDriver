@@ -40,6 +40,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             }
         }
 
+        protected override void QueuePendingPositionFromSystem()
+        {
+            var eventRef = CGEventCreate(IntPtr.Zero);
+            var pos = CGEventGetLocation(eventRef);
+            CFRelease(eventRef);
+            QueuePendingPosition((float)pos.x, (float)pos.y);
+        }
+
         protected override void ResetPendingPosition(IntPtr mouseEvent)
         {
             _lastPos = null;
