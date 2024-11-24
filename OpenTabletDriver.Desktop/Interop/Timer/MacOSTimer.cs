@@ -5,10 +5,9 @@ using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.OSX.Timers;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Timers;
-using Thread = System.Threading.Thread;
-
-using static OpenTabletDriver.Native.Posix.Utility;
 using static OpenTabletDriver.Native.OSX.Timers.Timers;
+using static OpenTabletDriver.Native.Posix.Utility;
+using Thread = System.Threading.Thread;
 
 #nullable enable
 
