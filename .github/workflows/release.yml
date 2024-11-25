@@ -33,7 +33,7 @@ jobs:
         run: ./eng/macos/package.sh --package true --output ./dist/macos
 
       - name: Upload all artifacts (Release)
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           name: OpenTabletDriver ${{ github.ref_name }}
@@ -96,7 +96,7 @@ jobs:
         run: ./eng/linux/package.sh --package RedHat --output ./dist/redhat
 
       - name: Upload all artifacts (Release)
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           name: OpenTabletDriver ${{ github.ref_name }}
@@ -130,7 +130,7 @@ jobs:
         run: ./eng/windows/package.ps1
 
       - name: Upload Windows asset (Release)
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           name: OpenTabletDriver ${{ github.ref_name }}
