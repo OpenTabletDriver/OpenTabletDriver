@@ -5,4 +5,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Label="NuGet Package">
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
 </Project>

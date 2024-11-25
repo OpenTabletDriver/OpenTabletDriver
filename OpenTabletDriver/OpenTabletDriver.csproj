@@ -6,10 +6,11 @@
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Label="NuGet Package Information">
+  <PropertyGroup Label="NuGet Package">
     <PackageId>OpenTabletDriver</PackageId>
     <Description>OpenTabletDriver core library</Description>
     <PackageOutputPath>../nupkg</PackageOutputPath>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
