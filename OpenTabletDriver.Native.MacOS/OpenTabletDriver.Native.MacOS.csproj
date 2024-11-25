@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Label="NuGet Packages">
     <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
   </ItemGroup>
 

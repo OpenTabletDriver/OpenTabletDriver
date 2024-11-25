@@ -7,10 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup Label="NuGet Package Information">
+  <PropertyGroup Label="NuGet Package">
     <PackageId>OpenTabletDriver.Configurations</PackageId>
     <Description>OpenTabletDriver tablet configurations</Description>
-    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">

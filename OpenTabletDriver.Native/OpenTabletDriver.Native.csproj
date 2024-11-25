@@ -4,7 +4,11 @@
     <TargetFrameworks>$(FrameworkLTS);$(FrameworkLatest)</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup Label="NuGet Package">
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.Native.Linux\OpenTabletDriver.Native.Linux.csproj" />
     <ProjectReference Include="..\OpenTabletDriver.Native.MacOS\OpenTabletDriver.Native.MacOS.csproj" />
     <ProjectReference Include="..\OpenTabletDriver.Native.Windows\OpenTabletDriver.Native.Windows.csproj" />
