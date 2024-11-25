@@ -17,7 +17,6 @@ in pkgs.mkShell {
     # dev
     gnused
     gnugrep
-    nixFlakes
     jq
   ];
 
