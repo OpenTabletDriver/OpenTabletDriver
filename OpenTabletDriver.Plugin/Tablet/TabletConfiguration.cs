@@ -29,13 +29,11 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The auxiliary device identifier.
         /// </summary>
-        [Required(ErrorMessage = $"Tablet {nameof(AuxilaryDeviceIdentifiers)} must be present")]
-        public List<DeviceIdentifier> AuxilaryDeviceIdentifiers { set; get; } = new List<DeviceIdentifier>();
+        public List<DeviceIdentifier>? AuxilaryDeviceIdentifiers { set; get; }
 
         /// <summary>
         /// Other information about the tablet that can be used in tools or other applications.
         /// </summary>
-        [Required(ErrorMessage = $"Tablet {nameof(Attributes)} must be present")]
-        public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
+        public Dictionary<string, string>? Attributes { set; get; }
     }
 }

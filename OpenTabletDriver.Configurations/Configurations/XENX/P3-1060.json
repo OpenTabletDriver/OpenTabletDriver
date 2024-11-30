@@ -15,9 +15,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 10
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -28,14 +26,9 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XENX.XENXReportParser",
       "FeatureInitReport": [
         "IAE="
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -52,13 +52,13 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// </summary>
         /// <typeparam name="uint">The index to query</typeparam>
         /// <typeparam name="string">The value to match to the queried index</typeparam>
-        public Dictionary<byte, string> DeviceStrings { set; get; } = new Dictionary<byte, string>();
+        public Dictionary<byte, string>? DeviceStrings { set; get; }
 
         /// <summary>
         /// Device strings to query to initialize device endpoints.
         /// </summary>
-        public List<byte> InitializationStrings { set; get; } = new List<byte>();
+        public List<byte>? InitializationStrings { set; get; }
 
-        public Dictionary<string, string> Attributes { set; get; } = new Dictionary<string, string>();
+        public Dictionary<string, string>? Attributes { set; get; }
     }
 }
