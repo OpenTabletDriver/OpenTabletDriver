@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
@@ -34,13 +35,13 @@ namespace OpenTabletDriver.Tests
             var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
 
             var parsers = from configuration in configurationProvider.TabletConfigurations
-                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxilaryDeviceIdentifiers)
+                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxilaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
                           orderby identifier.ReportParser
                           select identifier.ReportParser;
 
             var failed = false;
 
-            foreach (var parserType in parsers.Distinct())
+            foreach (var parserType in parsers.Where(p => p != null).Distinct())
             {
                 try
                 {
@@ -242,8 +243,11 @@ namespace OpenTabletDriver.Tests
         public void Configurations_Verify_Configs_With_Schema()
         {
             var gen = new JSchemaGenerator();
+            gen.DefaultRequired = Required.DisallowNull;
+
             var schema = gen.Generate(typeof(TabletConfiguration));
             DisallowAdditionalItemsAndProperties(schema);
+            DisallowNullsAndEmptyCollections(schema);
 
             var failed = false;
 
@@ -252,7 +256,11 @@ namespace OpenTabletDriver.Tests
                 var tabletConfig = JObject.Parse(tabletConfigString);
                 if (tabletConfig.IsValid(schema, out IList<string> errors)) continue;
 
-                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:\r\n{string.Join("\r\n", errors)}\r\n");
+                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:");
+                foreach (var error in errors)
+                    _testOutputHelper.WriteLine(error);
+                _testOutputHelper.WriteLine(string.Empty);
+
                 failed = true;
             }
 
@@ -273,6 +281,28 @@ namespace OpenTabletDriver.Tests
             }
         }
 
+        private static void DisallowNullsAndEmptyCollections(JSchema schema)
+        {
+            var schemaType = schema.Type!.Value;
+
+            if (schemaType.HasFlag(JSchemaType.Array))
+            {
+                schema.MinimumItems = 1;
+            }
+            else if (schemaType.HasFlag(JSchemaType.Object))
+            {
+                schema.MinimumProperties = 1;
+            }
+
+            if (schema.Properties is not null)
+            {
+                foreach (var property in schema.Properties)
+                {
+                    DisallowNullsAndEmptyCollections(property.Value);
+                }
+            }
+        }
+
         [Fact]
         public void Configurations_DeviceIdentifier_IsNotConflicting()
         {
@@ -285,7 +315,7 @@ namespace OpenTabletDriver.Tests
                                                   select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
 
             var auxIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                                            from identifier in config.AuxilaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                            from identifier in (config.AuxilaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>()).Select((d, i) => new { DeviceIdentifier = d, Index = i })
                                             select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
 
             var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts);
@@ -334,20 +364,33 @@ namespace OpenTabletDriver.Tests
 
         private static bool IsEqual(DeviceIdentifier a, DeviceIdentifier b)
         {
-            var pidMatch = a.VendorID == b.VendorID && a.ProductID == b.ProductID;
-            var inputMatch = a.InputReportLength == b.InputReportLength || a.InputReportLength is null || b.InputReportLength is null;
-            var outputMatch = a.OutputReportLength == b.OutputReportLength || a.OutputReportLength is null || b.OutputReportLength is null;
-
-            if (pidMatch && inputMatch && outputMatch)
+            if (a.VendorID != b.VendorID || a.ProductID != b.ProductID)
             {
-                if (a.DeviceStrings.Count == 0 || b.DeviceStrings.Count == 0)
-                    return true;
-
-                var (longer, shorter) = a.DeviceStrings.Count > b.DeviceStrings.Count ? (a, b) : (b, a);
-                return shorter.DeviceStrings.All(kv => longer.DeviceStrings.TryGetValue(kv.Key, out var otherValue) && otherValue == kv.Value);
+                return false;
             }
 
-            return false;
+            if (a.InputReportLength != b.InputReportLength && a.InputReportLength is not null && b.InputReportLength is not null)
+            {
+                return false;
+            }
+
+            if (a.OutputReportLength != b.OutputReportLength && a.OutputReportLength is not null && b.OutputReportLength is not null)
+            {
+                return false;
+            }
+
+            if (a.DeviceStrings is null || a.DeviceStrings.Count == 0 || b.DeviceStrings is null || b.DeviceStrings.Count == 0)
+            {
+                return true; // One or both have no device strings, so they match.
+            }
+
+            // Both have device strings, so check for equality.
+            if (a.DeviceStrings.Count != b.DeviceStrings.Count)
+            {
+                return false;
+            }
+
+            return a.DeviceStrings.All(kv => b.DeviceStrings.TryGetValue(kv.Key, out var otherValue) && otherValue == kv.Value);
         }
 
         public enum IdentifierType

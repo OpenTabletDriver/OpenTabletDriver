@@ -100,9 +100,9 @@ namespace OpenTabletDriver
                     Log.Write("Detect", $"Found tablet '{config.Name}'");
                     devices.Add(digitizer);
 
-                    if (config.AuxilaryDeviceIdentifiers.Any())
+                    if ((config.AuxilaryDeviceIdentifiers?.Count ?? 0) > 0)
                     {
-                        if (MatchDevice(config, config.AuxilaryDeviceIdentifiers) is InputDevice aux)
+                        if (MatchDevice(config, config.AuxilaryDeviceIdentifiers!) is InputDevice aux)
                             devices.Add(aux);
                         else
                             Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Warning);
@@ -176,7 +176,7 @@ namespace OpenTabletDriver
                    select device;
         }
 
-        private static bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string> deviceStrings)
+        private static bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string>? deviceStrings)
         {
             if (deviceStrings == null || deviceStrings.Count == 0)
                 return true;
@@ -200,11 +200,15 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> identifier_attributes, Dictionary<string, string> config_attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string>? identifier_attributes, Dictionary<string, string>? config_attributes)
         {
-            var attributes = new Dictionary<string, string>(identifier_attributes);
-            foreach (var kvp in config_attributes)
-                attributes.TryAdd(kvp.Key, kvp.Value);
+            var attributes = new Dictionary<string, string>(identifier_attributes ?? Enumerable.Empty<KeyValuePair<string, string>>());
+
+            if (config_attributes != null)
+            {
+                foreach (var kvp in config_attributes)
+                    attributes.TryAdd(kvp.Key, kvp.Value);
+            }
 
             // Windows only configuration attribute.
             if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
