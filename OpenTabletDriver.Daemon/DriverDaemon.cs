@@ -196,28 +196,25 @@ namespace OpenTabletDriver.Daemon
                         Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
 
                     if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
-                    {
                         SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
-                        absoluteMode.DisablePressure = profile.BindingSettings.DisablePressure;
-                        Log.Write(group, $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
-                        absoluteMode.DisableTilt = profile.BindingSettings.DisableTilt;
-                        Log.Write(group, $"Tilt: {(profile.BindingSettings.DisableTilt ? "Disabled" : "Enabled")}");
-                    }
 
                     if (dev.OutputMode is RelativeOutputMode relativeMode)
-                    {
                         SetRelativeModeSettings(dev, relativeMode, profile.RelativeModeSettings);
-                        relativeMode.DisablePressure = profile.BindingSettings.DisablePressure;
+
+                    if (dev.OutputMode is OutputMode outputMode)
+                    {
+                        outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
                         Log.Write(group, $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
-                        relativeMode.DisableTilt = profile.BindingSettings.DisableTilt;
+
+                        outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
                         Log.Write(group, $"Tilt: {(profile.BindingSettings.DisableTilt ? "Disabled" : "Enabled")}");
                     }
 
-                    if (dev.OutputMode is IOutputMode outputMode)
+                    if (dev.OutputMode is IOutputMode iOutputMode)
                     {
-                        outputMode.Tablet = tabletReference;
-                        var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
-                        SetOutputModeElements(dev, outputMode, profile, bindingHandler);
+                        iOutputMode.Tablet = tabletReference;
+                        var bindingHandler = CreateBindingHandler(dev, iOutputMode, profile.BindingSettings);
+                        SetOutputModeElements(dev, iOutputMode, profile, bindingHandler);
                     }
                 }
 
