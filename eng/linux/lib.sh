@@ -67,5 +67,6 @@ Terminal=false
 Type=Application
 Categories=Settings;
 StartupNotify=true
+SingleMainWindow=true
 EOF
 }
