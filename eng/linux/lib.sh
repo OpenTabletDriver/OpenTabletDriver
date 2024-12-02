@@ -59,7 +59,7 @@ generate_desktop_file() {
 [Desktop Entry]
 Version=1.5
 Name=${OTD_NAME}
-GenericName="Tablet Driver Settings"
+GenericName=Tablet driver settings
 Comment=A ${OTD_DESC}
 Exec=${OTD_GUI}
 Icon=otd
