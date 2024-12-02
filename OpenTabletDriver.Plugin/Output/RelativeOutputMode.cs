@@ -61,16 +61,6 @@ namespace OpenTabletDriver.Plugin.Output
         /// </summary>
         public TimeSpan ResetTime { set; get; }
 
-        /// <summary>
-        /// Whether to disable pressure
-        /// </summary>
-        public bool DisablePressure { set; get; }
-
-        /// <summary>
-        /// Whether to disable tilt
-        /// </summary>
-        public bool DisableTilt { set; get; }
-
         protected override Matrix3x2 CreateTransformationMatrix()
         {
             var transform = Matrix3x2.CreateRotation(
