@@ -12,6 +12,9 @@
       "Buttons": {
         "ButtonCount": 2
       }
+    },
+    "MouseButtons": {
+      "ButtonCount": 2
     }
   },
   "DigitizerIdentifiers": [
