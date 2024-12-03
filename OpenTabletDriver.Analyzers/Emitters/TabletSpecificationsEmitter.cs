@@ -41,6 +41,10 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                     : new ButtonSpecificationsEmitter(_specifications.AuxiliaryButtons).Emit()),
                             SyntaxFactory.AssignmentExpression(
                                 SyntaxKind.SimpleAssignmentExpression,
+                                SyntaxFactory.IdentifierName(nameof(TabletSpecifications.TouchStrips)),
+                                new TouchStripSpecificationsEmitter(_specifications.TouchStrips).Emit()),
+                            SyntaxFactory.AssignmentExpression(
+                                SyntaxKind.SimpleAssignmentExpression,
                                 SyntaxFactory.IdentifierName(nameof(TabletSpecifications.MouseButtons)),
                                 _specifications.MouseButtons == null
                                     ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)

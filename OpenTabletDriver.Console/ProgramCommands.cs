@@ -134,6 +134,17 @@ namespace OpenTabletDriver.Console
             });
         }
 
+        [Command("set-touchstrip-binding", "Sets the touch strip bindings")]
+        public async Task SetTouchStripBinding(string tablet, string name, int index)
+        {
+            await ModifyProfile(tablet, async p =>
+            {
+                var binding = await _driverDaemon.GetDefaults(name);
+
+                p.BindingSettings.TouchStrips[index] = binding;
+            });
+        }
+
         [Command("set-output-mode", "Sets the active output mode with its defaults")]
         public async Task SetOutputMode(string tablet, string mode)
         {
@@ -231,6 +242,7 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format()}@{profile.BindingSettings.TipActivationThreshold}%");
             await Out.WriteLineAsync($"Pen Bindings: {profile.BindingSettings.PenButtons.Format()}");
             await Out.WriteLineAsync($"Express Key Bindings: {profile.BindingSettings.AuxButtons.Format()}");
+            await Out.WriteLineAsync($"Touch Strips Bindings: {profile.BindingSettings.TouchStrips.Format()}");
         }
 
         [Command("get-output-mode", "Gets the output mode")]

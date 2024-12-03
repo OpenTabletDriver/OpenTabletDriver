@@ -29,6 +29,12 @@ namespace OpenTabletDriver.Tablet
         public ButtonSpecifications? AuxiliaryButtons { set; get; }
 
         /// <summary>
+        /// Specifications for the touch strips.
+        /// </summary>
+        [DisplayName("Touch Strips")]
+        public TouchStripSpecifications? TouchStrips { set; get; }
+
+        /// <summary>
         /// Specifications for the mouse buttons.
         /// </summary>
         [DisplayName("Mouse")]

@@ -63,6 +63,7 @@ namespace OpenTabletDriver.UX.Windows
             var digitizerSpecifications = SpecificationEditorsFor(c => c.Specifications.Digitizer);
             var penSpecifications = SpecificationEditorsFor(c => c.Specifications.Pen);
             var auxiliarySpecifications = SpecificationEditorsFor(c => c.Specifications.AuxiliaryButtons);
+            var touchStripSpecifications = SpecificationEditorsFor(c => c.Specifications.TouchStrips);
             var mouseSpecifications = SpecificationEditorsFor(c => c.Specifications.MouseButtons);
             var touchSpecifications = SpecificationEditorsFor(c => c.Specifications.Touch);
 
@@ -115,6 +116,7 @@ namespace OpenTabletDriver.UX.Windows
                                 digitizerSpecifications,
                                 penSpecifications,
                                 auxiliarySpecifications,
+                                touchStripSpecifications,
                                 mouseSpecifications,
                                 touchSpecifications
                             }

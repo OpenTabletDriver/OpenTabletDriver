@@ -39,6 +39,8 @@ namespace OpenTabletDriver.Desktop.RPC
                 sb.AppendLines(GetStringFormat(tabletReport));
             if (report is IAuxReport auxReport)
                 sb.AppendLines(GetStringFormat(auxReport));
+            if (report is ITouchStripReport touchStripReport)
+                sb.AppendLines(GetStringFormat(touchStripReport));
             if (report is IEraserReport eraserReport)
                 sb.AppendLines(GetStringFormat(eraserReport));
             if (report is IConfidenceReport confidenceReport)
@@ -73,6 +75,11 @@ namespace OpenTabletDriver.Desktop.RPC
         private static IEnumerable<string> GetStringFormat(IAuxReport auxReport)
         {
             yield return $"AuxButtons:[{string.Join(" ", auxReport.AuxButtons)}]";
+        }
+
+        private static IEnumerable<string> GetStringFormat(ITouchStripReport touchStripReport)
+        {
+            yield return $"TouchStripDirections:[{string.Join(" ", touchStripReport.TouchStripDirections)}]";
         }
 
         private static IEnumerable<string> GetStringFormat(IEraserReport eraserReport)
