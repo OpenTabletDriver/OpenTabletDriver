@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Plugin.Output
         IList<IPositionedPipelineElement<IDeviceReport>> Elements { set; get; }
 
         /// <summary>
-        /// The transformation matrix in which the 
+        /// The transformation matrix in which the
         /// </summary>
         /// <value></value>
         Matrix3x2 TransformationMatrix { get; }
@@ -28,5 +28,15 @@ namespace OpenTabletDriver.Plugin.Output
         /// The current tablet assigned to this <see cref="IOutputMode"/>
         /// </summary>
         TabletReference Tablet { set; get; }
+
+        /// <summary>
+        /// Whether to disable pressure
+        /// </summary>
+        public bool DisablePressure { set; get; }
+
+        /// <summary>
+        /// Whether to disable tilt
+        /// </summary>
+        public bool DisableTilt { set; get; }
     }
 }
