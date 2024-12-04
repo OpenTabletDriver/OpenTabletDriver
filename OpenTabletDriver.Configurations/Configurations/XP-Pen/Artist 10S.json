@@ -13,26 +13,19 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 21827,
       "ProductID": 74,
       "InputReportLength": 8,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV1ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
       "InitializationStrings": [
         123
       ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }
