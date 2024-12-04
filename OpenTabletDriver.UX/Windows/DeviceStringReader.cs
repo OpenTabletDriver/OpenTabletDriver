@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             sendRequestButton.Click += async (_, _) => await SendRequestWithTimeout(stringIndexText.Text,
-                (s) => deviceStringText.Text = s,
+                (s) => deviceStringText.Text = s != null ? System.Text.Json.JsonEncodedText.Encode(s).ToString() : s,
                 (e) => MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error),
                 () => MessageBox.Show(OperationTimedOut)
             );
