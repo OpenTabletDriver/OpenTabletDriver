@@ -27,6 +27,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3
                 return new IntuosV1TabletReport(data, ref _prevPressure, ref _prevTilt, ref _prevPenButtons);
             if ((data[1] & 0xF0) == 0xF0 || (data[1] & 0xF0) == 0xB0)
                 return new Intuos3MouseReport(data);
+            if (data[1] == 0xC2)
+                return new IntuosV1ToolReport(data);
 
             return new DeviceReport(data);
         }
