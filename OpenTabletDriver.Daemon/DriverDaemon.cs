@@ -203,11 +203,17 @@ namespace OpenTabletDriver.Daemon
                     if (dev.OutputMode is RelativeOutputMode relativeMode)
                         SetRelativeModeSettings(dev, relativeMode, profile.RelativeModeSettings);
 
-                    if (dev.OutputMode is IOutputMode outputMode)
+                    if (dev.OutputMode is { } outputMode)
                     {
                         outputMode.Tablet = tabletReference;
                         var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
                         SetOutputModeElements(dev, outputMode, profile, bindingHandler);
+
+                        outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
+                        Log.Write(group, $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
+
+                        outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
+                        Log.Write(group, $"Tilt: {(profile.BindingSettings.DisableTilt ? "Disabled" : "Enabled")}");
                     }
                 }
 

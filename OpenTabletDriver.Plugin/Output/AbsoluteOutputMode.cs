@@ -150,9 +150,9 @@ namespace OpenTabletDriver.Plugin.Output
             }
             if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
                 eraserHandler.SetEraser(eraserReport.Eraser);
-            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
                 tiltHandler.SetTilt(tiltReport.Tilt);
-            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler && !DisablePressure)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
 
             // make sure to set the position last
