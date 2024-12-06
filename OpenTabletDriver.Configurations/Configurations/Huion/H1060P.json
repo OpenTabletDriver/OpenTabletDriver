@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T(167|205)_\\d{6}$"
       },
@@ -39,10 +34,7 @@
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T167_\\d{6}$"
       },
@@ -54,10 +46,7 @@
       "VendorID": 9580,
       "ProductID": 100,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T(205|219)_\\d{6}$"
       },
@@ -66,7 +55,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

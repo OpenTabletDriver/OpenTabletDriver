@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
@@ -99,9 +100,9 @@ namespace OpenTabletDriver
                     Log.Write("Detect", $"Found tablet '{config.Name}'");
                     devices.Add(digitizer);
 
-                    if (config.AuxilaryDeviceIdentifiers.Any())
+                    if ((config.AuxilaryDeviceIdentifiers?.Count ?? 0) > 0)
                     {
-                        if (MatchDevice(config, config.AuxilaryDeviceIdentifiers) is InputDevice aux)
+                        if (MatchDevice(config, config.AuxilaryDeviceIdentifiers!) is InputDevice aux)
                             devices.Add(aux);
                         else
                             Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Warning);
@@ -171,11 +172,11 @@ namespace OpenTabletDriver
                    where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                    where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
                    where DeviceMatchesStrings(device, identifier.DeviceStrings)
-                   where DeviceMatchesAttribute(device, configuration.Attributes)
+                   where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
                    select device;
         }
 
-        private static bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string> deviceStrings)
+        private static bool DeviceMatchesStrings(IDeviceEndpoint device, IDictionary<byte, string>? deviceStrings)
         {
             if (deviceStrings == null || deviceStrings.Count == 0)
                 return true;
@@ -199,37 +200,45 @@ namespace OpenTabletDriver
             return true;
         }
 
-        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string> attributes)
+        private static bool DeviceMatchesAttribute(IDeviceEndpoint device, Dictionary<string, string>? identifier_attributes, Dictionary<string, string>? config_attributes)
         {
-            switch (SystemInterop.CurrentPlatform)
+            var attributes = new Dictionary<string, string>(identifier_attributes ?? Enumerable.Empty<KeyValuePair<string, string>>());
+
+            if (config_attributes != null)
             {
-                case PluginPlatform.Windows:
-                {
-                    var devName = device.DevicePath;
-                    bool interfaceMatches = !attributes.ContainsKey("WinInterface") || Regex.IsMatch(devName, $"&mi_{attributes["WinInterface"]}");
-                    bool keyMatches = !attributes.ContainsKey("WinUsage") || Regex.IsMatch(devName, $"&col{attributes["WinUsage"]}");
+                foreach (var kvp in config_attributes)
+                    attributes.TryAdd(kvp.Key, kvp.Value);
+            }
 
-                    return interfaceMatches && keyMatches;
-                }
-                case PluginPlatform.MacOS:
+            // Windows only configuration attribute.
+            if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
+            {
+                if (device is HidSharpEndpoint
+                    && attributes.TryGetValue("WinUsage", out var winUsage)
+                    && !Regex.IsMatch(device.DevicePath, $"&col{winUsage}"))
                 {
-                    var devName = device.DevicePath;
-                    bool interfaceMatches = !attributes.ContainsKey("MacInterface") || Regex.IsMatch(devName, $"IOUSBHostInterface@{attributes["MacInterface"]}");
-                    return interfaceMatches;
+                    // If it isn't a match there is no point proceeding.
+                    return false;
                 }
-                case PluginPlatform.Linux:
-                {
-                    var devName = device.DevicePath;
-                    var match = Regex.Match(devName, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
-                    bool interfaceMatches = !attributes.ContainsKey("LinuxInterface") || match.Groups["interface"].Value == attributes["LinuxInterface"];
+            }
 
-                    return interfaceMatches;
-                }
+            var device_attributes = device.DeviceAttributes;
+            if (device_attributes != null)
+            {
+                return matchInterface(attributes, device_attributes);
+            }
 
-                default:
-                {
-                    return true;
-                }
+            return true;
+
+            static bool matchInterface(Dictionary<string, string> identifierAttributes, IDictionary<string, string> deviceAttributes)
+            {
+                if (!identifierAttributes.TryGetValue("Interface", out var identifierInterface))
+                    return true; // No interface specified, match.
+
+                if (!deviceAttributes.TryGetValue("USB_INTERFACE_NUMBER", out var usbInterface))
+                    return false; // Device doesn't have an interface number, not a match.
+
+                return identifierInterface == usbInterface;
             }
         }
 

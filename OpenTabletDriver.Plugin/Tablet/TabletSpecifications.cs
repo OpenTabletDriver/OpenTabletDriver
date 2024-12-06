@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+#nullable enable
+
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public class TabletSpecifications
@@ -8,23 +10,23 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// Specifications for the tablet digitizer.
         /// </summary>
         [Required(ErrorMessage = $"{nameof(Digitizer)} specifications must be defined")]
-        public DigitizerSpecifications Digitizer { set; get; }
+        public DigitizerSpecifications Digitizer { set; get; } = new DigitizerSpecifications();
 
         /// <summary>
         /// Specifications for the tablet's pen.
         /// </summary>
         [Required(ErrorMessage = $"{nameof(Pen)} specifications must be defined")]
-        public PenSpecifications Pen { set; get; }
+        public PenSpecifications Pen { set; get; } = new PenSpecifications();
 
         /// <summary>
         /// Specifications for the auxiliary buttons.
         /// </summary>
-        public ButtonSpecifications AuxiliaryButtons { set; get; }
+        public ButtonSpecifications? AuxiliaryButtons { set; get; }
 
         /// <summary>
         /// Specifications for the mouse buttons.
         /// </summary>
-        public ButtonSpecifications MouseButtons { set; get; }
+        public ButtonSpecifications? MouseButtons { set; get; }
 
         /// <summary>
         /// Specifications for the wheel.
@@ -34,6 +36,6 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// Specifications for the touch digitizer.
         /// </summary>
-        public DigitizerSpecifications Touch { set; get; }
+        public DigitizerSpecifications? Touch { set; get; }
     }
 }

@@ -15,18 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"
       ],
@@ -38,9 +34,8 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1",
-    "MacInterface": "0"
+    "Interface": "0"
   }
 }

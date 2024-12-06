@@ -12,25 +12,16 @@
       "Buttons": {
         "ButtonCount": 2
       }
-    },
-    "AuxiliaryButtons": null,
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 2578,
       "ProductID": 16391,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.FlooGoo.FmaReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.FlooGoo.FmaReportParser"
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

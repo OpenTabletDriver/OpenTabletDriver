@@ -15,9 +15,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -26,12 +24,9 @@
       "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [
@@ -41,9 +36,6 @@
       "InputReportLength": 8,
       "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenDedicatedAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
       "InitializationStrings": [
         4
       ]

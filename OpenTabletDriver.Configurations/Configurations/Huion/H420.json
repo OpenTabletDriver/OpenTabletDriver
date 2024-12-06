@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 3
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 8,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "6": "H420"
       },
@@ -37,9 +32,8 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1",
-    "LinuxInterface": "0"
+    "Interface": "0"
   }
 }

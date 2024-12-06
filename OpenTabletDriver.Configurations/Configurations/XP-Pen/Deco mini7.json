@@ -15,9 +15,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -26,12 +24,9 @@
       "InputReportLength": 12,
       "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     },
     {
       "VendorID": 10429,
@@ -39,12 +34,9 @@
       "InputReportLength": 12,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     },
     {
       "VendorID": 10429,
@@ -52,12 +44,9 @@
       "InputReportLength": 12,
       "OutputReportLength": 21,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     },
     {
       "VendorID": 10429,
@@ -65,15 +54,11 @@
       "InputReportLength": 12,
       "OutputReportLength": 32,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

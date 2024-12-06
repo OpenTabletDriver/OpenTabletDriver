@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 16,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "6": "1060PRO",
         "121": "HA60-F400"
@@ -38,7 +33,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }
