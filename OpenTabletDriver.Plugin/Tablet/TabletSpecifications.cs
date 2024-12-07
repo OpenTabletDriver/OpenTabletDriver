@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// Specifications for the wheel.
         /// </summary>
-        public WheelSpecifications Wheel { get; set; }
+        public WheelSpecifications? Wheel { get; set; }
 
         /// <summary>
         /// Specifications for the touch digitizer.
