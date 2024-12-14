@@ -68,10 +68,13 @@ Show help and usage information for the GUI
 
 The daemon log is created in the application data directory, at
 
-~/.config/OpenTabletDriver/daemon.log
+~/.config/OpenTabletDriver/Logs/
 
 by default.
 
+The file format is almost JSON, with an end-of-array marker missing.
+
+This can be alleviated by appending a square bracket end ']' to the end of the file.
 
 .SH FREQUENT ISSUES AND QUESTIONS
 
