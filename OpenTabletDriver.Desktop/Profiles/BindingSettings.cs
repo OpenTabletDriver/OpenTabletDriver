@@ -8,7 +8,8 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class BindingSettings : ViewModel
     {
-        private float tP, eP;
+        private float tP = 1;
+        private float eP = 1;
         private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown;
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
             auxButtons = new PluginSettingStoreCollection(),
