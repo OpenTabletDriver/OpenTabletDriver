@@ -18,7 +18,7 @@ jobs:
       VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
       - name: Install required packages
-        run: sudo apt install -y debhelper dotnet-sdk-8.0
+        run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
 
       - name: Checkout OpenTabletDriver Repository
         uses: actions/checkout@v4
