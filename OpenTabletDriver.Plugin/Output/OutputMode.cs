@@ -44,14 +44,8 @@ namespace OpenTabletDriver.Plugin.Output
         protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
         protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; } = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
 
-        /// <summary>
-        /// Whether to disable pressure
-        /// </summary>
         public bool DisablePressure { set; get; }
 
-        /// <summary>
-        /// Whether to disable tilt
-        /// </summary>
         public bool DisableTilt { set; get; }
 
         public Matrix3x2 TransformationMatrix { protected set; get; }
