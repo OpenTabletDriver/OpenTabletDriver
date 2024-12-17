@@ -1,13 +1,13 @@
 namespace OpenTabletDriver.Plugin.Tablet.Wheel
 {
     /// <summary>
-    /// An auxiliary report containing states of a wheel/ring input.
+    /// An auxiliary report containing states of a relative wheel/ring/strip input.
     /// </summary>
-    public interface IAbsoluteWheelReport : IDeviceReport
+    public interface IAbsoluteWheelReport : ISingleAbsoluteAnalogReport, IRelativeSingleAnalogReport
     {
         /// <summary>
-        /// The position reading of the wheel, or null to indicate an absence of touch.
+        /// The buttons related to the wheel.
         /// </summary>
-        uint? WheelPosition { get; set; }
+        public bool[] WheelButtons { set; get; }
     }
 }
