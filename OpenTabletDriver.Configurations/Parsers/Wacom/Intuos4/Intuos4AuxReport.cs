@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
                 Position = (uint)wheelByte - 0x80;
                 Delta = CalculateDelta(prevWheelPosition, Position);
             }
-            
+
             WheelButtons = new bool[]
             {
                 touchWheelButtonByte.IsBitSet(0),
