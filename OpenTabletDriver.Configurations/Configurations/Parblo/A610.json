@@ -2,10 +2,10 @@
   "Name": "Parblo A610",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 152.4,
-      "MaxX": 40000.0,
-      "MaxY": 24000.0
+      "MaxX": 40000,
+      "MaxY": 24000
     },
     "Pen": {
       "MaxPressure": 2047,

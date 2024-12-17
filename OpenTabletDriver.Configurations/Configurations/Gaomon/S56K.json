@@ -2,10 +2,10 @@
   "Name": "Gaomon S56K",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 120.0,
-      "MaxX": 32000.0,
-      "MaxY": 24000.0
+      "Width": 160,
+      "Height": 120,
+      "MaxX": 32000,
+      "MaxY": 24000
     },
     "Pen": {
       "MaxPressure": 2047,

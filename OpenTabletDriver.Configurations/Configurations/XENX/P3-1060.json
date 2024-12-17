@@ -2,10 +2,10 @@
   "Name": "XENX P3-1060",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.75,
-      "MaxX": 25400.0,
-      "MaxY": 15875.0
+      "MaxX": 25400,
+      "MaxY": 15875
     },
     "Pen": {
       "MaxPressure": 8191,

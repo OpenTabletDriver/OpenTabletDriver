@@ -2,10 +2,10 @@
   "Name": "Huion H610X",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.8,
-      "MaxX": 50800.0,
-      "MaxY": 31760.0
+      "MaxX": 50800,
+      "MaxY": 31760
     },
     "Pen": {
       "MaxPressure": 8191,

@@ -2,10 +2,10 @@
   "Name": "Wacom Cintiq 13HD (DTK-1300)",
   "Specifications": {
     "Digitizer": {
-      "Width": 299.0,
-      "Height": 171.0,
-      "MaxX": 59800.0,
-      "MaxY": 34200.0
+      "Width": 299,
+      "Height": 171,
+      "MaxX": 59800,
+      "MaxY": 34200
     },
     "Pen": {
       "MaxPressure": 2048,

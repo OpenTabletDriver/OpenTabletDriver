@@ -2,10 +2,10 @@
   "Name": "XENX P1-640",
   "Specifications": {
     "Digitizer": {
-      "Width": 168.0,
-      "Height": 105.0,
-      "MaxX": 16800.0,
-      "MaxY": 10500.0
+      "Width": 168,
+      "Height": 105,
+      "MaxX": 16800,
+      "MaxY": 10500
     },
     "Pen": {
       "MaxPressure": 8191,

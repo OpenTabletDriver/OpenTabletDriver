@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 341.07,
       "Height": 191.795,
-      "MaxX": 68214.0,
-      "MaxY": 38359.0
+      "MaxX": 68214,
+      "MaxY": 38359
     },
     "Pen": {
       "MaxPressure": 8191,
