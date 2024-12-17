@@ -2,10 +2,10 @@
   "Name": "Wacom PTZ-430",
   "Specifications": {
     "Digitizer": {
-      "Width": 127.0,
+      "Width": 127,
       "Height": 101.6,
-      "MaxX": 25400.0,
-      "MaxY": 20320.0
+      "MaxX": 25400,
+      "MaxY": 20320
     },
     "Pen": {
       "MaxPressure": 2046,

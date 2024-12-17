@@ -2,10 +2,10 @@
   "Name": "Waltop Slim Tablet 5.8\"",
   "Specifications": {
     "Digitizer": {
-      "Width": 127.0,
+      "Width": 127,
       "Height": 76.2,
-      "MaxX": 10000.0,
-      "MaxY": 6000.0
+      "MaxX": 10000,
+      "MaxY": 6000
     },
     "Pen": {
       "MaxPressure": 1023,

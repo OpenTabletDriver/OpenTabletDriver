@@ -2,10 +2,10 @@
   "Name": "Wacom Cintiq 22HD (DTK-2200)",
   "Specifications": {
     "Digitizer": {
-      "Width": 479.0,
-      "Height": 271.0,
-      "MaxX": 95040.0,
-      "MaxY": 54260.0
+      "Width": 479,
+      "Height": 271,
+      "MaxX": 95040,
+      "MaxY": 54260
     },
     "Pen": {
       "MaxPressure": 2048,

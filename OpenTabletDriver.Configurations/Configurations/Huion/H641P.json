@@ -2,10 +2,10 @@
   "Name": "Huion H641P",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 100.0,
-      "MaxX": 32000.0,
-      "MaxY": 20000.0
+      "Width": 160,
+      "Height": 100,
+      "MaxX": 32000,
+      "MaxY": 20000
     },
     "Pen": {
       "MaxPressure": 8191,
