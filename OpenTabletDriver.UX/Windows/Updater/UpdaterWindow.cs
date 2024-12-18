@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls;
@@ -36,6 +37,7 @@ namespace OpenTabletDriver.UX.Windows.Updater
             _ = InitializeAsync();
         }
 
+        public const string LATEST_RELEASE_URL = "https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest";
         private int _isUpdateRequested;
         private TaskCompletionSource<bool> _updateAvailable = new();
         public Task<bool> HasUpdates() => _updateAvailable.Task;
@@ -54,9 +56,9 @@ namespace OpenTabletDriver.UX.Windows.Updater
                         new Bitmap(App.Logo.WithSize(256, 256)),
                         "An update is available to install",
                         $"OpenTabletDriver v{updateAvailable.Version}",
-                        new Button(Update)
+                        new Button(OpenRelease)
                         {
-                            Text = "Install"
+                            Text = "Go to Release"
                         },
                         new PaddingSpacerItem(),
                     }
@@ -117,5 +119,8 @@ namespace OpenTabletDriver.UX.Windows.Updater
             else
                 Environment.Exit(0);
         });
+
+        private void OpenRelease(object sender, EventArgs e)
+            => DesktopInterop.Open(string.Format(LATEST_RELEASE_URL));
     }
 }
