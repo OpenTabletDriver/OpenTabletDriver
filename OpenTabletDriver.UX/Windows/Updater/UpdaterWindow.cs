@@ -121,6 +121,6 @@ namespace OpenTabletDriver.UX.Windows.Updater
         });
 
         private void OpenRelease(object sender, EventArgs e)
-            => DesktopInterop.Open(string.Format(LATEST_RELEASE_URL));
+            => DesktopInterop.Open(LATEST_RELEASE_URL);
     }
 }
