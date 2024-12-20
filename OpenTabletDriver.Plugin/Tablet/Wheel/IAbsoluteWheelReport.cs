@@ -1,7 +1,7 @@
 namespace OpenTabletDriver.Plugin.Tablet.Wheel
 {
     /// <summary>
-    /// An auxiliary report containing states of a relative wheel/ring/strip input.
+    /// An auxiliary report containing states of a Absolute wheel/ring/strip input.
     /// </summary>
     public interface IAbsoluteWheelReport : ISingleAbsoluteAnalogReport, IRelativeSingleAnalogReport
     {
