@@ -2,10 +2,10 @@
   "Name": "LifeTec LT9570",
   "Specifications": {
     "Digitizer": {
-      "Width": 300.0,
-      "Height": 225.0,
-      "MaxX": 5999.0,
-      "MaxY": 4499.0
+      "Width": 300,
+      "Height": 225,
+      "MaxX": 5999,
+      "MaxY": 4499
     },
     "Pen": {
       "MaxPressure": 1023,

@@ -2,10 +2,10 @@
   "Name": "Huion H610 Pro V3",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.75,
-      "MaxX": 2048.0,
-      "MaxY": 2048.0
+      "MaxX": 2048,
+      "MaxY": 2048
     },
     "Pen": {
       "MaxPressure": 2047,

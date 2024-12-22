@@ -2,6 +2,7 @@
 
   <PropertyGroup Label="Project Properties">
     <TargetFrameworks>$(FrameworkBase)</TargetFrameworks>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package">
@@ -23,6 +24,10 @@
 
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="NuGet Packages">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
 </Project>
