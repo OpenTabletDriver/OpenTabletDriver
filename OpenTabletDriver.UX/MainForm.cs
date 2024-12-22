@@ -76,7 +76,6 @@ namespace OpenTabletDriver.UX
         private const int DEFAULT_CLIENT_WIDTH = 960;
         private const int DEFAULT_CLIENT_HEIGHT = 760;
 
-        private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
         private TrayIcon trayIcon;
