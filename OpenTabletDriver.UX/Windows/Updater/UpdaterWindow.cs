@@ -1,14 +1,8 @@
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Interop;
-using OpenTabletDriver.Interop;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
 
@@ -38,7 +32,6 @@ namespace OpenTabletDriver.UX.Windows.Updater
         }
 
         public const string LATEST_RELEASE_URL = "https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest";
-        private int _isUpdateRequested;
         private TaskCompletionSource<bool> _updateAvailable = new();
         public Task<bool> HasUpdates() => _updateAvailable.Task;
 
@@ -74,51 +67,6 @@ namespace OpenTabletDriver.UX.Windows.Updater
                 _updateAvailable.SetResult(false);
             }
         }
-
-        private void Update(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async () =>
-        {
-            if (Interlocked.Exchange(ref _isUpdateRequested, 1) != 0)
-                return;
-
-            // Disallow multiple invocations
-            (sender as Control)!.Enabled = false;
-
-            try
-            {
-                await App.Driver.Instance.InstallUpdate();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message, MessageBoxType.Error);
-                Close();
-                return;
-            }
-
-            var mainForm = (MainForm)Application.Instance.MainForm;
-            mainForm.SilenceDaemonShutdown = true;
-
-            Close();
-            mainForm.Close();
-
-            if (App.DaemonWatchdog is not null)
-                App.DaemonWatchdog.Dispose();
-
-            string basePath = AppDomain.CurrentDomain.BaseDirectory;
-            string path = Directory.EnumerateFiles(basePath, "OpenTabletDriver.UI*").FirstOrDefault(); // 0.7.x mirgration
-            path ??= SystemInterop.CurrentPlatform switch
-            {
-                PluginPlatform.Windows => Path.Join(basePath, "OpenTabletDriver.UX.Wpf.exe"),
-                PluginPlatform.MacOS => Path.Join(basePath, "OpenTabletDriver.UX.MacOS"),
-                _ => throw new NotSupportedException("Unsupported platform")
-            };
-
-            Process.Start(path);
-
-            if (Application.Instance.QuitIsSupported)
-                Application.Instance.Quit();
-            else
-                Environment.Exit(0);
-        });
 
         private void OpenRelease(object sender, EventArgs e)
             => DesktopInterop.Open(LATEST_RELEASE_URL);
