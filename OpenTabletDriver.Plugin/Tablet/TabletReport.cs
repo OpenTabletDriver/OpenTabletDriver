@@ -19,7 +19,8 @@ namespace OpenTabletDriver.Plugin.Tablet
             PenButtons = new bool[]
             {
                 report[1].IsBitSet(1),
-                report[1].IsBitSet(2)
+                report[1].IsBitSet(2),
+                report[1].IsBitSet(3)
             };
         }
 

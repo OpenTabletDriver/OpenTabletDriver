@@ -1,0 +1,37 @@
+{
+  "Name": "Huion Kamvas 13 (Gen 3)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 293.8,
+      "Height": 165.2,
+      "MaxX": 58760,
+      "MaxY": 33040
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "Buttons": {
+        "ButtonCount": 3
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 7
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 8200,
+      "InputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "DeviceStrings": {
+        "201": "HUION_M22c_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
