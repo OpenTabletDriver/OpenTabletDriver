@@ -30,7 +30,8 @@ namespace OpenTabletDriver.Tablet
             PenButtons = new bool[]
             {
                 penByte.IsBitSet(1),
-                penByte.IsBitSet(2)
+                penByte.IsBitSet(2),
+                penByte.IsBitSet(3),
             };
         }
 
