@@ -26,6 +26,15 @@
       "FeatureInitReport": [
         "BRIQERIAAAA="
       ]
+    },
+    {
+      "VendorID": 1112,
+      "ProductID": 20506,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParser",
+      "FeatureInitReport": [
+        "BRIQERIAAAA="
+      ]
     }
   ]
 }
