@@ -1,0 +1,38 @@
+{
+  "Name": "Wacom DTU-1141",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 234.66,
+      "Height": 131.99,
+      "MaxX": 23672,
+      "MaxY": 13403
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "ButtonCount": 1
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 822,
+      "InputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.DTU.DTUReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 822,
+      "InputReportLength": 65,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.DTU.DTUReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}
