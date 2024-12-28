@@ -2,10 +2,10 @@
   "Name": "Wacom CTL-672",
   "Specifications": {
     "Digitizer": {
-      "Width": 216.0,
-      "Height": 135.0,
-      "MaxX": 21600.0,
-      "MaxY": 13500.0
+      "Width": 216,
+      "Height": 135,
+      "MaxX": 21600,
+      "MaxY": 13500
     },
     "Pen": {
       "MaxPressure": 2047,

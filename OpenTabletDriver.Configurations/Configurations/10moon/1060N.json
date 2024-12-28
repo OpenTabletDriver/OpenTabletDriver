@@ -2,10 +2,10 @@
   "Name": "10moon 1060N",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 152.4,
-      "MaxX": 4095.0,
-      "MaxY": 4095.0
+      "MaxX": 4095,
+      "MaxY": 4095
     },
     "Pen": {
       "MaxPressure": 8191,
