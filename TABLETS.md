@@ -13,7 +13,7 @@
 | Gaomon PD1561                 |     Supported     |
 | Gaomon PD2200                 |     Supported     |
 | Gaomon S620                   |     Supported     |
-| Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons
+| Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons.
 | Huion 1060 Plus               |     Supported     |
 | Huion G930L                   |     Supported     |
 | Huion GT-220 V2               |     Supported     |
@@ -48,6 +48,7 @@
 | Huion Q11K                    |     Supported     |
 | Huion Q11K V2                 |     Supported     |
 | Huion RDS-160                 |     Supported     |
+| Huion RTS-300                 |     Supported     | Uses the same configuration as the Huion H642.
 | Huion RTE-100                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
