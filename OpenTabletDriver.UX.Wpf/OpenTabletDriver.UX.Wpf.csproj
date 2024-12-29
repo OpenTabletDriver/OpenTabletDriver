@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Wpf" Version="2.5.6" />
+    <PackageReference Include="Eto.Platform.Wpf" Version="2.10.2" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">

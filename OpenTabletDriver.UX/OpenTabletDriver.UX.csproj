@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	
+
   <PropertyGroup Label="Project Properties">
     <TargetFramework>$(FrameworkBase)</TargetFramework>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
   </PropertyGroup>
-  
+
   <ItemGroup Label="Resources">
     <EmbeddedResource Include="Assets\*.ico" />
     <EmbeddedResource Include="Assets\*.png" />
@@ -12,11 +12,11 @@
   </ItemGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Forms" Version="2.5.10" />
+    <PackageReference Include="Eto.Forms" Version="2.10.2" />
   </ItemGroup>
-  
+
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj" />
   </ItemGroup>
-  
+
 </Project>

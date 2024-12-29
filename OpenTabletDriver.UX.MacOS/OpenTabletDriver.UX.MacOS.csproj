@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.10" />
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.10.2" />
   </ItemGroup>
-  
+
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
   </ItemGroup>
-  
+
 </Project>
