@@ -13,7 +13,7 @@
 | Gaomon PD1561                 |     Supported     |
 | Gaomon PD2200                 |     Supported     |
 | Gaomon S620                   |     Supported     |
-| Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons
+| Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons.
 | Huion 1060 Plus               |     Supported     |
 | Huion G930L                   |     Supported     |
 | Huion GT-220 V2               |     Supported     |
@@ -48,6 +48,7 @@
 | Huion Q11K                    |     Supported     |
 | Huion Q11K V2                 |     Supported     |
 | Huion RDS-160                 |     Supported     |
+| Huion RTS-300                 |     Supported     | Uses the same configuration as the Huion H642.
 | Huion RTE-100                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
@@ -180,6 +181,7 @@
 | Turcom TS-6580                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                     |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
 | Wacom PTU-600U                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
+| XP-Pen Artist 10S             |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 16              |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 22HD            |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Star G430              |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 1
