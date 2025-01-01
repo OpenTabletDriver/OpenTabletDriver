@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
             {
                 0x02 => GetToolReport(report),
                 0x10 => GetToolReport(report),
-                0x0C => new CintiqV1AuxReport(report),
+                0x0C => new CintiqV1AuxReport(report, ref _prevLeftStrip, ref _prevRightStrip),
                 _ => new DeviceReport(report)
             };
         }
@@ -37,5 +37,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
         private uint _prevPressure;
         private Vector2 _prevTilt;
         private bool[] _prevPenButtons = Array.Empty<bool>();
+        private ushort _prevLeftStrip;
+        private ushort _prevRightStrip;
     }
 }

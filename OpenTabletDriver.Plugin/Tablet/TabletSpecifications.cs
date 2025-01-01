@@ -32,5 +32,10 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// Specifications for the touch digitizer.
         /// </summary>
         public DigitizerSpecifications? Touch { set; get; }
+
+        /// <summary>
+        /// Specifications for the touch strips.
+        /// </summary>
+        public TouchStripSpecifications? TouchStrips { set; get; }
     }
 }

@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown;
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
             auxButtons = new PluginSettingStoreCollection(),
+            touchStrips = new PluginSettingStoreCollection(),
             mouseButtons = new PluginSettingStoreCollection();
 
         [JsonProperty("TipActivationThreshold")]
@@ -57,6 +58,13 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.auxButtons;
         }
 
+        [JsonProperty("TouchStrips")]
+        public PluginSettingStoreCollection TouchStrips
+        {
+            set => this.RaiseAndSetIfChanged(ref this.touchStrips, value);
+            get => this.touchStrips;
+        }
+
         [JsonProperty("MouseButtons")]
         public PluginSettingStoreCollection MouseButtons
         {
@@ -90,7 +98,8 @@ namespace OpenTabletDriver.Desktop.Profiles
                 ),
                 PenButtons = new PluginSettingStoreCollection(),
                 AuxButtons = new PluginSettingStoreCollection(),
-                MouseButtons = new PluginSettingStoreCollection()
+                TouchStrips = new PluginSettingStoreCollection(),
+                MouseButtons = new PluginSettingStoreCollection(),
             };
             bindingSettings.MatchSpecifications(tabletSpecifications);
             return bindingSettings;
@@ -100,10 +109,12 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
             int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
+            int touchStripsCount = (int?)tabletSpecifications.TouchStrips?.Count ?? 0;
             int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
 
             PenButtons = PenButtons.SetExpectedCount(penButtonCount);
             AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
+            TouchStrips = TouchStrips.SetExpectedCount(touchStripsCount * 2);
             MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
         }
     }

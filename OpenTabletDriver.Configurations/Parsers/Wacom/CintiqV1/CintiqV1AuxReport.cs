@@ -1,14 +1,28 @@
+using System;
+using System.Buffers.Binary;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
 {
-    public struct CintiqV1AuxReport : IAuxReport
+    public struct CintiqV1AuxReport : IAuxReport, ITouchStripReport
     {
-        public CintiqV1AuxReport(byte[] report)
+        public CintiqV1AuxReport(byte[] report, ref ushort _prevLeftTouchStrip, ref ushort _prevRightTouchStrip)
         {
             Raw = report;
 
-            // TODO: Handle touch strips.
+            ushort nextLeftTouchStrip = BinaryPrimitives.ReadUInt16BigEndian(report.AsSpan(1));
+            ushort nextRightTouchStrip = BinaryPrimitives.ReadUInt16BigEndian(report.AsSpan(3));
+            var leftTouchStripDir = GetTouchStripDirection(_prevLeftTouchStrip, nextLeftTouchStrip);
+            var rightTouchStripDir = GetTouchStripDirection(_prevRightTouchStrip, nextRightTouchStrip);
+            _prevLeftTouchStrip = nextLeftTouchStrip;
+            _prevRightTouchStrip = nextRightTouchStrip;
+
+            TouchStripDirections = new TouchStripDirection[]
+            {
+                leftTouchStripDir,
+                rightTouchStripDir,
+            };
+
             var leftRadialButton = report[5];
             var leftButtons = report[6];
             var rightRadialButton = report[7];
@@ -41,7 +55,24 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1
             };
         }
 
+        private TouchStripDirection GetTouchStripDirection(ushort prevTouchStrip, ushort nextTouchStrip)
+        {
+            if (prevTouchStrip == 0 || nextTouchStrip == 0 || prevTouchStrip == nextTouchStrip)
+            {
+                return TouchStripDirection.None;
+            }
+            else if (prevTouchStrip < nextTouchStrip)
+            {
+                return TouchStripDirection.Down;
+            }
+            else
+            {
+                return TouchStripDirection.Up;
+            }
+        }
+
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
+        public TouchStripDirection[] TouchStripDirections { set; get; }
     }
 }

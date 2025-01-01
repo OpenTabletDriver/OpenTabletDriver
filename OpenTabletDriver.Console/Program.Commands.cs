@@ -152,6 +152,16 @@ namespace OpenTabletDriver.Console
             });
         }
 
+        private static async Task SetTouchStripBinding(string tablet, string name, int index)
+        {
+            await ModifyProfile(tablet, p =>
+            {
+                var binding = AppInfo.PluginManager.ConstructObject<IBinding>(name);
+
+                p.BindingSettings.TouchStrips[index] = new PluginSettingStore(binding);
+            });
+        }
+
         private static async Task SetEnableClipping(string tablet, bool isEnabled)
         {
             await ModifyProfile(tablet, p => p.AbsoluteModeSettings.EnableClipping = isEnabled);
@@ -249,6 +259,7 @@ namespace OpenTabletDriver.Console
             await Out.WriteLineAsync($"Tip Binding: {profile.BindingSettings.TipButton.Format() ?? "None"}@{profile.BindingSettings.TipActivationThreshold}%");
             await Out.WriteLineAsync($"Pen Bindings: {string.Join(", ", profile.BindingSettings.PenButtons.Format())}");
             await Out.WriteLineAsync($"Express Key Bindings: {string.Join(", ", profile.BindingSettings.AuxButtons.Format())}");
+            await Out.WriteLineAsync($"Touch Strips Bindings: {string.Join(", ", profile.BindingSettings.TouchStrips.Format())}");
         }
 
         private static async Task GetMiscSettings(string tablet)
