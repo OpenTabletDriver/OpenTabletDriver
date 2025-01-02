@@ -21,8 +21,8 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public Dictionary<int, BindingState?> PenButtons { set; get; } = new Dictionary<int, BindingState?>();
         public Dictionary<int, BindingState?> AuxButtons { set; get; } = new Dictionary<int, BindingState?>();
+        public Dictionary<int, BindingState?> TouchStrips { set; get; } = new Dictionary<int, BindingState?>();
         public Dictionary<int, BindingState?> MouseButtons { set; get; } = new Dictionary<int, BindingState?>();
-
         public BindingState? MouseScrollDown { set; get; }
         public BindingState? MouseScrollUp { set; get; }
 
@@ -46,6 +46,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleAuxiliaryReport(tablet, auxReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(tablet, mouseReport);
+            if (report is ITouchStripReport touchStripReport)
+                HandleTouchStripReport(tablet, touchStripReport);
         }
 
         private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
@@ -70,6 +72,25 @@ namespace OpenTabletDriver.Desktop.Binding
 
             MouseScrollDown?.Invoke(tablet, report, report.Scroll.Y < 0);
             MouseScrollUp?.Invoke(tablet, report, report.Scroll.Y > 0);
+        }
+
+        private void HandleTouchStripReport(TabletReference tablet, ITouchStripReport report)
+        {
+            HandleTouchStripBindingCollection(tablet, report, TouchStrips, TouchStripDirection.Up);
+            HandleTouchStripBindingCollection(tablet, report, TouchStrips, TouchStripDirection.Down);
+        }
+
+        private static void HandleTouchStripBindingCollection(TabletReference tablet, ITouchStripReport report, IDictionary<int, BindingState?> bindings, TouchStripDirection direction)
+        {
+            for (int i = 0; i < report.TouchStripDirections.Length; i++)
+            {
+                var bindingIndex = i * 2 + (direction == TouchStripDirection.Up ? 0 : 1);
+                if (report.TouchStripDirections[i] == direction && bindings.TryGetValue(bindingIndex, out var binding))
+                {
+                    binding?.Invoke(tablet, report, true);
+                    binding?.Invoke(tablet, report, false);
+                }
+            }
         }
 
         private static void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IDictionary<int, BindingState?> bindings, IList<bool> newStates)
