@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
+using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.UX.Controls;
 using OpenTabletDriver.UX.Controls.Generic;
@@ -49,9 +50,22 @@ namespace OpenTabletDriver.UX.Windows.Updater
                         new Bitmap(App.Logo.WithSize(256, 256)),
                         "An update is available to install",
                         $"OpenTabletDriver v{updateAvailable.Version}",
-                        new Button(OpenRelease)
+                        new PaddingSpacerItem(),
+                        new StackLayout()
                         {
-                            Text = "Go to Release"
+                            Orientation = Orientation.Horizontal,
+                            Items =
+                            {
+                                new Button(OpenRelease)
+                                {
+                                    Text = "Go to Release"
+                                },
+                                new Button(OpenDirectory)
+                                {
+                                    Text = "Open Directory"
+                                }
+                            },
+                            Spacing = 5
                         },
                         new PaddingSpacerItem(),
                     }
@@ -70,5 +84,8 @@ namespace OpenTabletDriver.UX.Windows.Updater
 
         private void OpenRelease(object sender, EventArgs e)
             => DesktopInterop.Open(LATEST_RELEASE_URL);
+
+        private void OpenDirectory(object sender, EventArgs e)
+            => DesktopInterop.Open(AppContext.BaseDirectory);
     }
 }
