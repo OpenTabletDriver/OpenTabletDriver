@@ -1,0 +1,37 @@
+{
+  "Name": "Gaomon M8 (Variant 2)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 258.465,
+      "Height": 161.535,
+      "MaxX": 51693,
+      "MaxY": 32307
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 9
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
+      "DeviceStrings": {
+        "201": "GM001_T221_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
