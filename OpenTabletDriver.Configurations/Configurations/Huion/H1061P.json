@@ -20,7 +20,7 @@
       "VendorID": 9580,
       "ProductID": 104,
       "InputReportLength": 12,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
         "201": "HUION_T21m_\\d{6}$"
       },
