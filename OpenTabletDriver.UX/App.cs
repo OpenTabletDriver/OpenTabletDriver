@@ -20,7 +20,7 @@ namespace OpenTabletDriver.UX
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public abstract class App : NotifyPropertyChanged
     {
-        protected App(string platform, string[] args)
+        protected App(Eto.Platform platform, string[] args)
         {
             Platform = platform;
             Arguments = args;
@@ -100,7 +100,7 @@ namespace OpenTabletDriver.UX
         /// <summary>
         /// The <see cref="Eto.Platform"/> this app was built with.
         /// </summary>
-        public string Platform { get; }
+        public Eto.Platform Platform { get; }
 
         /// <summary>
         /// The command line arguments passed to the app.

@@ -8,7 +8,7 @@ namespace OpenTabletDriver.UX.Wpf
     {
         private Process? _daemon;
 
-        public WindowsApp(string[] args) : base(Platforms.Wpf, args)
+        public WindowsApp(string[] args) : base(new Eto.Wpf.Platform(), args)
         {
         }
 

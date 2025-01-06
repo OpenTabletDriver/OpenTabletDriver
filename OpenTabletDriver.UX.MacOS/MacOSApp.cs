@@ -8,7 +8,7 @@ namespace OpenTabletDriver.UX.MacOS
     {
         private Process? _daemon;
 
-        public MacOSApp(string[] args) : base(Platforms.Mac64, args)
+        public MacOSApp(string[] args) : base(new Eto.Mac.Platform(), args)
         {
         }
 

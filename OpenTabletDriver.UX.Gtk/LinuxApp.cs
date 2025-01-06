@@ -9,7 +9,7 @@ namespace OpenTabletDriver.UX.Gtk
     {
         private Process? _daemon;
 
-        public LinuxApp(string[] args) : base(Platforms.Gtk, args)
+        public LinuxApp(string[] args) : base(new Eto.GtkSharp.Platform(), args)
         {
         }
 
