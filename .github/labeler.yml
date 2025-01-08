@@ -1,0 +1,96 @@
+# simple labels
+
+ci:
+- changed-files:
+  - any-glob-to-any-file:
+    - '.github/workflows/**'
+
+configuration:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Configurations/Configuration/**'
+    - 'OpenTabletDriver.Configurations/Parsers/**'
+
+console:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Console/**'
+
+core:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver/**'
+
+daemon:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Daemon/**'
+
+desktop:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Desktop/**'
+
+documentation:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'docs/**'
+    - 'README.md'
+
+gui:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.UX/**'
+    - 'OpenTabletDriver.UX.Gtk/**'
+    - 'OpenTabletDriver.UX.MacOS/**'
+    - 'OpenTabletDriver.UX.Wpf/**'
+
+meta:
+- changed-files:
+  - any-glob-to-any-file:
+    - '.github/**'
+    - '*'
+    - 'eng/**'
+    - 'OpenTabletDriver.Benchmarks/**'
+  - all-globs-to-all-files:
+    - '!.github/workflows'
+    - '!README.md'
+    - '!TABLETS.md'
+
+plugins:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Plugin/**'
+
+tests:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Tests/**'
+
+# complex labels
+
+'linux/gtk':
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Native/Linux/**'
+    - 'OpenTabletDriver.UX.Gtk/**'
+    - '**/*Linux*' # TODO: verify that this works 1/3
+    - '**/*.sh' # TODO: verify that this also affects './generate-rules.sh' etc
+    - '**/*.nix'
+    - '**/flake.lock'
+
+'windows/wpf':
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Native/Windows/**'
+    - 'OpenTabletDriver/Devices/WinUSB/**'
+    - 'OpenTabletDriver.UX.Wpf/**'
+    - '**/*Windows*' # TODO: verify that this works 2/3
+    - 'build.ps1'
+
+macos:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'OpenTabletDriver.Native/MacOS/**'
+    - 'OpenTabletDriver.UX.MacOS/**'
+    - '**/*MacOS*' # TODO: verify that this works 3/3
