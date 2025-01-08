@@ -8,7 +8,7 @@ ci:
 configuration:
 - changed-files:
   - any-glob-to-any-file:
-    - 'OpenTabletDriver.Configurations/Configuration/**'
+    - 'OpenTabletDriver.Configurations/Configurations/**'
     - 'OpenTabletDriver.Configurations/Parsers/**'
 
 console:
@@ -91,6 +91,6 @@ tests:
 macos:
 - changed-files:
   - any-glob-to-any-file:
-    - 'OpenTabletDriver.Native/MacOS/**'
+    - 'OpenTabletDriver.Native/OSX/**'
     - 'OpenTabletDriver.UX.MacOS/**'
     - '**/*MacOS*' # TODO: verify that this works 3/3
