@@ -170,16 +170,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             if (!this.ParentWindow.Enabled)
                 return;
 
-            var dialog = new OpenFileDialog()
-            {
-                Title = "Choose a plugin to install...",
-                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
-                MultiSelect = true,
-                Filters =
-                {
-                    new FileFilter("Plugin (.zip, .dll)", ".zip", ".dll")
-                }
-            };
+            var dialog = Extensions.OpenFileDialog(
+                "Choose a plugin to install...",
+                Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
+                [new FileFilter("Plugin (.zip, .dll)", ".zip", ".dll")],
+                true
+            );
 
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {

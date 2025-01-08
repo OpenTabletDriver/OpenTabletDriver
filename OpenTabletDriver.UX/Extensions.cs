@@ -65,5 +65,36 @@ namespace OpenTabletDriver.UX
             var tablets = await App.Driver.Instance.GetTablets();
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }
+
+        public static SaveFileDialog SaveFileDialog(string title, string directory, FileFilter[] filters)
+        {
+            var fileDialog = new SaveFileDialog();
+
+            SetupFileDialog(fileDialog, title, directory, filters, "Save File");
+
+            return fileDialog;
+        }
+
+        public static OpenFileDialog OpenFileDialog(string title, string directory, FileFilter[] filters, bool multiSelect = false)
+        {
+            var fileDialog = new OpenFileDialog();
+
+            SetupFileDialog(fileDialog, title, directory, filters, "Open File");
+            fileDialog.MultiSelect = multiSelect;
+
+            return fileDialog;
+        }
+
+        private static void SetupFileDialog(FileDialog fileDialog, string title, string directory, FileFilter[] filters, string defaultTitle)
+        {
+            fileDialog.Title = !string.IsNullOrEmpty(title) ? title : defaultTitle;
+
+            if (filters != null)
+                foreach (var filter in filters)
+                    fileDialog.Filters.Add(filter);
+
+            if (!string.IsNullOrEmpty(directory))
+                fileDialog.Directory = new Uri(directory);
+        }
     }
 }
