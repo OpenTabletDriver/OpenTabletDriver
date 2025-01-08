@@ -22,5 +22,3 @@ jobs:
         uses: actions/labeler@v5
         with:
           pr-number: ${{ fromJSON(inputs.pull_request_ids) }}
-
-
