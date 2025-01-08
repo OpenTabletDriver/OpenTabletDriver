@@ -1,0 +1,17 @@
+name: Shell Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test_labeler_paths:
+    runs-on: ubuntu-latest
+    name: Test for presence of all GitHub Labeler paths
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test paths
+        run: |
+          ./tests/test_labeler_yaml.sh
