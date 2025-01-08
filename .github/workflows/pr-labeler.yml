@@ -4,4 +4,4 @@ on:
 
 jobs:
   labeler:
-    uses: ./.github/workflows/uses/labeler.yaml
+    uses: ./.github/workflows/uses/labeler.yml

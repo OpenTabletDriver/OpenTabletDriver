@@ -7,7 +7,7 @@ on:
 
 jobs:
   manual_labeler:
-    uses: ./.github/workflows/uses/labeler.yaml
+    uses: ./.github/workflows/uses/labeler.yml
     with:
       pull_request_ids: ${{ inputs.pull_request_ids }}
 
