@@ -69,6 +69,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             ProfileChanged?.Invoke(this, new EventArgs());
             UpdateTablet();
+            UpdateOutputMode(Profile?.OutputMode);
         }
 
         public BindableBinding<OutputModeEditor, Profile> ProfileBinding
@@ -89,6 +90,7 @@ namespace OpenTabletDriver.UX.Controls.Output
         private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
         private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
         private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
+        private Label outputModeUnsupported = new Label { Text = "No supported output mode selected.", TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
 
         public void SetTabletSize(TabletReference tablet)
         {
@@ -128,6 +130,8 @@ namespace OpenTabletDriver.UX.Controls.Output
                 editorContainer.Content = absoluteModeEditor;
             else if (showRelative)
                 editorContainer.Content = relativeModeEditor;
+            else
+                editorContainer.Content = outputModeUnsupported;
         }
     }
 }
