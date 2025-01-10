@@ -118,9 +118,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             bool showAbsolute = false;
             bool showRelative = false;
-            if (store != null)
+            if (store?.GetTypeInfo<IOutputMode>() is TypeInfo outputMode)
             {
-                var outputMode = store.GetTypeInfo<IOutputMode>();
                 showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
             }
