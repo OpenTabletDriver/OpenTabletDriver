@@ -189,6 +189,7 @@
 | Artisul D16 Pro               |  Missing Features | Wheel is not yet supported.
 | Artisul M0610 Pro             |  Missing Features | Tablet buttons, tilt, and wheel are not yet supported.
 | Gaomon M10K                   |  Missing Features | Wheel is not yet supported.
+| Gaomon M10K (2018)            |  Missing Features | Wheel is not yet supported.
 | Gaomon M10K Pro               |  Missing Features | Wheel is not yet supported.
 | Gaomon M1220                  |  Missing Features | Wheel is not yet supported.
 | Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
