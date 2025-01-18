@@ -2,10 +2,10 @@
   "Name": "Monoprice MP1060-HA60",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.75,
-      "MaxX": 39999.0,
-      "MaxY": 24999.0
+      "MaxX": 39999,
+      "MaxY": 24999
     },
     "Pen": {
       "MaxPressure": 1023,

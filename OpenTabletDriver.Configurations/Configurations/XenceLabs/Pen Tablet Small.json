@@ -2,10 +2,10 @@
   "Name": "XenceLabs Pen Tablet Small",
   "Specifications": {
     "Digitizer": {
-      "Width": 178.0,
-      "Height": 101.0,
-      "MaxX": 35600.0,
-      "MaxY": 20200.0
+      "Width": 178,
+      "Height": 101,
+      "MaxX": 35600,
+      "MaxY": 20200
     },
     "Pen": {
       "MaxPressure": 8191,
