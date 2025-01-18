@@ -29,7 +29,10 @@
       "InitializationStrings": [
         100,
         123
-      ]
+      ],
+      "Attributes": {
+        "Interface": "0"
+      }
     }
   ],
   "Attributes": {
