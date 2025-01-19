@@ -61,6 +61,18 @@
       "ProductID": 211,
       "InputReportLength": 20,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosAuxReportParser"
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 216,
+      "InputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosAuxReportParser"
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 219,
+      "InputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosAuxReportParser"
     }
   ]
 }
