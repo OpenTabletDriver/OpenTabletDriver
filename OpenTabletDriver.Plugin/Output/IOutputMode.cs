@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The list of pipeline elements in which the report is modified.
         /// </summary>
-        IList<IPositionedPipelineElement<IDeviceReport>> Elements { set; get; }
+        IList<IPositionedPipelineElement<IDeviceReport>>? Elements { set; get; }
 
         /// <summary>
         /// The transformation matrix in which the 
@@ -26,6 +26,6 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The current tablet assigned to this <see cref="IOutputMode"/>
         /// </summary>
-        TabletReference Tablet { set; get; }
+        TabletReference? Tablet { set; get; }
     }
 }

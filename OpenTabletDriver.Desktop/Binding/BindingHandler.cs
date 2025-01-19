@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
@@ -11,7 +12,7 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginIgnore]
     public class BindingHandler : IPositionedPipelineElement<IDeviceReport>
     {
-        public BindingHandler(TabletReference tablet)
+        public BindingHandler(TabletReference? tablet)
         {
             this.tablet = tablet;
         }
@@ -28,7 +29,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public PipelinePosition Position => PipelinePosition.PostTransform;
 
-        private readonly TabletReference tablet;
+        private readonly TabletReference? tablet;
+
+        private bool _warnedAboutNullPenPressure = false;
 
         public event Action<IDeviceReport>? Emit;
 
@@ -41,17 +44,31 @@ namespace OpenTabletDriver.Desktop.Binding
         public void HandleBinding(IDeviceReport report)
         {
             if (report is ITabletReport tabletReport)
-                HandleTabletReport(tablet, tablet.Properties.Specifications.Pen, tabletReport);
+                HandleTabletReport(tablet, tablet?.Properties?.Specifications?.Pen, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(tablet, auxReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(tablet, mouseReport);
         }
 
-        private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
+        private void HandleTabletReport(TabletReference? tablet, PenSpecifications? pen, ITabletReport report)
         {
-            float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
-            if (report is IEraserReport eraserReport && eraserReport.Eraser)
+            float pressurePercent = 0;
+            if (pen != null)
+                pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
+            else
+            {
+                if (!_warnedAboutNullPenPressure)
+                {
+                    Log.Write("HandleTabletReport", "Pen max pressure undefined, defaulting to binary pressure",
+                        LogLevel.Warning);
+                    _warnedAboutNullPenPressure = true;
+                }
+
+                pressurePercent = report.Pressure > 0 ? 100 : 0;
+            }
+
+            if (report is IEraserReport { Eraser: true })
                 Eraser?.Invoke(tablet, report, pressurePercent);
             else
                 Tip?.Invoke(tablet, report, pressurePercent);
@@ -59,12 +76,12 @@ namespace OpenTabletDriver.Desktop.Binding
             HandleBindingCollection(tablet, report, PenButtons, report.PenButtons);
         }
 
-        private void HandleAuxiliaryReport(TabletReference tablet, IAuxReport report)
+        private void HandleAuxiliaryReport(TabletReference? tablet, IAuxReport report)
         {
             HandleBindingCollection(tablet, report, AuxButtons, report.AuxButtons);
         }
 
-        private void HandleMouseReport(TabletReference tablet, IMouseReport report)
+        private void HandleMouseReport(TabletReference? tablet, IMouseReport report)
         {
             HandleBindingCollection(tablet, report, MouseButtons, report.MouseButtons);
 
@@ -72,7 +89,7 @@ namespace OpenTabletDriver.Desktop.Binding
             MouseScrollUp?.Invoke(tablet, report, report.Scroll.Y > 0);
         }
 
-        private static void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IDictionary<int, BindingState?> bindings, IList<bool> newStates)
+        private static void HandleBindingCollection(TabletReference? tablet, IDeviceReport report, IDictionary<int, BindingState?> bindings, IList<bool> newStates)
         {
             for (int i = 0; i < newStates.Count; i++)
             {

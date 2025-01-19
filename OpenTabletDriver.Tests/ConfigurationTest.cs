@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Tests
             var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
 
             var parsers = from configuration in configurationProvider.TabletConfigurations
-                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxilaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
+                          from identifier in configuration.DigitizerIdentifiers!.Concat(configuration.AuxilaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
                           orderby identifier.ReportParser
                           select identifier.ReportParser;
 
@@ -314,7 +314,7 @@ namespace OpenTabletDriver.Tests
                 .GetRequiredService<IDeviceConfigurationProvider>();
 
             var digitizerIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                                                  from identifier in config.DigitizerIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                                  from identifier in config.DigitizerIdentifiers!.Select((d, i) => new { DeviceIdentifier = d, Index = i })
                                                   select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
 
             var auxIdentificationContexts = from config in configurationProvider.TabletConfigurations

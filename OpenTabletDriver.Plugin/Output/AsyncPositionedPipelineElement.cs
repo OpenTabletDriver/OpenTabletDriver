@@ -12,21 +12,22 @@ namespace OpenTabletDriver.Plugin.Output
     {
         private readonly object synchronizationObject = new object();
         private HPETDeltaStopwatch consumeWatch = new HPETDeltaStopwatch(false);
-        private ITimer scheduler;
+        private ITimer? scheduler;
         private float? reportMsAvg;
         private float frequency;
 
         /// <summary>
         /// The current state of the <see cref="AsyncPositionedPipelineElement{T}"/>.
         /// </summary>
-        protected T State { set; get; }
+        protected T? State { set; get; }
 
-        public event Action<T> Emit;
+        public event Action<T>? Emit;
 
         public abstract PipelinePosition Position { get; }
 
         [Resolved]
-        public ITimer Scheduler
+        // ReSharper disable once MemberCanBePrivate.Global
+        public ITimer? Scheduler
         {
             set
             {
@@ -53,6 +54,8 @@ namespace OpenTabletDriver.Plugin.Output
             set
             {
                 this.frequency = value;
+                if (Scheduler == null) return;
+
                 if (Scheduler.Enabled)
                     Scheduler.Stop();
                 Scheduler.Interval = 1000f / value;

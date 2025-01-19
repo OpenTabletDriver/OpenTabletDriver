@@ -138,16 +138,18 @@ namespace OpenTabletDriver
             return null;
         }
 
-        private InputDevice? MatchDevice(TabletConfiguration config, IList<DeviceIdentifier> identifiers)
+        private InputDevice? MatchDevice(TabletConfiguration config, IList<DeviceIdentifier>? identifiers)
         {
+            if (identifiers == null) return null;
+
             foreach (var identifier in identifiers)
             {
-                var matches = GetMatchingDevices(config, identifier);
+                var matches = GetMatchingDevices(config, identifier).ToList();
 
-                if (matches.Count() > 1)
+                if (matches.Count > 1)
                     Log.Write("Detect", "More than 1 matching device has been found.", LogLevel.Warning);
 
-                foreach (IDeviceEndpoint dev in matches)
+                foreach (var dev in matches)
                 {
                     try
                     {
@@ -160,6 +162,7 @@ namespace OpenTabletDriver
                     }
                 }
             }
+
             return null;
         }
 
@@ -215,6 +218,7 @@ namespace OpenTabletDriver
             {
                 if (device is HidSharpEndpoint
                     && attributes.TryGetValue("WinUsage", out var winUsage)
+                    && device.DevicePath != null
                     && !Regex.IsMatch(device.DevicePath, $"&col{winUsage}"))
                 {
                     // If it isn't a match there is no point proceeding.

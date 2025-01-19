@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// Specifications for the tablet's pen.
         /// </summary>
         [Required(ErrorMessage = $"{nameof(Pen)} specifications must be defined")]
-        public PenSpecifications Pen { set; get; } = new PenSpecifications();
+        public PenSpecifications? Pen { set; get; } = new PenSpecifications();
 
         /// <summary>
         /// Specifications for the auxiliary buttons.

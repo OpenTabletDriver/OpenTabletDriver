@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Plugin.Tablet
             this.Identifiers = identifiers;
         }
 
-        public TabletConfiguration Properties { set; get; }
-        public IEnumerable<DeviceIdentifier> Identifiers { set; get; }
+        public TabletConfiguration? Properties { set; get; }
+        public IEnumerable<DeviceIdentifier>? Identifiers { set; get; }
     }
 }

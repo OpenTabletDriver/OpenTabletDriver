@@ -101,7 +101,7 @@ namespace OpenTabletDriver.Daemon
         public Driver Driver { get; }
         private Settings? Settings { set; get; }
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
-        private IUpdater Updater = DesktopInterop.Updater;
+        private IUpdater? Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
 
@@ -184,18 +184,18 @@ namespace OpenTabletDriver.Daemon
 
                 Settings = settings ??= Settings.GetDefaults();
 
-                foreach (InputDeviceTree? dev in Driver.InputDevices)
+                foreach (var dev in Driver.InputDevices)
                 {
                     var tabletReference = dev.CreateReference();
-                    string group = dev.Properties.Name;
-                    var profile = Settings.Profiles[dev];
+                    string? group = dev.Properties.Name;
+                    var profile = Settings.Profiles[tabletReference];
 
                     profile.BindingSettings.MatchSpecifications(dev.Properties.Specifications);
 
                     dev.OutputMode = profile.OutputMode.Construct<IOutputMode>(tabletReference);
 
                     if (dev.OutputMode != null)
-                        Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
+                        Log.Write(group ?? "Tablet", $"Output mode: {profile.OutputMode.Name}");
 
                     if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
                         SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
@@ -319,7 +319,7 @@ namespace OpenTabletDriver.Daemon
 
         private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
         {
-            string group = dev.Properties.Name;
+            var group = dev.Properties.Name;
 
             var elements = from store in profile.Filters
                            where store.Enable
@@ -329,12 +329,13 @@ namespace OpenTabletDriver.Daemon
             outputMode.Elements = elements.Append(bindingHandler).ToList();
 
             if (outputMode.Elements.Count > 1)
-                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements.Where(e => e != bindingHandler))}");
+                Log.Write(group ?? nameof(SetOutputModeElements), $"Filters: {string.Join(", ", outputMode.Elements.Where(e => e != bindingHandler))}");
         }
 
         private void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)
         {
-            string group = dev.Properties.Name;
+            var group = dev.Properties.Name ?? nameof(SetAbsoluteModeSettings);
+
             absoluteMode.Output = settings.Display.Area;
 
             Log.Write(group, $"Display area: {absoluteMode.Output}");
@@ -351,7 +352,8 @@ namespace OpenTabletDriver.Daemon
 
         private void SetRelativeModeSettings(InputDeviceTree dev, RelativeOutputMode relativeMode, RelativeModeSettings settings)
         {
-            string group = dev.Properties.Name;
+            var group = dev.Properties.Name ?? nameof(SetRelativeModeSettings);
+
             relativeMode.Sensitivity = settings.Sensitivity;
 
             Log.Write(group, $"Relative Mode Sensitivity (X, Y): {relativeMode.Sensitivity}");
@@ -380,7 +382,7 @@ namespace OpenTabletDriver.Daemon
 
         private static BindingHandler CreateBindingHandler(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings)
         {
-            string group = dev.Properties.Name;
+            var group = dev.Properties.Name ?? nameof(CreateBindingHandler);
             var tabletReference = outputMode.Tablet;
             var bindingHandler = new BindingHandler(tabletReference);
 
@@ -454,7 +456,7 @@ namespace OpenTabletDriver.Daemon
             return bindingHandler;
         }
 
-        private static void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict, TabletReference tabletReference)
+        private static void SetBindingHandlerCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, Dictionary<int, BindingState?> targetDict, TabletReference? tabletReference)
         {
             for (int index = 0; index < collection.Count; index++)
             {
@@ -532,7 +534,7 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(_logFile.Read());
         }
 
-        private void PostDebugReport(TabletReference tablet, IDeviceReport report)
+        private void PostDebugReport(TabletReference? tablet, IDeviceReport? report)
         {
             if (report != null && tablet != null)
                 DeviceReport?.Invoke(this, new DebugReportData(tablet, report));

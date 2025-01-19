@@ -11,20 +11,20 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// The tablet's name.
         /// </summary>
         [Required(ErrorMessage = $"Tablet {nameof(Name)} is required")]
-        public string Name { set; get; } = string.Empty;
+        public string? Name { set; get; } = string.Empty;
 
         /// <summary>
         /// The tablet's specifications.
         /// </summary>
         [Required(ErrorMessage = $"Tablet {nameof(Specifications)} is required")]
-        public TabletSpecifications Specifications { set; get; } = new TabletSpecifications();
+        public TabletSpecifications? Specifications { set; get; } = new TabletSpecifications();
 
         /// <summary>
         /// The digitizer device identifier.
         /// </summary>
         [Required(ErrorMessage = $"Tablet {nameof(DigitizerIdentifiers)} are required")]
         [MinLength(1, ErrorMessage = "Requires at least 1 identifier")]
-        public List<DeviceIdentifier> DigitizerIdentifiers { set; get; } = new List<DeviceIdentifier>();
+        public List<DeviceIdentifier>? DigitizerIdentifiers { set; get; } = [];
 
         /// <summary>
         /// The auxiliary device identifier.

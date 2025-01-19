@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public abstract class OutputMode : PipelineManager<IDeviceReport>, IOutputMode
     {
         public OutputMode()
@@ -14,11 +16,11 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private bool passthrough;
-        private TabletReference tablet;
-        private IList<IPositionedPipelineElement<IDeviceReport>> elements;
-        private IPipelineElement<IDeviceReport> entryElement;
+        private TabletReference? tablet;
+        private IList<IPositionedPipelineElement<IDeviceReport>>? elements;
+        private IPipelineElement<IDeviceReport>? entryElement;
 
-        public event Action<IDeviceReport> Emit;
+        public event Action<IDeviceReport>? Emit;
 
         protected bool Passthrough
         {
@@ -46,7 +48,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         public Matrix3x2 TransformationMatrix { protected set; get; }
 
-        public IList<IPositionedPipelineElement<IDeviceReport>> Elements
+        public IList<IPositionedPipelineElement<IDeviceReport>>? Elements
         {
             set
             {
@@ -94,7 +96,7 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.elements;
         }
 
-        public virtual TabletReference Tablet
+        public virtual TabletReference? Tablet
         {
             set
             {
@@ -104,18 +106,18 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.tablet;
         }
 
-        public virtual void Consume(IDeviceReport report)
+        public virtual void Consume(IDeviceReport? report)
         {
             if (report is IAbsolutePositionReport tabletReport)
                 report = Transform(tabletReport);
-            if (report != null)
+            if (report != null) // TODO: remove this null check, make sure null check is performed outside
                 Emit?.Invoke(report);
         }
 
         public virtual void Read(IDeviceReport deviceReport) => entryElement?.Consume(deviceReport);
 
         protected abstract Matrix3x2 CreateTransformationMatrix();
-        protected abstract IAbsolutePositionReport Transform(IAbsolutePositionReport tabletReport);
+        protected abstract IAbsolutePositionReport? Transform(IAbsolutePositionReport? tabletReport);
         protected abstract void OnOutput(IDeviceReport report);
 
         private void DestroyInternalLinks()
