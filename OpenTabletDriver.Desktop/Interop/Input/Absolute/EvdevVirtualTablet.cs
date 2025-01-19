@@ -91,6 +91,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
+            // Reset opposite tool
+            Device.Write(EventType.EV_KEY, !isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, 0);
+
             Device.Write(EventType.EV_KEY, isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, proximity ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
