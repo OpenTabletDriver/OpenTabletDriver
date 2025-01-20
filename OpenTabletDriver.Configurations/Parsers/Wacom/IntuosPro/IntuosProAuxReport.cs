@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosPro
 {
-    public struct IntuosProAuxReport : IAuxReport, IAbsoluteWheelReport
+    public struct IntuosProAuxReport : IAuxReport, IWheelButtonReport, IAbsoluteWheelReport
     {
         private const int WHEEL_STEPS = 71;
         private const double HALF_WHEEL_STEPS = 71 / 2d;

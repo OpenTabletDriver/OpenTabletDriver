@@ -2,7 +2,7 @@ using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion;
 
-public class HuionWheelReport : IAbsoluteWheelReport
+public class HuionWheelReport : IWheelButtonReport, IAbsoluteWheelReport
 {
     private const uint WHEEL_STEPS = 12;
     private const double HALF_WHEEL_STEPS = WHEEL_STEPS / 2d;

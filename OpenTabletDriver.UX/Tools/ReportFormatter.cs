@@ -130,15 +130,15 @@ namespace OpenTabletDriver.UX.Tools
         {
             yield return $"Wheel:{wheelReport.Position?.ToString() ?? "Idle"}";
             yield return $"Wheel Delta:{wheelReport.Delta?.ToString() ?? "Idle"}";
-            if (wheelReport.WheelButtons.Length > 0)
-                yield return $"Wheel Buttons:[{string.Join(" ", wheelReport.WheelButtons)}]";
+            if (wheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
+                yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
         }
 
         private static IEnumerable<string> GetStringFormat(IRelativeWheelReport wheelReport)
         {
             yield return $"Wheel Delta:{wheelReport.Delta?.ToString() ?? "Idle"}";
-            if (wheelReport.WheelButtons.Length > 0 && wheelReport is not IAbsoluteWheelReport)
-                yield return $"Wheel Buttons:[{string.Join(" ", wheelReport.WheelButtons)}]";
+            if (wheelReport is not IAbsoluteWheelReport && wheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
+                yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
         }
 
         private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)

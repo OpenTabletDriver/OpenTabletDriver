@@ -5,9 +5,5 @@ namespace OpenTabletDriver.Plugin.Tablet.Wheel
     /// </summary>
     public interface IAbsoluteWheelReport : IAbsoluteSingleAnalogReport, IRelativeSingleAnalogReport
     {
-        /// <summary>
-        /// The buttons related to the wheel.
-        /// </summary>
-        public bool[] WheelButtons { set; get; }
     }
 }
