@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion
 {
-    public class HuionAuxReportParser : IReportParser<IDeviceReport>
+    public class HuionTiltReportParser : IReportParser<IDeviceReport>
     {
         public IDeviceReport Parse(byte[] data)
         {
