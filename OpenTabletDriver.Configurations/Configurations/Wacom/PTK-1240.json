@@ -19,7 +19,7 @@
     "Wheel": {
       "StepCount": 71,
       "IsRelative": false,
-      "AngleOfZeroReading": 180,
+      "AngleOfZeroReading": 180.0,
       "Buttons": {
         "ButtonCount": 1
       }
