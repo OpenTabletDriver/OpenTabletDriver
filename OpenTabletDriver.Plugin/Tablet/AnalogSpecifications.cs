@@ -11,12 +11,6 @@ namespace OpenTabletDriver.Plugin.Tablet
     public class AnalogSpecifications
     {
         /// <summary>
-        /// The number of analog devices of this type.
-        /// </summary>
-        [Required(ErrorMessage = $"{nameof(Count)} must be defined")]
-        public uint Count { get; set; }
-
-        /// <summary>
         /// The amount of steps in the analog device.
         /// </summary>
         [Required(ErrorMessage = $"{nameof(StepCount)} must be defined")]
