@@ -1,6 +1,6 @@
 namespace OpenTabletDriver.Plugin.Tablet
 {
-    public interface ISingleAbsoluteAnalogReport : IDeviceReport
+    public interface IAbsoluteSingleAnalogReport : IDeviceReport
     {
         /// <summary>
         /// The position reading of an input, or null to indicate no reading.
