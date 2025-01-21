@@ -19,19 +19,20 @@ namespace OpenTabletDriver.Plugin.Attributes
         /// <remarks>
         /// This member must return <see cref="IEnumerable{T}"/> statically.
         /// </remarks>
+        // ReSharper disable once MemberCanBePrivate.Global
         public string MemberName { get; }
 
-        public T GetValue<T>(PropertyInfo property)
+        public T? GetValue<T>(PropertyInfo property)
         {
             var sourceType = property.ReflectedType;
-            var member = sourceType.GetMember(MemberName).First();
+            var member = sourceType?.GetMember(MemberName).First();
             try
             {
-                return member.MemberType switch
+                return member?.MemberType switch
                 {
-                    MemberTypes.Property => (T)sourceType.GetProperty(MemberName).GetValue(null),
-                    MemberTypes.Field => (T)sourceType.GetField(MemberName).GetValue(null),
-                    MemberTypes.Method => (T)sourceType.GetMethod(MemberName).Invoke(null, null),
+                    MemberTypes.Property => (T?)sourceType?.GetProperty(MemberName)?.GetValue(null),
+                    MemberTypes.Field => (T?)sourceType?.GetField(MemberName)?.GetValue(null),
+                    MemberTypes.Method => (T?)sourceType?.GetMethod(MemberName)?.Invoke(null, null),
                     _ => default
                 };
             }

@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Plugin
         /// <summary>
         /// Event hook to recieve log messages.
         /// </summary>
-        public static event EventHandler<LogMessage> Output;
+        public static event EventHandler<LogMessage>? Output;
 
         /// <summary>
         /// Invoke sending a log message.

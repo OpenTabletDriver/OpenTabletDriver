@@ -66,7 +66,8 @@ namespace OpenTabletDriver.Plugin.Output
             var transform = Matrix3x2.CreateRotation(
                 (float)(-Rotation * System.Math.PI / 180));
 
-            var digitizer = Tablet?.Properties.Specifications.Digitizer;
+            var digitizer = Tablet?.Properties?.Specifications?.Digitizer;
+
             return transform *= Matrix3x2.CreateScale(
                 sensitivity.X * ((digitizer?.Width / digitizer?.MaxX) ?? 0.01f),
                 sensitivity.Y * ((digitizer?.Height / digitizer?.MaxY) ?? 0.01f));
@@ -102,8 +103,10 @@ namespace OpenTabletDriver.Plugin.Output
             base.Read(deviceReport);
         }
 
-        protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
+        protected override IAbsolutePositionReport? Transform(IAbsolutePositionReport? report)
         {
+            if (report == null) return report;
+
             var pos = Vector2.Transform(report.Position, TransformationMatrix);
             var delta = pos - lastTransformedPos;
 
@@ -131,7 +134,7 @@ namespace OpenTabletDriver.Plugin.Output
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
                 tiltHandler.SetTilt(tiltReport.Tilt);
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler
-                && Tablet.Properties.Specifications.Pen != null)
+                && Tablet?.Properties?.Specifications?.Pen != null)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
 
             // make sure to set the position last

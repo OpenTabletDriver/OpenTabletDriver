@@ -140,7 +140,7 @@ namespace OpenTabletDriver.Devices
         {
             if (eventArgs.Changes.Any())
             {
-                Log.Debug(sender?.GetType().Name, $"Changes: {eventArgs.Changes.Count()}, Add: {eventArgs.Additions.Count()}, Remove: {eventArgs.Removals.Count()}");
+                Log.Debug(sender?.GetType().Name ?? nameof(RootHub), $"Changes: {eventArgs.Changes.Count()}, Add: {eventArgs.Additions.Count()}, Remove: {eventArgs.Removals.Count()}");
                 OnDevicesChanged(sender, eventArgs);
             }
         }

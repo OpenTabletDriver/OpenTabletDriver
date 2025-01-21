@@ -33,7 +33,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public void SetProfile(TabletReference tablet, Profile profile)
         {
-            if (this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile oldProfile)
+            if (tablet.Properties?.Name != null && this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile oldProfile)
             {
                 this.Remove(oldProfile);
             }
@@ -42,7 +42,13 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public Profile GetProfile(TabletReference tablet)
         {
-            return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
+            if (tablet.Properties?.Name != null &&
+                this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile)
+            {
+                return profile;
+            }
+
+            return Generate(tablet);
         }
 
         public Profile? GetProfile(string tablet)
