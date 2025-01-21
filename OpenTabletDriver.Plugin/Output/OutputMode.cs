@@ -41,8 +41,11 @@ namespace OpenTabletDriver.Plugin.Output
             get => this.passthrough;
         }
 
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
-        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; } = Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PreTransformElements { private set; get; } =
+            Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
+
+        protected IList<IPositionedPipelineElement<IDeviceReport>> PostTransformElements { private set; get; } =
+            Array.Empty<IPositionedPipelineElement<IDeviceReport>>();
 
         public Matrix3x2 TransformationMatrix { protected set; get; }
 
@@ -62,27 +65,11 @@ namespace OpenTabletDriver.Plugin.Output
 
                     Action<IDeviceReport> output = this.OnOutput;
 
-                    if (PreTransformElements.Any() && !PostTransformElements.Any())
-                    {
-                        entryElement = PreTransformElements.First();
+                    var links = ElementsAsPipeline;
 
-                        // PreTransform --> Transform --> Output
-                        LinkAll(PreTransformElements, this, output);
-                    }
-                    else if (PostTransformElements.Any() && !PreTransformElements.Any())
-                    {
-                        entryElement = this;
+                    entryElement = links.First();
 
-                        // Transform --> PostTransform --> Output
-                        LinkAll(this, PostTransformElements, output);
-                    }
-                    else if (PreTransformElements.Any() && PostTransformElements.Any())
-                    {
-                        entryElement = PreTransformElements.First();
-
-                        // PreTransform --> Transform --> PostTransform --> Output
-                        LinkAll(PreTransformElements, this, PostTransformElements, output);
-                    }
+                    LinkAll(links, output);
                 }
                 else
                 {
@@ -92,6 +79,20 @@ namespace OpenTabletDriver.Plugin.Output
                 }
             }
             get => this.elements;
+        }
+
+        private List<IPipelineElement<IDeviceReport>> ElementsAsPipeline
+        {
+            get
+            {
+                var links = new List<IPipelineElement<IDeviceReport>>();
+
+                links.AddRange(PreTransformElements);
+                links.Add(this);
+                links.AddRange(PostTransformElements);
+
+                return links;
+            }
         }
 
         public virtual TabletReference Tablet
@@ -122,18 +123,9 @@ namespace OpenTabletDriver.Plugin.Output
         {
             Action<IDeviceReport> output = this.OnOutput;
 
-            if (PreTransformElements.Any() && !PostTransformElements.Any())
-            {
-                UnlinkAll(PreTransformElements, this, output);
-            }
-            else if (PostTransformElements.Any() && !PreTransformElements.Any())
-            {
-                UnlinkAll(this, PostTransformElements, output);
-            }
-            else if (PreTransformElements.Any() && PostTransformElements.Any())
-            {
-                UnlinkAll(PreTransformElements, this, PostTransformElements, output);
-            }
+            var links = ElementsAsPipeline;
+
+            UnlinkAll(links, output);
         }
     }
 }
