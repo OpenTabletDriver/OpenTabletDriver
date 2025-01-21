@@ -89,9 +89,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         private const int MaxPressure = ushort.MaxValue;
 
+        private EventCode currentTool => isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN;
+
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_KEY, isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, proximity ? 1 : 0);
+            Device.Write(EventType.EV_KEY, currentTool, proximity ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
@@ -110,6 +112,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetEraser(bool isEraser)
         {
+            if (this.isEraser == isEraser)
+                return; // do nothing if no state change
+
+            // unset opposite tool (in case tablet never sends us Reset/OutOfRange)
+            Device.Write(EventType.EV_KEY, currentTool, 0);
+
             this.isEraser = isEraser;
         }
 
