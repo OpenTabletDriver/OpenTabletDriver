@@ -196,10 +196,22 @@ namespace OpenTabletDriver.Daemon
                         Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
 
                     if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
+                    {
                         SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
+                        if (absoluteMode.Pointer is IPressureHandler)
+                            LogPressureState(group, profile);
+                        if (absoluteMode.Pointer is ITiltHandler)
+                            LogTiltState(group, profile);
+                    }
 
                     if (dev.OutputMode is RelativeOutputMode relativeMode)
+                    {
                         SetRelativeModeSettings(dev, relativeMode, profile.RelativeModeSettings);
+                        if (relativeMode.Pointer is IPressureHandler)
+                            LogPressureState(group, profile);
+                        if (relativeMode.Pointer is ITiltHandler)
+                            LogTiltState(group, profile);
+                    }
 
                     if (dev.OutputMode is { } outputMode)
                     {
@@ -208,10 +220,7 @@ namespace OpenTabletDriver.Daemon
                         SetOutputModeElements(dev, outputMode, profile, bindingHandler);
 
                         outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
-                        Log.Write(group, $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
-
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
-                        Log.Write(group, $"Tilt: {(profile.BindingSettings.DisableTilt ? "Disabled" : "Enabled")}");
                     }
                 }
 
@@ -239,6 +248,17 @@ namespace OpenTabletDriver.Daemon
                 Resynchronize?.Invoke(this, EventArgs.Empty);
                 return Task.CompletedTask;
             }
+        }
+
+        private static void LogTiltState(string group, Profile profile)
+        {
+            Log.Write(group, $"Tilt: {(profile.BindingSettings.DisableTilt ? "Disabled" : "Enabled")}");
+        }
+
+        private static void LogPressureState(string group, Profile profile)
+        {
+            Log.Write(group,
+                $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
         }
 
         private void RecoverSettings(Settings? settings)
