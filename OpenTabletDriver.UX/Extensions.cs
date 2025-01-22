@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }
 
-        #nullable enable
+#nullable enable
 
         public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null)
             where T : FileDialog, new()
@@ -86,7 +86,7 @@ namespace OpenTabletDriver.UX
                 fileDialog.Title = dialogTitle;
 
             if (filters != null)
-                fileDialog.AddRangeToFilters(filters);;
+                fileDialog.AddRangeToFilters(filters);
 
             if (!string.IsNullOrEmpty(directory))
                 fileDialog.Directory = new Uri(directory);
