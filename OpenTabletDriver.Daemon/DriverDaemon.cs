@@ -326,8 +326,9 @@ namespace OpenTabletDriver.Daemon
                            select filter;
             outputMode.Elements = elements.Append(bindingHandler).ToList();
 
-            if (outputMode.Elements.Count > 1)
-                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements.Where(e => e != bindingHandler))}");
+            var activeFilters = outputMode.Elements.Where(e => e != bindingHandler).ToList();
+            if (activeFilters.Count != 0)
+                Log.Write(group, $"Filters: {string.Join(", ", activeFilters)}");
         }
 
         private void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)
