@@ -66,6 +66,8 @@ namespace OpenTabletDriver.UX
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }
 
+        #nullable enable
+
         public static SaveFileDialog SaveFileDialog(string title, string directory, FileFilter[] filters)
         {
             var fileDialog = new SaveFileDialog();
