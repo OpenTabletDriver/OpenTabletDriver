@@ -83,7 +83,7 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IAbsolutePointer AbsolutePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsAbsolutePointer(),
-            PluginPlatform.Linux => absolutePointer ??= new EvdevAbsolutePointer(),
+            PluginPlatform.Linux => absolutePointer?.HasValidDevice() ?? false ? absolutePointer : absolutePointer = new EvdevAbsolutePointer(),
             PluginPlatform.MacOS => new MacOSAbsolutePointer(),
             _ => null
         };
@@ -91,21 +91,21 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IRelativePointer RelativePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsRelativePointer(),
-            PluginPlatform.Linux => relativePointer ??= new EvdevRelativePointer(),
+            PluginPlatform.Linux => relativePointer?.HasValidDevice() ?? false ? relativePointer : relativePointer = new EvdevRelativePointer(),
             PluginPlatform.MacOS => new MacOSRelativePointer(),
             _ => null
         };
 
         public static IPressureHandler VirtualTablet => CurrentPlatform switch
         {
-            PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
+            PluginPlatform.Linux => virtualTablet?.HasValidDevice() ?? false ? virtualTablet : virtualTablet = new EvdevVirtualTablet(),
             _ => null
         };
 
         public static IVirtualKeyboard VirtualKeyboard => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-            PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
+            PluginPlatform.Linux => virtualKeyboard?.HasValidDevice() ?? false ? virtualKeyboard : virtualKeyboard = new EvdevVirtualKeyboard(),
             PluginPlatform.MacOS => new MacOSVirtualKeyboard(),
             _ => null
         };

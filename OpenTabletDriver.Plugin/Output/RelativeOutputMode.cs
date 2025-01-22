@@ -144,5 +144,13 @@ namespace OpenTabletDriver.Plugin.Output
                 synchronousPointer.Flush();
             }
         }
+
+        public override void Dispose()
+        {
+            if (Pointer is IDisposable pointer)
+                pointer.Dispose();
+
+            base.Dispose();
+        }
     }
 }

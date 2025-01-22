@@ -186,5 +186,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "Control", VirtualKey.VK_CONTROL },
             { "Application", VirtualKey.VK_LWIN },
         };
+
+        public bool HasValidDevice() => true;
     }
 }
