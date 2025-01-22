@@ -177,10 +177,8 @@ namespace OpenTabletDriver.Daemon
         {
             try
             {
-                // Dispose filters that implement IDisposable interface
-                foreach (var obj in Driver.InputDevices.SelectMany(d => d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
-                    if (obj is IDisposable disposable)
-                        disposable.Dispose();
+                foreach (var dev in Driver.InputDevices)
+                    dev.OutputMode?.Dispose();
 
                 Settings = settings ??= Settings.GetDefaults();
 

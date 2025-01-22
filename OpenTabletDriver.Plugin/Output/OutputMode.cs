@@ -135,5 +135,14 @@ namespace OpenTabletDriver.Plugin.Output
                 UnlinkAll(PreTransformElements, this, PostTransformElements, output);
             }
         }
+
+        public virtual void Dispose()
+        {
+            entryElement = null;
+
+            foreach (var obj in Elements ?? [])
+                if (obj is IDisposable disposable)
+                    disposable.Dispose();
+        }
     }
 }
