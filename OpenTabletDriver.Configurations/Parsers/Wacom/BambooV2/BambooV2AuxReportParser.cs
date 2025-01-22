@@ -1,9 +1,9 @@
 using OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos
+namespace OpenTabletDriver.Configurations.Parsers.Wacom.BambooV2
 {
-    public class IntuosAuxReportParser : IReportParser<IDeviceReport>
+    public class BambooV2AuxReportParser : IReportParser<IDeviceReport>
     {
         public virtual IDeviceReport Parse(byte[] data)
         {
