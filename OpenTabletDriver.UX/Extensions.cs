@@ -70,7 +70,7 @@ namespace OpenTabletDriver.UX
 
         #nullable enable
 
-        public static T BuildFileDialog<T>(string? title, string? directory, FileFilter[]? filters, bool? multiSelect = null)
+        public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null)
             where T : FileDialog, new()
         {
             var fileDialog = new T();
@@ -99,10 +99,10 @@ namespace OpenTabletDriver.UX
             return fileDialog;
         }
 
-        public static OpenFileDialog OpenFileDialog(string? title, string? directory, FileFilter[]? filters, bool? multiSelect = null) =>
+        public static OpenFileDialog OpenFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null) =>
             BuildFileDialog<OpenFileDialog>(title, directory, filters, multiSelect);
 
-        public static SaveFileDialog SaveFileDialog(string? title, string? directory, FileFilter[]? filters) =>
+        public static SaveFileDialog SaveFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters) =>
             BuildFileDialog<SaveFileDialog>(title, directory, filters);
 
         public static void AddRangeToFilters(this FileDialog fileDialog, IEnumerable<FileFilter> filters)
