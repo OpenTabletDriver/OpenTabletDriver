@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -75,7 +76,6 @@ namespace OpenTabletDriver.UX
         private const int DEFAULT_CLIENT_WIDTH = 960;
         private const int DEFAULT_CLIENT_HEIGHT = 760;
 
-        private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
         private TrayIcon trayIcon;
@@ -369,6 +369,9 @@ namespace OpenTabletDriver.UX
             // Load the application information from the daemon
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
 
+            AppInfo.PluginManager = new DesktopPluginManager();
+            AppInfo.PresetManager = new PresetManager();
+
             // Load any new plugins
             AppInfo.PluginManager.Load();
 
@@ -382,7 +385,7 @@ namespace OpenTabletDriver.UX
 
             // Set window content
             base.Menu = menu ??= ConstructMenu();
-            base.Content = mainPanel ??= new TabletSwitcherPanel
+            base.Content = new TabletSwitcherPanel
             {
                 CommandsControl = new StackLayout
                 {
