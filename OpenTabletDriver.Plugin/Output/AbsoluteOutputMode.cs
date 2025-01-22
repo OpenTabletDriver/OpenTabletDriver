@@ -143,8 +143,6 @@ namespace OpenTabletDriver.Plugin.Output
             // the SetPosition method is dependent on the proximity state.
             if (report is IProximityReport proximityReport)
             {
-                if (Pointer is IProximityHandler proximityHandler)
-                    proximityHandler.SetProximity(proximityReport.NearProximity);
                 if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
                     hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
             }
