@@ -116,16 +116,9 @@ namespace OpenTabletDriver.Plugin.Output
         protected override void OnOutput(IDeviceReport report)
         {
             // this should be ordered from least to most chance of having a
-            // dependency to another pointer property. for example, proximity
-            // should be set before position, because in LinuxArtistMode
-            // the SetPosition method is dependent on the proximity state.
-            if (report is IProximityReport proximityReport)
-            {
-                if (Pointer is IProximityHandler proximityHandler)
-                    proximityHandler.SetProximity(proximityReport.NearProximity);
-                if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
-                    hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
-            }
+            // dependency to another pointer property.
+            if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
+                hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
             if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
                 eraserHandler.SetEraser(eraserReport.Eraser);
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
