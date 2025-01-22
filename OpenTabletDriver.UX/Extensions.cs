@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Eto.Forms;
@@ -68,35 +70,45 @@ namespace OpenTabletDriver.UX
 
         #nullable enable
 
-        public static SaveFileDialog SaveFileDialog(string title, string directory, FileFilter[] filters)
+        public static T BuildFileDialog<T>(string? title, string? directory, FileFilter[]? filters, bool? multiSelect = null)
+            where T : FileDialog, new()
         {
-            var fileDialog = new SaveFileDialog();
+            var fileDialog = new T();
 
-            SetupFileDialog(fileDialog, title, directory, filters, "Save File");
-
-            return fileDialog;
-        }
-
-        public static OpenFileDialog OpenFileDialog(string title, string directory, FileFilter[] filters, bool multiSelect = false)
-        {
-            var fileDialog = new OpenFileDialog();
-
-            SetupFileDialog(fileDialog, title, directory, filters, "Open File");
-            fileDialog.MultiSelect = multiSelect;
-
-            return fileDialog;
-        }
-
-        private static void SetupFileDialog(FileDialog fileDialog, string title, string directory, FileFilter[] filters, string defaultTitle)
-        {
-            fileDialog.Title = !string.IsNullOrEmpty(title) ? title : defaultTitle;
+            var defaultTitle = fileDialog switch
+            {
+                Eto.Forms.OpenFileDialog => "Open File",
+                Eto.Forms.SaveFileDialog => "Save File",
+                _ => string.Empty,
+            };
+            var dialogTitle = !string.IsNullOrEmpty(title) ? title : defaultTitle;
+            if (!string.IsNullOrEmpty(dialogTitle))
+                fileDialog.Title = dialogTitle;
 
             if (filters != null)
-                foreach (var filter in filters)
-                    fileDialog.Filters.Add(filter);
+                fileDialog.AddRangeToFilters(filters);;
 
             if (!string.IsNullOrEmpty(directory))
                 fileDialog.Directory = new Uri(directory);
+
+            if (fileDialog is OpenFileDialog openFileDialog && multiSelect.HasValue)
+                openFileDialog.MultiSelect = multiSelect.Value;
+            else if (multiSelect.HasValue)
+                Debug.Fail("Multiselect set without compatible file dialog type");
+
+            return fileDialog;
+        }
+
+        public static OpenFileDialog OpenFileDialog(string? title, string? directory, FileFilter[]? filters, bool? multiSelect = null) =>
+            BuildFileDialog<OpenFileDialog>(title, directory, filters, multiSelect);
+
+        public static SaveFileDialog SaveFileDialog(string? title, string? directory, FileFilter[]? filters) =>
+            BuildFileDialog<SaveFileDialog>(title, directory, filters);
+
+        public static void AddRangeToFilters(this FileDialog fileDialog, IEnumerable<FileFilter> filters)
+        {
+            foreach (var filter in filters)
+                fileDialog.Filters.Add(filter);
         }
     }
 }
