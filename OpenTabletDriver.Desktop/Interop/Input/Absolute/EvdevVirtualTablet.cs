@@ -8,12 +8,11 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IProximityHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool isEraser;
-        private bool proximity = true;
 
         public unsafe EvdevVirtualTablet()
         {
@@ -93,7 +92,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_KEY, currentTool, proximity ? 1 : 0);
+            Device.Write(EventType.EV_KEY, currentTool, 1);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
@@ -121,11 +120,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             this.isEraser = isEraser;
         }
 
-        public void SetProximity(bool proximity)
-        {
-            this.proximity = proximity;
-        }
-
         public void SetHoverDistance(uint distance)
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
@@ -148,7 +142,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
 
             isEraser = false;
-            proximity = true; // we counterintuitively set this to true since its the initial state
         }
 
         protected override EventCode? GetCode(MouseButton button) => null;
