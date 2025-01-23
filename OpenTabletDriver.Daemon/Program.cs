@@ -45,14 +45,13 @@ namespace OpenTabletDriver.Daemon.Executable
         private static async Task InvokeAsync(string appdata, string config)
         {
             var serviceCollection = DesktopServiceCollection.GetPlatformServiceCollection();
-            var appInfo = GetPlatformAppInfo();
+            // FIXME: these should be set in appInfo
+            //if (!string.IsNullOrWhiteSpace(appdata))
+            //    appInfo.AppDataDirectory = FileUtilities.InjectEnvironmentVariables(appdata);
+            //if (!string.IsNullOrWhiteSpace(config))
+            //    appInfo.ConfigurationDirectory = FileUtilities.InjectEnvironmentVariables(config);
 
-            if (!string.IsNullOrWhiteSpace(appdata))
-                appInfo.AppDataDirectory = FileUtilities.InjectEnvironmentVariables(appdata);
-            if (!string.IsNullOrWhiteSpace(config))
-                appInfo.ConfigurationDirectory = FileUtilities.InjectEnvironmentVariables(config);
-
-            serviceCollection.AddSingleton(appInfo)
+            serviceCollection
                 .AddSingleton(s => s.CreateInstance<RpcHost<IDriverDaemon>>("OpenTabletDriver.Daemon"))
                 .AddSingleton<IDriverDaemon, DriverDaemon>();
 
@@ -82,17 +81,6 @@ namespace OpenTabletDriver.Daemon.Executable
 
             await daemon.Initialize();
             await rpcHost.Run(daemon);
-        }
-
-        private static AppInfo GetPlatformAppInfo()
-        {
-            return SystemInterop.CurrentPlatform switch
-            {
-                SystemPlatform.Windows => new WindowsAppInfo(),
-                SystemPlatform.Linux => new LinuxAppInfo(),
-                SystemPlatform.MacOS => new MacOSAppInfo(),
-                _ => throw new PlatformNotSupportedException("This platform is not supported by OpenTabletDriver.")
-            };
         }
     }
 }

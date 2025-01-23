@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Daemon.Library
         private const string FILE_EXTENSION = ".json";
         private const string FILE_FILTER = $"*{FILE_EXTENSION}";
 
-        public PresetManager(AppInfo appInfo)
+        public PresetManager(IAppInfo appInfo)
         {
             _dir = appInfo.PresetDirectory!;
         }

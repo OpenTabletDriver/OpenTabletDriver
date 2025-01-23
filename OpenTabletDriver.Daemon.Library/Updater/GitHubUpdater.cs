@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Daemon.Library.Updater
     {
         private readonly IGitHubClient _github;
 
-        protected GitHubUpdater(Version currentVersion, AppInfo appInfo, IGitHubClient client)
+        protected GitHubUpdater(Version currentVersion, IAppInfo appInfo, IGitHubClient client)
             : base(currentVersion, appInfo.BinaryDirectory, appInfo.AppDataDirectory, appInfo.BackupDirectory)
         {
             _github = client;
