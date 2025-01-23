@@ -49,17 +49,17 @@ namespace OpenTabletDriver.Daemon.Library.Reflection
             Clean();
 
             var pluginInterfacesLinq = from asm in _coreAssemblies
-                from type in asm.ExportedTypes
-                where type.IsInterface || type.IsAbstract
-                where type.GetCustomAttribute<PluginInterfaceAttribute>() != null
-                select type;
+                                       from type in asm.ExportedTypes
+                                       where type.IsInterface || type.IsAbstract
+                                       where type.GetCustomAttribute<PluginInterfaceAttribute>() != null
+                                       select type;
 
             PluginInterfaces = pluginInterfacesLinq.ToImmutableArray();
 
             var internalPluginTypesLinq = from asm in _coreAssemblies
-                from type in asm.ExportedTypes
-                where IsLoadablePlugin(type)
-                select type;
+                                          from type in asm.ExportedTypes
+                                          where IsLoadablePlugin(type)
+                                          select type;
 
             InternalPluginTypes = internalPluginTypesLinq.ToImmutableArray();
         }
