@@ -26,10 +26,7 @@ Minden támogatott, nem tesztelt, és támogatásra váró tabletet megtalálhat
 
 # Az OpenTabletDriver futtatása
 
-Az OpenTabletDriver két, külön folyamatként fut, amelyek a háttérben együttműködnek. Az aktív program - ami a tablet adatait kezeli - az `OpenTabletDriver.Daemon`, míg a program megjelenítését az `OpenTabletDriver.UX.*` program végzi, ahol a `*` a te platformodat jelzi<sup>1</sup>. A daemont mindig el kell indítani, hogy működjön a program, de a GUI hanyagolható. Ha már vannak beállításaid, a daemon azokkal fog elindulni.
-
-> <sup>1</sup>Windows uses `Wpf`, Linux uses `Gtk`, and MacOS uses `MacOS` respectively. This for the most part can be ignored if you don't build it from source as only the correct version will be provided.
-> <sup>1</sup>A Windowst a `Wpf` utótag jelzi, a Linuxot a `Gtk`, a MacOS-t pedig a `MacOS`. Ez nem olyan fontos, ha nem a forráskódból építed az appot.
+Az OpenTabletDriver két, külön folyamatként fut, amelyek a háttérben együttműködnek. Az aktív program - ami a tablet adatait kezeli - az `OpenTabletDriver.Daemon`, míg a program megjelenítését az `OpenTabletDriver.UI`. A daemont mindig el kell indítani, hogy működjön a program, de a GUI hanyagolható. Ha már vannak beállításaid, a daemon azokkal fog elindulni.
 
 ## Az OpenTabletDriver építése forráskódból
 
