@@ -9,14 +9,16 @@
       "OpenTabletDriver.Configurations\\OpenTabletDriver.Configurations.csproj",
       "OpenTabletDriver.Console\\OpenTabletDriver.Console.csproj",
       "OpenTabletDriver.Daemon\\OpenTabletDriver.Daemon.csproj",
-      "OpenTabletDriver.Desktop\\OpenTabletDriver.Desktop.csproj",
+      "OpenTabletDriver.Daemon.Library\\OpenTabletDriver.Daemon.Library.csproj",
+      "OpenTabletDriver.Daemon.Contracts\\OpenTabletDriver.Daemon.Contracts.csproj",
       "OpenTabletDriver.Native\\OpenTabletDriver.Native.csproj",
       "OpenTabletDriver.Native.Linux\\OpenTabletDriver.Native.Linux.csproj",
       "OpenTabletDriver.Native.MacOS\\OpenTabletDriver.Native.MacOS.csproj",
       "OpenTabletDriver.Native.Windows\\OpenTabletDriver.Native.Windows.csproj",
       "OpenTabletDriver.Tests\\OpenTabletDriver.Tests.csproj",
-      "OpenTabletDriver.UX\\OpenTabletDriver.UX.csproj",
-      "OpenTabletDriver.UX.Wpf\\OpenTabletDriver.UX.Wpf.csproj"
+      "OpenTabletDriver.UI\\OpenTabletDriver.UI.csproj",
+      "OpenTabletDriver.UI.Library\\OpenTabletDriver.UI.Library.csproj",
+      "OpenTabletDriver.UI.Tests\\OpenTabletDriver.UI.Tests.csproj",
     ]
   }
 }

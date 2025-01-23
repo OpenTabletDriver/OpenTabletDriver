@@ -1,0 +1,25 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tc="using:OpenTabletDriver.UI.TemplatedControls">
+  <Style Selector="tc|BooleanInput">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border
+            Name="PART_Background"
+            Classes="Container">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <TextBlock
+                Text="{TemplateBinding Label}"
+                Classes="Label"
+                Grid.Column="0" />
+            <ToggleButton
+                Name="PART_Toggle"
+                IsChecked="{TemplateBinding Value, Mode=TwoWay}"
+                Grid.Column="2" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

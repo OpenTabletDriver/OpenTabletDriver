@@ -1,5 +1,3 @@
-using System.Numerics;
-using System.Runtime.CompilerServices;
 using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.BambooPad

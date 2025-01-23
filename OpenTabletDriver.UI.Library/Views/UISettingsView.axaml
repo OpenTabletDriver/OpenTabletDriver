@@ -1,0 +1,44 @@
+﻿<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    xmlns:tc="using:OpenTabletDriver.UI.TemplatedControls"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Views.UISettingsView"
+    x:DataType="vm:UISettingsViewModel"
+    x:CompileBindings="True"
+    IsVisible="{Binding Settings, Converter={x:Static ObjectConverters.IsNotNull}}">
+  <Grid RowDefinitions="Auto,*,Auto">
+    <ScrollViewer Grid.Row="0">
+      <StackPanel
+          Spacing="4"
+          Grid.IsSharedSizeScope="True">
+        <tc:BooleanInput
+            Label="Kaomoji"
+            Value="{Binding Settings.Kaomoji}" />
+        <tc:BooleanInput
+            Label="Transparency"
+            Value="{Binding Settings.Transparency}" />
+        <tc:BooleanInput
+            Label="{Binding AutoStartLabel}"
+            IsVisible="{Binding AutoStartLabel, Converter={x:Static ObjectConverters.IsNotNull}}"
+            Value="{Binding AutoStart}" />
+      </StackPanel>
+    </ScrollViewer>
+
+    <StackPanel
+        Classes="CommandBar"
+        Grid.Row="2">
+      <Button
+          Content="Save"
+          Command="{Binding SaveSettingsCommand}" />
+      <Button
+          Content="Reset"
+          Command="{Binding ResetSettingsCommand}" />
+    </StackPanel>
+  </Grid>
+</UserControl>

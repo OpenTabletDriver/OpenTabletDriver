@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Daemon.Contracts.Persistence;
 
 #nullable enable
 

@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Package Information">
-    <Authors>InfinityGhost</Authors>
+    <Authors>InfinityGhost;X9VoiD</Authors>
     <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
     <ProjectUrl>https://www.opentabletdriver.net/</ProjectUrl>
     <RepositoryUrl>https://www.github.com/OpenTabletDriver/OpenTabletDriver</RepositoryUrl>

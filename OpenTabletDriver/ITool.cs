@@ -8,7 +8,7 @@ namespace OpenTabletDriver
     /// A plugin that will be started up and kept running until OpenTabletDriver is closed.
     /// </summary>
     [PublicAPI]
-    [PluginName("Tool")]
+    [PluginInterface]
     public interface ITool : IDisposable
     {
         /// <summary>

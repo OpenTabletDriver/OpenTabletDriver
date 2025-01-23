@@ -1,0 +1,51 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tc="using:OpenTabletDriver.UI.TemplatedControls">
+  <Style Selector="tc|RangedInput">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border
+            Name="PART_Background"
+            Classes="Container">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition
+                  Width="Auto"
+                  SharedSizeGroup="Input_LabelColumn" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="6*" />
+              <ColumnDefinition Width="64" />
+              <ColumnDefinition
+                  Width="Auto"
+                  SharedSizeGroup="Input_UnitColumn" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Name="PART_Label"
+                Text="{TemplateBinding Label}"
+                Classes="Label"
+                Grid.Column="0"/>
+            <Slider
+                Name="PART_Slider"
+                Grid.Column="2"
+                Minimum="{TemplateBinding Minimum}"
+                Maximum="{TemplateBinding Maximum}"
+                Value="{TemplateBinding Value, Mode=TwoWay}" />
+            <TextBox
+                Name="PART_Input"
+                Classes="HorizontalGridMarginTight"
+                Text="{TemplateBinding Text}"
+                Grid.Column="3" />
+            <TextBlock
+                Name="PART_Unit"
+                Text="{TemplateBinding Unit}"
+                Grid.Column="4"
+                HorizontalAlignment="Left"
+                IsVisible="{TemplateBinding Unit, Converter={x:Static ObjectConverters.IsNotNull}}" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

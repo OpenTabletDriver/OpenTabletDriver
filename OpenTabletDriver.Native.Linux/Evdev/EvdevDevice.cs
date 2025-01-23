@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace OpenTabletDriver.Native.Linux.Evdev
 {
@@ -61,7 +60,7 @@ namespace OpenTabletDriver.Native.Linux.Evdev
         public void EnableTypeCodes(EventType type, IEnumerable<EventCode> codes)
         {
             EnableType(type);
-            EnableCodes(type, codes.ToArray());
+            EnableCodes(type, codes);
         }
 
         public int Write(EventType type, EventCode code, int value)

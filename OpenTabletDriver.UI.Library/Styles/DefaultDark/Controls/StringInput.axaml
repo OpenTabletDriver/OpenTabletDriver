@@ -1,0 +1,36 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tc="using:OpenTabletDriver.UI.TemplatedControls">
+  <Style Selector="tc|StringInput">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border
+            Name="PART_Background"
+            Classes="Container">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition
+                  Width="Auto"
+                  SharedSizeGroup="Input_LabelColumn" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition
+                  Width="2*"
+                  MinWidth="80"
+                  MaxWidth="200" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Text="{TemplateBinding Label}"
+                Classes="Label"
+                Grid.Column="0" />
+            <TextBox
+                Name="PART_Input"
+                Text="{TemplateBinding Value, Mode=TwoWay}"
+                Grid.Column="2" />
+          </Grid>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>
