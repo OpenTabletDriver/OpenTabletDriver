@@ -30,10 +30,9 @@ namespace OpenTabletDriver.Tests
                 SupportedDriverVersion = supportedDriverVersion
             };
 
-            //var supportStatus = pluginMetaData.IsSupportedBy(driverVersion);
+            var supportStatus = pluginMetaData.IsSupportedBy(driverVersion);
 
-            //Assert.Equal(expectedSupport, supportStatus);
-            Assert.Fail("test unimplemented");
+            Assert.Equal(expectedSupport, supportStatus);
         }
     }
 }
