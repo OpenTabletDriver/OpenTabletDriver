@@ -3,7 +3,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Wheel
     /// <summary>
     /// A report containing aux keys related to a wheel.
     /// </summary>
-    public interface IWheelButtonReport
+    public interface IWheelButtonReport : IDeviceReport
     {
         /// <summary>
         /// The buttons related to the wheel.
