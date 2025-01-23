@@ -26,9 +26,7 @@ Los estados de las tabletas que son soportadas, no probadas y planeadas para ser
 
 # Ejecución de los binarios de OpenTabletDriver
 
-OpenTabletDriver funciona como dos procesos separados que se coordinan a la perfección. El programa activo que se encarga de manejar todos los datos de la tableta es `OpenTabletDriver.Daemon`, mientras que la interfaz de usuario es `OpenTabletDriver.UX.*`, donde `*` depende de su plataforma<sup>1</sup>. El servicio debe de iniciarse para que todo funcione, sin embargo, la interfaz de usuario es innecesaria. Si tiene configuraciones existentes, deberían de aplicarse cuando se inicie el servicio.
-
-> <sup>1</sup>Windows usa `Wpf`, Linux usa `Gtk` y MacOS usa `MacOS` respectivamente. Esto, en su mayor parte, puede ser ignorado si no lo compilas desde el código fuente, ya que sólo se proporcionará la versión correcta.
+OpenTabletDriver funciona como dos procesos separados que se coordinan a la perfección. El programa activo que se encarga de manejar todos los datos de la tableta es `OpenTabletDriver.Daemon`, mientras que la interfaz de usuario es `OpenTabletDriver.UI`. El servicio debe de iniciarse para que todo funcione, sin embargo, la interfaz de usuario es innecesaria. Si tiene configuraciones existentes, deberían de aplicarse cuando se inicie el servicio.
 
 ## Compilación de OpenTabletDriver desde el código fuente
 
