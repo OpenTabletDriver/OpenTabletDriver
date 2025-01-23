@@ -286,7 +286,7 @@ copy_pixmap_assets() {
 
   echo "Copying pixmap assets to '${output_folder}'..."
   mkdir -p "${output_folder}"
-  cp "${REPO_ROOT}/OpenTabletDriver.UX/Assets"/* "${output_folder}"
+  cp "${REPO_ROOT}/OpenTabletDriver.UI.Library/Assets"/* "${output_folder}"
 }
 
 copy_manpage() {

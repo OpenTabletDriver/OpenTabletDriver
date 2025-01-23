@@ -71,7 +71,7 @@ buildDotnetModule rec {
     mv $out/bin/OpenTabletDriver.Daemon $out/bin/otd-daemon
     mv $out/bin/OpenTabletDriver.UI $out/bin/otd-gui
 
-    install -Dm644 $src/OpenTabletDriver.UI/Assets/otd.png -t $out/share/pixmaps
+    install -Dm644 $src/OpenTabletDriver.UI.Library/Assets/otd.png -t $out/share/pixmaps
 
     # Generate udev rules from source
     export OTD_CONFIGURATIONS="$src/OpenTabletDriver.Configurations/Configurations"
