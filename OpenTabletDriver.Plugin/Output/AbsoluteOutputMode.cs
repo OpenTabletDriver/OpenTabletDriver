@@ -62,6 +62,16 @@ namespace OpenTabletDriver.Plugin.Output
         /// </remarks>
         public bool AreaLimiting { set; get; }
 
+        /// <summary>
+        /// Whether to disable pressure
+        /// </summary>
+        public bool DisablePressure { set; get; }
+
+        /// <summary>
+        /// Whether to disable tilt
+        /// </summary>
+        public bool DisableTilt { set; get; }
+
         protected override Matrix3x2 CreateTransformationMatrix()
         {
             if (Input != null && Output != null && Tablet != null)
@@ -143,9 +153,9 @@ namespace OpenTabletDriver.Plugin.Output
                 hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
             if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
                 eraserHandler.SetEraser(eraserReport.Eraser);
-            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
                 tiltHandler.SetTilt(tiltReport.Tilt);
-            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler && !DisablePressure
                 && Tablet.Properties.Specifications.Pen != null)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
 
