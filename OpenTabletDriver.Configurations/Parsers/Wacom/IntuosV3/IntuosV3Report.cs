@@ -4,7 +4,7 @@ using OpenTabletDriver.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
 {
-    public struct IntuosV3Report : ITabletReport, IHoverReport, IConfidenceReport, ITiltReport
+    public struct IntuosV3Report : ITabletReport, IHoverReport, IConfidenceReport, ITiltReport, IEraserReport
     {
         public IntuosV3Report(byte[] report)
         {
@@ -30,6 +30,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
                 penByte.IsBitSet(1),
                 penByte.IsBitSet(2)
             };
+            Eraser = report[2].IsBitSet(5);
             HighConfidence = report[2].IsBitSet(6);
             HoverDistance = report[13];
         }
@@ -41,5 +42,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
         public bool[] PenButtons { set; get; }
         public bool HighConfidence { set; get; }
         public uint HoverDistance { set; get; }
+        public bool Eraser { get; set; }
     }
 }

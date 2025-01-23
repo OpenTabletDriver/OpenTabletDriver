@@ -13,9 +13,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -24,12 +22,9 @@
       "InputReportLength": 9,
       "OutputReportLength": 9,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkV1ReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "CQEE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     },
     {
       "VendorID": 12267,
@@ -37,15 +32,11 @@
       "InputReportLength": 8,
       "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkV1ReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "CQEE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

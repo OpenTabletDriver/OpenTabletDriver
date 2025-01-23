@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -84,7 +85,7 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                                                             _tabletConfigurations.Select(t => new TabletConfigurationEmitter(t).Emit()))))))))))
                                         .WithSemicolonToken(
                                             SyntaxFactory.Token(SyntaxKind.SemicolonToken))))))))
-                .NormalizeWhitespace(eol: "\n");
+                .NormalizeWhitespace(eol: Environment.NewLine);
 
             builder.AppendLine(Format(compilationUnit).GetText().ToString());
 

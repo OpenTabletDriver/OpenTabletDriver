@@ -29,7 +29,7 @@ jobs:
           dotnet publish OpenTabletDriver.UX.Gtk "${options[@]}" --runtime "$runtime" -o "build/$runtime"
 
       - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
@@ -38,7 +38,7 @@ jobs:
         run: ./generate-rules.sh > 70-opentabletdriver.rules
 
       - name: Upload udev Rules
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4
         with:
           name: udev Rules
           path: 70-opentabletdriver.rules
@@ -65,7 +65,7 @@ jobs:
           dotnet publish OpenTabletDriver.UX.MacOS "${options[@]}" --runtime "$runtime" -o "build/$runtime"
 
       - name: Upload MacOS artifacts
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenTabletDriver osx-x64
           path: build/osx-x64
@@ -92,7 +92,7 @@ jobs:
           dotnet publish OpenTabletDriver.UX.Wpf $options --runtime $ENV:runtime -o build/$ENV:runtime
 
       - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v3.1.3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenTabletDriver win-x64
           path: build/win-x64

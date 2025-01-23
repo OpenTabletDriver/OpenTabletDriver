@@ -8,7 +8,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
         {
             return data[0] switch
             {
-                0x1F => new IntuosV3Report(data),
+                0x1E => new IntuosV3ExtendedReport(data),
+                0x1F => data[1] == 0x01 ? new IntuosV3Report(data) : new DeviceReport(data),
                 _ => new DeviceReport(data)
             };
         }

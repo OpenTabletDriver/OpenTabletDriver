@@ -61,18 +61,20 @@ namespace OpenTabletDriver.Analyzers.Emitters
                                 SyntaxFactory.AssignmentExpression(
                                     SyntaxKind.SimpleAssignmentExpression,
                                     SyntaxFactory.IdentifierName(nameof(TabletConfiguration.Attributes)),
-                                    EmitterHelper.CreateDictionary(
+                                    _configuration.Attributes == null
+                                        ? SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)
+                                        : EmitterHelper.CreateDictionary(
                                         SyntaxFactory.PredefinedType(
                                             SyntaxFactory.Token(SyntaxKind.StringKeyword)),
-                                        SyntaxFactory.PredefinedType(
-                                            SyntaxFactory.Token(SyntaxKind.StringKeyword)),
-                                        _configuration.Attributes.Select(a =>
-                                            (SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal(a.Key)),
-                                            SyntaxFactory.LiteralExpression(
-                                                SyntaxKind.StringLiteralExpression,
-                                                SyntaxFactory.Literal(a.Value))))))
+                                            SyntaxFactory.PredefinedType(
+                                                SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+                                            _configuration.Attributes.Select(a =>
+                                                (SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.StringLiteralExpression,
+                                                    SyntaxFactory.Literal(a.Key)),
+                                                SyntaxFactory.LiteralExpression(
+                                                    SyntaxKind.StringLiteralExpression,
+                                                    SyntaxFactory.Literal(a.Value))))))
                             })))
                     .WithArgumentList(
                         SyntaxFactory.ArgumentList());
@@ -86,7 +88,7 @@ namespace OpenTabletDriver.Analyzers.Emitters
         public class EmitterException : Exception
         {
             public string ConfigurationName { get; set; }
-            public override string Message => $"Failed to emit code for configuration '{ConfigurationName}'.";
+            public override string Message => $"Failed to emit code for configuration '{ConfigurationName}': {InnerException.Message}";
 
             public EmitterException(string configurationName) : base()
             {

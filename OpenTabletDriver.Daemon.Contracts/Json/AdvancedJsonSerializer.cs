@@ -10,6 +10,12 @@ namespace OpenTabletDriver.Daemon.Contracts.Json
             {
                 Converters.Add(converter);
             }
+
+            Formatting = Formatting.Indented;
+            NullValueHandling = NullValueHandling.Ignore;
+            DefaultValueHandling = DefaultValueHandling.Ignore;
         }
+
+        public static AdvancedJsonSerializer Instance { get; } = new();
     }
 }

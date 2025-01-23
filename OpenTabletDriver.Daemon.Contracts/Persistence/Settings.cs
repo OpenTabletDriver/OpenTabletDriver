@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
+using OpenTabletDriver.Daemon.Contracts.Json;
 
 namespace OpenTabletDriver.Daemon.Contracts.Persistence
 {
@@ -46,10 +47,7 @@ namespace OpenTabletDriver.Daemon.Contracts.Persistence
             return Profiles.FirstOrDefault(p => p.Tablet == inputDevice.Configuration.Name && p.PersistentId == inputDevice.PersistentId);
         }
 
-        private static readonly JsonSerializer Serializer = new JsonSerializer
-        {
-            Formatting = Formatting.Indented
-        };
+        private static readonly JsonSerializer Serializer = new AdvancedJsonSerializer();
 
         private static void SerializationErrorHandler(object? sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {

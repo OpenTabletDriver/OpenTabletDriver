@@ -15,6 +15,8 @@ namespace OpenTabletDriver
     [PublicAPI]
     public sealed class InputDeviceEndpoint : IDisposable
     {
+        private readonly uint _featureInitDelayMs;
+        private const string DELAY_ATTRIBUTE_KEY_NAME = "FeatureInitDelayMs";
         private InputDeviceState _state;
         private IDeviceEndpointStream? _reportStream;
         private Thread? _reportThread;
@@ -30,6 +32,10 @@ namespace OpenTabletDriver
             Parser = driver.GetReportParser(identifier);
             Configuration = configuration;
             Identifier = identifier;
+
+            if (Configuration.Attributes?.TryGetValue(DELAY_ATTRIBUTE_KEY_NAME, out var delayStr) ?? false)
+                if (!uint.TryParse(delayStr, out _featureInitDelayMs))
+                    Log.Write("Device", $"Could not parse '{delayStr}' from attribute {DELAY_ATTRIBUTE_KEY_NAME}", LogLevel.Warning);
         }
 
         /// <summary>
@@ -84,6 +90,9 @@ namespace OpenTabletDriver
 
             Log.Debug("Device", $"Using report parser type '{Identifier.ReportParser}'");
 
+            if (_featureInitDelayMs != 0)
+                Log.Debug("Device", $"{DELAY_ATTRIBUTE_KEY_NAME} is set in tablet configuration, will sleep for {_featureInitDelayMs}ms between FeatureInitReports");
+
             foreach (byte index in Identifier.InitializationStrings ?? Enumerable.Empty<byte>())
             {
                 Endpoint.GetDeviceString(index);
@@ -97,6 +106,8 @@ namespace OpenTabletDriver
 
                 try
                 {
+                    if (_featureInitDelayMs != 0)
+                        Thread.Sleep((int)_featureInitDelayMs);
                     reportStream!.SetFeature(report);
                     Log.Debug("Device", "Set device feature: " + BitConverter.ToString(report));
                 }

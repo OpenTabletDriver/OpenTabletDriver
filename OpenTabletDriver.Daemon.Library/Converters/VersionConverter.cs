@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace OpenTabletDriver.Daemon.Library.Converters
+namespace OpenTabletDriver.Daemon.Library.Converters.VersionConverter
 {
     public class VersionConverter : JsonConverter<Version>
     {

@@ -87,6 +87,7 @@ cp -r bin "%{buildroot}/%{_prefix}/lib/opentabletdriver"
 %{_prefix}/share/doc/opentabletdriver/LICENSE
 %{_prefix}/share/pixmaps/otd.ico
 %{_prefix}/share/pixmaps/otd.png
+%{_prefix}/share/libinput/30-vendor-opentabletdriver.quirks
 
 %changelog
 EOF

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -35,13 +36,13 @@ namespace OpenTabletDriver.Tests
             var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
 
             var parsers = from configuration in configurationProvider.TabletConfigurations
-                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers)
+                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
                           orderby identifier.ReportParser
                           select identifier.ReportParser;
 
             var failed = false;
 
-            foreach (var parserType in parsers.Distinct())
+            foreach (var parserType in parsers.Where(p => p != null).Distinct())
             {
                 try
                 {
@@ -246,7 +247,7 @@ namespace OpenTabletDriver.Tests
                                                   select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
 
             var auxIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                                            from identifier in config.AuxiliaryDeviceIdentifiers.Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                            from identifier in (config.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>()).Select((d, i) => new { DeviceIdentifier = d, Index = i })
                                             select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
 
             var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts);
@@ -286,8 +287,11 @@ namespace OpenTabletDriver.Tests
         public void Configurations_Verify_Configs_With_Schema()
         {
             var gen = new JSchemaGenerator();
+            gen.DefaultRequired = Required.DisallowNull;
+
             var schema = gen.Generate(typeof(TabletConfiguration));
             DisallowAdditionalItemsAndProperties(schema);
+            DisallowNullsAndEmptyCollections(schema);
 
             var failed = false;
 
@@ -296,7 +300,11 @@ namespace OpenTabletDriver.Tests
                 var tabletConfig = JObject.Parse(tabletConfigString);
                 if (tabletConfig.IsValid(schema, out IList<string> errors)) continue;
 
-                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:\r\n{string.Join("\r\n", errors)}\r\n");
+                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:");
+                foreach (var error in errors)
+                    _testOutputHelper.WriteLine(error);
+                _testOutputHelper.WriteLine(string.Empty);
+
                 failed = true;
             }
 
@@ -312,74 +320,47 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public void Configurations_Are_Linted()
         {
-            const int maxLinesToOutput = 3;
-
-            var serializer = new JsonSerializer();
-            var failedFiles = 0;
-
-            var ourJsonSb = new StringBuilder();
-            using var strw = new StringWriter(ourJsonSb);
-            using var jtw = new JsonTextWriter(strw);
-            jtw.Formatting = Formatting.Indented;
-            jtw.Indentation = 2;
-
-            foreach (var (tabletFilename, theirJson) in ConfigFiles)
+            var serializer = new JsonSerializer()
             {
-                ourJsonSb.Clear();
-                var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(theirJson);
+                NullValueHandling = NullValueHandling.Ignore
+            };
 
-                serializer.Serialize(jtw, ourJsonObj);
-                ourJsonSb.AppendLine(); // otherwise we won't have an EOL at EOF
+            var sb = new StringBuilder();
+            using var strw = new StringWriter(sb);
+            using var jtw = new JsonTextWriter(strw)
+            {
+                Formatting = Formatting.Indented,
+                Indentation = 2
+            };
 
-                var ourJson = ourJsonSb.ToString();
-
-                var failedLines = DoesJsonMatch(ourJson, theirJson);
-
-                if (failedLines.Any() || !string.Equals(theirJson, ourJson)) // second check ensures EOL markers are equivalent
+            var failedFiles = 0;
+            foreach (var (tabletFilename, actual) in ConfigFiles)
+            {
+                sb.Clear();
+                try
                 {
-                    failedFiles++;
-                    _testOutputHelper.WriteLine(
-                        $"- Tablet Configuration '{tabletFilename}' lint check failed with the following errors:");
+                    var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(actual);
+                    serializer.Serialize(jtw, ourJsonObj);
+                    sb.AppendLine();
+                    var expected = sb.ToString();
 
-                    foreach (var (line, error) in failedLines.Take(maxLinesToOutput))
-                        _testOutputHelper.WriteLine($"    Line {line}: {error}");
-                    if (failedLines.Count > maxLinesToOutput)
-                        _testOutputHelper.WriteLine($"    Truncated an additional {failedLines.Count - maxLinesToOutput} mismatching lines - wrong indent?");
-                    else if (failedLines.Count == 0)
-                        _testOutputHelper.WriteLine("     Generic mismatch (line endings?)");
+                    var diff = InlineDiffBuilder.Diff(expected, actual);
+
+                    if (diff.HasDifferences)
+                    {
+                        _testOutputHelper.WriteLine($"'{tabletFilename}' did not match linting:");
+                        PrintDiff(_testOutputHelper, diff);
+                        failedFiles++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _testOutputHelper.WriteLine($"'{tabletFilename}' failed to deserialize: {ex.Message}");
+                    failedFiles++;
                 }
             }
 
-            Assert.Equal(0, failedFiles);
-        }
-
-        private static IList<(int, string)> DoesJsonMatch(string ourJson, string theirJson)
-        {
-            int line = 0;
-            var rv = new List<(int, string)>();
-
-            using var ourSr = new StringReader(ourJson);
-            using var theirSr = new StringReader(theirJson);
-            while (true)
-            {
-                var ourLine = ourSr.ReadLine();
-                var theirLine = theirSr.ReadLine();
-                line++;
-
-                if (ourLine == null && theirLine == null)
-                    break; // success for file
-
-                var ourLineOutput = ourLine ?? "EOF";
-                var theirLineOutput = theirLine ?? "EOF";
-
-                if (ourLine == null || theirLine == null || !string.Equals(ourLine, theirLine))
-                    rv.Add((line, $"Expected '{ourLineOutput}' got '{theirLineOutput}'"));
-
-                if (ourLine == null || theirLine == null)
-                    break;
-            }
-
-            return rv;
+            Assert.True(failedFiles == 0, $"{failedFiles} configuration files failed linting.");
         }
 
         private static void DisallowAdditionalItemsAndProperties(JSchema schema)
@@ -393,6 +374,47 @@ namespace OpenTabletDriver.Tests
             {
                 if (child.Key == nameof(TabletConfiguration.Attributes)) continue;
                 DisallowAdditionalItemsAndProperties(child.Value);
+            }
+        }
+
+        private static void DisallowNullsAndEmptyCollections(JSchema schema)
+        {
+            var schemaType = schema.Type!.Value;
+
+            if (schemaType.HasFlag(JSchemaType.Array))
+            {
+                schema.MinimumItems = 1;
+            }
+            else if (schemaType.HasFlag(JSchemaType.Object))
+            {
+                schema.MinimumProperties = 1;
+            }
+
+            if (schema.Properties is not null)
+            {
+                foreach (var property in schema.Properties)
+                {
+                    DisallowNullsAndEmptyCollections(property.Value);
+                }
+            }
+        }
+
+        private static void PrintDiff(ITestOutputHelper outputHelper, DiffPaneModel diff)
+        {
+            foreach (var line in diff.Lines)
+            {
+                switch (line.Type)
+                {
+                    case ChangeType.Inserted:
+                        outputHelper.WriteLine($"+ {line.Text}");
+                        break;
+                    case ChangeType.Deleted:
+                        outputHelper.WriteLine($"- {line.Text}");
+                        break;
+                    default:
+                        outputHelper.WriteLine($"  {line.Text}");
+                        break;
+                }
             }
         }
 
@@ -414,20 +436,33 @@ namespace OpenTabletDriver.Tests
 
         private static bool IsEqual(DeviceIdentifier a, DeviceIdentifier b)
         {
-            var pidMatch = a.VendorID == b.VendorID && a.ProductID == b.ProductID;
-            var inputMatch = a.InputReportLength == b.InputReportLength || a.InputReportLength is null || b.InputReportLength is null;
-            var outputMatch = a.OutputReportLength == b.OutputReportLength || a.OutputReportLength is null || b.OutputReportLength is null;
-
-            if (pidMatch && inputMatch && outputMatch)
+            if (a.VendorID != b.VendorID || a.ProductID != b.ProductID)
             {
-                if (a.DeviceStrings.Count == 0 || b.DeviceStrings.Count == 0)
-                    return true;
-
-                var (longer, shorter) = a.DeviceStrings.Count > b.DeviceStrings.Count ? (a, b) : (b, a);
-                return shorter.DeviceStrings.All(kv => longer.DeviceStrings.TryGetValue(kv.Key, out var otherValue) && otherValue == kv.Value);
+                return false;
             }
 
-            return false;
+            if (a.InputReportLength != b.InputReportLength && a.InputReportLength is not null && b.InputReportLength is not null)
+            {
+                return false;
+            }
+
+            if (a.OutputReportLength != b.OutputReportLength && a.OutputReportLength is not null && b.OutputReportLength is not null)
+            {
+                return false;
+            }
+
+            if (a.DeviceStrings is null || a.DeviceStrings.Count == 0 || b.DeviceStrings is null || b.DeviceStrings.Count == 0)
+            {
+                return true; // One or both have no device strings, so they match.
+            }
+
+            // Both have device strings, so check for equality.
+            if (a.DeviceStrings.Count != b.DeviceStrings.Count)
+            {
+                return false;
+            }
+
+            return a.DeviceStrings.All(kv => b.DeviceStrings.TryGetValue(kv.Key, out var otherValue) && otherValue == kv.Value);
         }
 
         public enum IdentifierType

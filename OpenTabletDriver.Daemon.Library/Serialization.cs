@@ -10,13 +10,9 @@ namespace OpenTabletDriver.Daemon.Library
         static Serialization()
         {
             Serializer.Error += SerializationErrorHandler;
-            Serializer.Converters.Add(new VersionConverter());
         }
 
-        internal static JsonSerializer Serializer { get; } = new AdvancedJsonSerializer
-        {
-            Formatting = Formatting.Indented
-        };
+        internal static JsonSerializer Serializer { get; } = new AdvancedJsonSerializer();
 
         private static void SerializationErrorHandler(object? sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
@@ -43,24 +39,14 @@ namespace OpenTabletDriver.Daemon.Library
         {
             using (var sr = new StreamReader(stream))
             using (var jr = new JsonTextReader(sr))
-                return Deserialize<T>(jr);
+                return Serializer.Deserialize<T>(jr);
         }
 
         public static void Serialize(Stream stream, object value)
         {
             using (var sw = new StreamWriter(stream))
             using (var jw = new JsonTextWriter(sw))
-                Serialize(jw, value);
-        }
-
-        public static T? Deserialize<T>(JsonTextReader textReader)
-        {
-            return Serializer.Deserialize<T>(textReader);
-        }
-
-        public static void Serialize(JsonTextWriter textWriter, object value)
-        {
-            Serializer.Serialize(textWriter, value);
+                Serializer.Serialize(jw, value);
         }
     }
 }
