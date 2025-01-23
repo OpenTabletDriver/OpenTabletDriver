@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Daemon.Library.Reflection
 
         public static Assembly PluginAssembly => _coreAssemblies[0];
 
-        public PluginManager(AppInfo appInfo)
+        public PluginManager(IAppInfo appInfo)
             : this(appInfo.PluginDirectory, appInfo.TrashDirectory, appInfo.TemporaryDirectory)
         {
         }
@@ -49,17 +49,17 @@ namespace OpenTabletDriver.Daemon.Library.Reflection
             Clean();
 
             var pluginInterfacesLinq = from asm in _coreAssemblies
-                from type in asm.ExportedTypes
-                where type.IsInterface || type.IsAbstract
-                where type.GetCustomAttribute<PluginInterfaceAttribute>() != null
-                select type;
+                                       from type in asm.ExportedTypes
+                                       where type.IsInterface || type.IsAbstract
+                                       where type.GetCustomAttribute<PluginInterfaceAttribute>() != null
+                                       select type;
 
             PluginInterfaces = pluginInterfacesLinq.ToImmutableArray();
 
             var internalPluginTypesLinq = from asm in _coreAssemblies
-                from type in asm.ExportedTypes
-                where IsLoadablePlugin(type)
-                select type;
+                                          from type in asm.ExportedTypes
+                                          where IsLoadablePlugin(type)
+                                          select type;
 
             InternalPluginTypes = internalPluginTypesLinq.ToImmutableArray();
         }

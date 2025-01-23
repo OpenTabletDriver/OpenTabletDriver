@@ -5,7 +5,7 @@ using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Daemon.Contracts
 {
-    public class AppInfo
+    public class AppInfo : IAppInfo
     {
         private string? _appDataDirectory,
             _binaryDirectory,

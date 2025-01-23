@@ -35,7 +35,7 @@ namespace OpenTabletDriver.Daemon.Library
         private readonly IDriver _driver;
         private readonly SynchronizationContext _synchronizationContext;
         private readonly ICompositeDeviceHub _deviceHub;
-        private readonly AppInfo _appInfo;
+        private readonly IAppInfo _appInfo;
         private readonly ISettingsPersistenceManager _settingsManager;
         private readonly IPluginManager _pluginManager;
         private readonly IPluginFactory _pluginFactory;
@@ -59,7 +59,7 @@ namespace OpenTabletDriver.Daemon.Library
             IDriver driver,
             SynchronizationContext synchronizationContext,
             ICompositeDeviceHub deviceHub,
-            AppInfo appInfo,
+            IAppInfo appInfo,
             ISettingsPersistenceManager settingsManager,
             IPluginManager pluginManager,
             IPluginFactory pluginFactory,
@@ -395,7 +395,7 @@ namespace OpenTabletDriver.Daemon.Library
             return Task.CompletedTask;
         }
 
-        public Task<AppInfo> GetApplicationInfo()
+        public Task<IAppInfo> GetApplicationInfo()
         {
             return Task.FromResult(_appInfo);
         }
