@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public sealed class WindowsUpdater : GitHubUpdater
     {
-        public WindowsUpdater(AppInfo appInfo, IGitHubClient client)
+        public WindowsUpdater(IAppInfo appInfo, IGitHubClient client)
            : base(AssemblyVersion, appInfo, client)
         {
         }

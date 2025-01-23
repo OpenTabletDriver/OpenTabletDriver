@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Library.Diagnostics;
 using OpenTabletDriver.Daemon.Library.Interop.Display;
 using OpenTabletDriver.Daemon.Library.Interop.Environment;
@@ -31,7 +32,8 @@ namespace OpenTabletDriver.Daemon.Library.Interop
                 Transient<IPressureHandler, EvdevVirtualTablet>(),
                 Transient<IVirtualKeyboard, EvdevVirtualKeyboard>(),
                 Singleton<IKeyMapper, LinuxKeysProvider>(),
-                GetVirtualScreen()
+                GetVirtualScreen(),
+                Singleton<IAppInfo, LinuxAppInfo>(),
             });
         }
 

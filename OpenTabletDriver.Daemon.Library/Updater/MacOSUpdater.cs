@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public class MacOSUpdater : GitHubUpdater
     {
-        public MacOSUpdater(AppInfo appInfo, IGitHubClient client)
+        public MacOSUpdater(IAppInfo appInfo, IGitHubClient client)
             : base(AssemblyVersion, appInfo, client)
         {
             UpdateInstalled += _ => PostInstall();

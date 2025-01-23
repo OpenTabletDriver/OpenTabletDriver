@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Library.Interop.Display;
 using OpenTabletDriver.Daemon.Library.Interop.Environment;
 using OpenTabletDriver.Daemon.Library.Interop.Input.Absolute;
@@ -27,7 +28,8 @@ namespace OpenTabletDriver.Daemon.Library.Interop
                 Transient<IVirtualKeyboard, MacOSVirtualKeyboard>(),
                 Singleton<IVirtualScreen, MacOSDisplay>(),
                 Singleton<IKeyMapper, MacOSKeysProvider>(),
-                Transient<IUpdater, MacOSUpdater>()
+                Transient<IUpdater, MacOSUpdater>(),
+                Singleton<IAppInfo, MacOSAppInfo>(),
             });
         }
     }
