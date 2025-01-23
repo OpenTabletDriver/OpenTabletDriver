@@ -18,13 +18,13 @@ namespace OpenTabletDriver.Daemon.Library
     {
         private const int THRESHOLD_MS = 250;
         private readonly DeviceConfigurationProvider _inAssemblyConfigurationProvider = new();
-        private readonly AppInfo _appInfo;
+        private readonly IAppInfo _appInfo;
         private readonly FileSystemWatcher? _watcher;
 
         private CancellationTokenSource? _cts;
         private ImmutableArray<TabletConfiguration> _tabletConfigurations;
 
-        public DesktopDeviceConfigurationProvider(AppInfo appInfo)
+        public DesktopDeviceConfigurationProvider(IAppInfo appInfo)
         {
             _appInfo = appInfo;
 

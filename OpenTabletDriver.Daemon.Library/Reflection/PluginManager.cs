@@ -32,7 +32,7 @@ namespace OpenTabletDriver.Daemon.Library.Reflection
 
         public static Assembly PluginAssembly => _coreAssemblies[0];
 
-        public PluginManager(AppInfo appInfo)
+        public PluginManager(IAppInfo appInfo)
             : this(appInfo.PluginDirectory, appInfo.TrashDirectory, appInfo.TemporaryDirectory)
         {
         }

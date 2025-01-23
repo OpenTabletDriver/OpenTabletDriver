@@ -50,7 +50,7 @@ namespace OpenTabletDriver.Daemon.Contracts
         Task ApplyPreset(string name);
         Task SaveAsPreset(string name);
 
-        Task<AppInfo> GetApplicationInfo();
+        Task<IAppInfo> GetApplicationInfo();
         Task<DiagnosticInfo> GetDiagnostics();
 
         Task SetTabletDebug(bool isEnabled);
