@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace OpenTabletDriver.Daemon.Updater
+namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public interface IUpdater
     {

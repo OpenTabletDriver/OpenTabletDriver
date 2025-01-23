@@ -1,8 +1,8 @@
 using OpenTabletDriver.Components;
-using OpenTabletDriver.Daemon.Reflection;
+using OpenTabletDriver.Daemon.Library.Reflection;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     public class DesktopReportParserProvider : IReportParserProvider
     {

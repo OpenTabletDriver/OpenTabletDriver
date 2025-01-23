@@ -5,7 +5,6 @@
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RootNamespace>OpenTabletDriver.Daemon</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">

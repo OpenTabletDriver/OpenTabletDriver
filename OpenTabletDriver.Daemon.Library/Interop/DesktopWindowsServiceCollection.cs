@@ -1,18 +1,18 @@
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Daemon.Diagnostics;
-using OpenTabletDriver.Daemon.Interop.Display;
-using OpenTabletDriver.Daemon.Interop.Environment;
-using OpenTabletDriver.Daemon.Interop.Input.Absolute;
-using OpenTabletDriver.Daemon.Interop.Input.Keyboard;
-using OpenTabletDriver.Daemon.Interop.Input.Relative;
-using OpenTabletDriver.Daemon.Interop.Timer;
-using OpenTabletDriver.Daemon.Updater;
+using OpenTabletDriver.Daemon.Library.Diagnostics;
+using OpenTabletDriver.Daemon.Library.Interop.Display;
+using OpenTabletDriver.Daemon.Library.Interop.Environment;
+using OpenTabletDriver.Daemon.Library.Interop.Input.Absolute;
+using OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard;
+using OpenTabletDriver.Daemon.Library.Interop.Input.Relative;
+using OpenTabletDriver.Daemon.Library.Interop.Timer;
+using OpenTabletDriver.Daemon.Library.Updater;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Environment;
 using OpenTabletDriver.Platform.Keyboard;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Interop
+namespace OpenTabletDriver.Daemon.Library.Interop
 {
     using static ServiceDescriptor;
 

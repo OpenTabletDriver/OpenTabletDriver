@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Daemon;
+using OpenTabletDriver.Daemon.Library;
 using Xunit;
 
 namespace OpenTabletDriver.Tests

@@ -6,7 +6,7 @@ using System.Linq;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Contracts.Persistence;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     public class PresetManager : IPresetManager
     {

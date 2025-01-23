@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Keyboard;
 
-namespace OpenTabletDriver.Daemon.Interop.Input.Keyboard
+namespace OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard
 {
     public class WindowsKeysProvider : IKeyMapper
     {

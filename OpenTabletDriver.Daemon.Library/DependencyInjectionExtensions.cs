@@ -6,7 +6,7 @@ using System.Reflection;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     [PublicAPI]
     public static class DependencyInjectionExtensions

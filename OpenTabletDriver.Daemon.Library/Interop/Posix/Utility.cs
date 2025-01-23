@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Linux;
 
-namespace OpenTabletDriver.Daemon.Interop.Posix
+namespace OpenTabletDriver.Daemon.Library.Interop.Posix
 {
     public static class Utility
     {

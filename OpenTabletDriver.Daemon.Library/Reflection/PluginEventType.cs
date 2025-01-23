@@ -1,4 +1,4 @@
-namespace OpenTabletDriver.Daemon.Reflection
+namespace OpenTabletDriver.Daemon.Library.Reflection
 {
     public enum PluginEventType
     {

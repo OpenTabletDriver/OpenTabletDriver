@@ -6,14 +6,14 @@ using Octokit;
 using OpenTabletDriver.ComponentProviders;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Configurations;
-using OpenTabletDriver.Daemon.Components;
-using OpenTabletDriver.Daemon.Diagnostics;
-using OpenTabletDriver.Daemon.Interop;
-using OpenTabletDriver.Daemon.Reflection;
+using OpenTabletDriver.Daemon.Library.Components;
+using OpenTabletDriver.Daemon.Library.Diagnostics;
+using OpenTabletDriver.Daemon.Library.Interop;
+using OpenTabletDriver.Daemon.Library.Reflection;
 using OpenTabletDriver.Devices;
 using OpenTabletDriver.Interop;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     using static ServiceDescriptor;
 

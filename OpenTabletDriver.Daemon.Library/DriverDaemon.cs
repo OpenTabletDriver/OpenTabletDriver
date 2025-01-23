@@ -11,13 +11,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Components;
-using OpenTabletDriver.Daemon.Binding;
-using OpenTabletDriver.Daemon.Components;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Contracts.Persistence;
-using OpenTabletDriver.Daemon.Output;
-using OpenTabletDriver.Daemon.Reflection;
-using OpenTabletDriver.Daemon.Updater;
+using OpenTabletDriver.Daemon.Library.Binding;
+using OpenTabletDriver.Daemon.Library.Components;
+using OpenTabletDriver.Daemon.Library.Output;
+using OpenTabletDriver.Daemon.Library.Reflection;
+using OpenTabletDriver.Daemon.Library.Updater;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Native.Windows;
@@ -27,7 +27,7 @@ using OpenTabletDriver.Platform.Pointer;
 using OpenTabletDriver.SystemDrivers;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     public class DriverDaemon : IDriverDaemon
     {

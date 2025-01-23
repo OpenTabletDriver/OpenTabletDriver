@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Octokit;
 using OpenTabletDriver.Daemon.Contracts;
 
-namespace OpenTabletDriver.Daemon.Updater
+namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public abstract class GitHubUpdater : Updater
     {

@@ -13,10 +13,10 @@ using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using OpenTabletDriver.Attributes;
-using OpenTabletDriver.Daemon.Compression;
 using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Library.Compression;
 
-namespace OpenTabletDriver.Daemon.Reflection
+namespace OpenTabletDriver.Daemon.Library.Reflection
 {
     public class PluginManager : IPluginManager
     {

@@ -3,7 +3,7 @@ using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Interop.Input.Relative
+namespace OpenTabletDriver.Daemon.Library.Interop.Input.Relative
 {
     public class EvdevRelativePointer : EvdevVirtualMouse, IRelativePointer
     {

@@ -5,7 +5,7 @@ using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Platform.Keyboard;
 
-namespace OpenTabletDriver.Daemon.Interop.Input.Keyboard
+namespace OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard
 {
     public class EvdevVirtualKeyboard : IVirtualKeyboard, IDisposable
     {

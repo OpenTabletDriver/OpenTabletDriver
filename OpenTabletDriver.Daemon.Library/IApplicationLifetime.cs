@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     public interface IApplicationLifetime
     {

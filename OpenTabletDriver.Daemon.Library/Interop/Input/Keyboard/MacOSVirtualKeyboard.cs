@@ -4,7 +4,7 @@ using OpenTabletDriver.Native.MacOS;
 using OpenTabletDriver.Native.MacOS.Input;
 using OpenTabletDriver.Platform.Keyboard;
 
-namespace OpenTabletDriver.Daemon.Interop.Input.Keyboard
+namespace OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard
 {
     using static MacOS;
 

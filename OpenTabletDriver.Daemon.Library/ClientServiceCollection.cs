@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Contracts.RPC;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     using static ServiceDescriptor;
 

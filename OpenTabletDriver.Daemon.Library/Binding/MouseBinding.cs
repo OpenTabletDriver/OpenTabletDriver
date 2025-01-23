@@ -5,7 +5,7 @@ using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Platform.Pointer;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon.Binding
+namespace OpenTabletDriver.Daemon.Library.Binding
 {
     [PluginName(PLUGIN_NAME)]
     public class MouseBinding : IStateBinding

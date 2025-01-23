@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Platform.Display;
 
-namespace OpenTabletDriver.Daemon.Interop.Display
+namespace OpenTabletDriver.Daemon.Library.Interop.Display
 {
     using static Windows;
 

@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OpenTabletDriver.Daemon.Components
+namespace OpenTabletDriver.Daemon.Library.Components
 {
     public interface ISleepDetector
     {

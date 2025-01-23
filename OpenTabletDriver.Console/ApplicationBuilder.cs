@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Daemon;
+using OpenTabletDriver.Daemon.Library;
 
 namespace OpenTabletDriver.Console
 {

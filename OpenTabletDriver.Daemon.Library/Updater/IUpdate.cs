@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace OpenTabletDriver.Daemon.Updater
+namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public record Update
     {

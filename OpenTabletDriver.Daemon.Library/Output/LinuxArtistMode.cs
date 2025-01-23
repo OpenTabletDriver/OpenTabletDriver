@@ -2,7 +2,7 @@ using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Output
+namespace OpenTabletDriver.Daemon.Library.Output
 {
     [PluginName("Artist Mode"), SupportedPlatform(SystemPlatform.Linux)]
     public class LinuxArtistMode : AbsoluteOutputMode, IMouseButtonSource

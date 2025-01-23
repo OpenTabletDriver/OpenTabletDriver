@@ -11,7 +11,7 @@ using Octokit;
 using OpenTabletDriver.Daemon.Contracts;
 
 #pragma warning disable 618
-namespace OpenTabletDriver.Daemon.Updater
+namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public class MacOSUpdater : GitHubUpdater
     {

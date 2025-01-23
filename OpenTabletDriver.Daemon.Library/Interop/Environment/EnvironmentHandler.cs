@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using OpenTabletDriver.Platform.Environment;
 
-namespace OpenTabletDriver.Daemon.Interop.Environment
+namespace OpenTabletDriver.Daemon.Library.Interop.Environment
 {
     public abstract class EnvironmentHandler : IEnvironmentHandler
     {

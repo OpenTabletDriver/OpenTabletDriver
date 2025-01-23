@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace OpenTabletDriver.Daemon.Interop.Environment
+namespace OpenTabletDriver.Daemon.Library.Interop.Environment
 {
     public class WindowsEnvironmentHandler : EnvironmentHandler
     {

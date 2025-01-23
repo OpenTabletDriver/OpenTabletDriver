@@ -1,9 +1,9 @@
 using System.Reflection;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Daemon.Contracts.Persistence;
-using OpenTabletDriver.Daemon.Reflection;
+using OpenTabletDriver.Daemon.Library.Reflection;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     public static class Extensions
     {

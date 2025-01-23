@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.MacOS.Timers;
-using static OpenTabletDriver.Daemon.Interop.Posix.Utility;
+using static OpenTabletDriver.Daemon.Library.Interop.Posix.Utility;
 using static OpenTabletDriver.Native.MacOS.Timers.Timers;
 
-namespace OpenTabletDriver.Daemon.Interop.Timer
+namespace OpenTabletDriver.Daemon.Library.Interop.Timer
 {
     internal class MacOSTimer : ITimer, IDisposable
     {

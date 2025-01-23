@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using OpenTabletDriver.Daemon.Contracts;
 using Xunit;
 
@@ -29,9 +30,10 @@ namespace OpenTabletDriver.Tests
                 SupportedDriverVersion = supportedDriverVersion
             };
 
-            var supportStatus = pluginMetaData.IsSupportedBy(driverVersion);
+            //var supportStatus = pluginMetaData.IsSupportedBy(driverVersion);
 
-            Assert.Equal(expectedSupport, supportStatus);
+            //Assert.Equal(expectedSupport, supportStatus);
+            Assert.Fail("test unimplemented");
         }
     }
 }

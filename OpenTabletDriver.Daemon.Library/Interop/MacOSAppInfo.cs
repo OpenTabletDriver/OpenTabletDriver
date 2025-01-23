@@ -2,7 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using static OpenTabletDriver.Daemon.Contracts.FileUtilities;
 
-namespace OpenTabletDriver.Daemon.Interop
+namespace OpenTabletDriver.Daemon.Library.Interop
 {
     public class MacOSAppInfo : Contracts.AppInfo
     {

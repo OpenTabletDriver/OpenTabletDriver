@@ -6,7 +6,7 @@ using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Platform.Keyboard;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon.Binding
+namespace OpenTabletDriver.Daemon.Library.Binding
 {
     [PluginName(PLUGIN_NAME)]
     public class KeyBinding : IStateBinding

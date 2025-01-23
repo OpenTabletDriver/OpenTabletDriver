@@ -1,4 +1,4 @@
-namespace OpenTabletDriver.Daemon.Diagnostics
+namespace OpenTabletDriver.Daemon.Library.Diagnostics
 {
     public sealed class LinuxEnvironmentDictionary : EnvironmentDictionary
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OpenTabletDriver.Daemon.Updater
+namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public abstract class Updater : IUpdater
     {

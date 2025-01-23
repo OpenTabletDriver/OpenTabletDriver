@@ -1,9 +1,9 @@
 using System.IO;
 using Newtonsoft.Json;
-using OpenTabletDriver.Daemon.Converters;
 using OpenTabletDriver.Daemon.Contracts.Json;
+using OpenTabletDriver.Daemon.Library.Converters;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     public static class Serialization
     {

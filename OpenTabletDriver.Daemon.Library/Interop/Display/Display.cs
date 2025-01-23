@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using OpenTabletDriver.Platform.Display;
 
-namespace OpenTabletDriver.Daemon.Interop.Display
+namespace OpenTabletDriver.Daemon.Library.Interop.Display
 {
     internal class Display : IDisplay
     {

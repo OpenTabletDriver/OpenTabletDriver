@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Daemon.Contracts.Persistence;
 
-namespace OpenTabletDriver.Daemon.Reflection
+namespace OpenTabletDriver.Daemon.Library.Reflection
 {
     public interface IPluginFactory
     {

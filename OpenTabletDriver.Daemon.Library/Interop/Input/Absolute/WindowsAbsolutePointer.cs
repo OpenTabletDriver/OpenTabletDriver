@@ -3,7 +3,7 @@ using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Interop.Input.Absolute
+namespace OpenTabletDriver.Daemon.Library.Interop.Input.Absolute
 {
     public class WindowsAbsolutePointer : WindowsVirtualMouse, IAbsolutePointer
     {

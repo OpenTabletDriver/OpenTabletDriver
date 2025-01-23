@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using OpenTabletDriver.Daemon.Contracts;
 
-namespace OpenTabletDriver.Daemon.Updater
+namespace OpenTabletDriver.Daemon.Library.Updater
 {
     public sealed class UpdateInfo
     {

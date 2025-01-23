@@ -6,7 +6,7 @@ using OpenTabletDriver.Native.MacOS;
 using OpenTabletDriver.Native.MacOS.Generic;
 using OpenTabletDriver.Platform.Display;
 
-namespace OpenTabletDriver.Daemon.Interop.Display
+namespace OpenTabletDriver.Daemon.Library.Interop.Display
 {
     using static MacOS;
 

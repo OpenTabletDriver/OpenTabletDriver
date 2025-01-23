@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Daemon;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Contracts.RPC;
+using OpenTabletDriver.Daemon.Library;
 
 namespace OpenTabletDriver.Console
 {

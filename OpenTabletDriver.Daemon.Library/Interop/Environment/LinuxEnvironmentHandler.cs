@@ -1,4 +1,4 @@
-namespace OpenTabletDriver.Daemon.Interop.Environment
+namespace OpenTabletDriver.Daemon.Library.Interop.Environment
 {
     public class LinuxEnvironmentHandler : EnvironmentHandler
     {

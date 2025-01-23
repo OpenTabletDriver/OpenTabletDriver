@@ -2,7 +2,7 @@
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Output
+namespace OpenTabletDriver.Daemon.Library.Output
 {
     [PluginName("Absolute Mode")]
     public class AbsoluteMode : AbsoluteOutputMode, IMouseButtonSource

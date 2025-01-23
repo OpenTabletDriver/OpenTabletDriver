@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using OpenTabletDriver.Daemon.Contracts;
 
-namespace OpenTabletDriver.Daemon.Reflection
+namespace OpenTabletDriver.Daemon.Library.Reflection
 {
     public interface IPluginManager
     {

@@ -1,9 +1,9 @@
 using OpenTabletDriver.Daemon.Contracts.Persistence;
-using OpenTabletDriver.Daemon.Reflection;
+using OpenTabletDriver.Daemon.Library.Reflection;
 using OpenTabletDriver.Platform.Pointer;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon.Binding
+namespace OpenTabletDriver.Daemon.Library.Binding
 {
     public class BindingState
     {

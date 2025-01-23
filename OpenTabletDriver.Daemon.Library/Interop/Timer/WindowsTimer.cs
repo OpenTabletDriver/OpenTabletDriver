@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Timers;
 
-namespace OpenTabletDriver.Daemon.Interop.Timer
+namespace OpenTabletDriver.Daemon.Library.Interop.Timer
 {
     using static Windows;
 

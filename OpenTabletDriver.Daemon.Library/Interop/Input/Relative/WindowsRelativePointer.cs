@@ -2,7 +2,7 @@ using System.Numerics;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Interop.Input.Relative
+namespace OpenTabletDriver.Daemon.Library.Interop.Input.Relative
 {
     public class WindowsRelativePointer : WindowsVirtualMouse, IRelativePointer
     {

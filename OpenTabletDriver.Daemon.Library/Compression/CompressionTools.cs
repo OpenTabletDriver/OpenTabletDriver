@@ -5,7 +5,7 @@ using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using ICSharpCode.SharpZipLib.Zip;
 
-namespace OpenTabletDriver.Daemon.Compression
+namespace OpenTabletDriver.Daemon.Library.Compression
 {
     public static class CompressionTools
     {

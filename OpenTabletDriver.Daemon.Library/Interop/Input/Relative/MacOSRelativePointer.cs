@@ -6,7 +6,7 @@ using OpenTabletDriver.Native.MacOS.Input;
 using OpenTabletDriver.Platform.Display;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Interop.Input.Relative
+namespace OpenTabletDriver.Daemon.Library.Interop.Input.Relative
 {
     using static MacOS;
 

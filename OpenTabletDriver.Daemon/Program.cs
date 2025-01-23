@@ -5,8 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Daemon.Contracts;
-using OpenTabletDriver.Daemon.Interop;
 using OpenTabletDriver.Daemon.Contracts.RPC;
+using OpenTabletDriver.Daemon.Library;
+using OpenTabletDriver.Daemon.Library.Interop;
 using OpenTabletDriver.Interop;
 
 namespace OpenTabletDriver.Daemon.Executable

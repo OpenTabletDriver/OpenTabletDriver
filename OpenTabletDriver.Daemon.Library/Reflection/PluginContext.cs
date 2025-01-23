@@ -7,7 +7,7 @@ using System.Runtime.Loader;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Interop;
 
-namespace OpenTabletDriver.Daemon.Reflection
+namespace OpenTabletDriver.Daemon.Library.Reflection
 {
     public class PluginContext : AssemblyLoadContext
     {

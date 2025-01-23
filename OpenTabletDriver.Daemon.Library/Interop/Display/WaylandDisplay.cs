@@ -6,7 +6,7 @@ using OpenTabletDriver.Platform.Display;
 using WaylandNET.Client;
 using WaylandNET.Client.Protocol;
 
-namespace OpenTabletDriver.Daemon.Interop.Display
+namespace OpenTabletDriver.Daemon.Library.Interop.Display
 {
     public class WaylandDisplay : IVirtualScreen
     {

@@ -4,7 +4,7 @@ using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Interop.Input
+namespace OpenTabletDriver.Daemon.Library.Interop.Input
 {
     using static Windows;
 

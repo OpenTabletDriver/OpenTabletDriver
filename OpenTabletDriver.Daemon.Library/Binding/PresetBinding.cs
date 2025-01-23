@@ -2,7 +2,7 @@ using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon.Binding
+namespace OpenTabletDriver.Daemon.Library.Binding
 {
     [PluginName("Preset")]
     public class PresetBinding : IStateBinding

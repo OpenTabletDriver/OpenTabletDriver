@@ -2,7 +2,7 @@
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Pointer;
 
-namespace OpenTabletDriver.Daemon.Output
+namespace OpenTabletDriver.Daemon.Library.Output
 {
     [PluginName("Relative Mode")]
     public class RelativeMode : RelativeOutputMode, IMouseButtonSource

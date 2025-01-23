@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Daemon.Contracts.Persistence;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Pointer;
 using OpenTabletDriver.Tablet;
-using OpenTabletDriver.Daemon.Contracts.Persistence;
 
-namespace OpenTabletDriver.Daemon.Binding
+namespace OpenTabletDriver.Daemon.Library.Binding
 {
     [PluginIgnore]
     public class BindingHandler : IDevicePipelineElement

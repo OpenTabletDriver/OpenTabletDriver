@@ -5,7 +5,7 @@ using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Timers;
 using OpenTabletDriver.Native.Linux.Timers.Structs;
 
-namespace OpenTabletDriver.Daemon.Interop.Timer
+namespace OpenTabletDriver.Daemon.Library.Interop.Timer
 {
     using static Timers;
 

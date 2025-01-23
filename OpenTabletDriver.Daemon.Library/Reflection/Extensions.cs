@@ -8,7 +8,7 @@ using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Contracts.Persistence;
 using OpenTabletDriver.Logging;
 
-namespace OpenTabletDriver.Daemon.Reflection
+namespace OpenTabletDriver.Daemon.Library.Reflection
 {
     public static class Extensions
     {

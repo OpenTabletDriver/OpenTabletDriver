@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace OpenTabletDriver.Daemon.Diagnostics
+namespace OpenTabletDriver.Daemon.Library.Diagnostics
 {
     public class EnvironmentDictionary : Dictionary<string, string>
     {

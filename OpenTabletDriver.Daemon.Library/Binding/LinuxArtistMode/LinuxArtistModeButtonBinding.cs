@@ -1,10 +1,10 @@
 using System;
 using OpenTabletDriver.Attributes;
-using OpenTabletDriver.Daemon.Interop.Input.Absolute;
+using OpenTabletDriver.Daemon.Library.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon.Binding.LinuxArtistMode
+namespace OpenTabletDriver.Daemon.Library.Binding.LinuxArtistMode
 {
     [PluginName(PLUGIN_NAME), SupportedPlatform(SystemPlatform.Linux)]
     public class LinuxArtistModeButtonBinding : IStateBinding

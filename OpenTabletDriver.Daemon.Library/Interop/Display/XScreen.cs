@@ -5,7 +5,7 @@ using System.Numerics;
 using OpenTabletDriver.Native.Linux.Xorg;
 using OpenTabletDriver.Platform.Display;
 
-namespace OpenTabletDriver.Daemon.Interop.Display
+namespace OpenTabletDriver.Daemon.Library.Interop.Display
 {
     using static XLib;
     using static XRandr;

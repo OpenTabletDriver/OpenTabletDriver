@@ -1,6 +1,6 @@
 using static OpenTabletDriver.Daemon.Contracts.FileUtilities;
 
-namespace OpenTabletDriver.Daemon.Interop
+namespace OpenTabletDriver.Daemon.Library.Interop
 {
     public class LinuxAppInfo : Contracts.AppInfo
     {

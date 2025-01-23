@@ -12,7 +12,7 @@ using OpenTabletDriver.Configurations;
 using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Library
 {
     public class DesktopDeviceConfigurationProvider : IDeviceConfigurationProvider
     {

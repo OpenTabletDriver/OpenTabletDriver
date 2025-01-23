@@ -1,7 +1,7 @@
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Tablet;
 
-namespace OpenTabletDriver.Daemon.Conversion
+namespace OpenTabletDriver.Daemon.Library.Conversion
 {
     [PluginName("Wacom, VEIKK")]
     public class ConversionFactorAreaConverter : IAreaConverter

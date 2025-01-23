@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Daemon.Contracts.Persistence;
 
-namespace OpenTabletDriver.Daemon.Reflection
+namespace OpenTabletDriver.Daemon.Library.Reflection
 {
     public class PluginFactory : IPluginFactory
     {
