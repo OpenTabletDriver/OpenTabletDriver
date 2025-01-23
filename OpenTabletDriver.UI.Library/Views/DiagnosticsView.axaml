@@ -1,0 +1,16 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    mc:Ignorable="d"
+    x:Class="OpenTabletDriver.UI.Views.DiagnosticsView"
+    x:DataType="vm:DiagnosticsViewModel"
+    x:CompileBindings="True"
+    Margin="0"
+    Name="PART_Root">
+  <Grid RowDefinitions="*,Auto">
+    <Button Name="ExportDiagnostics" Click="ExportDiagnostics_OnClick">Export Diagnostics</Button>
+  </Grid>
+</UserControl>

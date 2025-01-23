@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Logging;
+using OpenTabletDriver.Platform.Environment;
 
 namespace OpenTabletDriver.Daemon.Contracts
 {
@@ -11,6 +13,14 @@ namespace OpenTabletDriver.Daemon.Contracts
         public OSInfo OSInfo { get; } = OSInfo.GetOSInfo();
         public IDictionary<string, string>? EnvironmentVariables { get; }
         public IEnumerable<DeviceEndpointDto>? Devices { get; }
+        public IEnumerable<LogMessage>? LogMessages { get; }
+
+        public DiagnosticInfo(IEnumerable<LogMessage> logMessages, IEnumerable<DeviceEndpointDto> devices)
+        {
+            // TODO: fill env vars
+            Devices = devices;
+            LogMessages = logMessages;
+        }
 
         private static string GetAppVersion()
         {

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace OpenTabletDriver.UI;
 
-internal static class StringUtility
+public static class StringUtility
 {
     public static bool TryParseFloat(string? value, out float result)
     {
