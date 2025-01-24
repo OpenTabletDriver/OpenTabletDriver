@@ -30,6 +30,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
         private EvdevDevice Device { set; get; }
 
+        public bool HasValidDevice() => Device?.CanWrite ?? false;
+
         private void KeyEvent(string key, bool isPress)
         {
             var keyEventCode = EtoKeysymToEventCode[key];
@@ -63,6 +65,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
         public void Dispose()
         {
             Device?.Dispose();
+            Device = null;
         }
 
         public IEnumerable<string> SupportedKeys => EtoKeysymToEventCode.Keys;

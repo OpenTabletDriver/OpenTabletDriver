@@ -24,6 +24,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private CGMouseButton _lastButton;
         private Vector2 _lastMouseDownPosition;
         private bool _mouseMovedSinceLastDown;
+        private bool _initialized;
 
         private int _clickState;
         private readonly Stopwatch _stopWatch;
@@ -34,13 +35,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         public MacOSVirtualMouse()
         {
-
             _doubleClickIntervalInMs = GetDoubleClickInterval() * 1000;
             _doubleClickStopWatch = new Stopwatch();
             _stopWatch = new Stopwatch();
             _stopWatch.Start();
             _eventSource = CGEventSourceCreate(CGEventSourceStatePrivate);
             _mouseEvent = CGEventCreate(_eventSource);
+            _initialized = true;
         }
 
         public void MouseDown(MouseButton button)
@@ -306,6 +307,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             {
                 CFRelease(_mouseEvent);
             }
+
+            _initialized = false;
         }
+
+        public bool HasValidDevice() => _initialized;
     }
 }

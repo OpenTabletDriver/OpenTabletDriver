@@ -190,5 +190,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
                 _ => 0
             };
         }
+
+        public bool HasValidDevice() => true;
     }
 }

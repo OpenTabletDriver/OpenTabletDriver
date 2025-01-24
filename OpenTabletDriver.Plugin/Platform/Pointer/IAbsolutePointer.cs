@@ -2,7 +2,7 @@
 
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
-    public interface IAbsolutePointer
+    public interface IAbsolutePointer : IValidatableDevice
     {
         void SetPosition(Vector2 pos);
     }

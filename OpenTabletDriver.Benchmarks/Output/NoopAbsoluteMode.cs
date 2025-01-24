@@ -16,6 +16,8 @@ namespace OpenTabletDriver.Benchmarks.Output
             {
                 Position = pos;
             }
+
+            public bool HasValidDevice() => true;
         }
     }
 }
