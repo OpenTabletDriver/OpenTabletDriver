@@ -170,7 +170,8 @@ namespace OpenTabletDriver
                             if (TryMatch(endpoint, candidateConfig, candidateConfig.DigitizerIdentifiers, out digitizerEndpoint))
                             {
                                 tabletConfiguration = candidateConfig;
-                                if (candidateConfig.AuxiliaryDeviceIdentifiers.Count == 0)
+                                if (candidateConfig.AuxiliaryDeviceIdentifiers == null ||
+                                    candidateConfig.AuxiliaryDeviceIdentifiers.Count == 0)
                                     goto build_device;
 
                                 goto found_config;
@@ -210,7 +211,7 @@ namespace OpenTabletDriver
                 build_device:
 
                     // whole log should be Warning when auxiliary is unexpectedly null
-                    var warning = tabletConfiguration!.AuxiliaryDeviceIdentifiers.Count > 0 && auxiliaryEndpoint is null
+                    var warning = tabletConfiguration!.AuxiliaryDeviceIdentifiers?.Count > 0 && auxiliaryEndpoint is null
                         ? LogLevel.Warning
                         : LogLevel.Info;
 
@@ -219,7 +220,7 @@ namespace OpenTabletDriver
 
                     if (auxiliaryEndpoint is not null)
                         Log.Write("Detect", $"{tabletConfiguration.Name} auxiliary: {auxiliaryEndpoint.Endpoint.DevicePath}", warning);
-                    else if (tabletConfiguration!.AuxiliaryDeviceIdentifiers.Count > 0) // aux is null
+                    else if (tabletConfiguration!.AuxiliaryDeviceIdentifiers?.Count > 0) // aux is null
                         Log.Write("Detect", $"{tabletConfiguration.Name} auxiliary: N/A, express keys on tablet may not work", warning);
 
                     var inputDevice = new InputDevice(tabletConfiguration!, digitizerEndpoint, auxiliaryEndpoint);
