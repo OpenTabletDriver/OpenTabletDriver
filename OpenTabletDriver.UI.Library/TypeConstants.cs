@@ -9,8 +9,8 @@ public static class TypeConstants
     public const string OutputModePlugin = "OpenTabletDriver.Output.IOutputMode";
     public const string BaseAbsoluteMode = "OpenTabletDriver.Output.AbsoluteOutputMode";
     public const string BaseRelativeMode = "OpenTabletDriver.Output.RelativeOutputMode";
-    public const string AbsoluteMode = "OpenTabletDriver.Daemon.Output.AbsoluteMode";
-    public const string RelativeMode = "OpenTabletDriver.Daemon.Output.RelativeMode";
+    public const string AbsoluteMode = "OpenTabletDriver.Daemon.Library.Output.AbsoluteMode";
+    public const string RelativeMode = "OpenTabletDriver.Daemon.Library.Output.RelativeMode";
 
     public const string BindingPlugin = "OpenTabletDriver.IBinding";
     public const string ToolPlugin = "OpenTabletDriver.ITool";
@@ -18,9 +18,9 @@ public static class TypeConstants
     public const string FilterPlugin = "OpenTabletDriver.Output.IPipelineElement`1";
     public const string ReportParserPlugin = "OpenTabletDriver.Tablet.IReportParser`1";
 
-    public const string MouseBinding = "OpenTabletDriver.Daemon.Binding.MouseBinding";
-    public const string KeyBinding = "OpenTabletDriver.Daemon.Binding.KeyBinding";
-    public const string MultiKeyBinding = "OpenTabletDriver.Daemon.Binding.MultiKeyBinding";
+    public const string MouseBinding = "OpenTabletDriver.Daemon.Library.Binding.MouseBinding";
+    public const string KeyBinding = "OpenTabletDriver.Daemon.Library.Binding.KeyBinding";
+    public const string MultiKeyBinding = "OpenTabletDriver.Daemon.Library.Binding.MultiKeyBinding";
 
     public const string MouseBindingMainProperty = "Button";
     public const string KeyBindingMainProperty = "Key";
