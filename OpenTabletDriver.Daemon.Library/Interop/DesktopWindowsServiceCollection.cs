@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Daemon.Library.Interop
         {
             this.AddServices(new[] {
                 Transient<IEnvironmentHandler, WindowsEnvironmentHandler>(),
-                Transient<EnvironmentDictionary, WindowsEnvironmentDictionary>(),
+                Transient<IEnvironmentDictionary, WindowsEnvironmentDictionary>(),
                 Transient<ITimer, WindowsTimer>(),
                 Transient<IAbsolutePointer, WindowsAbsolutePointer>(),
                 Transient<IRelativePointer, WindowsRelativePointer>(),

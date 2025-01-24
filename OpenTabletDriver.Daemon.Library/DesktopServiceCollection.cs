@@ -6,6 +6,7 @@ using Octokit;
 using OpenTabletDriver.ComponentProviders;
 using OpenTabletDriver.Components;
 using OpenTabletDriver.Configurations;
+using OpenTabletDriver.Daemon.Contracts;
 using OpenTabletDriver.Daemon.Library.Components;
 using OpenTabletDriver.Daemon.Library.Diagnostics;
 using OpenTabletDriver.Daemon.Library.Interop;
@@ -33,7 +34,7 @@ namespace OpenTabletDriver.Daemon.Library
                 Singleton<IReportParserProvider, DesktopReportParserProvider>(),
                 // Desktop Services
                 Singleton<IGitHubClient>(new GitHubClient(ProductHeaderValue.Parse("OpenTabletDriver"))),
-                Transient<EnvironmentDictionary, EnvironmentDictionary>(),
+                Transient<IEnvironmentDictionary, EnvironmentDictionary>(),
                 Singleton<IPluginManager, PluginManager>(),
                 Singleton<ISettingsPersistenceManager, SettingsPersistenceManager>(),
                 Singleton<IPresetManager, PresetManager>(),

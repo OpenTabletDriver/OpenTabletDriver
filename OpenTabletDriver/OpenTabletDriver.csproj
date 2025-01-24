@@ -25,4 +25,14 @@
     <ProjectReference Include="..\OpenTabletDriver.Native.Windows\OpenTabletDriver.Native.Windows.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <BuildDate>$([System.DateTime]::UtcNow.ToString("d"))</BuildDate>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="OpenTabletDriver.Attributes.BuildDateAttribute">
+      <_Parameter1>$(BuildDate)</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
 </Project>

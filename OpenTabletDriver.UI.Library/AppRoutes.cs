@@ -35,14 +35,16 @@ public static class AppRoutes
         return services
             .AddNavigationMapping<NavigationMapNotFoundViewModel, NavigationMapNotFoundView>()
             .AddSingletonRoute<DaemonConnectionViewModel, DaemonConnectionView>(DaemonConnectionRoute)
-            .AddSingletonRoute<UISettingsViewModel, UISettingsView>(SettingsRoute) // register as singleton to preserve "modified" state
-            .AddSingletonRoute<TabletsOverviewViewModel, TabletsOverview>(TabletsOverviewRoute) // preserve tablet selection
-            .AddNavigationMapping<TabletViewModel, TabletView>();
-        // .AddNavigationRoute<TabletMainSettingsViewModel, TabletMainSettingsView>(TabletMainSettingsRoute)
-        // .AddNavigationRoute<TabletBindingsViewModel, TabletBindingsView>(TabletBindingsRoute)
-        // .AddNavigationRoute<TabletFiltersViewModel, TabletFiltersView>(TabletFiltersRoute)
-        // .AddNavigationRoute<PluginsSettingsViewModel, PluginsSettingsView>(PluginsSettingsRoute)
-        // .AddNavigationRoute<PluginManagerViewModel, PluginManagerView>(PluginManagerRoute)
-        // .AddNavigationRoute<DiagnosticsViewModel, DiagnosticsView>(DiagnosticsRoute)
+            .AddSingletonRoute<UISettingsViewModel,
+                UISettingsView>(SettingsRoute) // register as singleton to preserve "modified" state
+            .AddSingletonRoute<TabletsOverviewViewModel,
+                TabletsOverview>(TabletsOverviewRoute) // preserve tablet selection
+            .AddNavigationMapping<TabletViewModel, TabletView>()
+            // .AddNavigationRoute<TabletMainSettingsViewModel, TabletMainSettingsView>(TabletMainSettingsRoute)
+            // .AddNavigationRoute<TabletBindingsViewModel, TabletBindingsView>(TabletBindingsRoute)
+            // .AddNavigationRoute<TabletFiltersViewModel, TabletFiltersView>(TabletFiltersRoute)
+            // .AddNavigationRoute<PluginsSettingsViewModel, PluginsSettingsView>(PluginsSettingsRoute)
+            // .AddNavigationRoute<PluginManagerViewModel, PluginManagerView>(PluginManagerRoute)
+            .AddSingletonRoute<DiagnosticsViewModel, DiagnosticsView>(DiagnosticsRoute);
     }
 }
