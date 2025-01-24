@@ -267,7 +267,7 @@
                   Grid.Column="1"
                   Grid.Row="0" />
               <tc:RangedInput
-                  Maximum="100"
+                  Maximum="99"
                   Value="{Binding PenTipPressureThreshold}"
                   Label="{StaticResource bindings_pen_tip_activation_threshold}"
                   Unit="%"
@@ -275,7 +275,7 @@
                   Grid.Column="0"
                   Grid.Row="1" />
               <tc:RangedInput
-                  Maximum="100"
+                  Maximum="99"
                   Value="{Binding PenEraserPressureThreshold}"
                   Label="{StaticResource bindings_pen_eraser_activation_threshold}"
                   Unit="%"
