@@ -23,7 +23,8 @@ public partial class DiagnosticsView : ActivatableUserControl
     {
         if (_daemonService.Instance == null) throw new Exception("null daemon service");
         var toplevel = TopLevel.GetTopLevel(this);
-        var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions(){
+        var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+        {
             Title = "Export Diagnostics",
             DefaultExtension = "json",
         });
