@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Logging;
-using OpenTabletDriver.Platform.Environment;
 
 namespace OpenTabletDriver.Daemon.Contracts
 {
@@ -26,6 +26,7 @@ namespace OpenTabletDriver.Daemon.Contracts
             LogMessages = logMessages;
         }
 
+        [SuppressMessage("Usage", "VSTHRD002:Avoid problematic synchronous waits")]
         public DiagnosticInfo(IEnvironmentDictionary environmentDictionary, IDriverDaemon driverDaemon)
         {
             Devices = Task.Run(driverDaemon.GetDevices).Result;
