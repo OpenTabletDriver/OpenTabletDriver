@@ -9,6 +9,10 @@ With any contribution you make, we ask that your commits are named sensibly and 
 At the very least, sentence-case your commits, and do consider prefixing the commit message with a component name in similar fashion to `Updater: Add file IncludeList`.
 If the reasoning for a commit is potentially cryptic, consider adding a commit description to it, succinctly explaining why it was needed.
 
+As we transition to replacing our UI, the `master` branch is now feature-locked. To help us avoid conflicts later, please direct all new pull requests to the `avalonia` branch moving forward.
+
+Pull requests for tablet configuration and parser changes may target either `avalonia` or `0.6.x` (if you prefer to develop on that branch), however, the developers will port your configuration to the other branches so you do not have to open a pull request for every branch. Please refer to the guidelines below for adding configurations.
+
 # Tablet Configuration Contributions
 
 Tablet configurations define tablets OpenTabletDriver can detect and operate. They provide
