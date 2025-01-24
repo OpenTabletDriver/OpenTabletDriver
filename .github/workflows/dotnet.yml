@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Linux Publish
     steps:
+      - name: Install required packages for Debian
+        run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -27,11 +30,20 @@ jobs:
           dotnet publish OpenTabletDriver.Daemon "${options[@]}" --runtime "$runtime" -o "build/$runtime"
           dotnet publish OpenTabletDriver.UI "${options[@]}" --runtime "$runtime" -o "build/$runtime"
 
+      - name: Build Debian package
+        run: ./eng/linux/package.sh --package Debian --output ./build/debian
+
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
           name: OpenTabletDriver linux-x64
           path: build/linux-x64
+
+      - name: Upload Debian artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenTabletDriver.deb
+          path: build/debian/*.deb
 
       - name: Generate udev Rules
         run: ./generate-rules.sh > 70-opentabletdriver.rules
@@ -41,6 +53,30 @@ jobs:
         with:
           name: udev Rules
           path: 70-opentabletdriver.rules
+
+  fedorapublish:
+    runs-on: ubuntu-latest
+    name: Fedora Publish
+    container:
+      image: fedora
+    steps:
+      - name: Install required packages
+        run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-8.0 tree jq
+
+      - name: Checkout OpenTabletDriver Repository
+        uses: actions/checkout@v4
+
+      # https://github.com/actions/checkout/issues/1169
+      - run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
+
+      - name: RPM Build
+        run: ./eng/linux/package.sh --package RedHat --output ./build/redhat
+
+      - name: Upload Fedora artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenTabletDriver.rpm
+          path: build/redhat/*.rpm
 
   macospublish:
     runs-on: ubuntu-latest
