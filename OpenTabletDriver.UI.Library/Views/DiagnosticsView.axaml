@@ -11,6 +11,6 @@
     Margin="0"
     Name="PART_Root">
   <Grid RowDefinitions="*,Auto">
-    <Button Name="ExportDiagnostics" Click="ExportDiagnostics_OnClick">Export Diagnostics</Button>
+    <Button Name="ExportDiagnostics" Click="ExportDiagnostics_OnClick" HorizontalAlignment="Center">Export Diagnostics</Button>
   </Grid>
 </UserControl>
