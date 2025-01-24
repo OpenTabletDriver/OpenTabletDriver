@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     using static MacOS;
 
-    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
+    public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer, IPressureHandler
     {
         private Vector2 offset;
         private Vector2? lastPos;
@@ -31,6 +31,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             QueuePendingPosition(newPos.X, newPos.Y);
         }
 
+        public void SetPressure(float percentage)
+        {
+            base.setPressure(percentage);
+        }
+
         protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)
         {
             CGEventSetLocation(mouseEvent, new CGPoint(x, y));
@@ -39,6 +44,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, delta.Value.X);
                 CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, delta.Value.Y);
             }
+        }
+
+        protected override void QueuePendingPositionFromSystem()
+        {
+            var eventRef = CGEventCreate(IntPtr.Zero);
+            var pos = CGEventGetLocation(eventRef);
+            CFRelease(eventRef);
+            QueuePendingPosition((float)pos.x, (float)pos.y);
         }
 
         protected override void ResetPendingPosition(IntPtr mouseEvent)
