@@ -170,7 +170,8 @@ namespace OpenTabletDriver
                             if (TryMatch(endpoint, candidateConfig, candidateConfig.DigitizerIdentifiers, out digitizerEndpoint))
                             {
                                 tabletConfiguration = candidateConfig;
-                                if (candidateConfig.AuxiliaryDeviceIdentifiers?.Count == 0)
+                                if (candidateConfig.AuxiliaryDeviceIdentifiers == null ||
+                                    candidateConfig.AuxiliaryDeviceIdentifiers.Count == 0)
                                     goto build_device;
 
                                 goto found_config;
