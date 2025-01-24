@@ -21,10 +21,8 @@ public partial class DiagnosticsView : ActivatableUserControl
 
     private async void ExportDiagnostics_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (_daemonService.Instance == null) throw new Exception();
+        if (_daemonService.Instance == null) throw new Exception("null daemon service");
         var toplevel = TopLevel.GetTopLevel(this);
-        var result = await Task.Run(_daemonService.Instance.GetDiagnostics);
-        var outputString = JsonConvert.SerializeObject(result, Formatting.Indented);
         var file = await toplevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions(){
             Title = "Export Diagnostics",
             DefaultExtension = "json",
@@ -34,6 +32,9 @@ public partial class DiagnosticsView : ActivatableUserControl
         {
             await using var stream = await file.OpenWriteAsync();
             await using var streamWriter = new StreamWriter(stream);
+            var result = await Task.Run(_daemonService.Instance.GetDiagnostics);
+            if (result == null) throw new Exception("null diagnostic");
+            var outputString = JsonConvert.SerializeObject(result, Formatting.Indented);
             await streamWriter.WriteLineAsync(outputString);
         }
     }

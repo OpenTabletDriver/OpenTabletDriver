@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Daemon.Library.Interop
             this.AddServices(new[]
             {
                 Transient<IEnvironmentHandler, LinuxEnvironmentHandler>(),
-                Transient<EnvironmentDictionary, LinuxEnvironmentDictionary>(),
+                Transient<IEnvironmentDictionary, LinuxEnvironmentDictionary>(),
                 Transient(GetTimer),
                 Transient<IAbsolutePointer, EvdevAbsolutePointer>(),
                 Transient<IRelativePointer, EvdevRelativePointer>(),

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using OpenTabletDriver.Attributes;
 using OpenTabletDriver.Logging;
 using OpenTabletDriver.Platform.Environment;
@@ -15,11 +17,20 @@ namespace OpenTabletDriver.Daemon.Contracts
         public IEnumerable<DeviceEndpointDto>? Devices { get; }
         public IEnumerable<LogMessage>? LogMessages { get; }
 
-        public DiagnosticInfo(IEnumerable<LogMessage> logMessages, IEnumerable<DeviceEndpointDto> devices)
+        [JsonConstructor]
+        public DiagnosticInfo(IDictionary<string, string>? environmentVariables, IEnumerable<DeviceEndpointDto>? devices,
+            IEnumerable<LogMessage>? logMessages)
         {
-            // TODO: fill env vars
+            EnvironmentVariables = environmentVariables;
             Devices = devices;
             LogMessages = logMessages;
+        }
+
+        public DiagnosticInfo(IEnvironmentDictionary environmentDictionary, IDriverDaemon driverDaemon)
+        {
+            Devices = Task.Run(driverDaemon.GetDevices).Result;
+            LogMessages = Task.Run(driverDaemon.GetCurrentLog).Result;
+            EnvironmentVariables = environmentDictionary.Variables;
         }
 
         private static string GetAppVersion()
