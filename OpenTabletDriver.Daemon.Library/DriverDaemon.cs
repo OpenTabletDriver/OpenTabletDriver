@@ -402,7 +402,7 @@ namespace OpenTabletDriver.Daemon.Library
 
         public async Task<DiagnosticInfo> GetDiagnostics()
         {
-            return _serviceProvider.CreateInstance<DiagnosticInfo>();
+            return await Task.Run(() => _serviceProvider.CreateInstance<DiagnosticInfo>());
         }
 
         public Task SetTabletDebug(bool enabled)
