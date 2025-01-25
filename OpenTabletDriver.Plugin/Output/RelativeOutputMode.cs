@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Plugin.Output
         private bool outOfRange;
 
         // for handling detection of low resetTimes
-        private uint _resets, _passes;
+        private uint _resets;
         private bool _warnedBadResets = false;
 
         /// <summary>
@@ -70,7 +70,6 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 _resetTime = value;
                 _resets = 0;
-                _passes = 0;
                 _warnedBadResets = false;
             }
             get => _resetTime;
@@ -101,11 +100,11 @@ namespace OpenTabletDriver.Plugin.Output
                     lastTransformedPos = null;
                     _resets++;
                 }
-                else _passes++;
+                else _resets = 0;
 
                 if (!_warnedBadResets &&
                     (_warnedBadResets =
-                        _resets > 10 && _resets > _passes))
+                        _resets > 10))
                     Log.Write("RelativeOutputMode",
                         $"Position reset spam detected - the configured reset time ({ResetTime.TotalMilliseconds} ms) is likely too low",
                         LogLevel.Warning);
