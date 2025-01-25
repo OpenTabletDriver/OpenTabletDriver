@@ -6,7 +6,7 @@ using OpenTabletDriver.Native.Windows.Timers;
 
 namespace OpenTabletDriver.Native.Windows
 {
-    public static class Windows
+    public static class WindowsAPI
     {
         #region Display
 
