@@ -5,11 +5,10 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Platform.Display;
+using static OpenTabletDriver.Native.Windows.WindowsAPI;
 
 namespace OpenTabletDriver.Daemon.Library.Interop.Display
 {
-    using static Windows;
-
     public class WindowsDisplay : IVirtualScreen
     {
         public WindowsDisplay()

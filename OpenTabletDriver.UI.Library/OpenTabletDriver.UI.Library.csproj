@@ -39,13 +39,13 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
   </ItemGroup>
 
   <!-- TODO -->
   <ItemGroup Label="Windows-specific Nuget Packages">
-    <PackageReference Include="WindowsShortcutFactory" Version="1.1.0" />
+    <PackageReference Include="WindowsShortcutFactory" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
