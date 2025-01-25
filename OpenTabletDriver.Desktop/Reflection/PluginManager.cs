@@ -69,6 +69,10 @@ namespace OpenTabletDriver.Desktop.Reflection
                             Log.Write("Plugin", $"No constructor found for '{name}'", LogLevel.Error);
                         }
                     }
+                    else
+                    {
+                        Log.Write("Plugin", $"Unable to find plugin matching name '{name}'", LogLevel.Error);
+                    }
                 }
                 catch (TargetInvocationException e) when (e.Message == "Exception has been thrown by the target of an invocation.")
                 {
