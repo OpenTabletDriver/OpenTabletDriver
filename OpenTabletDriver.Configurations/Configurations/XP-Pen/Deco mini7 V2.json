@@ -1,0 +1,35 @@
+{
+  "Name": "XP-Pen Deco mini7 V2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 177.975,
+      "Height": 111.095,
+      "MaxX": 35595,
+      "MaxY": 22219
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2376,
+      "InputReportLength": 12,
+      "OutputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
