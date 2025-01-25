@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Devices
         public DeviceReader(IDeviceEndpoint endpoint, IReportParser<T> reportParser)
         {
             Endpoint = endpoint;
-            Parser = reportParser;
+            Parser = reportParser ?? throw new ArgumentNullException(nameof(reportParser));
             workerThread = new Thread(Main)
             {
                 Name = "OpenTabletDriver Device Reader",
