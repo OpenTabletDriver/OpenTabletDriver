@@ -284,5 +284,6 @@
 | XP-Pen Deco Pro Small         |  Missing Features | Tilt and wheel are not yet supported.
 | XP-Pen Deco Pro SW            |  Missing Features | Wheel is not yet supported.
 | XP-Pen Innovator 16           |  Missing Features | Wheel is not yet supported.
+| XP-Pen Star 02                |  Missing Features | Pen and auxiliary buttons may produce malformed reports. Windows: Requires Zadig's WinUSB to be installed on interface 0.
 | XP-Pen Star 06                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Star 06C               |  Missing Features | Wheel is not yet supported.
