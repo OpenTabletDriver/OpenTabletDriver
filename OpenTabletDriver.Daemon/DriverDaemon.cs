@@ -497,7 +497,7 @@ namespace OpenTabletDriver.Daemon
                 {
                     Binding = binding,
                     StartThreshold = start,
-                    EndThreshold = end >= start ? end : start 
+                    EndThreshold = end >= start ? end : start
                 };
 
                 if (!targetDict.TryAdd(index, state))
