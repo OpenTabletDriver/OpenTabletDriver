@@ -451,6 +451,23 @@ namespace OpenTabletDriver.Daemon
                 Log.Write(group, $"Mouse Scroll: Up: [{scrollUp?.Binding}] Down: [{scrollDown?.Binding}]");
             }
 
+            var clockwiseRotation = bindingHandler.ClockwiseRotation = new ThresholdBindingState
+            {
+                Binding = settings.ClockwiseRotation?.Construct<IBinding>(bindingServiceProvider, tabletReference),
+                ActivationThreshold = settings.ClockwiseActivationThreshold
+            };
+
+            var counterClockwiseRotation = bindingHandler.CounterClockwiseRotation = new ThresholdBindingState
+            {
+                Binding = settings.CounterClockwiseRotation?.Construct<IBinding>(bindingServiceProvider, tabletReference),
+                ActivationThreshold = settings.CounterClockwiseActivationThreshold
+            };
+
+            if (clockwiseRotation.Binding != null || counterClockwiseRotation.Binding != null)
+            {
+                Log.Write(group, $"Wheel: Clockwise Rotation: [{clockwiseRotation?.Binding}] Counter-Clockwise Rotation: [{counterClockwiseRotation?.Binding}]");
+            }
+
             return bindingHandler;
         }
 
@@ -462,6 +479,26 @@ namespace OpenTabletDriver.Daemon
                 var state = binding == null ? null : new BindingState
                 {
                     Binding = binding
+                };
+
+                if (!targetDict.TryAdd(index, state))
+                    targetDict[index] = state;
+            }
+        }
+
+        private static void SetBindingHandlerRangeCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, float[] ends, Dictionary<int, RangeBindingState?> targetDict, TabletReference tabletReference)
+        {
+            var start = 0;
+
+            for (int index = 0; index < collection.Count; index++)
+            {
+                var binding = collection[index]?.Construct<IBinding>(serviceManager, tabletReference);
+                var end = ends[index];
+                var state = binding == null ? null : new RangeBindingState
+                {
+                    Binding = binding,
+                    StartThreshold = start,
+                    EndThreshold = end >= start ? end : start 
                 };
 
                 if (!targetDict.TryAdd(index, state))

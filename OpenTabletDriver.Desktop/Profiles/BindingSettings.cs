@@ -8,11 +8,13 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class BindingSettings : ViewModel
     {
-        private float tP, eP;
-        private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown;
+        private float tP, eP, ct, cct;
+
+        private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown, clockwiseRotation, counterClockwiseRotation;
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
             auxButtons = new PluginSettingStoreCollection(),
-            mouseButtons = new PluginSettingStoreCollection();
+            mouseButtons = new PluginSettingStoreCollection(),
+            wheelButtons = new PluginSettingStoreCollection();
 
         [JsonProperty("TipActivationThreshold")]
         public float TipActivationThreshold
@@ -63,6 +65,13 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.mouseButtons;
         }
 
+        [JsonProperty("WheelButtons")]
+        public PluginSettingStoreCollection WheelButtons
+        {
+            set => this.RaiseAndSetIfChanged(ref this.wheelButtons, value);
+            get => this.wheelButtons;
+        }
+
         [JsonProperty("MouseScrollUp")]
         public PluginSettingStore MouseScrollUp
         {
@@ -77,6 +86,34 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.mouseScrollDown;
         }
 
+        [JsonProperty("ClockwiseRotation")]
+        public PluginSettingStore ClockwiseRotation
+        {
+            set => this.RaiseAndSetIfChanged(ref this.clockwiseRotation, value);
+            get => this.clockwiseRotation;
+        }
+
+        [JsonProperty("ClockwiseActivationThreshold")]
+        public float ClockwiseActivationThreshold
+        {
+            set => this.RaiseAndSetIfChanged(ref this.ct, value);
+            get => this.ct;
+        }
+
+        [JsonProperty("CounterClockwiseRotation")]
+        public PluginSettingStore CounterClockwiseRotation
+        {
+            set => this.RaiseAndSetIfChanged(ref this.counterClockwiseRotation, value);
+            get => this.counterClockwiseRotation;
+        }
+
+        [JsonProperty("CounterClockwiseActivationThreshold")]
+        public float CounterClockwiseActivationThreshold
+        {
+            set => this.RaiseAndSetIfChanged(ref this.cct, value);
+            get => this.cct;
+        }
+
         public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
         {
             var bindingSettings = new BindingSettings
@@ -89,7 +126,8 @@ namespace OpenTabletDriver.Desktop.Profiles
                 ),
                 PenButtons = new PluginSettingStoreCollection(),
                 AuxButtons = new PluginSettingStoreCollection(),
-                MouseButtons = new PluginSettingStoreCollection()
+                MouseButtons = new PluginSettingStoreCollection(),
+                WheelButtons = new PluginSettingStoreCollection()
             };
             bindingSettings.MatchSpecifications(tabletSpecifications);
             return bindingSettings;
@@ -100,10 +138,12 @@ namespace OpenTabletDriver.Desktop.Profiles
             int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
             int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
             int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
+            int wheelButtonCount = (int?)tabletSpecifications.Wheel?.Buttons.ButtonCount ?? 0;
 
             PenButtons = PenButtons.SetExpectedCount(penButtonCount);
             AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
             MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
+            WheelButtons = WheelButtons.SetExpectedCount(wheelButtonCount);
         }
     }
 }
