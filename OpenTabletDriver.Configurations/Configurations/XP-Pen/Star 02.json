@@ -24,9 +24,6 @@
       "InputReportLength": 8,
       "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "OutputInitReport": [],
-      "DeviceStrings": {
-      },
       "InitializationStrings": [
         100,
         123
