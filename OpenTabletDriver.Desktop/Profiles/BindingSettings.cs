@@ -13,6 +13,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private float ct = 15; 
         private float cct = 15;
         private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown, clockwiseRotation, counterClockwiseRotation;
+
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
             auxButtons = new PluginSettingStoreCollection(),
             mouseButtons = new PluginSettingStoreCollection(),

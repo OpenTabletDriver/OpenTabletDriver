@@ -1,0 +1,28 @@
+{
+  "Name": "Wacom Movink 13 (DTH-135)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 297.76,
+      "Height": 169.24,
+      "MaxX": 59552,
+      "MaxY": 33848
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 3
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 1008,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3.IntuosV3ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

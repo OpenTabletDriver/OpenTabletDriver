@@ -3,9 +3,9 @@
   "Specifications": {
     "Digitizer": {
       "Width": 216.48,
-      "Height": 137.0,
-      "MaxX": 21648.0,
-      "MaxY": 13700.0
+      "Height": 137,
+      "MaxX": 21648,
+      "MaxY": 13700
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -53,6 +53,26 @@
       "FeatureInitReport": [
         "AgI="
       ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 211,
+      "InputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooV2.BambooV2AuxReportParser"
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 216,
+      "InputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooV2.BambooV2AuxReportParser"
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 219,
+      "InputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooV2.BambooV2AuxReportParser"
     }
   ]
 }

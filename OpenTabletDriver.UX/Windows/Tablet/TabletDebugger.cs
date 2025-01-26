@@ -364,50 +364,56 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 var touchDigitizerSpecification = specifications?.Touch;
                 var absDigitizerSpecification = specifications?.Digitizer;
 
-                if (report is IAbsolutePositionReport absReport && absDigitizerSpecification != null)
+                if (report is IAbsolutePositionReport absReport)
                 {
-                    var tabletScale = calculateTabletScale(absDigitizerSpecification, scale);
-                    var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
-
-                    var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
-                    graphics.FillEllipse(AccentColor, drawRect);
-                }
-                else if (absDigitizerSpecification == null)
-                {
-                    var absHashName = tabletName + "abs";
-                    var absHash = absHashName.GetHashCode();
-                    if (!_warnedDigitizers.Contains(absHash))
+                    if (absDigitizerSpecification != null)
                     {
-                        _warnedDigitizers.Add(absHash);
-                        Log.Write("TabletDebugger",
-                            "Digitizer undefined in tablet configuration - unable to draw points",
-                            LogLevel.Warning);
+                        var tabletScale = calculateTabletScale(absDigitizerSpecification, scale);
+                        var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
+
+                        var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
+                        graphics.FillEllipse(AccentColor, drawRect);
+                    }
+                    else
+                    {
+                        var absHashName = tabletName + "abs";
+                        var absHash = absHashName.GetHashCode();
+                        if (!_warnedDigitizers.Contains(absHash))
+                        {
+                            _warnedDigitizers.Add(absHash);
+                            Log.Write("TabletDebugger",
+                                "Digitizer undefined in tablet configuration - unable to draw points",
+                                LogLevel.Warning);
+                        }
                     }
                 }
 
                 // touch reports
-                if (report is ITouchReport touchReport && touchDigitizerSpecification != null)
+                if (report is ITouchReport touchReport)
                 {
-                    var tabletScale = calculateTabletScale(touchDigitizerSpecification, scale);
+                    if (touchDigitizerSpecification != null)
+                    {
+                        var tabletScale = calculateTabletScale(touchDigitizerSpecification, scale);
 
-                    foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
-                    {
-                        var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
-                        var drawPen = new Pen(AccentColor, SPACING / 2);
-                        var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING * 2, SPACING * 2));
-                        graphics.DrawEllipse(drawPen, drawRect);
+                        foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
+                        {
+                            var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
+                            var drawPen = new Pen(AccentColor, SPACING / 2);
+                            var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING * 2, SPACING * 2));
+                            graphics.DrawEllipse(drawPen, drawRect);
+                        }
                     }
-                }
-                else if (touchDigitizerSpecification == null)
-                {
-                    var touchHashName = tabletName + "touch";
-                    var touchHash = touchHashName.GetHashCode();
-                    if (!_warnedDigitizers.Contains(touchHash))
+                    else
                     {
-                        _warnedDigitizers.Add(touchHash);
-                        Log.Write("TabletDebugger",
-                            "Touch undefined in tablet configuration - unable to draw touch points",
-                            LogLevel.Warning);
+                        var touchHashName = tabletName + "touch";
+                        var touchHash = touchHashName.GetHashCode();
+                        if (!_warnedDigitizers.Contains(touchHash))
+                        {
+                            _warnedDigitizers.Add(touchHash);
+                            Log.Write("TabletDebugger",
+                                "Touch undefined in tablet configuration - unable to draw touch points",
+                                LogLevel.Warning);
+                        }
                     }
                 }
             }

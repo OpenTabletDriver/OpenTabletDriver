@@ -59,12 +59,15 @@ generate_desktop_file() {
 [Desktop Entry]
 Version=1.5
 Name=${OTD_NAME}
+GenericName=Tablet driver settings
 Comment=A ${OTD_DESC}
 Exec=${OTD_GUI}
-Icon=/usr/share/pixmaps/otd.png
+Icon=otd
 Terminal=false
 Type=Application
-Categories=Settings;
+Categories=HardwareSettings;Settings;GTK
 StartupNotify=true
+StartupWMClass=OpenTabletDriver.UX
+SingleMainWindow=true
 EOF
 }

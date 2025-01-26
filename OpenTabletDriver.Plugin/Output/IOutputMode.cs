@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Plugin.Output
 {
-    public interface IOutputMode : IPipelineElement<IDeviceReport>
+    public interface IOutputMode : IPipelineElement<IDeviceReport>, IDisposable
     {
         /// <summary>
         /// Consume the <see cref="IDeviceReport"/> emitted by the device endpoints to be transformed by the pipeline, including <see cref="TransformationMatrix"/>.

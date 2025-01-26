@@ -1,19 +1,21 @@
-.TH OpenTabletDriver 8
+.TH OpenTabletDriver 8 2024-12-14 "OpenTabletDriver v0.6.5.0" "Quick Reference Manual"
 
-.Sh NAME
-
-.B opentabletdriver
-
-Open source, cross platform, user mode tablet driver.
+.SH NAME
+opentabletdriver, otd, otd-gui, otd-daemon \- User mode FOSS tablet driver
 
 .SY
 .SH SYNOPSIS
 
-.B opentabletdriver
-.RB [OPTIONS]
+.B otd
+.RB [OPTIONS...]
+
+.B otd-gui
+.RB [OPTIONS...]
+
+.B otd-daemon
+.RB [OPTIONS...]
 
 .YS
-
 .SH DESCRIPTION
 
 OpenTabletDriver is a cross platform, open source, user mode graphics
@@ -22,11 +24,7 @@ configurable graphical user interface.
 
 .SH OPTIONS
 
-
-.SS Daemon Options
-
-(Relevant to the portable tarball installation - OpenTabletDriver daemon when
-installed via package manager is launched by systemd or equivalent)
+.SS Daemon Options (otd-daemon)
 
 .OP "-a, --appdata <directory>"
 
@@ -46,10 +44,7 @@ Show version information
 
 Show help and usage information
 
-.SS Graphical Front-end Options
-
-(Relevant to the package manager installation, opentabletdriver
-command will take these arguments for manipulating the GUI)
+.SS Graphical Front-end Options (otd-gui)
 
 .OP "-m, --minimized"
 
@@ -63,15 +58,19 @@ Show version information
 
 Show help and usage information for the GUI
 
-
 .SH DIAGNOSTICS
 
-The daemon log is created in the application data directory, at
+The daemon log is created in the application data directory, which by default is located at
 
-~/.config/OpenTabletDriver/daemon.log
+.RS
+.EX
+~/.config/OpenTabletDriver/Logs/
+.EE
+.RE
 
-by default.
+The file format is almost JSON, with an end-of-array marker missing.
 
+This can be alleviated by appending a square bracket end ']' to the end of the file.
 
 .SH FREQUENT ISSUES AND QUESTIONS
 
@@ -80,87 +79,130 @@ by default.
 This occurs due to a lack of permissions to open a device stream. It
 is resolved by creating udev rules that give these permissions. If you
 installed OpenTabletDriver via your package manager, you may need to
-run the following command then replug your tablet.
+run the following command, and then replug your tablet.
 
+.RS
 .EX
 sudo udevadm control --reload-rules
 .EE
+.RE
 
 .SS Poor performance with NVIDIA
 
 Disable "Force full composition pipeline" in the NVIDIA settings panel.
 
-
-.SS X11/Wayland Session not detected
-
-Your .xinitrc is likely configured improperly and the DISPLAY
-environment variable isn't set for systemd. Proper configuration for
-the .xinitrc file can be found at:
-
-.UR https://wiki.archlinux.org/index.php/Xinit#Configuration
-.UE
-
-.B For X11:
-
-1. Create an override file
-
-.EX
-# Opens with whatever program is set to $EDITOR
-systemctl --user edit opentabletdriver.service
-.EE
-
-2. Add this block below the first 2 lines of the file, then save and exit
-
-.EX
-[Service]
-Environment=DISPLAY=:0
-.EE
-
-3. Finally, run the following commands to reload the system user
-daemon and start the OpenTabletDriver daemon service, or restart it if it's already
-running:
-
-.EX
-systemctl --user daemon-reload
-systemctl --user restart opentabletdriver.service
-.EE
-
-.B For Wayland:
-
-1. Create an override file:
-
-.EX
-systemctl --user edit opentabletdriver.service
-.EE
-
-2. Add this block below the first 2 lines of the file, then save and exit
-
-.EX
-[Service]
-Environment=WAYLAND_DISPLAY=:0
-.EE
-
-3. Finally, run the following commands to reload the system user
-daemon and start the OpenTabletDriver daemon service, or restart it if it's already
-running:
-
-.EX
-systemctl --user daemon-reload
-systemctl --user restart opentabletdriver.service
-.EE
-
 .SS Failed to initialize virtual device
 
+The virtual device uses the
+.B uinput
+kernel module to create a virtual tablet.
+Common errors and their solution are provided below:
+
 .B EACCESS
+.RS
 
-Run the following command:
+The udev rules have been installed incorrectly.
+If you are using an official OpenTabletDriver package, this is a bug and should
+be reported.
 
+The udev rules need to be located in one of the following directories:
+
+.RS
 .EX
-sudo chmod 0666 /dev/uinput
+/etc/udev/rules.d/
+/usr/lib/udev/rules.d/
 .EE
+.RE
 
+and the file name must end with
+.B .rules
+
+Also see:
+.MR udev 7
+
+.RE
 .B ENODEV
+.RS
 
-Rebooting is the only option here. Your kernel was very likely
-updated, or some component of uinput was modified which requires a
-reboot to resolve.
+Most modern Linux distributions have uinput enabled, so this is usually caused
+by a missing reboot after a kernel update (and therefore no modules available
+to load), before uinput was loaded.
+
+.B If you have a custom compiled kernel,
+ensure that your kernel configuration includes the following as either 'y'
+(built-in) or 'm' (as module):
+
+.RS
+.EX
+CONFIG_INPUT_UINPUT
+.EE
+.RE
+
+.SH ENVIRONMENT
+
+.SS DISPLAY
+
+The X11 display to use
+
+.SS WAYLAND_DISPLAY
+
+The Wayland display to use.
+
+If both
+.I WAYLAND_DISPLAY
+and
+.I DISPLAY
+is set,
+.I WAYLAND_DISPLAY
+takes priority.
+
+.SH FILES
+
+.SS bin/otd-daemon
+
+The OpenTabletDriver driver daemon.
+.B This must be running at all times to provide a working tablet.
+
+.SS bin/otd-gui
+
+The graphical user interface for interacting with the daemon
+
+.SS bin/otd
+
+The command-line interface for interacting with the daemon. The command line
+interface is provided as-is.
+
+.SS ~/.config/OpenTabletDriver/settings.json
+The settings file used by the daemon
+
+.SH NOTES
+
+This manpage is \fBnot\fR autogenerated. Therefore the information provided within
+this man page may be out of date. We refer to OpenTabletDriver's website which
+has an up to date FAQ and other instructions.
+
+.SH BUGS
+
+.SS Unreliable autostart with systemd
+
+The systemd user service provided with OpenTabletDriver depends on a
+functioning
+.I graphical-session.target
+systemd user unit.
+
+If the target isn't initialized at the correct time, the OpenTabletDriver
+daemon can start before the environment variables are ready, resulting in the
+daemon crashing because it could not grab the correct display information.
+
+If you have this issue, a workaround is to put
+.I otd-daemon
+in your desktop environments autostart. However, you lose the crash handling
+provided by systemd.
+
+Some Linux distributions expect you to fix the target yourself.
+
+.SH SEE ALSO
+
+OpenTabletDriver website:
+.UR https://www.opentabletdriver.net/
+.UE

@@ -177,10 +177,8 @@ namespace OpenTabletDriver.Daemon
         {
             try
             {
-                // Dispose filters that implement IDisposable interface
-                foreach (var obj in Driver.InputDevices.SelectMany(d => d.OutputMode?.Elements ?? (IEnumerable<object>)Array.Empty<object>()))
-                    if (obj is IDisposable disposable)
-                        disposable.Dispose();
+                foreach (var dev in Driver.InputDevices)
+                    dev.OutputMode?.Dispose();
 
                 Settings = settings ??= Settings.GetDefaults();
 
@@ -328,8 +326,9 @@ namespace OpenTabletDriver.Daemon
                            select filter;
             outputMode.Elements = elements.Append(bindingHandler).ToList();
 
-            if (outputMode.Elements.Count > 1)
-                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements.Where(e => e != bindingHandler))}");
+            var activeFilters = outputMode.Elements.Where(e => e != bindingHandler).ToList();
+            if (activeFilters.Count != 0)
+                Log.Write(group, $"Filters: {string.Join(", ", activeFilters)}");
         }
 
         private void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)

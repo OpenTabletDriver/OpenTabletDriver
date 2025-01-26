@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Eto.Forms;
@@ -64,6 +66,49 @@ namespace OpenTabletDriver.UX
         {
             var tablets = await App.Driver.Instance.GetTablets();
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
+        }
+
+#nullable enable
+
+        public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null)
+            where T : FileDialog, new()
+        {
+            var fileDialog = new T();
+
+            var defaultTitle = fileDialog switch
+            {
+                Eto.Forms.OpenFileDialog => "Open File",
+                Eto.Forms.SaveFileDialog => "Save File",
+                _ => string.Empty,
+            };
+            var dialogTitle = !string.IsNullOrEmpty(title) ? title : defaultTitle;
+            if (!string.IsNullOrEmpty(dialogTitle))
+                fileDialog.Title = dialogTitle;
+
+            if (filters != null)
+                fileDialog.AddRangeToFilters(filters);
+
+            if (!string.IsNullOrEmpty(directory))
+                fileDialog.Directory = new Uri(directory);
+
+            if (fileDialog is OpenFileDialog openFileDialog && multiSelect.HasValue)
+                openFileDialog.MultiSelect = multiSelect.Value;
+            else if (multiSelect.HasValue)
+                Debug.Fail("Multiselect set without compatible file dialog type");
+
+            return fileDialog;
+        }
+
+        public static OpenFileDialog OpenFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null) =>
+            BuildFileDialog<OpenFileDialog>(title, directory, filters, multiSelect);
+
+        public static SaveFileDialog SaveFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters) =>
+            BuildFileDialog<SaveFileDialog>(title, directory, filters);
+
+        public static void AddRangeToFilters(this FileDialog fileDialog, IEnumerable<FileFilter> filters)
+        {
+            foreach (var filter in filters)
+                fileDialog.Filters.Add(filter);
         }
     }
 }

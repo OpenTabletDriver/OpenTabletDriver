@@ -166,14 +166,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "RightShift", CGKeyCode.kVK_RightShift },
             { "LeftControl", CGKeyCode.kVK_Control },
             { "RightControl", CGKeyCode.kVK_RightControl },
-            { "LeftAlt", CGKeyCode.kVK_Command },
-            { "RightAlt", CGKeyCode.kVK_RightCommand },
-            { "LeftApplication", CGKeyCode.kVK_Option },
-            { "RightApplication", CGKeyCode.kVK_RightOption },
+            { "LeftAlt", CGKeyCode.kVK_Option },
+            { "RightAlt", CGKeyCode.kVK_RightOption },
+            { "LeftApplication", CGKeyCode.kVK_Command },
+            { "RightApplication", CGKeyCode.kVK_RightCommand },
             { "Shift", CGKeyCode.kVK_Shift },
-            { "Alt", CGKeyCode.kVK_Command },
+            { "Alt", CGKeyCode.kVK_Option },
             { "Control", CGKeyCode.kVK_Control },
-            { "Application", CGKeyCode.kVK_Option },
+            { "Application", CGKeyCode.kVK_Command },
         };
 
         private CGEventFlags fromCGKeyCode(CGKeyCode code)

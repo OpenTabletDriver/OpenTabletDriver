@@ -11,6 +11,7 @@ using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Diagnostics;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
@@ -75,7 +76,6 @@ namespace OpenTabletDriver.UX
         private const int DEFAULT_CLIENT_WIDTH = 960;
         private const int DEFAULT_CLIENT_HEIGHT = 760;
 
-        private TabletSwitcherPanel mainPanel;
         private MenuBar menu;
         private Placeholder placeholder;
         private TrayIcon trayIcon;
@@ -369,6 +369,9 @@ namespace OpenTabletDriver.UX
             // Load the application information from the daemon
             AppInfo.Current = await Driver.Instance.GetApplicationInfo();
 
+            AppInfo.PluginManager = new DesktopPluginManager();
+            AppInfo.PresetManager = new PresetManager();
+
             // Load any new plugins
             AppInfo.PluginManager.Load();
 
@@ -382,7 +385,7 @@ namespace OpenTabletDriver.UX
 
             // Set window content
             base.Menu = menu ??= ConstructMenu();
-            base.Content = mainPanel ??= new TabletSwitcherPanel
+            base.Content = new TabletSwitcherPanel
             {
                 CommandsControl = new StackLayout
                 {
@@ -450,15 +453,12 @@ namespace OpenTabletDriver.UX
 
         private async Task LoadSettingsDialog()
         {
-            var fileDialog = new OpenFileDialog
-            {
-                Title = "Load OpenTabletDriver settings...",
-                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
-                Filters =
-                {
-                    new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
-                }
-            };
+            var fileDialog = Extensions.OpenFileDialog(
+                "Load OpenTabletDriver settings...",
+                Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
+                [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")]
+            );
+
             switch (fileDialog.ShowDialog(this))
             {
                 case DialogResult.Ok:
@@ -485,15 +485,12 @@ namespace OpenTabletDriver.UX
 
         private async Task SaveSettingsDialog()
         {
-            var fileDialog = new SaveFileDialog
-            {
-                Title = "Save OpenTabletDriver settings...",
-                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
-                Filters =
-                {
-                    new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
-                }
-            };
+            var fileDialog = Extensions.SaveFileDialog(
+                "Save OpenTabletDriver settings...",
+                Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
+                [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")]
+            );
+
             switch (fileDialog.ShowDialog(this))
             {
                 case DialogResult.Ok:
@@ -599,15 +596,12 @@ namespace OpenTabletDriver.UX
 
         private async Task SavePresetDialog()
         {
-            var fileDialog = new SaveFileDialog
-            {
-                Title = "Save OpenTabletDriver settings as preset...",
-                Directory = new Uri(AppInfo.Current.PresetDirectory),
-                Filters =
-                {
-                    new FileFilter("OpenTabletDriver Settings (*.json)", ".json")
-                }
-            };
+            var fileDialog = Extensions.SaveFileDialog(
+                "Save OpenTabletDriver settings as preset...",
+                AppInfo.Current.PresetDirectory,
+                [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")]
+            );
+
             switch (fileDialog.ShowDialog(this))
             {
                 case DialogResult.Ok:
@@ -641,15 +635,12 @@ namespace OpenTabletDriver.UX
             {
                 var log = await Driver.Instance.GetCurrentLog();
                 var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
-                var fileDialog = new SaveFileDialog
-                {
-                    Title = "Save diagnostic information to...",
-                    Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
-                    Filters =
-                    {
-                        new FileFilter("Diagnostic information", ".json")
-                    }
-                };
+                var fileDialog = Extensions.SaveFileDialog(
+                    "Save diagnostic information to...",
+                    Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
+                    [new FileFilter("Diagnostic information", ".json")]
+                );
+
                 switch (fileDialog.ShowDialog(this))
                 {
                     case DialogResult.Ok:

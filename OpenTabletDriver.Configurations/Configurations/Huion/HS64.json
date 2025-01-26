@@ -2,10 +2,10 @@
   "Name": "Huion HS64",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 102.0,
-      "MaxX": 32000.0,
-      "MaxY": 20400.0
+      "Width": 160,
+      "Height": 102,
+      "MaxX": 32000,
+      "MaxY": 20400
     },
     "Pen": {
       "MaxPressure": 8191,

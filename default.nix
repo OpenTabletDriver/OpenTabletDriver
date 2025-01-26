@@ -28,7 +28,7 @@
 
 buildDotnetModule rec {
   pname = "OpenTabletDriver";
-  version = "0.6.4.0";
+  version = "0.6.5.0";
 
   src = ./.;
 
@@ -38,7 +38,7 @@ buildDotnetModule rec {
   dotnetInstallFlags = [ "--framework=net8.0" ];
 
   projectFile = [ "OpenTabletDriver.Console" "OpenTabletDriver.Daemon" "OpenTabletDriver.UX.Gtk" ];
-  nugetDeps = ./deps.nix;
+  nugetDeps = ./deps.json;
 
   executables = [ "OpenTabletDriver.Console" "OpenTabletDriver.Daemon" "OpenTabletDriver.UX.Gtk" ];
 

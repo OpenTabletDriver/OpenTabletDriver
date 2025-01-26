@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 203.2,
       "Height": 152.4,
-      "MaxX": 40960.0,
-      "MaxY": 30720.0
+      "MaxX": 40960,
+      "MaxY": 30720
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -22,6 +22,15 @@
       "VendorID": 1112,
       "ProductID": 20506,
       "InputReportLength": 16,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParser",
+      "FeatureInitReport": [
+        "BRIQERIAAAA="
+      ]
+    },
+    {
+      "VendorID": 1112,
+      "ProductID": 20506,
+      "InputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParser",
       "FeatureInitReport": [
         "BRIQERIAAAA="

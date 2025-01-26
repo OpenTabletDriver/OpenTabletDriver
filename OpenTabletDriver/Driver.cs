@@ -60,6 +60,8 @@ namespace OpenTabletDriver
 
                         tree.Disconnected += (sender, e) =>
                         {
+                            tree.OutputMode?.Dispose();
+
                             // save the immutable array for later use
                             Unsafe.SkipInit(out ImmutableArray<InputDeviceTree> updatedTrees);
                             ImmutableInterlocked.Update(ref _inputDeviceTrees, (trees, tree) =>
