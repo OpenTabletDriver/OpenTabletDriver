@@ -2,8 +2,7 @@
 
 # increment this when releasing a new package of the same upstream version
 # where the only changes are to the packaging itself
-PKG_VER="1"
-PKG_FILE="${OTD_LNAME}-${OTD_VERSION}-${PKG_VER}-x64.deb"
+PKG_FILE="${OTD_LNAME}-${OTD_VERSION}_x64.deb"
 
 debian_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
@@ -39,9 +38,9 @@ EOF
 
 echo "Generating debian/changelog..."
 cat <<EOF > "${output}/${OTD_LNAME}-${OTD_VERSION}/debian/changelog"
-${OTD_LNAME} (${OTD_VERSION}-${PKG_VER}) unstable; urgency=low
+${OTD_LNAME} (${OTD_VERSION}) unstable; urgency=low
 
-  * New version: ${OTD_VERSION}-${PKG_VER}
+  * New version: ${OTD_VERSION}
 
  -- InfinityGhost <infinityghostgit@gmail.com>  `LANG=C date +"%a, %d %b %Y %X %z"`
 
@@ -53,4 +52,4 @@ cd "${output}/${OTD_LNAME}-${OTD_VERSION}"
 # TODO: fix --no-sign
 dpkg-buildpackage --no-sign -b
 cd "${PREV_DIR}"
-mv "${output}/${OTD_LNAME}_${OTD_VERSION}-${PKG_VER}_amd64.deb" "${output}/${PKG_FILE}"
+mv "${output}/${OTD_LNAME}_${OTD_VERSION}_amd64.deb" "${output}/${PKG_FILE}"
