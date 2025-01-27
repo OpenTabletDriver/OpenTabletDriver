@@ -454,12 +454,14 @@ namespace OpenTabletDriver.Daemon
             {
                 Binding = settings.ClockwiseRotation?.Construct<IBinding>(bindingServiceProvider, tabletReference),
                 ActivationThreshold = settings.ClockwiseActivationThreshold
+                    * (tabletReference.Properties.Specifications.Wheel?.StepCount ?? 1) / 100
             };
 
             var counterClockwiseRotation = bindingHandler.CounterClockwiseRotation = new ThresholdBindingState
             {
                 Binding = settings.CounterClockwiseRotation?.Construct<IBinding>(bindingServiceProvider, tabletReference),
                 ActivationThreshold = settings.CounterClockwiseActivationThreshold
+                    * (tabletReference.Properties.Specifications.Wheel?.StepCount ?? 1) / 100
             };
 
             if (clockwiseRotation.Binding != null || counterClockwiseRotation.Binding != null)
