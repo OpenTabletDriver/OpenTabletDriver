@@ -690,11 +690,17 @@ namespace OpenTabletDriver.Daemon.Library
             var screen = serviceProvider.GetRequiredService<IVirtualScreen>();
             var digitizer = inputDevice.Configuration.Specifications.Digitizer;
 
+            var outputMode = SystemInterop.CurrentPlatform switch
+            {
+                SystemPlatform.Linux => typeof(LinuxArtistMode), // Artist Mode has more predictable behavior on Linux
+                _ => typeof(AbsoluteMode),
+            };
+
             return new Profile
             {
                 Tablet = inputDevice.Configuration.Name,
                 PersistentId = inputDevice.PersistentId,
-                OutputMode = serviceProvider.GetDefaultSettings(typeof(AbsoluteMode), digitizer!, screen),
+                OutputMode = serviceProvider.GetDefaultSettings(outputMode, digitizer!, screen),
                 Bindings = GetDefaultBindings(inputDevice.Configuration.Specifications)
             };
         }
