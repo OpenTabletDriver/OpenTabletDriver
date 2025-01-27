@@ -105,7 +105,7 @@ namespace OpenTabletDriver.Plugin.Output
                 if (!_warnedBadResets &&
                     (_warnedBadResets =
                         _resets > 10))
-                    Log.Write("RelativeOutputMode",
+                    Log.WriteNotify("RelativeOutputMode",
                         $"Position reset spam detected - the configured reset time ({ResetTime.TotalMilliseconds} ms) is likely too low",
                         LogLevel.Warning);
 
