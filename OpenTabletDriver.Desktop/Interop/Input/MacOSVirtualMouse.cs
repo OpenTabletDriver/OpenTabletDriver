@@ -243,6 +243,23 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         private void ApplyTabletValues()
         {
+            // The capabilityMask is essential for Adobe software to recognize tablet pressure sensitivity,
+            // a feature specific to Wacom devices.
+            // However, Adobe officially supports only Wacom tablets,
+            // while most other software tends to disregard these masks.
+
+            const WacomCapabilityMask capabilityMask = WacomCapabilityMask.absXBitMask |
+                                                       WacomCapabilityMask.absYBitMask |
+                                                       WacomCapabilityMask.buttonsBitMask |
+                                                       WacomCapabilityMask.pressureBitMask |
+                                                       WacomCapabilityMask.tiltXBitMask |
+                                                       WacomCapabilityMask.tiltYBitMask |
+                                                       WacomCapabilityMask.deviceIdBitMask;
+
+            // A non-zero deviceId is essential for Adobe software to map tablet events to their
+            // corresponding capabilities. Randomly generated and hopefully do not conflict with another driver.
+            const long deviceId = 5303613955435230461;
+
             // send proximity events if there are no reports for a while.
             if (_currButtonStates == 0)
             {
@@ -258,12 +275,18 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventEnterProximity, 1);
                     CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventPointerType, (long)(_isEraser ?? false ?
                             NSPointingDeviceType.Eraser : NSPointingDeviceType.Pen));
+                    CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventCapabilityMask, (long)capabilityMask);
+                    CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventDeviceID, deviceId);
+
                     CGEventPost(CGEventTapLocation.kCGHIDEventTap, proximityEvent);
                     CFRelease(proximityEvent);
 
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventSubtype, (long)CGMouseEventSubtype.TabletProximity);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventEnterProximity, 1);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventPointerType, (long)pointerType);
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventCapabilityMask, (long)capabilityMask);
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventDeviceID, deviceId);
+
                     return;
                 }
             }
@@ -278,6 +301,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             else if (IsButtonSet(_currButtonStates, CGMouseButton.kCGMouseButtonCenter))
                 buttons |= 4;
             CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventPointButtons, buttons);
+            CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventDeviceID, deviceId);
 
             CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventSubtype, (long)CGMouseEventSubtype.TabletPoint);
             CGEventSetDoubleValueField(_mouseEvent, CGEventField.mouseEventPressure, _pressure ?? 1.0);
