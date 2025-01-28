@@ -302,10 +302,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 buttons |= 2;
             else if (IsButtonSet(_currButtonStates, CGMouseButton.kCGMouseButtonCenter))
                 buttons |= 4;
-            CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventPointButtons, buttons);
+
+            CGEventSetDoubleValueField(_mouseEvent, CGEventField.mouseEventPressure, _pressure ?? 1.0);
 
             CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventSubtype, (long)CGMouseEventSubtype.TabletPoint);
-            CGEventSetDoubleValueField(_mouseEvent, CGEventField.mouseEventPressure, _pressure ?? 1.0);
+            // The fields of tabletEvent can only be set after the subtype is defined.
+            CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventPointButtons, buttons);
             CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventDeviceID, deviceId);
             CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventPointPressure, _pressure ?? 1.0);
 
