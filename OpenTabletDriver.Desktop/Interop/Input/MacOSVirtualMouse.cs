@@ -244,7 +244,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private void ApplyTabletValues()
         {
             // send proximity events if there are no reports for a while.
-            if (_currButtonStates == 0)
+            if (_currButtonStates == 0 && _prevButtonStates == 0)
             {
                 var elapsed = _stopWatch.ElapsedMilliseconds;
                 _stopWatch.Restart();
