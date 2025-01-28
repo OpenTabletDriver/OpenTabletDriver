@@ -138,11 +138,14 @@ namespace OpenTabletDriver.UX.Controls
                         this.SelectedIndex = 0;
                         this.OnSelectedValueChanged(EventArgs.Empty);
                     }
+
+                    this.Enabled = true;
                 }
                 else
                 {
                     this.SelectedValue = null;
                     this.OnSelectedValueChanged(EventArgs.Empty);
+                    this.Enabled = false;
                 }
             }
         }

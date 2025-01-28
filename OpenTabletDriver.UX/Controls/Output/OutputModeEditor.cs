@@ -70,6 +70,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             ProfileChanged?.Invoke(this, new EventArgs());
             UpdateTablet();
             UpdateOutputMode(Profile?.OutputMode);
+            outputModeSelector.Enabled = Profile != null;
         }
 
         public BindableBinding<OutputModeEditor, Profile> ProfileBinding
