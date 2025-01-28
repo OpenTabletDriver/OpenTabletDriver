@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private readonly Stopwatch _stopWatch;
         private readonly Stopwatch _doubleClickStopWatch;
         private readonly IntPtr _eventSource;
-        private readonly IntPtr _mouseEvent;
+        private IntPtr _mouseEvent;
         private readonly double _doubleClickIntervalInMs;
 
         public MacOSVirtualMouse()
@@ -65,14 +65,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 ProcessKeyStates(_prevButtonStates, _currButtonStates);
                 _prevButtonStates = _currButtonStates;
             }
-            else if (DrainPendingPosition())
+            else if (DrainPendingPosition() is { } position)
             {
                 // can send drag here
                 var lastButtonSet = IsButtonSet(_currButtonStates, _lastButton);
                 var cgEventType = ToDragCGEventType(_lastButton, lastButtonSet);
                 CGEventSetType(_mouseEvent, cgEventType);
+                SetPendingPosition(_mouseEvent, position.X, position.Y);
                 ApplyTabletValues();
-                CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
+                PostEvent();
             }
         }
 
@@ -119,17 +120,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             _pressure = percentage;
         }
 
-        private bool DrainPendingPosition()
+        private Vector2? DrainPendingPosition()
         {
             if (_pendingX.HasValue)
             {
-                SetPendingPosition(_mouseEvent, _pendingX.Value, _pendingY!.Value);
+                var vector2 = new Vector2(_pendingX!.Value, _pendingY!.Value);
                 _pendingX = null;
                 _pendingY = null;
-                return true;
+                return vector2;
             }
 
-            return false;
+            return null;
         }
 
         private void ProcessKeyStates(int prevButtonStates, int currButtonStates)
@@ -171,15 +172,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     ResetPendingPosition(_mouseEvent);
 
                     // propagate pending position to mouseEvent
-                    DrainPendingPosition();
                     var cgEventType = ToNoDragCGEventType(button, currState);
-
                     CGEventSetType(_mouseEvent, cgEventType);
+                    if (DrainPendingPosition() is { } position)
+                    {
+                        SetPendingPosition(_mouseEvent, position.X, position.Y);
+                    }
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, i);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, _clickState); // clickState should be set to 1 (or more) during up, down, and drag events
                     ApplyTabletValues();
-                    CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
-
+                    PostEvent();
                     _lastButton = button;
                 }
             }
@@ -301,10 +303,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             else if (IsButtonSet(_currButtonStates, CGMouseButton.kCGMouseButtonCenter))
                 buttons |= 4;
             CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventPointButtons, buttons);
-            CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventDeviceID, deviceId);
 
             CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventSubtype, (long)CGMouseEventSubtype.TabletPoint);
             CGEventSetDoubleValueField(_mouseEvent, CGEventField.mouseEventPressure, _pressure ?? 1.0);
+            CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletEventDeviceID, deviceId);
             CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventPointPressure, _pressure ?? 1.0);
 
             if (_tilt != null)
@@ -318,6 +320,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             // set keyboard modifier and filter out `nonCoalesced` and 0x20000000 flags
             // see https://github.com/Hammerspoon/hammerspoon/blob/0ccc9d07641a660140d1d2f05b76f682b501a0e8/extensions/eventtap/libeventtap_event.m#L1558-L1560
             CGEventSetFlags(_mouseEvent, CGEventSourceFlagsState(CGEventSourceStateHIDSystemState) & (0xffffffff ^ 0x20000100));
+        }
+
+        private void PostEvent()
+        {
+            CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
+            // Fields in a CGEvent are stored in a union determined by the event type,
+            // and they cannot be safely reused.
+            _mouseEvent = CGEventCreate(_eventSource);
         }
 
         ~MacOSVirtualMouse()
