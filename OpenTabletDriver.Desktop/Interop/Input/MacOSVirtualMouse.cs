@@ -327,6 +327,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
             // Fields in a CGEvent are stored in a union determined by the event type,
             // and they cannot be safely reused.
+            CFRelease(_mouseEvent);
             _mouseEvent = CGEventCreate(_eventSource);
         }
 
