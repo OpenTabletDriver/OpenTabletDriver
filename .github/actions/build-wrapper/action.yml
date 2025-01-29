@@ -1,0 +1,31 @@
+name: 'OpenTabletDriver Build Wrapper'
+description: 'Runs the appropriate build based on properties'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # assuming checkout is already done
+
+    - name: Setup .NET Core
+      uses: ./.github/actions/setup-dotnet
+
+    - name: "Windows Build Artifact"
+      if: runner.os == 'Windows' && startsWith(inputs.runtime, 'win-')
+      uses: ./.github/actions/build-windows
+      with:
+        runtime: ${{ inputs.runtime }}
+
+    - name: "Linux Build Artifact"
+      if: runner.os == 'Linux' && startsWith(inputs.runtime, 'linux-')
+      uses: ./.github/actions/build-linux
+      with:
+        runtime: ${{ inputs.runtime }}
+
+    - name: "MacOS Build Artifact"
+      if: runner.os == 'Linux' && startsWith(inputs.runtime, 'osx-')
+      uses: ./.github/actions/build-macos
+      with:
+        runtime: ${{ inputs.runtime }}
