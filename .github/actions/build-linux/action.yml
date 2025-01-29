@@ -1,0 +1,33 @@
+name: 'OpenTabletDriver Linux Build'
+description: 'Builds OpenTabletDriver for Linux and publishes the relevant artifacts'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # assuming checkout is already done
+
+    - name: Linux Publish
+      uses: ./.github/actions/build-linux-for-distro
+      with:
+        runtime: ${{ inputs.runtime }}
+        package-name: "BinaryTarBall"
+
+    - name: Debian Publish
+      uses: ./.github/actions/build-linux-for-distro
+      with:
+        runtime: ${{ inputs.runtime }}
+        package-name: "Debian"
+
+    - name: Generate udev Rules
+      shell: bash
+      run: ./generate-rules.sh > 70-opentabletdriver.rules
+
+    - name: Upload udev Rules
+      uses: actions/upload-artifact@v4
+      with:
+        name: udev Rules
+        path: 70-opentabletdriver.rules
+        if-no-files-found: error

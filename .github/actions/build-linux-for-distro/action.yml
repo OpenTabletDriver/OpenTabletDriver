@@ -1,0 +1,27 @@
+name: 'OpenTabletDriver distro-specific Linux build'
+description: 'Builds OpenTabletDriver for a specific Linux distribution and publishes the relevant artifact'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+  package-name:
+    description: 'The --package argument for package.sh'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install required packages for Debian
+      if: inputs.package-name == 'Debian'
+      shell: bash
+      run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
+
+    - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
+      shell: bash
+      run: ./eng/linux/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output ./build-${{ inputs.package-name }}/${{ inputs.runtime }}
+
+    - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Artifact upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenTabletDriver ${{ inputs.package-name }} ${{ inputs.runtime }}
+        path: ./build-${{ inputs.package-name }}/*${{ inputs.runtime }}*
+        if-no-files-found: error

@@ -1,0 +1,21 @@
+name: 'OpenTabletDriver MacOS Build'
+description: 'Builds OpenTabletDriver for MacOS and publishes the relevant artifact'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # assuming checkout is already done
+
+    - name: MacOS ${{ inputs.runtime }} Build
+      shell: bash
+      run: ./eng/macos/package.sh --package true -r ${{ inputs.runtime }} --output ./dist/${{ inputs.runtime }}
+
+    - name: MacOS ${{ inputs.runtime }} artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenTabletDriver ${{ inputs.runtime }}.tar.gz
+        path: ./dist/${{ inputs.runtime }}/*.tar.gz
+        if-no-files-found: error
