@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
@@ -14,12 +15,14 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// The amount of steps in the analog device.
         /// </summary>
         [Required(ErrorMessage = $"{nameof(StepCount)} must be defined")]
+        [JsonProperty(Order = int.MinValue)]
         public uint StepCount { set; get; }
 
         /// <summary>
         /// Does the device report relative position (movement) or absolute position
         /// </summary>
         [Required(ErrorMessage = $"{nameof(IsRelative)} must be defined")]
+        [JsonProperty(Order = int.MinValue)]
         public bool IsRelative { get; set; }
     }
 }
