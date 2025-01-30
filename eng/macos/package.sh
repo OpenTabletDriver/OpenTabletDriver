@@ -11,8 +11,7 @@ PKG_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 PACKAGE="false"
 PROJECTS=(
   "OpenTabletDriver.Daemon"
-  "OpenTabletDriver.Console"
-  "OpenTabletDriver.UX.MacOS"
+  "OpenTabletDriver.UI"
 )
 
 print_help() {
