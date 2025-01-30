@@ -13,6 +13,8 @@ public class HuionWheelReport : IWheelButtonReport, IAbsoluteWheelReport
             Position = null;
         else
             Position = wheelData - 1u;
+
+        WheelButtons = [];
     }
 
     public byte[] Raw { get; set; }
