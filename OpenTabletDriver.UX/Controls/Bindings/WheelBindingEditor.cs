@@ -102,7 +102,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
         private FloatSlider clockwiseThreshold, counterClockwiseThreshold;
         private BindingDisplayList wheelButtons;
 
-        protected override void OnTabletChanged() 
+        protected override void OnTabletChanged()
         {
             base.OnTabletChanged();
 
