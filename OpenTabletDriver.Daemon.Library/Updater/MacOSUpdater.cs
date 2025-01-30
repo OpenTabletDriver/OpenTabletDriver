@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Daemon.Library.Updater
         {
             // Mark the binaries executable, SharpZipLib doesn't do this.
             var subPath = Path.Join(BinaryDirectory, "OpenTabletDriver.app", "Contents", "MacOS");
-            Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.UX.MacOS");
+            Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.UI");
             Process.Start("chmod", $"+x {subPath}/OpenTabletDriver.Daemon");
         }
 
