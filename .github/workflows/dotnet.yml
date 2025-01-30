@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - master
+      - 0.6.x
+      - avalonia
   pull_request:
 jobs:
   linuxpublish:
