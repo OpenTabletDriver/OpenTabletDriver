@@ -18,7 +18,12 @@ runs:
     - name: "Fix container git permissions"
       if: inputs.container
       shell: bash
-      run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
+      run: |
+        if [ z${{ inputs.container }} == 'zfedora' ]; then
+          sudo dnf install -y git
+        fi
+        hash git &>/dev/null && \
+          git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
     - name: "Windows Build Artifact"
       if: runner.os == 'Windows' && startsWith(inputs.runtime, 'win-')
