@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         build: [windows, macos, BinaryTarBall, RedHat, Debian]
-        runtime-suffix: [x64]
+        runtime-suffix: [x64, arm64]
         include:
           - build: BinaryTarBall
             os: ubuntu-latest
