@@ -4,13 +4,21 @@ inputs:
   runtime:
     description: '.NET runtime target (e.g. win-x64 linux-arm64)'
     required: true
+  package-name:
+    description: 'Linux package name, --package argument for package.sh'
+  container:
+    description: 'Set to anything to apply container workarounds'
 runs:
   using: "composite"
   steps:
-    # assuming checkout is already done
-
     - name: Setup .NET Core
       uses: ./.github/actions/setup-dotnet
+
+    # containers need safe.directory: https://github.com/actions/checkout/issues/1169
+    - name: "Fix container git permissions"
+      if: inputs.container
+      shell: bash
+      run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
     - name: "Windows Build Artifact"
       if: runner.os == 'Windows' && startsWith(inputs.runtime, 'win-')
@@ -23,6 +31,7 @@ runs:
       uses: ./.github/actions/build-linux
       with:
         runtime: ${{ inputs.runtime }}
+        package-name: ${{ inputs.package-name }}
 
     - name: "MacOS Build Artifact"
       if: runner.os == 'Linux' && startsWith(inputs.runtime, 'osx-')

@@ -11,8 +11,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # assuming checkout is already done
-
     - name: "Windows Build"
       shell: pwsh
       run: ./eng/windows/package.ps1 -netRuntime ${{ inputs.runtime }} -output build/${{ inputs.runtime }} -isRelease ${{ inputs.release }}

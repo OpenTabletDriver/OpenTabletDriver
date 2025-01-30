@@ -13,57 +13,61 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        runtime: [linux-x64, osx-x64, win-x64]
+        build: [windows, macos, BinaryTarBall, RedHat, Debian]
+        runtime-suffix: [x64]
         include:
-          - runtime: linux-x64
+          - build: BinaryTarBall
             os: ubuntu-latest
-          - runtime: osx-x64
+            runtime-prefix: linux-
+          - build: RedHat
             os: ubuntu-latest
-          - runtime: win-x64
+            runtime-prefix: linux-
+            container: fedora
+          - build: Debian
+            os: ubuntu-latest
+            runtime-prefix: linux-
+          - build: macos
+            os: ubuntu-latest
+            runtime-prefix: osx-
+          - build: windows
             os: windows-latest
+            runtime-prefix: win-
     # TODO: release or debug build
-    name: ${{ matrix.runtime }} ${{ matrix.os }} Publish
+    name: ${{ matrix.build }} ${{ matrix.runtime-suffix }} Publish
     runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: ./.github/actions/build-wrapper
         with:
-          runtime: ${{ matrix.runtime }}
+          runtime: ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }}
+          package-name: ${{ matrix.build }}
+          container: ${{ matrix.container }}
 
-  fedorapublish:
+  udev:
+    name: Generate udev Rules
     runs-on: ubuntu-latest
-    name: Fedora Publish
-    container:
-      image: fedora
     steps:
-      - name: Install required packages
-        run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-8.0 tree jq
+      - uses: actions/checkout@v4
+      - run: ./generate-rules.sh > 70-opentabletdriver.rules
 
-      - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v4
-
-      # https://github.com/actions/checkout/issues/1169
-      - run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
-
-      - name: RPM Build
-        uses: ./.github/actions/build-linux-for-distro
+      - name: Upload udev Rules
+        uses: actions/upload-artifact@v4
         with:
-          runtime: 'linux-x64'
-          package-name: 'RedHat'
+          name: udev Rules
+          path: 70-opentabletdriver.rules
+          if-no-files-found: error
 
   linter:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           # Full git history is needed to get a proper list of changed files
           fetch-depth: 0
-
-      - name: Setup .NET Core
-        uses: ./.github/actions/setup-dotnet
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Lint Changed Files
         run: |
@@ -74,11 +78,8 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET Core
-        uses: ./.github/actions/setup-dotnet
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Run tests
         run: dotnet test
@@ -87,11 +88,8 @@ jobs:
     name: Validate Solution Filters
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET Core
-        uses: ./.github/actions/setup-dotnet
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Windows
         run: dotnet restore OpenTabletDriver.Windows.slnf
