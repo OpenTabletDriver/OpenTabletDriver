@@ -146,7 +146,11 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(toolEditor, false);
 
                 if (tabControl.SelectedPage != logView.Parent)
-                    tabControl.SelectedIndex = 0;
+                {
+                    tabControl.SelectedIndex = Profile == null ?
+                        tabControl.Pages.IndexOf(placeholder.Parent as TabPage) :
+                        0;
+                }
             }
 
             SetPageVisibility(logView, true);
