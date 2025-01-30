@@ -68,7 +68,7 @@ build "PROJECTS" "extra_args"
 if [ "${PACKAGE}" = "true" ]; then
   echo -e "\nPreparing package..."
 
-  pkg_file="${OTD_NAME}-${OTD_VERSION}-${NET_RUNTIME}.tar.gz"
+  pkg_file="${OTD_NAME}-${OTD_VERSION}_${NET_RUNTIME}.tar.gz"
   pkg_root="${OUTPUT}/${OTD_NAME}.app"
 
   move_to_nested "${OUTPUT}" "${pkg_root}/Contents/MacOS"

@@ -38,6 +38,12 @@ if (!($isRelease)) {
     $Options += "/p:SourceRevisionId=$(git rev-parse --short HEAD)";
 }
 
+$gitVersion = "$(git describe --tags --abbrev=0)"
+if (Test-Path variable:gitVersion) {
+  $gitVersion = $gitVersion.replace('v','');
+  Write-Output "Git reports version $gitVersion";
+}
+
 function exitWithError {
     param ($message)
 
@@ -97,7 +103,12 @@ Write-Output "${nl}Build finished! Binaries created in $output";
 if ($isPackage) {
     Write-Output "${nl}Creating package...";
     Copy-Item -Path $PSScriptRoot/convert_to_portable.bat -Destination $output;
-    $zipPath = "$output/OpenTabletDriver-$netRuntime.zip";
+    if (Test-Path variable:gitVersion) {
+      $zipPath = "$output/OpenTabletDriver-$gitVersion_$netRuntime.zip";
+    } else {
+      Write-Output "${nl}Unable to determine release version, using fallback naming for zip";
+      $zipPath = "$output/OpenTabletDriver_$netRuntime.zip";
+    }
     if (Test-Path $zipPath) {
         Remove-Item $zipPath;
     }
