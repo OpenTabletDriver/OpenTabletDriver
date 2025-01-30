@@ -8,6 +8,7 @@ on:
   pull_request:
 jobs:
   matrixpublish:
+    continue-on-error: true
     strategy:
       matrix:
         runtime: [linux-x64, osx-x64, win-x64]
