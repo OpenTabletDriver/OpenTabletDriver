@@ -18,7 +18,7 @@ runs:
     - name: Install required packages for RedHat/Fedora
       if: inputs.package-name == 'RedHat'
       shell: bash
-      run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-8.0 tree jq
+      run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs dotnet-sdk-8.0 tree jq
 
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
       shell: bash
