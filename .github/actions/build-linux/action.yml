@@ -20,6 +20,9 @@ runs:
       shell: bash
       run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs dotnet-sdk-8.0 tree jq
 
+    # re-checkout repository prior to build to ensure git root is initialized (causes OpenTabletDriver#3774 if not done)
+    - uses: actions/checkout@v4
+
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
       shell: bash
       run: ./eng/linux/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output ./build-${{ inputs.package-name }}/${{ inputs.runtime }}
