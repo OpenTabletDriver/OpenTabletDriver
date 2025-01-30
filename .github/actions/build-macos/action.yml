@@ -7,8 +7,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    # assuming checkout is already done
-
     - name: MacOS ${{ inputs.runtime }} Build
       shell: bash
       run: ./eng/macos/package.sh --package true -r ${{ inputs.runtime }} --output ./dist/${{ inputs.runtime }}

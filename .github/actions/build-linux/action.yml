@@ -1,33 +1,32 @@
-name: 'OpenTabletDriver Linux Build'
-description: 'Builds OpenTabletDriver for Linux and publishes the relevant artifacts'
+name: 'OpenTabletDriver distro-specific Linux build'
+description: 'Builds OpenTabletDriver for a specific Linux distribution and publishes the relevant artifact'
 inputs:
   runtime:
     description: '.NET runtime target (e.g. win-x64 linux-arm64)'
     required: true
+  package-name:
+    description: 'The --package argument for package.sh'
+    required: true
 runs:
   using: "composite"
   steps:
-    # assuming checkout is already done
-
-    - name: Linux Publish
-      uses: ./.github/actions/build-linux-for-distro
-      with:
-        runtime: ${{ inputs.runtime }}
-        package-name: "BinaryTarBall"
-
-    - name: Debian Publish
-      uses: ./.github/actions/build-linux-for-distro
-      with:
-        runtime: ${{ inputs.runtime }}
-        package-name: "Debian"
-
-    - name: Generate udev Rules
+    - name: Install required packages for Debian
+      if: inputs.package-name == 'Debian'
       shell: bash
-      run: ./generate-rules.sh > 70-opentabletdriver.rules
+      run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
 
-    - name: Upload udev Rules
+    - name: Install required packages for RedHat/Fedora
+      if: inputs.package-name == 'RedHat'
+      shell: bash
+      run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-8.0 tree jq
+
+    - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
+      shell: bash
+      run: ./eng/linux/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output ./build-${{ inputs.package-name }}/${{ inputs.runtime }}
+
+    - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Artifact upload
       uses: actions/upload-artifact@v4
       with:
-        name: udev Rules
-        path: 70-opentabletdriver.rules
+        name: OpenTabletDriver ${{ inputs.package-name }} ${{ inputs.runtime }}
+        path: ./build-${{ inputs.package-name }}/*${{ inputs.runtime }}*
         if-no-files-found: error
