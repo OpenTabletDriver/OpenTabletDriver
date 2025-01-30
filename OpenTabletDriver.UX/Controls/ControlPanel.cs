@@ -123,6 +123,8 @@ namespace OpenTabletDriver.UX.Controls
 
             var tablet = Profile != null ? await Profile.GetTabletReference() : null;
 
+            OnTabletChanged(tablet);
+
             if (Platform.IsMac)
                 tabControl.Pages.Clear();
 
@@ -159,6 +161,14 @@ namespace OpenTabletDriver.UX.Controls
 
             SetPageVisibility(logView, true);
         });
+
+        public void OnTabletChanged(TabletReference tablet)
+        {
+            penBindingEditor.Tablet = tablet;
+            auxBindingEditor.Tablet = tablet;
+            wheelBindingEditor.Tablet = tablet;
+            mouseBindingEditor.Tablet = tablet;
+        }
 
         public BindableBinding<ControlPanel, Profile> ProfileBinding
         {

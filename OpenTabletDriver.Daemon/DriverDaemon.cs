@@ -435,6 +435,12 @@ namespace OpenTabletDriver.Daemon
                 Log.Write(group, $"Mouse Button Bindings: [" + string.Join("], [", bindingHandler.MouseButtons.Select(b => b.Value?.Binding)) + "]");
             }
 
+            if (settings.WheelButtons != null && settings.WheelButtons.Any(b => b?.Path != null))
+            {
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.WheelButtons, bindingHandler.WheelButtons, tabletReference);
+                Log.Write(group, $"Wheel Button Bindings: [" + string.Join("], [", bindingHandler.WheelButtons.Select(b => b.Value?.Binding)) + "]");
+            }
+
             var scrollUp = bindingHandler.MouseScrollUp = new BindingState
             {
                 Binding = settings.MouseScrollUp?.Construct<IBinding>(bindingServiceProvider, tabletReference)
