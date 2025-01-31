@@ -718,7 +718,9 @@ namespace OpenTabletDriver.Daemon.Library
                 ),
                 PenButtons = new Collection<PluginSettings?>(),
                 AuxButtons = new Collection<PluginSettings?>(),
-                MouseButtons = new Collection<PluginSettings?>()
+                MouseButtons = new Collection<PluginSettings?>(),
+                TipActivationThreshold = 1f,
+                EraserActivationThreshold = 1f,
             };
             return bindingSettings;
         }
