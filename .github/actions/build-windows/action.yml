@@ -11,6 +11,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # checkout enables git repo under build, otherwise git root is not found
+    - uses: actions/checkout@v4
+
     - name: "Windows Build"
       shell: pwsh
       run: ./eng/windows/package.ps1 -netRuntime ${{ inputs.runtime }} -output build/${{ inputs.runtime }} -isRelease ${{ inputs.release }}

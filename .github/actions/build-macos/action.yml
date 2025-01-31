@@ -7,6 +7,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # checkout enables git repo under build, otherwise git root is not found
+    - uses: actions/checkout@v4
+
     - name: MacOS ${{ inputs.runtime }} Build
       shell: bash
       run: ./eng/macos/package.sh --package true -r ${{ inputs.runtime }} --output ./dist/${{ inputs.runtime }}
