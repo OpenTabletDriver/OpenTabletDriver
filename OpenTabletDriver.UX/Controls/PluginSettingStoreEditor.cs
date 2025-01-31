@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.UX.Controls
@@ -71,12 +72,14 @@ namespace OpenTabletDriver.UX.Controls
             if (store != null)
             {
                 var type = store.GetTypeInfo<TSource>();
-                return GetControlsForType(store, type);
+
+                if (type != null)
+                    return GetControlsForType(store, type);
+                else
+                    Log.Write("PluginSettingStoreEditor", $"Failed to get type info for {store.GetHumanReadableString()}.", LogLevel.Error);
             }
-            else
-            {
-                return Array.Empty<Control>();
-            }
+                
+            return Array.Empty<Control>();
         }
 
         private IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)
