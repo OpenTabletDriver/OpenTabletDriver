@@ -78,7 +78,7 @@ namespace OpenTabletDriver.UX.Controls
                 else
                     Log.Write("PluginSettingStoreEditor", $"Failed to get type info for {store.GetHumanReadableString()}.", LogLevel.Error);
             }
-                
+
             return Array.Empty<Control>();
         }
 
