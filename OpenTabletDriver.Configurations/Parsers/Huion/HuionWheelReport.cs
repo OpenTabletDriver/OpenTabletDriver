@@ -2,7 +2,7 @@ using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion;
 
-public class HuionWheelReport : IWheelButtonReport, IAbsoluteWheelReport
+public class HuionWheelReport : IAbsoluteWheelReport
 {
     public HuionWheelReport(byte[] data)
     {
@@ -13,8 +13,6 @@ public class HuionWheelReport : IWheelButtonReport, IAbsoluteWheelReport
             Position = null;
         else
             Position = wheelData - 1u;
-
-        WheelButtons = [];
     }
 
     public byte[] Raw { get; set; }
