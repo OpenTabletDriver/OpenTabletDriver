@@ -13,7 +13,7 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        build: [windows, macos, BinaryTarBall, RedHat, Debian]
+        build: [windows, macos, BinaryTarBall, RedHat, Debian, Simple]
         runtime-suffix: [x64]
         include:
           - build: BinaryTarBall
@@ -24,6 +24,9 @@ jobs:
             runtime-prefix: linux-
             container: fedora
           - build: Debian
+            os: ubuntu-latest
+            runtime-prefix: linux-
+          - build: Simple
             os: ubuntu-latest
             runtime-prefix: linux-
           - build: macos
