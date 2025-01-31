@@ -76,7 +76,7 @@ namespace OpenTabletDriver.UX.Controls
                 if (type != null)
                     return GetControlsForType(store, type);
                 else
-                    Log.Write("PluginSettingStoreEditor", $"Failed to get type info for {store.GetHumanReadableString()}.", LogLevel.Error);
+                    Log.Write("PluginSettingStoreEditor", $"Failed to get type info. {(store.Path == null ? "(store path is null)" : "")}", LogLevel.Error);
             }
 
             return Array.Empty<Control>();
