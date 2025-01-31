@@ -8,7 +8,8 @@ if [ -n "$VERSION_SUFFIX" ]; then
   if [[ "$VERSION_SUFFIX" =~ "-" ]]; then
     # likely from CI, generate CI-friendly Fedora string
     # see https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/
-    version_to_use="${OTD_VERSION_BASE}^${VERSION_SUFFIX//-/.}"
+    local_suffix="${VERSION_SUFFIX//-/.}"
+    version_to_use="${OTD_VERSION_BASE}^${local_suffix:1}"
   else
     # likely from packaging, e.g. release candidates. can just use OTD_VERSION directly
     version_to_use="${OTD_VERSION//-/}}"
