@@ -29,6 +29,16 @@ namespace OpenTabletDriver.Plugin.Tablet
         public ButtonSpecifications? MouseButtons { set; get; }
 
         /// <summary>
+        /// Specifications for the wheels.
+        /// </summary>
+        public WheelSpecifications? Wheel { get; set; }
+
+        /// <summary>
+        /// Specifications for the strips.
+        /// </summary>
+        public AnalogSpecifications? Strips { set; get; }
+
+        /// <summary>
         /// Specifications for the touch digitizer.
         /// </summary>
         public DigitizerSpecifications? Touch { set; get; }
