@@ -18,7 +18,7 @@ if [ -z "$VERSION_SUFFIX" ]; then
     VERSION_SUFFIX="-$(git describe --long --tags --dirty | sed -E 's/^v((.\.)*.)-(.*)$/\3/')"
 
     # don't set suffix if this is a tagged commit
-    COMMIT_DISTANCE_FROM_TAG="$(sed -E 's/^([0-9]+)-(.*)$/\1/' <<< "$VERSION_SUFFIX")"
+    COMMIT_DISTANCE_FROM_TAG="$(sed -E 's/^-([0-9]+)-(.*)$/\1/' <<< "$VERSION_SUFFIX")"
     if [ "$COMMIT_DISTANCE_FROM_TAG" -eq "0" ]; then
       echo "INFO: This looks like a tagged commit, not setting a version suffix"
       unset VERSION_SUFFIX
