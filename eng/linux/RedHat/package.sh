@@ -23,7 +23,7 @@ echo "RPMizing..."
 mkdir -p "${output}"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 echo "Making a source tarball..."
-create_source_tarball_gz "${OTD_LNAME}-${OTD_VERSION}" > "${output}/SOURCES/${OTD_LNAME}-${OTD_VERSION}.tar.gz"
+create_source_tarball_gz "${OTD_LNAME}-${version_to_use}" > "${output}/SOURCES/${OTD_LNAME}-${version_to_use}.tar.gz"
 
 echo "Generating ${OTD_LNAME}.spec..."
 cat << EOF > "${output}/SPECS/${OTD_LNAME}.spec"
@@ -32,7 +32,7 @@ Version: ${version_to_use}
 Release: 1
 Summary: A ${OTD_DESC}
 
-Source0: ${OTD_LNAME}-${OTD_VERSION}.tar.gz
+Source0: ${OTD_LNAME}-${version_to_use}.tar.gz
 
 License: LGPLv3
 URL: ${OTD_UPSTREAM_URL}
