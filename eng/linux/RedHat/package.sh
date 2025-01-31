@@ -4,6 +4,20 @@ redhat_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
 output="$(readlink -f "${1}")"
 
+if [ -n "$VERSION_SUFFIX" ]; then
+  if [[ "$VERSION_SUFFIX" ~= "-" ]]; then
+    # likely from CI, generate CI-friendly Fedora string
+    # see https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/
+    version_to_use="${OTD_VERSION_BASE}^${VERSION_SUFFIX//-/.}"
+  else
+    # likely from packaging, e.g. release candidates. can just use OTD_VERSION directly
+    version_to_use="${OTD_VERSION//-/}}"
+  fi
+else
+  version_to_use="${OTD_VERSION}"
+fi
+echo "Determined version $version_to_use"
+
 echo "RPMizing..."
 mkdir -p "${output}"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
@@ -13,7 +27,7 @@ create_source_tarball_gz "${OTD_LNAME}-${OTD_VERSION}" > "${output}/SOURCES/${OT
 echo "Generating ${OTD_LNAME}.spec..."
 cat << EOF > "${output}/SPECS/${OTD_LNAME}.spec"
 Name: ${OTD_LNAME}
-Version: ${OTD_VERSION}
+Version: ${version_to_use}
 Release: 1
 Summary: A ${OTD_DESC}
 
