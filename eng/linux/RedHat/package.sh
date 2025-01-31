@@ -65,7 +65,7 @@ ${OTD_LONG_DESC2}
 %autosetup
 
 %build
-./eng/linux/package.sh --output bin
+VERSION_SUFFIX=${VERSION_SUFFIX} ./eng/linux/package.sh --output bin
 
 %install
 export DONT_STRIP=1
