@@ -2,7 +2,6 @@
 
   <PropertyGroup Label="Project Properties">
     <TargetFrameworks>$(FrameworkBase)</TargetFrameworks>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package">

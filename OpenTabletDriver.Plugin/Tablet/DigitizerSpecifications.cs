@@ -47,6 +47,8 @@ namespace OpenTabletDriver.Plugin.Tablet
             return objectType == typeof(double);
         }
 
+#nullable enable
+
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             if (value == null)
