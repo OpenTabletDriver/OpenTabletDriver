@@ -22,6 +22,8 @@ runs:
 
     # re-checkout repository prior to build to ensure git root is initialized (causes OpenTabletDriver#3774 if not done)
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # we need tags _and_ history for correct VERSION_SUFFIX'ing
 
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
       shell: bash
