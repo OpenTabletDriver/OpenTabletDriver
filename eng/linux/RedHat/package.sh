@@ -5,7 +5,7 @@ redhat_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 output="$(readlink -f "${1}")"
 
 if [ -n "$VERSION_SUFFIX" ]; then
-  if [[ "$VERSION_SUFFIX" ~= "-" ]]; then
+  if [[ "$VERSION_SUFFIX" =~ "-" ]]; then
     # likely from CI, generate CI-friendly Fedora string
     # see https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/
     version_to_use="${OTD_VERSION_BASE}^${VERSION_SUFFIX//-/.}"
