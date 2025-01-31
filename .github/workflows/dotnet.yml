@@ -36,7 +36,7 @@ jobs:
             os: windows-latest
             runtime-prefix: win-
     # TODO: release or debug build
-    name: ${{ matrix.build }} ${{ matrix.runtime-suffix }} Publish
+    name: ${{ matrix.build }} ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }} Publish
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
     steps:
