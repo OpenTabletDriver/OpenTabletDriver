@@ -3,6 +3,7 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
+# TODO: detect MacOS
 if is_musl_based_distro; then
   NET_RUNTIME="linux-musl-x64"
 else
@@ -23,7 +24,7 @@ print_help() {
   echo
   echo "Platform-specific options:"
   echo "  --package <package_type>      Package generation script to run after build"
-  echo "                                (see eng/linux/* for available package types)"
+  echo "                                (see eng/bash/* for available package types)"
   echo
   echo "Remarks:"
   echo "  Anything after '--', if it is specified, will be passed to dotnet publish as-is."
@@ -62,16 +63,23 @@ while [ ${#remaining_args[@]} -gt 0 ]; do
   shift_arr "remaining_args"
 done
 
+# set defaults
+if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
+  SINGLE_FILE=${SINGLE_FILE:-"false"}
+  SELF_CONTAINED=${SELF_CONTAINED:-"true"}
+  PACKAGE_GEN=${PACKAGE_GEN:-"macos"}
+fi
+
 cd "${REPO_ROOT}"
 
 prepare_build
-if ! [ -e "${PKG_SCRIPT_ROOT}/${PACKAGE_GEN:-BinaryTarBall}/no-build" ]; then
+if ! [ -e "${LIB_SCRIPT_ROOT}/${PACKAGE_GEN:-BinaryTarBall}/no-build" ]; then
   build "PROJECTS" "extra_args"
 fi
 
 if [ -n "${PACKAGE_GEN}" ]; then
   echo -e "\nCreating package with type '${PACKAGE_GEN}'..."
-  package_script="${PKG_SCRIPT_ROOT}/${PACKAGE_GEN}/package.sh"
+  package_script="${LIB_SCRIPT_ROOT}/${PACKAGE_GEN}/package.sh"
   if [ ! -f "${package_script}" ]; then
     exit_with_error "Could not find package generation script: ${package_script}"
   fi

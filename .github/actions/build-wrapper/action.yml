@@ -31,15 +31,9 @@ runs:
       with:
         runtime: ${{ inputs.runtime }}
 
-    - name: "Linux Build Artifact"
-      if: runner.os == 'Linux' && startsWith(inputs.runtime, 'linux-')
-      uses: ./.github/actions/build-linux
+    - name: "BASH Build Artifact"
+      if: runner.os == 'Linux' && !startsWith(inputs.runtime, 'win-')
+      uses: ./.github/actions/build-bash
       with:
         runtime: ${{ inputs.runtime }}
         package-name: ${{ inputs.package-name }}
-
-    - name: "MacOS Build Artifact"
-      if: runner.os == 'Linux' && startsWith(inputs.runtime, 'osx-')
-      uses: ./.github/actions/build-macos
-      with:
-        runtime: ${{ inputs.runtime }}

@@ -65,20 +65,20 @@ ${OTD_LONG_DESC2}
 %autosetup
 
 %build
-VERSION_SUFFIX=${VERSION_SUFFIX} ./eng/linux/package.sh --output bin
+VERSION_SUFFIX=${VERSION_SUFFIX} ./eng/bash/package.sh --output bin
 
 %install
 export DONT_STRIP=1
-PREFIX="%{_prefix}" ./eng/linux/package.sh --package Generic --build false
+PREFIX="%{_prefix}" ./eng/bash/package.sh --package Generic --build false
 mkdir -p "%{buildroot}"
 mv ./dist/files/* "%{buildroot}"/
 rm -rf ./dist
 mkdir -p "%{buildroot}/%{_prefix}/lib/"
 cp -r bin "%{buildroot}/%{_prefix}/lib/opentabletdriver"
 
-%post -f eng/linux/Generic/postinst
+%post -f eng/bash/Generic/postinst
 
-%postun -f eng/linux/Generic/postrm
+%postun -f eng/bash/Generic/postrm
 
 %files
 %defattr(-,root,root)

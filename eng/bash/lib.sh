@@ -12,7 +12,7 @@ VERSION_SUFFIX=${VERSION_SUFFIX:-}
 # if unset, autodetect suffix from git
 if [ -z "$VERSION_SUFFIX" ]; then
   # limit git repo discovery to project root
-  export GIT_CEILING_DIRECTORIES="$(realpath $(dirname "${BASH_SOURCE[0]}")/../..)"
+  export GIT_CEILING_DIRECTORIES="$(realpath $(dirname "${BASH_SOURCE[0]}")/../../..)"
 
   if hash git &>/dev/null && hash sed &>/dev/null; then
     VERSION_SUFFIX="-$(git describe --long --tags --dirty | sed -E 's/^v((.\.)*.)-(.*)$/\3/')"
@@ -31,8 +31,9 @@ fi
 ### Global variables
 
 PREV_PATH=${PWD}
-ENG_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
-REPO_ROOT="$(readlink -f "${ENG_SCRIPT_ROOT}/../")"
+LIB_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
+REPO_ROOT="$(readlink -f "${LIB_SCRIPT_ROOT}/../../")"
+GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
 
 ### Build Requirements
 
@@ -329,4 +330,67 @@ create_source_tarball() {
 create_source_tarball_gz() {
   local prefix="${1}"
   git archive --format=tar.gz --prefix="${prefix}/" HEAD
+}
+
+### Linux Helper functions
+
+# From https://github.com/dotnet/install-scripts/blob/main/src/dotnet-install.sh
+is_musl_based_distro() {
+  (ldd --version 2>&1 || true) | grep -q musl
+}
+
+copy_generic_files() {
+  local output="${1}"
+
+  echo "Copying generic files..."
+  cp -Rv "${GENERIC_FILES}/usr/"* "${output}"
+  echo
+}
+
+test_rules() {
+  if ! hash udevadm 2>/dev/null; then
+    echo "INFO: test_rules: Cannot test rules without program 'udevadm'. Passing."
+    return 0
+  fi
+
+  if ! udevadm verify --help >/dev/null; then
+    echo "INFO: test_rules: Your udevadm does not support 'udevadm verify'. Passing."
+    return 0
+  fi
+
+  if [ ! -f "${1}" ]; then
+    echo "test_rules: Not a file '${1}'" >&2
+    return 1
+  fi
+
+  udevadm verify "${1}"
+}
+
+generate_rules() {
+  local output_file="${1}"
+
+  echo "Generating udev rules to ${output_file}..."
+  mkdir -p $(dirname "$output_file")
+  "${REPO_ROOT}/generate-rules.sh" > "${output_file}"
+
+  test_rules "$output_file"
+}
+
+generate_desktop_file() {
+  local output="${1}"
+
+  mkdir -p "$(dirname "${output}")"
+  cat << EOF > "${output}"
+[Desktop Entry]
+Version=1.5
+Name=${OTD_NAME}
+Comment=A ${OTD_DESC}
+Exec=${OTD_GUI}
+Icon=/usr/share/pixmaps/otd.png
+Terminal=false
+Type=Application
+Categories=Settings;
+StartupNotify=true
+StartupWMClass=OpenTabletDriver.UX
+EOF
 }
