@@ -600,14 +600,14 @@ namespace OpenTabletDriver.Daemon.Library
                     {
                         unsafe
                         {
-                            var state = Windows.PowerThrottlingState.Create();
-                            state.ControlMask = (int)Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
+                            var state = WindowsAPI.PowerThrottlingState.Create();
+                            state.ControlMask = (int)WindowsAPI.PowerThrottlingStateMask.IgnoreTimerResolution;
 
-                            if (!Windows.SetProcessInformation(
+                            if (!WindowsAPI.SetProcessInformation(
                                 System.Diagnostics.Process.GetCurrentProcess().Handle,
-                                Windows.ProcessInformationClass.ProcessPowerThrottling,
+                                WindowsAPI.ProcessInformationClass.ProcessPowerThrottling,
                                 (IntPtr)Unsafe.AsPointer(ref state),
-                                Unsafe.SizeOf<Windows.PowerThrottlingState>()))
+                                Unsafe.SizeOf<WindowsAPI.PowerThrottlingState>()))
                             {
                                 Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
                             }
