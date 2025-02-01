@@ -24,13 +24,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Debian Build
-        run: ./eng/linux/package.sh --package Debian --output ./dist/debian
+        run: ./eng/bash/package.sh --package Debian --output ./dist/debian
 
       - name: Generic Linux Build
-        run: ./eng/linux/package.sh --package BinaryTarBall --output ./dist/tarball
+        run: ./eng/bash/package.sh --package BinaryTarBall --output ./dist/tarball
 
       - name: MacOS Build
-        run: ./eng/macos/package.sh --package true --output ./dist/macos
+        run: ./eng/bash/package.sh --package macos --output ./dist/macos
 
       - name: Upload all artifacts (Release)
         uses: softprops/action-gh-release@v2
@@ -93,7 +93,7 @@ jobs:
       - run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
       - name: RPM Build
-        run: ./eng/linux/package.sh --package RedHat --output ./dist/redhat
+        run: ./eng/bash/package.sh --package RedHat --output ./dist/redhat
 
       - name: Upload all artifacts (Release)
         uses: softprops/action-gh-release@v2
@@ -126,8 +126,8 @@ jobs:
         with:
           dotnet-version: '8.0'
 
-      - name: Package
-        run: ./eng/windows/package.ps1
+      - name: Windows Build
+        run: ./eng/bash/package.sh --package windows --output ./dist/
 
       - name: Upload Windows asset (Release)
         uses: softprops/action-gh-release@v2
@@ -135,7 +135,7 @@ jobs:
         with:
           name: OpenTabletDriver v${{ github.ref_name }}
           draft: true
-          files: ./dist/*.zip
+          files: ./dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -144,4 +144,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: OpenTabletDriver.win-x64.zip
-          path: ./dist/*.zip
+          path: ./dist/*
