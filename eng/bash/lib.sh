@@ -261,13 +261,10 @@ build() {
     options+=("${extra_options[@]}")
   fi
 
-  # this initial restore is needed to make clean work properly on cases where
-  # the projects changed dependencies (e.g. added a new nuget package)
+  # this initial restore is needed in cases projects changed dependencies
+  # (e.g. added a new nuget package)
   echo "Restoring packages..."
   dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
-
-  echo "Running dotnet clean..."
-  dotnet clean --configuration "${CONFIG}" --verbosity quiet
 
   if [ "${PORTABLE}" = "true" ]; then
     mkdir -p "${OUTPUT}/userdata"
