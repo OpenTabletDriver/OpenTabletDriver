@@ -81,4 +81,10 @@ if [ "${PACKAGE}" = "true" ]; then
   create_binary_tarball "${pkg_root}" "${OUTPUT}/${pkg_file}"
 
   echo -e "\nPackaging finished! Package created at '${OUTPUT}/${pkg_file}'"
+
+  # output information to CI
+  if [ -n "$GITHUB_OUTPUT" ]; then
+    printf 'output-file=%s\n' "$PKG_FILE" >> $GITHUB_OUTPUT
+    printf 'version=%s\n' "$OTD_VERSION" >> $GITHUB_OUTPUT
+  fi
 fi
