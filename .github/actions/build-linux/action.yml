@@ -1,0 +1,40 @@
+name: 'OpenTabletDriver distro-specific Linux build'
+description: 'Builds OpenTabletDriver for a specific Linux distribution and publishes the relevant artifact'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+  package-name:
+    description: 'The --package argument for package.sh'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install required packages for Debian
+      if: inputs.package-name == 'Debian'
+      shell: bash
+      run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
+
+    - name: Install required packages for RedHat/Fedora
+      if: inputs.package-name == 'RedHat'
+      shell: bash
+      run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs dotnet-sdk-8.0 tree jq
+
+    # re-checkout repository prior to build to ensure git root is initialized (causes OpenTabletDriver#3774 if not done)
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # we need tags _and_ history for correct VERSION_SUFFIX'ing
+
+    - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
+      id: build
+      shell: bash
+      run: ./eng/linux/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output build-${{ inputs.package-name }}
+      # should output artifact name and version to GITHUB_OUTPUT with key 'output-file' and 'version' respectively
+      # TODO: version return value unused, not sure where to use?
+
+    - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Artifact upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.build.outputs.output-file }}
+        path: build-${{ inputs.package-name }}/${{ steps.build.outputs.output-file }}
+        if-no-files-found: error

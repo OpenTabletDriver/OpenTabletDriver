@@ -1,0 +1,28 @@
+name: 'OpenTabletDriver Windows Build'
+description: 'Builds OpenTabletDriver for Windows and publishes the relevant artifact'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+  release:
+    description: 'Should the package be built as release? (boolean input)'
+    required: false
+    default: 'false'
+runs:
+  using: "composite"
+  steps:
+    # checkout enables git repo under build, otherwise git root is not found
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # we need tags _and_ history for correct VERSION_SUFFIX'ing
+
+    - name: "Windows Build"
+      shell: pwsh
+      run: ./eng/windows/package.ps1 -netRuntime ${{ inputs.runtime }} -output build/${{ inputs.runtime }} -isRelease ${{ inputs.release }}
+
+    - name: Upload Windows artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: OpenTabletDriver ${{ inputs.runtime }}
+        path: build/${{ inputs.runtime }}
+        if-no-files-found: error

@@ -9,143 +9,70 @@ on:
       - avalonia
   pull_request:
 jobs:
-  linuxpublish:
-    runs-on: ubuntu-latest
-    name: Linux Publish
+  matrixpublish:
+    continue-on-error: true
+    strategy:
+      matrix:
+        build: [windows, macos, BinaryTarBall, RedHat, Debian, Simple]
+        runtime-suffix: [x64]
+        include:
+          - build: BinaryTarBall
+            os: ubuntu-latest
+            runtime-prefix: linux-
+          - build: RedHat
+            os: ubuntu-latest
+            runtime-prefix: linux-
+            container: fedora
+          - build: Debian
+            os: ubuntu-latest
+            runtime-prefix: linux-
+          - build: Simple
+            os: ubuntu-latest
+            runtime-prefix: linux-
+          - build: macos
+            os: ubuntu-latest
+            runtime-prefix: osx-
+          - build: windows
+            os: windows-latest
+            runtime-prefix: win-
+    # TODO: release or debug build
+    name: ${{ matrix.build }} ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }} Publish
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
     steps:
-      - name: Install required packages for Debian
-        run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
+      - uses: actions/checkout@v4
 
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.2.0
+      - uses: ./.github/actions/build-wrapper
         with:
-          dotnet-version: '8.0'
+          runtime: ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }}
+          package-name: ${{ matrix.build }}
+          container: ${{ matrix.container }}
 
-      - name: Linux Publish
-        env:
-          runtime: linux-x64
-        run: |
-          read -ra options <<< "--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
-          dotnet publish OpenTabletDriver.Daemon "${options[@]}" --runtime "$runtime" -o "build/$runtime"
-          dotnet publish OpenTabletDriver.UI "${options[@]}" --runtime "$runtime" -o "build/$runtime"
+  udev:
+    name: Generate udev Rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Build Debian package
-        run: ./eng/linux/package.sh --package Debian --output ./build/debian
-
-      - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: OpenTabletDriver linux-x64
-          path: build/linux-x64
-
-      - name: Upload Debian artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: OpenTabletDriver.deb
-          path: build/debian/*.deb
-
-      - name: Generate udev Rules
-        run: ./generate-rules.sh > 70-opentabletdriver.rules
+      - run: ./generate-rules.sh > 70-opentabletdriver.rules
 
       - name: Upload udev Rules
         uses: actions/upload-artifact@v4
         with:
           name: udev Rules
           path: 70-opentabletdriver.rules
-
-  fedorapublish:
-    runs-on: ubuntu-latest
-    name: Fedora Publish
-    container:
-      image: fedora
-    steps:
-      - name: Install required packages
-        run: sudo dnf install -y rpm-build systemd-rpm-macros libicu openssl-libs zlib krb5-libs git dotnet-sdk-8.0 tree jq
-
-      - name: Checkout OpenTabletDriver Repository
-        uses: actions/checkout@v4
-
-      # https://github.com/actions/checkout/issues/1169
-      - run: git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
-
-      - name: RPM Build
-        run: ./eng/linux/package.sh --package RedHat --output ./build/redhat
-
-      - name: Upload Fedora artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: OpenTabletDriver.rpm
-          path: build/redhat/*.rpm
-
-  macospublish:
-    runs-on: ubuntu-latest
-    name: MacOS Publish
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.2.0
-        with:
-          dotnet-version: '8.0'
-
-      - name: MacOS Publish
-        env:
-          runtime: osx-x64
-        run: |
-          read -ra options <<< "--configuration Release -p:DebugType=embedded -p:PublishTrimmed=false --no-self-contained -p:SourceRevisionId=$(git rev-parse --short HEAD)"
-          dotnet publish OpenTabletDriver.Daemon "${options[@]}" --runtime "$runtime" -o "build/$runtime"
-          dotnet publish OpenTabletDriver.UI "${options[@]}" --runtime "$runtime" -o "build/$runtime"
-
-      - name: Upload MacOS artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: OpenTabletDriver osx-x64
-          path: build/osx-x64
-
-  windowspublish:
-    runs-on: windows-latest
-    name: Windows Publish
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.2.0
-        with:
-          dotnet-version: '8.0'
-
-      - name: Windows Publish
-        env:
-          runtime: win-x64
-        run: |
-          $options=@("--configuration", "Release", "-p:PublishSingleFile=true", "-p:DebugType=embedded", "--no-self-contained", "-p:SourceRevisionId=$(git rev-parse --short HEAD)")
-          dotnet publish OpenTabletDriver.Daemon $options --runtime $ENV:runtime -o build/$ENV:runtime
-          dotnet publish OpenTabletDriver.UI $options --runtime $ENV:runtime -o build/$ENV:runtime
-
-      - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: OpenTabletDriver win-x64
-          path: build/win-x64
+          if-no-files-found: error
 
   linter:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           # Full git history is needed to get a proper list of changed files
           fetch-depth: 0
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.2.0
-        with:
-          dotnet-version: '8.0'
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Lint Changed Files
         run: |
@@ -156,13 +83,8 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.2.0
-        with:
-          dotnet-version: '8.0'
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Run tests
         run: dotnet test
@@ -171,13 +93,8 @@ jobs:
     name: Validate Solution Filters
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.2.0
-        with:
-          dotnet-version: '8.0'
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-dotnet
 
       - name: Windows
         run: dotnet restore OpenTabletDriver.Windows.slnf
