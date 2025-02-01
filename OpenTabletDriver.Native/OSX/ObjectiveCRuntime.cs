@@ -15,6 +15,12 @@ namespace OpenTabletDriver.Native.OSX
 
         [DllImport(ObjCLibrary, CharSet = CharSet.Ansi)]
         public static extern IntPtr objc_getClass(string namePtr);
+
+        [DllImport(ObjCLibrary)]
+        public static extern IntPtr objc_autoreleasePoolPush();
+
+        [DllImport(ObjCLibrary)]
+        public static extern void objc_autoreleasePoolPop(IntPtr pool);
     }
 }
 
