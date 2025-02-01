@@ -244,17 +244,17 @@ build() {
     --framework "${FRAMEWORK}"
     --self-contained "${SELF_CONTAINED}"
     --output "${OUTPUT}"
-    /p:PublishTrimmed=false
-    /p:DebugType=embedded
-    /p:SuppressNETCoreSdkPreviewMessage=true
-    /p:VersionSuffix=${VERSION_SUFFIX}
+    -p:PublishTrimmed=false
+    -p:DebugType=embedded
+    -p:SuppressNETCoreSdkPreviewMessage=true
+    -p:VersionSuffix=${VERSION_SUFFIX}
   )
 
   if [ "${DOG_FOOD}" != "true" ]; then
-    options+=( /p:SourceRevisionId=$(git rev-parse --short HEAD) )
+    options+=( -p:SourceRevisionId=$(git rev-parse --short HEAD) )
   fi
   if [ "${SINGLE_FILE}" == "true" ]; then
-    options+=( /p:PublishSingleFile=true )
+    options+=( -p:PublishSingleFile=true )
   fi
 
   if [ ${#extra_options[@]} -gt 0 ]; then
