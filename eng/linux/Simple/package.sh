@@ -6,7 +6,7 @@
 # emitted: Apps and local dependencies (e.g. Avalonia has Skia), as well as the
 # local README and udev rules
 
-PKG_FILE="${OTD_LNAME}-${OTD_VERSION}-${NET_RUNTIME}_simple.tar.gz"
+PKG_FILE="${OTD_LNAME}-${OTD_VERSION}_${NET_RUNTIME}_simple.tar.gz"
 folder_name="${OTD_LNAME}-Simple"
 
 output="$(readlink -f "${1}")"
