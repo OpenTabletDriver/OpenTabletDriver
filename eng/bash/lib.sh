@@ -281,6 +281,7 @@ build() {
   echo -e "\nBuild finished! Binaries created in ${OUTPUT}"
 }
 
+# always creates a subfolder by changing directory to the parent folder of source ($1)
 create_binary_tarball() {
   local source="${1}"
   local output="${2}"
