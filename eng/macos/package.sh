@@ -31,7 +31,8 @@ is_extra_args=false  # whether we've reached '--'
 extra_args=()        # args after '--'
 
 parse_build_args "args" "remaining_args"
-PKG_FILE="${OTD_LNAME}-${OTD_VERSION}-${NET_RUNTIME}.app.tar.gz"
+
+PKG_FILE="${OTD_LNAME}-${OTD_VERSION}_${NET_RUNTIME}.app.tar.gz"
 
 while [ ${#remaining_args[@]} -gt 0 ]; do
   if $is_extra_args; then
@@ -67,7 +68,6 @@ build "PROJECTS" "extra_args"
 if [ "${PACKAGE}" = "true" ]; then
   echo -e "\nPreparing package..."
 
-  pkg_file="${OTD_NAME}-${OTD_VERSION}_${NET_RUNTIME}.tar.gz"
   pkg_root="${OUTPUT}/${OTD_NAME}.app"
 
   move_to_nested "${OUTPUT}" "${pkg_root}/Contents/MacOS"
@@ -78,9 +78,9 @@ if [ "${PACKAGE}" = "true" ]; then
   cp "${PKG_SCRIPT_ROOT}/Info.plist" "${pkg_root}/Contents/"
 
   echo "Creating tarball..."
-  create_binary_tarball "${pkg_root}" "${OUTPUT}/${pkg_file}"
+  create_binary_tarball "${pkg_root}" "${OUTPUT}/${PKG_FILE}"
 
-  echo -e "\nPackaging finished! Package created at '${OUTPUT}/${pkg_file}'"
+  echo -e "\nPackaging finished! Package created at '${OUTPUT}/${PKG_FILE}'"
 
   # output information to CI
   if [ -n "$GITHUB_OUTPUT" ]; then
