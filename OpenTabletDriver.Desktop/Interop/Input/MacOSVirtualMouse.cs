@@ -326,9 +326,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 
         private void PostEvent()
         {
-            var pool = ObjectiveCRuntime.objc_autoreleasePoolPush();
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, _mouseEvent);
-            ObjectiveCRuntime.objc_autoreleasePoolPop(pool);
             // Fields in a CGEvent are stored in a union determined by the event type,
             // and they cannot be safely reused.
             CFRelease(_mouseEvent);
