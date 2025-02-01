@@ -3,13 +3,6 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-# TODO: detect MacOS
-if is_musl_based_distro; then
-  NET_RUNTIME="linux-musl-x64"
-else
-  NET_RUNTIME="linux-x64"
-fi
-
 PACKAGE_GEN=""
 PROJECTS=(
   "OpenTabletDriver.Daemon"
@@ -62,6 +55,15 @@ while [ ${#remaining_args[@]} -gt 0 ]; do
   esac
   shift_arr "remaining_args"
 done
+
+if [ -z "${NET_RUNTIME:-}" ]; then
+  if is_musl_based_distro; then # is this command even portable?
+    NET_RUNTIME="linux-musl-x64"
+  else
+    NET_RUNTIME="linux-x64"
+  fi
+  echo "WARN: You must specify a runtime! Falling back to '${NET_RUNTIME}'"
+fi
 
 # set defaults
 if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
