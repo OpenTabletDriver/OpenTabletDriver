@@ -26,12 +26,15 @@ runs:
         fetch-depth: 0 # we need tags _and_ history for correct VERSION_SUFFIX'ing
 
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
+      id: build
       shell: bash
-      run: ./eng/linux/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output ./build-${{ inputs.package-name }}/${{ inputs.runtime }}
+      run: ./eng/linux/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output build-${{ inputs.package-name }}
+      # should output artifact name and version to GITHUB_OUTPUT with key 'output-file' and 'version' respectively
+      # TODO: version return value unused, not sure where to use?
 
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Artifact upload
       uses: actions/upload-artifact@v4
       with:
-        name: OpenTabletDriver ${{ inputs.package-name }} ${{ inputs.runtime }}
-        path: ./build-${{ inputs.package-name }}/*${{ inputs.runtime }}*
+        name: ${{ steps.build.outputs.output-file }}
+        path: build-${{ inputs.package-name }}/${{ steps.build.outputs.output-file }}
         if-no-files-found: error
