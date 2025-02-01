@@ -6,6 +6,7 @@ inputs:
     required: true
   package-name:
     description: 'Package name, --package argument for package.sh'
+    required: true
   container:
     description: 'Set to anything to apply container workarounds'
 runs:
