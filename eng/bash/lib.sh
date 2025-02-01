@@ -33,6 +33,9 @@ if [ -z "$VERSION_SUFFIX" ]; then
   else
     echo "WARN: VERSION_SUFFIX unset and git or sed not found, VERSION_SUFFIX remains unset!"
   fi
+  if [ -n "$VERSION_SUFFIX" ]; then
+    echo "Autodetected version suffix: '${VERSION_SUFFIX}'"
+  fi
 fi
 
 ### Build Requirements
