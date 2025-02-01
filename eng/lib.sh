@@ -17,7 +17,7 @@ REPO_ROOT="$(readlink -f "${ENG_SCRIPT_ROOT}/../")"
 
 ### Build Requirements
 
-DOTNET_VERSION="8.0"
+DOTNET_VERSION="9.0"
 
 # could do away with declare -g, but did it anyway for all of them for consistency
 # with NET_RUNTIME (a global variable without initial value in lib.sh)
