@@ -11,6 +11,8 @@ PROJECTS=(
 
 MOVE_RULES_TO_ETC="false"
 
+### Argument parsing
+
 print_help() {
   echo "Usage: ${BASH_SOURCE[0]} [OPTIONS]..."
   print_common_arg_help
@@ -65,12 +67,15 @@ if [ -z "${NET_RUNTIME:-}" ]; then
   echo "WARN: You must specify a runtime! Falling back to '${NET_RUNTIME}'"
 fi
 
-# set defaults
+### Set defaults
+
 if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
   SINGLE_FILE=${SINGLE_FILE:-"false"}
   SELF_CONTAINED=${SELF_CONTAINED:-"true"}
   PACKAGE_GEN=${PACKAGE_GEN:-"macos"}
 fi
+
+### Build, if necessary
 
 cd "${REPO_ROOT}"
 
@@ -78,6 +83,8 @@ prepare_build
 if ! [ -e "${LIB_SCRIPT_ROOT}/${PACKAGE_GEN:-BinaryTarBall}/no-build" ]; then
   build "PROJECTS" "extra_args"
 fi
+
+### Package, if necessary
 
 if [ -n "${PACKAGE_GEN}" ]; then
   echo -e "\nCreating package with type '${PACKAGE_GEN}'..."
