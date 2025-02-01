@@ -5,7 +5,7 @@ inputs:
     description: '.NET runtime target (e.g. win-x64 linux-arm64)'
     required: true
   package-name:
-    description: 'Linux package name, --package argument for package.sh'
+    description: 'Package name, --package argument for package.sh'
   container:
     description: 'Set to anything to apply container workarounds'
 runs:
@@ -25,14 +25,7 @@ runs:
         hash git &>/dev/null && \
           git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
 
-    - name: "Windows Build Artifact"
-      if: runner.os == 'Windows' && startsWith(inputs.runtime, 'win-')
-      uses: ./.github/actions/build-windows
-      with:
-        runtime: ${{ inputs.runtime }}
-
     - name: "BASH Build Artifact"
-      if: runner.os == 'Linux' && !startsWith(inputs.runtime, 'win-')
       uses: ./.github/actions/build-bash
       with:
         runtime: ${{ inputs.runtime }}
