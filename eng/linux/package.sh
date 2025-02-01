@@ -87,6 +87,6 @@ fi
 
 # output information to CI
 if [ -n "$GITHUB_OUTPUT" ]; then
-  printf 'output-file=%s\n' "$PKG_FILE"
-  printf 'version=%s\n' "$OTD_VERSION"
+  printf 'output-file=%s\n' "$PKG_FILE" >> $GITHUB_OUTPUT
+  printf 'version=%s\n' "$OTD_VERSION" >> $GITHUB_OUTPUT
 fi
