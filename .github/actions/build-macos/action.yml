@@ -1,0 +1,27 @@
+name: 'OpenTabletDriver MacOS Build'
+description: 'Builds OpenTabletDriver for MacOS and publishes the relevant artifact'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # checkout enables git repo under build, otherwise git root is not found
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # we need tags _and_ history for correct VERSION_SUFFIX'ing
+
+    - name: MacOS ${{ inputs.runtime }} Build
+      id: build
+      shell: bash
+      run: ./eng/macos/package.sh --package true -r ${{ inputs.runtime }} --output ./dist-${{ inputs.runtime }}
+      # should output artifact name and version to GITHUB_OUTPUT with key 'output-file' and 'version' respectively
+      # TODO: version return value unused, not sure where to use?
+
+    - name: MacOS ${{ inputs.runtime }} artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.build.outputs.output-file }}
+        path: ./dist-${{ inputs.runtime }}/${{ steps.build.outputs.output-file }}
+        if-no-files-found: error

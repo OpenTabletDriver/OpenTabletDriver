@@ -83,4 +83,10 @@ if [ -n "${PACKAGE_GEN}" ]; then
   . "${package_script}" "${OUTPUT}"
 
   echo -e "\nPackaging finished! Package created at '${OUTPUT}/${PKG_FILE}'"
+
+  # output information to CI
+  if [ -n "$GITHUB_OUTPUT" ]; then
+    printf 'output-file=%s\n' "$PKG_FILE" >> $GITHUB_OUTPUT
+    printf 'version=%s\n' "$OTD_VERSION" >> $GITHUB_OUTPUT
+  fi
 fi

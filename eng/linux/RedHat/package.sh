@@ -4,20 +4,35 @@ redhat_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
 output="$(readlink -f "${1}")"
 
+if [ -n "$VERSION_SUFFIX" ]; then
+  if [[ "$VERSION_SUFFIX" =~ "-" ]]; then
+    # likely from CI, generate CI-friendly Fedora string
+    # see https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/
+    local_suffix="${VERSION_SUFFIX//-/.}"
+    version_to_use="${OTD_VERSION_BASE}^${local_suffix:1}"
+  else
+    # likely from packaging, e.g. release candidates. can just use OTD_VERSION directly
+    version_to_use="${OTD_VERSION//-/}}"
+  fi
+else
+  version_to_use="${OTD_VERSION}"
+fi
+echo "Determined version $version_to_use"
+
 echo "RPMizing..."
 mkdir -p "${output}"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 echo "Making a source tarball..."
-create_source_tarball_gz "${OTD_LNAME}-${OTD_VERSION}" > "${output}/SOURCES/${OTD_LNAME}-${OTD_VERSION}.tar.gz"
+create_source_tarball_gz "${OTD_LNAME}-${version_to_use}" > "${output}/SOURCES/${OTD_LNAME}-${version_to_use}.tar.gz"
 
 echo "Generating ${OTD_LNAME}.spec..."
 cat << EOF > "${output}/SPECS/${OTD_LNAME}.spec"
 Name: ${OTD_LNAME}
-Version: ${OTD_VERSION}
+Version: ${version_to_use}
 Release: 1
 Summary: A ${OTD_DESC}
 
-Source0: ${OTD_LNAME}-${OTD_VERSION}.tar.gz
+Source0: ${OTD_LNAME}-${version_to_use}.tar.gz
 
 License: LGPLv3
 URL: ${OTD_UPSTREAM_URL}
@@ -50,7 +65,7 @@ ${OTD_LONG_DESC2}
 %autosetup
 
 %build
-./eng/linux/package.sh --output bin
+VERSION_SUFFIX=${VERSION_SUFFIX} ./eng/linux/package.sh --output bin
 
 %install
 export DONT_STRIP=1
