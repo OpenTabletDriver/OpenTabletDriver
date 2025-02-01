@@ -9,10 +9,17 @@ set -eu
 
 VERSION_SUFFIX=${VERSION_SUFFIX:-}
 
-# if unset, autodetect suffix from git
+### Global variables
+
+PREV_PATH=${PWD}
+LIB_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
+REPO_ROOT="$(readlink -f "${LIB_SCRIPT_ROOT}/../../")"
+GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
+
+# if suffix unset, autodetect suffix from git
 if [ -z "$VERSION_SUFFIX" ]; then
   # limit git repo discovery to project root
-  export GIT_CEILING_DIRECTORIES="$(realpath $(dirname "${BASH_SOURCE[0]}")/../../..)"
+  export GIT_CEILING_DIRECTORIES="$(realpath ${REPO_ROOT}/../)"
 
   if hash git &>/dev/null && hash sed &>/dev/null; then
     VERSION_SUFFIX="-$(git describe --long --tags --dirty | sed -E 's/^v((.\.)*.)-(.*)$/\3/')"
@@ -27,13 +34,6 @@ if [ -z "$VERSION_SUFFIX" ]; then
     echo "WARN: VERSION_SUFFIX unset and git or sed not found, VERSION_SUFFIX remains unset!"
   fi
 fi
-
-### Global variables
-
-PREV_PATH=${PWD}
-LIB_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
-REPO_ROOT="$(readlink -f "${LIB_SCRIPT_ROOT}/../../")"
-GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
 
 ### Build Requirements
 
