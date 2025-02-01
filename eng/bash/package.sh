@@ -93,8 +93,19 @@ if [ -n "${PACKAGE_GEN}" ]; then
   echo -e "\nPackaging finished! Package created at '${OUTPUT}/${PKG_FILE}'"
 
   # output information to CI
-  if [ -n "$GITHUB_OUTPUT" ]; then
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then
     printf 'output-file=%s\n' "$PKG_FILE" >> $GITHUB_OUTPUT
     printf 'version=%s\n' "$OTD_VERSION" >> $GITHUB_OUTPUT
+
+    # allow packaging scripts to display a custom artifact name on CI
+    if [ -n "${PKG_FILE_DISPLAY_NAME:-}" ]; then
+      display_name="${PKG_FILE_DISPLAY_NAME}"
+    else
+      display_name="${PKG_FILE}"
+    fi
+
+    printf 'output-file-display-name=%s\n' "$display_name" >> $GITHUB_OUTPUT
+
+    echo "Set values in GITHUB_OUTPUT"
   fi
 fi
