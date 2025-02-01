@@ -13,12 +13,15 @@ runs:
         fetch-depth: 0 # we need tags _and_ history for correct VERSION_SUFFIX'ing
 
     - name: MacOS ${{ inputs.runtime }} Build
+      id: build
       shell: bash
-      run: ./eng/macos/package.sh --package true -r ${{ inputs.runtime }} --output ./dist/${{ inputs.runtime }}
+      run: ./eng/macos/package.sh --package true -r ${{ inputs.runtime }} --output ./dist-${{ inputs.runtime }}
+      # should output artifact name and version to GITHUB_OUTPUT with key 'output-file' and 'version' respectively
+      # TODO: version return value unused, not sure where to use?
 
     - name: MacOS ${{ inputs.runtime }} artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenTabletDriver ${{ inputs.runtime }}.tar.gz
-        path: ./dist/${{ inputs.runtime }}/*.tar.gz
+        name: ${{ steps.build.outputs.output-file }}
+        path: ./dist-${{ inputs.runtime }}/${{ steps.build.outputs.output-file }}
         if-no-files-found: error
