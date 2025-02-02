@@ -63,6 +63,12 @@ if [ -z "$VERSION_SUFFIX" ]; then
     else
       echo "WARN: Unable determine commit distance from tag"
     fi
+
+    describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\9/ <<< "$GIT_DESCRIBE")"
+    if [[ $describe_remainder =~ ^*dirty*$ ]]; then
+      # tag dirty if dirty
+      VERSION_SUFFIX="${VERSION_SUFFIX:-}"-dirty
+    fi
   else
     echo "WARN: VERSION_SUFFIX unset and git or sed not found, VERSION_SUFFIX remains unset!"
   fi
