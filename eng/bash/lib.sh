@@ -16,19 +16,48 @@ LIB_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 REPO_ROOT="$(readlink -f "${LIB_SCRIPT_ROOT}/../../")"
 GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
 
+# The below regex supports the following backrefs:
+# \1 Full version, e.g. '0.7.0.0alpha-rc1'
+# \2 Primary version, e.g. '0.7.0.0'
+# \3 unused (sed doesn't support non-capturing groups)
+# \4 Secondary version, e.g. 'alpha-rc1'
+# \5 Release candidate, if any, e.g. '-rc1'
+# \6 Suffix of 'git describe', e.g. '-1234-g1337f00d-dirty'
+# \7 Distance from tag, e.g. '1234'
+# \8 Short-SHA of commit with trailing 'g' trimmed, e.g. '1337f00d'
+# \9 Remainder, e.g. '-dirty'
+#
+# Please tag project with any of the following formats only:
+# v0.7.0.0
+# v9.9.9.9
+# v9.9.9.99
+# v0.7.0.0alpha
+# v0.7.0.0z
+# v0.7.0.0rc1
+# v0.7.0.0-rc99
+# v1
+# v1.42
+# v10.42.123
+GIT_TAG_REGEX='^v(([0-9]+(\.[0-9]+)*)([^-]*(-?rc[0-9]+)?))(-([0-9]+)-g([a-f0-9]{8})(-.*)?)$'
+
 # if suffix unset, autodetect suffix from git
 if [ -z "$VERSION_SUFFIX" ]; then
   # limit git repo discovery to project root
   export GIT_CEILING_DIRECTORIES="$(realpath ${REPO_ROOT}/../)"
 
-  if hash git &>/dev/null && hash sed &>/dev/null; then
-    VERSION_SUFFIX="-$(git describe --long --tags --dirty | sed -E 's/^v((.\.)*.)-(.*)$/\3/')"
+  if hash git &>/dev/null && \
+  hash sed &>/dev/null && \
+  git rev-parse --is-inside-work-tree &>/dev/null
+  then
+    GIT_DESCRIBE="$(git describe --long --tags --dirty)"
 
     # don't set suffix if this is a tagged commit
-    COMMIT_DISTANCE_FROM_TAG="$(sed -E 's/^-([0-9]+)-(.*)$/\1/' <<< "$VERSION_SUFFIX")"
-    if [ "$COMMIT_DISTANCE_FROM_TAG" -eq "0" ]; then
-      echo "INFO: This looks like a tagged commit, not setting a version suffix"
-      unset VERSION_SUFFIX
+    COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
+    if [ "$COMMIT_DISTANCE_FROM_TAG" -gt 0 ]; then
+      #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
+      VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\6/ <<< "$GIT_DESCRIBE")"
+    elif [ "$COMMIT_DISTANCE_FROM_TAG" -ne 0 ]; then
+      echo "WARN: Unable determine commit distance from tag"
     fi
   else
     echo "WARN: VERSION_SUFFIX unset and git or sed not found, VERSION_SUFFIX remains unset!"
