@@ -37,11 +37,18 @@ runs:
         mkdir subfolder
         mv * subfolder 2>/dev/null || true
         cd subfolder
-        zip ../"$FILENAME" $(basename "$FILELIST")
+        if hash zip 2>/dev/null; then
+          zip ../"$FILENAME".zip $(basename "$FILELIST")
+        elif hash pwsh 2>/dev/null; then
+          pwsh -Command "Compress-Archive -Path \"$(basename "$FILELIST")\" -Destination ..\\\"$FILENAME\".zip"
+        else
+          echo "unable to zip :("
+          exit 1
+        fi
         cd ..
         rm -rf subfolder
         cd ..
-        echo "zipfile ready: $FILENAME"
+        echo "zipfile ready: ${FILENAME}.zip"
 
     - name: Release
       uses: softprops/action-gh-release@v2
