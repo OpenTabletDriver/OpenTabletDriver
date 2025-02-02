@@ -12,7 +12,7 @@ if [ -n "$VERSION_SUFFIX" ]; then
     version_to_use="${OTD_VERSION_BASE}^${local_suffix:1}"
   else
     # likely from packaging, e.g. release candidates. can just use OTD_VERSION directly
-    version_to_use="${OTD_VERSION//-/}}"
+    version_to_use="${OTD_VERSION//-/}"
   fi
 else
   version_to_use="${OTD_VERSION}"
