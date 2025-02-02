@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
-using OpenTabletDriver.Desktop.Updater;
+using OpenTabletDriver.Daemon.Library.Updater;
 using OpenTabletDriver.Tests.Fakes;
 using Xunit;
-using OTDUpdater = OpenTabletDriver.Desktop.Updater.Updater;
+using OTDUpdater = OpenTabletDriver.Daemon.Library.Updater.Updater;
 
 namespace OpenTabletDriver.Tests.Updater
 {
-    public class FakeUpdater : OTDUpdater
+    public class FakeUpdater : Daemon.Library.Updater.Updater
     {
         private readonly string _downloadPath = Path.Join(Path.GetTempPath(), Path.GetRandomFileName());
         private Update? _update;

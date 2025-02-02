@@ -1,0 +1,41 @@
+<Styles
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tc="using:OpenTabletDriver.UI.TemplatedControls">
+  <Styles.Resources>
+    <ResourceDictionary>
+      <Thickness x:Key="LeadingSectionMargin">0, 12, 0, 0</Thickness>
+      <Thickness x:Key="SectionMargin">0, 32, 0, 0</Thickness>
+      <x:Int32 x:Key="SectionSpacing">8</x:Int32>
+    </ResourceDictionary>
+  </Styles.Resources>
+
+  <Style Selector="tc|Section">
+    <Setter Property="Margin" Value="{DynamicResource SectionMargin}" />
+    <Setter Property="Template">
+      <ControlTemplate>
+        <StackPanel Spacing="{DynamicResource SectionSpacing}">
+          <ContentPresenter
+              Name="PART_HeaderPresenter"
+              Content="{TemplateBinding Header}"
+              ContentTemplate="{TemplateBinding HeaderTemplate}" />
+          <ContentPresenter
+              Name="PART_ContentPresenter"
+              Background="{TemplateBinding Background}"
+              BorderBrush="{TemplateBinding BorderBrush}"
+              BorderThickness="{TemplateBinding BorderThickness}"
+              CornerRadius="{TemplateBinding CornerRadius}"
+              ContentTemplate="{TemplateBinding ContentTemplate}"
+              Content="{TemplateBinding Content}"
+              Padding="{TemplateBinding Padding}"
+              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" />
+        </StackPanel>
+      </ControlTemplate>
+    </Setter>
+
+    <Style Selector="^:nth-child(1)">
+      <Setter Property="Margin" Value="{DynamicResource LeadingSectionMargin}" />
+    </Style>
+  </Style>
+</Styles>

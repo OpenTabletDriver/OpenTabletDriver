@@ -19,7 +19,7 @@
       "InputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
       "DeviceStrings": {
-        "6": "^420"
+        "6": "^\\x00*420\\x00*$"
       },
       "InitializationStrings": [
         100,

@@ -22,7 +22,7 @@
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
-        "201": "HUION_M182_\\d{6}$"
+        "201": "HUION_M(182|20k)_\\d{6}$"
       },
       "InitializationStrings": [
         200
@@ -34,7 +34,7 @@
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
-        "201": "HUION_M182_\\d{6}$"
+        "201": "HUION_M(182|20k)_\\d{6}$"
       },
       "InitializationStrings": [
         200

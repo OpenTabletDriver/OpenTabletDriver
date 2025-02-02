@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using OpenTabletDriver.Attributes;
 
 namespace OpenTabletDriver.Devices
 {
@@ -8,6 +9,7 @@ namespace OpenTabletDriver.Devices
     /// A device hub, providing an enumeration of connected devices.
     /// </summary>
     [PublicAPI]
+    [PluginInterface]
     public interface IDeviceHub
     {
         /// <summary>

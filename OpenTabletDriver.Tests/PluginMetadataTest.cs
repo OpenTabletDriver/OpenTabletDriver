@@ -1,5 +1,6 @@
 using System;
-using OpenTabletDriver.Desktop.Reflection.Metadata;
+using System.Diagnostics;
+using OpenTabletDriver.Daemon.Contracts;
 using Xunit;
 
 namespace OpenTabletDriver.Tests

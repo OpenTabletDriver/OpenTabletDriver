@@ -1,17 +1,16 @@
 ﻿using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
-using System.Globalization;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
-using OpenTabletDriver.Desktop.Interop.AppInfo;
-using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Contracts.RPC;
+using OpenTabletDriver.Daemon.Library;
+using OpenTabletDriver.Daemon.Library.Interop;
+using OpenTabletDriver.Interop;
 
-namespace OpenTabletDriver.Daemon
+namespace OpenTabletDriver.Daemon.Executable
 {
     public class Program
     {
@@ -38,22 +37,21 @@ namespace OpenTabletDriver.Daemon
                     }
                 };
 
-                rootCommand.Handler = CommandHandler.Create<string, string>(Invoke);
+                rootCommand.Handler = CommandHandler.Create<string, string>(InvokeAsync);
                 await rootCommand.InvokeAsync(args);
             }
         }
 
-        private static async Task Invoke(string appdata, string config)
+        private static async Task InvokeAsync(string appdata, string config)
         {
             var serviceCollection = DesktopServiceCollection.GetPlatformServiceCollection();
-            var appInfo = AppInfo.GetPlatformAppInfo();
+            // FIXME: these should be set in appInfo
+            //if (!string.IsNullOrWhiteSpace(appdata))
+            //    appInfo.AppDataDirectory = FileUtilities.InjectEnvironmentVariables(appdata);
+            //if (!string.IsNullOrWhiteSpace(config))
+            //    appInfo.ConfigurationDirectory = FileUtilities.InjectEnvironmentVariables(config);
 
-            if (!string.IsNullOrWhiteSpace(appdata))
-                appInfo.AppDataDirectory = FileUtilities.InjectEnvironmentVariables(appdata);
-            if (!string.IsNullOrWhiteSpace(config))
-                appInfo.ConfigurationDirectory = FileUtilities.InjectEnvironmentVariables(config);
-
-            serviceCollection.AddSingleton(appInfo)
+            serviceCollection
                 .AddSingleton(s => s.CreateInstance<RpcHost<IDriverDaemon>>("OpenTabletDriver.Daemon"))
                 .AddSingleton<IDriverDaemon, DriverDaemon>();
 
@@ -65,7 +63,7 @@ namespace OpenTabletDriver.Daemon
 
             try
             {
-                await Run(serviceCollection.BuildServiceProvider());
+                await RunAsync(serviceCollection.BuildServiceProvider());
             }
             catch (Exception e)
             {
@@ -74,7 +72,7 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private static async Task Run(IServiceProvider serviceProvider)
+        private static async Task RunAsync(IServiceProvider serviceProvider)
         {
             var daemon = serviceProvider.GetRequiredService<IDriverDaemon>();
             var rpcHost = serviceProvider.GetRequiredService<RpcHost<IDriverDaemon>>();

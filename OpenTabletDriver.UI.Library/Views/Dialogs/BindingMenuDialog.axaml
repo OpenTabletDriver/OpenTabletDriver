@@ -1,0 +1,101 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenTabletDriver.UI.ViewModels"
+    xmlns:tc="using:OpenTabletDriver.UI.TemplatedControls"
+    xmlns:templates="using:OpenTabletDriver.UI.DataTemplates"
+    mc:Ignorable="d"
+    d:DesignWidth="800"
+    d:DesignHeight="450"
+    x:Class="OpenTabletDriver.UI.Views.Dialogs.BindingMenuDialog"
+    x:DataType="vm:BindingMenuViewModel"
+    x:CompileBindings="True"
+    Title="Bindable Editor"
+    Background="Transparent"
+    ExtendClientAreaChromeHints="PreferSystemChrome"
+    ExtendClientAreaToDecorationsHint="True"
+    WindowStartupLocation="CenterOwner"
+    Width="500"
+    Height="300"
+    MinWidth="300"
+    MinHeight="140"
+    Name="VIEW_Root">
+  <Panel>
+    <!-- Noisy stuff -->
+    <!-- TODO: fine-grain control over the material opacity of the noise for different controls-->
+    <ExperimentalAcrylicBorder
+        Name="VIEW_AcrylicBorder"
+        IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+        <ExperimentalAcrylicMaterial
+            BackgroundSource="Digger"
+            TintColor="{DynamicResource OTD_BackgroundColor}"
+            TintOpacity="1"
+            MaterialOpacity="0"
+            FallbackColor="{DynamicResource OTD_BackgroundColor}" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+
+    <!-- Focus thingy, lose transparency when focus is lost -->
+    <Rectangle
+        Name="VIEW_WindowBg"
+        IsHitTestVisible="False"
+        Fill="{DynamicResource OTD_BackgroundBrush}">
+      <Rectangle.Transitions>
+        <Transitions>
+          <DoubleTransition
+              Property="Opacity"
+              Duration="0:0:0.2" />
+        </Transitions>
+      </Rectangle.Transitions>
+    </Rectangle>
+
+    <!-- Main content -->
+    <Panel Margin="{Binding #VIEW_Root.WindowDecorationMargin}">
+      <Grid
+          RowDefinitions="Auto,*,Auto"
+          ColumnDefinitions="Auto,*"
+          Margin="12">
+        <TextBlock
+            Grid.Column="0"
+            Grid.Row="0"
+            Text="Binding Type"
+            VerticalAlignment="Center" />
+        <ComboBox
+            Grid.Column="1"
+            Grid.Row="0"
+            SelectedItem="{Binding Setting.SelectedBinding}"
+            ItemsSource="{Binding Setting.UsableBindings}"
+            HorizontalAlignment="Right"
+            ToolTip.Tip="{StaticResource binding_type_desc}" />
+        <ScrollViewer
+            Grid.Column="0"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Margin="0,8,0,0">
+          <ItemsControl ItemsSource="{Binding Setting.PropertySettings}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Spacing="8" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <templates:PluginSettingControlBuilder />
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+        <StackPanel
+            Classes="CommandBar"
+            Grid.Column="0"
+            Grid.Row="2"
+            Grid.ColumnSpan="2">
+          <Button
+              Content="Clear"
+              Command="{Binding ClearCommand}" />
+        </StackPanel>
+      </Grid>
+    </Panel>
+  </Panel>
+</Window>

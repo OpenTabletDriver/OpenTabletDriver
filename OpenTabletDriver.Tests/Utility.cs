@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop.AppInfo;
-using OpenTabletDriver.Desktop.Interop.Timer;
-using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Daemon.Contracts;
+using OpenTabletDriver.Daemon.Library;
+using OpenTabletDriver.Daemon.Library.Interop.Timer;
+using OpenTabletDriver.Daemon.Library.Reflection;
 
 namespace OpenTabletDriver.Tests
 {
@@ -11,9 +11,11 @@ namespace OpenTabletDriver.Tests
         public static IServiceCollection GetServices()
         {
             return new DesktopServiceCollection()
-                .AddSingleton<IPluginManager, PluginManager>()
-                .AddTransient<ITimer, FallbackTimer>()
-                .AddSingleton<IAppInfo, AppInfo>();
+                    .AddSingleton<IAppInfo, AppInfo>()
+                    .AddSingleton<IPluginFactory, PluginFactory>()
+                    .AddSingleton<IPluginManager, PluginManager>()
+                    .AddTransient<ITimer, FallbackTimer>()
+                ;
         }
     }
 }

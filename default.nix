@@ -37,10 +37,11 @@ buildDotnetModule rec {
 
   dotnetInstallFlags = [ "--framework=net8.0" ];
 
-  projectFile = [ "OpenTabletDriver.Console" "OpenTabletDriver.Daemon" "OpenTabletDriver.UX.Gtk" ];
-  nugetDeps = ./deps.nix;
+  # TODO: add OpenTabletDriver.Console back when it builds again.
+  projectFile = [ "OpenTabletDriver.Daemon" "OpenTabletDriver.UI" ];
+  nugetDeps = ./deps.json;
 
-  executables = [ "OpenTabletDriver.Console" "OpenTabletDriver.Daemon" "OpenTabletDriver.UX.Gtk" ];
+  executables = [ "OpenTabletDriver.Daemon" "OpenTabletDriver.UI" ];
 
   nativeBuildInputs = [
     copyDesktopItems
@@ -67,11 +68,10 @@ buildDotnetModule rec {
 
   postFixup = ''
     # Give a more "*nix" name to the binaries
-    mv $out/bin/OpenTabletDriver.Console $out/bin/otd
     mv $out/bin/OpenTabletDriver.Daemon $out/bin/otd-daemon
-    mv $out/bin/OpenTabletDriver.UX.Gtk $out/bin/otd-gui
+    mv $out/bin/OpenTabletDriver.UI $out/bin/otd-gui
 
-    install -Dm644 $src/OpenTabletDriver.UX/Assets/otd.png -t $out/share/pixmaps
+    install -Dm644 $src/OpenTabletDriver.UI.Library/Assets/otd.png -t $out/share/pixmaps
 
     # Generate udev rules from source
     export OTD_CONFIGURATIONS="$src/OpenTabletDriver.Configurations/Configurations"
