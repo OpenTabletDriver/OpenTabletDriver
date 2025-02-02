@@ -10,43 +10,7 @@ on:
   pull_request:
 jobs:
   matrixpublish:
-    continue-on-error: true
-    strategy:
-      matrix:
-        build: [windows, macos, BinaryTarBall, RedHat, Debian, Simple]
-        runtime-suffix: [x64]
-        include:
-          - build: BinaryTarBall
-            os: ubuntu-latest
-            runtime-prefix: linux-
-          - build: RedHat
-            os: ubuntu-latest
-            runtime-prefix: linux-
-            container: fedora
-          - build: Debian
-            os: ubuntu-latest
-            runtime-prefix: linux-
-          - build: Simple
-            os: ubuntu-latest
-            runtime-prefix: linux-
-          - build: macos
-            os: ubuntu-latest
-            runtime-prefix: osx-
-          - build: windows
-            os: windows-latest
-            runtime-prefix: win-
-    # TODO: release or debug build
-    name: ${{ matrix.build }} ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }} Publish
-    runs-on: ${{ matrix.os }}
-    container: ${{ matrix.container }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./.github/actions/build-wrapper
-        with:
-          runtime: ${{ matrix.runtime-prefix }}${{ matrix.runtime-suffix }}
-          package-name: ${{ matrix.build }}
-          container: ${{ matrix.container }}
+    uses: ./.github/workflows/build-matrix.yml
 
   udev:
     name: Generate udev Rules

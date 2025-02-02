@@ -1,0 +1,55 @@
+name: 'Make release or upload artifact'
+inputs:
+  files:
+    description: 'Filepath to upload'
+    required: true
+  file-display-name:
+    description: 'Artifact name if generating an artifact (PR checks, etc)'
+    required: true
+  publish-name:
+    description: 'The title prefix to use if publishing a release'
+    default: 'OpenTabletDriver'
+runs:
+  using: "composite"
+  steps:
+    # Does not use tag (artifact upload)
+
+    - name: Artifact upload
+      if: ${{ ! startsWith(github.ref, 'refs/tags/') }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.file-display-name }}
+        path: ${{ inputs.files }}
+        if-no-files-found: error
+
+    # Uses tag (release)
+
+    - name: Ensure Release has single file only
+      if: ${{ startsWith(github.ref, 'refs/tags/') && endsWith(input.files, '*') }}
+      shell: bash
+      env:
+        FILENAME: ${{ inputs.file-display-name }}
+        FILELIST: ${{ inputs.files }}
+        # script below doesn't work with multiline file lists
+      run: |
+        echo "Zipping up files to avoid many random files being released"
+        cd $(dirname "$FILELIST")
+        mkdir subfolder
+        mv * subfolder 2>/dev/null || true
+        cd subfolder
+        zip ../"$FILENAME" $(basename "$FILELIST")
+        cd ..
+        rm -rf subfolder
+        cd ..
+        echo "zipfile ready: $FILENAME"
+
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      with:
+        name: ${{ inputs.publish-name }} ${{ github.ref_name }}
+        draft: true
+        files: ${{ inputs.files }}
+        fail_on_unmatched_files: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
