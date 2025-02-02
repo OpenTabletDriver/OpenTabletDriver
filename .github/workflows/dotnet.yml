@@ -10,6 +10,7 @@ on:
   pull_request:
 jobs:
   matrixpublish:
+    name: Build all supported platforms
     uses: ./.github/workflows/build-matrix.yml
 
   udev:
