@@ -2,8 +2,8 @@
   "Name": "XP-Pen Deco 640 (IT640)",
   "Specifications": {
     "Digitizer": {
-      "Width": 160,
-      "Height": 90,
+      "Width": 159.99,
+      "Height": 89.99,
       "MaxX": 31998,
       "MaxY": 17998
     },
