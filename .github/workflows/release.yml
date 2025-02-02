@@ -28,5 +28,6 @@ jobs:
   matrixpublish:
     name: Build all supported platforms
     uses: ./.github/workflows/build-matrix.yml
+    secrets: inherit
     with:
       version_suffix: ${{ inputs.version_suffix }}

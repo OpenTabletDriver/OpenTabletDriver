@@ -25,7 +25,7 @@ runs:
     # Uses tag (release)
 
     - name: Ensure Release has single file only
-      if: ${{ startsWith(github.ref, 'refs/tags/') && endsWith(input.files, '*') }}
+      if: ${{ startsWith(github.ref, 'refs/tags/') && endsWith(inputs.files, '*') }}
       shell: bash
       env:
         FILENAME: ${{ inputs.file-display-name }}
@@ -52,4 +52,4 @@ runs:
         files: ${{ inputs.files }}
         fail_on_unmatched_files: true
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
