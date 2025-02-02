@@ -37,6 +37,7 @@
 | Huion Kamvas 20               |     Supported     |
 | Huion Kamvas 22               |     Supported     |
 | Huion Kamvas 22 Plus          |     Supported     |
+| Huion Kamvas 24               |     Supported     |
 | Huion Kamvas 24 Plus          |     Supported     |
 | Huion Kamvas Pro 13 (2.5K)    |     Supported     |
 | Huion Kamvas Pro 16 (2.5K)    |     Supported     |
