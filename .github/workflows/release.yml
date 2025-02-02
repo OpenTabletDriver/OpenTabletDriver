@@ -66,8 +66,18 @@ jobs:
           name: OpenTabletDriver.osx-x64.tar.gz
           path: ./dist/macos/*.tar.gz
 
+  nuget:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_dispatch' }}
+    name: NuGet Deploy (Ubuntu Host)
+    steps:
+      - name: Install required packages
+        run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
+
+      - name: Checkout OpenTabletDriver Repository
+        uses: actions/checkout@v4
+
       - name: Publish NuGet package
-        if: ${{ github.event_name != 'workflow_dispatch' }}
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
           SOURCE: https://api.nuget.org/v3/index.json
