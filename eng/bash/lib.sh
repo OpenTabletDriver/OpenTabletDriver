@@ -54,9 +54,13 @@ if [ -z "$VERSION_SUFFIX" ]; then
     # don't set suffix if this is a tagged commit
     COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
     if [ "$COMMIT_DISTANCE_FROM_TAG" -gt 0 ]; then
-      #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
+      # use git describe as suffix
       VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\6/ <<< "$GIT_DESCRIBE")"
-    elif [ "$COMMIT_DISTANCE_FROM_TAG" -ne 0 ]; then
+      #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
+    elif [ "$COMMIT_DISTANCE_FROM_TAG" -eq 0 ]; then
+      # use secondary version ('alpha-rc1' from '0.7alpha-rc1')
+      VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
+    else
       echo "WARN: Unable determine commit distance from tag"
     fi
   else
