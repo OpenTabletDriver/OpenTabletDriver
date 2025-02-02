@@ -30,6 +30,7 @@
 | Huion H950P                   |     Supported     |
 | Huion HS64                    |     Supported     |
 | Huion HS95                    |     Supported     |
+| Huion HS610                   |     Supported     |
 | Huion Kamvas 12               |     Supported     |
 | Huion Kamvas 13               |     Supported     |
 | Huion Kamvas 16               |     Supported     |
@@ -215,7 +216,6 @@
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion H951P                   |  Missing Features | Tilt Y-axis is inverted. Wheel is not yet supported. Switching groups is not yet supported; group selectors are mapped as regular buttons.
 | Huion HC16                    |  Missing Features | Wheel is not yet supported.
-| Huion HS610                   |  Missing Features | Wheel is not yet supported.
 | Huion HS611                   |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas 13 (Gen 3)       |  Missing Features | Wheel is not yet supported, function-switch buttons act as regular auxiliary keys.
 | Huion Kamvas Pro 12           |  Missing Features | Touch bar is not yet supported.
