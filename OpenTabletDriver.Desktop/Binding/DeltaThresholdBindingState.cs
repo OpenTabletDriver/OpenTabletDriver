@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop.Binding
             bool newState = IsNegativeThreshold ? delta < ActivationThreshold : delta > ActivationThreshold;
 
             if (newState)
-                delta += IsNegativeThreshold ? ActivationThreshold : -ActivationThreshold;
+                delta -= ActivationThreshold;
 
             base.Invoke(tablet, report, newState);
         }
