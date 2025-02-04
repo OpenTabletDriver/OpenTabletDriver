@@ -10,6 +10,8 @@ namespace OpenTabletDriver.Desktop.Interop
     {
         protected EvdevDevice Device { set; get; }
 
+        public bool HasValidDevice() => Device?.CanWrite ?? false;
+
         public void MouseDown(MouseButton button)
         {
             if (GetCode(button) is EventCode code)
@@ -39,11 +41,12 @@ namespace OpenTabletDriver.Desktop.Interop
         public virtual void Dispose()
         {
             Device?.Dispose();
+            Device = null;
         }
 
         public void Flush()
         {
-            Device.Sync();
+            Device?.Sync();
         }
 
         public virtual void Reset()

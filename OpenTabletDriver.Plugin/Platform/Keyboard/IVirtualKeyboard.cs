@@ -2,7 +2,7 @@
 
 namespace OpenTabletDriver.Plugin.Platform.Keyboard
 {
-    public interface IVirtualKeyboard
+    public interface IVirtualKeyboard : IValidatableDevice
     {
         void Press(string key);
         void Release(string key);

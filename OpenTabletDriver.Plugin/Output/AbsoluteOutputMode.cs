@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -158,6 +159,14 @@ namespace OpenTabletDriver.Plugin.Output
                     synchronousPointer.Reset();
                 synchronousPointer.Flush();
             }
+        }
+
+        public override void Dispose()
+        {
+            if (Pointer is IDisposable pointer)
+                pointer.Dispose();
+
+            base.Dispose();
         }
     }
 }
