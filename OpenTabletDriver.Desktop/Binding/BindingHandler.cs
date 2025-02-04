@@ -32,8 +32,8 @@ namespace OpenTabletDriver.Desktop.Binding
         public BindingState? MouseScrollDown { set; get; }
         public BindingState? MouseScrollUp { set; get; }
 
-        public ThresholdBindingState? ClockwiseRotation { set; get; }
-        public ThresholdBindingState? CounterClockwiseRotation { set; get; }
+        public DeltaThresholdBindingState? ClockwiseRotation { set; get; }
+        public DeltaThresholdBindingState? CounterClockwiseRotation { set; get; }
 
         public PipelinePosition Position => PipelinePosition.PostTransform;
 
@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private readonly double? threeHalfWheelSteps;
 
         private uint? lastWheelPosition;
-        private int currentWheelDelta;
+        private float currentWheelDelta;
 
         public event Action<IDeviceReport>? Emit;
 
@@ -100,7 +100,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private void HandleAbsoluteWheelReport(TabletReference tablet, IAbsoluteWheelReport report)
         {
-            int? delta = (int?)((((int?)report.Position - lastWheelPosition + threeHalfWheelSteps) % wheelSteps) - halfWheelSteps);
+            int? delta = ComputeWheelDelta(lastWheelPosition, report.Position);
             HandleRelativeWheelReport(tablet, report, delta);
             lastWheelPosition = report.Position;
         }
@@ -109,13 +109,13 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             currentWheelDelta += delta ?? 0;
 
-            ClockwiseRotation?.Invoke(tablet, report, currentWheelDelta);
-            CounterClockwiseRotation?.Invoke(tablet, report, -currentWheelDelta);
+            ClockwiseRotation?.Invoke(tablet, report, ref currentWheelDelta);
+            CounterClockwiseRotation?.Invoke(tablet, report, ref currentWheelDelta);
+        }
 
-            if (ClockwiseRotation != null && currentWheelDelta > ClockwiseRotation.ActivationThreshold)
-                currentWheelDelta -= (int)ClockwiseRotation.ActivationThreshold;
-            else if (CounterClockwiseRotation != null && currentWheelDelta < -CounterClockwiseRotation.ActivationThreshold)
-                currentWheelDelta += (int)CounterClockwiseRotation.ActivationThreshold;
+        private int? ComputeWheelDelta(uint? from, uint? to)
+        {
+            return (int?)((((int?)to - from + threeHalfWheelSteps) % wheelSteps) - halfWheelSteps);
         }
 
         private static void HandleBindingCollection(TabletReference tablet, IDeviceReport report, IDictionary<int, BindingState?> bindings, IList<bool> newStates)

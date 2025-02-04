@@ -456,18 +456,20 @@ namespace OpenTabletDriver.Daemon
                 Log.Write(group, $"Mouse Scroll: Up: [{scrollUp?.Binding}] Down: [{scrollDown?.Binding}]");
             }
 
-            var clockwiseRotation = bindingHandler.ClockwiseRotation = new ThresholdBindingState
+            var clockwiseRotation = bindingHandler.ClockwiseRotation = new DeltaThresholdBindingState
             {
                 Binding = settings.ClockwiseRotation?.Construct<IBinding>(bindingServiceProvider, tabletReference),
                 ActivationThreshold = settings.ClockwiseActivationThreshold
-                    * (tabletReference.Properties.Specifications.Wheel?.StepCount ?? 1) / 100
+                    * (tabletReference.Properties.Specifications.Wheel?.StepCount ?? 1) / 100,
+                IsNegativeThreshold = false
             };
 
-            var counterClockwiseRotation = bindingHandler.CounterClockwiseRotation = new ThresholdBindingState
+            var counterClockwiseRotation = bindingHandler.CounterClockwiseRotation = new DeltaThresholdBindingState
             {
                 Binding = settings.CounterClockwiseRotation?.Construct<IBinding>(bindingServiceProvider, tabletReference),
-                ActivationThreshold = settings.CounterClockwiseActivationThreshold
-                    * (tabletReference.Properties.Specifications.Wheel?.StepCount ?? 1) / 100
+                ActivationThreshold = -settings.CounterClockwiseActivationThreshold
+                    * (tabletReference.Properties.Specifications.Wheel?.StepCount ?? 1) / 100,
+                IsNegativeThreshold = true
             };
 
             if (clockwiseRotation.Binding != null || counterClockwiseRotation.Binding != null)
