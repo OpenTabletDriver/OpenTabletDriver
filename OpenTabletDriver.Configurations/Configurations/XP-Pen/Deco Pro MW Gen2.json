@@ -1,0 +1,28 @@
+{
+  "Name": "XP-Pen Deco Pro MW Gen2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 237.06,
+      "Height": 158.04,
+      "MaxX": 47412,
+      "MaxY": 31608
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2370,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
+      "OutputInitReport": ["ArAE"]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
