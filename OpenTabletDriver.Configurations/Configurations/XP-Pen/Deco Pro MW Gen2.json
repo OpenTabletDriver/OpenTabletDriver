@@ -2,10 +2,10 @@
   "Name": "XP-Pen Deco Pro MW Gen2",
   "Specifications": {
     "Digitizer": {
-      "Width": 237.06,
-      "Height": 158.04,
-      "MaxX": 47412,
-      "MaxY": 31608
+      "Width": 228.6,
+      "Height": 152.4,
+      "MaxX": 45720,
+      "MaxY": 30480
     },
     "Pen": {
       "MaxPressure": 16383,
