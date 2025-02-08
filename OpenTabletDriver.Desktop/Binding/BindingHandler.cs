@@ -112,6 +112,8 @@ namespace OpenTabletDriver.Desktop.Binding
             ClockwiseRotation?.Invoke(tablet, report, ref currentWheelDelta);
             CounterClockwiseRotation?.Invoke(tablet, report, ref currentWheelDelta);
 
+            // Some issues with keys staying pressed when holding on specific tablets
+            // This will cause consistency issues on higher end machines
             ClockwiseRotation?.Invoke(tablet, report, false);
             CounterClockwiseRotation?.Invoke(tablet, report, false);
         }
