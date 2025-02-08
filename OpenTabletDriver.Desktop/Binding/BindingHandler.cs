@@ -111,6 +111,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
             ClockwiseRotation?.Invoke(tablet, report, ref currentWheelDelta);
             CounterClockwiseRotation?.Invoke(tablet, report, ref currentWheelDelta);
+
+            ClockwiseRotation?.Invoke(tablet, report, false);
+            CounterClockwiseRotation?.Invoke(tablet, report, false);
         }
 
         private int? ComputeWheelDelta(uint? from, uint? to)
