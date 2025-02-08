@@ -9,9 +9,7 @@ public class HuionWheelReport : IAbsoluteWheelReport
         Raw = data;
         var wheelData = data[5];
 
-        if (wheelData == 0)
-            Position = null;
-        else
+        if (wheelData != 0)
             Position = wheelData - 1u;
     }
 
