@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using DiffPlex.DiffBuilder;
@@ -237,10 +238,13 @@ namespace OpenTabletDriver.Tests
             Assert.False(equality);
         }
 
-        private static readonly string ConfigurationProjectDir = Path.GetFullPath(Path.Join("../../../..", "OpenTabletDriver.Configurations"));
-        private static readonly string ConfigurationDir = Path.Join(ConfigurationProjectDir, "Configurations");
-        private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(ConfigurationDir, "*.json", SearchOption.AllDirectories)
-            .Select(f => (Path.GetRelativePath(ConfigurationDir, f), File.ReadAllText(f)));
+        private static string GetConfigDir([CallerFilePath] string sourceFilePath = "")
+        {
+            return Path.GetFullPath(Path.Join(sourceFilePath, "../../OpenTabletDriver.Configurations/Configurations"));
+        }
+
+        private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(GetConfigDir(), "*.json", SearchOption.AllDirectories)
+            .Select(f => (Path.GetRelativePath(GetConfigDir(), f), File.ReadAllText(f)));
 
         [Fact]
         public void Configurations_Verify_Configs_With_Schema()
