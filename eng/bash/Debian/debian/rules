@@ -5,8 +5,8 @@ SHELL=/usr/bin/env bash
 	dh $@
 
 override_dh_auto_build:
-	./eng/linux/package.sh --output bin
-	PREFIX=usr ./eng/linux/package.sh --package Generic --build false
+	./eng/bash/package.sh --output bin
+	PREFIX=usr ./eng/bash/package.sh --package Generic --build false
 
 override_dh_auto_install:
 	mkdir -p ./debian/tmp

@@ -28,13 +28,15 @@ runs:
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
       id: build
       shell: bash
-      run: ./eng/linux/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output build-${{ inputs.package-name }}
-      # should output artifact name and version to GITHUB_OUTPUT with key 'output-file' and 'version' respectively
+      run: ./eng/bash/package.sh --package ${{ inputs.package-name }} -r ${{ inputs.runtime }} --output build-${{ inputs.package-name }}
+      # should output the following keys to GITHUB_OUTPUT:
+      #  - output-file: artifact name
+      #  - output-file-display-name: artifact display name
+      #  - version: OpenTabletDriver version
       # TODO: version return value unused, not sure where to use?
 
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Artifact upload
-      uses: actions/upload-artifact@v4
+      uses: ./.github/actions/handle-artifact
       with:
-        name: ${{ steps.build.outputs.output-file }}
-        path: build-${{ inputs.package-name }}/${{ steps.build.outputs.output-file }}
-        if-no-files-found: error
+        file-display-name: ${{ steps.build.outputs.output-file-display-name }}
+        files: build-${{ inputs.package-name }}/${{ steps.build.outputs.output-file }}
