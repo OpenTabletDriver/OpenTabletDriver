@@ -137,6 +137,7 @@
 | XP-Pen Artist 22 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 24              |     Supported     |
 | XP-Pen Artist Pro 16 (Gen2)   |     Supported     |
+| XP-Pen Artist 22 Pro          |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco 01 V3             |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
