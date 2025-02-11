@@ -30,6 +30,7 @@
 | Huion H950P                   |     Supported     |
 | Huion HS64                    |     Supported     |
 | Huion HS95                    |     Supported     |
+| Huion HS610                   |     Supported     |
 | Huion Kamvas 12               |     Supported     |
 | Huion Kamvas 13               |     Supported     |
 | Huion Kamvas 16               |     Supported     |
@@ -117,6 +118,14 @@
 | Wacom GD-0912-U               |     Supported     |
 | Wacom GD-1212-U               |     Supported     |
 | Wacom GD-1218-U               |     Supported     |
+| Wacom PTK-440                 |     Supported     |
+| Wacom PTH-451                 |     Supported     |
+| Wacom PTK-540WL               |     Supported     |
+| Wacom PTK-640                 |     Supported     |
+| Wacom PTH-651                 |     Supported     |
+| Wacom PTK-840                 |     Supported     |
+| Wacom PTH-851                 |     Supported     |
+| Wacom PTK-1240                |     Supported     |
 | Wacom XD-0405-U               |     Supported     |
 | Wacom XD-0608-U               |     Supported     |
 | Wacom XD-0912-U               |     Supported     |
@@ -208,7 +217,6 @@
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion H951P                   |  Missing Features | Tilt Y-axis is inverted. Wheel is not yet supported. Switching groups is not yet supported; group selectors are mapped as regular buttons.
 | Huion HC16                    |  Missing Features | Wheel is not yet supported.
-| Huion HS610                   |  Missing Features | Wheel is not yet supported.
 | Huion HS611                   |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas 13 (Gen 3)       |  Missing Features | Wheel is not yet supported, function-switch buttons act as regular auxiliary keys.
 | Huion Kamvas Pro 12           |  Missing Features | Touch bar is not yet supported.
@@ -250,21 +258,13 @@
 | Wacom DTZ-1200W               |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom MTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-450                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-451                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-460                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-650                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-651                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-660                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-850                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-851                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-860                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTK-1240                |  Missing Features | Wheel is not yet supported.
-| Wacom PTK-440                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-450                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTK-540WL               |  Missing Features | Wheel is not yet supported.
-| Wacom PTK-640                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-650                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTK-840                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTZ-1230                |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-431W                |  Missing Features | Touch bars are not yet supported.
