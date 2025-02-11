@@ -143,10 +143,10 @@ namespace OpenTabletDriver.Plugin.Output
                 hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
             if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
                 eraserHandler.SetEraser(eraserReport.Eraser);
-            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
                 tiltHandler.SetTilt(tiltReport.Tilt);
-            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler
-                && Tablet?.Properties.Specifications.Pen != null)
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler &&
+                !DisablePressure && Tablet?.Properties.Specifications.Pen != null)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
 
             // make sure to set the position last
