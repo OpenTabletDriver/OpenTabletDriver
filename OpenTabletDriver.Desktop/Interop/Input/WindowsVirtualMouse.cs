@@ -102,5 +102,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         public void Reset()
         {
         }
+
+        public bool HasValidDevice() => true;
     }
 }

@@ -1,6 +1,6 @@
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
-    public interface ISynchronousPointer
+    public interface ISynchronousPointer : IValidatableDevice
     {
         void Reset();
         void Flush();
