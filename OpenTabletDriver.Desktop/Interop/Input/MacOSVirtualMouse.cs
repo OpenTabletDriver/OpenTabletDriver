@@ -319,9 +319,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 CGEventSetDoubleValueField(_mouseEvent, CGEventField.tabletEventTiltY, -_tilt.Value.Y / 90.0);
             }
 
-            // set keyboard modifier and filter out `nonCoalesced` and 0x20000000 flags
-            // see https://github.com/Hammerspoon/hammerspoon/blob/0ccc9d07641a660140d1d2f05b76f682b501a0e8/extensions/eventtap/libeventtap_event.m#L1558-L1560
-            CGEventSetFlags(_mouseEvent, CGEventSourceFlagsState(CGEventSourceStateHIDSystemState) & (0xffffffff ^ 0x20000100));
+            // This uses an undocumented flag that tells the system to automatically include the event flags in the event.
+            // It's a better approach than fetching the active event flags ourselves, as doing so can introduce a race condition
+            // (e.g., if a modifier key is released after we check its status but before the event is posted).
+            CGEventSetFlags(_mouseEvent, ~0U);
         }
 
         private void PostEvent()
