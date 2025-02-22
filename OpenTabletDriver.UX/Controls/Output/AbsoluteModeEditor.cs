@@ -252,11 +252,6 @@ namespace OpenTabletDriver.UX.Controls.Output
 
                 if (fullBounds.Width != 0 && fullBounds.Height != 0)
                 {
-                    if (display.Area.Width > fullBounds.Width)
-                        display.Area.Width = fullBounds.Width;
-                    if (display.Area.Height > fullBounds.Height)
-                        display.Area.Height = fullBounds.Height;
-
                     var correction = GetOutOfBoundsAmount(display, display.Area.X, display.Area.Y);
                     display.Area.X -= correction.X;
                     display.Area.Y -= correction.Y;
