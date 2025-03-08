@@ -98,6 +98,10 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected virtual void Insert(int index)
         {
+            // Prevent an exception when a tablet is disconnected & a binding editor is closed
+            if (ItemSource is null || index >= ItemSource.Count)
+                return;
+
             var itemBinding = new DelegateBinding<T>(
                 () => ItemSource[index],
                 (v) => ItemSource[index] = v
