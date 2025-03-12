@@ -618,7 +618,7 @@ namespace OpenTabletDriver.UX
         {
             var presetName = (sender as ButtonMenuItem).Text;
             var preset = AppInfo.PresetManager.FindPreset(presetName);
-            App.Current.Settings = preset.GetSettings();
+            App.Current.Settings = preset.Settings;
             App.Driver.Instance.SetSettings(App.Current.Settings);
             Log.Write("Settings", $"Applied preset '{preset.Name}'");
         }
