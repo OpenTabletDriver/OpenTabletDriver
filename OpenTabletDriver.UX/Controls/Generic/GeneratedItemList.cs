@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Eto.Forms;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
@@ -98,13 +99,25 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         protected virtual void Insert(int index)
         {
-            // Prevent an exception when a tablet is disconnected & a binding editor is closed
-            if (ItemSource is null || index >= ItemSource.Count)
+            if (ItemSource is null)
                 return;
 
+            var clamped = Math.Clamp(index, 0, ItemSource.Count - 1);
+
+            if (clamped != index)
+            {
+                Log.Debug("GeneratedItemList", $"Index {index} is out of range, skipping...");
+                return;
+            }
+
+            // Prevent an exception when a tablet is disconnected & a binding editor is closed
             var itemBinding = new DelegateBinding<T>(
                 () => ItemSource[index],
-                (v) => ItemSource[index] = v
+                (v) =>
+                {
+                    if (ItemSource != null)
+                        ItemSource[index] = v;
+                }
             );
 
             var control = CreateControlBase(index, itemBinding);
