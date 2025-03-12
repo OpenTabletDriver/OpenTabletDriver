@@ -63,7 +63,7 @@ namespace OpenTabletDriver.Console
             AppInfo.PresetManager.Refresh();
 
             var preset = AppInfo.PresetManager.FindPreset(name);
-            await ApplySettings(preset.GetSettings());
+            await ApplySettings(preset.Settings);
         }
 
         private static async Task SavePreset(string name)
