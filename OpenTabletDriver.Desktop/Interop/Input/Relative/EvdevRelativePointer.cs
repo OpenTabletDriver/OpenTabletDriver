@@ -24,7 +24,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
                 EventCode.BTN_SIDE,
-                EventCode.BTN_EXTRA);
+                EventCode.BTN_EXTRA,
+                EventCode.REL_WHEEL,
+                EventCode.REL_WHEEL_HI_RES,
+                EventCode.REL_HWHEEL,
+                EventCode.REL_HWHEEL_HI_RES
+            );
 
             var result = Device.Initialize();
             switch (result)

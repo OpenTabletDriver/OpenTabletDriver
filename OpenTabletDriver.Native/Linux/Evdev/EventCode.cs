@@ -625,6 +625,9 @@ namespace OpenTabletDriver.Native.Linux.Evdev
         REL_DIAL = 0x07,
         REL_WHEEL = 0x08,
         REL_MISC = 0x09,
+        REL_RESERVED = 0x0a,
+        REL_WHEEL_HI_RES = 0x0b,
+        REL_HWHEEL_HI_RES = 0x0c,
 
         // Absolute axes
 

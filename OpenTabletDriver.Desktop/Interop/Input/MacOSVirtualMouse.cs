@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
-    public abstract class MacOSVirtualMouse : IMouseButtonHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
+    public abstract class MacOSVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
     {
         private const int DoubleClickMoveTolerance = 8;
         private const int ProximityExpiresDurationInMs = 200;
@@ -18,6 +18,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private int _prevButtonStates;
         private float? _pendingX;
         private float? _pendingY;
+        private int? _scrollDeltaX;
+        private int? _scrollDeltaY;
         private float? _pressure;
         private Vector2? _tilt;
         private bool? _isEraser;
@@ -55,6 +57,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             if (!_pendingX.HasValue)
                 QueuePendingPositionFromSystem();
             SetButtonState(ref _currButtonStates, ToCGMouseButton(button), false);
+        }
+
+        public void ScrollVertically(int amount)
+        {
+            _scrollDeltaX = -amount;
+        }
+
+        public void ScrollHorizontally(int amount)
+        {
+            _scrollDeltaY = -amount;
         }
 
         public void Flush()
@@ -113,6 +125,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             {
                 _mouseMovedSinceLastDown = true;
             }
+        }
+
+        protected void QueuePendingScroll(int x, int y)
+        {
+            _scrollDeltaX = x;
+            _scrollDeltaY = y;
         }
 
         public void SetPressure(float percentage)
@@ -177,6 +195,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     if (DrainPendingPosition() is { } position)
                     {
                         SetPendingPosition(_mouseEvent, position.X, position.Y);
+                    }
+                    if (_scrollDeltaX.HasValue || _scrollDeltaY.HasValue)
+                    {
+                        CGEventCreateScrollWheelEvent2(IntPtr.Zero, CGScrollEventUnit.kCGScrollEventUnitPixel, 2, _scrollDeltaX!.Value, _scrollDeltaY!.Value, 0);
+                        _scrollDeltaX = _scrollDeltaY = null;
                     }
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, i);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, _clickState); // clickState should be set to 1 (or more) during up, down, and drag events

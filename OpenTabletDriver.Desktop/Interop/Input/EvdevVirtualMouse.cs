@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Interop
 {
     [PluginIgnore]
-    public abstract class EvdevVirtualMouse : IMouseButtonHandler, ISynchronousPointer, IDisposable
+    public abstract class EvdevVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, IDisposable
     {
         protected EvdevDevice Device { set; get; }
 
@@ -24,6 +24,16 @@ namespace OpenTabletDriver.Desktop.Interop
             {
                 Device.Write(EventType.EV_KEY, code, 0);
             }
+        }
+
+        public void ScrollVertically(int amount)
+        {
+            Device.Write(EventType.EV_REL, EventCode.REL_WHEEL_HI_RES, amount);
+        }
+
+        public void ScrollHorizontally(int amount)
+        {
+            Device.Write(EventType.EV_REL, EventCode.REL_HWHEEL_HI_RES, amount);
         }
 
         protected virtual EventCode? GetCode(MouseButton button) => button switch
