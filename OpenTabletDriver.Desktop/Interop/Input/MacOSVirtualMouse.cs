@@ -87,6 +87,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 ApplyTabletValues();
                 PostEvent();
             }
+            if (_scrollDeltaX.HasValue || _scrollDeltaY.HasValue)
+            {
+                var scrollEventRef = CGEventCreateScrollWheelEvent2(IntPtr.Zero, CGScrollEventUnit.kCGScrollEventUnitPixel, 2, _scrollDeltaX ?? 0, _scrollDeltaY ?? 0, 0);
+                CGEventPost(CGEventTapLocation.kCGHIDEventTap, scrollEventRef);
+                CFRelease(scrollEventRef);
+                _scrollDeltaX = _scrollDeltaY = null;
+            }
         }
 
         public void Reset()
@@ -195,11 +202,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     if (DrainPendingPosition() is { } position)
                     {
                         SetPendingPosition(_mouseEvent, position.X, position.Y);
-                    }
-                    if (_scrollDeltaX.HasValue || _scrollDeltaY.HasValue)
-                    {
-                        CGEventCreateScrollWheelEvent2(IntPtr.Zero, CGScrollEventUnit.kCGScrollEventUnitPixel, 2, _scrollDeltaX!.Value, _scrollDeltaY!.Value, 0);
-                        _scrollDeltaX = _scrollDeltaY = null;
                     }
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventButtonNumber, i);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.mouseEventClickState, _clickState); // clickState should be set to 1 (or more) during up, down, and drag events
