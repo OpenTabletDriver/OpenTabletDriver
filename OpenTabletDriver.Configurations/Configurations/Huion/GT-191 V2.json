@@ -1,0 +1,32 @@
+{
+  "Name": "Huion GT-191 V2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 434.88,
+      "Height": 238.68,
+      "MaxX": 86976,
+      "MaxY": 47736
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "HUION_M168_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
