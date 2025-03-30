@@ -13,34 +13,20 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 855,
       "InputReportLength": 192,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser"
     },
     {
       "VendorID": 1386,
       "ProductID": 864,
       "InputReportLength": 361,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      "ReportParser": "OpenTabletDriver.Tablet.TabletReportParser"
     }
   ],
   "AuxiliaryDeviceIdentifiers": [
@@ -48,14 +34,7 @@
       "VendorID": 1386,
       "ProductID": 855,
       "InputReportLength": 44,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser"
     }
-  ],
-  "Attributes": {}
+  ]
 }

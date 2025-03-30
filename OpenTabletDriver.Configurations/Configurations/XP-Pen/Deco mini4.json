@@ -13,9 +13,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -24,13 +22,9 @@
       "InputReportLength": 12,
       "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     },
     {
       "VendorID": 10429,
@@ -38,15 +32,9 @@
       "InputReportLength": 12,
       "OutputReportLength": 10,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
-  ],
-  "AuxiliaryDeviceIdentifiers": [],
-  "Attributes": {}
+  ]
 }

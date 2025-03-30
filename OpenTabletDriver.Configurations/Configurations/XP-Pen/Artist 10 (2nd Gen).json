@@ -13,27 +13,19 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
       "ProductID": 2381,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

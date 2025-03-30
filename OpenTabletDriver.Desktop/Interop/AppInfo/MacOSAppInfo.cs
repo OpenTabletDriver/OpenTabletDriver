@@ -1,6 +1,7 @@
 namespace OpenTabletDriver.Desktop.Interop.AppInfo
 {
     using System;
+    using System.IO;
     using System.Text.RegularExpressions;
     using static FileUtilities;
 
@@ -13,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Interop.AppInfo
             if (match.Success)
                 BinaryDirectory = match.Groups[1].ToString();
 
-            if (GetPath(AppDataDirectory, "~/Library/Application Support/OpenTabletDriver") is string appdata)
+            if (GetExistingPathOrLast(AppDataDirectory, Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver") is string appdata)
                 AppDataDirectory = appdata;
 
             if (GetPath(TemporaryDirectory, "$TMPDIR/OpenTabletDriver") is string temp)

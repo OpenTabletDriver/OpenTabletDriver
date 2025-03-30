@@ -11,28 +11,19 @@
       "MaxPressure": 1023,
       "ButtonCount": 2
     },
-    "AuxiliaryButtons": null,
     "MouseButtons": {
       "ButtonCount": 3
-    },
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1112,
       "ProductID": 20496,
       "InputReportLength": 8,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParser",
       "FeatureInitReport": [
         "BRIQERIAAAA="
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
-  ],
-  "AuxiliaryDeviceIdentifiers": [],
-  "Attributes": {}
+  ]
 }

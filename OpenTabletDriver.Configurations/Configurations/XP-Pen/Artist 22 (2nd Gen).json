@@ -10,10 +10,7 @@
     "Pen": {
       "MaxPressure": 8191,
       "ButtonCount": 2
-    },
-    "AuxiliaryButtons": null,
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -22,15 +19,9 @@
       "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      ]
     }
-  ],
-  "AuxiliaryDeviceIdentifiers": [],
-  "Attributes": {}
+  ]
 }

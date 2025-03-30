@@ -8,23 +8,20 @@
       "MaxY": 30480
     },
     "Pen": {
-      "MaxPressure": 8191,
+      "MaxPressure": 2047,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
-      "OutputReportLength": null,
+      "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"
       ],
@@ -33,11 +30,9 @@
       },
       "InitializationStrings": [
         100
-      ],
-      "Attributes": {}
+      ]
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1",
     "Interface": "0"

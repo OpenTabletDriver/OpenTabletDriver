@@ -10,26 +10,16 @@
     "Pen": {
       "MaxPressure": 32767,
       "ButtonCount": 2
-    },
-    "AuxiliaryButtons": null,
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 2578,
       "ProductID": 16391,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.FlooGoo.FmaReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": [],
-      "Attributes": {}
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.FlooGoo.FmaReportParser"
     }
   ],
-  "AuxiliaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

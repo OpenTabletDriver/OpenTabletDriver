@@ -14,7 +14,7 @@
 | Gaomon PD1561                 |     Supported     |
 | Gaomon PD2200                 |     Supported     |
 | Gaomon S620                   |     Supported     |
-| Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons
+| Genius G-Pen 560              |     Supported     | Soft-buttons are bindable as aux buttons.
 | Huion 1060 Plus               |     Supported     |
 | Huion G930L                   |     Supported     |
 | Huion GT-220 V2               |     Supported     |
@@ -49,6 +49,7 @@
 | Huion Q11K                    |     Supported     |
 | Huion Q11K V2                 |     Supported     |
 | Huion RDS-160                 |     Supported     |
+| Huion RTS-300                 |     Supported     | Uses the same configuration as the Huion H642.
 | Huion RTE-100                 |     Supported     |
 | Huion WH1409                  |     Supported     |
 | Huion WH1409 V2               |     Supported     |
@@ -145,7 +146,7 @@
 | XP-Pen Deco mini7             |     Supported     |
 | XP-Pen Deco Pro LW Gen2       |     Supported     |
 | XP-Pen Deco Pro XLW Gen2      |     Supported     |
-| XP-Pen Star 03                |     Supported     |
+| XP-Pen Star 03                |     Supported     | Older variants may use the same configuration as the UC-Logic 1060N.
 | XP-Pen Star 03 Pro            |     Supported     |
 | XP-Pen Star 05 V3             |     Supported     |
 | XP-Pen Star G430S             |     Supported     |
@@ -180,6 +181,7 @@
 | Turcom TS-6580                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                     |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
 | Wacom PTU-600U                |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
+| XP-Pen Artist 10S             |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 16              |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 22HD            |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Star G430              |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 1
@@ -199,12 +201,14 @@
 | Huion GT-156HD V2             |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221                  |  Missing Features | Touch bar is not yet supported.
 | Huion GT-221 Pro              |  Missing Features | Touch bar is not yet supported.
+| Huion H1061P                  |  Missing Features | Roller is not yet supported. Group keys act like auxiliary buttons.
 | Huion H1161                   |  Missing Features | Tablet buttons are not yet supported.
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion H951P                   |  Missing Features | Tilt Y-axis is inverted. Wheel is not yet supported. Switching groups is not yet supported; group selectors are mapped as regular buttons.
 | Huion HC16                    |  Missing Features | Wheel is not yet supported.
 | Huion HS610                   |  Missing Features | Wheel is not yet supported.
 | Huion HS611                   |  Missing Features | Touch bar is not yet supported.
+| Huion Kamvas 13 (Gen 3)       |  Missing Features | Wheel is not yet supported, function-switch buttons act as regular auxiliary keys.
 | Huion Kamvas Pro 12           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 13           |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 16           |  Missing Features | Touch bar is not yet supported.
@@ -237,7 +241,10 @@
 | Wacom CTH-461                 |  Missing Features | Tablet buttons and touch are not yet supported.
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                |  Missing Features | Touch is not yet supported.
+| Wacom DTH-135                 |  Missing Features | Touch is not yet supported.
+| Wacom DTH-271                 |  Missing Features | Aux buttons are not yet supported.
 | Wacom DTK-1300                |  Missing Features | Center button is not yet supported.
+| Wacom DTK-2200                |  Missing Features | Touch Strips are not yet supported.
 | Wacom DTZ-1200W               |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom MTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-450                 |  Missing Features | Wheel is not yet supported.
