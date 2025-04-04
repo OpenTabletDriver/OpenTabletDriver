@@ -246,6 +246,7 @@
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                |  Missing Features | Touch is not yet supported.
 | Wacom DTH-135                 |  Missing Features | Touch is not yet supported.
+| Wacom DTH-227                 |  Missing Features | Touch is not yet supported.
 | Wacom DTH-271                 |  Missing Features | Aux buttons are not yet supported.
 | Wacom DTK-1300                |  Missing Features | Center button is not yet supported.
 | Wacom DTK-2200                |  Missing Features | Touch Strips are not yet supported.
