@@ -17,7 +17,9 @@ namespace OpenTabletDriver.Desktop.Diagnostics
                             "DISPLAY",
                             "WAYLAND_DISPLAY",
                             "PWD",
-                            "PATH"
+                            "PATH",
+                            "XDG_CURRENT_DESKTOP",
+                            "XDG_RUNTIME_DIR"
                     );
                     break;
                 case PluginPlatform.Windows:
