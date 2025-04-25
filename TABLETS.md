@@ -44,6 +44,7 @@
 | Huion Kamvas Pro 16 Plus (4K) |     Supported     |
 | Huion Kamvas Pro 19 (4K)      |     Supported     |
 | Huion Kamvas Pro 24 (4K)      |     Supported     |
+| Huion L610                    |     Supported     |
 | Huion New 1060 Plus           |     Supported     |
 | Huion Q11K                    |     Supported     |
 | Huion Q11K V2                 |     Supported     |
