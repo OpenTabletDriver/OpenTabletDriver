@@ -263,6 +263,7 @@
 | Wacom PTK-1240                |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-440                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-450                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-470                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-540WL               |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-640                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-650                 |  Missing Features | Wheel is not yet supported.
