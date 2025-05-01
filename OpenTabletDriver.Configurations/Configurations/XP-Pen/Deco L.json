@@ -22,7 +22,6 @@
       "VendorID": 10429,
       "ProductID": 2357,
       "InputReportLength": 10,
-      "OutputReportLength": 33,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
       "OutputInitReport": [
         "ArAE"
