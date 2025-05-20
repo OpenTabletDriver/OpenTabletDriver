@@ -344,7 +344,7 @@ namespace OpenTabletDriver.Tests
                     sb.AppendLine();
                     var expected = sb.ToString();
 
-                    var diff = InlineDiffBuilder.Diff(expected, actual);
+                    var diff = InlineDiffBuilder.Diff(expected, actual, ignoreWhiteSpace: false);
 
                     if (diff.HasDifferences)
                     {
