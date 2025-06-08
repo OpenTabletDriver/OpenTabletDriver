@@ -1,0 +1,36 @@
+{
+    "Name": "M5",
+    "Specifications": {
+      "Digitizer": {
+        "Width": 152,
+        "Height": 95,
+        "MaxX": 35830,
+        "MaxY": 23700
+      },
+      "Pen": {
+        "MaxPressure": 8191,
+        "ButtonCount": 2
+      },
+      "AuxiliaryButtons": {
+        "ButtonCount": 1
+      }
+    },
+    "DigitizerIdentifiers": [
+      {
+        "VendorID": 9580,
+        "ProductID": 100,
+        "InputReportLength": 12,
+        "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
+        "DeviceStrings": {
+          "201": "OEM02_T195_\\d{6}$"
+        },
+        "InitializationStrings": [
+          200
+        ]
+      }
+    ],
+    "Attributes": {
+      "libinputoverride": "1"
+    }
+  }
+  
