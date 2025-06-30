@@ -1,0 +1,32 @@
+{
+  "Name": "Wacom Cintiq 21UX (DTK-2100)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 432,
+      "Height": 324,
+      "MaxX": 87200,
+      "MaxY": 65600
+    },
+    "Pen": {
+      "MaxPressure": 2048,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 18
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 204,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1.CintiqV1ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
