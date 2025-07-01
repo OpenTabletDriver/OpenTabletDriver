@@ -2,13 +2,13 @@
   "Name": "Wacom Cintiq 21UX (DTK-2100)",
   "Specifications": {
     "Digitizer": {
-      "Width": 432,
-      "Height": 324,
+      "Width": 436,
+      "Height": 328,
       "MaxX": 87200,
       "MaxY": 65600
     },
     "Pen": {
-      "MaxPressure": 2048,
+      "MaxPressure": 2047,
       "ButtonCount": 2
     },
     "AuxiliaryButtons": {
