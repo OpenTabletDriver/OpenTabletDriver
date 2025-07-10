@@ -1,0 +1,34 @@
+{
+  "Name": "Huion Kamvas Pro 27",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 596.735,
+      "Height": 335.66,
+      "MaxX": 119347,
+      "MaxY": 67132
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 108,
+      "InputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "HUION_M221_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
