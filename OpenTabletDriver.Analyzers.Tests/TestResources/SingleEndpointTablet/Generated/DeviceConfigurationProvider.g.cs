@@ -44,8 +44,9 @@ namespace OpenTabletDriver.Configurations
                         {
                             new byte[] { 0x02, 0xb0, 0x04 }
                         },
-                        DeviceStrings = new global::System.Collections.Generic.Dictionary<byte, string>(),
-                        InitializationStrings = new global::System.Collections.Generic.List<byte>()
+                        DeviceStrings = null,
+                        InitializationStrings = null,
+                        Attributes = null
                     },
                     new global::OpenTabletDriver.Tablet.DeviceIdentifier()
                     {
@@ -59,8 +60,9 @@ namespace OpenTabletDriver.Configurations
                         {
                             new byte[] { 0x02, 0xb0, 0x04 }
                         },
-                        DeviceStrings = new global::System.Collections.Generic.Dictionary<byte, string>(),
-                        InitializationStrings = new global::System.Collections.Generic.List<byte>()
+                        DeviceStrings = null,
+                        InitializationStrings = null,
+                        Attributes = null
                     },
                     new global::OpenTabletDriver.Tablet.DeviceIdentifier()
                     {
@@ -74,11 +76,12 @@ namespace OpenTabletDriver.Configurations
                         {
                             new byte[] { 0x02, 0xb0, 0x04 }
                         },
-                        DeviceStrings = new global::System.Collections.Generic.Dictionary<byte, string>(),
-                        InitializationStrings = new global::System.Collections.Generic.List<byte>()
+                        DeviceStrings = null,
+                        InitializationStrings = null,
+                        Attributes = null
                     }
                 },
-                AuxiliaryDeviceIdentifiers = new global::System.Collections.Generic.List<global::OpenTabletDriver.Tablet.DeviceIdentifier>(),
+                AuxiliaryDeviceIdentifiers = null,
                 Attributes = new global::System.Collections.Generic.Dictionary<string, string>()
                 {
                     ["libinputoverride"] = "1"

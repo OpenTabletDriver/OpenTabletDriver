@@ -1,8 +1,8 @@
-[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![CodeFactor](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/badge/master)](https://www.codefactor.io/repository/github/OpenTabletDriver/OpenTabletDriver/overview/master) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
+[![Actions Status](https://github.com/OpenTabletDriver/OpenTabletDriver/workflows/.NET%20CI/badge.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/actions) [![Total Download Count](https://img.shields.io/github/downloads/OpenTabletDriver/OpenTabletDriver/total.svg)](https://github.com/OpenTabletDriver/OpenTabletDriver/releases/latest)
 
 # OpenTabletDriver
 
-English | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [Português-BR](docs/README_PTBR.md)
+English | [Español](docs/README_ES.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [Português-BR](docs/README_PTBR.md) | [Nederlands](docs/README_NL.md) | [한국어](docs/README_KO.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [繁體中文](docs/README_TW.md) | [Ελληνικά](docs/README_EL.md) | [Magyar](docs/README_HU.md)
 
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
@@ -36,7 +36,7 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 ### All platforms
 
-- .NET 7 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/7.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
+- .NET 8 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/8.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
 
 #### Windows
 
@@ -52,7 +52,7 @@ Required packages (some packages may be pre-installed for your distribution):
 - GTK+3
 
 Run `./eng/linux/package.sh`. If a "package" build is desired,
-there are official support for the following packaging formats:
+there is official support for the following packaging formats:
 
 | Package Format | Command |
 | --- | --- |
@@ -90,9 +90,6 @@ Run `./eng/macos/package.sh --package true`.
   - External plugin bindings
 - Saving and loading settings
   - Auto-loads user settings via `settings.json` in the active user `%localappdata%` or `.config` settings root directory.
-- Configuration Editor
-  - Allows you to create, modify, and delete configurations.
-  - Generate configurations from visible HID devices
 - Plugins
   - Filters
   - Output modes
@@ -111,9 +108,7 @@ and fill out the template with relevant information. We welcome both bug
 reports, as well as new tablets to add support for. In many cases adding support
 for a new tablet is quite easy.
 
-For issues and PRs related to OpenTabletDriver's packaging, please see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
-
-For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
+For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/opentabletdriver.github.io).
 
 ### Supporting a new tablet
 

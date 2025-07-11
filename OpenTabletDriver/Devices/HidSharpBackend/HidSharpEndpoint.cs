@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using HidSharp;
 using HidSharp.Reports;
@@ -30,90 +28,47 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         public string? SerialNumber => _device.SafeGet(d => d.GetSerialNumber(), null);
         public string DevicePath => _device.SafeGet(d => d.DevicePath, "Invalid Device Path");
         public bool CanOpen => _device.SafeGet(d => d.CanOpen, false);
-        public IDictionary<string, string>? DeviceAttributes => GetDeviceAttributes();
+        public IDictionary<string, string>? DeviceAttributes => GetDeviceAttributes(DevicePath, () => _device.GetReportDescriptor());
 
         public IDeviceEndpointStream? Open() => _device.TryOpen(out var stream) ? new HidSharpEndpointStream(stream) : null;
         public string GetDeviceString(byte index) => _device.GetDeviceString(index);
 
-        // - HID_REPORTS (report_id:usage_page:usage_id, ...)
-        // - USB_INTERFACE_NUMBER
-        private IDictionary<string, string>? GetDeviceAttributes()
+        private static IDictionary<string, string>? GetDeviceAttributes(string devicePath, Func<ReportDescriptor> reportDescriptorFunc)
         {
             var deviceAttributes = new Dictionary<string, string>();
+
+            // - USB_INTERFACE_NUMBER
             switch (SystemInterop.CurrentPlatform)
             {
                 case SystemPlatform.Windows:
-                    GetDeviceAttributesWindows(deviceAttributes);
+                    GetDeviceAttributesWindows(devicePath, deviceAttributes);
                     break;
                 case SystemPlatform.Linux:
-                    GetDeviceAttributesLinux(deviceAttributes);
+                    GetDeviceAttributesLinux(devicePath, deviceAttributes);
                     break;
                 case SystemPlatform.MacOS:
-                    GetDeviceAttributesMacOS(deviceAttributes);
+                    GetDeviceAttributesMacOS(devicePath, deviceAttributes);
                     break;
             }
 
-            try
-            {
-                ExtractHidUsages(deviceAttributes);
-            }
-            catch
-            {
-                deviceAttributes.Add("HID_REPORT_DESCRIPTOR_NON_RECONSTRUCTABLE", "true");
-            }
+            Extensions.ExtractHidUsages(deviceAttributes, reportDescriptorFunc);
 
             return deviceAttributes;
         }
 
-        private void ExtractHidUsages(Dictionary<string, string> deviceAttributes)
+        private static void GetDeviceAttributesWindows(string devicePath, Dictionary<string, string> deviceAttributes)
         {
-            var reportDescriptor = _device.GetReportDescriptor();
-
-            List<(byte, uint)> usages = new List<(byte, uint)>();
-            foreach (var inputReport in reportDescriptor.InputReports)
-            {
-                var reportId = inputReport.ReportID;
-                usages.AddRange(inputReport.DeviceItem.Usages.GetAllValues().Select(x => (reportId, x)));
-            }
-
-            var hidReportsBuilder = new StringBuilder();
-            var enumerator = usages.GetEnumerator();
-            if (enumerator.MoveNext())
-            {
-                var reportId = enumerator.Current.Item1;
-                var extendedUsage = enumerator.Current.Item2;
-                appendHidReport(hidReportsBuilder, reportId, extendedUsage);
-                while (enumerator.MoveNext())
-                {
-                    hidReportsBuilder.Append(", ");
-                    reportId = enumerator.Current.Item1;
-                    extendedUsage = enumerator.Current.Item2;
-                    appendHidReport(hidReportsBuilder, reportId, extendedUsage);
-                }
-
-                static void appendHidReport(StringBuilder stringBuilder, byte reportId, uint extendedUsage)
-                {
-                    var usagePage = (extendedUsage & 0xffff0000) >> 16;
-                    var usageId = extendedUsage & 0x0000ffff;
-                    stringBuilder.Append($"{reportId:X2}:{usagePage:X4}:{usageId:X4}");
-                }
-            }
-
-            deviceAttributes.Add("HID_REPORTS", hidReportsBuilder.ToString());
+            GetInterfaceNumberFromPath(deviceAttributes, devicePath, @"&mi_(?<interface>\d+)");
         }
 
-        private void GetDeviceAttributesWindows(Dictionary<string, string> deviceAttributes)
+        private static void GetDeviceAttributesLinux(string devicePath, Dictionary<string, string> deviceAttributes)
         {
-            GetInterfaceNumberFromPath(deviceAttributes, DevicePath, @"&mi_(?<interface>\d+)");
+            GetInterfaceNumberFromPath(deviceAttributes, devicePath, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
         }
 
-        private void GetDeviceAttributesLinux(Dictionary<string, string> deviceAttributes)
+        private static void GetDeviceAttributesMacOS(string devicePath, Dictionary<string, string> deviceAttributes)
         {
-            GetInterfaceNumberFromPath(deviceAttributes, DevicePath, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
-        }
-
-        private void GetDeviceAttributesMacOS(Dictionary<string, string> deviceAttributes)
-        {
+            GetInterfaceNumberFromPath(deviceAttributes, devicePath, @"IOUSBHostInterface@(?<interface>\d+)");
         }
 
         private static void GetInterfaceNumberFromPath(Dictionary<string, string> attributes, string path, string regex)

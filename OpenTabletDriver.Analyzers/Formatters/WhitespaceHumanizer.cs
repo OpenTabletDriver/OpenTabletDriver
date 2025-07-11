@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -121,19 +122,19 @@ namespace OpenTabletDriver.Analyzers.Formatters
                 .WithOpenBraceToken(oldInitializer.OpenBraceToken
                     .WithLeadingTrivia(
                         SyntaxFactory.TriviaList(
-                            SyntaxFactory.LineFeed,
+                            SyntaxFactory.EndOfLine(Environment.NewLine),
                             SyntaxFactory.Whitespace(currIndentation))))
                 .WithCloseBraceToken(oldInitializer.CloseBraceToken
                     .WithLeadingTrivia(
                         SyntaxFactory.TriviaList(
-                            SyntaxFactory.LineFeed,
+                            SyntaxFactory.EndOfLine(Environment.NewLine),
                             SyntaxFactory.Whitespace(currIndentation))))
                 .WithExpressions(
                     SyntaxFactory.SeparatedList(
                         oldInitializer.Expressions.Select(e => e
                             .WithLeadingTrivia(
                                 SyntaxFactory.TriviaList(
-                                    SyntaxFactory.LineFeed,
+                                    SyntaxFactory.EndOfLine(Environment.NewLine),
                                     SyntaxFactory.Whitespace(currIndentation + indentation))))));
 
             return newInitializer;

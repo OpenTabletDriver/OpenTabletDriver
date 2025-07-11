@@ -9,6 +9,10 @@ With any contribution you make, we ask that your commits are named sensibly and 
 At the very least, sentence-case your commits, and do consider prefixing the commit message with a component name in similar fashion to `Updater: Add file IncludeList`.
 If the reasoning for a commit is potentially cryptic, consider adding a commit description to it, succinctly explaining why it was needed.
 
+As we transition to replacing our UI, the `master` branch is now feature-locked. To help us avoid conflicts later, please direct all new pull requests to the `avalonia` branch moving forward.
+
+Pull requests for tablet configuration and parser changes may target either `avalonia` or `0.6.x` (if you prefer to develop on that branch), however, the developers will port your configuration to the other branches so you do not have to open a pull request for every branch. Please refer to the guidelines below for adding configurations.
+
 # Tablet Configuration Contributions
 
 Tablet configurations define tablets OpenTabletDriver can detect and operate. They provide
@@ -31,9 +35,7 @@ rules must be followed:
   name,* with a `.json` extension. Spaces are acceptable, and
   preferable to underscores.
 - The file must be located in the directory dedicated to an individual manufacturer.
-- All trailing whitespace must be trimmed before committing. When using the configuration editor
-  within the OpenTabletDriver UI, this will be performed automatically. We recommend using it to
-  generate new configs, as it will also format the json correctly with correct indentation, etc.
+- All trailing whitespace must be trimmed before committing.
 - The current formatting of the `TABLETS.md` document must be strictly followed as below:
 
   | Column | Contents                                                                                          |
@@ -137,7 +139,7 @@ review comment. Resolve applied fixes, if they are not resolved by GitHub automa
 
 ## Unit-Testing OpenTabletDriver
 
-Our CI runs unit tests on each new commit pushed on a PR, but if you'd like to test OpenTabletDriver locally, you can do so by running the command `dotnet test OpenTabletDriver` from the project root, which will run all tests and report status.
+Our CI runs unit tests on each new commit pushed on a PR, but if you'd like to test OpenTabletDriver locally, you can do so by running the command `dotnet test` from the project root, which will run all tests and report status.
 The unit tests for the most part concern the daemon part of the driver, which performs the bulk of the "work" and thus is critical to test.
 Of course, we also welcome contributions adding more unit testing, our coverage is weaker outside of
 critical areas.
