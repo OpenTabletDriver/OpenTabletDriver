@@ -1,7 +1,7 @@
 param (
     $output = "dist",
     $config = "Release",
-    $framework = "net8.0",
+    $framework = "net9.0",
     $netRuntime = "win-x64",
     $isRelease = $true,
     $isPackage = $true,

@@ -36,7 +36,7 @@ De benodigdheden om OpenTabletDriver te bouwen zijn hetzelfde voor alle platform
 
 ### Alle platformen
 
-- .NET 8 SDK (kan [hier](https://dotnet.microsoft.com/download/dotnet/8.0) verkregen worden - U heeft de SDK voor uw platform nodig, Linux gebruikers kunnen het via hun package manager installeren waar mogelijk)
+- .NET 9 SDK (kan [hier](https://dotnet.microsoft.com/download/dotnet/9.0) verkregen worden - U heeft de SDK voor uw platform nodig, Linux gebruikers kunnen het via hun package manager installeren waar mogelijk)
 
 #### Windows
 
