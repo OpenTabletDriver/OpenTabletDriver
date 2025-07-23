@@ -63,8 +63,9 @@ namespace OpenTabletDriver.Native.OSX
         [DllImport(Quartz)]
         public extern static ulong CGEventSourceFlagsState(int stateID);
 
-        [DllImport(Quartz)]
-        public extern static CGEventRef CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
+        [DllImport(Quartz, EntryPoint = "CGEventPost")]
+        private extern static void _CGEventPost(CGEventTapLocation tap, CGEventRef eventRef);
+
 
         [DllImport(Quartz)]
         public extern static CGError CGGetActiveDisplayList(uint maxDisplays,
@@ -76,6 +77,13 @@ namespace OpenTabletDriver.Native.OSX
         public static double GetDoubleClickInterval()
         {
             return objc_msgSend_double(objc_getClass("NSEvent"), sel_registerName("doubleClickInterval"));
+        }
+
+        public static void CGEventPost(CGEventTapLocation tap, CGEventRef eventRef)
+        {
+            var pool = objc_autoreleasePoolPush();
+            _CGEventPost(tap, eventRef);
+            objc_autoreleasePoolPop(pool);
         }
     }
 }

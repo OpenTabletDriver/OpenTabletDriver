@@ -1,20 +1,17 @@
 {
-  "Name": "Huion Kamvas Pro 20",
+  "Name": "Huion GT-191 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 435.375,
-      "Height": 238.75,
-      "MaxX": 87075,
-      "MaxY": 47750
+      "Width": 434.88,
+      "Height": 238.68,
+      "MaxX": 86976,
+      "MaxY": 47736
     },
     "Pen": {
       "MaxPressure": 8191,
       "Buttons": {
         "ButtonCount": 2
       }
-    },
-    "AuxiliaryButtons": {
-      "ButtonCount": 16
     }
   },
   "DigitizerIdentifiers": [
@@ -24,7 +21,7 @@
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "DeviceStrings": {
-        "201": "HUION_M(189|193)_\\d{6}$"
+        "201": "HUION_M168_\\d{6}$"
       },
       "InitializationStrings": [
         200

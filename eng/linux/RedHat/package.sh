@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-# increment this when releasing a new package of the same upstream version
-# where the only changes are to the packaging itself
-PKG_VER="1"
-PKG_FILE="${OTD_LNAME}-${OTD_VERSION}-${PKG_VER}-x64.rpm"
-
 redhat_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
 output="$(readlink -f "${1}")"
@@ -19,7 +14,7 @@ echo "Generating ${OTD_LNAME}.spec..."
 cat << EOF > "${output}/SPECS/${OTD_LNAME}.spec"
 Name: ${OTD_LNAME}
 Version: ${OTD_VERSION}
-Release: ${PKG_VER}
+Release: 1
 Summary: A ${OTD_DESC}
 
 Source0: ${OTD_LNAME}-${OTD_VERSION}.tar.gz

@@ -18,6 +18,10 @@ namespace OpenTabletDriver.Plugin.Output
         private Vector2 lastReadPos;
         private bool outOfRange;
 
+        // for handling detection of low resetTimes
+        private uint _resets;
+        private bool _warnedBadResets = false;
+
         /// <summary>
         /// The class in which the final relative positioned output is handled.
         /// </summary>
@@ -42,6 +46,7 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private float rotation;
+        private TimeSpan _resetTime;
 
         /// <summary>
         /// The angle of rotation to be applied to the input.
@@ -59,7 +64,16 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The delay in which to reset the last known position in relative positioning.
         /// </summary>
-        public TimeSpan ResetTime { set; get; }
+        public TimeSpan ResetTime
+        {
+            set
+            {
+                _resetTime = value;
+                _resets = 0;
+                _warnedBadResets = false;
+            }
+            get => _resetTime;
+        }
 
         protected override Matrix3x2 CreateTransformationMatrix()
         {
@@ -84,7 +98,16 @@ namespace OpenTabletDriver.Plugin.Output
                 {
                     outOfRange = true;
                     lastTransformedPos = null;
+                    _resets++;
                 }
+                else _resets = 0;
+
+                if (!_warnedBadResets &&
+                    (_warnedBadResets =
+                        _resets > 10))
+                    Log.WriteNotify("RelativeOutputMode",
+                        $"Position reset spam detected - the configured reset time ({ResetTime.TotalMilliseconds} ms) is likely too low",
+                        LogLevel.Warning);
 
                 // skip duplicate reports sent by tablets right after going into
                 // range from an out of range state.
