@@ -8,14 +8,15 @@ namespace OpenTabletDriver.Desktop.Profiles
 {
     public class BindingSettings : ViewModel
     {
-        private float tP, eP;
+        private float tP = 1;
+        private float eP = 1;
         private PluginSettingStore tipButton, eraserButton, mouseScrollUp, mouseScrollDown;
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
             auxButtons = new PluginSettingStoreCollection(),
             mouseButtons = new PluginSettingStoreCollection();
 
-        [JsonProperty("TipActivationPressure")]
-        public float TipActivationPressure
+        [JsonProperty("TipActivationThreshold")]
+        public float TipActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.tP, value);
             get => this.tP;
@@ -28,8 +29,8 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.tipButton;
         }
 
-        [JsonProperty("EraserActivationPressure")]
-        public float EraserActivationPressure
+        [JsonProperty("EraserActivationThreshold")]
+        public float EraserActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.eP, value);
             get => this.eP;

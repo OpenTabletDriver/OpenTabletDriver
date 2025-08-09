@@ -2,10 +2,10 @@
   "Name": "Huion Q11K",
   "Specifications": {
     "Digitizer": {
-      "Width": 258.4,
-      "Height": 165.1,
-      "MaxX": 51680.0,
-      "MaxY": 33020.0
+      "Width": 279.4,
+      "Height": 174.625,
+      "MaxX": 55880,
+      "MaxY": 34925
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T164_\\d{6}$"
       },
@@ -39,10 +34,7 @@
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T164_\\d{6}$"
       },
@@ -51,7 +43,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

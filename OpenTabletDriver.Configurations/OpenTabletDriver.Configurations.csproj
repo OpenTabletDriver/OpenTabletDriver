@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
+    <TargetFrameworks>$(FrameworkBase)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Label="NuGet Package Information">
+  <PropertyGroup Label="NuGet Package">
     <PackageId>OpenTabletDriver.Configurations</PackageId>
     <Description>OpenTabletDriver tablet configurations</Description>
-    <PackageOutputPath>../nupkg</PackageOutputPath>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">

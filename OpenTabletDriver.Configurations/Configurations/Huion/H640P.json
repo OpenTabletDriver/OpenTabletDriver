@@ -2,10 +2,10 @@
   "Name": "Huion H640P",
   "Specifications": {
     "Digitizer": {
-      "Width": 160.0,
-      "Height": 100.0,
-      "MaxX": 32000.0,
-      "MaxY": 20000.0
+      "Width": 160,
+      "Height": 100,
+      "MaxX": 32000,
+      "MaxY": 20000
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
         "201": "HUION_T173_\\d{6}$"
       },
@@ -39,10 +34,7 @@
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
         "201": "HUION_T173_\\d{6}$"
       },
@@ -54,10 +46,19 @@
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "DeviceStrings": {
+        "201": "HUION_T203_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
         "201": "HUION_T203_\\d{6}$"
       },
@@ -66,7 +67,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

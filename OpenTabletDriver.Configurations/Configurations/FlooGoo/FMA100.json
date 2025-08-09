@@ -1,0 +1,28 @@
+{
+  "Name": "FlooGoo FMA100",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 262.128,
+      "Height": 196.596,
+      "MaxX": 20640,
+      "MaxY": 15480
+    },
+    "Pen": {
+      "MaxPressure": 32767,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 2578,
+      "ProductID": 16391,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.FlooGoo.FmaReportParser"
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

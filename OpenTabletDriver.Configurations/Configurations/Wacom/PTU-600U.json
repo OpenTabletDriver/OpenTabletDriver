@@ -1,0 +1,28 @@
+{
+  "Name": "Wacom PTU-600U",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 204.8,
+      "Height": 153.6,
+      "MaxX": 20480,
+      "MaxY": 15360
+    },
+    "Pen": {
+      "MaxPressure": 511,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 3,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.PTU.PTUReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "Name": "Parblo A640",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 155,
+      "Height": 93,
+      "MaxX": 29616,
+      "MaxY": 17170
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 97,
+      "InputReportLength": 10,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "InitializationStrings": [
+        100
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 271.02,
       "Height": 158.75,
-      "MaxX": 54204.0,
-      "MaxY": 31750.0
+      "MaxX": 54204,
+      "MaxY": 31750
     },
     "Pen": {
       "MaxPressure": 2046,
@@ -18,41 +18,31 @@
     },
     "MouseButtons": {
       "ButtonCount": 5
-    },
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 181,
       "InputReportLength": 10,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ReportParser",
       "FeatureInitReport": [
         "AgI=",
-        "CAIDAAA=",
         "BAA="
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     },
     {
       "VendorID": 1386,
       "ProductID": 181,
       "InputReportLength": 11,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.WacomDriverIntuos3ReportParser",
       "FeatureInitReport": [
         "AgI=",
-        "CAIDAAA=",
         "BAA="
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
-  "Attributes": {}
+  "Attributes": {
+    "FeatureInitDelayMs": "150"
+  }
 }

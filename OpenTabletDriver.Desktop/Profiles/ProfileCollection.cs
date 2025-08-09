@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using OpenTabletDriver.Plugin.Tablet;
 
+#nullable enable
+
 namespace OpenTabletDriver.Desktop.Profiles
 {
     public class ProfileCollection : ObservableCollection<Profile>
@@ -41,6 +43,11 @@ namespace OpenTabletDriver.Desktop.Profiles
         public Profile GetProfile(TabletReference tablet)
         {
             return this.FirstOrDefault(t => t.Tablet == tablet.Properties.Name) is Profile profile ? profile : Generate(tablet);
+        }
+
+        public Profile? GetProfile(string tablet)
+        {
+            return this.FirstOrDefault(t => t.Tablet == tablet);
         }
 
         public Profile Generate(TabletReference tablet)

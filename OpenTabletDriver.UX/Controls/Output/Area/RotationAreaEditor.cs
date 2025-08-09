@@ -25,6 +25,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
             var rotationBinding = AreaBinding.Child(c => c.Rotation);
             rotation.ValueBinding.Bind(rotationBinding);
+            rotation.ValueChanged += (_, _) => Display.Invalidate();
         }
 
         private MaskedTextBox<float> rotation;

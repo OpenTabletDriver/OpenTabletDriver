@@ -1,0 +1,41 @@
+{
+  "Name": "Parblo A610",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 152.4,
+      "MaxX": 40000,
+      "MaxY": 24000
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 129,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetAuxReportParser",
+      "DeviceStrings": {
+        "201": "F401-HK708-STD"
+      },
+      "InitializationStrings": [
+        100,
+        123
+      ],
+      "Attributes": {
+        "Interface": "0"
+      }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

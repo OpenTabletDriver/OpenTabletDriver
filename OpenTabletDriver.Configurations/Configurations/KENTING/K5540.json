@@ -1,0 +1,31 @@
+{
+  "Name": "KENTING K5540",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 139.6873,
+      "Height": 101.5873,
+      "MaxX": 10999,
+      "MaxY": 7999
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 4,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "InitializationStrings": [
+        100
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

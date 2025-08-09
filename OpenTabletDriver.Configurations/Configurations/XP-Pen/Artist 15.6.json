@@ -1,0 +1,57 @@
+{
+  "Name": "XP-Pen Artist 15.6",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 344.19,
+      "Height": 194.61,
+      "MaxX": 34419,
+      "MaxY": 19461
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 6
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 12,
+      "InputReportLength": 8,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAC"
+      ]
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2330,
+      "InputReportLength": 10,
+      "OutputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "AuxilaryDeviceIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 12,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenDedicatedAuxReportParser",
+      "InitializationStrings": [
+        4
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "Name": "Wacom CTH-301",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 107,
+      "Height": 67,
+      "MaxX": 10690,
+      "MaxY": 6680
+    },
+    "Pen": {
+      "MaxPressure": 511,
+      "Buttons": {
+        "ButtonCount": 1
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 792,
+      "InputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.BambooPad.BambooPadReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

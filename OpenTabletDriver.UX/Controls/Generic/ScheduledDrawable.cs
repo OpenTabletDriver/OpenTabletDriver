@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             base.ParentWindow.Closing += (sender, e) => CompositionScheduler.Unregister(OnCompose);
             base.ParentWindow.WindowStateChanged += (sender, e) =>
             {
-                if (base.ParentWindow.WindowState == WindowState.Minimized)
+                if (base.ParentWindow == null || base.ParentWindow.WindowState == WindowState.Minimized)
                     CompositionScheduler.Unregister(OnCompose);
                 else
                     CompositionScheduler.Register(OnCompose);

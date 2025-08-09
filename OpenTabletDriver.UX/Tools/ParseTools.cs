@@ -7,15 +7,15 @@ namespace OpenTabletDriver.UX.Tools
     {
         public static float? ToNullableFloat(string str) => float.TryParse(str, out var val) ? val : (float?)null;
         public static float ToFloat(string str) => ToNullableFloat(str) ?? 0f;
-        
+
         public static int? ToNullableInt(string str) => int.TryParse(str, out var val) ? val : (int?)null;
         public static int ToInt(string str) => ToNullableInt(str) ?? 0;
-                
+
         public static uint? ToNullableUInt(string str) => uint.TryParse(str, out var val) ? val : (uint?)null;
         public static uint ToUInt(string str) => ToNullableUInt(str) ?? 0;
 
         public static bool TryGetHexValue(string str, out byte value) => byte.TryParse(str.Replace("0x", string.Empty), NumberStyles.HexNumber, null, out value);
-        
+
         public static string ToHexString(byte[] value)
         {
             if (value is byte[] array)
@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX.Tools
             else
                 return string.Empty;
         }
-        
+
         public static byte[] ToByteArray(string hex)
         {
             var raw = hex.Split(' ');

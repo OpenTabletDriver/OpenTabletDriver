@@ -1,0 +1,31 @@
+{
+  "Name": "Wacom Cintiq Pro 27 (DTH-271)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 600.16,
+      "Height": 339.34,
+      "MaxX": 120032,
+      "MaxY": 67868
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 3
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 960,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

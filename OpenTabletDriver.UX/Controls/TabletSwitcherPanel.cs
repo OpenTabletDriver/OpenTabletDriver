@@ -124,8 +124,8 @@ namespace OpenTabletDriver.UX.Controls
                 if (tablets.Any())
                 {
                     var tabletsWithoutProfile = from tablet in tablets
-                        where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
-                        select tablet;
+                                                where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
+                                                select tablet;
 
                     foreach (var tablet in tabletsWithoutProfile)
                         profiles.Generate(tablet);
@@ -138,11 +138,14 @@ namespace OpenTabletDriver.UX.Controls
                         this.SelectedIndex = 0;
                         this.OnSelectedValueChanged(EventArgs.Empty);
                     }
+
+                    this.Enabled = true;
                 }
                 else
                 {
                     this.SelectedValue = null;
                     this.OnSelectedValueChanged(EventArgs.Empty);
+                    this.Enabled = false;
                 }
             }
         }

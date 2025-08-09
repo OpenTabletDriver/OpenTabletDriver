@@ -1,0 +1,34 @@
+{
+  "Name": "Huion Kamvas 20",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 434.75,
+      "Height": 238.75,
+      "MaxX": 86950,
+      "MaxY": 47750
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "HUION_M192_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

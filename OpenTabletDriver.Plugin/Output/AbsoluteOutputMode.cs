@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Numerics;
+﻿using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -138,8 +137,27 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
+            // this should be ordered from least to most chance of having a
+            // dependency to another pointer property.
+            if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
+                hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
+                eraserHandler.SetEraser(eraserReport.Eraser);
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+                tiltHandler.SetTilt(tiltReport.Tilt);
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler
+                && Tablet?.Properties.Specifications.Pen != null)
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
+
+            // make sure to set the position last
             if (report is IAbsolutePositionReport absReport)
                 Pointer.SetPosition(absReport.Position);
+            if (Pointer is ISynchronousPointer synchronousPointer)
+            {
+                if (report is OutOfRangeReport)
+                    synchronousPointer.Reset();
+                synchronousPointer.Flush();
+            }
         }
     }
 }

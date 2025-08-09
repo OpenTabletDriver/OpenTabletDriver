@@ -1,0 +1,40 @@
+{
+  "Name": "UGEE M708",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 200,
+      "Height": 120,
+      "MaxX": 40000,
+      "MaxY": 24000
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 129,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetAuxReportParser",
+      "DeviceStrings": {
+        "4": "F401-20111028",
+        "5": "UC-LOIC",
+        "6": "TABLET 1060"
+      },
+      "InitializationStrings": [
+        100,
+        123
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

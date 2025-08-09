@@ -30,6 +30,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                             Text = "Display",
                             Content = displayAreaEditor = new DisplayAreaEditor
                             {
+                                InvalidForegroundError = "Invalid display area.",
                                 Unit = "px"
                             }
                         }
@@ -43,6 +44,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                             Content = tabletAreaEditor = new TabletAreaEditor
                             {
                                 InvalidBackgroundError = "No tablet detected.",
+                                InvalidForegroundError = "Invalid tablet area.",
                                 Unit = "mm"
                             }
                         }
@@ -76,8 +78,10 @@ namespace OpenTabletDriver.UX.Controls.Output
         internal DisplayAreaEditor displayAreaEditor;
         internal TabletAreaEditor tabletAreaEditor;
 
+        private bool arLockHooked;
         private bool handlingArLock;
         private bool handlingForcedArConstraint;
+        private bool handlingSettingsChanging;
         private float? prevDisplayWidth;
         private float? prevDisplayHeight;
         private DirectBinding<float> displayWidth;
@@ -98,7 +102,12 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         public event EventHandler<EventArgs> SettingsChanged;
 
-        protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnSettingsChanged()
+        {
+            handlingSettingsChanging = true;
+            SettingsChanged?.Invoke(this, new EventArgs());
+            handlingSettingsChanging = false;
+        }
 
         public BindableBinding<AbsoluteModeEditor, AbsoluteModeSettings> SettingsBinding
         {
@@ -116,26 +125,31 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HookAspectRatioLock(object sender, EventArgs args)
         {
-            if (Settings?.LockAspectRatio ?? false)
+            lock (this)
             {
-                lock (this)
+                if (Settings?.LockAspectRatio ?? false)
                 {
+                    if (arLockHooked)
+                        return;
+
                     HandleAspectRatioLock(tabletAreaEditor, EventArgs.Empty);
 
                     displayWidth.DataValueChanged += HandleAspectRatioLock;
                     displayHeight.DataValueChanged += HandleAspectRatioLock;
                     tabletWidth.DataValueChanged += HandleAspectRatioLock;
                     tabletHeight.DataValueChanged += HandleAspectRatioLock;
+                    arLockHooked = true;
                 }
-            }
-            else
-            {
-                lock (this)
+                else
                 {
+                    if (!arLockHooked)
+                        return;
+
                     displayWidth.DataValueChanged -= HandleAspectRatioLock;
                     displayHeight.DataValueChanged -= HandleAspectRatioLock;
                     tabletWidth.DataValueChanged -= HandleAspectRatioLock;
                     tabletHeight.DataValueChanged -= HandleAspectRatioLock;
+                    arLockHooked = false;
                 }
             }
         }
@@ -179,19 +193,37 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void HandleAspectRatioLock(object sender, EventArgs e)
         {
-            if (!handlingArLock)
+            if (!handlingArLock && !handlingSettingsChanging)
             {
                 // Avoids looping
                 handlingArLock = true;
 
                 if (sender == tabletWidth || sender == tabletAreaEditor)
-                    tabletHeight.DataValue = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                {
+                    var fullHeight = tabletAreaEditor.FullAreaBounds.Height;
+                    var scaledHeight = displayHeight.DataValue / displayWidth.DataValue * tabletWidth.DataValue;
+                    if (tabletAreaEditor.FullAreaCommandExecuting && scaledHeight > fullHeight)
+                    {
+                        tabletHeight.DataValue = fullHeight;
+                        tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * fullHeight;
+                    }
+                    else
+                    {
+                        tabletHeight.DataValue = scaledHeight;
+                    }
+                }
                 else if (sender == tabletHeight)
+                {
                     tabletWidth.DataValue = displayWidth.DataValue / displayHeight.DataValue * tabletHeight.DataValue;
+                }
                 else if ((sender == displayWidth) && prevDisplayWidth is float prevWidth)
+                {
                     tabletWidth.DataValue *= displayWidth.DataValue / prevWidth;
+                }
                 else if ((sender == displayHeight) && prevDisplayHeight is float prevHeight)
+                {
                     tabletHeight.DataValue *= displayHeight.DataValue / prevHeight;
+                }
 
                 prevDisplayWidth = displayWidth.DataValue;
                 prevDisplayHeight = displayHeight.DataValue;
@@ -213,17 +245,20 @@ namespace OpenTabletDriver.UX.Controls.Output
         private void ForceAreaConstraint(object sender, EventArgs args)
         {
             var display = (AreaDisplay)sender;
-            if (!handlingForcedArConstraint && display.LockToUsableArea && display.Area != null)
+            if (!handlingForcedArConstraint && !handlingSettingsChanging && display.LockToUsableArea && display.Area != null)
             {
                 handlingForcedArConstraint = true;
                 var fullBounds = display.FullAreaBounds;
 
                 if (fullBounds.Width != 0 && fullBounds.Height != 0)
                 {
-                    if (display.Area.Width > fullBounds.Width)
-                        display.Area.Width = fullBounds.Width;
-                    if (display.Area.Height > fullBounds.Height)
-                        display.Area.Height = fullBounds.Height;
+                    if (display.Area.Rotation % 180 == 0)
+                    {
+                        if (display.Area.Width > fullBounds.Width)
+                            display.Area.Width = fullBounds.Width;
+                        if (display.Area.Height > fullBounds.Height)
+                            display.Area.Height = fullBounds.Height;
+                    }
 
                     var correction = GetOutOfBoundsAmount(display, display.Area.X, display.Area.Y);
                     display.Area.X -= correction.X;

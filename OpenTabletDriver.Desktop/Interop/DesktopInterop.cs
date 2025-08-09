@@ -1,10 +1,12 @@
 using System;
 using System.Diagnostics;
+using Octokit;
 using OpenTabletDriver.Desktop.Interop.Display;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
+using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
@@ -20,10 +22,11 @@ namespace OpenTabletDriver.Desktop.Interop
         {
         }
 
+        private static IUpdater updater;
         private static IVirtualScreen virtualScreen;
         private static IAbsolutePointer absolutePointer;
         private static IRelativePointer relativePointer;
-        private static IVirtualTablet virtualTablet;
+        private static IPressureHandler virtualTablet;
         private static IVirtualKeyboard virtualKeyboard;
 
         public static void Open(string path)
@@ -60,30 +63,40 @@ namespace OpenTabletDriver.Desktop.Interop
             }
         }
 
+        public static IGitHubClient GitHubClient => new GitHubClient(new ProductHeaderValue("OpenTabletDriver"));
+
+        public static IUpdater Updater => CurrentPlatform switch
+        {
+            PluginPlatform.Windows => updater ??= new WindowsUpdater(AppInfo.Current, GitHubClient),
+            PluginPlatform.MacOS => updater ??= new MacOSUpdater(AppInfo.Current, GitHubClient),
+            _ => null
+        };
+
         public static ITimer Timer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsTimer(),
-            PluginPlatform.Linux   => new LinuxTimer(),
-            _                      => new FallbackTimer()
+            PluginPlatform.Linux => new LinuxTimer(),
+            PluginPlatform.MacOS => new MacOSTimer(),
+            _ => new FallbackTimer()
         };
 
         public static IAbsolutePointer AbsolutePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsAbsolutePointer(),
-            PluginPlatform.Linux   => absolutePointer ??= new EvdevAbsolutePointer(),
-            PluginPlatform.MacOS   => new MacOSAbsolutePointer(),
-            _                      => null
+            PluginPlatform.Linux => absolutePointer ??= new EvdevAbsolutePointer(),
+            PluginPlatform.MacOS => new MacOSAbsolutePointer(),
+            _ => null
         };
 
         public static IRelativePointer RelativePointer => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsRelativePointer(),
-            PluginPlatform.Linux   => relativePointer ??= new EvdevRelativePointer(),
-            PluginPlatform.MacOS   => new MacOSRelativePointer(),
-            _                      => null
+            PluginPlatform.Linux => relativePointer ??= new EvdevRelativePointer(),
+            PluginPlatform.MacOS => new MacOSRelativePointer(),
+            _ => null
         };
 
-        public static IVirtualTablet VirtualTablet => CurrentPlatform switch
+        public static IPressureHandler VirtualTablet => CurrentPlatform switch
         {
             PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
             _ => null
@@ -92,9 +105,9 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IVirtualKeyboard VirtualKeyboard => CurrentPlatform switch
         {
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
-            PluginPlatform.Linux   => virtualKeyboard ??= new EvdevVirtualKeyboard(),
-            PluginPlatform.MacOS   => new MacOSVirtualKeyboard(),
-            _                      => null
+            PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
+            PluginPlatform.MacOS => new MacOSVirtualKeyboard(),
+            _ => null
         };
 
         public static IVirtualScreen VirtualScreen => virtualScreen ??= CurrentPlatform switch

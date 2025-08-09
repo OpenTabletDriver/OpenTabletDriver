@@ -1,0 +1,37 @@
+{
+  "Name": "VEIKK VK1060PRO",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 158.75,
+      "MaxX": 50800,
+      "MaxY": 31750
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 12267,
+      "ProductID": 7,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "OutputInitReport": [
+        "CQEE",
+        "CQIC",
+        "CQMC"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

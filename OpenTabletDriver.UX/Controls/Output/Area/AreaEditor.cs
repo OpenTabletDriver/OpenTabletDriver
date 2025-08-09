@@ -5,6 +5,7 @@ using System.Numerics;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Native.Linux.Evdev.Structs;
 using OpenTabletDriver.UX.Controls.Generic.Text;
 using OpenTabletDriver.UX.Controls.Utilities;
 
@@ -105,6 +106,11 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             x.ValueBinding.Bind(xBinding);
             y.ValueBinding.Bind(yBinding);
 
+            width.ValueChanged += (_, _) => Display.Invalidate();
+            height.ValueChanged += (_, _) => Display.Invalidate();
+            x.ValueChanged += (_, _) => Display.Invalidate();
+            y.ValueChanged += (_, _) => Display.Invalidate();
+
             Display.AreaBinding.Bind(AreaBinding);
             Display.LockToUsableAreaBinding.Bind(LockToUsableAreaBinding);
             Display.UnitBinding.Bind(UnitBinding);
@@ -126,6 +132,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         public AreaDisplay Display { get; }
 
+        public bool FullAreaCommandExecuting { get; private set; }
+
         public override IEnumerable<RectangleF> AreaBounds
         {
             set
@@ -146,6 +154,8 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 {
                     this.FullAreaBounds = RectangleF.Empty;
                 }
+
+                this.Invalidate();
             }
             get => this.areaBounds;
         }
@@ -235,10 +245,12 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                                 MenuText = "Full area",
                                 Action = () =>
                                 {
+                                    FullAreaCommandExecuting = true;
                                     Area.Height = FullAreaBounds.Height;
                                     Area.Width = FullAreaBounds.Width;
                                     Area.Y = FullAreaBounds.Center.Y;
                                     Area.X = FullAreaBounds.Center.X;
+                                    FullAreaCommandExecuting = false;
                                 }
                             },
                             new ActionCommand

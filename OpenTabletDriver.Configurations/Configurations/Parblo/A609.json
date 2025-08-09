@@ -1,0 +1,34 @@
+{
+  "Name": "Parblo A609",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 223.52,
+      "Height": 139.7,
+      "MaxX": 44704,
+      "MaxY": 27940
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 1
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 2903,
+      "ProductID": 37009,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1.IntuosV1ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

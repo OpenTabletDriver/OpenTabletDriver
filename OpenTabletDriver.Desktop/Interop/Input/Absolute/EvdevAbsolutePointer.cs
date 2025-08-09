@@ -35,8 +35,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 EventCode.BTN_LEFT,
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
-                EventCode.BTN_FORWARD,
-                EventCode.BTN_BACK);
+                EventCode.BTN_SIDE,
+                EventCode.BTN_EXTRA);
 
             var result = Device.Initialize();
             switch (result)
@@ -54,7 +54,6 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)pos.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)pos.Y);
-            Device.Sync();
         }
     }
 }

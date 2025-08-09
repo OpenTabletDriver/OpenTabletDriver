@@ -2,10 +2,10 @@
   "Name": "Gaomon M106K",
   "Specifications": {
     "Digitizer": {
-      "Width": 200.0,
-      "Height": 125.0,
-      "MaxX": 40000.0,
-      "MaxY": 25000.0
+      "Width": 200,
+      "Height": 125,
+      "MaxX": 40000,
+      "MaxY": 25000
     },
     "Pen": {
       "MaxPressure": 2047,
@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "OEM02_T151_\\d{6}$"
       },
@@ -36,7 +31,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

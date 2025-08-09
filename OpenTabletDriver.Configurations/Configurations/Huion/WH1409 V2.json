@@ -2,10 +2,10 @@
   "Name": "Huion WH1409 V2",
   "Specifications": {
     "Digitizer": {
-      "Width": 350.0,
-      "Height": 218.0,
-      "MaxX": 70000.0,
-      "MaxY": 43600.0
+      "Width": 350,
+      "Height": 218,
+      "MaxX": 70000,
+      "MaxY": 43600
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "HUION_T188_\\d{6}$"
       },
@@ -36,7 +31,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

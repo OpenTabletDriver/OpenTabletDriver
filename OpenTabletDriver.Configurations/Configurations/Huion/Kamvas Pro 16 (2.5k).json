@@ -1,0 +1,46 @@
+{
+  "Name": "Huion Kamvas Pro 16 (2.5k)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 349.63,
+      "Height": 196.665,
+      "MaxX": 69926,
+      "MaxY": 39333
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "HUION_M214_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "DeviceStrings": {
+        "201": "HUION_M20q_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ]
+}

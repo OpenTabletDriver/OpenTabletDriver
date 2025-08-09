@@ -1,0 +1,37 @@
+{
+  "Name": "Huion RTE-100",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 121.92,
+      "Height": 76.19,
+      "MaxX": 24384,
+      "MaxY": 15238
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "DeviceStrings": {
+        "201": "HUION_T217_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

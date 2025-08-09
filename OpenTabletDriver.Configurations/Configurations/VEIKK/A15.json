@@ -2,10 +2,10 @@
   "Name": "VEIKK A15",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "MaxX": 50800,
+      "MaxY": 30480
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,26 +15,21 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 12267,
       "ProductID": 4,
       "InputReportLength": 9,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.SkipByteTabletReportParser",
-      "FeatureInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkA15ReportParser",
       "OutputInitReport": [
-        "CQEE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+        "CQEE",
+        "CQIC",
+        "CQMC"
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

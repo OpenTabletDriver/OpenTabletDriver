@@ -1,7 +1,7 @@
 using System.IO;
 using Newtonsoft.Json;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Desktop.Converters;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {
@@ -21,7 +21,20 @@ namespace OpenTabletDriver.Desktop
         private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
             Log.Exception(args.ErrorContext.Error);
-            args.ErrorContext.Handled = true;
+        }
+
+        public static bool TryDeserialize<T>(FileInfo file, out T value)
+        {
+            try
+            {
+                value = Deserialize<T>(file);
+                return true;
+            }
+            catch (JsonException)
+            {
+                value = default;
+                return false;
+            }
         }
 
         public static T Deserialize<T>(FileInfo file)

@@ -13,9 +13,14 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : OutputMode
     {
-        private Vector2? lastPos;
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
-        private bool skipReport;
+        private Vector2? lastTransformedPos;
+        private Vector2 lastReadPos;
+        private bool outOfRange;
+
+        // for handling detection of low resetTimes
+        private uint _resets;
+        private bool _warnedBadResets = false;
 
         /// <summary>
         /// The class in which the final relative positioned output is handled.
@@ -41,6 +46,7 @@ namespace OpenTabletDriver.Plugin.Output
         }
 
         private float rotation;
+        private TimeSpan _resetTime;
 
         /// <summary>
         /// The angle of rotation to be applied to the input.
@@ -58,12 +64,19 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The delay in which to reset the last known position in relative positioning.
         /// </summary>
-        public TimeSpan ResetTime { set; get; }
+        public TimeSpan ResetTime
+        {
+            set
+            {
+                _resetTime = value;
+                _resets = 0;
+                _warnedBadResets = false;
+            }
+            get => _resetTime;
+        }
 
         protected override Matrix3x2 CreateTransformationMatrix()
         {
-            this.skipReport = true; // Prevents cursor from jumping on sensitivity change
-
             var transform = Matrix3x2.CreateRotation(
                 (float)(-Rotation * System.Math.PI / 180));
 
@@ -73,30 +86,78 @@ namespace OpenTabletDriver.Plugin.Output
                 sensitivity.Y * ((digitizer?.Height / digitizer?.MaxY) ?? 0.01f));
         }
 
+        public override void Read(IDeviceReport deviceReport)
+        {
+            // intercept positional reports
+            if (deviceReport is IAbsolutePositionReport report)
+            {
+                var deltaTime = stopwatch.Restart();
+
+                // reset origin when exceeding the reset delay
+                if (deltaTime > ResetTime)
+                {
+                    outOfRange = true;
+                    lastTransformedPos = null;
+                    _resets++;
+                }
+                else _resets = 0;
+
+                if (!_warnedBadResets &&
+                    (_warnedBadResets =
+                        _resets > 10))
+                    Log.WriteNotify("RelativeOutputMode",
+                        $"Position reset spam detected - the configured reset time ({ResetTime.TotalMilliseconds} ms) is likely too low",
+                        LogLevel.Warning);
+
+                // skip duplicate reports sent by tablets right after going into
+                // range from an out of range state.
+                if (outOfRange && report.Position == lastReadPos)
+                    return;
+
+                outOfRange = false;
+                lastReadPos = report.Position;
+            }
+            else if (deviceReport is OutOfRangeReport)
+            {
+                outOfRange = true;
+            }
+
+            base.Read(deviceReport);
+        }
+
         protected override IAbsolutePositionReport Transform(IAbsolutePositionReport report)
         {
-            var deltaTime = stopwatch.Restart();
+            var pos = Vector2.Transform(report.Position, TransformationMatrix);
+            var delta = pos - lastTransformedPos;
 
-            var pos = Vector2.Transform(report.Position, this.TransformationMatrix);
-            var delta = pos - this.lastPos;
-
-            this.lastPos = pos;
-            report.Position = deltaTime < ResetTime ? delta.GetValueOrDefault() : Vector2.Zero;
-
-            if (skipReport)
-            {
-                skipReport = false;
-                return null;
-            }
+            lastTransformedPos = pos;
+            report.Position = delta.GetValueOrDefault();
 
             return report;
         }
 
         protected override void OnOutput(IDeviceReport report)
         {
+            // this should be ordered from least to most chance of having a
+            // dependency to another pointer property.
+            if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
+                hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
+                eraserHandler.SetEraser(eraserReport.Eraser);
+            if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler)
+                tiltHandler.SetTilt(tiltReport.Tilt);
+            if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler
+                && Tablet?.Properties.Specifications.Pen != null)
+                pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
+
+            // make sure to set the position last
             if (report is IAbsolutePositionReport absReport)
+                Pointer.SetPosition(absReport.Position);
+            if (Pointer is ISynchronousPointer synchronousPointer)
             {
-                Pointer.Translate(absReport.Position);
+                if (report is OutOfRangeReport)
+                    synchronousPointer.Reset();
+                synchronousPointer.Flush();
             }
         }
     }

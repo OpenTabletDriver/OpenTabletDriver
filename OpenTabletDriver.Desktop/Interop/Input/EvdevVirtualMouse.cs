@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace OpenTabletDriver.Desktop.Interop
 {
     [PluginIgnore]
-    public abstract class EvdevVirtualMouse : IVirtualMouse, IDisposable
+    public abstract class EvdevVirtualMouse : IMouseButtonHandler, ISynchronousPointer, IDisposable
     {
         protected EvdevDevice Device { set; get; }
 
@@ -15,7 +15,6 @@ namespace OpenTabletDriver.Desktop.Interop
             if (GetCode(button) is EventCode code)
             {
                 Device.Write(EventType.EV_KEY, code, 1);
-                Device.Sync();
             }
         }
 
@@ -24,23 +23,31 @@ namespace OpenTabletDriver.Desktop.Interop
             if (GetCode(button) is EventCode code)
             {
                 Device.Write(EventType.EV_KEY, code, 0);
-                Device.Sync();
             }
         }
 
         protected virtual EventCode? GetCode(MouseButton button) => button switch
         {
-            MouseButton.Left     => EventCode.BTN_LEFT,
-            MouseButton.Middle   => EventCode.BTN_MIDDLE,
-            MouseButton.Right    => EventCode.BTN_RIGHT,
-            MouseButton.Forward  => EventCode.BTN_FORWARD,
-            MouseButton.Backward => EventCode.BTN_BACK,
-            _                    => null
+            MouseButton.Left => EventCode.BTN_LEFT,
+            MouseButton.Middle => EventCode.BTN_MIDDLE,
+            MouseButton.Right => EventCode.BTN_RIGHT,
+            MouseButton.Backward => EventCode.BTN_SIDE,
+            MouseButton.Forward => EventCode.BTN_EXTRA,
+            _ => null
         };
 
         public virtual void Dispose()
         {
             Device?.Dispose();
+        }
+
+        public void Flush()
+        {
+            Device.Sync();
+        }
+
+        public virtual void Reset()
+        {
         }
     }
 }

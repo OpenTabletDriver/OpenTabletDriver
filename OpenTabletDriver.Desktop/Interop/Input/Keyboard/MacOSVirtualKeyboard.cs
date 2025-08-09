@@ -16,6 +16,20 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             if (EtoKeysymToVK.TryGetValue(key, out var code))
             {
                 var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
+                var flag = fromCGKeyCode((CGKeyCode)code);
+                var currentFlag = CGEventSourceFlagsState(CGEventSourceStateHIDSystemState) & (0xffffffff ^ 0x20000100);
+                if (flag != 0)
+                {
+                    if (!isPress)
+                    {
+                        currentFlag &= ~(ulong)flag;
+                    }
+                    else
+                    {
+                        currentFlag |= (ulong)flag;
+                    }
+                }
+                CGEventSetFlags(keyEvent, currentFlag);
                 CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
                 CFRelease(keyEvent);
             }
@@ -152,14 +166,29 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "RightShift", CGKeyCode.kVK_RightShift },
             { "LeftControl", CGKeyCode.kVK_Control },
             { "RightControl", CGKeyCode.kVK_RightControl },
-            { "LeftAlt", CGKeyCode.kVK_Command },
-            { "RightAlt", CGKeyCode.kVK_RightCommand },
-            { "LeftApplication", CGKeyCode.kVK_Option },
-            { "RightApplication", CGKeyCode.kVK_RightOption },
+            { "LeftAlt", CGKeyCode.kVK_Option },
+            { "RightAlt", CGKeyCode.kVK_RightOption },
+            { "LeftApplication", CGKeyCode.kVK_Command },
+            { "RightApplication", CGKeyCode.kVK_RightCommand },
             { "Shift", CGKeyCode.kVK_Shift },
-            { "Alt", CGKeyCode.kVK_Command },
+            { "Alt", CGKeyCode.kVK_Option },
             { "Control", CGKeyCode.kVK_Control },
-            { "Application", CGKeyCode.kVK_Option },
+            { "Application", CGKeyCode.kVK_Command },
         };
+
+        private CGEventFlags fromCGKeyCode(CGKeyCode code)
+        {
+            return code switch
+            {
+                CGKeyCode.kVK_CapsLock => CGEventFlags.kCGEventFlagMaskAlphaShift,
+                CGKeyCode.kVK_Command or CGKeyCode.kVK_RightCommand => CGEventFlags.kCGEventFlagMaskCommand,
+                CGKeyCode.kVK_Control or CGKeyCode.kVK_RightControl => CGEventFlags.kCGEventFlagMaskControl,
+                CGKeyCode.kVK_Function => CGEventFlags.kCGEventFlagMaskSecondaryFn,
+                CGKeyCode.kVK_Help => CGEventFlags.kCGEventFlagMaskHelp,
+                CGKeyCode.kVK_Option or CGKeyCode.kVK_RightOption => CGEventFlags.kCGEventFlagMaskAlternate,
+                CGKeyCode.kVK_Shift or CGKeyCode.kVK_RightShift => CGEventFlags.kCGEventFlagMaskShift,
+                _ => 0
+            };
+        }
     }
 }

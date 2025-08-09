@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Native.Linux.Xorg
 
     public static class XRandr
     {
-        private const string libXRandr = "libXrandr";
+        private const string libXRandr = "libXrandr.so.2";
 
         [DllImport(libXRandr, EntryPoint = "XRRGetMonitors")]
         public unsafe extern static XRRMonitorInfo* XRRGetMonitors(Display dpy, Window window, bool get_active, out int nmonitors);

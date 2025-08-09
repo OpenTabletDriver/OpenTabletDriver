@@ -1,0 +1,37 @@
+{
+  "Name": "XP-Pen Artist 16",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 344.16,
+      "Height": 193.59,
+      "MaxX": 34416,
+      "MaxY": 19359
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 77,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetAuxReportParser",
+      "InitializationStrings": [
+        100,
+        123
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1",
+    "Interface": "0"
+  }
+}

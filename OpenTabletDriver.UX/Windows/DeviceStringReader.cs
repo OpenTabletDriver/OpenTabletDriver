@@ -11,7 +11,7 @@ namespace OpenTabletDriver.UX.Windows
     public class DeviceStringReader : DesktopForm
     {
         public DeviceStringReader()
-            : base()
+            : base(Application.Instance.MainForm)
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             sendRequestButton.Click += async (_, _) => await SendRequestWithTimeout(stringIndexText.Text,
-                (s) => deviceStringText.Text = s,
+                (s) => deviceStringText.Text = s != null ? System.Text.Json.JsonEncodedText.Encode(s).ToString() : s,
                 (e) => MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error),
                 () => MessageBox.Show(OperationTimedOut)
             );
@@ -112,15 +112,11 @@ namespace OpenTabletDriver.UX.Windows
                     return;
             }
 
-            var fileDialog = new SaveFileDialog
-            {
-                Title = "Save string dump to...",
-                Directory = new Uri(Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents)),
-                Filters =
-                {
-                    new FileFilter("String dump", ".txt")
-                }
-            };
+            var fileDialog = Extensions.SaveFileDialog(
+                "Save string dump to...",
+                Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
+                [new FileFilter("String dump", ".txt")]
+            );
 
             switch (fileDialog.ShowDialog(this))
             {

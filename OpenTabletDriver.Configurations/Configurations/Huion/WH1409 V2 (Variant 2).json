@@ -1,0 +1,37 @@
+{
+  "Name": "Huion WH1409 V2 (Variant 2)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 350.52,
+      "Height": 219.0623,
+      "MaxX": 55200,
+      "MaxY": 34498
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 12
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "DeviceStrings": {
+        "201": "HUION_T153_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

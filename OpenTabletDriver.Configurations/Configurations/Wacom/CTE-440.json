@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 127.6,
       "Height": 92.8,
-      "MaxX": 10208.0,
-      "MaxY": 7424.0
+      "MaxX": 10208,
+      "MaxY": 7424
     },
     "Pen": {
       "MaxPressure": 511,
@@ -16,44 +16,31 @@
     "AuxiliaryButtons": {
       "ButtonCount": 2
     },
-    "MouseButtons": null,
-    "Touch": null
+    "MouseButtons": {
+      "ButtonCount": 3
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 21,
       "InputReportLength": 9,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser"
     },
     {
       "VendorID": 1386,
       "ProductID": 21,
       "InputReportLength": 8,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Bamboo.BambooReportParser",
       "FeatureInitReport": [
         "AgI="
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     },
     {
       "VendorID": 1386,
       "ProductID": 21,
       "InputReportLength": 10,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.WacomDriverIntuosReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.WacomDriverIntuosReportParser"
     }
   ],
   "AuxilaryDeviceIdentifiers": [
@@ -61,13 +48,7 @@
       "VendorID": 1386,
       "ProductID": 21,
       "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.AuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.AuxReportParser"
     }
-  ],
-  "Attributes": {}
+  ]
 }

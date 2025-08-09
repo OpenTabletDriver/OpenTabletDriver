@@ -29,6 +29,9 @@ namespace OpenTabletDriver.Desktop.Reflection
             PluginDirectory = pluginDirectory;
             TrashDirectory = trashDirectory;
             TemporaryDirectory = tempDirectory;
+
+            if (!PluginDirectory.Exists)
+                PluginDirectory.Create();
         }
 
         public DirectoryInfo PluginDirectory { get; }
@@ -49,9 +52,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 {
                     foreach (var file in PluginDirectory.GetFiles())
                     {
-                        var newPath = Path.Join(PluginDirectory.FullName, file.Name.Replace(file.Extension, string.Empty), file.Name);
-                        Directory.CreateDirectory(Directory.GetParent(newPath).FullName);
-                        file.MoveTo(newPath);
+                        Log.Write("Plugin", $"Unexpected file found: '{file.FullName}'", LogLevel.Warning);
                     }
                 }
 
@@ -80,35 +81,35 @@ namespace OpenTabletDriver.Desktop.Reflection
             // "Plugins" are directories that contain managed and unmanaged dll
             // These dlls are loaded into a PluginContext per directory
             directory.Refresh();
-            if (Plugins.All(p => p.Directory.Name != directory.Name))
-            {
-                if (directory.Exists)
-                {
-                    Log.Write("Plugin", $"Loading plugin '{directory.Name}'", LogLevel.Debug);
-                    var context = new DesktopPluginContext(directory);
-
-                    // Populate PluginTypes so desktop implementations can access them
-                    ImportTypes(context);
-                    Plugins.Add(context);
-                }
-                else
-                {
-                    Log.Write("Plugin", $"Tried to load a nonexistent plugin '{directory.Name}'", LogLevel.Warning);
-                }
-            }
-            else
+            if (Plugins.Any(p => p.Directory.Name == directory.Name))
             {
                 Log.Write("Plugin", $"Attempted to load the plugin {directory.Name} when it is already loaded.", LogLevel.Debug);
+                return;
+            }
+
+            Log.Write("Plugin", $"Loading plugin '{directory.Name}'", LogLevel.Debug);
+
+            try
+            {
+                var context = new DesktopPluginContext(directory);
+
+                // Populate PluginTypes so desktop implementations can access them
+                ImportTypes(context);
+                Plugins.Add(context);
+            }
+            catch
+            {
+                Log.Write("Plugin", $"Failed to completely load plugin '{directory.Name}'. Some problems may occur later. Please double check if this plugin is installed correctly or has any update.", LogLevel.Error, true);
             }
         }
 
         protected void ImportTypes(PluginContext context)
         {
             var types = from asm in context.Assemblies
-                where IsLoadable(asm)
-                from type in asm.GetExportedTypes()
-                where IsPluginType(type)
-                select type;
+                        where IsLoadable(asm)
+                        from type in asm.GetExportedTypes()
+                        where IsPluginType(type)
+                        select type;
 
             types.AsParallel().ForAll(type =>
             {

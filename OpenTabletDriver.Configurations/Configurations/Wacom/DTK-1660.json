@@ -1,0 +1,37 @@
+{
+  "Name": "Wacom Cintiq 16 (DTK1660)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 348.16,
+      "Height": 197.59,
+      "MaxX": 69632,
+      "MaxY": 39518
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 912,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    },
+    {
+      "VendorID": 1386,
+      "ProductID": 942,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}

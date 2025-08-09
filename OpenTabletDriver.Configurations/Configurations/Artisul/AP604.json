@@ -1,0 +1,28 @@
+{
+  "Name": "Artisul AP604",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 159,
+      "Height": 99.3,
+      "MaxX": 15900,
+      "MaxY": 9930
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 84,
+      "InputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser"
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

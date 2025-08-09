@@ -2,10 +2,10 @@
   "Name": "VEIKK A50",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "MaxX": 50800,
+      "MaxY": 30480
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -14,27 +14,31 @@
       }
     },
     "AuxiliaryButtons": {
-      "ButtonCount": 4
-    },
-    "MouseButtons": null,
-    "Touch": null
+      "ButtonCount": 12
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 12267,
       "ProductID": 3,
       "InputReportLength": 9,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.SkipByteTabletReportParser",
-      "FeatureInitReport": null,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkV1ReportParser",
       "OutputInitReport": [
         "CQEE"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
+    },
+    {
+      "VendorID": 12267,
+      "ProductID": 3,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkV1ReportParser",
+      "OutputInitReport": [
+        "CQEE"
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Plugin.Attributes
 
         public PluginPlatform Platform { get; }
 
-        public bool IsCurrentPlatform => 
+        public bool IsCurrentPlatform =>
             (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && Platform.HasFlag(PluginPlatform.Windows)) ||
             (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && Platform.HasFlag(PluginPlatform.Linux)) ||
             (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && Platform.HasFlag(PluginPlatform.MacOS)) ||

@@ -1,0 +1,35 @@
+{
+  "Name": "XP-Pen Artist 16 (2nd Gen)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 340.99,
+      "Height": 191.81,
+      "MaxX": 68198,
+      "MaxY": 38362
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 10
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2380,
+      "InputReportLength": 12,
+      "OutputReportLength": 33,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

@@ -12,6 +12,12 @@ namespace OpenTabletDriver.Console
     {
         public static async Task Main(string[] args)
         {
+            if (!Instance.Exists("OpenTabletDriver.Daemon"))
+            {
+                System.Console.WriteLine("OpenTabletDriver Daemon not running");
+                Environment.Exit(1);
+            }
+
             await Driver.Connect();
             await Root.InvokeAsync(args);
         }
@@ -26,13 +32,14 @@ namespace OpenTabletDriver.Console
                 Name = "otd"
             };
 
-            root.AddRange(IOCommands);
-            root.AddRange(ActionCommands);
-            root.AddRange(DebugCommands);
-            root.AddRange(ModifyCommands);
-            root.AddRange(RequestCommands);
-            root.AddRange(ListCommands);
-            root.AddRange(ScriptingCommands);
+            root.AddCommands(IOCommands);
+            root.AddCommands(ActionCommands);
+            root.AddCommands(DebugCommands);
+            root.AddCommands(ModifyCommands);
+            root.AddCommands(RequestCommands);
+            root.AddCommands(UpdateCommands);
+            root.AddCommands(ListCommands);
+            root.AddCommands(ScriptingCommands);
 
             return root;
         }
@@ -40,7 +47,9 @@ namespace OpenTabletDriver.Console
         private static readonly IEnumerable<Command> IOCommands = new Command[]
         {
             CreateCommand<FileInfo>(LoadSettings, "Load settings from a file", "load"),
-            CreateCommand<FileInfo>(SaveSettings, "Save settings to a file", "save")
+            CreateCommand<FileInfo>(SaveSettings, "Save settings to a file", "save"),
+            CreateCommand<string>(ApplyPreset, "Apply a preset from the Presets directory", "preset"),
+            CreateCommand<string>(SavePreset, "Save the current settings to the Presets directory")
         };
 
         private static readonly IEnumerable<Command> ActionCommands = new Command[]
@@ -83,7 +92,13 @@ namespace OpenTabletDriver.Console
             CreateCommand(GetTools, "Gets the currently enabled tools")
         };
 
-        private static IEnumerable<Command> ListCommands = new Command[]
+        private static readonly IEnumerable<Command> UpdateCommands = new Command[]
+        {
+            CreateCommand(HasUpdate, "Check for any updates"),
+            CreateCommand(InstallUpdate, "Install update")
+        };
+
+        private static readonly IEnumerable<Command> ListCommands = new Command[]
         {
             CreateCommand(ListOutputModes, "Lists all available output modes"),
             CreateCommand(ListFilters, "Lists all available filters"),

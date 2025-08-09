@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
                 auxByte.IsBitSet(7),
             };
         }
-        
+
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
     }

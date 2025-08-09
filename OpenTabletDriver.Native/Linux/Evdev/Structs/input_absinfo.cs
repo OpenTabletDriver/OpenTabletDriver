@@ -10,6 +10,6 @@ namespace OpenTabletDriver.Native.Linux.Evdev.Structs
         public int maximum;
         public int fuzz;
         public int flat;
-	    public int resolution;
+        public int resolution;
     }
 }

@@ -17,6 +17,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter.Pages
                 "Plugins can be downloaded from the plugin manager at your own risk.",
                 "The plugin manager can be found in the Plugins menu in the main window.",
                 "Filters modify the output of the tablet, an example of this is smoothing.",
+                "Using multiple filters at once can cause unexpected effects.",
                 "Tools don't directly interfere with or modify the output; they instead add new functionality to OpenTabletDriver.",
                 new PaddingSpacerItem()
             };

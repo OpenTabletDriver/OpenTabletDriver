@@ -73,12 +73,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                             if (uri.IsFile && File.Exists(uri.LocalPath))
                             {
                                 var fileInfo = new FileInfo(uri.LocalPath);
-                                return fileInfo.Extension switch
-                                {
-                                    ".zip" => true,
-                                    ".dll" => true,
-                                    _ => false
-                                };
+                                return fileInfo.Extension == ".zip";
                             }
                             return false;
                         });

@@ -2,10 +2,10 @@
   "Name": "Wacom PTH-660",
   "Specifications": {
     "Digitizer": {
-      "Width": 224.0,
-      "Height": 148.0,
-      "MaxX": 44800.0,
-      "MaxY": 29600.0
+      "Width": 224,
+      "Height": 148,
+      "MaxX": 44800,
+      "MaxY": 29600
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,32 +15,20 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 855,
       "InputReportLength": 192,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser"
     },
     {
       "VendorID": 1386,
       "ProductID": 864,
       "InputReportLength": 361,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser"
     }
   ],
   "AuxilaryDeviceIdentifiers": [
@@ -48,13 +36,7 @@
       "VendorID": 1386,
       "ProductID": 855,
       "InputReportLength": 44,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser"
     }
-  ],
-  "Attributes": {}
+  ]
 }

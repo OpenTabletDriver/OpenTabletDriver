@@ -1,0 +1,48 @@
+{
+  "Name": "Turcom TS-6580",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 203.2,
+      "Height": 127,
+      "MaxX": 32000,
+      "MaxY": 20000
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "DeviceStrings": {
+        "6": "Huion",
+        "121": "M508"
+      },
+      "InitializationStrings": [
+        100
+      ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 16,
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "DeviceStrings": {
+        "6": "Huion",
+        "121": "M508"
+      },
+      "InitializationStrings": [
+        100
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

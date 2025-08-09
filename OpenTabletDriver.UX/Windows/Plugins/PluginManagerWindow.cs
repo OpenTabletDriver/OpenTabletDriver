@@ -16,6 +16,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
     public class PluginManagerWindow : DesktopForm
     {
         public PluginManagerWindow()
+            : base(Application.Instance.MainForm)
         {
             this.Title = "Plugin Manager";
             this.ClientSize = new Size(1000, 750);
@@ -48,7 +49,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                                 Padding = 5,
                                 Content = new Label
                                 {
-                                    Text = "Drag and drop plugins to install.",
+                                    Text = "Drag and drop plugins here to install.",
                                     VerticalAlignment = VerticalAlignment.Center
                                 }
                             }
@@ -136,7 +137,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         private MenuBar ConstructMenu()
         {
-            var quitCommand = new Command { MenuText = "Exit", Shortcut = Keys.Escape  };
+            var quitCommand = new Command { MenuText = "Exit", Shortcut = Keys.Escape };
             quitCommand.Executed += (_, _) => this.Close();
 
             var install = new Command { MenuText = "Install plugin...", Shortcut = Application.Instance.CommonModifier | Keys.O };
@@ -169,19 +170,16 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             if (!this.ParentWindow.Enabled)
                 return;
 
-            var dialog = new OpenFileDialog()
-            {
-                Title = "Choose a plugin to install...",
-                MultiSelect = true,
-                Filters =
-                {
-                    new FileFilter("Plugin (.zip, .dll)", ".zip", ".dll")
-                }
-            };
+            var dialog = Extensions.OpenFileDialog(
+                "Choose a plugin to install...",
+                Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
+                [new FileFilter("Plugin (.zip, .dll)", ".zip", ".dll")],
+                true
+            );
 
             if (dialog.ShowDialog(this) == DialogResult.Ok)
             {
-                foreach(var file in dialog.Filenames)
+                foreach (var file in dialog.Filenames)
                 {
                     await Install(file);
                 }

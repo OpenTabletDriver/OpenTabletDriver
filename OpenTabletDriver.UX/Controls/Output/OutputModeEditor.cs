@@ -69,6 +69,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             ProfileChanged?.Invoke(this, new EventArgs());
             UpdateTablet();
+            UpdateOutputMode(Profile?.OutputMode);
+            outputModeSelector.Enabled = Profile != null;
         }
 
         public BindableBinding<OutputModeEditor, Profile> ProfileBinding
@@ -89,6 +91,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         private AbsoluteModeEditor absoluteModeEditor = new AbsoluteModeEditor();
         private RelativeModeEditor relativeModeEditor = new RelativeModeEditor();
         private TypeDropDown<IOutputMode> outputModeSelector = new TypeDropDown<IOutputMode> { Width = 300 };
+        private Label outputModeUnsupported = new Label { Text = "No supported output mode selected.", TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
+        private Label tabletUnavailable = new Label { Text = "No tablets were detected or selected.", TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center };
 
         public void SetTabletSize(TabletReference tablet)
         {
@@ -109,8 +113,8 @@ namespace OpenTabletDriver.UX.Controls.Output
         public void SetDisplaySize(IEnumerable<IDisplay> displays)
         {
             var bgs = from disp in displays
-                where !(disp is IVirtualScreen)
-                select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
+                      where !(disp is IVirtualScreen)
+                      select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
             absoluteModeEditor.displayAreaEditor.AreaBounds = bgs;
         }
 
@@ -118,9 +122,9 @@ namespace OpenTabletDriver.UX.Controls.Output
         {
             bool showAbsolute = false;
             bool showRelative = false;
-            if (store != null)
+
+            if (store?.GetTypeInfo<IOutputMode>() is TypeInfo outputMode)
             {
-                var outputMode = store.GetTypeInfo<IOutputMode>();
                 showAbsolute = outputMode.IsSubclassOf(typeof(AbsoluteOutputMode));
                 showRelative = outputMode.IsSubclassOf(typeof(RelativeOutputMode));
             }
@@ -129,6 +133,10 @@ namespace OpenTabletDriver.UX.Controls.Output
                 editorContainer.Content = absoluteModeEditor;
             else if (showRelative)
                 editorContainer.Content = relativeModeEditor;
+            else if (Profile != null)
+                editorContainer.Content = outputModeUnsupported;
+            else
+                editorContainer.Content = tabletUnavailable;
         }
     }
 }

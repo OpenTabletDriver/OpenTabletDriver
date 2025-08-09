@@ -5,7 +5,6 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Reflection;
-using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Controls.Generic.Reflection;
 
 namespace OpenTabletDriver.UX.Controls
@@ -47,6 +46,8 @@ namespace OpenTabletDriver.UX.Controls
 
             if (!Platform.IsMac) // Don't do this on macOS, causes poor UI performance.
                 settingStoreEditor.BackgroundColor = SystemColors.WindowBackground;
+
+            AppInfo.PluginManager.AssembliesChanged += HandleAssembliesChanged;
         }
 
         private Placeholder placeholder;
@@ -70,7 +71,22 @@ namespace OpenTabletDriver.UX.Controls
         protected virtual void OnStoreCollectionChanged()
         {
             StoreCollectionChanged?.Invoke(this, new EventArgs());
-            this.Content = sourceSelector.DataStore?.Any() ?? false ? mainContent : placeholder;
+            RefreshContent();
+        }
+
+        private void HandleAssembliesChanged(object sender, EventArgs e) => Application.Instance.AsyncInvoke(RefreshContent);
+
+        private void RefreshContent()
+        {
+            var types = AppInfo.PluginManager.GetChildTypes<TSource>();
+
+            // Update DataStore to new types, this refreshes the editor.
+            var prevIndex = sourceSelector.SelectedIndex;
+            sourceSelector.SelectedIndex = -1;
+            sourceSelector.DataStore = types;
+            sourceSelector.SelectedIndex = prevIndex;
+
+            this.Content = types.Any() ? mainContent : placeholder;
         }
 
         public BindableBinding<PluginSettingStoreCollectionEditor<TSource>, PluginSettingStoreCollection> StoreCollectionBinding
@@ -93,7 +109,7 @@ namespace OpenTabletDriver.UX.Controls
             {
                 var enableButton = new CheckBox
                 {
-                    Text = $"Enable {store.Name?? store.Path}",
+                    Text = $"Enable {store.Name ?? store.Path}",
                     Checked = store.Enable
                 };
                 enableButton.CheckedChanged += (sender, e) => store.Enable = enableButton.Checked ?? false;

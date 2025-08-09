@@ -1,0 +1,39 @@
+{
+  "Name": "LifeTec LT9570",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 300,
+      "Height": 225,
+      "MaxX": 5999,
+      "MaxY": 4499
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 2250,
+      "ProductID": 16,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Lifetec.LifetecReportParser",
+      "FeatureInitReport": [
+        "AhgE",
+        "AgIA",
+        "AgMA",
+        "AgQA",
+        "AgEA",
+        "AgEB",
+        "AggA",
+        "AhAB",
+        "AhEC"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

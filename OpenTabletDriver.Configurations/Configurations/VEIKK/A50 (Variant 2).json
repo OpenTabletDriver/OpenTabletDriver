@@ -1,0 +1,35 @@
+{
+  "Name": "VEIKK A50 (Variant 2)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 152.4,
+      "MaxX": 50800,
+      "MaxY": 30480
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 12267,
+      "ProductID": 3,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "OutputInitReport": [
+        "CQEE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

@@ -16,7 +16,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Mouse Button Binding";
 
         [Resolved]
-        public IVirtualMouse Pointer { set; get; }
+        public IMouseButtonHandler Pointer { set; get; }
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string Button { set; get; }
@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private static IEnumerable<string> validButtons;
         public static IEnumerable<string> ValidButtons
         {
-            get => validButtons ??= Enum.GetValues(typeof(MouseButton)).Cast<MouseButton>().Select(Enum.GetName);
+            get => validButtons ??= Enum.GetValues<MouseButton>().Select(Enum.GetName);
         }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";

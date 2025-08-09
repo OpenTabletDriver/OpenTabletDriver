@@ -56,11 +56,11 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                         return false;
 
                     var updatableFromRepository = from meta in repo
-                        where PluginMetadata.Match(meta, Metadata)
-                        where meta.PluginVersion > Metadata.PluginVersion
-                        where CurrentDriverVersion >= meta.SupportedDriverVersion
-                        orderby meta.PluginVersion descending
-                        select meta;
+                                                  where PluginMetadata.Match(meta, Metadata)
+                                                  where meta.PluginVersion > Metadata.PluginVersion
+                                                  where CurrentDriverVersion >= meta.SupportedDriverVersion
+                                                  orderby meta.PluginVersion descending
+                                                  select meta;
 
                     return updatableFromRepository.Any();
                 },
@@ -150,7 +150,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             driverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.SupportedDriverVersion).Convert(v => v?.ToString()));
             pluginVersion.TextBinding.Bind(MetadataBinding.Child(c => c.PluginVersion).Convert(v => v?.ToString()));
             license.TextBinding.Bind(MetadataBinding.Child(c => c.LicenseIdentifier));
-            
+
             sourceCode.GetEnabledBinding().Bind(MetadataBinding.Child(c => c.RepositoryUrl).Convert(c => c != null));
             sourceCode.Click += (sender, e) => DesktopInterop.Open(Metadata.RepositoryUrl);
 
@@ -166,7 +166,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         private Label name, owner, description, driverVersion, pluginVersion, license;
         private Button sourceCode, wiki;
-        
+
         private Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
         private Button uninstallButton, installButton;
 
@@ -231,7 +231,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private async void UninstallHandler(object sender, EventArgs e)
         {
             this.ParentWindow.Enabled = false;
-            
+
             await RequestPluginUninstall?.Invoke(Metadata);
 
             this.ParentWindow.Enabled = true;

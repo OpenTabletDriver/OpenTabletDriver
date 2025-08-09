@@ -7,9 +7,10 @@ using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 using OpenTabletDriver.Plugin.Timing;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Tools;
@@ -18,70 +19,23 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 {
     public class TabletDebugger : DesktopForm
     {
+        const int LARGE_FONTSIZE = 14;
+        const int FONTSIZE = LARGE_FONTSIZE - 4;
+        const int SPACING = 5;
+
         public TabletDebugger()
+            : base(Application.Instance.MainForm)
         {
             Title = "Tablet Debugger";
 
             var debugger = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                Height = 370,
-                Padding = 5,
-                Spacing = 5,
+                Height = 320,
+                Padding = SPACING,
+                Spacing = SPACING,
                 Items =
                 {
-                    new DebuggerGroup
-                    {
-                        Text = "Device",
-                        Content = deviceName = new Label
-                        {
-                            Font = Fonts.Monospace(10)
-                        }
-                    },
-                    new StackLayoutItem
-                    {
-                        Expand = true,
-                        Control = new StackLayout
-                        {
-                            Orientation = Orientation.Horizontal,
-                            VerticalContentAlignment = VerticalAlignment.Stretch,
-                            Items =
-                            {
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new DebuggerGroup
-                                    {
-                                        Text = "Raw Tablet Data",
-                                        Content = rawTablet = new Label
-                                        {
-                                            Font = Fonts.Monospace(10)
-                                        }
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new DebuggerGroup
-                                    {
-                                        Text = "Tablet Report",
-                                        Content = tablet = new Label
-                                        {
-                                            Font = Fonts.Monospace(10)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    new DebuggerGroup
-                    {
-                        Text = "Report Rate",
-                        Content = reportRate = new Label
-                        {
-                            Font = Fonts.Monospace(10)
-                        }
-                    },
                     new StackLayoutItem
                     {
                         Control = new StackLayout
@@ -95,10 +49,31 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                                     Expand = true,
                                     Control = new DebuggerGroup
                                     {
+                                        Text = "Device",
+                                        Content = deviceName = new Label
+                                        {
+                                            Font = Fonts.Monospace(LARGE_FONTSIZE)
+                                        }
+                                    }
+                                },
+                                new DebuggerGroup
+                                {
+                                    Text = "Report Rate",
+                                    Width = LARGE_FONTSIZE * 6,
+                                    Content = reportRate = new Label
+                                    {
+                                        Font = Fonts.Monospace(LARGE_FONTSIZE)
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Control = new DebuggerGroup
+                                    {
                                         Text = "Reports Recorded",
+                                        Width = LARGE_FONTSIZE * 10,
                                         Content = reportsRecorded = new Label
                                         {
-                                            Font = Fonts.Monospace(10)
+                                            Font = Fonts.Monospace(LARGE_FONTSIZE)
                                         }
                                     }
                                 },
@@ -108,6 +83,44 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                                     Content = enableDataRecording = new CheckBox
                                     {
                                         Text = "Enable Data Recording"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new StackLayout
+                        {
+                            Orientation = Orientation.Horizontal,
+                            VerticalContentAlignment = VerticalAlignment.Stretch,
+                            Height = 240,
+                            Items =
+                            {
+                                new StackLayoutItem
+                                {
+                                    Expand = true,
+                                    Control = new DebuggerGroup
+                                    {
+                                        Text = "Raw Tablet Data",
+                                        Width = FONTSIZE * 33,
+                                        Content = rawTablet = new Label
+                                        {
+                                            Font = Fonts.Monospace(FONTSIZE)
+                                        }
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Control = new DebuggerGroup
+                                    {
+                                        Text = "Tablet Report",
+                                        Width = FONTSIZE * 33,
+                                        Content = tablet = new Label
+                                        {
+                                            Font = Fonts.Monospace(FONTSIZE)
+                                        }
                                     }
                                 }
                             }
@@ -124,6 +137,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 FixedPanel = SplitterFixedPanel.Panel2,
                 Panel1 = new DebuggerGroup
                 {
+                    Height = 200,
                     Text = "Visualizer",
                     Content = tabletVisualizer = new TabletVisualizer()
                 },
@@ -170,7 +184,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private double reportPeriod;
         private int numReportsRecorded;
 
-        private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch(true);
+        private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch();
         private TextWriter dataRecordingOutput;
 
         public DebugReportData ReportData
@@ -210,7 +224,6 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         protected virtual void OnReportDataChanged()
         {
             ReportDataChanged?.Invoke(this, new EventArgs());
-            ReportPeriod += (stopwatch.Restart().TotalMilliseconds - ReportPeriod) / 10.0f;
         }
 
         protected virtual void OnReportPeriodChanged() => ReportPeriodChanged?.Invoke(this, new EventArgs());
@@ -261,12 +274,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
             this.ReportData = data;
+            var timeDelta = stopwatch.Restart();
+            ReportPeriod += (timeDelta.TotalMilliseconds - ReportPeriod) * 0.01f;
 
             if (data.ToObject() is IDeviceReport deviceReport)
             {
                 if (enableDataRecording.Checked ?? false)
                 {
-                    var output = string.Join(' ', deviceReport.Raw.Select(d => d.ToString("X2")));
+                    var output = ReportFormatter.GetStringFormatOneLine(deviceReport, timeDelta, data.Path);
                     dataRecordingOutput?.WriteLine(output);
                     NumberOfReportsRecorded++;
                 }
@@ -295,6 +310,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             private static readonly Color AccentColor = SystemColors.Highlight;
 
             public DebugReportData ReportData { set; get; }
+            private List<int> _warnedDigitizers = [];
 
             public BindableBinding<TabletVisualizer, DebugReportData> ReportDataBinding
             {
@@ -315,16 +331,18 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     var graphics = e.Graphics;
                     using (graphics.SaveTransformState())
                     {
-                        var pxToMM = (float)graphics.DPI / 25.4f;
-
                         var digitizer = tablet.Properties.Specifications.Digitizer;
+                        var yScale = (this.ClientSize.Height - SPACING) / digitizer.Height;
+                        var xScale = (this.ClientSize.Width - SPACING) / digitizer.Width;
+                        var finalScale = Math.Min(yScale, xScale);
+
                         var clientCenter = new PointF(this.ClientSize.Width, this.ClientSize.Height) / 2;
-                        var tabletCenter = new PointF(digitizer.Width, digitizer.Height) / 2 * pxToMM;
+                        var tabletCenter = new PointF(digitizer.Width, digitizer.Height) / 2 * finalScale;
 
                         graphics.TranslateTransform(clientCenter - tabletCenter);
 
-                        DrawBackground(graphics, pxToMM, tablet);
-                        DrawPosition(graphics, pxToMM, tablet);
+                        DrawBackground(graphics, finalScale, tablet);
+                        DrawPosition(graphics, finalScale, tablet);
                     }
                 }
             }
@@ -341,20 +359,70 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             protected void DrawPosition(Graphics graphics, float scale, TabletReference tablet)
             {
                 var report = ReportData?.ToObject();
-                var specifications = ReportData.Tablet.Properties.Specifications;
-                var digitizer = specifications.Digitizer;
-                var pen = specifications.Pen;
+                var specifications = ReportData?.Tablet.Properties.Specifications;
+                var tabletName = ReportData?.Tablet.Properties.Name;
+                var touchDigitizerSpecification = specifications?.Touch;
+                var absDigitizerSpecification = specifications?.Digitizer;
 
                 if (report is IAbsolutePositionReport absReport)
                 {
-                    var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
-                    var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);
-                    var tabletScale = tabletMm / tabletPx * scale;
-                    var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
+                    if (absDigitizerSpecification != null)
+                    {
+                        var tabletScale = calculateTabletScale(absDigitizerSpecification, scale);
+                        var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
 
-                    var drawRect = RectangleF.FromCenter(position, new SizeF(5, 5));
-                    graphics.FillEllipse(AccentColor, drawRect);
+                        var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
+                        graphics.FillEllipse(AccentColor, drawRect);
+                    }
+                    else
+                    {
+                        var absHashName = tabletName + "abs";
+                        var absHash = absHashName.GetHashCode();
+                        if (!_warnedDigitizers.Contains(absHash))
+                        {
+                            _warnedDigitizers.Add(absHash);
+                            Log.Write("TabletDebugger",
+                                "Digitizer undefined in tablet configuration - unable to draw points",
+                                LogLevel.Warning);
+                        }
+                    }
                 }
+
+                // touch reports
+                if (report is ITouchReport touchReport)
+                {
+                    if (touchDigitizerSpecification != null)
+                    {
+                        var tabletScale = calculateTabletScale(touchDigitizerSpecification, scale);
+
+                        foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
+                        {
+                            var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
+                            var drawPen = new Pen(AccentColor, SPACING / 2);
+                            var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING * 2, SPACING * 2));
+                            graphics.DrawEllipse(drawPen, drawRect);
+                        }
+                    }
+                    else
+                    {
+                        var touchHashName = tabletName + "touch";
+                        var touchHash = touchHashName.GetHashCode();
+                        if (!_warnedDigitizers.Contains(touchHash))
+                        {
+                            _warnedDigitizers.Add(touchHash);
+                            Log.Write("TabletDebugger",
+                                "Touch undefined in tablet configuration - unable to draw touch points",
+                                LogLevel.Warning);
+                        }
+                    }
+                }
+            }
+
+            protected SizeF calculateTabletScale(DigitizerSpecifications digitizer, float scale)
+            {
+                var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
+                var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);
+                return tabletMm / tabletPx * scale;
             }
         }
     }

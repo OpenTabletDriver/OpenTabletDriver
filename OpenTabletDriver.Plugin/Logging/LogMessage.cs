@@ -9,18 +9,18 @@ namespace OpenTabletDriver.Plugin.Logging
         {
         }
 
-        public LogMessage(Exception exception)
+        public LogMessage(Exception exception, LogLevel level = LogLevel.Error)
         {
             Group = exception.GetType().Name;
             Message = exception.Message;
-            Level = LogLevel.Error;
+            Level = level;
             StackTrace = exception.StackTrace;
         }
 
         /// <summary>
         /// The time in which a log message was created.
         /// </summary>
-        public DateTime Time { private set; get; } = DateTime.Now;
+        public DateTime Time { set; get; } = DateTime.Now;
 
         /// <summary>
         /// The group in which the log message belongs to.
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.Plugin.Logging
             return string.Format(
                 "[{0}:{1}]\t{2}",
                 this.Group,
-                Enum.GetName(typeof(LogLevel), this.Level),
+                Enum.GetName(this.Level),
                 this.Message
             );
         }

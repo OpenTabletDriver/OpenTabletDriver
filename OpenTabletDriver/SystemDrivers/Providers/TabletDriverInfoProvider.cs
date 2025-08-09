@@ -23,8 +23,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                     {
                         Name = "TabletDriver",
                         Processes = processes,
-                        IsBlockingDriver = true, // TabletDriver opens tablets in exclusive mode by default
-                        IsSendingInput = true
+                        Status = DriverStatus.Active | DriverStatus.Blocking // TabletDriver opens tablets in exclusive mode by default
                     };
                 }
             }

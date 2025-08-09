@@ -1,0 +1,55 @@
+{
+  "Name": "VEIKK VK430",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 101.6,
+      "Height": 76.2,
+      "MaxX": 50800,
+      "MaxY": 31750
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 12267,
+      "ProductID": 9,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "OutputInitReport": [
+        "CQEE",
+        "CQIC",
+        "CQMC"
+      ],
+      "DeviceStrings": {
+        "23": "^2022/3/21$"
+      }
+    },
+    {
+      "VendorID": 12267,
+      "ProductID": 9,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "OutputInitReport": [
+        "CQEE",
+        "CQIC",
+        "CQMC"
+      ],
+      "DeviceStrings": {
+        "23": "^2022/4/25$"
+      }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

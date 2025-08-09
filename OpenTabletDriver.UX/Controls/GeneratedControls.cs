@@ -107,7 +107,7 @@ namespace OpenTabletDriver.UX.Controls
                     // TODO: replace with slider when possible (https://github.com/picoe/Eto/issues/1772)
                     tb.ToolTip = $"Minimum: {sliderAttr.Min}, Maximum: {sliderAttr.Max}";
                     tb.PlaceholderText = $"{sliderAttr.DefaultValue}";
-                    
+
                     if (!binding.DataValue.HasValue)
                         binding.DataValue.SetValue(sliderAttr.DefaultValue);
                 }

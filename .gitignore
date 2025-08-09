@@ -1,13 +1,17 @@
 # IDE
 .vs/
-.vscode/
+.vscode/**
+!.vscode/launch.json
+!.vscode/tasks.json
 .idea/
 
 # Build Artifacts
-obj/
-bin/
+/*/obj/
+/*/bin/
+/bin/
 nupkg/
 [Bb]uild/
+/dist/
 
 # BenchmarkDotNet Artifacts
 BenchmarkDotNet.Artifacts/
@@ -18,6 +22,6 @@ BenchmarkDotNet.Artifacts/
 # MacOS Cache
 *.DS_Store
 
-# Nix
-.envrc
-shell.nix
+# Nix environment
+[Rr]esult
+.data/

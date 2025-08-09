@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.UX.Controls
@@ -71,20 +72,25 @@ namespace OpenTabletDriver.UX.Controls
             if (store != null)
             {
                 var type = store.GetTypeInfo<TSource>();
-                return GetControlsForType(store, type);
+
+                if (type != null)
+                    return GetControlsForType(store, type);
+                else
+                {
+                    var isStorePathNull = store.Path == null ? "(store path is null)" : "";
+                    Log.Write("PluginSettingStoreEditor", $"Failed to get type info. {isStorePathNull}", LogLevel.Error);
+                }
             }
-            else
-            {
-                return Array.Empty<Control>();
-            }
+
+            return Array.Empty<Control>();
         }
 
         private IEnumerable<Control> GetControlsForType(PluginSettingStore store, Type type)
         {
             var properties = from property in type.GetProperties()
-                let attrs = property.GetCustomAttributes(true)
-                where attrs.Any(a => a is PropertyAttribute)
-                select property;
+                             let attrs = property.GetCustomAttributes(true)
+                             where attrs.Any(a => a is PropertyAttribute)
+                             select property;
 
             foreach (var property in properties)
                 yield return GeneratedControls.GetControlForProperty(store, property);

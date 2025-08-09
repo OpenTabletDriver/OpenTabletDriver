@@ -2,10 +2,10 @@
   "Name": "XP-Pen Deco 02",
   "Specifications": {
     "Digitizer": {
-      "Width": 223.52,
-      "Height": 139.7,
-      "MaxX": 22352.0,
-      "MaxY": 13970.0
+      "Width": 254,
+      "Height": 142.875,
+      "MaxX": 22352,
+      "MaxY": 13970
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,9 +15,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -26,15 +24,11 @@
       "InputReportLength": 10,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -2,7 +2,7 @@
 
 # OpenTabletDriver
 
-English | [한국어](README_KO.md) | [Español](README_ES.md) | [Русский](README_RU.md) | [简体中文](README_CN.md) | [Français](README_FR.md)
+English | [한국어](docs/README_KO.md) | [Español](docs/README_ES.md) | [Русский](docs/README_RU.md) | [简体中文](docs/README_CN.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md)
 
 OpenTabletDriver is an open source, cross platform, user mode tablet driver. The goal of OpenTabletDriver is to be cross platform as possible with the highest compatibility in an easily configurable graphical user interface.
 
@@ -36,41 +36,35 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 ### All platforms
 
-- .NET 6 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/6.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
+- .NET 8 SDK (can be obtained from [here](https://dotnet.microsoft.com/download/dotnet/8.0) - You want the SDK for your platform, Linux users should install via package manager where possible)
 
 #### Windows
 
-No other dependencies.
+Run `build.ps1` to produce binary builds to 'bin' folder. These builds will run in portable mode by default.
 
 #### Linux
 
-Required packages (some packages may be pre-installed for your distribution)
+Required packages (some packages may be pre-installed for your distribution):
 
 - libx11
 - libxrandr
 - libevdev2
 - GTK+3
 
-To build on Linux, run the provided 'build.sh' file. This will run the
-same 'dotnet publish' commands used for building the AUR package, and
-will produce usable binaries in 'OpenTabletDriver/bin'.
+Run `./eng/linux/package.sh`. If a "package" build is desired,
+there are official support for the following packaging formats:
 
-To build on ARM linux, run the provided 'build.sh' file with the
-appropriate runtime provided as an argument. For arm64, this is
-'linux-arm64'.
+| Package Format | Command |
+| --- | --- |
+| Generic binary tarball (`.tar.gz`) | `./eng/linux/package.sh --package BinaryTarBall` |
+| Debian package (`.deb`) | `./eng/linux/package.sh --package Debian` |
+| Red Hat package (`.rpm`) | `./eng/linux/package.sh --package RedHat` |
 
-Note: If building for the first time, run the included
-generate-rules.sh script. This will generate a set of udev rules in
-OpenTabletDriver/bin, called '99-opentabletdriver.rules'. This file
-should then be moved to `/etc/udev/rules.d/`:
-
-```
-sudo mv ./bin/99-opentabletdriver.rules /etc/udev/rules.d/
-```
+The generic binary tarball is designed to be extracted from the root directory.
 
 #### MacOS [Experimental]
 
-No other dependencies.
+Run `./eng/macos/package.sh --package true`.
 
 # Features
 
@@ -116,6 +110,10 @@ ticket](https://github.com/OpenTabletDriver/OpenTabletDriver/issues/new/choose)
 and fill out the template with relevant information. We welcome both bug
 reports, as well as new tablets to add support for. In many cases adding support
 for a new tablet is quite easy.
+
+For issues and PRs related to OpenTabletDriver's packaging, please see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Packaging).
+
+For issues and PRs related to OpenTabletDriver's [web page](https://opentabletdriver.net), see the repository [here](https://github.com/OpenTabletDriver/OpenTabletDriver.Web).
 
 ### Supporting a new tablet
 

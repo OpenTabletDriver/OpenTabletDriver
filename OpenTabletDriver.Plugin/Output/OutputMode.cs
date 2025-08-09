@@ -107,10 +107,9 @@ namespace OpenTabletDriver.Plugin.Output
         public virtual void Consume(IDeviceReport report)
         {
             if (report is IAbsolutePositionReport tabletReport)
-                if (Transform(tabletReport) is IAbsolutePositionReport transformedReport)
-                    report = transformedReport;
-
-            Emit?.Invoke(report);
+                report = Transform(tabletReport);
+            if (report != null)
+                Emit?.Invoke(report);
         }
 
         public virtual void Read(IDeviceReport deviceReport) => entryElement?.Consume(deviceReport);
@@ -135,6 +134,15 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 UnlinkAll(PreTransformElements, this, PostTransformElements, output);
             }
+        }
+
+        public virtual void Dispose()
+        {
+            entryElement = null;
+
+            foreach (var obj in Elements ?? [])
+                if (obj is IDisposable disposable)
+                    disposable.Dispose();
         }
     }
 }

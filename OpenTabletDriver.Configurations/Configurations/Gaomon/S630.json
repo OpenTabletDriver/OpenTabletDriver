@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 129.3,
       "Height": 80.8,
-      "MaxX": 25860.0,
-      "MaxY": 16160.0
+      "MaxX": 25860,
+      "MaxY": 16160
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
       "DeviceStrings": {
         "201": "GM001_T203_\\d{6}$"
       },
@@ -36,7 +31,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

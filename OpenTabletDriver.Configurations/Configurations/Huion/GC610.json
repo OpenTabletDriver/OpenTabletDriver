@@ -2,10 +2,10 @@
   "Name": "Huion GC610",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 158.75,
-      "MaxX": 50800.0,
-      "MaxY": 31750.0
+      "MaxX": 50800,
+      "MaxY": 31750
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,19 +15,26 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "DeviceStrings": {
+        "201": "HUION_T166_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
       "DeviceStrings": {
         "201": "HUION_T166_\\d{6}$"
       },
@@ -36,7 +43,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

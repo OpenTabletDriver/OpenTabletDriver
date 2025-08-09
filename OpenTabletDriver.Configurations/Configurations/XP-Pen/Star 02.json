@@ -1,0 +1,37 @@
+{
+  "Name": "XP-Pen Star 02",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 203.2,
+      "Height": 127,
+      "MaxX": 32000,
+      "MaxY": 20000
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 5
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 21827,
+      "ProductID": 80,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "InitializationStrings": [
+        100,
+        123
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1",
+    "Interface": "0"
+  }
+}

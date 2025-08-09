@@ -1,0 +1,41 @@
+{
+  "Name": "Huion H610 Pro V3",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 254,
+      "Height": 158.75,
+      "MaxX": 2048,
+      "MaxY": 2048
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 16,
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "DeviceStrings": {
+        "121": "^HA60\\x00*$"
+      }
+    },
+    {
+      "VendorID": 9580,
+      "ProductID": 110,
+      "InputReportLength": 8,
+      "ReportParser": "OpenTabletDriver.Plugin.Tablet.TabletReportParser",
+      "DeviceStrings": {
+        "121": "^HA60\\x00*$"
+      }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1",
+    "Interface": "1"
+  }
+}

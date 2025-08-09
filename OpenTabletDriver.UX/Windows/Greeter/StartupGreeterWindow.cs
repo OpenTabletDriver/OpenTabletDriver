@@ -1,16 +1,23 @@
 using System;
 using System.Collections.Generic;
+using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.UX.Controls.Generic;
 using OpenTabletDriver.UX.Windows.Greeter.Pages;
 
 namespace OpenTabletDriver.UX.Windows.Greeter
 {
-    public class StartupGreeterWindow : Dialog
+    public class StartupGreeterWindow : ChildDialog
     {
         public StartupGreeterWindow()
+            : base(Application.Instance.MainForm)
         {
             base.Title = "OpenTabletDriver Guide";
+
+            var bounds = Application.Instance.MainForm.ClientSize;
+            var minWidth = Math.Min(895, bounds.Width * 0.95);
+            var minHeight = Math.Min(680, bounds.Height * 0.95);
+            ClientSize = new Size((int)minWidth, (int)minHeight);
         }
 
         protected override void OnLoadComplete(EventArgs e)
@@ -70,7 +77,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter
             yield return new PluginPage();
             if (App.EnableTrayIcon)
                 yield return new SystemTrayPage();
-            yield return new FAQPage();
+            yield return new WikiPage();
         }
 
         private class StartupGreeterPageViewer : DocumentControl

@@ -2,10 +2,10 @@
   "Name": "XP-Pen Star 06",
   "Specifications": {
     "Digitizer": {
-      "Width": 254.0,
+      "Width": 254,
       "Height": 152.4,
-      "MaxX": 50800.0,
-      "MaxY": 30480.0
+      "MaxX": 50800,
+      "MaxY": 30480
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,9 +15,7 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
@@ -26,15 +24,11 @@
       "InputReportLength": 8,
       "OutputReportLength": 8,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
-      "FeatureInitReport": null,
       "OutputInitReport": [
         "ArAC"
-      ],
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

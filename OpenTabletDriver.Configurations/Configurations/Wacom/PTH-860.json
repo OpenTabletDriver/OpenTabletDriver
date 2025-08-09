@@ -2,10 +2,10 @@
   "Name": "Wacom PTH-860",
   "Specifications": {
     "Digitizer": {
-      "Width": 311.0,
-      "Height": 216.0,
-      "MaxX": 62200.0,
-      "MaxY": 43200.0
+      "Width": 311,
+      "Height": 216,
+      "MaxX": 62200,
+      "MaxY": 43200
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,32 +15,20 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 856,
       "InputReportLength": 192,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser"
     },
     {
       "VendorID": 1386,
       "ProductID": 856,
       "InputReportLength": 193,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser"
     }
   ],
   "AuxilaryDeviceIdentifiers": [
@@ -48,13 +36,7 @@
       "VendorID": 1386,
       "ProductID": 856,
       "InputReportLength": 44,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.IntuosV2ReportParser"
     }
-  ],
-  "Attributes": {}
+  ]
 }

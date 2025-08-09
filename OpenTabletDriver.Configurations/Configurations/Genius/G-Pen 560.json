@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 152.3873,
       "Height": 114.2873,
-      "MaxX": 11999.0,
-      "MaxY": 8999.0
+      "MaxX": 11999,
+      "MaxY": 8999
     },
     "Pen": {
       "MaxPressure": 1024,
@@ -15,28 +15,21 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1112,
       "ProductID": 20483,
       "InputReportLength": 8,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParserV2",
       "FeatureInitReport": [
         "AgQA",
         "AgIA",
         "AhAB"
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

@@ -71,5 +71,45 @@ namespace OpenTabletDriver.Native.Windows
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern bool CloseHandle(IntPtr hHandle);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern bool SetProcessInformation(IntPtr hProcess, ProcessInformationClass processInformationClass, IntPtr processInformation, int processInformationLength);
+
+        public enum ProcessInformationClass
+        {
+            ProcessMemoryPriority,
+            ProcessMemoryExhaustionInfo,
+            ProcessAppMemoryInfo,
+            ProcessInPrivateInfo,
+            ProcessPowerThrottling,
+            ProcessReservedValue1,
+            ProcessTelemetryCoverageInfo,
+            ProcessProtectionLevelInfo,
+            ProcessLeapSecondInfo,
+            ProcessMachineTypeInfo,
+            ProcessInformationClassMax
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct PowerThrottlingState
+        {
+            public uint Version;
+            public uint ControlMask;
+            public uint StateMask;
+
+            public static PowerThrottlingState Create()
+            {
+                return new PowerThrottlingState
+                {
+                    Version = 1,
+                };
+            }
+        }
+
+        public enum PowerThrottlingStateMask
+        {
+            ExecutionSpeed = 0x1,
+            IgnoreTimerResolution = 0x4,
+        }
     }
 }

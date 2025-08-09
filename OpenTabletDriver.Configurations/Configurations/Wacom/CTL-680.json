@@ -2,10 +2,10 @@
   "Name": "Wacom CTL-680",
   "Specifications": {
     "Digitizer": {
-      "Width": 216.0,
-      "Height": 135.0,
-      "MaxX": 21600.0,
-      "MaxY": 13500.0
+      "Width": 216,
+      "Height": 135,
+      "MaxX": 21600,
+      "MaxY": 13500
     },
     "Pen": {
       "MaxPressure": 1023,
@@ -15,36 +15,26 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 803,
       "InputReportLength": 10,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.IntuosReportParser",
       "FeatureInitReport": [
         "AgI="
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     },
     {
       "VendorID": 1386,
       "ProductID": 803,
       "InputReportLength": 11,
-      "OutputReportLength": null,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos.WacomDriverIntuosReportParser",
       "FeatureInitReport": [
         "AgI="
-      ],
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      ]
     }
   ],
   "AuxilaryDeviceIdentifiers": [
@@ -52,13 +42,7 @@
       "VendorID": 1386,
       "ProductID": 803,
       "InputReportLength": 64,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
-      "DeviceStrings": {},
-      "InitializationStrings": []
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser"
     }
-  ],
-  "Attributes": {}
+  ]
 }

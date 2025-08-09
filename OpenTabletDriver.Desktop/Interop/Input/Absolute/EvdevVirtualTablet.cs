@@ -8,25 +8,19 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IVirtualTablet
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
     {
-        private static readonly EventCode[] BUTTONS =
-        {
-            EventCode.BTN_STYLUS,
-            EventCode.BTN_STYLUS2,
-            EventCode.BTN_STYLUS3
-        };
-
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
-        private bool IsEraser = false;
-        private bool Proximity = true;
+        private bool isEraser;
 
         public unsafe EvdevVirtualTablet()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 
-            Device.EnableType(EventType.INPUT_PROP_DIRECT);
+            Device.EnableProperty(InputProperty.INPUT_PROP_DIRECT);
+            Device.EnableProperty(InputProperty.INPUT_PROP_POINTER);
+
             Device.EnableType(EventType.EV_ABS);
 
             var xAbs = new input_absinfo
@@ -94,9 +88,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         private const int MaxPressure = ushort.MaxValue;
 
+        private EventCode currentTool => isEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN;
+
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_KEY, IsEraser ? EventCode.BTN_TOOL_RUBBER : EventCode.BTN_TOOL_PEN, Proximity ? 1 : 0);
+            Device.Write(EventType.EV_KEY, currentTool, 1);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
@@ -113,23 +109,40 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_Y, (int)tilt.Y);
         }
 
-        public void SetButtonState(uint button, bool active)
-        {
-            Device.Write(EventType.EV_KEY, BUTTONS[button], active ? 1 : 0);
-        }
-
         public void SetEraser(bool isEraser)
         {
-            IsEraser = isEraser;
+            if (this.isEraser == isEraser)
+                return; // do nothing if no state change
+
+            // unset opposite tool (in case tablet never sends us Reset/OutOfRange)
+            Device.Write(EventType.EV_KEY, currentTool, 0);
+
+            this.isEraser = isEraser;
         }
 
-        public void SetProximity(bool proximity, uint distance)
+        public void SetHoverDistance(uint distance)
         {
-            Proximity = proximity;
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
-        public void Sync() => Device.Sync();
+        public void SetKeyState(EventCode eventCode, bool state)
+        {
+            Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
+        }
+
+        public sealed override void Reset()
+        {
+            // Zero out everything except position and tilt
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_PEN, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, 0);
+            Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS2, 0);
+            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
+
+            isEraser = false;
+        }
 
         protected override EventCode? GetCode(MouseButton button) => null;
     }

@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 256.32,
       "Height": 144.18,
-      "MaxX": 51264.0,
-      "MaxY": 28836.0
+      "MaxX": 51264,
+      "MaxY": 28836
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,19 +15,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
         "201": "OEM02_M191_\\d{6}$"
       },
@@ -36,7 +31,6 @@
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

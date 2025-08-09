@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX.Controls
 
         private Label label;
         private Panel extraPanel;
-        
+
         private string text;
         public string Text
         {
@@ -44,11 +44,11 @@ namespace OpenTabletDriver.UX.Controls
             }
             get => this.text;
         }
-        
+
         public event EventHandler<EventArgs> TextChanged;
-        
+
         protected virtual void OnTextChanged() => TextChanged?.Invoke(this, new EventArgs());
-        
+
         public BindableBinding<Placeholder, string> TextBinding
         {
             get

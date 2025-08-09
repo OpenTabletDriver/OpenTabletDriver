@@ -4,8 +4,8 @@
     "Digitizer": {
       "Width": 293.76,
       "Height": 165.24,
-      "MaxX": 58752.0,
-      "MaxY": 33048.0
+      "MaxX": 58752,
+      "MaxY": 33048
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -15,21 +15,16 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 4
-    },
-    "MouseButtons": null,
-    "Touch": null
+    }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 9580,
       "ProductID": 109,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
-        "201": "HUION_M182_\\d{6}$"
+        "201": "HUION_M(182|20k)_\\d{6}$"
       },
       "InitializationStrings": [
         200
@@ -39,19 +34,15 @@
       "VendorID": 9580,
       "ProductID": 110,
       "InputReportLength": 12,
-      "OutputReportLength": null,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
-      "FeatureInitReport": null,
-      "OutputInitReport": null,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
       "DeviceStrings": {
-        "201": "HUION_M182_\\d{6}$"
+        "201": "HUION_M(182|20k)_\\d{6}$"
       },
       "InitializationStrings": [
         200
       ]
     }
   ],
-  "AuxilaryDeviceIdentifiers": [],
   "Attributes": {
     "libinputoverride": "1"
   }

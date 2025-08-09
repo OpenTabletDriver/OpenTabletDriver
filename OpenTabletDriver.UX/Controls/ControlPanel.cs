@@ -5,6 +5,7 @@ using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
@@ -17,20 +18,20 @@ namespace OpenTabletDriver.UX.Controls
     {
         public ControlPanel()
         {
-            tabControl = new TabControl
+            this.Content = tabControl = new TabControl
             {
                 Pages =
                 {
                     new TabPage
                     {
                         Text = "Output",
-                        Content = outputModeEditor = new OutputModeEditor()
+                        Content = outputModeEditor = new()
                     },
                     new TabPage
                     {
                         Text = "Filters",
                         Padding = 5,
-                        Content = filterEditor = new PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>>()
+                        Content = filterEditor = new()
                     },
                     new TabPage
                     {
@@ -51,13 +52,12 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         Text = "Tools",
                         Padding = 5,
-                        Content = toolEditor = new PluginSettingStoreCollectionEditor<ITool>()
+                        Content = toolEditor = new()
                     },
                     new TabPage
                     {
                         Text = "Info",
                         Padding = 5,
-                        Visible = false,
                         Content = placeholder = new Placeholder
                         {
                             Text = "No tablets are detected."
@@ -67,7 +67,7 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         Text = "Console",
                         Padding = 5,
-                        Content = logView = new LogView()
+                        Content = logView = new()
                     }
                 }
             };
@@ -80,8 +80,6 @@ namespace OpenTabletDriver.UX.Controls
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
-
-            this.Content = tabControl;
 
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {
@@ -115,34 +113,47 @@ namespace OpenTabletDriver.UX.Controls
 
         protected virtual void OnProfileChanged() => Application.Instance.AsyncInvoke(async () =>
         {
-            ProfileChanged?.Invoke(this, new EventArgs());
-            if (Profile != null && await Profile.GetTabletReference() is TabletReference tablet)
+            ProfileChanged?.Invoke(this, EventArgs.Empty);
+
+            var tablet = Profile != null ? await Profile.GetTabletReference() : null;
+
+            if (Platform.IsMac)
+                tabControl.Pages.Clear();
+
+            if (tablet != null)
             {
-                var placeholderFocused = tabControl.SelectedPage == placeholder.Parent;
+                bool switchToOutput = tabControl.SelectedPage == placeholder.Parent;
 
-                placeholder.Parent.Visible = false;
-                outputModeEditor.Parent.Visible = true;
-                filterEditor.Parent.Visible = true;
-                toolEditor.Parent.Visible = true;
-                penBindingEditor.Parent.Visible = tablet.Properties.Specifications.Pen != null;
-                auxBindingEditor.Parent.Visible = tablet.Properties.Specifications.AuxiliaryButtons != null;
-                mouseBindingEditor.Parent.Visible = tablet.Properties.Specifications.MouseButtons != null;
+                SetPageVisibility(placeholder, false);
+                SetPageVisibility(outputModeEditor, true);
+                SetPageVisibility(filterEditor, true);
+                SetPageVisibility(penBindingEditor, tablet.Properties.Specifications.Pen != null);
+                SetPageVisibility(auxBindingEditor, tablet.Properties.Specifications.AuxiliaryButtons != null);
+                SetPageVisibility(mouseBindingEditor, tablet.Properties.Specifications.MouseButtons != null);
+                SetPageVisibility(toolEditor, true);
 
-                if (placeholderFocused)
-                {
+                if (switchToOutput)
                     tabControl.SelectedIndex = 0;
-                }
             }
             else
             {
-                placeholder.Parent.Visible = true;
-                outputModeEditor.Parent.Visible = false;
-                filterEditor.Parent.Visible = false;
-                toolEditor.Parent.Visible = false;
-                penBindingEditor.Parent.Visible = false;
-                auxBindingEditor.Parent.Visible = false;
-                mouseBindingEditor.Parent.Visible = false;
+                SetPageVisibility(placeholder, true);
+                SetPageVisibility(outputModeEditor, false);
+                SetPageVisibility(filterEditor, false);
+                SetPageVisibility(penBindingEditor, false);
+                SetPageVisibility(auxBindingEditor, false);
+                SetPageVisibility(mouseBindingEditor, false);
+                SetPageVisibility(toolEditor, false);
+
+                if (tabControl.SelectedPage != logView.Parent)
+                {
+                    tabControl.SelectedIndex = Profile == null ?
+                        tabControl.Pages.IndexOf(placeholder.Parent as TabPage) :
+                        0;
+                }
             }
+
+            SetPageVisibility(logView, true);
         });
 
         public BindableBinding<ControlPanel, Profile> ProfileBinding
@@ -156,6 +167,24 @@ namespace OpenTabletDriver.UX.Controls
                     (c, h) => c.ProfileChanged += h,
                     (c, h) => c.ProfileChanged -= h
                 );
+            }
+        }
+
+        private void SetPageVisibility(Control control, bool visible)
+        {
+            // This works around a bug in Eto.Forms with TabPage visibility
+            // https://github.com/picoe/Eto/issues/1224
+            if (Platform.IsMac)
+            {
+                if (visible)
+                {
+                    var page = control.Parent as TabPage;
+                    tabControl.Pages.Add(page);
+                }
+            }
+            else
+            {
+                control.Parent.Visible = visible;
             }
         }
     }

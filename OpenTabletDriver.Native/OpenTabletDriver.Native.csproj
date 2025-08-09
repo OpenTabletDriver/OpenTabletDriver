@@ -1,8 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Project Properties">
-    <TargetFrameworks>net5.0;$(FrameworkBase)</TargetFrameworks>
+    <TargetFrameworks>$(FrameworkBase)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuGet Package">
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
 </Project>
