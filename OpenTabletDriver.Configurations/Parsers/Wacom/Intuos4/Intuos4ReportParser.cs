@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
             return data[0] switch
             {
                 0x02 => GetToolReport(data),
-                0x10 => new IntuosV1TabletReport(data),
+                0x10 => _IntuosV1ReportParser.Parse(data),
                 0x0C => new Intuos4AuxReport(data),
                 _ => new DeviceReport(data)
             };
@@ -20,11 +20,12 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
         {
             return data[1] switch
             {
-                0xE0 => new IntuosV1TabletReport(data),
                 0xEC => new Intuos4MouseReport(data),
                 0xAC => new Intuos4MouseReport(data),
-                _ => new DeviceReport(data)
+                _ => _IntuosV1ReportParser.Parse(data)
             };
         }
+
+        private IntuosV1ReportParser _IntuosV1ReportParser = new IntuosV1ReportParser();
     }
 }
