@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4
             };
             Scroll = new Vector2
             {
-                Y = report[8].IsBitSet(0) ? 1 : report[8].IsBitSet(1) ? -1 : 0
+                Y = report[7].IsBitSet(7) ? 1 : report[7].IsBitSet(6) ? -1 : 0
             };
 
             NearProximity = report[1].IsBitSet(6);
