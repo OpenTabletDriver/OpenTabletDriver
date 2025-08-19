@@ -28,14 +28,14 @@ namespace OpenTabletDriver.Desktop.Binding
 
                 var preset = AppInfo.PresetManager.FindPreset(Preset);
 
-                if (preset != null)
+                if (preset != null && Daemon != null)
                 {
-                    Daemon?.SetSettings(preset.Settings);
-                    Daemon?.ForceResynchronize();
-                    Log.Write("Settings", $"Applied preset '{preset.Name}'");
+                    Daemon.SetSettings(preset.Settings);
+                    Daemon.ForceResynchronize();
+                    Log.Write("Settings", $"Applied preset '{preset.Name}'.");
                 }
                 else
-                    Log.Write("Settings", $"Failed to find preset '{Preset}'");
+                    Log.Write("Settings", $"Failed to find preset '{Preset}' or daemon is null.");
             }
         }
 
