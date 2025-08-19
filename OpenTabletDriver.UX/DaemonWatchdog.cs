@@ -23,8 +23,7 @@ namespace OpenTabletDriver.UX
             },
             PluginPlatform.MacOS => new ProcessStartInfo
             {
-                FileName = Path.Join(AppContext.BaseDirectory, "OpenTabletDriver.Daemon"),
-                Arguments = $"-c {Path.Join(AppContext.BaseDirectory, "Configurations")}"
+                FileName = Path.Join(AppContext.BaseDirectory, "OpenTabletDriver.Daemon")
             },
             _ => new ProcessStartInfo
             {
