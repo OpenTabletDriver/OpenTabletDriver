@@ -12,9 +12,9 @@ namespace OpenTabletDriver.Desktop.Binding
     public class PresetBinding : IStateBinding
     {
         public readonly static IReadOnlyCollection<Preset> Presets = AppInfo.PresetManager.GetPresets();
-        public static string[] ValidModes => Presets.Select(x => x.Name).ToArray();
+        public static string[] ValidPresets => Presets.Select(x => x.Name).ToArray();
 
-        [Property("Preset"), PropertyValidated(nameof(ValidModes))]
+        [Property("Preset"), PropertyValidated(nameof(ValidPresets))]
         public string Preset { set; get; }
 
         [Resolved]
@@ -24,6 +24,7 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             if (Preset != null && AppInfo.PresetManager != null)
             {
+                // Force a refresh, preset list may be out of date
                 AppInfo.PresetManager.Refresh();
 
                 var preset = AppInfo.PresetManager.FindPreset(Preset);
