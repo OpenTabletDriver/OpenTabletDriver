@@ -1,0 +1,31 @@
+{
+  "Name": "Wacom PTK-870",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 349,
+      "Height": 195,
+      "MaxX": 69800,
+      "MaxY": 39000
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "Buttons": {
+        "ButtonCount": 3
+      }
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 10
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 1017,
+      "InputReportLength": 192,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3.IntuosV3ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}
