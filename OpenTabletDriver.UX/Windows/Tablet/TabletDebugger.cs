@@ -162,7 +162,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             App.Driver.TabletsChanged += HandleTabletsChanged;
             App.Driver.Instance.SetTabletDebug(true);
 
-            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
+            string fileName = "tablet-data_" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() + ".txt";
+
+            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, fileName));
             dataRecordingOutput = new StreamWriter(outputStream);
         }
 
