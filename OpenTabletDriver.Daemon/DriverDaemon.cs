@@ -91,6 +91,8 @@ namespace OpenTabletDriver.Daemon
                 await DetectTablets();
                 await SetSettings(Settings);
             };
+
+            AppInfo.PluginManager.AddService<IDriverDaemon>(() => this);
         }
 
         public event EventHandler<LogMessage>? Message;
@@ -564,6 +566,12 @@ namespace OpenTabletDriver.Daemon
             {
                 _updateInfo = null;
             }
+        }
+
+        public Task ForceResynchronize()
+        {
+            Resynchronize?.Invoke(this, EventArgs.Empty);
+            return Task.CompletedTask;
         }
 
         private static void InitializePlatform()
