@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Profiles;
 using OpenTabletDriver.Desktop.Reflection;
@@ -13,6 +14,14 @@ namespace OpenTabletDriver.Desktop
         private ProfileCollection profiles = new ProfileCollection();
         private bool lockUsableAreaDisplay, lockUsableAreaTablet;
         private PluginSettingStoreCollection tools = new PluginSettingStoreCollection();
+        private string revision = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+        [JsonProperty("Revision")]
+        public string Revision
+        {
+            set => this.RaiseAndSetIfChanged(ref revision, value);
+            get => revision;
+        }
 
         [JsonProperty("Profiles")]
         public ProfileCollection Profiles
