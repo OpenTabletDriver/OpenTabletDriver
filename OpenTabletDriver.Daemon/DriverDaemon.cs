@@ -325,7 +325,7 @@ namespace OpenTabletDriver.Daemon
             var dst = Path.Join(AppInfo.Current.AppDataDirectory, dstFileName);
 
             Log.Write("MoveSettingsFile", $"Moving settings file at '{src}' to '{dst}'", LogLevel.Debug);
-            File.Move(src,dst);
+            File.Move(src, dst);
         }
 
         private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
