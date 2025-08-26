@@ -294,16 +294,36 @@ namespace OpenTabletDriver.Daemon
 
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
 
-            if (settingsFile.Exists &&
-                Settings.TryDeserialize(settingsFile, out var settings) &&
-                settings.Revision != "0.7.0.0")
+            if (settingsFile.Exists)
             {
-                await SetSettings(settings);
+                if (Settings.TryDeserialize(settingsFile, out var settings) &&
+                    settings.Revision != "0.7.0.0")
+                {
+                    await SetSettings(settings);
+                }
+                else
+                {
+                    Log.Write("Settings", "Invalid settings found. Moving invalid config.");
+                    MoveSettingsFile();
+                    await ResetSettings();
+                }
             }
             else
             {
                 await ResetSettings();
             }
+        }
+
+        private void MoveSettingsFile()
+        {
+            var src = AppInfo.Current.SettingsFile;
+
+            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var dstFileName = $"settings_bak-{now}.json";
+            var dst = Path.Join(AppInfo.Current.AppDataDirectory, dstFileName);
+
+            Log.Write("MoveSettingsFile", $"Moving settings file at '{src}' to '{dst}'", LogLevel.Debug);
+            File.Move(src,dst);
         }
 
         private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
