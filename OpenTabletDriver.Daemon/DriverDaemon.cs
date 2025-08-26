@@ -301,6 +301,7 @@ namespace OpenTabletDriver.Daemon
                 if (Settings.TryDeserialize(settingsFile, out var settings) &&
                     settings.Revision != AVALONIA_REVISION)
                 {
+                    settings.Revision = Settings.GetVersion(); // ensure Revision matches Daemon version
                     await SetSettings(settings);
                 }
                 else
