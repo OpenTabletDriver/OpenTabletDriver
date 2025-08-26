@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop
         private ProfileCollection profiles = new ProfileCollection();
         private bool lockUsableAreaDisplay, lockUsableAreaTablet;
         private PluginSettingStoreCollection tools = new PluginSettingStoreCollection();
-        private string revision = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        private string revision = GetVersion();
 
         [JsonProperty("Revision")]
         public string Revision
@@ -94,6 +94,11 @@ namespace OpenTabletDriver.Desktop
                 using (var jr = new JsonTextReader(sr))
                     return serializer.Deserialize<Settings>(jr);
             }
+        }
+
+        public static string GetVersion()
+        {
+            return Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
         }
 
         [Obsolete("Unused and deprecated")]
