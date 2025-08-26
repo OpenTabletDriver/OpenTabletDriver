@@ -296,7 +296,7 @@ namespace OpenTabletDriver.Daemon
 
             if (settingsFile.Exists)
             {
-                if (Settings.TryDeserialize(settingsFile, out var settings))
+                if (Settings.TryDeserialize(settingsFile, out var settings) && settings.Revision != "0.7.0.0")
                 {
                     await SetSettings(settings);
                 }
