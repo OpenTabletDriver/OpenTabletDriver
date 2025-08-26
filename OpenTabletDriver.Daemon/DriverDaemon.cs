@@ -294,20 +294,11 @@ namespace OpenTabletDriver.Daemon
 
             var settingsFile = new FileInfo(AppInfo.Current.SettingsFile);
 
-            if (settingsFile.Exists)
+            if (settingsFile.Exists &&
+                Settings.TryDeserialize(settingsFile, out var settings) &&
+                settings.Revision != "0.7.0.0")
             {
-                if (Settings.TryDeserialize(settingsFile, out var settings) && settings.Revision != "0.7.0.0")
-                {
-                    await SetSettings(settings);
-                }
-                else
-                {
-                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
-                    settings = Settings.GetDefaults();
-                    Settings.Recover(settingsFile, settings);
-                    Log.Write("Settings", "Recovery complete");
-                    await SetSettings(settings);
-                }
+                await SetSettings(settings);
             }
             else
             {

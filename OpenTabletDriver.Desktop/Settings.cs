@@ -96,6 +96,7 @@ namespace OpenTabletDriver.Desktop
             }
         }
 
+        [Obsolete("Unused and deprecated")]
         public static void Recover(FileInfo file, Settings settings)
         {
             using (var stream = file.OpenRead())
