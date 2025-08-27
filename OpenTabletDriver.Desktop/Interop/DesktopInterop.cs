@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Octokit;
 using OpenTabletDriver.Desktop.Interop.Display;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
+using OpenTabletDriver.Desktop.Interop.Input.Exotic;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
 using OpenTabletDriver.Desktop.Interop.Timer;
@@ -28,6 +29,7 @@ namespace OpenTabletDriver.Desktop.Interop
         private static IRelativePointer relativePointer;
         private static IPressureHandler virtualTablet;
         private static IVirtualKeyboard virtualKeyboard;
+        private static IVirtualPad virtualPad;
 
         public static void Open(string path)
         {
@@ -107,6 +109,12 @@ namespace OpenTabletDriver.Desktop.Interop
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
             PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
             PluginPlatform.MacOS => new MacOSVirtualKeyboard(),
+            _ => null
+        };
+
+        public static IVirtualPad VirtualPad => CurrentPlatform switch
+        {
+            PluginPlatform.Linux => virtualPad ??= new EvdevVirtualPad(),
             _ => null
         };
 
