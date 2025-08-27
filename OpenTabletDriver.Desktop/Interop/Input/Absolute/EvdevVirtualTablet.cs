@@ -16,6 +16,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         private EvdevDevice Device { set; get; }
 
+        private EventCode[] supportedEventCodes =
+        [
+            EventCode.BTN_TOUCH,
+            EventCode.BTN_STYLUS,
+            EventCode.BTN_STYLUS2,
+            EventCode.BTN_STYLUS3,
+            EventCode.BTN_TOOL_PEN,
+            EventCode.BTN_TOOL_RUBBER,
+        ];
+
         public unsafe EvdevVirtualTablet()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
@@ -68,12 +78,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
-                EventCode.BTN_TOUCH,
-                EventCode.BTN_STYLUS,
-                EventCode.BTN_TOOL_PEN,
-                EventCode.BTN_TOOL_RUBBER,
-                EventCode.BTN_STYLUS2,
-                EventCode.BTN_STYLUS3
+                supportedEventCodes
             );
 
             var result = Device.Initialize();
@@ -136,13 +141,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void Reset()
         {
             // Zero out everything except position and tilt
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_PEN, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, 0);
+            foreach (var eventCode in supportedEventCodes)
+                Device.Write(EventType.EV_KEY, eventCode, 0);
+
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS2, 0);
-            Device.Write(EventType.EV_KEY, EventCode.BTN_STYLUS3, 0);
 
             isEraser = false;
         }
