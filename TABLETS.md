@@ -64,6 +64,7 @@
 | UC-Logic 1060N                |     Supported     |
 | UC-Logic PF1209               |     Supported     |
 | UC-Logic TWMNA62              |     Supported     |
+| UGEE EX08                     |     Supported     | Uses the same configuration as the XP-Pen Deco 01 V2.
 | UGEE M708 V2                  |     Supported     |
 | UGEE M808                     |     Supported     |
 | UGEE S640                     |     Supported     |
@@ -140,6 +141,8 @@
 | XP-Pen Artist 24              |     Supported     |
 | XP-Pen Artist Pro 16 (Gen2)   |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
+| XP-Pen Deco 01 V2             |     Supported     |
+| XP-Pen Deco 01 V2 (Variant 2) |     Supported     |
 | XP-Pen Deco 01 V3             |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco Fun S (CT640)     |     Supported     |
@@ -230,7 +233,6 @@
 | Parblo A640                   |  Missing Features | Aux buttons are not yet supported.
 | Parblo Intangbo M             |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo S             |  Missing Features | Wheel is not yet supported.
-| UGEE EX08                     |  Missing Features | Tilt is not yet supported. Uses the same configuration as the XP-Pen Deco 01 V2.
 | UGEE M908                     |  Missing Features | Wheel is not yet supported.
 | VEIKK A15 Pro                 |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                     |  Missing Features | Touchpad is not yet supported.
@@ -285,8 +287,6 @@
 | XP-Pen Artist 16 Pro          |  Missing Features | Wheel is not yet supported.
 | XP-Pen Artist 24 Pro          |  Missing Features | Wheel is not yet supported.
 | XP-Pen Artist Pro 16TP        |  Missing Features | Touch is not yet supported.
-| XP-Pen Deco 01 V2             |  Missing Features | Tilt is not yet supported.
-| XP-Pen Deco 01 V2 (Variant 2) |  Missing Features | Tilt is not yet supported
 | XP-Pen Deco 02                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco 03                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are not yet supported.
