@@ -312,6 +312,10 @@ namespace OpenTabletDriver.Daemon
             else
             {
                 await ResetSettings();
+
+                // only save fresh settings if a tablet was configured
+                if (Settings!.Profiles.Any())
+                    Settings.Serialize(settingsFile);
             }
         }
 
