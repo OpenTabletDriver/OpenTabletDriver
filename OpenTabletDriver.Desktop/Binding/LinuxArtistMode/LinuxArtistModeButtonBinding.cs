@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
@@ -13,13 +15,15 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
     {
         private readonly EvdevVirtualTablet virtualTablet = (EvdevVirtualTablet)DesktopInterop.VirtualTablet;
 
-        public static string[] ValidButtons { get; } = {
-            "Pen Button 1",
-            "Pen Button 2",
-            "Pen Button 3"
+        public static Dictionary<string, EventCode> ValidButtons { get; } = new() {
+            { "Pen Button 1", EventCode.BTN_STYLUS },
+            { "Pen Button 2", EventCode.BTN_STYLUS2 },
+            { "Pen Button 3", EventCode.BTN_STYLUS3 },
         };
 
-        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
+        public static string[] ValidKeys => ValidButtons.Keys.ToArray();
+
+        [Property("Button"), PropertyValidated(nameof(ValidKeys))]
         public string Button { get; set; }
 
         public void Press(TabletReference tablet, IDeviceReport report)
@@ -34,13 +38,8 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 
         private void SetState(bool state)
         {
-            var eventCode = Button switch
-            {
-                "Pen Button 1" => EventCode.BTN_STYLUS,
-                "Pen Button 2" => EventCode.BTN_STYLUS2,
-                "Pen Button 3" => EventCode.BTN_STYLUS3,
-                _ => throw new InvalidOperationException($"Invalid Button '{Button}'")
-            };
+            if (!ValidButtons.TryGetValue(Button, out var eventCode))
+                throw new InvalidOperationException($"Invalid Button '{Button}'");
 
             virtualTablet.SetKeyState(eventCode, state);
         }
