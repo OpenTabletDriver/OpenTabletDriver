@@ -121,7 +121,7 @@ namespace OpenTabletDriver.Daemon
 
                 foreach (var signal in trappedSignals)
                     PosixSignalRegistration.Create(signal,
-                        [SuppressMessage("ReSharper", "AccessToModifiedClosure")](_) =>
+                        [SuppressMessage("ReSharper", "AccessToModifiedClosure")] (_) =>
                         {
                             Log.Debug("signal", Enum.GetName(signal));
                             CloseDaemon();
@@ -140,7 +140,7 @@ namespace OpenTabletDriver.Daemon
                 daemonRunning = true;
                 await host.Run(BuildDaemon(), cts.Token);
                 daemonRunning = false;
-                Log.Write("ProgramMain","Daemon gracefully stopped");
+                Log.Write("ProgramMain", "Daemon gracefully stopped");
             }
             catch (Exception e)
             {
