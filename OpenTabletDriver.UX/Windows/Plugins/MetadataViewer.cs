@@ -154,7 +154,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             owner.TextBinding.Bind(MetadataBinding.Child(c => c.Owner));
             description.TextBinding.Bind(MetadataBinding.Child(c => c.Description));
             driverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.SupportedDriverVersion).Convert(v => v?.ToString()));
-            maxDriverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.MaxSupportedDriverVersion).Convert(v => v?.ToString()));
+            maxDriverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.MaxSupportedDriverVersion).Convert(v => v?.ToString() ?? "N/A"));
             pluginVersion.TextBinding.Bind(MetadataBinding.Child(c => c.PluginVersion).Convert(v => v?.ToString()));
             license.TextBinding.Bind(MetadataBinding.Child(c => c.LicenseIdentifier));
 
