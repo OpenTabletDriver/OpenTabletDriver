@@ -226,7 +226,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             // Get the plugin's updated metadata from the repo
             var updatedMetadata = PluginMetadataList.Repository.FirstOrDefault(m => PluginMetadata.Match(m, Metadata));
 
-            if (metadata != null)
+            if (updatedMetadata != null)
                 await RequestPluginInstall?.Invoke(updatedMetadata);
 
             this.ParentWindow.Enabled = true;
