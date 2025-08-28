@@ -22,11 +22,12 @@ namespace OpenTabletDriver.Tests
 
         [Theory]
         [MemberData(nameof(PluginMetadata_DeclaresDriverSupport_Properly_Data))]
-        public void PluginMetadata_DeclaresDriverSupport_Properly(Version supportedDriverVersion, Version driverVersion, bool expectedSupport)
+        public void PluginMetadata_DeclaresDriverSupport_Properly(Version supportedDriverVersion, Version maxSupportedDriverVersion, Version driverVersion, bool expectedSupport)
         {
             var pluginMetaData = new PluginMetadata()
             {
-                SupportedDriverVersion = supportedDriverVersion
+                SupportedDriverVersion = supportedDriverVersion,
+                MaxSupportedDriverVersion = maxSupportedDriverVersion
             };
 
             var supportStatus = pluginMetaData.IsSupportedBy(driverVersion);

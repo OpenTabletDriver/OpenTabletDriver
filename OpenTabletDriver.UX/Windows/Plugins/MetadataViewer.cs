@@ -59,6 +59,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                                                   where PluginMetadata.Match(meta, Metadata)
                                                   where meta.PluginVersion > Metadata.PluginVersion
                                                   where CurrentDriverVersion >= meta.SupportedDriverVersion
+                                                  where CurrentDriverVersion <= meta.MaxSupportedDriverVersion
                                                   orderby meta.PluginVersion descending
                                                   select meta;
 
@@ -112,6 +113,11 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                         },
                         new AlignedGroup
                         {
+                            Text = "Max Supported Driver Version",
+                            Content = maxDriverVersion = new Label()
+                        },
+                        new AlignedGroup
+                        {
                             Text = "Plugin Version",
                             Content = pluginVersion = new Label()
                         },
@@ -148,6 +154,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             owner.TextBinding.Bind(MetadataBinding.Child(c => c.Owner));
             description.TextBinding.Bind(MetadataBinding.Child(c => c.Description));
             driverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.SupportedDriverVersion).Convert(v => v?.ToString()));
+            maxDriverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.MaxSupportedDriverVersion).Convert(v => v?.ToString()));
             pluginVersion.TextBinding.Bind(MetadataBinding.Child(c => c.PluginVersion).Convert(v => v?.ToString()));
             license.TextBinding.Bind(MetadataBinding.Child(c => c.LicenseIdentifier));
 
@@ -164,7 +171,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private StackLayout actions;
         private Placeholder placeholder;
 
-        private Label name, owner, description, driverVersion, pluginVersion, license;
+        private Label name, owner, description, driverVersion, maxDriverVersion, pluginVersion, license;
         private Button sourceCode, wiki;
 
         private Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
