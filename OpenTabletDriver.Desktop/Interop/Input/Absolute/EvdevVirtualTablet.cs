@@ -8,11 +8,13 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IDisposable
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool isEraser;
+
+        private EvdevDevice Device { set; get; }
 
         public unsafe EvdevVirtualTablet()
         {
@@ -130,7 +132,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
         }
 
-        public sealed override void Reset()
+        public void Reset()
         {
             // Zero out everything except position and tilt
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
@@ -144,6 +146,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             isEraser = false;
         }
 
-        protected override EventCode? GetCode(MouseButton button) => null;
+        public void Dispose()
+        {
+            Device?.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        public void Flush()
+        {
+            Device.Sync();
+        }
     }
 }
