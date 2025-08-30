@@ -50,7 +50,10 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
             try
             {
-                return LoadFromAssemblyPath(file.FullName);
+                var stream = file.OpenRead();
+                var asm = LoadFromStream(stream);
+                stream.Close();
+                return asm;
             }
             catch
             {
