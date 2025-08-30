@@ -91,8 +91,6 @@ namespace OpenTabletDriver.Daemon
                 await DetectTablets();
                 await SetSettings(Settings);
             };
-
-            AppInfo.PluginManager.AddService<IDriverDaemon>(() => this);
         }
 
         public event EventHandler<LogMessage>? Message;
@@ -132,6 +130,7 @@ namespace OpenTabletDriver.Daemon
 
             // Add services to inject on plugin construction
             AppInfo.PluginManager.AddService<IDriver>(() => this.Driver);
+            AppInfo.PluginManager.AddService<IDriverDaemon>(() => this);
 
             return Task.CompletedTask;
         }
