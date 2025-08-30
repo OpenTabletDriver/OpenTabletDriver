@@ -169,13 +169,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void Activate(PenAction action)
         {
-            if (GetCode(action) is {} code)
+            if (GetCode(action) is { } code)
                 SetKeyState(code, true);
         }
 
         public void Deactivate(PenAction action)
         {
-            if (GetCode(action) is {} code)
+            if (GetCode(action) is { } code)
                 SetKeyState(code, false);
         }
     }
