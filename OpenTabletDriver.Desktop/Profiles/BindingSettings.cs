@@ -92,6 +92,9 @@ namespace OpenTabletDriver.Desktop.Profiles
                 AuxButtons = new PluginSettingStoreCollection(),
                 MouseButtons = new PluginSettingStoreCollection()
             };
+
+            bindingSettings.AddPenButtons(tabletSpecifications);
+
             bindingSettings.MatchSpecifications(tabletSpecifications);
             return bindingSettings;
         }
@@ -105,6 +108,17 @@ namespace OpenTabletDriver.Desktop.Profiles
             PenButtons = PenButtons.SetExpectedCount(penButtonCount);
             AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
             MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
+        }
+
+        private void AddPenButtons(TabletSpecifications tabletSpecifications)
+        {
+            uint buttonCount = tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
+            if (buttonCount >= 1)
+                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton1)));
+            if (buttonCount >= 2)
+                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton2)));
+            if (buttonCount >= 3)
+                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton3)));
         }
     }
 }
