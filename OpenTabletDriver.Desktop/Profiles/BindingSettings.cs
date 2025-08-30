@@ -83,10 +83,10 @@ namespace OpenTabletDriver.Desktop.Profiles
             var bindingSettings = new BindingSettings
             {
                 TipButton = new PluginSettingStore(
-                    new MouseBinding
-                    {
-                        Button = nameof(MouseButton.Left)
-                    }
+                    new AdaptiveBinding(PenAction.Tip)
+                ),
+                EraserButton = new PluginSettingStore(
+                    new AdaptiveBinding(PenAction.Eraser)
                 ),
                 PenButtons = new PluginSettingStoreCollection(),
                 AuxButtons = new PluginSettingStoreCollection(),
