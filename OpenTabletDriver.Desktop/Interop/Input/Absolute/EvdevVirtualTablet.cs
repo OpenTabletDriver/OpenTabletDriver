@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IDisposable
+    public class EvdevVirtualTablet : IPenActionHandler, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IDisposable
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
@@ -146,6 +146,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             isEraser = false;
         }
 
+        private static EventCode? GetCode(PenAction button) => button switch
+        {
+            PenAction.Tip => null, // tip is handled via pressure
+            PenAction.Eraser => null, // eraser is handled via pressure
+            PenAction.BarrelButton1 => EventCode.BTN_STYLUS2, // STYLUS2 = right click
+            PenAction.BarrelButton2 => EventCode.BTN_STYLUS,
+            PenAction.BarrelButton3 => EventCode.BTN_STYLUS3,
+            _ => null,
+        };
+
         public void Dispose()
         {
             Device?.Dispose();
@@ -155,6 +165,18 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void Flush()
         {
             Device.Sync();
+        }
+
+        public void Activate(PenAction action)
+        {
+            if (GetCode(action) is {} code)
+                SetKeyState(code, true);
+        }
+
+        public void Deactivate(PenAction action)
+        {
+            if (GetCode(action) is {} code)
+                SetKeyState(code, false);
         }
     }
 }
