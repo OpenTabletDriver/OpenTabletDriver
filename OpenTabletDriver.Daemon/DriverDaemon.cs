@@ -396,6 +396,9 @@ namespace OpenTabletDriver.Daemon
             if (pointer is IMouseButtonHandler mouseButtonHandler)
                 bindingServiceProvider.AddService(() => mouseButtonHandler);
 
+            if (pointer is IPenActionHandler penActionHandler)
+                bindingServiceProvider.AddService(() => penActionHandler);
+
             var tip = bindingHandler.Tip = new ThresholdBindingState
             {
                 Binding = settings.TipButton?.Construct<IBinding>(bindingServiceProvider, tabletReference),
