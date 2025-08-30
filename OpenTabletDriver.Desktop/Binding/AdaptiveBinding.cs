@@ -30,19 +30,21 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public static string[] ButtonNames => ValidButtons.Keys.ToArray();
 
+        private string _binding = string.Empty;
+
         [Property(nameof(Binding)), PropertyValidated(nameof(ButtonNames))]
         public string Binding
         {
-            get;
+            get => _binding;
             set
             {
                 if (!ValidButtons.TryGetValue(value, out var button))
                     throw new ArgumentException("Invalid button name", value);
 
                 _action = button;
-                field = value;
+                _binding = value;
             }
-        } = string.Empty;
+        }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
