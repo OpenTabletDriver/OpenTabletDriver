@@ -93,6 +93,7 @@ namespace OpenTabletDriver.Desktop.Binding
             { "Eraser", PenAction.Eraser },
             { "Button 1", PenAction.BarrelButton1 },
             { "Button 2", PenAction.BarrelButton2 },
+            { "Button 3", PenAction.BarrelButton3 },
         };
 
         private static string ActionToString(PenAction button) =>
