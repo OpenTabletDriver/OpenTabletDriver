@@ -4,6 +4,8 @@ using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
+using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
@@ -11,7 +13,8 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
     [PluginName("Linux Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
     public class LinuxArtistModeButtonBinding : IStateBinding
     {
-        private readonly EvdevVirtualTablet virtualTablet = (EvdevVirtualTablet)DesktopInterop.VirtualTablet;
+        [Resolved]
+        public readonly IPressureHandler virtualTablet;
 
         public static string[] ValidButtons { get; } = {
             "Pen Button 1",
@@ -42,7 +45,10 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
                 _ => throw new InvalidOperationException($"Invalid Button '{Button}'")
             };
 
-            virtualTablet.SetKeyState(eventCode, state);
+            if (virtualTablet is EvdevVirtualTablet evdevTablet)
+                evdevTablet.SetKeyState(eventCode, state);
+            else
+                Log.Write(nameof(LinuxArtistModeButtonBinding), $"Attempted to output to invalid output mode", LogLevel.Error);
         }
     }
 }
