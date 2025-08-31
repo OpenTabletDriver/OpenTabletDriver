@@ -91,6 +91,14 @@ namespace OpenTabletDriver.Daemon
             };
             return;
 
+            _outputChangedDetector.Changed += async () =>
+            {
+                Log.Write(nameof(DriverDaemon), "Monitor output change detected...", LogLevel.Info);
+                await ResetDaemon();
+                Log.WriteNotify(nameof(DriverDaemon),
+                    "Your Monitor Layout has changed. Please verify that the OpenTabletDriver tablet output settings are correct");
+            };
+
             async Task ResetDaemon()
             {
                 await DetectTablets();
@@ -109,6 +117,7 @@ namespace OpenTabletDriver.Daemon
         private IUpdater Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
+        private readonly IOutputChangedDetector _outputChangedDetector = new OutputChangedDetector();
 
         private UpdateInfo? _updateInfo;
         private LogFile _logFile;
