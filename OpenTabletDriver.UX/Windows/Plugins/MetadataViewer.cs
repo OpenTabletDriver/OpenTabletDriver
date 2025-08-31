@@ -49,7 +49,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             );
 
             var updateableBinding = new DelegateBinding<bool>(
-                () => IsUpdated,
+                () => IsOutdated,
                 addChangeEvent: (e) => MetadataChanged += e,
                 removeChangeEvent: (e) => MetadataChanged -= e
             );
@@ -233,7 +233,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             this.ParentWindow.Enabled = true;
         }
 
-        private bool IsUpdated => GetUpdatedMetadatas(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).Any();
+        private bool IsOutdated => GetUpdatedMetadatas(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).Any();
 
         private static IEnumerable<PluginMetadata> GetUpdatedMetadatas(PluginMetadataCollection repo, PluginMetadata Metadata, Version CurrentDriverVersion)
         {
@@ -244,7 +244,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                    where PluginMetadata.Match(meta, Metadata)
                    where meta.PluginVersion > Metadata.PluginVersion
                    where CurrentDriverVersion >= meta.SupportedDriverVersion
-                   where CurrentDriverVersion <= meta.MaxSupportedDriverVersion
+                   where meta.MaxSupportedDriverVersion == null || CurrentDriverVersion <= meta.MaxSupportedDriverVersion
                    orderby meta.PluginVersion descending
                    select meta;
         }
