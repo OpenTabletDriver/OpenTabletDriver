@@ -244,6 +244,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                    where PluginMetadata.Match(meta, Metadata)
                    where meta.PluginVersion > Metadata.PluginVersion
                    where CurrentDriverVersion >= meta.SupportedDriverVersion
+                   where CurrentDriverVersion <= meta.MaxSupportedDriverVersion
                    orderby meta.PluginVersion descending
                    select meta;
         }
