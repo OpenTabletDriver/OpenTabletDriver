@@ -51,8 +51,7 @@ namespace OpenTabletDriver.Daemon
             {
                 if (args.Additions.Any())
                 {
-                    await DetectTablets();
-                    await SetSettings(Settings);
+                    await ResetDaemon();
                 }
             };
 
@@ -88,9 +87,15 @@ namespace OpenTabletDriver.Daemon
                     return;
 
                 Log.Write(nameof(DriverDaemon), "Sleep detected...", LogLevel.Info);
+                await ResetDaemon();
+            };
+            return;
+
+            async Task ResetDaemon()
+            {
                 await DetectTablets();
                 await SetSettings(Settings);
-            };
+            }
         }
 
         public event EventHandler<LogMessage>? Message;
