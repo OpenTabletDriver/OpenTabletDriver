@@ -138,6 +138,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         public virtual void Dispose()
         {
+            Log.Write(nameof(OutputMode), "Disposing output mode", LogLevel.Debug);
+
             entryElement = null;
 
             foreach (var obj in Elements ?? [])
