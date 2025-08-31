@@ -241,12 +241,12 @@ namespace OpenTabletDriver.Daemon
                     Log.Write("Settings", "Failed to apply settings. Attempted recovery. Some settings may have been lost.", LogLevel.Error, true);
                 }
 
-                Resynchronize?.Invoke(this, EventArgs.Empty);
                 return Task.CompletedTask;
             }
             finally
             {
                 InjectServices();
+                ForceResynchronize();
             }
         }
 
