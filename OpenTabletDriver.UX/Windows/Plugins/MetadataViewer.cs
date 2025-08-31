@@ -49,21 +49,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             );
 
             var updateableBinding = new DelegateBinding<bool>(
-                () =>
-                {
-                    var repo = PluginMetadataList.Repository;
-                    if (repo == null)
-                        return false;
-
-                    var updatableFromRepository = from meta in repo
-                                                  where PluginMetadata.Match(meta, Metadata)
-                                                  where meta.PluginVersion > Metadata.PluginVersion
-                                                  where CurrentDriverVersion >= meta.SupportedDriverVersion
-                                                  orderby meta.PluginVersion descending
-                                                  select meta;
-
-                    return updatableFromRepository.Any();
-                },
+                () => IsUpdated,
                 addChangeEvent: (e) => MetadataChanged += e,
                 removeChangeEvent: (e) => MetadataChanged -= e
             );
@@ -224,7 +210,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             this.ParentWindow.Enabled = false;
 
             // Get the plugin's updated metadata from the repo
-            var updatedMetadata = PluginMetadataList.Repository.FirstOrDefault(m => PluginMetadata.Match(m, Metadata));
+            var updatedMetadata = GetUpdatedMetadatas(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).FirstOrDefault();
 
             if (updatedMetadata != null)
                 await RequestPluginInstall?.Invoke(updatedMetadata);
@@ -239,6 +225,21 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             await RequestPluginUninstall?.Invoke(Metadata);
 
             this.ParentWindow.Enabled = true;
+        }
+
+        private bool IsUpdated => GetUpdatedMetadatas(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).Any();
+
+        private static IEnumerable<PluginMetadata> GetUpdatedMetadatas(PluginMetadataCollection repo, PluginMetadata Metadata, Version CurrentDriverVersion)
+        {
+            if (repo == null)
+                return Enumerable.Empty<PluginMetadata>();
+
+            return from meta in repo
+                   where PluginMetadata.Match(meta, Metadata)
+                   where meta.PluginVersion > Metadata.PluginVersion
+                   where CurrentDriverVersion >= meta.SupportedDriverVersion
+                   orderby meta.PluginVersion descending
+                   select meta;
         }
 
         private class AlignedGroup : Group
