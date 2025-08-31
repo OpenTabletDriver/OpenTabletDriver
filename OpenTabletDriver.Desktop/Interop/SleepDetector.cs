@@ -11,67 +11,15 @@ namespace OpenTabletDriver.Desktop.Interop
         event Action Slept;
     }
 
-    public class SleepDetector : ISleepDetector
+    public class SleepDetector() : TaskDetector(DetectionLoop), ISleepDetector
     {
-        private readonly object sync = new();
-        private Task? task;
-        private CancellationTokenSource? cts;
-        private event Action? slept;
-
         public event Action Slept
         {
-            add
-            {
-                if (slept == null)
-                {
-                    Start();
-                }
-
-                slept += value;
-            }
-
-            remove
-            {
-                slept -= value;
-
-                if (slept == null)
-                {
-                    Stop();
-                }
-            }
+            add => ActionTask += value;
+            remove => ActionTask -= value;
         }
 
-        private void Start()
-        {
-            lock (sync)
-            {
-                if (task != null)
-                    return;
-
-                cts = new();
-                task = DetectionLoop(cts.Token);
-            }
-        }
-
-        private void Stop()
-        {
-            lock (sync)
-            {
-                if (task == null)
-                    return;
-
-                cts!.Cancel();
-#pragma warning disable VSTHRD002
-                task.Wait();
-#pragma warning restore VSTHRD002
-
-                cts.Dispose();
-                cts = null;
-                task = null;
-            }
-        }
-
-        private async Task DetectionLoop(CancellationToken ct)
+        private static async Task DetectionLoop(Action? action, CancellationToken ct)
         {
             var prev = DateTime.UtcNow;
             while (!ct.IsCancellationRequested)
@@ -79,7 +27,7 @@ namespace OpenTabletDriver.Desktop.Interop
                 var elapsed = DateTime.UtcNow;
 
                 if (elapsed - prev > TimeSpan.FromSeconds(8))
-                    slept?.Invoke();
+                    action?.Invoke();
 
                 prev = elapsed;
 
