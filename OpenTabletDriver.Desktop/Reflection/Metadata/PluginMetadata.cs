@@ -37,6 +37,11 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         public Version SupportedDriverVersion { set; get; }
 
         /// <summary>
+        /// The plugin's maximum supported OpenTabletDriver version.
+        /// </summary>
+        public Version MaxSupportedDriverVersion { set; get; }
+
+        /// <summary>
         /// The plugin's source code repository URL.
         /// </summary>
         public string RepositoryUrl { set; get; }
@@ -122,6 +127,12 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             // We do this because the driver will bump build version when a non-breaking feature is introduced.
             // Newer plugins may start using these new features not available in older drivers.
             if (SupportedDriverVersion.Build > appVersion.Build)
+                return false;
+
+            // Always return false when driver's version is newer than plugin's declared upper support version.
+            // We do this as some plugins may be integrated into the driver in the future.
+            // We also do this as breaking changes may be introduced.
+            if (MaxSupportedDriverVersion != null && MaxSupportedDriverVersion < appVersion)
                 return false;
 
             return true;
