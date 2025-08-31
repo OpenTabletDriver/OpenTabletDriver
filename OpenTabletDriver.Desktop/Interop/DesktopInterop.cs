@@ -118,6 +118,19 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => null
         };
 
+        public static void InvalidateServices()
+        {
+            virtualScreen = null;
+            absolutePointer = null;
+            relativePointer = null;
+            virtualTablet = null;
+            virtualKeyboard = null;
+
+            AppInfo.PluginManager.ResetServices();
+
+            Log.Write(nameof(DesktopInterop), "Invalidated virtual screen and output devices", LogLevel.Debug);
+        }
+
         private static IVirtualScreen ConstructLinuxDisplay()
         {
             if (Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") != null)

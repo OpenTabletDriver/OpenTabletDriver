@@ -184,6 +184,8 @@ namespace OpenTabletDriver.Daemon
                 foreach (var dev in Driver.InputDevices)
                     dev.OutputMode?.Dispose();
 
+                DesktopInterop.InvalidateServices();
+
                 Settings = settings ??= Settings.GetDefaults();
 
                 foreach (InputDeviceTree? dev in Driver.InputDevices)
