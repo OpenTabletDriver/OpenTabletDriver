@@ -217,7 +217,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
-            await RequestPluginInstall?.Invoke(metadata);
+            await RequestPluginInstall?.Invoke(updatedMetadata);
 
             this.ParentWindow.Enabled = true;
         }
