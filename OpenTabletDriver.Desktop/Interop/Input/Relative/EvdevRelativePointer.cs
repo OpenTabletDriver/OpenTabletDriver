@@ -15,7 +15,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             Device.EnableTypeCodes(
                 EventType.EV_REL,
                 EventCode.REL_X,
-                EventCode.REL_Y
+                EventCode.REL_Y,
+                EventCode.REL_WHEEL,
+                EventCode.REL_WHEEL_HI_RES,
+                EventCode.REL_HWHEEL,
+                EventCode.REL_HWHEEL_HI_RES
             );
 
             Device.EnableTypeCodes(
@@ -24,11 +28,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
                 EventCode.BTN_SIDE,
-                EventCode.BTN_EXTRA,
-                EventCode.REL_WHEEL,
-                EventCode.REL_WHEEL_HI_RES,
-                EventCode.REL_HWHEEL,
-                EventCode.REL_HWHEEL_HI_RES
+                EventCode.BTN_EXTRA
             );
 
             var result = Device.Initialize();

@@ -37,7 +37,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 EventCode.BTN_MIDDLE,
                 EventCode.BTN_RIGHT,
                 EventCode.BTN_SIDE,
-                EventCode.BTN_EXTRA,
+                EventCode.BTN_EXTRA
+            );
+
+            Device.EnableTypeCodes(
+                EventType.EV_REL,
                 EventCode.REL_WHEEL,
                 EventCode.REL_WHEEL_HI_RES,
                 EventCode.REL_HWHEEL,
