@@ -52,8 +52,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 () =>
                 {
                     // Get the plugin's updated metadata from the repo
-                    updatedMetadata = GetUpdatedMetadatas(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).FirstOrDefault();
-                    return updatedMetadata != null;
+                    updatedMetadata = GetUpdatedMetadatas(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).FirstOrDefault() ?? Metadata;
+                    return updatedMetadata != Metadata;
                 },
                 addChangeEvent: (e) => MetadataChanged += e,
                 removeChangeEvent: (e) => MetadataChanged -= e
@@ -188,10 +188,6 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             MetadataChanged?.Invoke(this, new EventArgs());
 
-            var contexts = AppInfo.PluginManager.GetLoadedPlugins();
-
-            bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
-
             this.Content = Metadata != null ? content : placeholder ??= new Placeholder
             {
                 Text = "No plugin selected."
@@ -221,8 +217,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
-            if (updatedMetadata != null)
-                await RequestPluginInstall?.Invoke(updatedMetadata);
+            await RequestPluginInstall?.Invoke(metadata);
 
             this.ParentWindow.Enabled = true;
         }
