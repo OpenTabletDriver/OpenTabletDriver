@@ -24,5 +24,8 @@
         100
       ]
     }
-  ]
+  ],
+  "Attributes": {
+    "Interface": "0"
+  }
 }

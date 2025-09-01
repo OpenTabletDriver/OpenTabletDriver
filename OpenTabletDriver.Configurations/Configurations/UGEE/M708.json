@@ -35,6 +35,7 @@
     }
   ],
   "Attributes": {
-    "libinputoverride": "1"
+    "libinputoverride": "1",
+    "Interface": "0"
   }
 }
