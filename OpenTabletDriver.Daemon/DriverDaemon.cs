@@ -130,6 +130,7 @@ namespace OpenTabletDriver.Daemon
 
             // Add services to inject on plugin construction
             AppInfo.PluginManager.AddService<IDriver>(() => this.Driver);
+            AppInfo.PluginManager.AddService<IDriverDaemon>(() => this);
 
             return Task.CompletedTask;
         }
@@ -564,6 +565,12 @@ namespace OpenTabletDriver.Daemon
             {
                 _updateInfo = null;
             }
+        }
+
+        public Task ForceResynchronize()
+        {
+            Resynchronize?.Invoke(this, EventArgs.Empty);
+            return Task.CompletedTask;
         }
 
         private static void InitializePlatform()

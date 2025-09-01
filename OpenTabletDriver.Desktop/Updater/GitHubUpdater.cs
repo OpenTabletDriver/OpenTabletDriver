@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Octokit;
 using OpenTabletDriver.Plugin;
@@ -9,10 +10,15 @@ namespace OpenTabletDriver.Desktop.Updater
 {
     public abstract class GitHubUpdater : Updater
     {
+        static private readonly string _binaryDirectory = Regex.Match(AppContext.BaseDirectory, "^(.*)/[^/]+\\.app/Contents/MacOS/?$", RegexOptions.IgnoreCase) switch
+        {
+            { Success: true } match => match.Groups[1].ToString(),
+            _ => AppContext.BaseDirectory
+        };
         private readonly IGitHubClient _github;
 
         protected GitHubUpdater(Version currentVersion, AppInfo appInfo, IGitHubClient client)
-            : base(currentVersion, AppInfo.ProgramDirectory, appInfo.AppDataDirectory, appInfo.BackupDirectory)
+            : base(currentVersion, _binaryDirectory, appInfo.AppDataDirectory, appInfo.BackupDirectory)
         {
             _github = client;
         }

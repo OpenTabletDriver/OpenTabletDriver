@@ -9,14 +9,26 @@ namespace OpenTabletDriver.Desktop.Diagnostics
     {
         public EnvironmentDictionary()
         {
-            AddVariable("USER", "TEMP", "TMP", "TMPDIR");
+            AddVariable("USER");
             switch (DesktopInterop.CurrentPlatform)
             {
                 case PluginPlatform.Linux:
-                    AddVariable("DISPLAY", "WAYLAND_DISPLAY", "PWD", "PATH");
+                    AddVariable(
+                            "DISPLAY",
+                            "WAYLAND_DISPLAY",
+                            "PWD",
+                            "PATH",
+                            "XDG_CURRENT_DESKTOP",
+                            "XDG_RUNTIME_DIR"
+                    );
                     break;
                 case PluginPlatform.Windows:
-                    AddVariable("USERPROFILE");
+                    AddVariable(
+                            "TEMP",
+                            "TMP",
+                            "TMPDIR",
+                            "USERPROFILE"
+                    );
                     break;
             }
         }

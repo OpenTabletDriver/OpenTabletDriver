@@ -1,0 +1,32 @@
+{
+  "Name": "XP-Pen Artist Pro 14 (Gen2)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 301.6,
+      "Height": 188.49,
+      "MaxX": 60320,
+      "MaxY": 37698
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "Buttons": {
+        "ButtonCount": 2
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2394,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
