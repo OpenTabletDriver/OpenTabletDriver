@@ -1,11 +1,11 @@
 {
-  "Name": "XP-Pen Artist 16 Pro",
+  "Name": "XP-Pen Artist Pro 16",
   "Specifications": {
     "Digitizer": {
-      "Width": 344.16,
-      "Height": 193.59,
-      "MaxX": 34419,
-      "MaxY": 19461
+      "Width": 341.07,
+      "Height": 191.795,
+      "MaxX": 68214,
+      "MaxY": 38359
     },
     "Pen": {
       "MaxPressure": 8191,
@@ -18,8 +18,9 @@
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
-      "ProductID": 36874,
-      "InputReportLength": 10,
+      "ProductID": 2379,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": [
         "ArAE"
