@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,7 @@ using Xunit.Abstractions;
 
 namespace OpenTabletDriver.Tests
 {
-    public class ConfigurationTest
+    public partial class ConfigurationTest
     {
         private readonly ITestOutputHelper _testOutputHelper;
 
@@ -39,7 +40,7 @@ namespace OpenTabletDriver.Tests
             var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
 
             var parsers = from configuration in configurationProvider.TabletConfigurations
-                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxilaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
+                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
                           orderby identifier.ReportParser
                           select identifier.ReportParser;
 
@@ -244,7 +245,9 @@ namespace OpenTabletDriver.Tests
         }
 
         private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(GetConfigDir(), "*.json", SearchOption.AllDirectories)
-            .Select(f => (Path.GetRelativePath(GetConfigDir(), f), File.ReadAllText(f)));
+            .Select(f => (Path.GetRelativePath(GetConfigDir(), f), File.ReadAllText(f))).OrderBy(x => x.Item1);
+
+        public static readonly IEnumerable<object?[]> Configs = ConfigFiles.Select(x => new object?[] { JsonConvert.DeserializeObject<TabletConfiguration>(x.Item2, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }), x.Item1 });
 
         [Fact]
         public void Configurations_Verify_Configs_With_Schema()
@@ -322,7 +325,7 @@ namespace OpenTabletDriver.Tests
                                                   select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Digitizer, identifier.Index);
 
             var auxIdentificationContexts = from config in configurationProvider.TabletConfigurations
-                                            from identifier in (config.AuxilaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>()).Select((d, i) => new { DeviceIdentifier = d, Index = i })
+                                            from identifier in (config.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>()).Select((d, i) => new { DeviceIdentifier = d, Index = i })
                                             select new IdentificationContext(config, identifier.DeviceIdentifier, IdentifierType.Auxiliary, identifier.Index);
 
             var identificationContexts = digitizerIdentificationContexts.Concat(auxIdentificationContexts);
@@ -403,6 +406,34 @@ namespace OpenTabletDriver.Tests
             }
 
             Assert.True(failedFiles == 0, $"{failedFiles} configuration files failed linting.");
+        }
+
+        private static readonly Regex AvaloniaReportParserPath = AvaloniaReportParserPathRegex();
+
+        [Theory]
+        [MemberData(nameof(Configs))]
+        public void Configurations_Have_No_Legacy_Properties(TabletConfiguration config, string filePath)
+        {
+            var errors = new List<string>();
+
+            // disable warning for "obsoleted" paths
+#pragma warning disable CS0618 // Type or member is obsolete
+            // aux identifier rename
+            if (config.HasLegacyProperties())
+                errors.Add("Incorrect key AuxilaryDeviceIdentifiers is present. It should be 'AuxiliaryDeviceIdentifiers'");
+
+            // pen ButtonCount rename and type change
+            if (config.Specifications.Pen.HasLegacyProperties())
+                errors.Add("Incorrect key Specifications.Pen.Buttons is present. The Pen.Buttons.ButtonCount value should be moved to Pen.ButtonCount");
+#pragma warning restore CS0618 // Type or member is obsolete
+
+            // ReportParser path change is also indirectly tested elsewhere (as the class path won't exist on this version)
+            // but it's still a good idea to test here, in case this test is run by itself
+            if (config.DigitizerIdentifiers.Any(x => AvaloniaReportParserPath.IsMatch(x.ReportParser)))
+                errors.Add("0.7-only ReportParser path detected. Replace all ReportPath instances of 'OpenTabletDriver.Tablet.' with 'OpenTabletDriver.Plugin.Tablet.'");
+
+            string errorsFormatted = string.Join(Environment.NewLine, errors);
+            Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
         }
 
         private static void PrintDiff(ITestOutputHelper outputHelper, DiffPaneModel diff)
@@ -506,5 +537,8 @@ namespace OpenTabletDriver.Tests
                     obj.Identifier.InputReportLength);
             }
         }
+
+        [GeneratedRegex(@"^OpenTabletDriver\.Tablet\..*$", RegexOptions.Compiled)]
+        private static partial Regex AvaloniaReportParserPathRegex();
     }
 }
