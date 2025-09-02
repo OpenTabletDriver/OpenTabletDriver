@@ -88,6 +88,28 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                             {
                                 Prefix = "Pen Binding"
                             }
+                        },
+                        new Group {
+                            Text = "Miscellaneous",
+                            Content = new StackLayout {
+                                Orientation = Orientation.Horizontal,
+                                Items = {
+                                    new Group {
+                                        Orientation = Orientation.Horizontal,
+                                        ToolTip = "Disable pressure if it is available",
+                                        Content = disablePressure = new CheckBox {
+                                            Text = "Disable Pressure",
+                                        }
+                                    },
+                                    new Group {
+                                        Orientation = Orientation.Horizontal,
+                                        ToolTip = "Disable tilt if it is available",
+                                        Content = disableTilt = new CheckBox {
+                                            Text = "Disable Tilt",
+                                        }
+                                    },
+                                }
+                            }
                         }
                     }
                 }
@@ -98,10 +120,13 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             tipThreshold.ValueBinding.Bind(SettingsBinding.Child(c => c.TipActivationThreshold));
             eraserThreshold.ValueBinding.Bind(SettingsBinding.Child(c => c.EraserActivationThreshold));
             penButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.PenButtons));
+            disablePressure.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisablePressure));
+            disableTilt.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisableTilt));
         }
 
         private BindingDisplay tipButton, eraserButton;
         private FloatSlider tipThreshold, eraserThreshold;
+        private CheckBox disablePressure, disableTilt;
         private BindingDisplayList penButtons;
     }
 }
