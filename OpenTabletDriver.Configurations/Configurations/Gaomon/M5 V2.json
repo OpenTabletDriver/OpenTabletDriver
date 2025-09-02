@@ -1,0 +1,35 @@
+{
+    "Name": "Gaomon M5 V2",
+    "Specifications": {
+        "Digitizer": {
+            "Width": 177.8,
+            "Height": 110,
+            "MaxX": 35560,
+            "MaxY": 22000
+        },
+        "Pen": {
+            "MaxPressure": 16383,
+            "ButtonCount": 2
+        },
+        "AuxiliaryButtons": {
+            "ButtonCount": 8
+        }
+    },
+    "DigitizerIdentifiers": [
+        {
+            "VendorID": 9580,
+            "ProductID": 8206,
+            "InputReportLength": 12,
+            "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
+            "DeviceStrings": {
+                "201": "GM001_T238_\\d{6}$"
+            },
+            "InitializationStrings": [
+                200
+            ]
+        }
+    ],
+    "Attributes": {
+        "libinputoverride": "1"
+    }
+}
