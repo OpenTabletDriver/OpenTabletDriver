@@ -37,9 +37,6 @@
       ]
     }
   ],
-  "Attributes": {
-    "libinputoverride": "1"
-  },
   "AuxiliaryDeviceIdentifiers": [
     {
       "VendorID": 10429,
@@ -51,5 +48,8 @@
         4
       ]
     }
-  ]
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
 }
