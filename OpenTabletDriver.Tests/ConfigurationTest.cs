@@ -244,7 +244,7 @@ namespace OpenTabletDriver.Tests
         }
 
         private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(GetConfigDir(), "*.json", SearchOption.AllDirectories)
-            .Select(f => (Path.GetRelativePath(GetConfigDir(), f), File.ReadAllText(f)));
+            .Select(f => (Path.GetRelativePath(GetConfigDir(), f), File.ReadAllText(f))).OrderBy(x => x.Item1);
 
         [Fact]
         public void Configurations_Verify_Configs_With_Schema()
