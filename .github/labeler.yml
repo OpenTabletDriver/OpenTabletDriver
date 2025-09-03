@@ -46,15 +46,17 @@ gui:
     - 'OpenTabletDriver.UX.Wpf/**'
 
 meta:
-- changed-files:
-  - any-glob-to-any-file:
-    - '.github/**'
-    - 'eng/**'
-    - 'OpenTabletDriver.Benchmarks/**'
-  - all-globs-to-all-files:
-    - '!.github/workflows'
-    - '!README.md'
-    - '!TABLETS.md'
+- all:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.github/**'
+      - '*'
+      - 'eng/**'
+      - 'OpenTabletDriver.Benchmarks/**'
+    - all-globs-to-all-files:
+      - '!.github/workflows'
+      - '!README.md'
+      - '!TABLETS.md'
 
 plugins:
 - changed-files:
