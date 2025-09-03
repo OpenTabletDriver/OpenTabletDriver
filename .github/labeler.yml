@@ -49,6 +49,7 @@ meta:
 - changed-files:
   - any-glob-to-any-file:
     - '.github/**'
+    - '*'
     - 'eng/**'
     - 'OpenTabletDriver.Benchmarks/**'
   - all-globs-to-all-files:
