@@ -460,6 +460,12 @@ namespace OpenTabletDriver.Daemon
                 Log.Write(group, $"Express Key Bindings: " + string.Join(", ", bindingHandler.AuxButtons.Select(b => b.Value?.Binding)));
             }
 
+            if (settings.TouchStrips != null && settings.TouchStrips.Any(b => b?.Path != null))
+            {
+                SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.TouchStrips, bindingHandler.TouchStrips, tabletReference);
+                Log.Write(group, $"Touch Strip Bindings: " + string.Join(", ", bindingHandler.TouchStrips.Select(b => b.Value?.Binding)));
+            }
+
             if (settings.MouseButtons != null && settings.MouseButtons.Any(b => b?.Path != null))
             {
                 SetBindingHandlerCollectionSettings(bindingServiceProvider, settings.MouseButtons, bindingHandler.MouseButtons, tabletReference);

@@ -13,7 +13,12 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 20
-    }
+    },
+    "TouchStrips": {
+      "Count": 2
+    },
+    "MouseButtons": null,
+    "Touch": null
   },
   "DigitizerIdentifiers": [
     {
