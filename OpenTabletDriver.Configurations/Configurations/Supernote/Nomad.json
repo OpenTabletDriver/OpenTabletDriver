@@ -1,0 +1,28 @@
+{
+  "Name": "Supernote Nomad",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 119,
+      "Height": 158,
+      "MaxX": 32767,
+      "MaxY": 32767
+    },
+    "Pen": {
+      "MaxPressure": 4095,
+    },
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 8711,
+      "ProductID": 7,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Supernote.SupernoteNomadReportParser",
+          "DeviceStrings": {
+         "1": "Supernote",
+         "2": "Supernote Nomad"
+       }
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

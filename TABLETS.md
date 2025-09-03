@@ -1,5 +1,6 @@
 | Tablet                        |      Status       | Notes |
 | ---------------------------   | :---------------: | ----- |
+| Supernote Nomad               |     Supported     |
 | Acepen AP906                  |     Supported     |
 | Acepen AP1060                 |     Supported     |
 | Adesso Cybertablet K8         |     Supported     |
