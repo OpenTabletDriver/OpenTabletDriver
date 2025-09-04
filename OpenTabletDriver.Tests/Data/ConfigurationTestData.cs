@@ -43,6 +43,63 @@ namespace OpenTabletDriver.Tests.Data
             return result;
         }
 
+        #region Schema
+
+        private static JSchema _tabletConfigurationSchema;
+        public static JSchema TabletConfigurationSchema => _tabletConfigurationSchema ??= GetTabletConfigSchema();
+
+        static JSchema GetTabletConfigSchema()
+        {
+            var gen = new JSchemaGenerator
+            {
+                DefaultRequired = Required.DisallowNull
+            };
+
+            var schema = gen.Generate(typeof(TabletConfiguration));
+            DisallowAdditionalItemsAndProperties(schema);
+            DisallowNullsAndEmptyCollections(schema);
+
+            return schema;
+
+            static void DisallowAdditionalItemsAndProperties(JSchema schema)
+            {
+                schema.AllowAdditionalItems = false;
+                schema.AllowAdditionalProperties = false;
+                schema.AllowUnevaluatedItems = false;
+                schema.AllowUnevaluatedProperties = false;
+
+                foreach (var child in schema.Properties)
+                {
+                    if (child.Key == nameof(TabletConfiguration.Attributes)) continue;
+                    DisallowAdditionalItemsAndProperties(child.Value);
+                }
+            }
+
+            static void DisallowNullsAndEmptyCollections(JSchema schema)
+            {
+                var schemaType = schema.Type!.Value;
+
+                if (schemaType.HasFlag(JSchemaType.Array))
+                {
+                    schema.MinimumItems = 1;
+                }
+                else if (schemaType.HasFlag(JSchemaType.Object))
+                {
+                    schema.MinimumProperties = 1;
+                }
+
+                if (schema.Properties is not null)
+                {
+                    foreach (var property in schema.Properties)
+                    {
+                        DisallowNullsAndEmptyCollections(property.Value);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         private static string GetConfigDir([CallerFilePath] string sourceFilePath = "") =>
             Path.GetFullPath(Path.Join(sourceFilePath, "../../../OpenTabletDriver.Configurations/Configurations"));
 

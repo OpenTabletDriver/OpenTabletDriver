@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Newtonsoft.Json.Schema.Generation;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Tests.Data;
@@ -232,67 +231,26 @@ namespace OpenTabletDriver.Tests
             Assert.False(equality);
         }
 
-        [Fact]
-        public void Configurations_Verify_Configs_With_Schema()
+        [Theory]
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Verify_Configs_With_Schema(TestTabletConfiguration testTabletConfiguration)
         {
-            var gen = new JSchemaGenerator();
-            gen.DefaultRequired = Required.DisallowNull;
+            var tabletFilename = testTabletConfiguration.File.Name;
+            var tabletConfigString = testTabletConfiguration.FileContents.Value;
+            var schema = ConfigurationTestData.TabletConfigurationSchema;
+            IList<string> errors = new List<string>();
 
-            var schema = gen.Generate(typeof(TabletConfiguration));
-            DisallowAdditionalItemsAndProperties(schema);
-            DisallowNullsAndEmptyCollections(schema);
-
-            var failed = false;
-
-            foreach (var (tabletFilename, tabletConfigString) in ConfigFiles)
+            var tabletConfig = JObject.Parse(tabletConfigString);
+            try
             {
-                var tabletConfig = JObject.Parse(tabletConfigString);
-                if (tabletConfig.IsValid(schema, out IList<string> errors)) continue;
-
-                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:");
-                foreach (var error in errors)
-                    _testOutputHelper.WriteLine(error);
-                _testOutputHelper.WriteLine(string.Empty);
-
-                failed = true;
+                Assert.True(tabletConfig.IsValid(schema, out errors));
             }
-
-            Assert.False(failed);
-        }
-
-        private static void DisallowAdditionalItemsAndProperties(JSchema schema)
-        {
-            schema.AllowAdditionalItems = false;
-            schema.AllowAdditionalProperties = false;
-            schema.AllowUnevaluatedItems = false;
-            schema.AllowUnevaluatedProperties = false;
-
-            foreach (var child in schema.Properties)
+            catch (Exception e)
             {
-                if (child.Key == nameof(TabletConfiguration.Attributes)) continue;
-                DisallowAdditionalItemsAndProperties(child.Value);
-            }
-        }
+                if (errors.Any())
+                    _testOutputHelper.WriteLine($"Schema errors in {tabletFilename}: " + string.Join(",", errors));
 
-        private static void DisallowNullsAndEmptyCollections(JSchema schema)
-        {
-            var schemaType = schema.Type!.Value;
-
-            if (schemaType.HasFlag(JSchemaType.Array))
-            {
-                schema.MinimumItems = 1;
-            }
-            else if (schemaType.HasFlag(JSchemaType.Object))
-            {
-                schema.MinimumProperties = 1;
-            }
-
-            if (schema.Properties is not null)
-            {
-                foreach (var property in schema.Properties)
-                {
-                    DisallowNullsAndEmptyCollections(property.Value);
-                }
+                throw;
             }
         }
 
