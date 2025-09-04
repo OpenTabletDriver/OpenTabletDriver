@@ -23,15 +23,8 @@ using Xunit.Abstractions;
 
 namespace OpenTabletDriver.Tests
 {
-    public partial class ConfigurationTest
+    public partial class ConfigurationTest(ITestOutputHelper _testOutputHelper)
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-
-        public ConfigurationTest(ITestOutputHelper testOutputHelper)
-        {
-            _testOutputHelper = testOutputHelper;
-        }
-
         [Fact]
         public void Configurations_Have_ExistentParsers()
         {
