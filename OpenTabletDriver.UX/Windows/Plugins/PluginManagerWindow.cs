@@ -83,6 +83,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
                     pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
+                    var contexts = AppInfo.PluginManager.GetLoadedPlugins();
+                    // Unload then reload the plugins
+                    var current = contexts.FirstOrDefault((c => PluginMetadata.Match(c.GetMetadata(), metadata)));
+                    if (current != null)
+                        AppInfo.PluginManager.UnloadPlugin(current);
+
                     AppInfo.PluginManager.Load();
                 }
                 return true;
