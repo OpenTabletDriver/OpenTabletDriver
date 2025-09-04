@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,6 +15,7 @@ using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tests.Data;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,7 +23,7 @@ using Xunit.Abstractions;
 
 namespace OpenTabletDriver.Tests
 {
-    public partial class ConfigurationTest(ITestOutputHelper _testOutputHelper)
+    public class ConfigurationTest(ITestOutputHelper _testOutputHelper)
     {
         [Fact]
         public void Configurations_Have_ExistentParsers()
@@ -232,16 +232,6 @@ namespace OpenTabletDriver.Tests
             Assert.False(equality);
         }
 
-        private static string GetConfigDir([CallerFilePath] string sourceFilePath = "")
-        {
-            return Path.GetFullPath(Path.Join(sourceFilePath, "../../OpenTabletDriver.Configurations/Configurations"));
-        }
-
-        private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(GetConfigDir(), "*.json", SearchOption.AllDirectories)
-            .Select(f => (Path.GetRelativePath(GetConfigDir(), f), File.ReadAllText(f))).OrderBy(x => x.Item1);
-
-        public static readonly IEnumerable<object?[]> Configs = ConfigFiles.Select(x => new object?[] { JsonConvert.DeserializeObject<TabletConfiguration>(x.Item2, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }), x.Item1 });
-
         [Fact]
         public void Configurations_Verify_Configs_With_Schema()
         {
@@ -355,9 +345,12 @@ namespace OpenTabletDriver.Tests
         /// - Newline at end of file
         /// - Consistent newline format
         /// </summary>
-        [Fact]
-        public void Configurations_Are_Linted()
+        [Theory]
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Are_Linted(TestTabletConfiguration ttc)
         {
+            var currentContent = ttc.FileContents.Value;
+
             var serializer = new JsonSerializer()
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -371,43 +364,31 @@ namespace OpenTabletDriver.Tests
                 Indentation = 2
             };
 
-            var failedFiles = 0;
-            foreach (var (tabletFilename, actual) in ConfigFiles)
+            var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(currentContent);
+            serializer.Serialize(jtw, ourJsonObj);
+            sb.AppendLine();
+            var expected = sb.ToString();
+
+            var diff = InlineDiffBuilder.Diff(currentContent, expected, ignoreWhiteSpace: false);
+
+            if (diff.HasDifferences)
             {
-                sb.Clear();
-                try
-                {
-                    var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(actual);
-                    serializer.Serialize(jtw, ourJsonObj);
-                    sb.AppendLine();
-                    var expected = sb.ToString();
-
-                    var diff = InlineDiffBuilder.Diff(expected, actual, ignoreWhiteSpace: false);
-
-                    if (diff.HasDifferences)
-                    {
-                        _testOutputHelper.WriteLine($"'{tabletFilename}' did not match linting:");
-                        PrintDiff(_testOutputHelper, diff);
-                        failedFiles++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _testOutputHelper.WriteLine($"'{tabletFilename}' failed to deserialize: {ex.Message}");
-                    failedFiles++;
-                }
+                _testOutputHelper.WriteLine($"'{ttc.File.Name}' did not match linting:");
+                PrintDiff(_testOutputHelper, diff);
+                Assert.True(false);
             }
-
-            Assert.True(failedFiles == 0, $"{failedFiles} configuration files failed linting.");
         }
 
-        private static readonly Regex AvaloniaReportParserPath = AvaloniaReportParserPathRegex();
+        private static readonly Regex AvaloniaReportParserPath = ConfigurationTestData.AvaloniaReportParserPathRegex();
 
         [Theory]
-        [MemberData(nameof(Configs))]
-        public void Configurations_Have_No_Legacy_Properties(TabletConfiguration config, string filePath)
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Have_No_Legacy_Properties(TestTabletConfiguration ttc)
         {
             var errors = new List<string>();
+
+            var config = ttc.Configuration.Value;
+            var filePath = $"{ttc.File.Directory?.Name ?? "unknown"}/{ttc.File.Name}";
 
             // disable warning for "obsoleted" paths
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -530,8 +511,5 @@ namespace OpenTabletDriver.Tests
                     obj.Identifier.InputReportLength);
             }
         }
-
-        [GeneratedRegex(@"^OpenTabletDriver\.Tablet\..*$", RegexOptions.Compiled)]
-        private static partial Regex AvaloniaReportParserPathRegex();
     }
 }
