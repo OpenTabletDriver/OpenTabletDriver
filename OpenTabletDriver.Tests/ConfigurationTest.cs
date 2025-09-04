@@ -22,7 +22,7 @@ using Xunit.Abstractions;
 
 namespace OpenTabletDriver.Tests
 {
-    public class ConfigurationTest(ITestOutputHelper _testOutputHelper)
+    public class ConfigurationTest(ITestOutputHelper testOutputHelper)
     {
         [Fact]
         public void Configurations_Have_ExistentParsers()
@@ -43,11 +43,11 @@ namespace OpenTabletDriver.Tests
                 try
                 {
                     var parser = parserProvider.GetReportParser(parserType);
-                    _testOutputHelper.WriteLine(parser.ToString());
+                    testOutputHelper.WriteLine(parser.ToString());
                 }
                 catch
                 {
-                    _testOutputHelper.WriteLine($"Unable to find report parser '{parserType}'");
+                    testOutputHelper.WriteLine($"Unable to find report parser '{parserType}'");
                     failed = true;
                 }
             }
@@ -248,7 +248,7 @@ namespace OpenTabletDriver.Tests
             catch (Exception e)
             {
                 if (errors.Any())
-                    _testOutputHelper.WriteLine($"Schema errors in {tabletFilename}: " + string.Join(",", errors));
+                    testOutputHelper.WriteLine($"Schema errors in {tabletFilename}: " + string.Join(",", errors));
 
                 throw;
             }
@@ -331,8 +331,8 @@ namespace OpenTabletDriver.Tests
 
             if (diff.HasDifferences)
             {
-                _testOutputHelper.WriteLine($"'{ttc.File.Name}' did not match linting:");
-                PrintDiff(_testOutputHelper, diff);
+                testOutputHelper.WriteLine($"'{ttc.File.Name}' did not match linting:");
+                PrintDiff(testOutputHelper, diff);
                 Assert.True(false);
             }
         }
