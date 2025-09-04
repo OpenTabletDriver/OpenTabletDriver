@@ -1,0 +1,30 @@
+{
+  "Name": "XP-Pen Deco 01 V3 (Variant 2)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 255.98,
+      "Height": 159.13,
+      "MaxX": 51196,
+      "MaxY": 31826
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2375,
+      "InputReportLength": 12,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ]
+}

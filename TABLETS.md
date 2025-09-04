@@ -146,6 +146,7 @@
 | XP-Pen Deco 01 V2             |     Supported     |
 | XP-Pen Deco 01 V2 (Variant 2) |     Supported     |
 | XP-Pen Deco 01 V3             |     Supported     |
+| XP-Pen Deco 01 V3 (Variant 2) |     Supported     |
 | XP-Pen Deco 640 (IT640)       |     Supported     |
 | XP-Pen Deco Fun L (CT1060)    |     Supported     |
 | XP-Pen Deco Fun S (CT640)     |     Supported     |
