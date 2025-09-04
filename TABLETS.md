@@ -143,6 +143,7 @@
 | XP-Pen Artist 24              |     Supported     |
 | XP-Pen Artist Pro 14 (Gen2)   |     Supported     |
 | XP-Pen Artist Pro 16 (Gen2)   |     Supported     |
+| XP-Pen Artist Pro 24 (Gen2)   |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco 01 V2             |     Supported     |
 | XP-Pen Deco 01 V2 (Variant 2) |     Supported     |
