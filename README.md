@@ -24,6 +24,10 @@ All statuses of tablets that are supported, untested, and planned to be supporte
 - [Linux](https://opentabletdriver.net/Wiki/Install/Linux)
 - [MacOS](https://opentabletdriver.net/Wiki/Install/MacOS)
 
+# Troubleshooting
+
+Please see our [website wiki](https://opentabletdriver.net/Wiki) for common issues and other quirks.
+
 # Running OpenTabletDriver binaries
 
 OpenTabletDriver functions as two separate processes that interact with each other seamlessly. The active program that does all of the tablet data handling is `OpenTabletDriver.Daemon`, while the GUI frontend is `OpenTabletDriver.UX.*`, where `*` depends on your platform<sup>1</sup>. The daemon must be started in order for anything to work, however the GUI is unnecessary. If you have existing settings, they should apply when the daemon starts.
