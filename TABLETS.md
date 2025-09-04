@@ -133,7 +133,7 @@
 | XP-Pen Artist 13 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
-| XP-Pen Artist 15.6 V2         |     Supported     |
+| XP-Pen Artist 15.6 Pro V2     |     Supported     |
 | XP-Pen Artist 16 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 22 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 24              |     Supported     |
