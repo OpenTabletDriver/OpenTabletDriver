@@ -142,7 +142,6 @@
 | XP-Pen Artist 24              |     Supported     |
 | XP-Pen Artist Pro 14 (Gen2)   |     Supported     |
 | XP-Pen Artist Pro 16 (Gen2)   |     Supported     |
-| XP-Pen Artist Pro 19 (Gen2)   |     Supported     |
 | XP-Pen Deco 01                |     Supported     |
 | XP-Pen Deco 01 V2             |     Supported     |
 | XP-Pen Deco 01 V2 (Variant 2) |     Supported     |
@@ -291,6 +290,7 @@
 | XP-Pen Artist 16 Pro          |  Missing Features | Wheel is not yet supported.
 | XP-Pen Artist 24 Pro          |  Missing Features | Wheel is not yet supported.
 | XP-Pen Artist Pro 16TP        |  Missing Features | Touch is not yet supported.
+| XP-Pen Artist Pro 19 (Gen2)   |  Missing Features | Scroll Wheel on Pen is not yet supported
 | XP-Pen Deco 02                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco 03                |  Missing Features | Wheel is not yet supported.
 | XP-Pen Deco Pro Medium        |  Missing Features | Tilt and wheel are not yet supported.
