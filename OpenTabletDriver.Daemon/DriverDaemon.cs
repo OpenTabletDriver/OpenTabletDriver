@@ -33,6 +33,8 @@ namespace OpenTabletDriver.Daemon
 {
     public class DriverDaemon : IDriverDaemon
     {
+        private const string AVALONIA_REVISION = "0.7.0.0";
+
         public DriverDaemon(Driver driver)
         {
             Driver = driver;
@@ -323,17 +325,17 @@ namespace OpenTabletDriver.Daemon
 
             if (settingsFile.Exists)
             {
-                if (Settings.TryDeserialize(settingsFile, out var settings))
+                if (Settings.TryDeserialize(settingsFile, out var settings) &&
+                    settings.Revision != AVALONIA_REVISION)
                 {
+                    settings.Revision = Settings.GetVersion(); // ensure Revision matches Daemon version
                     await SetSettings(settings);
                 }
                 else
                 {
-                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
-                    settings = Settings.GetDefaults();
-                    Settings.Recover(settingsFile, settings);
-                    Log.Write("Settings", "Recovery complete");
-                    await SetSettings(settings);
+                    Log.Write("Settings", "Invalid settings found. Moving invalid config.");
+                    MoveSettingsFile();
+                    await ResetSettings();
                 }
             }
             else
@@ -344,6 +346,18 @@ namespace OpenTabletDriver.Daemon
                 if (Settings!.Profiles.Any())
                     Settings.Serialize(settingsFile);
             }
+        }
+
+        private void MoveSettingsFile()
+        {
+            var src = AppInfo.Current.SettingsFile;
+
+            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var dstFileName = $"settings_bak-{now}.json";
+            var dst = Path.Join(AppInfo.Current.AppDataDirectory, dstFileName);
+
+            Log.Write("MoveSettingsFile", $"Moving settings file at '{src}' to '{dst}'", LogLevel.Debug);
+            File.Move(src, dst);
         }
 
         private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
