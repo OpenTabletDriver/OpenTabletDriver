@@ -5,10 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;
 using Newtonsoft.Json.Schema.Generation;
+using OpenTabletDriver.Configurations;
 using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
 using Xunit;
 
@@ -54,6 +57,20 @@ namespace OpenTabletDriver.Tests.Data
 
             return result;
         }
+
+        private static readonly ServiceProvider ServiceProvider = new DriverServiceCollection().BuildServiceProvider();
+
+        private static T GetRequiredService<T>() where T : notnull => ServiceProvider.GetRequiredService<T>();
+
+        public static IReportParserProvider ReportParserProvider => GetRequiredService<IReportParserProvider>();
+        public static IDeviceConfigurationProvider DeviceConfigurationProvider => GetRequiredService<IDeviceConfigurationProvider>();
+
+        private static IEnumerable<string> parsersInConfigs => from configuration in DeviceConfigurationProvider.TabletConfigurations
+            from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
+            orderby identifier.ReportParser
+            select identifier.ReportParser;
+
+        public static TheoryData<string> ParsersInConfigs => parsersInConfigs.Distinct().ToTheoryData();
 
         #region Schema
 

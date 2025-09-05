@@ -24,35 +24,11 @@ namespace OpenTabletDriver.Tests
 {
     public class ConfigurationTest(ITestOutputHelper testOutputHelper)
     {
-        [Fact]
-        public void Configurations_Have_ExistentParsers()
+        [Theory]
+        [MemberData(nameof(ConfigurationTestData.ParsersInConfigs), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Have_ExistentParsers(string parserName)
         {
-            var serviceProvider = new DriverServiceCollection().BuildServiceProvider();
-            var parserProvider = serviceProvider.GetRequiredService<IReportParserProvider>();
-            var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
-
-            var parsers = from configuration in configurationProvider.TabletConfigurations
-                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
-                          orderby identifier.ReportParser
-                          select identifier.ReportParser;
-
-            var failed = false;
-
-            foreach (var parserType in parsers.Where(p => p != null).Distinct())
-            {
-                try
-                {
-                    var parser = parserProvider.GetReportParser(parserType);
-                    testOutputHelper.WriteLine(parser.ToString());
-                }
-                catch
-                {
-                    testOutputHelper.WriteLine($"Unable to find report parser '{parserType}'");
-                    failed = true;
-                }
-            }
-
-            Assert.False(failed);
+            ConfigurationTestData.ReportParserProvider.GetReportParser(parserName);
         }
 
         [Fact]
