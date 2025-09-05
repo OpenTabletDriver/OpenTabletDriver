@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,17 @@ namespace OpenTabletDriver.Tests.Data
         public required Lazy<TabletConfiguration> Configuration { get; init; }
         public required FileInfo File { get; init; }
         public required Lazy<string> FileContents  { get; init; }
+    }
+
+    public static class Extensions
+    {
+        public static TheoryData<T> ToTheoryData<T>(this IEnumerable<T> enumerable)
+        {
+            var result = new TheoryData<T>();
+            foreach (var element in enumerable)
+                result.Add(element);
+            return result;
+        }
     }
 
     public static partial class ConfigurationTestData
