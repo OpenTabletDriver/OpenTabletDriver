@@ -53,8 +53,7 @@ namespace OpenTabletDriver.Daemon
             {
                 if (args.Additions.Any())
                 {
-                    await DetectTablets();
-                    await SetSettings(Settings);
+                    await ResetDaemon();
                 }
             };
 
@@ -90,9 +89,23 @@ namespace OpenTabletDriver.Daemon
                     return;
 
                 Log.Write(nameof(DriverDaemon), "Sleep detected...", LogLevel.Info);
+                await ResetDaemon();
+            };
+            return;
+
+            _outputChangedDetector.Changed += async () =>
+            {
+                Log.Write(nameof(DriverDaemon), "Monitor output change detected...", LogLevel.Info);
+                await ResetDaemon();
+                Log.WriteNotify(nameof(DriverDaemon),
+                    "Your Monitor Layout has changed. Please verify that the OpenTabletDriver tablet output settings are correct");
+            };
+
+            async Task ResetDaemon()
+            {
                 await DetectTablets();
                 await SetSettings(Settings);
-            };
+            }
         }
 
         public event EventHandler<LogMessage>? Message;
@@ -106,6 +119,7 @@ namespace OpenTabletDriver.Daemon
         private IUpdater Updater = DesktopInterop.Updater;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
+        private readonly IOutputChangedDetector _outputChangedDetector = new OutputChangedDetector();
 
         private UpdateInfo? _updateInfo;
         private LogFile _logFile;
@@ -130,10 +144,13 @@ namespace OpenTabletDriver.Daemon
 
             AppInfo.PluginManager.Load();
 
-            // Add services to inject on plugin construction
+            return Task.CompletedTask;
+        }
+
+        private Task InjectServices()
+        {
             AppInfo.PluginManager.AddService<IDriver>(() => this.Driver);
             AppInfo.PluginManager.AddService<IDriverDaemon>(() => this);
-
             return Task.CompletedTask;
         }
 
@@ -182,6 +199,8 @@ namespace OpenTabletDriver.Daemon
             {
                 foreach (var dev in Driver.InputDevices)
                     dev.OutputMode?.Dispose();
+
+                DesktopInterop.InvalidateServices();
 
                 Settings = settings ??= Settings.GetDefaults();
 
@@ -248,8 +267,12 @@ namespace OpenTabletDriver.Daemon
                     Log.Write("Settings", "Failed to apply settings. Attempted recovery. Some settings may have been lost.", LogLevel.Error, true);
                 }
 
-                Resynchronize?.Invoke(this, EventArgs.Empty);
                 return Task.CompletedTask;
+            }
+            finally
+            {
+                InjectServices();
+                ForceResynchronize();
             }
         }
 

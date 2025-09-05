@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using Octokit;
 using OpenTabletDriver.Desktop.Interop.Display;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
@@ -110,13 +111,29 @@ namespace OpenTabletDriver.Desktop.Interop
             _ => null
         };
 
-        public static IVirtualScreen VirtualScreen => virtualScreen ??= CurrentPlatform switch
+        public static IVirtualScreen VirtualScreen => virtualScreen ??= GetNewVirtualScreen();
+
+        private static IVirtualScreen GetNewVirtualScreen() =>
+            CurrentPlatform switch
+            {
+                PluginPlatform.Windows => new WindowsDisplay(),
+                PluginPlatform.Linux => ConstructLinuxDisplay(),
+                PluginPlatform.MacOS => new MacOSDisplay(),
+                _ => null
+            };
+
+        public static void InvalidateServices()
         {
-            PluginPlatform.Windows => new WindowsDisplay(),
-            PluginPlatform.Linux => ConstructLinuxDisplay(),
-            PluginPlatform.MacOS => new MacOSDisplay(),
-            _ => null
-        };
+            virtualScreen = null;
+            absolutePointer = null;
+            relativePointer = null;
+            virtualTablet = null;
+            virtualKeyboard = null;
+
+            AppInfo.PluginManager.ResetServices();
+
+            Log.Write(nameof(DesktopInterop), "Invalidated virtual screen and output devices", LogLevel.Debug);
+        }
 
         private static IVirtualScreen ConstructLinuxDisplay()
         {
@@ -127,6 +144,31 @@ namespace OpenTabletDriver.Desktop.Interop
 
             Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
             return new XScreen();
+        }
+
+        public static bool HasDisplayLayoutChanged()
+        {
+            var currentScreen = VirtualScreen;
+            var newScreen = GetNewVirtualScreen();
+
+            if (currentScreen.Displays.Count() != newScreen.Displays.Count())
+                return true;
+
+            for (int i = 0; i < currentScreen.Displays.Count(); i++)
+            {
+                var curDisp = currentScreen.Displays.ElementAt(i);
+                var newDisp = newScreen.Displays.ElementAt(i);
+
+                // ReSharper disable twice CompareOfFloatsByEqualityOperator
+                // floats in this case are sourced the same way, so should in theory always be the same
+                if (curDisp.Index != newDisp.Index ||
+                    curDisp.Width != newDisp.Width ||
+                    curDisp.Height != newDisp.Height ||
+                    !curDisp.Position.Equals(newDisp.Position))
+                    return true;
+            }
+
+            return false;
         }
     }
 }
