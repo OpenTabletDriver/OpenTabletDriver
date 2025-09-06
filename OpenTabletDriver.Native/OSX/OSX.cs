@@ -55,6 +55,9 @@ namespace OpenTabletDriver.Native.OSX
         public extern static void CGEventSetLocation(CGEventRef eventRef, CGPoint location);
 
         [DllImport(Quartz)]
+        public extern static CGEventRef CGEventCreateScrollWheelEvent2(CGEventRef eventRef, CGScrollEventUnit units, uint wheelCount, int wheel1, int wheel2, int wheel3);
+
+        [DllImport(Quartz)]
         public extern static void CGEventSetFlags(CGEventRef eventRef, ulong flags);
 
         [DllImport(Quartz)]

@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
 {
     using static OSX;
 
-    public abstract class MacOSVirtualMouse : IMouseButtonHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
+    public abstract class MacOSVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer, ITiltHandler, IEraserHandler, IPressureHandler
     {
         private const int DoubleClickMoveTolerance = 8;
         private const int ProximityExpiresDurationInMs = 200;
@@ -18,6 +18,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private int _prevButtonStates;
         private float? _pendingX;
         private float? _pendingY;
+        private int? _scrollDeltaX;
+        private int? _scrollDeltaY;
         private float? _pressure;
         private Vector2? _tilt;
         private bool? _isEraser;
@@ -57,6 +59,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             SetButtonState(ref _currButtonStates, ToCGMouseButton(button), false);
         }
 
+        public void ScrollVertically(int amount)
+        {
+            _scrollDeltaX = -amount;
+        }
+
+        public void ScrollHorizontally(int amount)
+        {
+            _scrollDeltaY = -amount;
+        }
+
         public void Flush()
         {
             if (_currButtonStates != _prevButtonStates)
@@ -74,6 +86,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                 SetPendingPosition(_mouseEvent, position.X, position.Y);
                 ApplyTabletValues();
                 PostEvent();
+            }
+            if (_scrollDeltaX.HasValue || _scrollDeltaY.HasValue)
+            {
+                var scrollEventRef = CGEventCreateScrollWheelEvent2(IntPtr.Zero, CGScrollEventUnit.kCGScrollEventUnitPixel, 2, _scrollDeltaX ?? 0, _scrollDeltaY ?? 0, 0);
+                CGEventPost(CGEventTapLocation.kCGHIDEventTap, scrollEventRef);
+                CFRelease(scrollEventRef);
+                _scrollDeltaX = _scrollDeltaY = null;
             }
         }
 
@@ -113,6 +132,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             {
                 _mouseMovedSinceLastDown = true;
             }
+        }
+
+        protected void QueuePendingScroll(int x, int y)
+        {
+            _scrollDeltaX = x;
+            _scrollDeltaY = y;
         }
 
         public void SetPressure(float percentage)
