@@ -14,6 +14,9 @@
     "AuxiliaryButtons": {
       "ButtonCount": 6
     },
+    "MouseButtons": {
+      "ButtonCount": 5
+    },
     "Wheel": {
       "StepCount": 71,
       "IsRelative": false,
@@ -21,9 +24,6 @@
       "Buttons": {
         "ButtonCount": 1
       }
-    },
-    "MouseButtons": {
-      "ButtonCount": 5
     }
   },
   "DigitizerIdentifiers": [
