@@ -33,6 +33,8 @@ namespace OpenTabletDriver.Daemon
 {
     public class DriverDaemon : IDriverDaemon
     {
+        private const string AVALONIA_REVISION = "0.7.0.0";
+
         public DriverDaemon(Driver driver)
         {
             Driver = driver;
@@ -130,6 +132,7 @@ namespace OpenTabletDriver.Daemon
 
             // Add services to inject on plugin construction
             AppInfo.PluginManager.AddService<IDriver>(() => this.Driver);
+            AppInfo.PluginManager.AddService<IDriverDaemon>(() => this);
 
             return Task.CompletedTask;
         }
@@ -196,16 +199,31 @@ namespace OpenTabletDriver.Daemon
                         Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
 
                     if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
+                    {
                         SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
+                        if (absoluteMode.Pointer is IPressureHandler)
+                            LogPressureState(group, profile);
+                        if (absoluteMode.Pointer is ITiltHandler)
+                            LogTiltState(group, profile);
+                    }
 
                     if (dev.OutputMode is RelativeOutputMode relativeMode)
+                    {
                         SetRelativeModeSettings(dev, relativeMode, profile.RelativeModeSettings);
+                        if (relativeMode.Pointer is IPressureHandler)
+                            LogPressureState(group, profile);
+                        if (relativeMode.Pointer is ITiltHandler)
+                            LogTiltState(group, profile);
+                    }
 
-                    if (dev.OutputMode is IOutputMode outputMode)
+                    if (dev.OutputMode is { } outputMode)
                     {
                         outputMode.Tablet = tabletReference;
                         var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
                         SetOutputModeElements(dev, outputMode, profile, bindingHandler);
+
+                        outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
+                        outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
                     }
                 }
 
@@ -233,6 +251,17 @@ namespace OpenTabletDriver.Daemon
                 Resynchronize?.Invoke(this, EventArgs.Empty);
                 return Task.CompletedTask;
             }
+        }
+
+        private static void LogTiltState(string group, Profile profile)
+        {
+            Log.Write(group, $"Tilt: {(profile.BindingSettings.DisableTilt ? "Disabled" : "Enabled")}");
+        }
+
+        private static void LogPressureState(string group, Profile profile)
+        {
+            Log.Write(group,
+                $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
         }
 
         private void RecoverSettings(Settings? settings)
@@ -296,23 +325,39 @@ namespace OpenTabletDriver.Daemon
 
             if (settingsFile.Exists)
             {
-                if (Settings.TryDeserialize(settingsFile, out var settings))
+                if (Settings.TryDeserialize(settingsFile, out var settings) &&
+                    settings.Revision != AVALONIA_REVISION)
                 {
+                    settings.Revision = Settings.GetVersion(); // ensure Revision matches Daemon version
                     await SetSettings(settings);
                 }
                 else
                 {
-                    Log.Write("Settings", "Invalid settings detected. Attempting recovery.", LogLevel.Error);
-                    settings = Settings.GetDefaults();
-                    Settings.Recover(settingsFile, settings);
-                    Log.Write("Settings", "Recovery complete");
-                    await SetSettings(settings);
+                    Log.Write("Settings", "Invalid settings found. Moving invalid config.");
+                    MoveSettingsFile();
+                    await ResetSettings();
                 }
             }
             else
             {
                 await ResetSettings();
+
+                // only save fresh settings if a tablet was configured
+                if (Settings!.Profiles.Any())
+                    Settings.Serialize(settingsFile);
             }
+        }
+
+        private void MoveSettingsFile()
+        {
+            var src = AppInfo.Current.SettingsFile;
+
+            long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            var dstFileName = $"settings_bak-{now}.json";
+            var dst = Path.Join(AppInfo.Current.AppDataDirectory, dstFileName);
+
+            Log.Write("MoveSettingsFile", $"Moving settings file at '{src}' to '{dst}'", LogLevel.Debug);
+            File.Move(src, dst);
         }
 
         private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
@@ -611,6 +656,12 @@ namespace OpenTabletDriver.Daemon
             {
                 _updateInfo = null;
             }
+        }
+
+        public Task ForceResynchronize()
+        {
+            Resynchronize?.Invoke(this, EventArgs.Empty);
+            return Task.CompletedTask;
         }
 
         private static void InitializePlatform()

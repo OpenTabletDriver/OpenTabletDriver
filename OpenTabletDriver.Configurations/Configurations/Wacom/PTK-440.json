@@ -9,9 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 2047,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 6
@@ -23,6 +21,9 @@
       "Buttons": {
         "ButtonCount": 1
       }
+    },
+    "MouseButtons": {
+      "ButtonCount": 5
     }
   },
   "DigitizerIdentifiers": [
@@ -30,7 +31,7 @@
       "VendorID": 1386,
       "ProductID": 184,
       "InputReportLength": 10,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1.IntuosV1ReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4.Intuos4ReportParser",
       "FeatureInitReport": [
         "AgI="
       ]
@@ -39,7 +40,7 @@
       "VendorID": 1386,
       "ProductID": 184,
       "InputReportLength": 11,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1.WacomDriverIntuosV1ReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4.WacomDriverIntuos4ReportParser",
       "FeatureInitReport": [
         "AgI="
       ]

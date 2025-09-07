@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
 using System.Threading;
@@ -128,6 +129,8 @@ namespace OpenTabletDriver.UX
         public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
 
+        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")).ReadToEnd();
+
         private Settings settings;
         public Settings Settings
         {
@@ -146,7 +149,7 @@ namespace OpenTabletDriver.UX
             Developers = new string[] { "InfinityGhost", "X9VoiD", "gonX", "jamesbt365", "Kuuube", "AkiSakurai" },
             Designers = new string[] { "InfinityGhost" },
             Documenters = new string[] { "InfinityGhost", "gonX", "jamesbt365", "Kuuube" },
-            License = string.Empty,
+            License = License,
             Copyright = string.Empty,
             Logo = Logo.WithSize(256, 256)
         };

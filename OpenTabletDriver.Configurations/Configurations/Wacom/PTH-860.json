@@ -9,9 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -31,7 +29,7 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2.WacomDriverIntuosV2ReportParser"
     }
   ],
-  "AuxilaryDeviceIdentifiers": [
+  "AuxiliaryDeviceIdentifiers": [
     {
       "VendorID": 1386,
       "ProductID": 856,

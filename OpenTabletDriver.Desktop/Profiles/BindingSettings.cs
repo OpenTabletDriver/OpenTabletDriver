@@ -22,6 +22,8 @@ namespace OpenTabletDriver.Desktop.Profiles
             mouseButtons = new PluginSettingStoreCollection(),
             wheelButtons = new PluginSettingStoreCollection();
 
+        private bool disablePressure, disableTilt;
+
         [JsonProperty("TipActivationThreshold")]
         public float TipActivationThreshold
         {
@@ -119,6 +121,20 @@ namespace OpenTabletDriver.Desktop.Profiles
             set => this.RaiseAndSetIfChanged(ref this.cct, value);
             get => this.cct;
         }
+        
+        [JsonProperty("DisablePressure")]
+        public bool DisablePressure
+        {
+            set => this.RaiseAndSetIfChanged(ref this.disablePressure, value);
+            get => this.disablePressure;
+        }
+
+        [JsonProperty("DisableTilt")]
+        public bool DisableTilt
+        {
+            set => this.RaiseAndSetIfChanged(ref this.disableTilt, value);
+            get => this.disableTilt;
+        }
 
         public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
         {
@@ -141,7 +157,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public void MatchSpecifications(TabletSpecifications tabletSpecifications)
         {
-            int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
+            int penButtonCount = (int?)tabletSpecifications.Pen?.ButtonCount ?? 0;
             int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
             int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
             int wheelButtonCount = (int?)tabletSpecifications.Wheel?.Buttons.ButtonCount ?? 0;

@@ -1,0 +1,13 @@
+name: "Manual Pull Request Labeler"
+on:
+  workflow_dispatch:
+    inputs:
+      pull_request_ids:
+        required: true
+
+jobs:
+  manual_labeler:
+    uses: ./.github/workflows/_uses-labeler.yml
+    with:
+      pull_request_ids: ${{ inputs.pull_request_ids }}
+

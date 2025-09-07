@@ -1,0 +1,24 @@
+name: "Pull Request Labeler"
+on:
+  workflow_call:
+    inputs:
+      pull_request_ids:
+        description: "JSON array of GitHub pull request ID's to relabel (untested, please PR this text out if it works)"
+        type: string
+        required: false # if not set, uses context
+
+jobs:
+  labeler:
+    permissions:
+      contents: read # to read committed files
+      pull-requests: write # to update labels
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Pull Request Labeler (automatic)"
+        if: "${{ inputs.pull_request_id == '' }}"
+        uses: actions/labeler@v5
+      - name: "Pull Request Labeler (manually input ID's)"
+        if: "${{ inputs.pull_request_id != '' }}"
+        uses: actions/labeler@v5
+        with:
+          pr-number: ${{ fromJSON(inputs.pull_request_ids) }}

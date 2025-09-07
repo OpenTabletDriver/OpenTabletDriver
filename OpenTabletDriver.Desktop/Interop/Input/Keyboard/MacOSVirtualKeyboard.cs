@@ -11,25 +11,26 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
     public class MacOSVirtualKeyboard : IVirtualKeyboard
     {
+        // Keep track of current modifier flags, as CGEventSourceFlagsState does not return updated flags immediately after an event is posted.
+        private ulong _currentFlags = 0;
         private void KeyEvent(string key, bool isPress)
         {
             if (EtoKeysymToVK.TryGetValue(key, out var code))
             {
                 var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
                 var flag = fromCGKeyCode((CGKeyCode)code);
-                var currentFlag = CGEventSourceFlagsState(CGEventSourceStateHIDSystemState) & (0xffffffff ^ 0x20000100);
                 if (flag != 0)
                 {
                     if (!isPress)
                     {
-                        currentFlag &= ~(ulong)flag;
+                        _currentFlags &= ~(ulong)flag;
                     }
                     else
                     {
-                        currentFlag |= (ulong)flag;
+                        _currentFlags |= (ulong)flag;
                     }
                 }
-                CGEventSetFlags(keyEvent, currentFlag);
+                CGEventSetFlags(keyEvent, _currentFlags);
                 CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
                 CFRelease(keyEvent);
             }

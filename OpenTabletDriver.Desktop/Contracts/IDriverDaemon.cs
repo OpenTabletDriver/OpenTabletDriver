@@ -44,5 +44,7 @@ namespace OpenTabletDriver.Desktop.Contracts
 
         Task<SerializedUpdateInfo?> CheckForUpdates();
         Task InstallUpdate();
+
+        Task ForceResynchronize();
     }
 }

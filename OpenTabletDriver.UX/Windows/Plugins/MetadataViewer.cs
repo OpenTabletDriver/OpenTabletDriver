@@ -51,18 +51,9 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             var updateableBinding = new DelegateBinding<bool>(
                 () =>
                 {
-                    var repo = PluginMetadataList.Repository;
-                    if (repo == null)
-                        return false;
-
-                    var updatableFromRepository = from meta in repo
-                                                  where PluginMetadata.Match(meta, Metadata)
-                                                  where meta.PluginVersion > Metadata.PluginVersion
-                                                  where CurrentDriverVersion >= meta.SupportedDriverVersion
-                                                  orderby meta.PluginVersion descending
-                                                  select meta;
-
-                    return updatableFromRepository.Any();
+                    // Get the plugin's updated metadata from the repo
+                    updatedMetadata = GetUpdatedMetadatas(PluginMetadataList.Repository, Metadata, CurrentDriverVersion).FirstOrDefault() ?? Metadata;
+                    return updatedMetadata != Metadata;
                 },
                 addChangeEvent: (e) => MetadataChanged += e,
                 removeChangeEvent: (e) => MetadataChanged -= e
@@ -112,6 +103,11 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                         },
                         new AlignedGroup
                         {
+                            Text = "Max Supported Driver Version",
+                            Content = maxDriverVersion = new Label()
+                        },
+                        new AlignedGroup
+                        {
                             Text = "Plugin Version",
                             Content = pluginVersion = new Label()
                         },
@@ -148,6 +144,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             owner.TextBinding.Bind(MetadataBinding.Child(c => c.Owner));
             description.TextBinding.Bind(MetadataBinding.Child(c => c.Description));
             driverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.SupportedDriverVersion).Convert(v => v?.ToString()));
+            maxDriverVersion.TextBinding.Bind(MetadataBinding.Child(c => c.MaxSupportedDriverVersion).Convert(v => v?.ToString() ?? "N/A"));
             pluginVersion.TextBinding.Bind(MetadataBinding.Child(c => c.PluginVersion).Convert(v => v?.ToString()));
             license.TextBinding.Bind(MetadataBinding.Child(c => c.LicenseIdentifier));
 
@@ -164,7 +161,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private StackLayout actions;
         private Placeholder placeholder;
 
-        private Label name, owner, description, driverVersion, pluginVersion, license;
+        private Label name, owner, description, driverVersion, maxDriverVersion, pluginVersion, license;
         private Button sourceCode, wiki;
 
         private Version CurrentDriverVersion = Assembly.GetExecutingAssembly().GetName().Version;
@@ -173,6 +170,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         public event Func<PluginMetadata, Task<bool>> RequestPluginInstall;
         public event Func<PluginMetadata, Task<bool>> RequestPluginUninstall;
 
+        private PluginMetadata updatedMetadata;
         private PluginMetadata metadata;
         public PluginMetadata Metadata
         {
@@ -189,10 +187,6 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         protected virtual void OnMetadataChanged()
         {
             MetadataChanged?.Invoke(this, new EventArgs());
-
-            var contexts = AppInfo.PluginManager.GetLoadedPlugins();
-
-            bool isInstalled = contexts.Any(t => PluginMetadata.Match(t.GetMetadata(), metadata));
 
             this.Content = Metadata != null ? content : placeholder ??= new Placeholder
             {
@@ -223,7 +217,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
-            await RequestPluginInstall?.Invoke(Metadata);
+            await RequestPluginInstall?.Invoke(updatedMetadata);
 
             this.ParentWindow.Enabled = true;
         }
@@ -235,6 +229,20 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             await RequestPluginUninstall?.Invoke(Metadata);
 
             this.ParentWindow.Enabled = true;
+        }
+
+        private static IEnumerable<PluginMetadata> GetUpdatedMetadatas(PluginMetadataCollection repo, PluginMetadata Metadata, Version CurrentDriverVersion)
+        {
+            if (repo == null)
+                return Enumerable.Empty<PluginMetadata>();
+
+            return from meta in repo
+                   where PluginMetadata.Match(meta, Metadata)
+                   where meta.PluginVersion > Metadata.PluginVersion
+                   where CurrentDriverVersion >= meta.SupportedDriverVersion
+                   where meta.MaxSupportedDriverVersion == null || CurrentDriverVersion <= meta.MaxSupportedDriverVersion
+                   orderby meta.PluginVersion descending
+                   select meta;
         }
 
         private class AlignedGroup : Group

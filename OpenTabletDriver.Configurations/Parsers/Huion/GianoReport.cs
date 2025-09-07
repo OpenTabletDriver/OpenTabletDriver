@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
             Position = new Vector2
             {
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]) | ((report[8] & 1) << 16),
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[4]) | ((report[9] & 1) << 16)
             };
             Tilt = new Vector2
             {
@@ -25,7 +25,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
             PenButtons = new bool[]
             {
                 report[1].IsBitSet(1),
-                report[1].IsBitSet(2)
+                report[1].IsBitSet(2),
+                report[1].IsBitSet(3)
             };
         }
 

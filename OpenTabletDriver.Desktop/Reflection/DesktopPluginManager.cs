@@ -142,8 +142,12 @@ namespace OpenTabletDriver.Desktop.Reflection
 
             var name = file.Name.Replace(file.Extension, string.Empty);
             var tempDir = new DirectoryInfo(Path.Join(TemporaryDirectory.FullName, name));
-            if (!tempDir.Exists)
-                tempDir.Create();
+
+            // Avoid issues with extracting to an existing directory and installing additional unwanted files
+            if (tempDir.Exists)
+                tempDir.Delete(true);
+
+            tempDir.Create();
 
             var pluginPath = Path.Join(AppInfo.Current.PluginDirectory, name);
             var pluginDir = new DirectoryInfo(pluginPath);
@@ -182,7 +186,12 @@ namespace OpenTabletDriver.Desktop.Reflection
             var sourceDir = new DirectoryInfo(sourcePath);
             var targetDir = new DirectoryInfo(targetPath);
 
+            if (sourceDir.Exists)
+                sourceDir.Delete(true);
+
             await metadata.DownloadAsync(sourcePath);
+
+            sourceDir.Refresh();
 
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == targetDir.FullName);
             var result = targetDir.Exists ? UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
