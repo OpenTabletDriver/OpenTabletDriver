@@ -18,10 +18,10 @@ namespace OpenTabletDriver.Desktop
         public static IEnumerable<Type> GetPluginTypes(this IEnumerable<Assembly> assemblies)
         {
             return from asm in assemblies
-                where asm.IsLoadable()
-                from type in asm.GetExportedTypes()
-                where IsPluginType(type)
-                select type;
+                   where asm.IsLoadable()
+                   from type in asm.GetExportedTypes()
+                   where IsPluginType(type)
+                   select type;
         }
 
         /// <summary>
