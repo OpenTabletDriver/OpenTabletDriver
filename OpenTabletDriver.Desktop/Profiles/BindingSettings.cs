@@ -128,7 +128,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         private void AddPenButtons(TabletSpecifications tabletSpecifications)
         {
-            uint buttonCount = tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
+            uint buttonCount = tabletSpecifications.Pen.ButtonCount;
             if (buttonCount >= 1)
                 PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton1)));
             if (buttonCount >= 2)
