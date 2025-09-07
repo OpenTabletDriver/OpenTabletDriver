@@ -35,7 +35,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// The device report parser used by the detected device.
         /// </summary>
         [RegularExpression(@"^([A-Za-z]+\w*)(\.[A-Za-z]+\w*)+$", ErrorMessage = $"{nameof(ReportParser)} for identifier must match regular expression")]
-        public string ReportParser { set; get; } = string.Empty;
+        public string ReportParser { set; get; } = typeof(PassthroughReportParser).FullName ?? string.Empty;
 
         /// <summary>
         /// The feature report sent to initialize tablet functions.
