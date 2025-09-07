@@ -121,7 +121,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             set => this.RaiseAndSetIfChanged(ref this.cct, value);
             get => this.cct;
         }
-        
+
         [JsonProperty("DisablePressure")]
         public bool DisablePressure
         {
