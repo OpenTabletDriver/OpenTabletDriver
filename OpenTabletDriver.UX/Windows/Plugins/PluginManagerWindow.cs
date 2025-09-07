@@ -10,6 +10,7 @@ using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
 using StreamJsonRpc.Protocol;
+using static OpenTabletDriver.UX.Controls.Generic.Reflection.Extensions;
 
 namespace OpenTabletDriver.UX.Windows.Plugins
 {
@@ -88,6 +89,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                     var current = contexts.FirstOrDefault((c => PluginMetadata.Match(c.GetMetadata(), metadata)));
                     if (current != null)
                         AppInfo.PluginManager.UnloadPlugin(current);
+
+                    ClearFriendlyNameCache();
 
                     AppInfo.PluginManager.Load();
                 }
