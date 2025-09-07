@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using OpenTabletDriver.Desktop;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 
 namespace OpenTabletDriver.UX.Controls.Generic.Reflection
@@ -16,9 +19,16 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
             return FriendlyNameCache[type] = type.GetCustomAttribute<PluginNameAttribute>()?.Name ?? type.FullName;
         }
 
-        public static void ClearFriendlyNameCache()
+        public static bool RemoveFromFriendlyNameCache(TypeInfo typeInfo) => FriendlyNameCache.Remove(typeInfo);
+
+        public static void RemovePluginsFromFriendlyNameCache(IEnumerable<Assembly> assemblies)
         {
-            FriendlyNameCache.Clear();
+            foreach (var typeInfo in assemblies.GetPluginTypes().Select(x => x.GetTypeInfo()))
+            {
+                bool removed = RemoveFromFriendlyNameCache(typeInfo);
+                if (removed)
+                    Log.Write(nameof(FriendlyNameCache), $"Removed cached entry '{typeInfo.FullName}'", LogLevel.Debug);
+            }
         }
     }
 }
