@@ -198,6 +198,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             );
 
             visibleChangedBinding.Bind(reportRecordedNonZeroBinding);
+            enableDataRecording.CheckedChanged += (_, _) => OnDataRecordingStateChanged();
 
             App.Driver.DeviceReport += HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
@@ -289,6 +290,12 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         protected virtual void OnReportDataChanged()
         {
             ReportDataChanged?.Invoke(this, new EventArgs());
+        }
+
+        protected virtual void OnDataRecordingStateChanged()
+        {
+            if (enableDataRecording.Checked ?? false)
+                NumberOfReportsRecorded = 0;
         }
 
         protected virtual void OnReportPeriodChanged() => ReportPeriodChanged?.Invoke(this, new EventArgs());
