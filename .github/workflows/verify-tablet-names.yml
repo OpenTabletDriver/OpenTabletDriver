@@ -1,6 +1,10 @@
 name: Verify Correct Tablet Names
 
 on:
+  workflow_dispatch:
+    inputs:
+      pull_request_ids:
+        required: true
   pull_request:
 
 jobs:
@@ -11,23 +15,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get changed tablet configs
-        id: delta
-        uses: tj-actions/changed-files@ed68ef82c095e0d48ec87eccea555d944a631a4c
-        with:
-          files: OpenTabletDriver.Configurations/Configurations/**/*.json
-          separator: ","
-
       - name: Check changed configs match TABLETS.md
-        if: steps.delta.outputs.any_changed == 'true'
         env:
           TABLETS: TABLETS.md
-          CONFIGS: ${{ steps.delta.outputs.all_changed_files }}
         run: |
-          IFS=","
-          for CONF in $CONFIGS; do
-            NAME=$(cat $CONF| jq -r '.Name')
-            if ! grep -q "| $NAME " $TABLETS; then
-              echo "Failure: '$NAME' was not found in $TABLETS - was it spelt correctly?"
+          IFS=$'\n'
+          mapfile -t configs < <(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '^OpenTabletDriver\.Configurations/Configurations/.*\.json')
+          if [ ${#configs[@]} -ne 0 ]; then
+            for conf in "${configs[@]}"; do
+              name=$(cat $conf| jq -r '.Name')
+              if ! grep -q "| $name" $TABLETS; then
+                echo "Failure: '$name' was not found in $TABLETS - was it spelled correctly?"
+                exit 1
               fi
-          done
+            done
+          fi
