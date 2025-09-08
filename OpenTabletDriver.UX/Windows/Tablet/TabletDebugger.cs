@@ -198,7 +198,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             );
 
             visibleChangedBinding.Bind(reportRecordedNonZeroBinding);
-            enableDataRecording.CheckedChanged += (_,_) =>OnDataRecordingStateChanged();
+            enableDataRecording.CheckedChanged += (_, _) => OnDataRecordingStateChanged();
 
             App.Driver.DeviceReport += HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
