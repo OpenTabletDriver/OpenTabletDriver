@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                                 },
                                 new StackLayoutItem
                                 {
-                                    Control = new DebuggerGroup
+                                    Control = reportsRecordedGroup = new DebuggerGroup
                                     {
                                         Text = "Reports Recorded",
                                         Width = LARGE_FONTSIZE * 10,
@@ -185,6 +185,20 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             reportsRecorded.TextBinding.Bind(NumberOfReportsRecordedBinding.Convert(c => c.ToString()));
             tabletVisualizer.ReportDataBinding.Bind(ReportDataBinding);
 
+            var reportRecordedNonZeroBinding = new DelegateBinding<bool>(
+                () => NumberOfReportsRecorded > 0,
+                addChangeEvent: (e) => NumberOfReportsRecordedChanged += e,
+                removeChangeEvent: (e) => NumberOfReportsRecordedChanged -= e
+            );
+
+            var visibleChangedBinding = new BindableBinding<DebuggerGroup, bool>(
+                reportsRecordedGroup,
+                (c) => c.Visible,
+                (c, v) => c.Visible = v
+            );
+
+            visibleChangedBinding.Bind(reportRecordedNonZeroBinding);
+
             App.Driver.DeviceReport += HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
             App.Driver.Instance.SetTabletDebug(true);
@@ -216,6 +230,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private Label deviceName, rawTablet, tablet, reportRate, reportsRecorded, maxReportedPosition;
         private Vector2 maxPosition;
         private TabletVisualizer tabletVisualizer;
+        private DebuggerGroup reportsRecordedGroup;
         private CheckBox enableDataRecording;
 
         private DebugReportData reportData;
