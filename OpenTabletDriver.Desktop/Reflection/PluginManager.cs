@@ -20,7 +20,9 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Assembly.Load("OpenTabletDriver.Plugin")
             };
 
+#pragma warning disable CS0618 // Type or member is obsolete
             libTypes = OpenTabletDriver.Desktop.Extensions.GetLibTypes().ToArray();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var internalTypes = from asm in assemblies
                                 from type in asm.DefinedTypes
