@@ -1,7 +1,8 @@
 name: Verify Correct Tablet Names
 
 on:
-  push
+  push:
+  pull_request:
 
 jobs:
   verify-names:
