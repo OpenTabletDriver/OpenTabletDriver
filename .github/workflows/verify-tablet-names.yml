@@ -1,11 +1,7 @@
 name: Verify Correct Tablet Names
 
 on:
-  workflow_dispatch:
-    inputs:
-      pull_request_ids:
-        required: true
-  pull_request:
+  push
 
 jobs:
   verify-names:
@@ -24,7 +20,7 @@ jobs:
           if [ ${#configs[@]} -ne 0 ]; then
             for conf in "${configs[@]}"; do
               name=$(cat $conf| jq -r '.Name')
-              if ! grep -q "| $name" $TABLETS; then
+              if ! grep -q "| $name " $TABLETS; then
                 echo "Failure: '$name' was not found in $TABLETS - was it spelled correctly?"
                 exit 1
               fi
