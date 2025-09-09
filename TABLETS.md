@@ -133,6 +133,7 @@
 | XP-Pen Artist 13 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 13.3            |     Supported     |
 | XP-Pen Artist 15.6            |     Supported     |
+| XP-Pen Artist 15.6 Pro V2     |     Supported     |
 | XP-Pen Artist 16 Pro          |     Supported     |
 | XP-Pen Artist 16 (2nd Gen)    |     Supported     |
 | XP-Pen Artist 22 (2nd Gen)    |     Supported     |
@@ -247,6 +248,7 @@
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                |  Missing Features | Touch is not yet supported.
 | Wacom DTH-135                 |  Missing Features | Touch is not yet supported.
+| Wacom DTH-227                 |  Missing Features | Touch is not yet supported.
 | Wacom DTH-271                 |  Missing Features | Aux buttons are not yet supported.
 | Wacom DTK-1300                |  Missing Features | Center button is not yet supported.
 | Wacom DTK-2200                |  Missing Features | Touch Strips are not yet supported.
@@ -270,6 +272,7 @@
 | Wacom PTK-650                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-670                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-840                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-870                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTZ-1230                |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-1231W               |  Missing Features | Touch bars are not yet supported.
 | Wacom PTZ-431W                |  Missing Features | Touch bars are not yet supported.
