@@ -89,7 +89,6 @@ namespace OpenTabletDriver.Daemon
                 Log.Write(nameof(DriverDaemon), "Sleep detected...", LogLevel.Info);
                 await ResetDaemon();
             };
-            return;
 
             _outputChangedDetector.Changed += async () =>
             {
@@ -98,6 +97,7 @@ namespace OpenTabletDriver.Daemon
                 Log.WriteNotify(nameof(DriverDaemon),
                     "Your Monitor Layout has changed. Please verify that the OpenTabletDriver tablet output settings are correct");
             };
+            return;
 
             async Task ResetDaemon()
             {
