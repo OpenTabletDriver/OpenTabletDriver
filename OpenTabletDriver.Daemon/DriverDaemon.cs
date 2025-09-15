@@ -199,6 +199,7 @@ namespace OpenTabletDriver.Daemon
                     dev.OutputMode?.Dispose();
 
                 DesktopInterop.InvalidateServices();
+                InjectServices();
 
                 Settings = settings ??= Settings.GetDefaults();
 
@@ -254,7 +255,6 @@ namespace OpenTabletDriver.Daemon
             }
             finally
             {
-                InjectServices();
                 ForceResynchronize();
             }
         }
