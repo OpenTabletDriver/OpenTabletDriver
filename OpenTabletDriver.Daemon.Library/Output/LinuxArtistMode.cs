@@ -1,4 +1,5 @@
 using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Daemon.Library.Interop.Input.Absolute;
 using OpenTabletDriver.Output;
 using OpenTabletDriver.Platform.Pointer;
 
@@ -9,7 +10,7 @@ namespace OpenTabletDriver.Daemon.Library.Output
     {
         public LinuxArtistMode(
             InputDevice tablet,
-            IPressureHandler pressureHandler,
+            EvdevVirtualTablet pressureHandler,
             ISettingsProvider settingsProvider
         ) : base(tablet, pressureHandler)
         {

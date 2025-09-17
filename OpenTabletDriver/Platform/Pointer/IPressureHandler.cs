@@ -6,7 +6,7 @@ namespace OpenTabletDriver.Platform.Pointer
     /// A pen pressure handler.
     /// </summary>
     [PublicAPI]
-    public interface IPressureHandler : IAbsolutePointer
+    public interface IPressureHandler
     {
         /// <summary>
         /// Sets the pressure of the pen.
