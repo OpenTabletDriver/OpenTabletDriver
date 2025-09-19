@@ -1,0 +1,32 @@
+{
+  "Name": "Huion L310",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 220,
+      "Height": 165.7,
+      "MaxX": 32000,
+      "MaxY": 20000
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 8209,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.InspiroyReportParser",
+      "DeviceStrings": {
+        "2": "Huion Tablet_L310"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
