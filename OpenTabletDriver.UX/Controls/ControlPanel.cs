@@ -80,6 +80,10 @@ namespace OpenTabletDriver.UX.Controls
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
+            App.Driver.Resynchronize += (sender, e) =>
+            {
+                outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
+            };
 
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
             {
