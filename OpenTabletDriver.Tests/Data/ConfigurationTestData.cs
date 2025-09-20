@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Tests.Data
     {
         public required Lazy<TabletConfiguration> Configuration { get; init; }
         public required FileInfo File { get; init; }
-        public required Lazy<string> FileContents  { get; init; }
+        public required Lazy<string> FileContents { get; init; }
     }
 
     public static class Extensions
@@ -66,9 +66,9 @@ namespace OpenTabletDriver.Tests.Data
         public static IDeviceConfigurationProvider DeviceConfigurationProvider => GetRequiredService<IDeviceConfigurationProvider>();
 
         private static IEnumerable<string> parsersInConfigs => from configuration in DeviceConfigurationProvider.TabletConfigurations
-            from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
-            orderby identifier.ReportParser
-            select identifier.ReportParser;
+                                                               from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
+                                                               orderby identifier.ReportParser
+                                                               select identifier.ReportParser;
 
         public static TheoryData<string> ParsersInConfigs => parsersInConfigs.Distinct().ToTheoryData();
 
