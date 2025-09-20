@@ -120,7 +120,12 @@ namespace OpenTabletDriver.UX.Controls
 
             public void HandleTabletsChanged(object sender, IList<TabletReference> tablets)
             {
+                Profile oldProfile = null;
+                if (SelectedIndex >= 0)
+                    oldProfile = (Profile)DataStore.ElementAt(SelectedIndex);
+
                 visibleProfiles.Clear();
+
                 if (tablets.Any())
                 {
                     var tabletsWithoutProfile = from tablet in tablets
@@ -135,7 +140,8 @@ namespace OpenTabletDriver.UX.Controls
 
                     if (this.SelectedIndex < 0)
                     {
-                        this.SelectedIndex = 0;
+                        int pendingIndex = oldProfile != null ? visibleProfiles.IndexOf(visibleProfiles.FirstOrDefault(x => x.Tablet == oldProfile.Tablet)) : 0;
+                        this.SelectedIndex = pendingIndex >= 0 ? pendingIndex : 0;
                         this.OnSelectedValueChanged(EventArgs.Empty);
                     }
 
