@@ -68,7 +68,8 @@ The generic binary tarball is designed to be extracted from the root directory.
 
 #### MacOS [Experimental]
 
-Run `./eng/macos/package.sh --package true`.
+A newer version of Bash and Coreutils is required to build OpenTabletDriver. You can install them using Homebrew.
+Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/macos/package.sh --package true`.
 
 # Features
 
