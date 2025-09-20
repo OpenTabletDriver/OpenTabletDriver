@@ -116,6 +116,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                       where !(disp is IVirtualScreen)
                       select new RectangleF(disp.Position.X, disp.Position.Y, disp.Width, disp.Height);
             absoluteModeEditor.displayAreaEditor.AreaBounds = bgs;
+            absoluteModeEditor.displayAreaEditor.CreateMenu();
         }
 
         private void UpdateOutputMode(PluginSettingStore store)

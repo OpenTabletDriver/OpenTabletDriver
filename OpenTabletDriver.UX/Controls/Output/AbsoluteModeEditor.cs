@@ -308,7 +308,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                 this.ToolTip = "You can right click the area editor to set the area to a display, adjust alignment, or resize the area.";
             }
 
-            protected override void CreateMenu()
+            internal override void CreateMenu()
             {
                 base.CreateMenu();
 
@@ -432,7 +432,7 @@ namespace OpenTabletDriver.UX.Controls.Output
                 }
             }
 
-            protected override void CreateMenu()
+            internal override void CreateMenu()
             {
                 base.CreateMenu();
 

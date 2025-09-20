@@ -193,7 +193,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             return (max - min) / 2;
         }
 
-        protected virtual void CreateMenu()
+        internal virtual void CreateMenu()
         {
             this.ContextMenu = new ContextMenu
             {

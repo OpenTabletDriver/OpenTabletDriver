@@ -30,7 +30,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
 
         private MaskedTextBox<float> rotation;
 
-        protected override void CreateMenu()
+        internal override void CreateMenu()
         {
             base.CreateMenu();
 
