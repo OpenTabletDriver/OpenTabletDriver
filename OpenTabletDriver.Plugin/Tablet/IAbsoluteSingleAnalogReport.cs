@@ -5,6 +5,6 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The position reading of an input, or null to indicate no reading.
         /// </summary>
-        uint? Position { get; }
+        uint? Position { get; set; }
     }
 }
