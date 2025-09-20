@@ -277,8 +277,8 @@
 | Wacom PTH-850                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-860                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-450                 |  Missing Features | Wheel is not yet supported.
-| Wacom PTK-650                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-470                 |  Missing Features | Wheel is not yet supported.
+| Wacom PTK-650                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-670                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-870                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTZ-1230                |  Missing Features | Touch bars are not yet supported.
