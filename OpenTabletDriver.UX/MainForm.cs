@@ -381,6 +381,10 @@ namespace OpenTabletDriver.UX
 
             // Synchronize settings
             await SyncSettings();
+            Driver.Resynchronize += (sender, e) =>
+            {
+                DesktopInterop.InvalidateServices();
+            };
             Driver.Resynchronize += async (sender, e) => await SyncSettings();
 
             // Set window content
