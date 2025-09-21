@@ -11,9 +11,7 @@ if [ ! -z "$GET_CONFIGS_FROM_CI" ]; then
   # git diff command uses a github action runner quirk where the diff between
   # HEAD^ and HEAD is equal to diffing commit merge base with pr tip
   mapfile -t configs < <(git diff --name-only --diff-filter=AM HEAD^ HEAD | grep '^OpenTabletDriver\.Configurations/Configurations/.*\.json')
-fi
-
-if [ -z "$configs" ]; then
+elif [ -z "$configs" ]; then
   # if still undefined, grab all configurations
   mapfile -t configs < <(find OpenTabletDriver.Configurations/Configurations/ -type f -iname '*.json')
 fi
