@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Configurations.Parsers.XP_Pen;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tests.Data;
 using Xunit;
 
 namespace OpenTabletDriver.Tests
@@ -28,6 +29,12 @@ namespace OpenTabletDriver.Tests
             var reportParserType = reportParserProvider.GetReportParser(reportParserName).GetType();
 
             Assert.Equal(expectedReportParserType, reportParserType);
+        }
+
+        [Fact]
+        public void InvalidParser_Throws()
+        {
+            Assert.ThrowsAny<Exception>(() => ConfigurationTestData.ReportParserProvider.GetReportParser("Invalid parser"));
         }
     }
 }
