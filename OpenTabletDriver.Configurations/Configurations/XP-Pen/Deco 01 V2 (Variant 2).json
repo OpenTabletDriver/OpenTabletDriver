@@ -42,6 +42,19 @@
         "4": "UG901_BPU1002",
         "5": "2020-10-23_Release3"
       }
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2306,
+      "InputReportLength": 12,
+      "OutputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ],
+      "DeviceStrings": {
+        "4": "UG902_BPG1002"
+      }
     }
   ],
   "Attributes": {
