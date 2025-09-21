@@ -22,6 +22,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.UX.MacOS", "OpenTabletDriver.UX.MacOS\OpenTabletDriver.UX.MacOS.csproj", "{BF28815D-56CA-443D-8F1E-836C19D94F05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Tests", "OpenTabletDriver.Tests\OpenTabletDriver.Tests.csproj", "{B0107F45-E452-40E4-8407-14F99895CE98}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1A9166D9-0B7E-41B6-8210-EC04E17E9C3E} = {1A9166D9-0B7E-41B6-8210-EC04E17E9C3E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTabletDriver.Desktop", "OpenTabletDriver.Desktop\OpenTabletDriver.Desktop.csproj", "{A72DF3AF-BFA5-4573-B02B-85E186AA428A}"
 EndProject
