@@ -174,8 +174,8 @@ namespace OpenTabletDriver
                    where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                    where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
                    where identifier.FeatureReportLength == null || identifier.FeatureReportLength == device.FeatureReportLength
-                   where device.FeatureReportLength >= (identifier.FeatureInitReport?.Count ?? 0)
-                   where device.OutputReportLength >= (identifier.OutputInitReport?.Count ?? 0)
+                   where device.FeatureReportLength >= (identifier.FeatureInitReport?.Max(x => x.Length) ?? 0)
+                   where device.OutputReportLength >= (identifier.OutputInitReport?.Max(x => x.Length) ?? 0)
                    where DeviceMatchesStrings(device, identifier.DeviceStrings)
                    where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
                    select device;
