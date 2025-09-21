@@ -32,6 +32,11 @@ namespace OpenTabletDriver.Plugin.Tablet
         public uint? OutputReportLength { set; get; }
 
         /// <summary>
+        /// The maximum feature report length reported by the device.
+        /// </summary>
+        public uint? FeatureReportLength { set; get; }
+
+        /// <summary>
         /// The device report parser used by the detected device.
         /// </summary>
         [RegularExpression(@"^([A-Za-z]+\w*)(\.[A-Za-z]+\w*)+$", ErrorMessage = $"{nameof(ReportParser)} for identifier must match regular expression")]
