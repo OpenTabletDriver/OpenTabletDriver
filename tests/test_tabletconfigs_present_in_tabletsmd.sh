@@ -32,6 +32,8 @@ if [ ${#configs[@]} -ne 0 ]; then
       fi
     fi
   done
+else
+  echo 'Pass: No configs to check'
 fi
 
 IFS="$oldifs"
