@@ -82,7 +82,7 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Text = "OpenTabletDriver",
                         VerticalAlignment = VerticalAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
+                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
                     },
                     new Label
                     {
