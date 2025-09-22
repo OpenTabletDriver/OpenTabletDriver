@@ -116,6 +116,12 @@ namespace OpenTabletDriver.UX.Windows
             tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
 
             this.Content = tabControl;
+
+            this.KeyDown += (sender, args) =>
+            {
+                if (args.Key == Keys.Escape)
+                    this.Close();
+            };
         }
     }
 }
