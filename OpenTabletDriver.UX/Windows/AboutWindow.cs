@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
 
@@ -18,6 +19,13 @@ namespace OpenTabletDriver.UX.Windows
             : base(Application.Instance.MainForm)
         {
             Title = "About OpenTabletDriver";
+
+            var jamesLabelDevelopers = new HoverLabel
+            {
+                Text = "jamesbt365",
+                VerticalAlignment = VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+            };
 
             var aboutTabContent = new StackLayout
             {
@@ -99,7 +107,14 @@ namespace OpenTabletDriver.UX.Windows
                                             },
                                             new Label
                                             {
-                                                Text = string.Join(Environment.NewLine, Developers),
+                                                Text = string.Join(Environment.NewLine, Developers.Take(Array.IndexOf(Developers, "jamesbt365"))),
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                            },
+                                            jamesLabelDevelopers,
+                                            new Label
+                                            {
+                                                Text = string.Join(Environment.NewLine, Developers.TakeLast(Developers.Length - Array.IndexOf(Developers, "jamesbt365") - 1)),
                                                 VerticalAlignment = VerticalAlignment.Center,
                                                 TextAlignment = TextAlignment.Center,
                                             },
@@ -222,7 +237,6 @@ namespace OpenTabletDriver.UX.Windows
             tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
             tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
             tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
-            tabControl.Pages.Add(new TabPage(memoriamTabContent) { Text = "Memoriam" });
 
             this.Content = tabControl;
 
@@ -230,7 +244,36 @@ namespace OpenTabletDriver.UX.Windows
             {
                 if (args.Key == Keys.Escape)
                     this.Close();
+                if (args.Key == Keys.J)
+                    if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
+                    {
+                        tabControl.Pages.Add(new TabPage(memoriamTabContent) { Text = "Memoriam" });
+                    }
             };
+
+            jamesLabelDevelopers.MouseDown += (sender, args) =>
+            {
+                if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
+                {
+                    tabControl.Pages.Add(new TabPage(memoriamTabContent) { Text = "Memoriam" });
+                }
+            };
+        }
+    }
+    class HoverLabel : Label
+    {
+        protected override void OnMouseEnter(MouseEventArgs e)
+        {
+            this.Font = SystemFonts.Bold();
+            this.Cursor = new Cursor(CursorType.Pointer);
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(MouseEventArgs e)
+        {
+            this.Font = SystemFonts.Default();
+            this.Cursor = new Cursor(CursorType.Default);
+            base.OnMouseLeave(e);
         }
     }
 }
