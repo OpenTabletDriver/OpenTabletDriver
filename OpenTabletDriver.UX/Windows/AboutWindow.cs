@@ -56,18 +56,58 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var creditsTabContent = new TextArea
+            var creditsTabContent = new StackLayout
             {
-                ReadOnly = true,
-                Text = "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Developers) + Environment.NewLine + Environment.NewLine
-                        + "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Designers) + Environment.NewLine + Environment.NewLine
-                        + "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Documenters)
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Padding = SPACING,
+                Spacing = SPACING / 2,
+                Items =
+                {
+                    new Label
+                    {
+                        Text = $"OpenTabletDriver v{App.Version} Credits",
+                        VerticalAlignment = VerticalAlignment.Center,
+                        TextAlignment = TextAlignment.Center,
+                        Font = SystemFonts.Bold(FONTSIZE),
+                    },
+                    new StackLayoutItem {
+                        Expand = true,
+                        Control = new TextArea
+                        {
+                            ReadOnly = true,
+                            Text = "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Developers) + Environment.NewLine + Environment.NewLine
+                                    + "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Designers) + Environment.NewLine + Environment.NewLine
+                                    + "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Documenters)
+                        }
+                    }
+                }
             };
 
-            var licenseTabContent = new TextArea
+            var licenseTabContent = new StackLayout
             {
-                ReadOnly = true,
-                Text = App.License,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Padding = SPACING,
+                Spacing = SPACING / 2,
+                Items =
+                {
+                    new Label
+                    {
+                        Text = $"OpenTabletDriver v{App.Version} License",
+                        VerticalAlignment = VerticalAlignment.Center,
+                        TextAlignment = TextAlignment.Center,
+                        Font = SystemFonts.Bold(FONTSIZE),
+                    },
+                    new StackLayoutItem {
+                        Expand = true,
+                        Control = new TextArea
+                        {
+                            ReadOnly = true,
+                            Text = App.License,
+                        }
+                    }
+                }
             };
 
             var tabControl = new TabControl();
