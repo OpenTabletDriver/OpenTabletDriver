@@ -71,14 +71,92 @@ namespace OpenTabletDriver.UX.Windows
                         TextAlignment = TextAlignment.Center,
                         Font = SystemFonts.Bold(FONTSIZE),
                     },
-                    new StackLayoutItem {
+                    new StackLayoutItem
+                    {
                         Expand = true,
-                        Control = new TextArea
+                        Control = new StackLayout
                         {
-                            ReadOnly = true,
-                            Text = "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Developers) + Environment.NewLine + Environment.NewLine
-                                    + "Designers:" + Environment.NewLine + string.Join(Environment.NewLine, Designers) + Environment.NewLine + Environment.NewLine
-                                    + "Documenters:" + Environment.NewLine + string.Join(Environment.NewLine, Documenters)
+                            Orientation = Orientation.Horizontal,
+                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                            VerticalContentAlignment = VerticalAlignment.Stretch,
+                            Items =
+                            {
+                                new StackLayoutItem
+                                {
+                                    Expand = true,
+                                    Control = new StackLayout
+                                    {
+                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                        VerticalContentAlignment = VerticalAlignment.Stretch,
+                                        Items =
+                                        {
+                                            new Label
+                                            {
+                                                Text = "Developers",
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                                Font = SystemFonts.Bold(FONTSIZE),
+                                            },
+                                            new Label
+                                            {
+                                                Text = string.Join(Environment.NewLine, Developers),
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                            },
+                                        }
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Expand = true,
+                                    Control = new StackLayout
+                                    {
+                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                        VerticalContentAlignment = VerticalAlignment.Stretch,
+                                        Items =
+                                        {
+                                            new Label
+                                            {
+                                                Text = "Designers",
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                                Font = SystemFonts.Bold(FONTSIZE),
+                                            },
+                                            new Label
+                                            {
+                                                Text = string.Join(Environment.NewLine, Designers),
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                            },
+                                        }
+                                    }
+                                },
+                                new StackLayoutItem
+                                {
+                                    Expand = true,
+                                    Control = new StackLayout
+                                    {
+                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                        VerticalContentAlignment = VerticalAlignment.Stretch,
+                                        Items =
+                                        {
+                                            new Label
+                                            {
+                                                Text = "Documenters",
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                                Font = SystemFonts.Bold(FONTSIZE),
+                                            },
+                                            new Label
+                                            {
+                                                Text = string.Join(Environment.NewLine, Documenters),
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                            },
+                                        }
+                                    }
+                                },
+                            }
                         }
                     }
                 }
