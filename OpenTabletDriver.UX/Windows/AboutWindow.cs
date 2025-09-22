@@ -77,8 +77,8 @@ namespace OpenTabletDriver.UX.Windows
                         {
                             ReadOnly = true,
                             Text = "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Developers) + Environment.NewLine + Environment.NewLine
-                                    + "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Designers) + Environment.NewLine + Environment.NewLine
-                                    + "Developers:" + Environment.NewLine + string.Join(Environment.NewLine, Documenters)
+                                    + "Designers:" + Environment.NewLine + string.Join(Environment.NewLine, Designers) + Environment.NewLine + Environment.NewLine
+                                    + "Documenters:" + Environment.NewLine + string.Join(Environment.NewLine, Documenters)
                         }
                     }
                 }
