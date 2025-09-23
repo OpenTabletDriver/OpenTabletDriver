@@ -15,6 +15,19 @@ namespace OpenTabletDriver.UX.Windows
         private readonly string[] Designers = ["InfinityGhost"];
         private readonly string[] Documenters = ["InfinityGhost", "gonX", "jamesbt365", "Kuuube"];
 
+        private const string _jamesText = """
+                                          In loving memory of Jamesbt365.
+                                          One of the biggest contributors to OpenTabletDriver and one of the kindest souls.
+
+                                          James was with the OpenTabletDriver team for about 4 and a half years.
+
+                                          In that time he sent over a quarter million messages on the OpenTabletDriver Discord server, added and improved hundreds of tablet configurations, commented thousands of times on Github issues, and pushed the project as a whole to new heights.
+
+                                          The countless hours he spent helping and improving OpenTabletDriver for not only its users but also the developers will not be forgotten.
+
+                                          His legacy will live on through the tablets he added support for, the features he merged into the driver, and the enormous impact he had on the community.
+                                          """;
+
         public AboutWindow()
             : base(Application.Instance.MainForm)
         {
@@ -43,10 +56,7 @@ namespace OpenTabletDriver.UX.Windows
                         Control = new TextArea
                         {
                             TextAlignment = TextAlignment.Center,
-                            Text = "In loving memory of Jamesbt365. One of the biggest contributors to OpenTabletDriver and one of the kindest souls.\n\n"
-                                + "James was with the OpenTabletDriver team for about 4 and a half years. In that time he sent over a quarter million messages on the OpenTabletDriver Discord server, added and improved hundreds of tablet configurations, commented thousands of times on Github issues, and pushed the project as a whole to new heights.\n\n"
-                                + "The countless hours he spent helping and improving OpenTabletDriver for not only its users but also the developers will not be forgotten.\n\n"
-                                + "His legacy will live on through the tablets he added support for, the features he merged into the driver, and the enormous impact he had on the community.",
+                            Text = _jamesText
                         }
                     }
                 }
