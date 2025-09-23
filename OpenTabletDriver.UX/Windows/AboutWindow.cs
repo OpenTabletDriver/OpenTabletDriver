@@ -286,6 +286,7 @@ namespace OpenTabletDriver.UX.Windows
             Command.Execute();
             base.OnMouseDown(e);
         }
+
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             this.Font = SystemFonts.Bold();
