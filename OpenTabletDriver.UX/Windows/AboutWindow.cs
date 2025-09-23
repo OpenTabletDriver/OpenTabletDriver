@@ -56,7 +56,7 @@ namespace OpenTabletDriver.UX.Windows
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new TextArea
+                        Control = new Label
                         {
                             TextAlignment = TextAlignment.Center,
                             Text = _jamesText
