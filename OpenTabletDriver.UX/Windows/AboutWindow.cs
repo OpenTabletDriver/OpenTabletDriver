@@ -51,7 +51,7 @@ namespace OpenTabletDriver.UX.Windows
                         Text = "In Memory of James",
                         VerticalAlignment = VerticalAlignment.Center,
                         TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
+                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
                     },
                     new StackLayoutItem
                     {
@@ -121,7 +121,7 @@ namespace OpenTabletDriver.UX.Windows
                         Text = $"OpenTabletDriver v{App.Version} Credits",
                         VerticalAlignment = VerticalAlignment.Center,
                         TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
+                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
                     },
                     new StackLayoutItem
                     {
@@ -238,7 +238,7 @@ namespace OpenTabletDriver.UX.Windows
                         Text = $"OpenTabletDriver v{App.Version} License",
                         VerticalAlignment = VerticalAlignment.Center,
                         TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
+                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
                     },
                     new StackLayoutItem {
                         Expand = true,
