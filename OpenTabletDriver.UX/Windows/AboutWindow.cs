@@ -52,14 +52,15 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var memoriamTabPage = new TabPage(memoriamTabContent) { Text = "Memoriam" };
+            var memoriamTabPage = new TabPage(memoriamTabContent)
+            {
+                Text = "Memoriam",
+                Visible = false,
+            };
 
             void showMemoriamTab()
             {
-                if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
-                {
-                    tabControl.Pages.Add(memoriamTabPage);
-                }
+                memoriamTabPage.Visible = true;
             };
 
             var aboutTabContent = new StackLayout
@@ -253,6 +254,7 @@ namespace OpenTabletDriver.UX.Windows
             tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
             tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
             tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
+            tabControl.Pages.Add(memoriamTabPage);
 
             this.Content = tabControl;
 
