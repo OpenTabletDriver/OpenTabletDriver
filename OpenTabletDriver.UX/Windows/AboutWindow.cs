@@ -255,7 +255,6 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     tabControl.Pages.Add(memoriamTabPage);
                 }
-                tabControl.SelectedPage = memoriamTabPage;
             };
 
             this.KeyDown += (sender, args) =>
