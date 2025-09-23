@@ -20,17 +20,46 @@ namespace OpenTabletDriver.UX.Windows
         {
             Title = "About OpenTabletDriver";
 
-            var jamesLabelFront = new HoverLabel
+            var tabControl = new TabControl();
+
+            var memoriamTabContent = new StackLayout
             {
-                Text = "In memory of jamesbt365",
-                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Padding = SPACING,
+                Spacing = SPACING / 2,
+                Items =
+                {
+                    new Label
+                    {
+                        Text = "In Memory of James",
+                        VerticalAlignment = VerticalAlignment.Center,
+                        TextAlignment = TextAlignment.Center,
+                        Font = SystemFonts.Bold(FONTSIZE),
+                    },
+                    new StackLayoutItem
+                    {
+                        Expand = true,
+                        Control = new TextArea
+                        {
+                            TextAlignment = TextAlignment.Center,
+                            Text = "In loving memory of Jamesbt365. One of the biggest contributors to OpenTabletDriver and one of the kindest souls.\n\n"
+                                + "James was with the OpenTabletDriver team for about 4 and a half years. In that time he sent over a quarter million messages on the OpenTabletDriver Discord server, added and improved hundreds of tablet configurations, commented thousands of times on Github issues, and pushed the project as a whole to new heights.\n\n"
+                                + "The countless hours he spent helping and improving OpenTabletDriver for not only its users but also the developers will not be forgotten.\n\n"
+                                + "His legacy will live on through the tablets he added support for, the features he merged into the driver, and the enormous impact he had on the community.",
+                        }
+                    }
+                }
             };
 
-            var jamesLabelDevelopers = new HoverLabel
+            var memoriamTabPage = new TabPage(memoriamTabContent) { Text = "Memoriam" };
+
+            void showMemoriamTab()
             {
-                Text = "jamesbt365",
-                VerticalAlignment = VerticalAlignment.Center,
-                TextAlignment = TextAlignment.Center,
+                if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
+                {
+                    tabControl.Pages.Add(memoriamTabPage);
+                }
             };
 
             var aboutTabContent = new StackLayout
@@ -67,7 +96,12 @@ namespace OpenTabletDriver.UX.Windows
                         Text = "OpenTabletDriver Github Repository",
                         Command = new Command((s, e) => Application.Instance.Open(App.Website.ToString())),
                     },
-                    jamesLabelFront,
+                    new CommandLabel
+                    {
+                        Text = "In memory of jamesbt365",
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Command = new Command((s, e) => showMemoriamTab()),
+                    },
                 }
             };
 
@@ -118,7 +152,13 @@ namespace OpenTabletDriver.UX.Windows
                                                 VerticalAlignment = VerticalAlignment.Center,
                                                 TextAlignment = TextAlignment.Center,
                                             },
-                                            jamesLabelDevelopers,
+                                            new CommandLabel
+                                            {
+                                                Text = "jamesbt365",
+                                                VerticalAlignment = VerticalAlignment.Center,
+                                                TextAlignment = TextAlignment.Center,
+                                                Command = new Command((s, e) => showMemoriamTab()),
+                                            },
                                             new Label
                                             {
                                                 Text = string.Join(Environment.NewLine, Developers.TakeLast(Developers.Length - Array.IndexOf(Developers, "jamesbt365") - 1)),
@@ -210,52 +250,11 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var memoriamTabContent = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                Padding = SPACING,
-                Spacing = SPACING / 2,
-                Items =
-                {
-                    new Label
-                    {
-                        Text = "In Memory of James",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
-                    },
-                    new StackLayoutItem
-                    {
-                        Expand = true,
-                        Control = new TextArea
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            Text = "In loving memory of Jamesbt365. One of the biggest contributors to OpenTabletDriver and one of the kindest souls.\n\n"
-                                + "James was with the OpenTabletDriver team for about 4 and a half years. In that time he sent over a quarter million messages on the OpenTabletDriver Discord server, added and improved hundreds of tablet configurations, commented thousands of times on Github issues, and pushed the project as a whole to new heights.\n\n"
-                                + "The countless hours he spent helping and improving OpenTabletDriver for not only its users but also the developers will not be forgotten.\n\n"
-                                + "His legacy will live on through the tablets he added support for, the features he merged into the driver, and the enormous impact he had on the community.",
-                        }
-                    }
-                }
-            };
-
-            var tabControl = new TabControl();
             tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
             tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
             tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
 
-            var memoriamTabPage = new TabPage(memoriamTabContent) { Text = "Memoriam" };
-
             this.Content = tabControl;
-
-            void showMemoriamTab()
-            {
-                if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
-                {
-                    tabControl.Pages.Add(memoriamTabPage);
-                }
-            };
 
             this.KeyDown += (sender, args) =>
             {
@@ -264,13 +263,16 @@ namespace OpenTabletDriver.UX.Windows
                 if (args.Key == Keys.J)
                     showMemoriamTab();
             };
-
-            jamesLabelDevelopers.MouseDown += (sender, args) => showMemoriamTab();
-            jamesLabelFront.MouseDown += (sender, args) => showMemoriamTab();
         }
     }
-    class HoverLabel : Label
+    class CommandLabel : Label
     {
+        public Command Command = new Command();
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            Command.Execute();
+            base.OnMouseDown(e);
+        }
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             this.Font = SystemFonts.Bold();
