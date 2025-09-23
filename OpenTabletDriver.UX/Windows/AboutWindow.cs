@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Eto.Drawing;
@@ -135,92 +136,9 @@ namespace OpenTabletDriver.UX.Windows
                             Spacing = SPACING / 2,
                             Items =
                             {
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new StackLayout
-                                    {
-                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                        VerticalContentAlignment = VerticalAlignment.Stretch,
-                                        Items =
-                                        {
-                                            new Label
-                                            {
-                                                Text = "Developers",
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                                Font = SystemFonts.Bold(FONTSIZE),
-                                            },
-                                            new LabelList(Developers, [
-                                                    new CommandLabel {
-                                                        Text = "jamesbt365",
-                                                        VerticalAlignment = VerticalAlignment.Center,
-                                                        TextAlignment = TextAlignment.Center,
-                                                        Command = new Command((s, e) => ShowMemoriamTab()),
-                                                    }
-                                                ])
-                                            {
-                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                                VerticalContentAlignment = VerticalAlignment.Stretch,
-                                            }
-                                        }
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new StackLayout
-                                    {
-                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                        VerticalContentAlignment = VerticalAlignment.Stretch,
-                                        Items =
-                                        {
-                                            new Label
-                                            {
-                                                Text = "Designers",
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                                Font = SystemFonts.Bold(FONTSIZE),
-                                            },
-                                            new LabelList(Designers, [])
-                                            {
-                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                                VerticalContentAlignment = VerticalAlignment.Stretch,
-                                            },
-                                        }
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new StackLayout
-                                    {
-                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                        VerticalContentAlignment = VerticalAlignment.Stretch,
-                                        Items =
-                                        {
-                                            new Label
-                                            {
-                                                Text = "Documenters",
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                                Font = SystemFonts.Bold(FONTSIZE),
-                                            },
-                                            new LabelList(Documenters, [
-                                                    new CommandLabel {
-                                                        Text = "jamesbt365",
-                                                        VerticalAlignment = VerticalAlignment.Center,
-                                                        TextAlignment = TextAlignment.Center,
-                                                        Command = new Command((s, e) => ShowMemoriamTab()),
-                                                    }
-                                                ])
-                                            {
-                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                                VerticalContentAlignment = VerticalAlignment.Stretch,
-                                            }
-                                        }
-                                    }
-                                },
+                                GenerateContributor(Developers, nameof(Developers)),
+                                GenerateContributor(Designers, nameof(Designers)),
+                                GenerateContributor(Documenters, nameof(Documenters)),
                             }
                         }
                     }
@@ -274,6 +192,40 @@ namespace OpenTabletDriver.UX.Windows
             Debug.Assert(_memoriamTabPage != null);
             _memoriamTabPage.Visible = true;
         }
+
+        private StackLayoutItem GenerateContributor(IEnumerable<string> contributors, string title) =>
+            new()
+            {
+                Expand = true,
+                Control = new StackLayout
+                {
+                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                    VerticalContentAlignment = VerticalAlignment.Stretch,
+                    Items =
+                    {
+                        new Label
+                        {
+                            Text = title,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            TextAlignment = TextAlignment.Center,
+                            Font = SystemFonts.Bold(FONTSIZE),
+                        },
+                        new LabelList(contributors, [
+                            new CommandLabel
+                            {
+                                Text = "jamesbt365",
+                                VerticalAlignment = VerticalAlignment.Center,
+                                TextAlignment = TextAlignment.Center,
+                                Command = new Command((s, e) => ShowMemoriamTab()),
+                            }
+                        ])
+                        {
+                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                            VerticalContentAlignment = VerticalAlignment.Stretch,
+                        }
+                    }
+                }
+            };
     }
     class CommandLabel : Label
     {
@@ -302,7 +254,7 @@ namespace OpenTabletDriver.UX.Windows
 
     class LabelList : StackLayout
     {
-        public LabelList(string[] textArray, CommandLabel[] commandLabels)
+        public LabelList(IEnumerable<string> textArray, CommandLabel[] commandLabels)
         {
             foreach (string text in textArray)
             {
