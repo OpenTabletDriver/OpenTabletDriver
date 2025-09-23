@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Eto.Drawing;
 using Eto.Forms;
@@ -14,6 +15,8 @@ namespace OpenTabletDriver.UX.Windows
         private readonly string[] Developers = ["InfinityGhost", "X9VoiD", "gonX", "jamesbt365", "Kuuube", "AkiSakurai"];
         private readonly string[] Designers = ["InfinityGhost"];
         private readonly string[] Documenters = ["InfinityGhost", "gonX", "jamesbt365", "Kuuube"];
+
+        private readonly TabPage _memoriamTabPage;
 
         private const string _jamesText = """
                                           In loving memory of Jamesbt365.
@@ -62,17 +65,6 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            var memoriamTabPage = new TabPage(memoriamTabContent)
-            {
-                Text = "Memoriam",
-                Visible = false,
-            };
-
-            void showMemoriamTab()
-            {
-                memoriamTabPage.Visible = true;
-            };
-
             var aboutTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -111,7 +103,7 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Text = "In memory of jamesbt365",
                         VerticalAlignment = VerticalAlignment.Center,
-                        Command = new Command((s, e) => showMemoriamTab()),
+                        Command = new Command((s, e) => ShowMemoriamTab()),
                     },
                 }
             };
@@ -168,7 +160,7 @@ namespace OpenTabletDriver.UX.Windows
                                                 Text = "jamesbt365",
                                                 VerticalAlignment = VerticalAlignment.Center,
                                                 TextAlignment = TextAlignment.Center,
-                                                Command = new Command((s, e) => showMemoriamTab()),
+                                                Command = new Command((s, e) => ShowMemoriamTab()),
                                             },
                                             new Label
                                             {
@@ -264,7 +256,7 @@ namespace OpenTabletDriver.UX.Windows
             tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
             tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
             tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
-            tabControl.Pages.Add(memoriamTabPage);
+            tabControl.Pages.Add(_memoriamTabPage = new TabPage(memoriamTabContent) { Text = "Memoriam", Visible = false });
 
             this.Content = tabControl;
 
@@ -273,8 +265,14 @@ namespace OpenTabletDriver.UX.Windows
                 if (args.Key == Keys.Escape)
                     this.Close();
                 if (args.Key == Keys.J)
-                    showMemoriamTab();
+                    ShowMemoriamTab();
             };
+        }
+
+        private void ShowMemoriamTab()
+        {
+            Debug.Assert(_memoriamTabPage != null);
+            _memoriamTabPage.Visible = true;
         }
     }
     class CommandLabel : Label
