@@ -149,17 +149,15 @@ namespace OpenTabletDriver.UX.Windows
                                                 TextAlignment = TextAlignment.Center,
                                                 Font = SystemFonts.Bold(FONTSIZE),
                                             },
-                                            new LabelList
-                                            {
-                                                CommandLabels = [
+                                            new LabelList(Developers, [
                                                     new CommandLabel {
                                                         Text = "jamesbt365",
                                                         VerticalAlignment = VerticalAlignment.Center,
                                                         TextAlignment = TextAlignment.Center,
                                                         Command = new Command((s, e) => ShowMemoriamTab()),
                                                     }
-                                                ],
-                                                TextArray = Developers,
+                                                ])
+                                            {
                                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                                                 VerticalContentAlignment = VerticalAlignment.Stretch,
                                             }
@@ -182,9 +180,8 @@ namespace OpenTabletDriver.UX.Windows
                                                 TextAlignment = TextAlignment.Center,
                                                 Font = SystemFonts.Bold(FONTSIZE),
                                             },
-                                            new LabelList
+                                            new LabelList(Designers, [])
                                             {
-                                                TextArray = Designers,
                                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                                                 VerticalContentAlignment = VerticalAlignment.Stretch,
                                             },
@@ -207,17 +204,15 @@ namespace OpenTabletDriver.UX.Windows
                                                 TextAlignment = TextAlignment.Center,
                                                 Font = SystemFonts.Bold(FONTSIZE),
                                             },
-                                            new LabelList
-                                            {
-                                                CommandLabels = [
+                                            new LabelList(Documenters, [
                                                     new CommandLabel {
                                                         Text = "jamesbt365",
                                                         VerticalAlignment = VerticalAlignment.Center,
                                                         TextAlignment = TextAlignment.Center,
                                                         Command = new Command((s, e) => ShowMemoriamTab()),
                                                     }
-                                                ],
-                                                TextArray = Documenters,
+                                                ])
+                                            {
                                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                                                 VerticalContentAlignment = VerticalAlignment.Stretch,
                                             }
@@ -305,31 +300,24 @@ namespace OpenTabletDriver.UX.Windows
 
     class LabelList : StackLayout
     {
-        public CommandLabel[] CommandLabels = [];
-        private string[] _textArray = [];
-        public string[] TextArray
+        public LabelList(string[] textArray, CommandLabel[] commandLabels)
         {
-            get => _textArray;
-            set
+            foreach (string text in textArray)
             {
-                foreach (string text in value)
+                var commandLabel = Array.Find(commandLabels, (x) => x.Text == text);
+                if (commandLabel != null)
                 {
-                    var commandLabel = Array.Find(CommandLabels, (x) => x.Text == text);
-                    if (commandLabel != null)
-                    {
-                        Items.Add(commandLabel);
-                    }
-                    else
-                    {
-                        Items.Add(new Label
-                        {
-                            VerticalAlignment = VerticalAlignment.Center,
-                            TextAlignment = TextAlignment.Center,
-                            Text = text,
-                        });
-                    }
+                    Items.Add(commandLabel);
                 }
-                _textArray = value;
+                else
+                {
+                    Items.Add(new Label
+                    {
+                        VerticalAlignment = VerticalAlignment.Center,
+                        TextAlignment = TextAlignment.Center,
+                        Text = text,
+                    });
+                }
             }
         }
     }
