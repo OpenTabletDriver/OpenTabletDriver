@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows
         private readonly TabPage _memoriamTabPage;
 
         private const string _jamesText = """
-                                          In loving memory of Jamesbt365.
+                                          In loving memory of jamesbt365.
                                           One of the biggest contributors to OpenTabletDriver and one of the kindest souls.
 
                                           James was with the OpenTabletDriver team for about 4 and a half years.
