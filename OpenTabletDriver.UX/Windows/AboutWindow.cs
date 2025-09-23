@@ -238,26 +238,28 @@ namespace OpenTabletDriver.UX.Windows
             tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
             tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
 
+            var memoriamTabPage = new TabPage(memoriamTabContent) { Text = "Memoriam" };
+
             this.Content = tabControl;
+
+            void showMemoriamTab()
+            {
+                if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
+                {
+                    tabControl.Pages.Add(memoriamTabPage);
+                }
+                tabControl.SelectedPage = memoriamTabPage;
+            };
 
             this.KeyDown += (sender, args) =>
             {
                 if (args.Key == Keys.Escape)
                     this.Close();
                 if (args.Key == Keys.J)
-                    if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
-                    {
-                        tabControl.Pages.Add(new TabPage(memoriamTabContent) { Text = "Memoriam" });
-                    }
+                    showMemoriamTab();
             };
 
-            jamesLabelDevelopers.MouseDown += (sender, args) =>
-            {
-                if (!tabControl.Pages.Any((x) => x.Text == "Memoriam"))
-                {
-                    tabControl.Pages.Add(new TabPage(memoriamTabContent) { Text = "Memoriam" });
-                }
-            };
+            jamesLabelDevelopers.MouseDown += (sender, args) => showMemoriamTab();
         }
     }
     class HoverLabel : Label
