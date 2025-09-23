@@ -279,7 +279,8 @@ namespace OpenTabletDriver.UX.Windows
     }
     class CommandLabel : Label
     {
-        public Command Command = new Command();
+        public required Command Command;
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             Command.Execute();
