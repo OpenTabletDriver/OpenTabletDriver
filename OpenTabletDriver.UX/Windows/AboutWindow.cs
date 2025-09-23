@@ -133,7 +133,7 @@ namespace OpenTabletDriver.UX.Windows
                             HorizontalContentAlignment = HorizontalAlignment.Stretch,
                             VerticalContentAlignment = VerticalAlignment.Stretch,
                             Padding = SPACING,
-                            Spacing = SPACING / 2,
+                            Spacing = SPACING,
                             Items =
                             {
                                 GenerateContributor(Developers, nameof(Developers)),
@@ -203,25 +203,24 @@ namespace OpenTabletDriver.UX.Windows
                     VerticalContentAlignment = VerticalAlignment.Stretch,
                     Items =
                     {
-                        new Label
+                        new GroupBox
                         {
                             Text = title,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            TextAlignment = TextAlignment.Center,
-                            Font = SystemFonts.Bold(FONTSIZE),
-                        },
-                        new LabelList(contributors, [
-                            new CommandLabel
+                            Font = SystemFonts.Bold(LARGE_FONTSIZE),
+                            Padding = SPACING,
+                            Content = new LabelList(contributors, [
+                                new CommandLabel
+                                {
+                                    Text = "jamesbt365",
+                                    VerticalAlignment = VerticalAlignment.Center,
+                                    TextAlignment = TextAlignment.Center,
+                                    Command = new Command((s, e) => ShowMemoriamTab()),
+                                }
+                            ])
                             {
-                                Text = "jamesbt365",
-                                VerticalAlignment = VerticalAlignment.Center,
-                                TextAlignment = TextAlignment.Center,
-                                Command = new Command((s, e) => ShowMemoriamTab()),
+                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                VerticalContentAlignment = VerticalAlignment.Stretch,
                             }
-                        ])
-                        {
-                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                            VerticalContentAlignment = VerticalAlignment.Stretch,
                         }
                     }
                 }
