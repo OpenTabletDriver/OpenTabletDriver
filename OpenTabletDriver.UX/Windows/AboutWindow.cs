@@ -149,25 +149,20 @@ namespace OpenTabletDriver.UX.Windows
                                                 TextAlignment = TextAlignment.Center,
                                                 Font = SystemFonts.Bold(FONTSIZE),
                                             },
-                                            new Label
+                                            new LabelList
                                             {
-                                                Text = string.Join(Environment.NewLine, Developers.Take(Array.IndexOf(Developers, "jamesbt365"))),
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                            },
-                                            new CommandLabel
-                                            {
-                                                Text = "jamesbt365",
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                                Command = new Command((s, e) => ShowMemoriamTab()),
-                                            },
-                                            new Label
-                                            {
-                                                Text = string.Join(Environment.NewLine, Developers.TakeLast(Developers.Length - Array.IndexOf(Developers, "jamesbt365") - 1)),
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                            },
+                                                CommandLabels = [
+                                                    new CommandLabel {
+                                                        Text = "jamesbt365",
+                                                        VerticalAlignment = VerticalAlignment.Center,
+                                                        TextAlignment = TextAlignment.Center,
+                                                        Command = new Command((s, e) => ShowMemoriamTab()),
+                                                    }
+                                                ],
+                                                TextArray = Developers,
+                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                                VerticalContentAlignment = VerticalAlignment.Stretch,
+                                            }
                                         }
                                     }
                                 },
@@ -187,11 +182,11 @@ namespace OpenTabletDriver.UX.Windows
                                                 TextAlignment = TextAlignment.Center,
                                                 Font = SystemFonts.Bold(FONTSIZE),
                                             },
-                                            new Label
+                                            new LabelList
                                             {
-                                                Text = string.Join(Environment.NewLine, Designers),
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
+                                                TextArray = Designers,
+                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                                VerticalContentAlignment = VerticalAlignment.Stretch,
                                             },
                                         }
                                     }
@@ -212,12 +207,20 @@ namespace OpenTabletDriver.UX.Windows
                                                 TextAlignment = TextAlignment.Center,
                                                 Font = SystemFonts.Bold(FONTSIZE),
                                             },
-                                            new Label
+                                            new LabelList
                                             {
-                                                Text = string.Join(Environment.NewLine, Documenters),
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                            },
+                                                CommandLabels = [
+                                                    new CommandLabel {
+                                                        Text = "jamesbt365",
+                                                        VerticalAlignment = VerticalAlignment.Center,
+                                                        TextAlignment = TextAlignment.Center,
+                                                        Command = new Command((s, e) => ShowMemoriamTab()),
+                                                    }
+                                                ],
+                                                TextArray = Documenters,
+                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                                                VerticalContentAlignment = VerticalAlignment.Stretch,
+                                            }
                                         }
                                     }
                                 },
@@ -297,6 +300,37 @@ namespace OpenTabletDriver.UX.Windows
             this.Font = SystemFonts.Default();
             this.Cursor = new Cursor(CursorType.Default);
             base.OnMouseLeave(e);
+        }
+    }
+
+    class LabelList : StackLayout
+    {
+        public CommandLabel[] CommandLabels = [];
+        private string[] _textArray = [];
+        public string[] TextArray
+        {
+            get => _textArray;
+            set
+            {
+                foreach (string text in value)
+                {
+                    var commandLabel = Array.Find(CommandLabels, (x) => x.Text == text);
+                    if (commandLabel != null)
+                    {
+                        Items.Add(commandLabel);
+                    }
+                    else
+                    {
+                        Items.Add(new Label
+                        {
+                            VerticalAlignment = VerticalAlignment.Center,
+                            TextAlignment = TextAlignment.Center,
+                            Text = text,
+                        });
+                    }
+                }
+                _textArray = value;
+            }
         }
     }
 }
