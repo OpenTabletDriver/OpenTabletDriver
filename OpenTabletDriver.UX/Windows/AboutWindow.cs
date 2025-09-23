@@ -110,7 +110,7 @@ namespace OpenTabletDriver.UX.Windows
 
             var creditsTabContent = new StackLayout
             {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
@@ -131,6 +131,8 @@ namespace OpenTabletDriver.UX.Windows
                             Orientation = Orientation.Horizontal,
                             HorizontalContentAlignment = HorizontalAlignment.Stretch,
                             VerticalContentAlignment = VerticalAlignment.Stretch,
+                            Padding = SPACING,
+                            Spacing = SPACING / 2,
                             Items =
                             {
                                 new StackLayoutItem
