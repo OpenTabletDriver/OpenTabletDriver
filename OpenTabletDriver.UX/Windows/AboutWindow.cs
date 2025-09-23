@@ -20,6 +20,12 @@ namespace OpenTabletDriver.UX.Windows
         {
             Title = "About OpenTabletDriver";
 
+            var jamesLabelFront = new HoverLabel
+            {
+                Text = "In memory of jamesbt365",
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
             var jamesLabelDevelopers = new HoverLabel
             {
                 Text = "jamesbt365",
@@ -60,7 +66,8 @@ namespace OpenTabletDriver.UX.Windows
                     {
                         Text = "OpenTabletDriver Github Repository",
                         Command = new Command((s, e) => Application.Instance.Open(App.Website.ToString())),
-                    }
+                    },
+                    jamesLabelFront,
                 }
             };
 
@@ -260,6 +267,7 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             jamesLabelDevelopers.MouseDown += (sender, args) => showMemoriamTab();
+            jamesLabelFront.MouseDown += (sender, args) => showMemoriamTab();
         }
     }
     class HoverLabel : Label
