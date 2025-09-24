@@ -39,6 +39,26 @@ namespace OpenTabletDriver.UX.Windows
 
             var tabControl = new TabControl();
 
+            tabControl.Pages.Add(GenerateAboutTabPage());
+            tabControl.Pages.Add(GenerateCreditsTabPage());
+            tabControl.Pages.Add(GenerateLicenseTabPage());
+            tabControl.Pages.Add(_memoriamTabPage = GenerateMemoriamTabPage());
+
+            this.Content = tabControl;
+
+            this.KeyDown += (sender, args) =>
+            {
+                if (args.Key == Keys.Escape)
+                    this.Close();
+                if (args.Key == Keys.J)
+                    ShowMemoriamTab();
+            };
+        }
+
+        #region Tab Pages
+
+        private TabPage GenerateAboutTabPage()
+        {
             var aboutTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -82,6 +102,11 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
+            return new TabPage(aboutTabContent) { Text = "About" };
+        }
+
+        private TabPage GenerateCreditsTabPage()
+        {
             var creditsTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -109,6 +134,11 @@ namespace OpenTabletDriver.UX.Windows
                 $"OpenTabletDriver v{App.Version} Credits",
                 creditsTabContentControl);
 
+            return new TabPage(creditsTabContent) { Text = "Credits" };
+        }
+
+        private static TabPage GenerateLicenseTabPage()
+        {
             var licenseTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -127,6 +157,11 @@ namespace OpenTabletDriver.UX.Windows
                 $"OpenTabletDriver v{App.Version} License",
                 licenseTabContentControl);
 
+            return new TabPage(licenseTabContent) { Text = "License" };
+        }
+
+        private static TabPage GenerateMemoriamTabPage()
+        {
             var memoriamTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
@@ -145,21 +180,10 @@ namespace OpenTabletDriver.UX.Windows
                 "In Memory of James",
                 memoriamTabContentControl);
 
-            tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
-            tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
-            tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
-            tabControl.Pages.Add(_memoriamTabPage = new TabPage(memoriamTabContent) { Text = "Memoriam", Visible = false });
-
-            this.Content = tabControl;
-
-            this.KeyDown += (sender, args) =>
-            {
-                if (args.Key == Keys.Escape)
-                    this.Close();
-                if (args.Key == Keys.J)
-                    ShowMemoriamTab();
-            };
+            return new TabPage(memoriamTabContent) { Text = "Memoriam", Visible = false };
         }
+
+        #endregion Tab Pages
 
         private void ShowMemoriamTab()
         {
