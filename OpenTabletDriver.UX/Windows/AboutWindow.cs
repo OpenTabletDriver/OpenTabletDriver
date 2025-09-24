@@ -62,7 +62,6 @@ namespace OpenTabletDriver.UX.Windows
             var aboutTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
                 Width = 500,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
@@ -75,18 +74,15 @@ namespace OpenTabletDriver.UX.Windows
                     new Label
                     {
                         Text = "OpenTabletDriver",
-                        VerticalAlignment = VerticalAlignment.Center,
                         Font = SystemFonts.Bold(LARGE_FONTSIZE),
                     },
                     new Label
                     {
                         Text = $"v{App.Version}",
-                        VerticalAlignment = VerticalAlignment.Center,
                     },
                     new Label
                     {
                         Text = "Open source, cross-platform tablet configurator",
-                        VerticalAlignment = VerticalAlignment.Center,
                     },
                     new LinkButton
                     {
@@ -96,7 +92,6 @@ namespace OpenTabletDriver.UX.Windows
                     new CommandLabel
                     {
                         Text = "In memory of jamesbt365",
-                        VerticalAlignment = VerticalAlignment.Center,
                         Command = new Command((s, e) => ShowMemoriamTab()),
                     },
                 }
@@ -110,7 +105,6 @@ namespace OpenTabletDriver.UX.Windows
             var creditsTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
             };
@@ -118,8 +112,6 @@ namespace OpenTabletDriver.UX.Windows
             var creditsTabContentControl = new StackLayout
             {
                 Orientation = Orientation.Horizontal,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING,
                 Items =
@@ -165,7 +157,6 @@ namespace OpenTabletDriver.UX.Windows
             var memoriamTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Center,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
             };
@@ -197,8 +188,6 @@ namespace OpenTabletDriver.UX.Windows
                 Expand = true,
                 Control = new StackLayout
                 {
-                    HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                    VerticalContentAlignment = VerticalAlignment.Stretch,
                     Items =
                     {
                         new GroupBox
@@ -210,14 +199,12 @@ namespace OpenTabletDriver.UX.Windows
                                 new CommandLabel
                                 {
                                     Text = "jamesbt365",
-                                    VerticalAlignment = VerticalAlignment.Center,
                                     TextAlignment = TextAlignment.Center,
                                     Command = new Command((s, e) => ShowMemoriamTab()),
                                 }
                             ])
                             {
                                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                VerticalContentAlignment = VerticalAlignment.Stretch,
                             }
                         }
                     }
@@ -284,7 +271,6 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     Items.Add(new Label
                     {
-                        VerticalAlignment = VerticalAlignment.Center,
                         TextAlignment = TextAlignment.Center,
                         Text = text,
                     });
