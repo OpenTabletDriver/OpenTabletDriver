@@ -230,6 +230,9 @@ namespace OpenTabletDriver.UX.Windows
     {
         public required Command Command;
 
+        private static readonly Cursor _pointerCursor = new(CursorType.Pointer);
+        private static readonly Cursor _defaultCursor = new(CursorType.Default);
+
         protected override void OnMouseDown(MouseEventArgs e)
         {
             Command.Execute();
@@ -239,14 +242,14 @@ namespace OpenTabletDriver.UX.Windows
         protected override void OnMouseEnter(MouseEventArgs e)
         {
             this.Font = SystemFonts.Bold();
-            this.Cursor = new Cursor(CursorType.Pointer);
+            this.Cursor = _pointerCursor;
             base.OnMouseEnter(e);
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
             this.Font = SystemFonts.Default();
-            this.Cursor = new Cursor(CursorType.Default);
+            this.Cursor = _defaultCursor;
             base.OnMouseLeave(e);
         }
     }
