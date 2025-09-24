@@ -12,6 +12,7 @@ namespace OpenTabletDriver.UX.Windows
         const int LARGE_FONTSIZE = 14;
         const int FONTSIZE = LARGE_FONTSIZE - 4;
         const int SPACING = 10;
+        const int TAB_CONTENT_WIDTH = 500;
 
         private readonly string[] Developers = ["InfinityGhost", "X9VoiD", "gonX", "jamesbt365", "Kuuube", "AkiSakurai"];
         private readonly string[] Designers = ["InfinityGhost"];
@@ -62,7 +63,7 @@ namespace OpenTabletDriver.UX.Windows
             var aboutTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
-                Width = 500,
+                Width = TAB_CONTENT_WIDTH,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
                 Items =
@@ -107,6 +108,7 @@ namespace OpenTabletDriver.UX.Windows
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
+                Width = TAB_CONTENT_WIDTH
             };
 
             var creditsTabContentControl = new StackLayout
@@ -137,6 +139,7 @@ namespace OpenTabletDriver.UX.Windows
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
+                Width = TAB_CONTENT_WIDTH
             };
 
             var licenseTabContentControl = new TextArea
@@ -159,6 +162,7 @@ namespace OpenTabletDriver.UX.Windows
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
+                Width = TAB_CONTENT_WIDTH
             };
 
             var memoriamTabContentControl = new Label
