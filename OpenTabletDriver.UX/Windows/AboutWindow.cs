@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Eto.Drawing;
@@ -11,6 +12,7 @@ namespace OpenTabletDriver.UX.Windows
         const int LARGE_FONTSIZE = 14;
         const int FONTSIZE = LARGE_FONTSIZE - 4;
         const int SPACING = 10;
+        const int TAB_CONTENT_WIDTH = 500;
 
         private readonly string[] Developers = ["InfinityGhost", "X9VoiD", "gonX", "jamesbt365", "Kuuube", "AkiSakurai"];
         private readonly string[] Designers = ["InfinityGhost"];
@@ -38,38 +40,30 @@ namespace OpenTabletDriver.UX.Windows
 
             var tabControl = new TabControl();
 
-            var memoriamTabContent = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                Padding = SPACING,
-                Spacing = SPACING / 2,
-                Items =
-                {
-                    new Label
-                    {
-                        Text = "In Memory of James",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
-                    },
-                    new StackLayoutItem
-                    {
-                        Expand = true,
-                        Control = new Label
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            Text = _jamesText
-                        }
-                    }
-                }
-            };
+            tabControl.Pages.Add(GenerateAboutTabPage());
+            tabControl.Pages.Add(GenerateCreditsTabPage());
+            tabControl.Pages.Add(GenerateLicenseTabPage());
+            tabControl.Pages.Add(_memoriamTabPage = GenerateMemoriamTabPage());
 
+            Content = tabControl;
+
+            KeyDown += (_, args) =>
+            {
+                if (args.Key == Keys.Escape)
+                    Close();
+                if (args.Key == Keys.J)
+                    ShowMemoriamTab();
+            };
+        }
+
+        #region Tab Pages
+
+        private TabPage GenerateAboutTabPage()
+        {
             var aboutTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
-                Width = 500,
+                Width = TAB_CONTENT_WIDTH,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
                 Items =
@@ -81,201 +75,170 @@ namespace OpenTabletDriver.UX.Windows
                     new Label
                     {
                         Text = "OpenTabletDriver",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
+                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
                     },
                     new Label
                     {
                         Text = $"v{App.Version}",
-                        VerticalAlignment = VerticalAlignment.Center,
                     },
                     new Label
                     {
                         Text = "Open source, cross-platform tablet configurator",
-                        VerticalAlignment = VerticalAlignment.Center,
                     },
                     new LinkButton
                     {
                         Text = "OpenTabletDriver Github Repository",
-                        Command = new Command((s, e) => Application.Instance.Open(App.Website.ToString())),
+                        Command = new Command((_, _) => Application.Instance.Open(App.Website.ToString())),
                     },
                     new CommandLabel
                     {
                         Text = "In memory of jamesbt365",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        Command = new Command((s, e) => ShowMemoriamTab()),
+                        Command = new Command((_, _) => ShowMemoriamTab()),
                     },
                 }
             };
 
+            return new TabPage(aboutTabContent) { Text = "About" };
+        }
+
+        private TabPage GenerateCreditsTabPage()
+        {
             var creditsTabContent = new StackLayout
             {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
+                Width = TAB_CONTENT_WIDTH
+            };
+
+            var creditsTabContentControl = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                Padding = SPACING,
+                Spacing = SPACING,
                 Items =
                 {
-                    new Label
-                    {
-                        Text = $"OpenTabletDriver v{App.Version} Credits",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
-                    },
-                    new StackLayoutItem
-                    {
-                        Expand = true,
-                        Control = new StackLayout
-                        {
-                            Orientation = Orientation.Horizontal,
-                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                            VerticalContentAlignment = VerticalAlignment.Stretch,
-                            Items =
-                            {
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new StackLayout
-                                    {
-                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                        VerticalContentAlignment = VerticalAlignment.Stretch,
-                                        Items =
-                                        {
-                                            new Label
-                                            {
-                                                Text = "Developers",
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                                Font = SystemFonts.Bold(FONTSIZE),
-                                            },
-                                            new LabelList(Developers, [
-                                                    new CommandLabel {
-                                                        Text = "jamesbt365",
-                                                        VerticalAlignment = VerticalAlignment.Center,
-                                                        TextAlignment = TextAlignment.Center,
-                                                        Command = new Command((s, e) => ShowMemoriamTab()),
-                                                    }
-                                                ])
-                                            {
-                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                                VerticalContentAlignment = VerticalAlignment.Stretch,
-                                            }
-                                        }
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new StackLayout
-                                    {
-                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                        VerticalContentAlignment = VerticalAlignment.Stretch,
-                                        Items =
-                                        {
-                                            new Label
-                                            {
-                                                Text = "Designers",
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                                Font = SystemFonts.Bold(FONTSIZE),
-                                            },
-                                            new LabelList(Designers, [])
-                                            {
-                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                                VerticalContentAlignment = VerticalAlignment.Stretch,
-                                            },
-                                        }
-                                    }
-                                },
-                                new StackLayoutItem
-                                {
-                                    Expand = true,
-                                    Control = new StackLayout
-                                    {
-                                        HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                        VerticalContentAlignment = VerticalAlignment.Stretch,
-                                        Items =
-                                        {
-                                            new Label
-                                            {
-                                                Text = "Documenters",
-                                                VerticalAlignment = VerticalAlignment.Center,
-                                                TextAlignment = TextAlignment.Center,
-                                                Font = SystemFonts.Bold(FONTSIZE),
-                                            },
-                                            new LabelList(Documenters, [
-                                                    new CommandLabel {
-                                                        Text = "jamesbt365",
-                                                        VerticalAlignment = VerticalAlignment.Center,
-                                                        TextAlignment = TextAlignment.Center,
-                                                        Command = new Command((s, e) => ShowMemoriamTab()),
-                                                    }
-                                                ])
-                                            {
-                                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                                                VerticalContentAlignment = VerticalAlignment.Stretch,
-                                            }
-                                        }
-                                    }
-                                },
-                            }
-                        }
-                    }
+                    GenerateContributor(Developers, nameof(Developers)),
+                    GenerateContributor(Designers, nameof(Designers)),
+                    GenerateContributor(Documenters, nameof(Documenters)),
                 }
             };
 
+            GenerateGenericStackLayoutItems(ref creditsTabContent,
+                $"OpenTabletDriver v{App.Version} Credits",
+                creditsTabContentControl);
+
+            return new TabPage(creditsTabContent) { Text = "Credits" };
+        }
+
+        private static TabPage GenerateLicenseTabPage()
+        {
             var licenseTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
-                Items =
-                {
-                    new Label
-                    {
-                        Text = $"OpenTabletDriver v{App.Version} License",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(FONTSIZE),
-                    },
-                    new StackLayoutItem {
-                        Expand = true,
-                        Control = new TextArea
-                        {
-                            ReadOnly = true,
-                            Text = App.License,
-                        }
-                    }
-                }
+                Width = TAB_CONTENT_WIDTH
             };
 
-            tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
-            tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
-            tabControl.Pages.Add(new TabPage(licenseTabContent) { Text = "License" });
-            tabControl.Pages.Add(_memoriamTabPage = new TabPage(memoriamTabContent) { Text = "Memoriam", Visible = false });
-
-            this.Content = tabControl;
-
-            this.KeyDown += (sender, args) =>
+            var licenseTabContentControl = new TextArea
             {
-                if (args.Key == Keys.Escape)
-                    this.Close();
-                if (args.Key == Keys.J)
-                    ShowMemoriamTab();
+                ReadOnly = true,
+                Text = App.License,
             };
+
+            GenerateGenericStackLayoutItems(ref licenseTabContent,
+                $"OpenTabletDriver v{App.Version} License",
+                licenseTabContentControl);
+
+            return new TabPage(licenseTabContent) { Text = "License" };
         }
+
+        private static TabPage GenerateMemoriamTabPage()
+        {
+            var memoriamTabContent = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                Padding = SPACING,
+                Spacing = SPACING / 2,
+                Width = TAB_CONTENT_WIDTH
+            };
+
+            var memoriamTabContentControl = new Label
+            {
+                TextAlignment = TextAlignment.Center,
+                Text = _jamesText
+            };
+
+            GenerateGenericStackLayoutItems(ref memoriamTabContent,
+                "In Memory of James",
+                memoriamTabContentControl);
+
+            return new TabPage(memoriamTabContent) { Text = "Memoriam", Visible = false };
+        }
+
+        #endregion Tab Pages
 
         private void ShowMemoriamTab()
         {
             Debug.Assert(_memoriamTabPage != null);
             _memoriamTabPage.Visible = true;
         }
+
+        private StackLayoutItem GenerateContributor(IEnumerable<string> contributors, string title) =>
+            new()
+            {
+                Expand = true,
+                Control = new StackLayout
+                {
+                    Items =
+                    {
+                        new GroupBox
+                        {
+                            Text = title,
+                            Font = SystemFonts.Bold(LARGE_FONTSIZE),
+                            Padding = SPACING,
+                            Content = new LabelList(contributors, [
+                                new CommandLabel
+                                {
+                                    Text = "jamesbt365",
+                                    TextAlignment = TextAlignment.Center,
+                                    Command = new Command((_, _) => ShowMemoriamTab()),
+                                }
+                            ])
+                            {
+                                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                            }
+                        }
+                    }
+                }
+            };
+
+        private static void GenerateGenericStackLayoutItems(ref StackLayout stackLayout, string title, Control control)
+        {
+            stackLayout.Items.Add(new Label
+            {
+                Text = title,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                Font = SystemFonts.Bold(LARGE_FONTSIZE)
+            });
+
+            stackLayout.Items.Add(new StackLayoutItem
+            {
+                Expand = true,
+                Control = control
+            });
+        }
     }
-    class CommandLabel : Label
+
+    internal class CommandLabel : Label
     {
         public required Command Command;
+
+        private static readonly Cursor _pointerCursor = new(CursorType.Pointer);
+        private static readonly Cursor _defaultCursor = new(CursorType.Default);
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
@@ -285,22 +248,22 @@ namespace OpenTabletDriver.UX.Windows
 
         protected override void OnMouseEnter(MouseEventArgs e)
         {
-            this.Font = SystemFonts.Bold();
-            this.Cursor = new Cursor(CursorType.Pointer);
+            Font = SystemFonts.Bold();
+            Cursor = _pointerCursor;
             base.OnMouseEnter(e);
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            this.Font = SystemFonts.Default();
-            this.Cursor = new Cursor(CursorType.Default);
+            Font = SystemFonts.Default();
+            Cursor = _defaultCursor;
             base.OnMouseLeave(e);
         }
     }
 
-    class LabelList : StackLayout
+    internal class LabelList : StackLayout
     {
-        public LabelList(string[] textArray, CommandLabel[] commandLabels)
+        public LabelList(IEnumerable<string> textArray, CommandLabel[] commandLabels)
         {
             foreach (string text in textArray)
             {
@@ -313,7 +276,6 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     Items.Add(new Label
                     {
-                        VerticalAlignment = VerticalAlignment.Center,
                         TextAlignment = TextAlignment.Center,
                         Text = text,
                     });
