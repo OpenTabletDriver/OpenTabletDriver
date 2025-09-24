@@ -44,12 +44,12 @@ namespace OpenTabletDriver.UX.Windows
             tabControl.Pages.Add(GenerateLicenseTabPage());
             tabControl.Pages.Add(_memoriamTabPage = GenerateMemoriamTabPage());
 
-            this.Content = tabControl;
+            Content = tabControl;
 
-            this.KeyDown += (sender, args) =>
+            KeyDown += (_, args) =>
             {
                 if (args.Key == Keys.Escape)
-                    this.Close();
+                    Close();
                 if (args.Key == Keys.J)
                     ShowMemoriamTab();
             };
@@ -87,12 +87,12 @@ namespace OpenTabletDriver.UX.Windows
                     new LinkButton
                     {
                         Text = "OpenTabletDriver Github Repository",
-                        Command = new Command((s, e) => Application.Instance.Open(App.Website.ToString())),
+                        Command = new Command((_, _) => Application.Instance.Open(App.Website.ToString())),
                     },
                     new CommandLabel
                     {
                         Text = "In memory of jamesbt365",
-                        Command = new Command((s, e) => ShowMemoriamTab()),
+                        Command = new Command((_, _) => ShowMemoriamTab()),
                     },
                 }
             };
@@ -200,7 +200,7 @@ namespace OpenTabletDriver.UX.Windows
                                 {
                                     Text = "jamesbt365",
                                     TextAlignment = TextAlignment.Center,
-                                    Command = new Command((s, e) => ShowMemoriamTab()),
+                                    Command = new Command((_, _) => ShowMemoriamTab()),
                                 }
                             ])
                             {
@@ -244,15 +244,15 @@ namespace OpenTabletDriver.UX.Windows
 
         protected override void OnMouseEnter(MouseEventArgs e)
         {
-            this.Font = SystemFonts.Bold();
-            this.Cursor = _pointerCursor;
+            Font = SystemFonts.Bold();
+            Cursor = _pointerCursor;
             base.OnMouseEnter(e);
         }
 
         protected override void OnMouseLeave(MouseEventArgs e)
         {
-            this.Font = SystemFonts.Default();
-            this.Cursor = _defaultCursor;
+            Font = SystemFonts.Default();
+            Cursor = _defaultCursor;
             base.OnMouseLeave(e);
         }
     }
