@@ -228,7 +228,7 @@ namespace OpenTabletDriver.UX.Windows
             });
         }
     }
-    class CommandLabel : Label
+    internal class CommandLabel : Label
     {
         public required Command Command;
 
@@ -256,7 +256,7 @@ namespace OpenTabletDriver.UX.Windows
         }
     }
 
-    class LabelList : StackLayout
+    internal class LabelList : StackLayout
     {
         public LabelList(IEnumerable<string> textArray, CommandLabel[] commandLabels)
         {
