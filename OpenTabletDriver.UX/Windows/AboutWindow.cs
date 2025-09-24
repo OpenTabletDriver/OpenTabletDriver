@@ -45,26 +45,17 @@ namespace OpenTabletDriver.UX.Windows
                 VerticalContentAlignment = VerticalAlignment.Center,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
-                Items =
-                {
-                    new Label
-                    {
-                        Text = "In Memory of James",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
-                    },
-                    new StackLayoutItem
-                    {
-                        Expand = true,
-                        Control = new Label
-                        {
-                            TextAlignment = TextAlignment.Center,
-                            Text = _jamesText
-                        }
-                    }
-                }
             };
+
+            var memoriamTabContentControl = new Label
+            {
+                TextAlignment = TextAlignment.Center,
+                Text = _jamesText
+            };
+
+            GenerateGenericStackLayoutItems(ref memoriamTabContent,
+                "In Memory of James",
+                memoriamTabContentControl);
 
             var aboutTabContent = new StackLayout
             {
@@ -115,35 +106,26 @@ namespace OpenTabletDriver.UX.Windows
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
+            };
+
+            var creditsTabContentControl = new StackLayout
+            {
+                Orientation = Orientation.Horizontal,
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                Padding = SPACING,
+                Spacing = SPACING,
                 Items =
                 {
-                    new Label
-                    {
-                        Text = $"OpenTabletDriver v{App.Version} Credits",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
-                    },
-                    new StackLayoutItem
-                    {
-                        Expand = true,
-                        Control = new StackLayout
-                        {
-                            Orientation = Orientation.Horizontal,
-                            HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                            VerticalContentAlignment = VerticalAlignment.Stretch,
-                            Padding = SPACING,
-                            Spacing = SPACING,
-                            Items =
-                            {
-                                GenerateContributor(Developers, nameof(Developers)),
-                                GenerateContributor(Designers, nameof(Designers)),
-                                GenerateContributor(Documenters, nameof(Documenters)),
-                            }
-                        }
-                    }
+                    GenerateContributor(Developers, nameof(Developers)),
+                    GenerateContributor(Designers, nameof(Designers)),
+                    GenerateContributor(Documenters, nameof(Documenters)),
                 }
             };
+
+            GenerateGenericStackLayoutItems(ref creditsTabContent,
+                $"OpenTabletDriver v{App.Version} Credits",
+                creditsTabContentControl);
 
             var licenseTabContent = new StackLayout
             {
@@ -151,25 +133,17 @@ namespace OpenTabletDriver.UX.Windows
                 VerticalContentAlignment = VerticalAlignment.Stretch,
                 Padding = SPACING,
                 Spacing = SPACING / 2,
-                Items =
-                {
-                    new Label
-                    {
-                        Text = $"OpenTabletDriver v{App.Version} License",
-                        VerticalAlignment = VerticalAlignment.Center,
-                        TextAlignment = TextAlignment.Center,
-                        Font = SystemFonts.Bold(LARGE_FONTSIZE),
-                    },
-                    new StackLayoutItem {
-                        Expand = true,
-                        Control = new TextArea
-                        {
-                            ReadOnly = true,
-                            Text = App.License,
-                        }
-                    }
-                }
             };
+
+            var licenseTabContentControl = new TextArea
+            {
+                ReadOnly = true,
+                Text = App.License,
+            };
+
+            GenerateGenericStackLayoutItems(ref licenseTabContent,
+                $"OpenTabletDriver v{App.Version} License",
+                licenseTabContentControl);
 
             tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
             tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
@@ -225,6 +199,23 @@ namespace OpenTabletDriver.UX.Windows
                     }
                 }
             };
+
+        private static void GenerateGenericStackLayoutItems(ref StackLayout stackLayout, string title, Control control)
+        {
+            stackLayout.Items.Add(new Label
+            {
+                Text = title,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                Font = SystemFonts.Bold(LARGE_FONTSIZE)
+            });
+
+            stackLayout.Items.Add(new StackLayoutItem
+            {
+                Expand = true,
+                Control = control
+            });
+        }
     }
     class CommandLabel : Label
     {
