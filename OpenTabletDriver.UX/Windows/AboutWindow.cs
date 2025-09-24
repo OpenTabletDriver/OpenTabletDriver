@@ -228,6 +228,7 @@ namespace OpenTabletDriver.UX.Windows
             });
         }
     }
+
     internal class CommandLabel : Label
     {
         public required Command Command;
