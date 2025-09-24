@@ -39,24 +39,6 @@ namespace OpenTabletDriver.UX.Windows
 
             var tabControl = new TabControl();
 
-            var memoriamTabContent = new StackLayout
-            {
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Center,
-                Padding = SPACING,
-                Spacing = SPACING / 2,
-            };
-
-            var memoriamTabContentControl = new Label
-            {
-                TextAlignment = TextAlignment.Center,
-                Text = _jamesText
-            };
-
-            GenerateGenericStackLayoutItems(ref memoriamTabContent,
-                "In Memory of James",
-                memoriamTabContentControl);
-
             var aboutTabContent = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -144,6 +126,24 @@ namespace OpenTabletDriver.UX.Windows
             GenerateGenericStackLayoutItems(ref licenseTabContent,
                 $"OpenTabletDriver v{App.Version} License",
                 licenseTabContentControl);
+
+            var memoriamTabContent = new StackLayout
+            {
+                HorizontalContentAlignment = HorizontalAlignment.Stretch,
+                VerticalContentAlignment = VerticalAlignment.Center,
+                Padding = SPACING,
+                Spacing = SPACING / 2,
+            };
+
+            var memoriamTabContentControl = new Label
+            {
+                TextAlignment = TextAlignment.Center,
+                Text = _jamesText
+            };
+
+            GenerateGenericStackLayoutItems(ref memoriamTabContent,
+                "In Memory of James",
+                memoriamTabContentControl);
 
             tabControl.Pages.Add(new TabPage(aboutTabContent) { Text = "About" });
             tabControl.Pages.Add(new TabPage(creditsTabContent) { Text = "Credits" });
