@@ -3,6 +3,7 @@
 | Acepen AP906                  |     Supported     |
 | Acepen AP1060                 |     Supported     |
 | Adesso Cybertablet K8         |     Supported     |
+| Fansjoy FJ-S2                 |     Supported     |
 | Gaomon 1060 Pro               |     Supported     |
 | Gaomon GM116HD                |     Supported     |
 | Gaomon GM156HD                |     Supported     |
