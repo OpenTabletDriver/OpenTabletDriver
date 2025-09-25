@@ -41,10 +41,10 @@
 | Huion Kamvas 22 Plus          |     Supported     |
 | Huion Kamvas 24               |     Supported     |
 | Huion Kamvas 24 Plus          |     Supported     |
-| Huion Kamvas Pro 13 (2.5K)    |     Supported     |
-| Huion Kamvas Pro 16 (2.5K)    |     Supported     |
-| Huion Kamvas Pro 16 (4K)      |     Supported     |
-| Huion Kamvas Pro 16 Plus (4K) |     Supported     |
+| Huion Kamvas Pro 13 (2.5k)    |     Supported     |
+| Huion Kamvas Pro 16 (2.5k)    |     Supported     |
+| Huion Kamvas Pro 16 (4k)      |     Supported     |
+| Huion Kamvas Pro 16 Plus (4k) |     Supported     |
 | Huion Kamvas Pro 19 (4K)      |     Supported     |
 | Huion Kamvas Pro 24 (4K)      |     Supported     |
 | Huion Kamvas Pro 27           |     Supported     |
@@ -80,8 +80,9 @@
 | VEIKK S640 V2                 |     Supported     |
 | VEIKK VK1060                  |     Supported     |
 | VEIKK VK430                   |     Supported     |
+| VEIKK VK430 V2                |     Supported     |
 | VEIKK VK640                   |     Supported     |
-| ViewSonic WoodPad PF0730      |     Supported     |
+| ViewSonic Woodpad PF0730      |     Supported     |
 | ViewSonic Woodpad PF1030      |     Supported     |
 | Wacom CTC-4110WL              |     Supported     |
 | Wacom CTC-6110WL              |     Supported     |
@@ -114,8 +115,8 @@
 | Wacom CTL-680                 |     Supported     |
 | Wacom CTL-690                 |     Supported     |
 | Wacom DTC-133                 |     Supported     |
-| Wacom DTK-1660                |     Supported     |
-| Wacom DTK-2100                |     Supported     |
+| Wacom Cintiq 16 (DTK-1660)    |     Supported     |
+| Wacom Cintiq 21UX (DTK-2100)  |     Supported     |
 | Wacom ET-0405-U               |     Supported     |
 | Wacom ET-0405A-U              |     Supported     |
 | Wacom FT-0405-U               |     Supported     |
@@ -168,6 +169,7 @@
 | XP-Pen Star 03 Pro            |     Supported     |
 | XP-Pen Star 05 V3             |     Supported     |
 | XP-Pen Star G430S             |     Supported     |
+| XP-Pen Star G430S V2          |     Supported     |
 | XP-Pen Star G540              |     Supported     |
 | XP-Pen Star G540 Pro          |     Supported     |
 | XP-Pen Star G640              |     Supported     |
@@ -212,6 +214,7 @@
 | Gaomon M1230                  |  Missing Features | Touch bar is not yet supported.
 | Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
 | Gaomon M8                     |  Missing Features | Wheel is not yet supported.
+| Gaomon M8 (Variant 2)         |  Missing Features | Wheel is not yet supported.
 | Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
 | Huion G10T                    |  Missing Features | Touchpad is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
@@ -223,6 +226,7 @@
 | Huion H610 Pro V3             |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
 | Huion H951P                   |  Missing Features | Tilt Y-axis is inverted. Wheel is not yet supported. Switching groups is not yet supported; group selectors are mapped as regular buttons.
 | Huion HC16                    |  Missing Features | Wheel is not yet supported.
+| Huion HC16 (Variant 2)        |  Missing Features | Wheel is not yet supported.
 | Huion HS610                   |  Missing Features | Wheel is not yet supported.
 | Huion HS611                   |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas 13 (Gen 3)       |  Missing Features | Wheel is not yet supported, function-switch buttons act as regular auxiliary keys.
@@ -236,7 +240,7 @@
 | Huion Q630M                   |  Missing Features | Dials/Wheels are not yet supported.
 | Huion RTM-500                 |  Missing Features | Touch bar is not yet supported.
 | Huion RTP-700                 |  Missing Features | Touch bar is not yet supported.
-| Lifetec LT9570                |  Missing Features | Aux buttons and tilt is not yet supported.
+| LifeTec LT9570                |  Missing Features | Aux buttons and tilt is not yet supported.
 | Monoprice MP1060-HA60         |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Parblo A610 Pro               |  Missing Features | Wheel is not yet supported.
 | Parblo A640                   |  Missing Features | Aux buttons are not yet supported.
@@ -257,12 +261,12 @@
 | Wacom CTH-461                 |  Missing Features | Tablet buttons and touch are not yet supported.
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                |  Missing Features | Touch is not yet supported.
-| Wacom DTH-135                 |  Missing Features | Touch is not yet supported.
-| Wacom DTH-227                 |  Missing Features | Touch is not yet supported.
-| Wacom DTH-271                 |  Missing Features | Aux buttons are not yet supported.
-| Wacom DTK-1300                |  Missing Features | Center button is not yet supported.
-| Wacom DTK-2200                |  Missing Features | Touch Strips are not yet supported.
-| Wacom DTZ-1200W               |  Missing Features | Touch bars and top side buttons are not yet supported.
+| Wacom Movink 13 (DTH-135)     |  Missing Features | Touch is not yet supported.
+| Wacom Cintiq Pro 22 (DTH-227) |  Missing Features | Touch is not yet supported.
+| Wacom Cintiq Pro 27 (DTH-271) |  Missing Features | Aux buttons are not yet supported.
+| Wacom Cintiq 13HD (DTK-1300)  |  Missing Features | Center button is not yet supported.
+| Wacom Cintiq 22HD (DTK-2200)  |  Missing Features | Touch Strips are not yet supported.
+| Wacom Cintiq 12WX (DTZ-1200W) |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom MTE-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-450                 |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-451                 |  Missing Features | Wheel is not yet supported.
