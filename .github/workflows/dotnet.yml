@@ -14,7 +14,7 @@ jobs:
     name: Linux Publish
     steps:
       - name: Install required packages for Debian
-        run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
+        run: sudo apt update && sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
 
       - name: Checkout
         uses: actions/checkout@v4
