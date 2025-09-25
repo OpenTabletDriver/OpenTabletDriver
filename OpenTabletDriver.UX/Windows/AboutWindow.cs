@@ -19,6 +19,7 @@ namespace OpenTabletDriver.UX.Windows
         private readonly string[] Documenters = ["InfinityGhost", "gonX", "jamesbt365", "Kuuube"];
 
         private readonly TabPage _memoriamTabPage;
+        private readonly TabControl _tabControl;
 
         private const string _jamesText = """
                                           In loving memory of jamesbt365.
@@ -38,14 +39,14 @@ namespace OpenTabletDriver.UX.Windows
         {
             Title = "About OpenTabletDriver";
 
-            var tabControl = new TabControl();
+            _tabControl = new TabControl();
 
-            tabControl.Pages.Add(GenerateAboutTabPage());
-            tabControl.Pages.Add(GenerateCreditsTabPage());
-            tabControl.Pages.Add(GenerateLicenseTabPage());
-            tabControl.Pages.Add(_memoriamTabPage = GenerateMemoriamTabPage());
+            _tabControl.Pages.Add(GenerateAboutTabPage());
+            _tabControl.Pages.Add(GenerateCreditsTabPage());
+            _tabControl.Pages.Add(GenerateLicenseTabPage());
+            _memoriamTabPage = GenerateMemoriamTabPage();
 
-            Content = tabControl;
+            Content = _tabControl;
 
             KeyDown += (_, args) =>
             {
@@ -175,7 +176,7 @@ namespace OpenTabletDriver.UX.Windows
                 "In Memory of James",
                 memoriamTabContentControl);
 
-            return new TabPage(memoriamTabContent) { Text = "Memoriam", Visible = false };
+            return new TabPage(memoriamTabContent) { Text = "Memoriam" };
         }
 
         #endregion Tab Pages
@@ -183,7 +184,10 @@ namespace OpenTabletDriver.UX.Windows
         private void ShowMemoriamTab()
         {
             Debug.Assert(_memoriamTabPage != null);
-            _memoriamTabPage.Visible = true;
+            if (!_tabControl.Pages.Any((x) => x.Text == "Memoriam"))
+            {
+                _tabControl.Pages.Add(_memoriamTabPage);
+            }
         }
 
         private StackLayoutItem GenerateContributor(IEnumerable<string> contributors, string title) =>
