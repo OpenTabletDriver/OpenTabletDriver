@@ -30,10 +30,13 @@ jobs:
         if: github.event_name != 'workflow_dispatch'
         env:
           GET_CONFIGS_FROM_CI: defined
+          VERBOSE: y
         run: |
           ./tests/test_tabletconfigs_present_in_tabletsmd.sh
 
       - name: Compare all names in tablet configs with TABLETS.md
         if: github.event_name == 'workflow_dispatch'
+        env:
+          VERBOSE: y
         run: |
           ./tests/test_tabletconfigs_present_in_tabletsmd.sh
