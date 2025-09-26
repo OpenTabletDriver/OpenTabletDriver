@@ -262,6 +262,7 @@
 | Wacom CTL-6100WL              |  Missing Features | Wireless is not yet supported.
 | Wacom DTH-1320                |  Missing Features | Touch is not yet supported.
 | Wacom Movink 13 (DTH-135)     |  Missing Features | Touch is not yet supported.
+| Wacom Cintiq 22HD Touch (DTH-2200) |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 22 (DTH-227) |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 27 (DTH-271) |  Missing Features | Aux buttons are not yet supported.
 | Wacom Cintiq 13HD (DTK-1300)  |  Missing Features | Center button is not yet supported.
