@@ -1,0 +1,37 @@
+{
+  "Name": "Wacom Cintiq 22HD Touch (DTH-2200)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 478,
+      "Height": 271,
+      "MaxX": 95600,
+      "MaxY": 54200
+    },
+    "Pen": {
+      "MaxPressure": 2047,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 20
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 91,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.CintiqV1.CintiqV1ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 94,
+      "InputReportLength": 62,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Wacom64bAuxReportParser"
+    }
+  ]
+}
