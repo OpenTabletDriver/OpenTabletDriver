@@ -247,6 +247,7 @@
 | Parblo Intangbo M                  |  Missing Features | Wheel is not yet supported.
 | Parblo Intangbo S                  |  Missing Features | Wheel is not yet supported.
 | UGEE M908                          |  Missing Features | Wheel is not yet supported.
+| UGEE UE16                          |  Missing Features | Wheel is not yet supported.
 | VEIKK A15 Pro                      |  Missing Features | Wheel is not yet supported.
 | VEIKK A30                          |  Missing Features | Touchpad is not yet supported.
 | VEIKK A30 V2                       |  Missing Features | Touchpad is not yet supported.
