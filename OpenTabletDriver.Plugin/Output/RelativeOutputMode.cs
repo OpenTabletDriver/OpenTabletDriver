@@ -138,6 +138,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
+            bool shouldCollect = false;
+
             // this should be ordered from least to most chance of having a
             // dependency to another pointer property.
             if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
@@ -156,9 +158,15 @@ namespace OpenTabletDriver.Plugin.Output
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
+                {
+                    shouldCollect = true;
                     synchronousPointer.Reset();
+                }
+
                 synchronousPointer.Flush();
             }
+
+            GC.Collect(2, shouldCollect ? GCCollectionMode.Aggressive : GCCollectionMode.Optimized);
         }
     }
 }
