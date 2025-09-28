@@ -18,7 +18,7 @@ jobs:
       VERSION_SUFFIX: ${{ github.event.inputs.version_suffix }}
     steps:
       - name: Install required packages
-        run: sudo apt update && apt install -y debhelper dotnet-sdk-8.0 build-essential
+        run: sudo apt update && sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
 
       - name: Checkout OpenTabletDriver Repository
         uses: actions/checkout@v4
@@ -72,7 +72,7 @@ jobs:
     name: NuGet Deploy (Ubuntu Host)
     steps:
       - name: Install required packages
-        run: sudo apt update && apt install -y debhelper dotnet-sdk-8.0 build-essential
+        run: sudo apt update && sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
 
       - name: Checkout OpenTabletDriver Repository
         uses: actions/checkout@v4
