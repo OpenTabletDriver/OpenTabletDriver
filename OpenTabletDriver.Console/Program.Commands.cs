@@ -167,11 +167,11 @@ namespace OpenTabletDriver.Console
             await ModifyProfile(tablet, p => p.AbsoluteModeSettings.LockAspectRatio = isEnabled);
         }
 
-        private static async Task SetOutputMode(string tablet, string mode)
+        private static async Task SetOutputMode(string tablet, string path)
         {
-            var outputMode = PluginSettingStore.FromPath(mode);
+            var outputMode = PluginSettingStore.FromPath(path);
             if (outputMode == null)
-                await Out.WriteLineAsync($"Invalid output mode '{mode}'. Use paths like in '{nameof(ListOutputModes).ToLower()}'");
+                await Out.WriteLineAsync($"Invalid output mode '{path}'. Use paths like in '{nameof(ListOutputModes).ToLower()}'");
             else
                 await ModifyProfile(tablet, p => p.OutputMode = outputMode);
         }
