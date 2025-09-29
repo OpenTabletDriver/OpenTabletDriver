@@ -169,7 +169,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task SetOutputMode(string tablet, string mode)
         {
-            await ModifyProfile(tablet, p => p.OutputMode = new PluginSettingStore(mode));
+            await ModifyProfile(tablet, p => p.OutputMode = PluginSettingStore.FromPath(mode));
         }
 
         private static async Task SetFilters(string tablet, params string[] filters)
