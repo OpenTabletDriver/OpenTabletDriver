@@ -1,0 +1,42 @@
+name: Shell Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  test_labeler_paths:
+    runs-on: ubuntu-latest
+    name: Test for presence of all GitHub Labeler paths
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test paths
+        run: |
+          ./tests/test_labeler_yaml.sh
+
+  test_tabletconfigs_present_in_tabletsmd:
+    runs-on: ubuntu-latest
+    name: Test for presence of added/changed configuration files in TABLETS.md
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full git history is needed to get a proper list of changed files
+          fetch-depth: 0
+
+      - name: Compare names of changed tablet configs with TABLETS.md
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          GET_CONFIGS_FROM_CI: defined
+          VERBOSE: y
+        run: |
+          ./tests/test_tabletconfigs_present_in_tabletsmd.sh
+
+      - name: Compare all names in tablet configs with TABLETS.md
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          VERBOSE: y
+        run: |
+          ./tests/test_tabletconfigs_present_in_tabletsmd.sh

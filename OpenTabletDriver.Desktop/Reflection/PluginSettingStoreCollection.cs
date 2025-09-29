@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -29,8 +31,21 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public PluginSettingStoreCollection SetExpectedCount(int expectedCount)
         {
+            int trimmed = 0;
+
             while (Count < expectedCount)
                 Add(null);
+
+            while (Count > expectedCount)
+            {
+                var me = this[Count - 1];
+                Log.Write(nameof(PluginSettingStoreCollection), $"Removing '{me.GetHumanReadableString()}'", LogLevel.Debug);
+                trimmed++;
+                RemoveAt(Count - 1);
+            }
+
+            if (trimmed > 0)
+                Log.WriteNotify(nameof(PluginSettingStoreCollection), $"Too many buttons configured for associated device - trimmed {trimmed} plugin settings for consistency. Some settings may have been lost.", LogLevel.Warning);
 
             return this;
         }

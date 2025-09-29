@@ -9,9 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 16383,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
@@ -23,6 +21,16 @@
       "ProductID": 2376,
       "InputReportLength": 12,
       "OutputReportLength": 20,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    },
+    {
+      "VendorID": 10429,
+      "ProductID": 2376,
+      "InputReportLength": 12,
+      "OutputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": [
         "ArAE"

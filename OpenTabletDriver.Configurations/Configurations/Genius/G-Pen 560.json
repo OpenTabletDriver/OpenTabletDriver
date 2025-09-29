@@ -8,10 +8,8 @@
       "MaxY": 8999
     },
     "Pen": {
-      "MaxPressure": 1024,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "MaxPressure": 1023,
+      "ButtonCount": 2
     },
     "AuxiliaryButtons": {
       "ButtonCount": 12

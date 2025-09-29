@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen CT430",
+  "Name": "XP-Pen Deco Fun XS (CT430)",
   "Specifications": {
     "Digitizer": {
       "Width": 121.92,
@@ -9,9 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     }
   },
   "DigitizerIdentifiers": [

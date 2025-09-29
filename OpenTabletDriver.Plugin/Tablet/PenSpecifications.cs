@@ -1,4 +1,6 @@
+using System;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
@@ -13,7 +15,32 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// Specifications for the pen buttons.
         /// </summary>
-        [Required(ErrorMessage = $"{nameof(Buttons)} must be defined")]
-        public ButtonSpecifications Buttons { set; get; } = new ButtonSpecifications();
+        [Required(ErrorMessage = $"{nameof(ButtonCount)} must be defined")]
+        public uint ButtonCount { set; get; }
+
+        private bool _legacyButtonsHaveBeenSet;
+
+        [Obsolete(Globals.LegacyTabletConfigurationProperty)]
+        [JsonIgnore]
+        public ButtonSpecifications Buttons
+        {
+            set
+            {
+                _legacyButtonsHaveBeenSet = true;
+                ButtonCount = value.ButtonCount;
+            }
+            get => new() { ButtonCount = ButtonCount };
+        }
+
+        // hack which allows us to deserialize the object for backwards compatibility, but not emit it in serialization
+        [JsonProperty("Buttons")]
+        private ButtonSpecifications Buttons2
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            set => Buttons = value;
+#pragma warning restore CS0618 // Type or member is obsolete
+        }
+
+        public bool HasLegacyProperties() => _legacyButtonsHaveBeenSet;
     }
 }

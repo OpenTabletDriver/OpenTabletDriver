@@ -8,6 +8,7 @@
   <ItemGroup Label="Resources">
     <EmbeddedResource Include="Assets\*.ico" />
     <EmbeddedResource Include="Assets\*.png" />
+    <EmbeddedResource Include="..\LICENSE" />
   </ItemGroup>
 
   <ItemGroup Label="NuGet Packages">

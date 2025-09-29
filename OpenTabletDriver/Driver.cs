@@ -102,9 +102,9 @@ namespace OpenTabletDriver
                     Log.Write("Detect", $"Found tablet '{config.Name}'");
                     devices.Add(digitizer);
 
-                    if ((config.AuxilaryDeviceIdentifiers?.Count ?? 0) > 0)
+                    if ((config.AuxiliaryDeviceIdentifiers?.Count ?? 0) > 0)
                     {
-                        if (MatchDevice(config, config.AuxilaryDeviceIdentifiers!) is InputDevice aux)
+                        if (MatchDevice(config, config.AuxiliaryDeviceIdentifiers!) is InputDevice aux)
                             devices.Add(aux);
                         else
                             Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Warning);
@@ -173,6 +173,7 @@ namespace OpenTabletDriver
                    where device.CanOpen
                    where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                    where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
+                   where identifier.FeatureReportLength == null || identifier.FeatureReportLength == device.FeatureReportLength
                    where DeviceMatchesStrings(device, identifier.DeviceStrings)
                    where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
                    select device;

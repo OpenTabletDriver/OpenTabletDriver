@@ -1,5 +1,5 @@
 {
-  "Name": "XP-Pen CT640",
+  "Name": "XP-Pen Deco Fun S (CT640)",
   "Specifications": {
     "Digitizer": {
       "Width": 160,
@@ -9,9 +9,7 @@
     },
     "Pen": {
       "MaxPressure": 8191,
-      "Buttons": {
-        "ButtonCount": 2
-      }
+      "ButtonCount": 2
     }
   },
   "DigitizerIdentifiers": [

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
 using System.Threading;
@@ -128,28 +129,15 @@ namespace OpenTabletDriver.UX
         public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
         public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
 
+        public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
+        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")).ReadToEnd();
+
         private Settings settings;
         public Settings Settings
         {
             set => this.RaiseAndSetIfChanged(ref this.settings, value);
             get => this.settings;
         }
-
-        public static AboutDialog AboutDialog => new AboutDialog
-        {
-            Title = "OpenTabletDriver",
-            ProgramName = "OpenTabletDriver",
-            ProgramDescription = "Open source, cross-platform tablet configurator",
-            WebsiteLabel = "OpenTabletDriver GitHub Repository",
-            Website = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver"),
-            Version = $"v{Version}",
-            Developers = new string[] { "InfinityGhost", "X9VoiD", "gonX", "jamesbt365", "Kuuube", "AkiSakurai" },
-            Designers = new string[] { "InfinityGhost" },
-            Documenters = new string[] { "InfinityGhost", "gonX", "jamesbt365", "Kuuube" },
-            License = string.Empty,
-            Copyright = string.Empty,
-            Logo = Logo.WithSize(256, 256)
-        };
 
         private const string APPNAME = "OpenTabletDriver.UX";
         public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(DesktopInterop.CurrentPlatform);
@@ -161,6 +149,8 @@ namespace OpenTabletDriver.UX
         public WindowSingleton<TabletDebugger> DebuggerWindow { get; } = new WindowSingleton<TabletDebugger>();
         public WindowSingleton<DeviceStringReader> StringReaderWindow { get; } = new WindowSingleton<DeviceStringReader>();
         public WindowSingleton<UpdaterWindow> UpdaterWindow { get; } = new WindowSingleton<UpdaterWindow>();
+
+        public WindowSingleton<AboutWindow> AboutWindow { get; } = new WindowSingleton<AboutWindow>();
 
         public void AddNotificationHandler(string identifier, Action handler)
         {

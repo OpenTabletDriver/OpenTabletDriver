@@ -44,5 +44,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
 
             virtualTablet.SetKeyState(eventCode, state);
         }
+
+        public override string ToString() => $"{nameof(LinuxArtistModeButtonBinding)}: {Button}";
     }
 }

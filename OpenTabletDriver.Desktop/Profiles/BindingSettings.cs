@@ -15,6 +15,8 @@ namespace OpenTabletDriver.Desktop.Profiles
             auxButtons = new PluginSettingStoreCollection(),
             mouseButtons = new PluginSettingStoreCollection();
 
+        private bool disablePressure, disableTilt;
+
         [JsonProperty("TipActivationThreshold")]
         public float TipActivationThreshold
         {
@@ -78,33 +80,61 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.mouseScrollDown;
         }
 
+        [JsonProperty("DisablePressure")]
+        public bool DisablePressure
+        {
+            set => this.RaiseAndSetIfChanged(ref this.disablePressure, value);
+            get => this.disablePressure;
+        }
+
+        [JsonProperty("DisableTilt")]
+        public bool DisableTilt
+        {
+            set => this.RaiseAndSetIfChanged(ref this.disableTilt, value);
+            get => this.disableTilt;
+        }
+
         public static BindingSettings GetDefaults(TabletSpecifications tabletSpecifications)
         {
             var bindingSettings = new BindingSettings
             {
                 TipButton = new PluginSettingStore(
-                    new MouseBinding
-                    {
-                        Button = nameof(MouseButton.Left)
-                    }
+                    new AdaptiveBinding(PenAction.Tip)
+                ),
+                EraserButton = new PluginSettingStore(
+                    new AdaptiveBinding(PenAction.Eraser)
                 ),
                 PenButtons = new PluginSettingStoreCollection(),
                 AuxButtons = new PluginSettingStoreCollection(),
                 MouseButtons = new PluginSettingStoreCollection()
             };
+
+            bindingSettings.AddPenButtons(tabletSpecifications);
+
             bindingSettings.MatchSpecifications(tabletSpecifications);
             return bindingSettings;
         }
 
         public void MatchSpecifications(TabletSpecifications tabletSpecifications)
         {
-            int penButtonCount = (int?)tabletSpecifications.Pen?.Buttons?.ButtonCount ?? 0;
+            int penButtonCount = (int?)tabletSpecifications.Pen?.ButtonCount ?? 0;
             int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
             int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
 
             PenButtons = PenButtons.SetExpectedCount(penButtonCount);
             AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
             MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
+        }
+
+        private void AddPenButtons(TabletSpecifications tabletSpecifications)
+        {
+            uint buttonCount = tabletSpecifications.Pen.ButtonCount;
+            if (buttonCount >= 1)
+                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton1)));
+            if (buttonCount >= 2)
+                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton2)));
+            if (buttonCount >= 3)
+                PenButtons.Add(new PluginSettingStore(new AdaptiveBinding(PenAction.BarrelButton3)));
         }
     }
 }

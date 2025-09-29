@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using Eto.Drawing;
 using Eto.Forms;
@@ -67,7 +68,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                                 },
                                 new StackLayoutItem
                                 {
-                                    Control = new DebuggerGroup
+                                    Control = reportsRecordedGroup = new DebuggerGroup
                                     {
                                         Text = "Reports Recorded",
                                         Width = LARGE_FONTSIZE * 10,
@@ -113,13 +114,38 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                                 },
                                 new StackLayoutItem
                                 {
-                                    Control = new DebuggerGroup
+                                    Control = new StackLayout
                                     {
-                                        Text = "Tablet Report",
-                                        Width = FONTSIZE * 33,
-                                        Content = tablet = new Label
+                                        Orientation = Orientation.Vertical,
+                                        VerticalContentAlignment = VerticalAlignment.Top,
+                                        Items =
                                         {
-                                            Font = Fonts.Monospace(FONTSIZE)
+                                            new StackLayoutItem
+                                            {
+                                                Control = new DebuggerGroup
+                                                {
+                                                    Text = "Maximum Position",
+                                                    Width = FONTSIZE * 33,
+                                                    Content = maxReportedPosition = new Label
+                                                    {
+                                                        Font = Fonts.Monospace(FONTSIZE)
+                                                    }
+                                                }
+                                            },
+
+                                            new StackLayoutItem
+                                            {
+                                                Expand = true,
+                                                Control = new DebuggerGroup
+                                                {
+                                                    Text = "Tablet Report",
+                                                    Width = FONTSIZE * 33,
+                                                    Content = tablet = new Label
+                                                    {
+                                                        Font = Fonts.Monospace(FONTSIZE)
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -154,15 +180,33 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             deviceName.TextBinding.Bind(ReportDataBinding.Child(c => c.Tablet.Properties.Name));
             rawTablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringRaw(c)));
             tablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringFormat(c)));
+            maxReportedPosition.TextBinding.Bind(MaxPositionBinding.Convert(c => MaxPositionString(c)));
             reportRate.TextBinding.Bind(ReportPeriodBinding.Convert(c => Math.Round(1000.0 / c) + "hz"));
             reportsRecorded.TextBinding.Bind(NumberOfReportsRecordedBinding.Convert(c => c.ToString()));
             tabletVisualizer.ReportDataBinding.Bind(ReportDataBinding);
+
+            var reportRecordedNonZeroBinding = new DelegateBinding<bool>(
+                () => NumberOfReportsRecorded > 0,
+                addChangeEvent: (e) => NumberOfReportsRecordedChanged += e,
+                removeChangeEvent: (e) => NumberOfReportsRecordedChanged -= e
+            );
+
+            var visibleChangedBinding = new BindableBinding<DebuggerGroup, bool>(
+                reportsRecordedGroup,
+                (c) => c.Visible,
+                (c, v) => c.Visible = v
+            );
+
+            visibleChangedBinding.Bind(reportRecordedNonZeroBinding);
+            enableDataRecording.CheckedChanged += (_, _) => OnDataRecordingStateChanged();
 
             App.Driver.DeviceReport += HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
             App.Driver.Instance.SetTabletDebug(true);
 
-            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, "tablet-data.txt"));
+            string fileName = "tablet-data_" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() + ".txt";
+
+            var outputStream = File.OpenWrite(Path.Join(AppInfo.Current.AppDataDirectory, fileName));
             dataRecordingOutput = new StreamWriter(outputStream);
         }
 
@@ -176,8 +220,18 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             dataRecordingOutput = null;
         }
 
-        private Label deviceName, rawTablet, tablet, reportRate, reportsRecorded;
+        private static string MaxPositionString(Vector2 pos)
+        {
+            if (pos.X == 0 && pos.Y == 0)
+                return "";
+
+            return $"Max Position: [{pos.X},{pos.Y}]";
+        }
+
+        private Label deviceName, rawTablet, tablet, reportRate, reportsRecorded, maxReportedPosition;
+        private Vector2 maxPosition;
         private TabletVisualizer tabletVisualizer;
+        private DebuggerGroup reportsRecordedGroup;
         private CheckBox enableDataRecording;
 
         private DebugReportData reportData;
@@ -217,17 +271,50 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             get => this.numReportsRecorded;
         }
 
+        public Vector2 MaxPositionReported
+        {
+            set
+            {
+                maxPosition = value;
+                OnMaxPositionReportedChanged();
+
+            }
+            get => maxPosition;
+        }
+
         public event EventHandler<EventArgs> ReportDataChanged;
         public event EventHandler<EventArgs> ReportPeriodChanged;
         public event EventHandler<EventArgs> NumberOfReportsRecordedChanged;
+        public event EventHandler<EventArgs> MaxPositionReportedChanged;
 
         protected virtual void OnReportDataChanged()
         {
             ReportDataChanged?.Invoke(this, new EventArgs());
         }
 
+        protected virtual void OnDataRecordingStateChanged()
+        {
+            if (enableDataRecording.Checked ?? false)
+                NumberOfReportsRecorded = 0;
+        }
+
         protected virtual void OnReportPeriodChanged() => ReportPeriodChanged?.Invoke(this, new EventArgs());
         protected virtual void OnNumberOfReportsRecordedChanged() => NumberOfReportsRecordedChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnMaxPositionReportedChanged() => MaxPositionReportedChanged?.Invoke(this, new EventArgs());
+
+        public BindableBinding<TabletDebugger, Vector2> MaxPositionBinding
+        {
+            get
+            {
+                return new BindableBinding<TabletDebugger, Vector2>(
+                    this,
+                    c => c.MaxPositionReported,
+                    (c, v) => c.MaxPositionReported = v,
+                    (c, h) => c.MaxPositionReportedChanged += h,
+                    (c, h) => c.MaxPositionReportedChanged -= h
+                );
+            }
+        }
 
         public BindableBinding<TabletDebugger, DebugReportData> ReportDataBinding
         {
@@ -273,9 +360,18 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
-            this.ReportData = data;
+            ReportData = data;
             var timeDelta = stopwatch.Restart();
             ReportPeriod += (timeDelta.TotalMilliseconds - ReportPeriod) * 0.01f;
+
+            if (data.ToObject() is ITabletReport tabletReport)
+            {
+
+                float x = Math.Max(maxPosition.X, tabletReport.Position.X);
+                float y = Math.Max(maxPosition.Y, tabletReport.Position.Y);
+
+                MaxPositionReported = new Vector2(x, y);
+            };
 
             if (data.ToObject() is IDeviceReport deviceReport)
             {

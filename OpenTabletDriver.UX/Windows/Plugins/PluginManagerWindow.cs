@@ -6,10 +6,12 @@ using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.UX.Dialogs;
 using StreamJsonRpc;
 using StreamJsonRpc.Protocol;
+using static OpenTabletDriver.UX.Controls.Generic.Reflection.Extensions;
 
 namespace OpenTabletDriver.UX.Windows.Plugins
 {
@@ -83,6 +85,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
                 {
                     pluginList.SelectFirstOrDefault((m => PluginMetadata.Match(m, metadata)));
+                    var contexts = AppInfo.PluginManager.GetLoadedPlugins();
+                    // Unload then reload the plugins
+                    var current = contexts.FirstOrDefault((c => PluginMetadata.Match(c.GetMetadata(), metadata)));
+                    if (current != null)
+                        UnloadPlugin(current);
+
                     AppInfo.PluginManager.Load();
                 }
                 return true;
@@ -105,6 +113,12 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 }
                 return false;
             }
+        }
+
+        private static void UnloadPlugin(DesktopPluginContext dpc)
+        {
+            AppInfo.PluginManager.UnloadPlugin(dpc);
+            RemovePluginsFromFriendlyNameCache(dpc.Assemblies);
         }
 
         protected async Task Install(string path)
@@ -131,7 +145,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
                 return false;
             }
 
-            AppInfo.PluginManager.UnloadPlugin(context);
+            UnloadPlugin(context);
             return true;
         }
 
