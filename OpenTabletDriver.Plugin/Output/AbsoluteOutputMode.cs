@@ -138,7 +138,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
-            bool shouldCollect = false;
+            var collectionMode = GCCollectionMode.Optimized;
 
             // this should be ordered from least to most chance of having a
             // dependency to another pointer property.
@@ -159,14 +159,14 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 if (report is OutOfRangeReport)
                 {
-                    shouldCollect = true;
+                    collectionMode = GCCollectionMode.Aggressive;
                     synchronousPointer.Reset();
                 }
 
                 synchronousPointer.Flush();
             }
 
-            GC.Collect(2, shouldCollect ? GCCollectionMode.Aggressive : GCCollectionMode.Optimized);
+            GC.Collect(2, collectionMode);
         }
     }
 }
