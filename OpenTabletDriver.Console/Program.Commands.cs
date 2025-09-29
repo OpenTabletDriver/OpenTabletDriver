@@ -178,7 +178,7 @@ namespace OpenTabletDriver.Console
             {
                 var collection = new PluginSettingStoreCollection();
                 foreach (var path in filters)
-                    collection.Add(new PluginSettingStore(path));
+                    collection.Add(PluginSettingStore.FromPath(path));
 
                 s.Filters = collection;
             });
@@ -190,7 +190,7 @@ namespace OpenTabletDriver.Console
             {
                 var collection = new PluginSettingStoreCollection();
                 foreach (var path in tools)
-                    collection.Add(new PluginSettingStore(path));
+                    collection.Add(PluginSettingStore.FromPath(path));
 
                 s.Tools = collection;
             });
