@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop;
 
 namespace OpenTabletDriver.Console
 {
@@ -19,6 +20,10 @@ namespace OpenTabletDriver.Console
             }
 
             await Driver.Connect();
+
+            // load plugins
+            AppInfo.PluginManager.Load();
+
             await Root.InvokeAsync(args);
         }
 
