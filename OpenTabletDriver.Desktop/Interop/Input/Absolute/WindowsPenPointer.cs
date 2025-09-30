@@ -3,12 +3,13 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class WindowsPenPointer : IPenActionHandler, IAbsolutePointer, IPressureHandler, ISynchronousPointer, ITiltHandler
+    public class WindowsPenPointer : IPenActionHandler, IAbsolutePointer, IPressureHandler, ISynchronousPointer, ITiltHandler, IEraserHandler
     {
         private readonly PointerDevice _pointerDevice;
         private bool _inContact;
         private bool _lastContact;
         private bool _dirty;
+        private bool _eraser = false;
 
         public WindowsPenPointer()
         {
@@ -98,6 +99,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void Deactivate(PenAction action)
         {
             _pointerDevice.UnsetPenFlags(GetCode(action));
+        }
+
+        public void SetEraser(bool isEraser)
+        {
+            _eraser = isEraser;
+            if (isEraser) {
+                _pointerDevice.SetPenFlags(PEN_FLAGS.INVERTED);
+            } else {
+                _pointerDevice.UnsetPenFlags(PEN_FLAGS.INVERTED);
+            }
         }
     }
 }
