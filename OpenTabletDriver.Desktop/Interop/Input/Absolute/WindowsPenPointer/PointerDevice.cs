@@ -4,13 +4,13 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class TouchDevice
+    public class PointerDevice
     {
         private readonly IntPtr _penHandle;
         private readonly POINTER_TYPE_INFO[] pointer;
         private readonly IntPtr _sourceDevice;
 
-        public unsafe TouchDevice()
+        public unsafe PointerDevice()
         {
             var _pointerInfo = new POINTER_INFO
             {

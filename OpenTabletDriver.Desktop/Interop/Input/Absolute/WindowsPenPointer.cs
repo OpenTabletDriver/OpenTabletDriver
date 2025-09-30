@@ -3,16 +3,16 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class WindowsTouchPointer : IAbsolutePointer, IPressureHandler, ISynchronousPointer, ITiltHandler
+    public class WindowsPenPointer : IAbsolutePointer, IPressureHandler, ISynchronousPointer, ITiltHandler
     {
-        private readonly TouchDevice _touchDevice;
+        private readonly PointerDevice _pointerDevice;
         private bool _inContact;
         private bool _lastContact;
         private bool _dirty;
 
-        public WindowsTouchPointer()
+        public WindowsPenPointer()
         {
-            _touchDevice = new TouchDevice();
+            _pointerDevice = new PointerDevice();
             _inContact = false;
             _lastContact = false;
         }
@@ -21,41 +21,41 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             if (_dirty)
             {
-                _touchDevice.Inject();
+                _pointerDevice.Inject();
                 _dirty = false;
             }
         }
 
         public void Reset()
         {
-            _touchDevice.UnsetPointerFlags(POINTER_FLAGS.INRANGE);
+            _pointerDevice.UnsetPointerFlags(POINTER_FLAGS.INRANGE);
         }
 
         public void SetPosition(Vector2 pos)
         {
             _dirty = true;
-            _touchDevice.SetPointerFlags(POINTER_FLAGS.INRANGE);
-            _touchDevice.SetPosition(new POINT((int)pos.X, (int)pos.Y));
+            _pointerDevice.SetPointerFlags(POINTER_FLAGS.INRANGE);
+            _pointerDevice.SetPosition(new POINT((int)pos.X, (int)pos.Y));
             if (_inContact != _lastContact)
             {
                 if (_inContact)
                 {
-                    _touchDevice.UnsetPointerFlags(POINTER_FLAGS.UP | POINTER_FLAGS.UPDATE);
-                    _touchDevice.SetPointerFlags(POINTER_FLAGS.DOWN);
+                    _pointerDevice.UnsetPointerFlags(POINTER_FLAGS.UP | POINTER_FLAGS.UPDATE);
+                    _pointerDevice.SetPointerFlags(POINTER_FLAGS.DOWN);
                     _lastContact = _inContact;
                 }
                 else
                 {
-                    _touchDevice.UnsetPointerFlags(POINTER_FLAGS.DOWN | POINTER_FLAGS.UPDATE);
-                    _touchDevice.SetPointerFlags(POINTER_FLAGS.UP);
+                    _pointerDevice.UnsetPointerFlags(POINTER_FLAGS.DOWN | POINTER_FLAGS.UPDATE);
+                    _pointerDevice.SetPointerFlags(POINTER_FLAGS.UP);
                     _lastContact = _inContact;
                 }
             }
             else
             {
-                _touchDevice.SetPointerFlags(POINTER_FLAGS.UPDATE);
+                _pointerDevice.SetPointerFlags(POINTER_FLAGS.UPDATE);
             }
-            _touchDevice.SetTarget();
+            _pointerDevice.SetTarget();
         }
 
         public void SetPressure(float percentage)
@@ -63,21 +63,21 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             var pressure = (uint)(percentage * 1024);
             if (pressure > 0)
             {
-                _touchDevice.SetPressure(pressure);
-                _touchDevice.SetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
+                _pointerDevice.SetPressure(pressure);
+                _pointerDevice.SetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
                 _inContact = true;
             }
             else
             {
-                _touchDevice.SetPressure(1);
-                _touchDevice.UnsetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
+                _pointerDevice.SetPressure(1);
+                _pointerDevice.UnsetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
                 _inContact = false;
             }
         }
 
         public void SetTilt(Vector2 tilt)
         {
-            _touchDevice.SetTilt(tilt);
+            _pointerDevice.SetTilt(tilt);
         }
     }
 }
