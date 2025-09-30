@@ -1,4 +1,5 @@
 using System.Numerics;
+using OpenTabletDriver.Native.Windows.PenPointer;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute

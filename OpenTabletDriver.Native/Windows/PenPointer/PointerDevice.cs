@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
+namespace OpenTabletDriver.Native.Windows.PenPointer
 {
     public class PointerDevice
     {

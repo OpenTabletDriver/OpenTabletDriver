@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
+namespace OpenTabletDriver.Native.Windows.PenPointer
 {
     using HANDLE = IntPtr;
     using HWND = IntPtr;
