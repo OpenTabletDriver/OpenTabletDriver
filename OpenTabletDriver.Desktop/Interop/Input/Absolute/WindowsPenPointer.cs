@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class WindowsPenPointer : IAbsolutePointer, IPressureHandler, ISynchronousPointer, ITiltHandler
+    public class WindowsPenPointer : IPenActionHandler, IAbsolutePointer, IPressureHandler, ISynchronousPointer, ITiltHandler
     {
         private readonly PointerDevice _pointerDevice;
         private bool _inContact;
@@ -78,6 +78,26 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetTilt(Vector2 tilt)
         {
             _pointerDevice.SetTilt(tilt);
+        }
+
+        private static PEN_FLAGS GetCode(PenAction button) => button switch
+        {
+            PenAction.Tip => PEN_FLAGS.NONE, // tip is handled via pressure
+            PenAction.Eraser => PEN_FLAGS.NONE, // eraser is handled via pressure
+            PenAction.BarrelButton1 => PEN_FLAGS.BARREL,
+            PenAction.BarrelButton2 => PEN_FLAGS.BARREL,
+            PenAction.BarrelButton3 => PEN_FLAGS.BARREL,
+            _ => PEN_FLAGS.NONE,
+        };
+
+        public void Activate(PenAction action)
+        {
+            _pointerDevice.SetPenFlags(GetCode(action));
+        }
+
+        public void Deactivate(PenAction action)
+        {
+            _pointerDevice.UnsetPenFlags(GetCode(action));
         }
     }
 }

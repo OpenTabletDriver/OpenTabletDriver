@@ -102,6 +102,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             pointer![0].penInfo.pointerInfo.pointerFlags &= ~flags;
         }
 
+        public void SetPenFlags(PEN_FLAGS flags)
+        {
+            pointer![0].penInfo.pointerFlags |= flags;
+        }
+
+        public void UnsetPenFlags(PEN_FLAGS flags)
+        {
+            pointer![0].penInfo.pointerFlags &= ~flags;
+        }
+
         public void ClearPointerFlags()
         {
             pointer![0].penInfo.pointerInfo.pointerFlags = 0;
