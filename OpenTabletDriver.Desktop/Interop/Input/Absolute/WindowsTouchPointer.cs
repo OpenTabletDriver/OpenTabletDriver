@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class WindowsTouchPointer : IAbsolutePointer, IPressureHandler, ISynchronousPointer
+    public class WindowsTouchPointer : IAbsolutePointer, IPressureHandler, ISynchronousPointer, ITiltHandler
     {
         private readonly TouchDevice _touchDevice;
         private bool _inContact;
@@ -73,6 +73,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 _touchDevice.UnsetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
                 _inContact = false;
             }
+        }
+
+        public void SetTilt(Vector2 tilt)
+        {
+            _touchDevice.SetTilt(tilt);
         }
     }
 }

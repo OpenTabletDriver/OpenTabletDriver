@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
@@ -31,11 +32,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             {
                 pointerInfo = _pointerInfo,
                 pointerFlags = PEN_FLAGS.NONE,
-                penMask = PEN_MASK.PRESSURE,
-                pressure = 512,
-                rotation = 0,
-                tiltX = 0,
-                tiltY = 0
+                penMask = PEN_MASK.PRESSURE | PEN_MASK.TILT_X | PEN_MASK.TILT_Y,
+                pressure = 0, // 0 to 1024
+                rotation = 0, // 0 to 359 (degrees clockwise)
+                tiltX = 0, // -90 to +90
+                tiltY = 0 // -90 to +90
             };
 
             pointer = new POINTER_TYPE_INFO[]
@@ -83,6 +84,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetPressure(uint pressure)
         {
             pointer![0].penInfo.pressure = pressure;
+        }
+
+        public void SetTilt(Vector2 tilt)
+        {
+            pointer![0].penInfo.tiltX = (int)tilt.X;
+            pointer![0].penInfo.tiltY = (int)tilt.Y;
         }
 
         public void SetPointerFlags(POINTER_FLAGS flags)
