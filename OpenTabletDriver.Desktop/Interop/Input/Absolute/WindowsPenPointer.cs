@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using OpenTabletDriver.Native.Windows.PenPointer;
 using OpenTabletDriver.Plugin.Platform.Pointer;
@@ -37,7 +38,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             _dirty = true;
             _pointerDevice.SetPointerFlags(POINTER_FLAGS.INRANGE);
-            _pointerDevice.SetPosition(new POINT((int)pos.X, (int)pos.Y));
+            _pointerDevice.SetPosition(new POINT((int)Math.Round(pos.X), (int)Math.Round(pos.Y)));
             if (_inContact != _lastContact)
             {
                 if (_inContact)
