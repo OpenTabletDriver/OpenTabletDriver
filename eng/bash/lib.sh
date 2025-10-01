@@ -56,6 +56,9 @@ if [ -z "$VERSION_SUFFIX" ]; then
     COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\8/ <<< "$GIT_DESCRIBE")"
     if [ "$COMMIT_DISTANCE_FROM_TAG" -gt 0 ]; then
       # use git describe as suffix
+      # commit distance from tag should not be used as a part before suffix
+      #   as that might not accurately represent version (e.g. commit distance 11
+      #   isn't necessarily newer than commit distance 5 if they're from 2 separate PR's)
       VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
       #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
       dont_set_dirty=y
