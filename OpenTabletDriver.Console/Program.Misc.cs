@@ -100,5 +100,19 @@ namespace OpenTabletDriver.Console
                 }
             }
         }
+
+        static void DisableAllInPluginStoreSettingsCollectionByPaths(PluginSettingStoreCollection pssc, params string[] paths)
+        {
+            foreach (string path in paths)
+            {
+                var plugins = pssc.Where(x => x.Path == path).ToArray();
+
+                if (plugins.Length == 0)
+                    Out.WriteLineAsync("No plugins found matching path");
+
+                foreach (var plugin in plugins)
+                    plugin.Enable = false;
+            }
+        }
     }
 }
