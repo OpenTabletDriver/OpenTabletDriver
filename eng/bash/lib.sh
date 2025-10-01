@@ -17,15 +17,16 @@ REPO_ROOT="$(readlink -f "${LIB_SCRIPT_ROOT}/../../")"
 GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
 
 # The below regex supports the following backrefs:
-# \1 Full version, e.g. '0.7.0.0alpha-rc1'
-# \2 Primary version, e.g. '0.7.0.0'
-# \3 unused (sed doesn't support non-capturing groups)
-# \4 Secondary version, e.g. 'alpha-rc1'
-# \5 Release candidate, if any, e.g. '-rc1'
-# \6 Suffix of 'git describe', e.g. '-1234-g1337f00d-dirty'
-# \7 Distance from tag, e.g. '1234'
-# \8 Short-SHA of commit with trailing 'g' trimmed, e.g. '1337f00d'
-# \9 Remainder, e.g. '-dirty'
+# \1  Full version, e.g. '0.7.0.0alpha-rc1'
+# \2  Primary version, e.g. '0.7.0.0'
+# \3  unused (sed doesn't support non-capturing groups)
+# \4  Secondary version, e.g. 'alpha-rc1'
+# \5  unused
+# \6  Release candidate, if any, e.g. 'rc1'
+# \7  Suffix of 'git describe', e.g. '1234-g1337f00d-dirty'
+# \8  Distance from tag, e.g. '1234'
+# \9  Short-SHA of commit with trailing 'g' trimmed, e.g. '1337f00d'
+# \10 Remainder, e.g. '-dirty'
 #
 # Please tag project with any of the following formats only:
 # v0.7.0.0
@@ -38,7 +39,7 @@ GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
 # v1
 # v1.42
 # v10.42.123
-GIT_TAG_REGEX='^v(([0-9]+(\.[0-9]+)*)([^-]*(-?rc[0-9]+)?))(-([0-9]+)-g([a-f0-9]{8})(-.*)?)$'
+GIT_TAG_REGEX='^v(([0-9]+(\.[0-9]+)*)([^-\r\n]*(-?(rc[0-9]+))?))-?(([0-9]+)-g([a-f0-9]{8})(-.*)?)?$'
 
 # if suffix unset, autodetect suffix from git
 if [ -z "$VERSION_SUFFIX" ]; then
@@ -52,10 +53,10 @@ if [ -z "$VERSION_SUFFIX" ]; then
     GIT_DESCRIBE="$(git describe --long --tags --dirty)"
 
     # don't set suffix if this is a tagged commit
-    COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
+    COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\8/ <<< "$GIT_DESCRIBE")"
     if [ "$COMMIT_DISTANCE_FROM_TAG" -gt 0 ]; then
       # use git describe as suffix
-      VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\6/ <<< "$GIT_DESCRIBE")"
+      VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
       #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
     elif [ "$COMMIT_DISTANCE_FROM_TAG" -eq 0 ]; then
       # use secondary version ('alpha-rc1' from '0.7alpha-rc1')
@@ -65,7 +66,7 @@ if [ -z "$VERSION_SUFFIX" ]; then
     fi
 
     # FIXME: bug: if commit distance from tag is -gt 0 on a dirty repo then this results in -dirty-dirty
-    describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\9/ <<< "$GIT_DESCRIBE")"
+    describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\10/ <<< "$GIT_DESCRIBE")"
     if [[ $describe_remainder =~ ^.*dirty.*$ ]]; then
       # tag dirty if dirty
       VERSION_SUFFIX="${VERSION_SUFFIX:-}"-dirty
