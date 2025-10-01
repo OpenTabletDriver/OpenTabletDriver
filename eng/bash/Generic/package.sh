@@ -2,6 +2,12 @@
 
 # This is a generic packaging script intended to be used by package maintainers
 
+if [ -z "$1" ]; then
+  echo "ERR: Must define an output directory! (first argument)"
+  echo "This script is intended to be source/run via the --package argument of ../package.sh"
+  exit 1
+fi
+
 PKG_FILE="files"
 output="$(readlink -f "${1}")"
 PREFIX="${PREFIX:-usr}"

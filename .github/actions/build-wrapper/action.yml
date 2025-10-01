@@ -1,0 +1,33 @@
+name: 'OpenTabletDriver Build Wrapper'
+description: 'Runs the appropriate build based on properties'
+inputs:
+  runtime:
+    description: '.NET runtime target (e.g. win-x64 linux-arm64)'
+    required: true
+  package-name:
+    description: 'Package name, --package argument for package.sh'
+    required: true
+  container:
+    description: 'Set to anything to apply container workarounds'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET Core
+      uses: ./.github/actions/setup-dotnet
+
+    # containers need safe.directory: https://github.com/actions/checkout/issues/1169
+    - name: "Fix container git permissions"
+      if: inputs.container
+      shell: bash
+      run: |
+        if [ z${{ inputs.container }} == 'zfedora' ]; then
+          sudo dnf install -y git
+        fi
+        hash git &>/dev/null && \
+          git config --system --add safe.directory /__w/OpenTabletDriver/OpenTabletDriver
+
+    - name: "BASH Build Artifact"
+      uses: ./.github/actions/build-bash
+      with:
+        runtime: ${{ inputs.runtime }}
+        package-name: ${{ inputs.package-name }}

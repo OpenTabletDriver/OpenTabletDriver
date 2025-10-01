@@ -7,7 +7,7 @@ MOVE_RULES_TO_ETC="true"
 
 . "${GENERIC_FILES}/package.sh" "${output}"
 
-PKG_FILE="${OTD_LNAME}-${OTD_VERSION}-x64.tar.gz"
+PKG_FILE="${OTD_LNAME}-${OTD_VERSION}_${NET_RUNTIME}_binary.tar.gz"
 
 echo "Creating binary tarball '${output}/${PKG_FILE}'..."
 mv "${output}/files" "${output}/${OTD_LNAME}"

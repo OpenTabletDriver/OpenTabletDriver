@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# TODO: fix multiarch
 
 # increment this when releasing a new package of the same upstream version
 # where the only changes are to the packaging itself
