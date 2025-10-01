@@ -8,7 +8,6 @@ namespace OpenTabletDriver.Native.Windows.PenPointer
     {
         private readonly IntPtr _penHandle;
         private readonly POINTER_TYPE_INFO[] pointer;
-        private readonly IntPtr _sourceDevice;
 
         public unsafe PointerDevice()
         {
@@ -18,7 +17,7 @@ namespace OpenTabletDriver.Native.Windows.PenPointer
                 pointerId = 1,
                 frameId = 0,
                 pointerFlags = POINTER_FLAGS.NONE,
-                sourceDevice = _sourceDevice,
+                sourceDevice = new IntPtr(),
                 ptPixelLocation = new POINT(),
                 ptPixelLocationRaw = new POINT(),
                 dwTime = 0,

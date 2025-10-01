@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.Windows.PenPointer
 {
+    using DWORD = UInt32;
     using HANDLE = IntPtr;
     using HWND = IntPtr;
-    using DWORD = UInt32;
 
     [StructLayout(LayoutKind.Sequential)]
     public struct POINT

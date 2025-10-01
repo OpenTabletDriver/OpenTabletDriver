@@ -106,9 +106,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         public void SetEraser(bool isEraser)
         {
             _eraser = isEraser;
-            if (isEraser) {
+            if (isEraser)
+            {
                 _pointerDevice.SetPenFlags(PEN_FLAGS.INVERTED);
-            } else {
+            }
+            else
+            {
                 _pointerDevice.UnsetPenFlags(PEN_FLAGS.INVERTED);
             }
         }
