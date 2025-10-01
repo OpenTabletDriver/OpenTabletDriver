@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Desktop.Reflection;
 using static System.Console;
 
 namespace OpenTabletDriver.Console
@@ -81,6 +82,23 @@ namespace OpenTabletDriver.Console
             var data = File.ReadAllBytes(path);
             var hash = sha256.ComputeHash(data);
             return string.Join(null, hash.Select(b => b.ToString("X")));
+        }
+
+        static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
+        {
+            foreach (var path in paths)
+            {
+                var existing = pssc.FirstOrDefault(x => x.Path == path);
+                if (existing == null)
+                {
+                    var obj = PluginSettingStore.FromPath(path).Construct<T>();
+                    pssc.Add(new PluginSettingStore(obj));
+                }
+                else
+                {
+                    existing.Enable = true;
+                }
+            }
         }
     }
 }

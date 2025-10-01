@@ -70,8 +70,8 @@ namespace OpenTabletDriver.Console
         private static readonly IEnumerable<Command> ModifyCommands = new Command[]
         {
             CreateCommand<string, string>(SetOutputMode, "Sets the output mode"),
-            CreateCommand<string, string[]>(SetFilters, "Sets the filters applied to the current output mode"),
-            CreateCommand<string[]>(SetTools, "Sets the active tools"),
+            CreateCommand<string, string[]>(EnableTabletFilters, "Enables the specified filters on the specified tablet"),
+            CreateCommand<string[]>(EnableTools, "Enables the specified tools"),
             CreateCommand<string, float, float, float, float>(SetDisplayArea, "Sets the display area"),
             CreateCommand<string, float, float, float, float, float>(SetTabletArea, "Sets the tablet area"),
             CreateCommand<string, float, float, float>(SetSensitivity, "Sets the relative sensitivity"),

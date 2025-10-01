@@ -172,28 +172,15 @@ namespace OpenTabletDriver.Console
             await ModifyProfile(tablet, p => p.OutputMode = new PluginSettingStore(mode));
         }
 
-        private static async Task SetFilters(string tablet, params string[] filters)
+        private static async Task EnableTabletFilters(string tablet, params string[] filters)
         {
-            await ModifyProfile(tablet, s =>
-            {
-                var collection = new PluginSettingStoreCollection();
-                foreach (var path in filters)
-                    collection.Add(PluginSettingStore.FromPath(path));
-
-                s.Filters = collection;
-            });
+            await ModifyProfile(tablet,
+                s => AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filters));
         }
 
-        private static async Task SetTools(params string[] tools)
+        private static async Task EnableTools(params string[] tools)
         {
-            await ModifySettings(s =>
-            {
-                var collection = new PluginSettingStoreCollection();
-                foreach (var path in tools)
-                    collection.Add(PluginSettingStore.FromPath(path));
-
-                s.Tools = collection;
-            });
+            await ModifySettings(s => AppendPluginStoreSettingsCollectionByPaths<ITool>(s.Tools, tools));
         }
 
         #endregion
