@@ -321,6 +321,13 @@ namespace OpenTabletDriver.Console
             await ListTypes<IBinding>();
         }
 
+        private static async Task ListPresets()
+        {
+            AppInfo.PresetManager.Refresh();
+            foreach (var preset in AppInfo.PresetManager.GetPresets())
+                await Out.WriteLineAsync(preset.Name);
+        }
+
         #endregion
 
         #region Scripting
