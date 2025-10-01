@@ -58,6 +58,7 @@ if [ -z "$VERSION_SUFFIX" ]; then
       # use git describe as suffix
       VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
       #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
+      dont_set_dirty=y
     elif [ "$COMMIT_DISTANCE_FROM_TAG" -eq 0 ]; then
       # use secondary version ('alpha-rc1' from '0.7alpha-rc1')
       VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
@@ -65,9 +66,8 @@ if [ -z "$VERSION_SUFFIX" ]; then
       echo "WARN: Unable determine commit distance from tag"
     fi
 
-    # FIXME: bug: if commit distance from tag is -gt 0 on a dirty repo then this results in -dirty-dirty
     describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\10/ <<< "$GIT_DESCRIBE")"
-    if [[ $describe_remainder =~ ^.*dirty.*$ ]]; then
+    if [ -z "$dont_set_dirty" ] && [[ $describe_remainder =~ ^.*dirty.*$ ]]; then
       # tag dirty if dirty
       VERSION_SUFFIX="${VERSION_SUFFIX:-}"-dirty
     fi
