@@ -221,7 +221,7 @@ namespace OpenTabletDriver.Tests
             {
                 Assert.True(tabletConfig.IsValid(schema, out errors));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (errors.Any())
                     testOutputHelper.WriteLine($"Schema errors in {tabletFilename}: " + string.Join(",", errors));
