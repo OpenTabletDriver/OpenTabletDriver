@@ -285,7 +285,6 @@ build() {
   local options=(
     --configuration "${CONFIG}"
     --runtime "${NET_RUNTIME}"
-    --framework "${FRAMEWORK}"
     --self-contained "${SELF_CONTAINED}"
     --output "${OUTPUT}"
     -p:PublishTrimmed=false
@@ -316,7 +315,12 @@ build() {
 
   for project in "${projects[@]}"; do
     echo -e "\nBuilding ${project}...\n"
-    dotnet publish "${project}" "${options[@]}"
+    if [[ "$project" =~ ^.*UX\.Wpf.*$ ]]; then
+      local_framework="${FRAMEWORK}-windows"
+    else
+      local_framework="${FRAMEWORK}"
+    fi
+    dotnet publish "${project}" --framework "${local_framework}" "${options[@]}"
   done
 
   echo -e "\nBuild finished! Binaries created in ${OUTPUT}"
