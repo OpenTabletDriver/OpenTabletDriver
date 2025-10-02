@@ -13,6 +13,7 @@ on:
 jobs:
   nuget:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'workflow_dispatch' }}
     name: NuGet Deploy Release (Ubuntu Host)
     steps:
       - uses: actions/checkout@v4
