@@ -191,14 +191,16 @@ namespace OpenTabletDriver.Console
 
         private static async Task DisableTabletFilters(string tablet, params string[] filters)
         {
-            await ModifyProfile(tablet, s => {
+            await ModifyProfile(tablet, s =>
+            {
                 DisableAllInPluginStoreSettingsCollectionByPaths(s.Filters, filters);
             });
         }
 
         private static async Task DisableTools(string[] tools)
         {
-            await ModifySettings(s => {
+            await ModifySettings(s =>
+            {
                 DisableAllInPluginStoreSettingsCollectionByPaths(s.Tools, tools);
             });
         }
