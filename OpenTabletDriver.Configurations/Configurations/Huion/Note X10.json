@@ -2,8 +2,8 @@
   "Name": "Huion Note X10",
   "Specifications": {
     "Digitizer": {
-      "Width": 186.9,
-      "Height": 140.9,
+      "Width": 187,
+      "Height": 141,
       "MaxX": 37400,
       "MaxY": 28200
     },
