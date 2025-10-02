@@ -8,7 +8,7 @@ using OpenTabletDriver.Platform.Pointer;
 
 namespace OpenTabletDriver.Daemon.Library.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : EvdevVirtualMouse, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IAbsolutePointer
     {
         // order seems important due to reset ordering (to satisfy libinput)
         // tools -> touch -> buttons

@@ -11,6 +11,8 @@ namespace OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard
     public class MacOSVirtualKeyboard : IVirtualKeyboard
     {
         private readonly IKeyMapper _keyMapper;
+        // Keep track of current modifier flags, as CGEventSourceFlagsState does not return updated flags immediately after an event is posted.
+        private ulong _currentFlags = 0;
 
         public MacOSVirtualKeyboard(IKeyMapper keysProvider)
         {
@@ -21,6 +23,19 @@ namespace OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard
         {
             var code = (CGKeyCode)_keyMapper[key];
             var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
+            var flag = fromCGKeyCode((CGKeyCode)code);
+            if (flag != 0)
+            {
+                if (!isPress)
+                {
+                    _currentFlags &= ~(ulong)flag;
+                }
+                else
+                {
+                    _currentFlags |= (ulong)flag;
+                }
+            }
+            CGEventSetFlags(keyEvent, _currentFlags);
             CGEventPost(CGEventTapLocation.kCGHIDEventTap, keyEvent);
             CFRelease(keyEvent);
         }
@@ -48,5 +63,20 @@ namespace OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard
         }
 
         public IEnumerable<BindableKey> SupportedKeys => _keyMapper.GetBindableKeys();
+
+        private CGEventFlags fromCGKeyCode(CGKeyCode code)
+        {
+            return code switch
+            {
+                CGKeyCode.kVK_CapsLock => CGEventFlags.kCGEventFlagMaskAlphaShift,
+                CGKeyCode.kVK_Command or CGKeyCode.kVK_RightCommand => CGEventFlags.kCGEventFlagMaskCommand,
+                CGKeyCode.kVK_Control or CGKeyCode.kVK_RightControl => CGEventFlags.kCGEventFlagMaskControl,
+                CGKeyCode.kVK_Function => CGEventFlags.kCGEventFlagMaskSecondaryFn,
+                CGKeyCode.kVK_Help => CGEventFlags.kCGEventFlagMaskHelp,
+                CGKeyCode.kVK_Option or CGKeyCode.kVK_RightOption => CGEventFlags.kCGEventFlagMaskAlternate,
+                CGKeyCode.kVK_Shift or CGKeyCode.kVK_RightShift => CGEventFlags.kCGEventFlagMaskShift,
+                _ => 0
+            };
+        }
     }
 }

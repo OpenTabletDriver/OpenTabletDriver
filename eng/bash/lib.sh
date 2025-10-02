@@ -303,7 +303,7 @@ build() {
   # this initial restore is needed in cases projects changed dependencies
   # (e.g. added a new nuget package)
   echo "Restoring packages..."
-  dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
+  dotnet restore OpenTabletDriver.sln --runtime "${NET_RUNTIME}" --verbosity quiet
 
   if [ "${PORTABLE}" = "true" ]; then
     mkdir -p "${OUTPUT}/userdata"
