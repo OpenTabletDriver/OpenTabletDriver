@@ -13,7 +13,7 @@ runs:
     - name: Install required packages for Debian
       if: inputs.package-name == 'Debian'
       shell: bash
-      run: sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
+      run: sudo apt update && sudo apt install -y debhelper dotnet-sdk-8.0 build-essential
 
     - name: Install required packages for RedHat/Fedora
       if: inputs.package-name == 'RedHat'
