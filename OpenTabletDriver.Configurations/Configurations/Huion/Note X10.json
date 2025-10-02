@@ -1,0 +1,32 @@
+{
+  "Name": "Huion Note X10",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 186.9,
+      "Height": 140.9,
+      "MaxX": 37400,
+      "MaxY": 28200
+    },
+    "Pen": {
+      "MaxPressure": 8191
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 109,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicTiltReportParser",
+      "DeviceStrings": {
+        "2": "Huion Tablet_X10",
+        "201": "HUION_T218_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
