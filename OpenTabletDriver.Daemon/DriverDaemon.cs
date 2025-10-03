@@ -76,6 +76,8 @@ namespace OpenTabletDriver.Daemon
                     message.Append(" It will block detection of tablets.");
                 if (driverInfo.Status.HasFlag(DriverStatus.Flaky))
                     message.Append(" It will cause flaky support to tablets.");
+                if (driverInfo.Status.HasFlag(DriverStatus.Uncertain))
+                    message.Append(" It may be a false positive.");
                 if (os != null)
                     message.Append($" If any problems arise, visit '{wikiUrl}'.");
 
