@@ -5,18 +5,22 @@ redhat_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 output="$(readlink -f "${1}")"
 
 if [ -n "$VERSION_SUFFIX" ]; then
-  if [[ "$VERSION_SUFFIX" =~ "-" ]]; then
-    # likely from CI, generate CI-friendly Fedora string
-    # see https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/
-    local_suffix="${VERSION_SUFFIX//-/.}"
-    version_to_use="${OTD_VERSION_BASE}^${local_suffix:1}"
+  # see https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/
+  if [[ "$VERSION_SUFFIX" == -* ]]; then
+    # use prerelease versioning
+    version_to_use="${OTD_VERSION_BASE}~${VERSION_SUFFIX:1}"
+  elif [[ "$VERSION_SUFFIX" == +* ]]; then
+    version_to_use="${OTD_VERSION_BASE}${VERSION_SUFFIX}"
   else
-    # likely from packaging, e.g. release candidates. can just use OTD_VERSION directly
-    version_to_use="${OTD_VERSION//-/}"
+    # some other variant, use underscore as visual seperator as it probably isn't a version component
+    version_to_use="${OTD_VERSION_BASE}_${VERSION_SUFFIX}"
   fi
 else
   version_to_use="${OTD_VERSION}"
 fi
+
+version_to_use="${version_to_use//+/^}" # replace commit info with preferred format
+
 echo "Determined version $version_to_use"
 
 echo "RPMizing..."
