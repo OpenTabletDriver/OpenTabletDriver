@@ -4,6 +4,7 @@
     <VersionBase>0.6.6.0</VersionBase>
     <FrameworkBase>net8.0</FrameworkBase>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
+    <Version Condition="$(VersionSuffix.StartsWith('+'))">$(VersionPrefix)$(VersionSuffix)</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
 
