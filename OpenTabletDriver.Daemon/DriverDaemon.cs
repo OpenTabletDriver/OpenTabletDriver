@@ -78,6 +78,15 @@ namespace OpenTabletDriver.Daemon
                     message.Append(" It will cause flaky support to tablets.");
                 if (driverInfo.Status.HasFlag(DriverStatus.Uncertain))
                     message.Append(" It may be a false positive.");
+
+                var processStrings = new List<string>();
+                foreach (var driverProcess in driverInfo.Processes)
+                {
+                    processStrings.Add(driverProcess.ProcessName);
+                }
+
+                message.Append($" Processes found: " + string.Join(", ", processStrings) + ".");
+
                 if (os != null)
                     message.Append($" If any problems arise, visit '{wikiUrl}'.");
 
