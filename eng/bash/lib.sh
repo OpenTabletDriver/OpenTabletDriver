@@ -59,14 +59,20 @@ if [ -z "$VERSION_SUFFIX" ]; then
       # commit distance from tag should not be used as a part before suffix
       #   as that might not accurately represent version (e.g. commit distance 11
       #   isn't necessarily newer than commit distance 5 if they're from 2 separate PR's)
-      VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
+      VERSION_SUFFIX="+$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
       #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
       dont_set_dirty=y
     elif [ "$COMMIT_DISTANCE_FROM_TAG" -eq 0 ]; then
-      # use secondary version ('alpha-rc1' from '0.7alpha-rc1')
-      VERSION_SUFFIX="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
+      : # do nothing
     else
       echo "WARN: Unable determine commit distance from tag"
+    fi
+
+    # secondary version ('alpha-rc1' from '0.7alpha-rc1')
+    sub_version="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
+
+    if [ "$sub_version" != "" ]; then
+      VERSION_SUFFIX="-${sub_version}${VERSION_SUFFIX}"
     fi
 
     describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\10/ <<< "$GIT_DESCRIBE")"
