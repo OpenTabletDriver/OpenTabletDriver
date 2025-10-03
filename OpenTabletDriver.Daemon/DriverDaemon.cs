@@ -79,13 +79,8 @@ namespace OpenTabletDriver.Daemon
                 if (driverInfo.Status.HasFlag(DriverStatus.Uncertain))
                     message.Append(" It may be a false positive.");
 
-                var processStrings = new List<string>();
-                foreach (var driverProcess in driverInfo.Processes)
-                {
-                    processStrings.Add(driverProcess.ProcessName);
-                }
-
-                message.Append($" Processes found: " + string.Join(", ", processStrings) + ".");
+                var processStrings = safeGetProcessDetails(driverInfo.Processes);
+                message.Append($" Processes found: [" + string.Join(", ", processStrings) + "].");
 
                 if (os != null)
                     message.Append($" If any problems arise, visit '{wikiUrl}'.");
@@ -104,6 +99,36 @@ namespace OpenTabletDriver.Daemon
                 await DetectTablets();
                 await SetSettings(Settings);
             };
+        }
+
+        private List<string> safeGetProcessDetails(Process[] processes)
+        {
+            var processDetails = new List<string>();
+
+            foreach (var driverProcess in processes)
+            {
+                var details = "";
+                try
+                {
+                    details += driverProcess.ProcessName;
+                }
+                catch
+                {
+                    details += "Failed to get ProcessName";
+                }
+
+                try
+                {
+                    details += ": " + driverProcess.MainModule?.FileName;
+                }
+                catch
+                {
+                    details += ": Failed to get FileName";
+                }
+                processDetails.Add(details);
+            }
+
+            return processDetails;
         }
 
         public event EventHandler<LogMessage>? Message;
