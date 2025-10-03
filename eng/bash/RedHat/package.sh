@@ -20,6 +20,7 @@ else
 fi
 
 version_to_use="${version_to_use//+/^}" # replace commit info with preferred format
+version_to_use="${version_to_use//-/.}" # replace illegal characters with period
 
 echo "Determined version $version_to_use"
 
