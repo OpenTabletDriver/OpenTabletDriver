@@ -26,7 +26,7 @@ OpenTabletDriver是一個開源、跨平台的電繪板驅動程式。其目標�
 
 # 運行OpenTabletDriver二進位檔案
 
-OpenTabletDriver有兩個獨立的程序共同運作。主程式 `OpenTabletDriver.Daemon` 會處理所有電繪板的數據，而GUI前端則是由 `OpenTabletDriver.UX.I`。主進程必須啟動，程式才能運作，不過GUI進程則是可選的。如果你已經配置好了設定，他們將會在主進程啟動的時候自動生效。
+OpenTabletDriver有兩個獨立的程序共同運作。主程式 `OpenTabletDriver.Daemon` 會處理所有電繪板的數據，而GUI前端則是由 `OpenTabletDriver.UI`。主進程必須啟動，程式才能運作，不過GUI進程則是可選的。如果你已經配置好了設定，他們將會在主進程啟動的時候自動生效。
 
 
 # 從原始碼編譯OpenTabletDriver
