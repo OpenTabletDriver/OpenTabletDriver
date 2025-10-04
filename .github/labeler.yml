@@ -67,6 +67,7 @@ tests:
 - changed-files:
   - any-glob-to-any-file:
     - 'OpenTabletDriver.Tests/**'
+    - 'tests/**'
 
 # complex labels
 
