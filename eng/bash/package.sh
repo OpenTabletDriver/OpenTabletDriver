@@ -70,14 +70,18 @@ fi
 ### Set defaults
 
 if [[ "${NET_RUNTIME}" =~ ^win-.*$ ]]; then
+  # the following vars are imported from old packaging script
+  SINGLE_FILE="true"
+
   PACKAGE_GEN="${PACKAGE_GEN:-"windows"}"
-  SINGLE_FILE="${SINGLE_FILE:-"true"}"
   PROJECTS+=('OpenTabletDriver.UX.Wpf')
 fi
 
 if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
-  SINGLE_FILE=${SINGLE_FILE:-"false"}
-  SELF_CONTAINED=${SELF_CONTAINED:-"true"}
+  # the following vars are imported from old packaging script
+  SINGLE_FILE="false"
+  SELF_CONTAINED="true"
+
   PACKAGE_GEN=${PACKAGE_GEN:-"macos"}
   PROJECTS+=('OpenTabletDriver.UX.MacOS')
 fi
