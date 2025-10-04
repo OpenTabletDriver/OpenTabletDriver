@@ -101,10 +101,8 @@ namespace OpenTabletDriver.Daemon
             };
         }
 
-        private List<string> safeGetProcessDetails(Process[] processes)
+        private IEnumerable<string> safeGetProcessDetails(Process[] processes)
         {
-            var processDetails = new List<string>();
-
             foreach (var driverProcess in processes)
             {
                 var details = "";
@@ -125,10 +123,9 @@ namespace OpenTabletDriver.Daemon
                 {
                     details += ": Failed to get FileName";
                 }
-                processDetails.Add(details);
+                yield return details;
             }
 
-            return processDetails;
         }
 
         public event EventHandler<LogMessage>? Message;
