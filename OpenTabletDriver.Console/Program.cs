@@ -110,7 +110,8 @@ namespace OpenTabletDriver.Console
             CreateCommand(ListOutputModes, "Lists all available output modes"),
             CreateCommand(ListFilters, "Lists all available filters"),
             CreateCommand(ListTools, "Lists all available tools"),
-            CreateCommand(ListBindings, "Lists all available binding types")
+            CreateCommand(ListBindings, "Lists all available binding types"),
+            CreateCommand(ListPresets, "Lists all available presets"),
         };
 
         private static readonly IEnumerable<Command> ScriptingCommands = new Command[]
