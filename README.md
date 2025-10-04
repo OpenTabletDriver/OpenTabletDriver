@@ -77,7 +77,7 @@ You can also run `./build.sh linux` to generate files into `bin/`, but this does
 #### MacOS [Experimental]
 
 A newer version of Bash and Coreutils is required to build OpenTabletDriver. You can install them using Homebrew.
-Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/bash/macos/package.sh --package true`.
+Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/bash/package.sh -r osx-x64`.
 
 # Features
 
