@@ -101,6 +101,11 @@ fi
 
 cd "$OLDPWD" 2>/dev/null
 
+if [ -z "${tablet_config}" ] || [ "${tablet_config}" == "" ]; then
+  echo "Tablet config missing, wrong selection?"
+  exit 2
+fi
+
 echo "Tablet config: ${tablet_config}"
 
 tablet_config="${root_dir}"/"${configs_path}"/"${tablet_config}"
