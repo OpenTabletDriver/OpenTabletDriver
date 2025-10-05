@@ -66,7 +66,14 @@ namespace OpenTabletDriver.Console
 
         static async Task ListTypes<T>(Func<Type, bool> predicate = null)
         {
-            foreach (var type in AppInfo.PluginManager.GetChildTypes<T>())
+            var types = AppInfo.PluginManager.GetChildTypes<T>();
+            if (types.Count == 0)
+            {
+                await Out.WriteAsync("No types found\n");
+                return;
+            }
+
+            foreach (var type in types)
             {
                 if (predicate?.Invoke(type) ?? true)
                 {
