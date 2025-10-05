@@ -66,14 +66,27 @@ if [ "${#file_matches[@]}" -gt 1 ]; then
   echo "More than 1 file matched. Please select the appropriate file:"
 
   echo "Files found:"
+  iterator=1
   for file_match in "${file_matches[@]}"; do
     local_tablet_name="$(jq -r .Name "${file_match}")"
-    printf '%s (%s)\n' "$file_match" "$local_tablet_name"
+    printf '%d) %s (%s)\n' "$iterator" "$file_match" "$local_tablet_name"
+    ((iterator++))
   done
 
-  select option in "${file_matches[@]}"; do
-    tablet_config="$option"
-    break
+  # not using select since we don't want the multi-choice option
+  input_solved="n"
+  while [ "$input_solved" != "y" ] ; do
+    read -p "Enter index: " file_match_index
+    # validate input
+    ! [[ $file_match_index =~ ^[0-9]+$ ]] && continue
+
+    let file_match_index--
+    if [ "$file_match_index" -ge 0 ] && [ "$file_match_index" -lt "${#file_matches[@]}" ]; then
+      input_solved="y"
+      tablet_config="${file_matches[$file_match_index]}"
+    else
+      echo "Invalid index"
+    fi
   done
 elif [ "${#file_matches[@]}" -eq 1 ]; then
   tablet_config="${file_matches[0]}"
