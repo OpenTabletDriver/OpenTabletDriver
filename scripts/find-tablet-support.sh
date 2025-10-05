@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# finds associated commit for tablet name
+# finds associated commits for tablet name
+# does NOT (yet) find parser changes
 
 set -e
 
@@ -17,7 +18,7 @@ fi
 
 input_string="$@"
 
-root_dir="$(dirname ${BASH_SOURCE[0]})/.."
+root_dir="$(dirname "${BASH_SOURCE[0]}")/.."
 
 configs_path="OpenTabletDriver.Configurations/Configurations/"
 
@@ -63,17 +64,16 @@ mapfile -t file_matches < <(grep --include=\*.json -rw \
   | awk -F: '{ print $1 }')
 
 if [ "${#file_matches[@]}" -gt 1 ]; then
-  echo "More than 1 file matched. Please select the appropriate file:"
-
-  echo "Files found:"
   iterator=1
+
+  echo "More than 1 file matched. Please select the appropriate file:"
   for file_match in "${file_matches[@]}"; do
     local_tablet_name="$(jq -r .Name "${file_match}")"
     printf '%d) %s (%s)\n' "$iterator" "$file_match" "$local_tablet_name"
     ((iterator++))
   done
 
-  # not using select since we don't want the multi-choice option
+  # not using bash's select since we want to control listing format
   input_solved="n"
   while [ "$input_solved" != "y" ] ; do
     read -p "Enter index: " file_match_index

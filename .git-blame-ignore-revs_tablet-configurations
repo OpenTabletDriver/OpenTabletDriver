@@ -1,4 +1,19 @@
-# FIXME: this file should be named differently and is only used to sort harmless mass config changes
+# This file contains git SHA's of commits mass-changing tablet configurations
+#
+# Examples of valid mass-changes are:
+# - Formatting (indentation, ordering, etc)
+# - Property additions/removals
+# - Field type changes
+# and other similar types changes
+#
+# Examples of INVALID mass-changes are:
+# - Mass backports or forward-ports (though, they shouldn't have been made as a
+#   single commit to begin with), e.g. 931a4d977
+#
+# Please do not leave any empty newlines in this file, the parser treats any
+# line that doesn't start with an octothorpe as a valid commit SHA
+#
+### LIST START ###
 # Configurations: Update to new format
 b62174f8c69ef1bba5cf3586562fadc451d5fefb
 # Change OpenTabletDriver.Parsers to OpenTabletDriver.Configurations.Parsers
