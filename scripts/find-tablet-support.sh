@@ -106,8 +106,13 @@ commit_added="$(git log --follow --pretty=format:%H --diff-filter=AC -1 -- "${ta
 echo -e "\nAdded in:"
 git_prettyprint_ref "${commit_added}"
 
-echo -e "\nModified in:"
 mapfile -t modified_commits < <(get_modified_refs "${tablet_config}")
-for modified_commit in "${modified_commits[@]}"; do
-  git_prettyprint_ref "${modified_commit}"
-done
+
+if [ "${#modified_commits[@]}" -gt 0 ]; then
+  echo -e "\nModified in:"
+  for modified_commit in "${modified_commits[@]}"; do
+    git_prettyprint_ref "${modified_commit}"
+  done
+else
+  echo -e "\nNo changes found"
+fi
