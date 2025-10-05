@@ -1,0 +1,41 @@
+# FIXME: this file should be named differently and is only used to sort harmless mass config changes
+# Configurations: Update to new format
+b62174f8c69ef1bba5cf3586562fadc451d5fefb
+# Change OpenTabletDriver.Parsers to OpenTabletDriver.Configurations.Parsers
+be1f213b0796c6a88ffa12dc400d85eb2da9670c
+# Move vendor parsers to OTD.Configurations
+dd98f6f7183e512414e7f4b02c762d6a4e7b9367
+# Update all configuration button counts
+1eed711db6b4610500d00c0840f53a71b98eff42
+# Update all configurations to new specifications
+e24843480a137e16d3ffcd90d029da396bb91870
+# Update all configurations to new namespaces
+00d6ec3adae103e282a0bf80c5605d640ee7315c
+# Fix configuration init report arrays
+fd0577e6b419dc0ed8d387794a4d7313163b6ebc
+# Migrate all configurations to new  format
+92c47dbbf073862a22f624b829f0aad6285d19e9
+# Match digitizer/aux parser and remove wild configs
+3acb8dd546a984cf58e9ab6727e2d53747df5270
+# Explicitly specify the parser used
+efa616203b8ac05b223a01b1277787c6425114c4
+# Update all configurations
+2892a5bc152e79d03f704e33c58b5339b002a943
+# Comply to OTD rename changes, and other fixes
+76582459daaea96cf8c47d1f907833d68f10e45c
+# Update S620 and HS610 to use regex string tests (affects more than those 2 configs)
+e3a8b553f5f85bde0a0c7bbfc2c9e9c7a33cbf32
+# Update all configurations to use DetectionRange
+e192a47ad3bf198fee80a326cd18db307a0d37a6
+# Update all tablets requiring libinput override
+a39fdcee45923990eff2d08572ab3b20b458ad26
+# Update all configurations to new format
+bd1a9d948a2f867f43dceec8a0d38c9f8f2f86b3
+# Lint configs
+291bfe4a77dd3f583fc342a18957cbf851691128
+# Reduce bloat of tablet configuration JSONs
+29436b8e32e9d0299d6d2e29012013ebd8edcfe7
+# Pass tests by applying schema changes
+8e249a0e2624cdf4f8d1e11b25a2203a60951d68
+# format(configs): Fixed formatting of multiple configuration files
+8a42c3304363dbaab14234cbb8f26cf35b093f78
