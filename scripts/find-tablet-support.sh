@@ -57,8 +57,9 @@ get_modified_refs(){
 
 ### program start
 
+cd "${root_dir}"/"${configs_path}"
 mapfile -t file_matches < <(grep --include=\*.json -rw \
-  "${root_dir}"/"${configs_path}" -Ei -e"\"Name\":.*${input_string}" \
+  -Ei -e"\"Name\":.*${input_string}" \
   | awk -F: '{ print $1 }')
 
 if [ "${#file_matches[@]}" -gt 1 ]; then
@@ -81,7 +82,11 @@ else
   exit 1
 fi
 
+cd "$OLDPWD" 2>/dev/null
+
 echo "Tablet config: ${tablet_config}"
+
+tablet_config="${root_dir}"/"${configs_path}"/"${tablet_config}"
 
 commit_added="$(git log --follow --pretty=format:%H --diff-filter=AC -1 -- "${tablet_config}")"
 
