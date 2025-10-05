@@ -39,9 +39,13 @@ get_excluded_commits() {
 
 # removes refs that are known minor
 # $1: tablet config path
+# $2: (optional) minimum commit
 get_modified_refs(){
   local tablet_config="$1"
-  mapfile -t modified_refs < <(git log --follow --pretty=format:%H --diff-filter=M ${gitlog_settings} -- "${tablet_config}")
+  if [ -n "$2" ]; then
+    local commit_range="${2}..HEAD"
+  fi
+  mapfile -t modified_refs < <(git log --follow --pretty=format:%H --diff-filter=M ${gitlog_settings} ${commit_range} -- "${tablet_config}")
   mapfile -t skippable_refs < <(get_excluded_commits)
 
   # this can probably be done smarter, but naive lookup:
@@ -106,7 +110,7 @@ commit_added="$(git log --follow --pretty=format:%H --diff-filter=AC -1 -- "${ta
 echo -e "\nAdded in:"
 git_prettyprint_ref "${commit_added}"
 
-mapfile -t modified_commits < <(get_modified_refs "${tablet_config}")
+mapfile -t modified_commits < <(get_modified_refs "${tablet_config}" "${commit_added}")
 
 if [ "${#modified_commits[@]}" -gt 0 ]; then
   echo -e "\nModified in:"
