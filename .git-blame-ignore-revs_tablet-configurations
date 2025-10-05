@@ -30,8 +30,6 @@ e24843480a137e16d3ffcd90d029da396bb91870
 fd0577e6b419dc0ed8d387794a4d7313163b6ebc
 # Migrate all configurations to new  format
 92c47dbbf073862a22f624b829f0aad6285d19e9
-# Match digitizer/aux parser and remove wild configs
-3acb8dd546a984cf58e9ab6727e2d53747df5270
 # Explicitly specify the parser used
 efa616203b8ac05b223a01b1277787c6425114c4
 # Update all configurations
