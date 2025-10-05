@@ -125,7 +125,6 @@ namespace OpenTabletDriver.Daemon
                 }
                 yield return details;
             }
-
         }
 
         public event EventHandler<LogMessage>? Message;
