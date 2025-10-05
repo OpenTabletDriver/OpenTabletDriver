@@ -80,7 +80,7 @@ if [ "${#file_matches[@]}" -gt 1 ]; then
     # validate input
     ! [[ $file_match_index =~ ^[0-9]+$ ]] && continue
 
-    let file_match_index--
+    let file_match_index-- || true
     if [ "$file_match_index" -ge 0 ] && [ "$file_match_index" -lt "${#file_matches[@]}" ]; then
       input_solved="y"
       tablet_config="${file_matches[$file_match_index]}"
