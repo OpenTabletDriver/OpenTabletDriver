@@ -19,5 +19,10 @@ namespace OpenTabletDriver.SystemDrivers
         /// The existence of this driver causes OpenTabletDriver to have flaky support to the device.
         /// </summary>
         Flaky = 1 << 2,
+
+        /// <summary>
+        /// A driver may be detected but it could be a false positive.
+        /// </summary>
+        Uncertain = 1 << 3,
     }
 }
