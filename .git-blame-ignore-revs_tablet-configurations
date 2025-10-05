@@ -54,3 +54,13 @@ bd1a9d948a2f867f43dceec8a0d38c9f8f2f86b3
 8e249a0e2624cdf4f8d1e11b25a2203a60951d68
 # format(configs): Fixed formatting of multiple configuration files
 8a42c3304363dbaab14234cbb8f26cf35b093f78
+# Add feature init report for known CTH tablets
+34e9a544632b70e66889aa714a4ce7286adce7cc
+# Set OutputReportLength accordingly to InitReport
+7896b18efaec3ef23863a0531c9d760bf604b24f
+# Fix configuration file formatting
+2489331e373f5953714a1610e787f8daf0759e60
+# Lint configurations
+cfcf54c28e2c09dac802cd944812c65e352f0d22
+# Unmangle configs by linting
+357a40d95419c28872c5ef593d18ab38dc1baf89
