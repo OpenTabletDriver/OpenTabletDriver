@@ -56,11 +56,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task ApplyPreset(string name)
         {
-            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
-
-            if (!presetDir.Exists)
-                presetDir.Create();
-            AppInfo.PresetManager.Refresh();
+            GetAndRefreshPresetDirectory();
 
             var preset = AppInfo.PresetManager.FindPreset(name);
             await ApplySettings(preset.Settings);
@@ -68,10 +64,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task SavePreset(string name)
         {
-            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
-
-            if (!presetDir.Exists)
-                presetDir.Create();
+            var presetDir = GetAndRefreshPresetDirectory();
 
             var settings = await GetSettings();
             var file = new FileInfo(Path.Combine(presetDir.FullName, name + ".json"));
@@ -83,6 +76,18 @@ namespace OpenTabletDriver.Console
                 throw new ArgumentException("Preset file name must not traverse directories");
 
             settings.Serialize(file);
+        }
+
+        private static DirectoryInfo GetAndRefreshPresetDirectory()
+        {
+            var presetDir = new DirectoryInfo(AppInfo.Current.PresetDirectory);
+
+            if (!presetDir.Exists)
+                presetDir.Create();
+
+            AppInfo.PresetManager.Refresh();
+
+            return presetDir;
         }
 
         #endregion
