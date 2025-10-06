@@ -66,7 +66,6 @@ namespace OpenTabletDriver.Console
         {
             var presetDir = GetAndRefreshPresetDirectory();
 
-            var settings = await GetSettings();
             var file = new FileInfo(Path.Combine(presetDir.FullName, name + ".json"));
 
             if (file.Exists)
@@ -77,6 +76,8 @@ namespace OpenTabletDriver.Console
 
             if (file.Directory.FullName != presetDir.FullName)
                 throw new ArgumentException("Preset file name must not traverse directories");
+
+            var settings = await GetSettings();
 
             settings.Serialize(file);
         }
