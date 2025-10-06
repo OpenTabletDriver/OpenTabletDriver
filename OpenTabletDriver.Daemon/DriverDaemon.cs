@@ -174,6 +174,7 @@ namespace OpenTabletDriver.Daemon
             return Task.FromResult(AppInfo.PluginManager.InstallPlugin(filePath));
         }
 
+        // FIXME: needs API bump: IDriverDaemon expects friendlyName but this implementation takes a full path
         public Task<bool> UninstallPlugin(string directoryPath)
         {
             var plugins = AppInfo.PluginManager.GetLoadedPlugins();
