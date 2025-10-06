@@ -41,14 +41,14 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void HandleBinding(IDeviceReport report)
         {
+            if (report is IEraserReport eraserReport)
+                _isEraser = eraserReport.Eraser;
             if (report is ITabletReport tabletReport)
                 HandleTabletReport(tablet, tablet.Properties.Specifications.Pen, tabletReport);
             if (report is IAuxReport auxReport)
                 HandleAuxiliaryReport(tablet, auxReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(tablet, mouseReport);
-            if (report is IEraserReport eraserReport)
-                _isEraser = eraserReport.Eraser;
         }
 
         private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
