@@ -69,6 +69,9 @@ namespace OpenTabletDriver.Console
             var settings = await GetSettings();
             var file = new FileInfo(Path.Combine(presetDir.FullName, name + ".json"));
 
+            if (file.Exists)
+                throw new ArgumentException("Cannot override presets");
+
             if (file.Directory == null)
                 throw new NullReferenceException(nameof(file.Directory));
 
