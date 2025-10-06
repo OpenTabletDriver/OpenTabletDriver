@@ -43,7 +43,8 @@ namespace OpenTabletDriver.Desktop.RPC
                     {
                         ConnectionStateChanged?.Invoke(this, true);
                         using var rpc = JsonRpc.Attach(stream, host);
-                        await rpc.Completion;
+                        await rpc.Completion.WaitAsync(ct);
+
                     }
                     catch (ObjectDisposedException)
                     {
