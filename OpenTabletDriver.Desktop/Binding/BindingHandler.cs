@@ -18,6 +18,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public ThresholdBindingState? Tip { set; get; }
         public ThresholdBindingState? Eraser { set; get; }
+        private bool _isEraser;
 
         public Dictionary<int, BindingState?> PenButtons { set; get; } = new Dictionary<int, BindingState?>();
         public Dictionary<int, BindingState?> AuxButtons { set; get; } = new Dictionary<int, BindingState?>();
@@ -46,12 +47,14 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleAuxiliaryReport(tablet, auxReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(tablet, mouseReport);
+            if (report is IEraserReport eraserReport)
+                _isEraser = eraserReport.Eraser;
         }
 
         private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
         {
             float pressurePercent = (float)report.Pressure / (float)pen.MaxPressure * 100f;
-            if (report is IEraserReport eraserReport && eraserReport.Eraser)
+            if (_isEraser)
                 Eraser?.Invoke(tablet, report, pressurePercent);
             else
                 Tip?.Invoke(tablet, report, pressurePercent);
