@@ -118,6 +118,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             // unset opposite tool (in case tablet never sends us Reset/OutOfRange)
             Device.Write(EventType.EV_KEY, currentTool, 0);
+            Flush();
 
             this.isEraser = isEraser;
         }
