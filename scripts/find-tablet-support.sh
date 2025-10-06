@@ -101,7 +101,7 @@ fi
 
 cd "$OLDPWD" 2>/dev/null
 
-if [ -z "${tablet_config}" ] || [ "${tablet_config}" == "" ]; then
+if [ -z "${tablet_config}" ]; then
   echo "Tablet config missing, wrong selection?"
   exit 2
 fi
