@@ -106,7 +106,7 @@ namespace OpenTabletDriver.Desktop.Interop
         {
             PluginPlatform.Windows => new WindowsVirtualKeyboard(),
             PluginPlatform.Linux => virtualKeyboard ??= new EvdevVirtualKeyboard(),
-            PluginPlatform.MacOS => new MacOSVirtualKeyboard(),
+            PluginPlatform.MacOS => virtualKeyboard ??= new MacOSVirtualKeyboard(),
             _ => null
         };
 

@@ -58,6 +58,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
                 KeyEvent(key, false);
         }
 
+        public ulong getCurrentFlags() => _currentFlags;
+
         public IEnumerable<string> SupportedKeys => EtoKeysymToVK.Keys;
 
         internal static readonly Dictionary<string, CGKeyCode> EtoKeysymToVK = new Dictionary<string, CGKeyCode>
