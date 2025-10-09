@@ -17,8 +17,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
             };
             Tilt = new Vector2
             {
-                X = (sbyte)report[10],
-                Y = (sbyte)report[11]
+                X = (sbyte)report[10] * -1,
+                Y = (sbyte)report[11] * -1
             };
             Pressure = Unsafe.ReadUnaligned<ushort>(ref report[6]);
 
