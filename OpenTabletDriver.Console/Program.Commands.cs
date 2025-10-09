@@ -297,6 +297,7 @@ namespace OpenTabletDriver.Console
         private static async Task Detect()
         {
             await Driver.Instance.DetectTablets();
+            await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
         }
 
         #endregion
