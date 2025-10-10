@@ -361,6 +361,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
             ReportData = data;
+            var tabletProperties = data.Tablet.Properties;
             var timeDelta = stopwatch.Restart();
             ReportPeriod += (timeDelta.TotalMilliseconds - ReportPeriod) * 0.01f;
 
@@ -377,7 +378,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             {
                 if (enableDataRecording.Checked ?? false)
                 {
-                    var output = ReportFormatter.GetStringFormatOneLine(deviceReport, timeDelta, data.Path);
+                    var output = ReportFormatter.GetStringFormatOneLine(tabletProperties, deviceReport, timeDelta, data.Path);
                     dataRecordingOutput?.WriteLine(output);
                     NumberOfReportsRecorded++;
                 }
