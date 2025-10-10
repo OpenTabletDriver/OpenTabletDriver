@@ -372,7 +372,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 float y = Math.Max(maxPosition.Y, tabletReport.Position.Y);
 
                 MaxPositionReported = new Vector2(x, y);
-            };
+            }
 
             if (data.ToObject() is IDeviceReport deviceReport)
             {
