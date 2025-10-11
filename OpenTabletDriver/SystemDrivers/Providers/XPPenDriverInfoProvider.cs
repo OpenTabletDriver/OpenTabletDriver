@@ -26,7 +26,6 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 
         private string[] Exclusions = new string[]
         {
-            "OpenTabletDriver",
             "Huion",
             "Gaomon",
             "Veikk"
@@ -36,7 +35,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
         {
             var processes = DriverInfo.SystemProcesses
                 .Where(p => WinProcessNames.Concat(Heuristics)
-                .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase)));
+                .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase)) && !Regex.IsMatch(p.ProcessName, "OpenTabletDriver", RegexOptions.IgnoreCase));
 
             var falsePositive = processes.Any(p => Exclusions.Any(ex => Regex.IsMatch(p.ProcessName, ex))) ? DriverStatus.Uncertain : 0;
 
