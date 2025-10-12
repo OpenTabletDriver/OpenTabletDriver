@@ -33,10 +33,12 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendLines(GetStringFormat(touchReport));
-            if (report is IAbsoluteWheelReport absoluteWheelReport)
-                sb.AppendLines(GetStringFormat(absoluteWheelReport));
-            if (report is IRelativeWheelReport relativeWheelReport)
-                sb.AppendLines(GetStringFormat(relativeWheelReport));
+            if (report is IAbsoluteWheelsReport absoluteWheelsReport)
+                sb.AppendLines(GetStringFormat(absoluteWheelsReport));
+            if (report is IRelativeWheelsReport relativeWheelsReport)
+                sb.AppendLines(GetStringFormat(relativeWheelsReport));
+            if (report is IWheelsButtonsReport wheelsButtonsReport)
+                sb.AppendLines(GetStringFormat(wheelsButtonsReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendLines(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
@@ -67,10 +69,12 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendOneLine(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendOneLine(GetStringFormat(touchReport));
-            if (report is IAbsoluteWheelReport absoluteWheelReport)
-                sb.AppendOneLine(GetStringFormat(absoluteWheelReport));
-            if (report is IRelativeWheelReport relativeWheelReport)
-                sb.AppendOneLine(GetStringFormat(relativeWheelReport));
+            if (report is IAbsoluteWheelsReport absoluteWheelsReport)
+                sb.AppendOneLine(GetStringFormat(absoluteWheelsReport));
+            if (report is IRelativeWheelsReport relativeWheelsReport)
+                sb.AppendOneLine(GetStringFormat(relativeWheelsReport));
+            if (report is IWheelsButtonsReport wheelsButtonsReport)
+                sb.AppendOneLine(GetStringFormat(wheelsButtonsReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendOneLine(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
@@ -126,18 +130,31 @@ namespace OpenTabletDriver.UX.Tools
                     yield return touch.ToString();
         }
 
-        private static IEnumerable<string> GetStringFormat(IAbsoluteWheelReport wheelReport)
+        private static IEnumerable<string> GetStringFormat(IAbsoluteWheelsReport wheelsReport)
         {
-            yield return $"Wheel:{wheelReport.Position?.ToString() ?? "Idle"}";
-            if (wheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
-                yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
+            for (int i = 0; i < wheelsReport.WheelsPosition.Length; i++)
+            {
+                var position = wheelsReport.WheelsPosition[i];
+                yield return $"Wheel Position {i}:{position?.ToString() ?? "Idle"}";
+            }
         }
 
-        private static IEnumerable<string> GetStringFormat(IRelativeWheelReport wheelReport)
+        private static IEnumerable<string> GetStringFormat(IRelativeWheelsReport wheelsReport)
         {
-            yield return $"Wheel Delta:{wheelReport.Delta?.ToString() ?? "Idle"}";
-            if (wheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
-                yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
+            for (int i = 0; i < wheelsReport.WheelsDelta.Length; i++)
+            {
+                var delta = wheelsReport.WheelsDelta[i];
+                yield return $"Wheel Delta {i}:{delta?.ToString() ?? "Idle"}";
+            }
+        }
+
+        private static IEnumerable<string> GetStringFormat(IWheelsButtonsReport wheelsButtonsReport)
+        {
+            for (int i = 0; i < wheelsButtonsReport.WheelsButtons.Length; i++)
+            {
+                var buttons = wheelsButtonsReport.WheelsButtons[i];
+                yield return $"Wheel Buttons {i}:[{string.Join(" ", buttons)}]";
+            }
         }
 
         private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)

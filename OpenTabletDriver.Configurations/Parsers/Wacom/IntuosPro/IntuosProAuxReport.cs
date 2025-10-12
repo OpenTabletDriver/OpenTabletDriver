@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosPro
 {
-    public struct IntuosProAuxReport : IAuxReport, IWheelButtonReport, IAbsoluteWheelReport
+    public struct IntuosProAuxReport : IAuxReport, IAbsoluteWheelsReport, IWheelsButtonsReport
     {
         public IntuosProAuxReport(byte[] report)
         {
@@ -25,20 +25,26 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosPro
             };
 
             var wheelByte = report[2];
+            WheelsPosition = new uint?[1];
 
             // Wheel Start at Position zero (0x80) and Provides a value between 0x80 & 0xC7 on PTH-x50 & PTH-x51     
             if (wheelByte.IsBitSet(7))
-                Position = (uint)wheelByte - 0x80;
+                WheelsPosition[0] = (uint)wheelByte - 0x80;
 
-            WheelButtons = new bool[]
-            {
-                touchWheelButtonByte.IsBitSet(0),
-            };
+            WheelsButtons =
+            [
+                new WheelButtonsStates() {
+                    States =
+                    [
+                        touchWheelButtonByte.IsBitSet(0),
+                    ]
+                }
+            ];
         }
 
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
-        public uint? Position { set; get; }
-        public bool[] WheelButtons { set; get; }
+        public uint?[] WheelsPosition { set; get; }
+        public WheelButtonsStates[] WheelsButtons { set; get; }
     }
 }

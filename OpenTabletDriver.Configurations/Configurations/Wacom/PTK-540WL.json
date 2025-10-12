@@ -17,14 +17,16 @@
     "MouseButtons": {
       "ButtonCount": 5
     },
-    "Wheel": {
-      "StepCount": 71,
-      "IsRelative": false,
-      "AngleOfZeroReading": 180.0,
-      "Buttons": {
-        "ButtonCount": 1
+    "Wheels": [
+      {
+        "StepCount": 71,
+        "IsRelative": false,
+        "AngleOfZeroReading": 180.0,
+        "Buttons": {
+          "ButtonCount": 1
+        }
       }
-    }
+    ]
   },
   "DigitizerIdentifiers": [
     {
