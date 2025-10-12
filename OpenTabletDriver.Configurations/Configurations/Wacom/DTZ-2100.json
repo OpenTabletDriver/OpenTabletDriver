@@ -1,0 +1,30 @@
+{
+  "Name": "Wacom Cintiq 21UX (DTZ-2100)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 436,
+      "Height": 328,
+      "MaxX": 87200,
+      "MaxY": 65600
+    },
+    "Pen": {
+      "MaxPressure": 2046,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1386,
+      "ProductID": 63,
+      "InputReportLength": 10,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Wacom.Intuos3.Intuos3ReportParser",
+      "FeatureInitReport": [
+        "AgI="
+      ]
+    }
+  ]
+}
