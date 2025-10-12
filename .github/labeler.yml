@@ -67,6 +67,7 @@ tests:
 - changed-files:
   - any-glob-to-any-file:
     - 'OpenTabletDriver.Tests/**'
+    - 'tests/**'
 
 # complex labels
 
@@ -75,8 +76,9 @@ tests:
   - any-glob-to-any-file:
     - 'OpenTabletDriver.Native/Linux/**'
     - 'OpenTabletDriver.UX.Gtk/**'
+    - 'generate-rules.sh'
+    - 'update-deps.sh'
     - '**/*Linux*' # TODO: verify that this works 1/3
-    - '**/*.sh' # TODO: verify that this also affects './generate-rules.sh' etc
     - '**/*.nix'
     - '**/flake.lock'
 

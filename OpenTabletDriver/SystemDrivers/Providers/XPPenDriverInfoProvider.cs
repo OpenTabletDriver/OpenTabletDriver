@@ -38,15 +38,15 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 .Where(p => WinProcessNames.Concat(Heuristics)
                 .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase)));
 
-            var falsePositive = processes.Any(p => Exclusions.Any(ex => Regex.IsMatch(p.ProcessName, ex)));
+            var falsePositive = processes.Any(p => Exclusions.Any(ex => Regex.IsMatch(p.ProcessName, ex))) ? DriverStatus.Uncertain : 0;
 
-            if (processes.Any() && !falsePositive)
+            if (processes.Any())
             {
                 return new DriverInfo
                 {
                     Name = FriendlyName,
                     Processes = processes.ToArray(),
-                    Status = DriverStatus.Active
+                    Status = DriverStatus.Active | falsePositive
                 };
             }
             else

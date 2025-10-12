@@ -178,7 +178,7 @@ namespace OpenTabletDriver.UX
             quitCommand.Executed += (sender, e) => Application.Instance.Quit();
 
             var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
-            aboutCommand.Executed += (sender, e) => AboutDialog.ShowDialog(this);
+            aboutCommand.Executed += (sender, e) => App.Current.AboutWindow.Show();
 
             var wikiUrl = new Command { MenuText = "Open Wiki..." };
             wikiUrl.Executed += (sender, e) => DesktopInterop.Open(WikiUrl);
@@ -209,7 +209,7 @@ namespace OpenTabletDriver.UX
             quitCommand.Executed += (sender, e) => Application.Instance.Quit();
 
             var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
-            aboutCommand.Executed += (sender, e) => AboutDialog.ShowDialog(this);
+            aboutCommand.Executed += (sender, e) => App.Current.AboutWindow.Show();
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
             resetSettings.Executed += async (sender, e) => await ResetSettingsDialog();

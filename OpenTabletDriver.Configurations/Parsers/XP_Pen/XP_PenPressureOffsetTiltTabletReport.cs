@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Configurations.Parsers.XP_Pen
                 X = Unsafe.ReadUnaligned<ushort>(ref report[2]),
                 Y = Unsafe.ReadUnaligned<ushort>(ref report[4])
             };
-            Pressure = (uint)(Unsafe.ReadUnaligned<ushort>(ref report[6]) - 8192);
+            Pressure = (uint)(Unsafe.ReadUnaligned<ushort>(ref report[6]) & 0x1FFF);
             Eraser = report[1].IsBitSet(3);
 
             PenButtons = new bool[]

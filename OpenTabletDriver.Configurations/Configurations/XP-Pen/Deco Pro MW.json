@@ -1,0 +1,30 @@
+{
+  "Name": "XP-Pen Deco Pro MW",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 278.99,
+      "Height": 156.995,
+      "MaxX": 55798,
+      "MaxY": 31399
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2356,
+      "InputReportLength": 12,
+      "OutputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ]
+}

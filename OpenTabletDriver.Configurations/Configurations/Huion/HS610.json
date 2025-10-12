@@ -42,7 +42,7 @@
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.HuionTiltReportParser",
       "DeviceStrings": {
-        "201": "HUION_T194_\\d{6}$"
+        "201": "HUION_T(194|227)_\\d{6}$"
       },
       "InitializationStrings": [
         200

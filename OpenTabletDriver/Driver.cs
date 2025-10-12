@@ -173,6 +173,7 @@ namespace OpenTabletDriver
                    where device.CanOpen
                    where identifier.InputReportLength == null || identifier.InputReportLength == device.InputReportLength
                    where identifier.OutputReportLength == null || identifier.OutputReportLength == device.OutputReportLength
+                   where identifier.FeatureReportLength == null || identifier.FeatureReportLength == device.FeatureReportLength
                    where DeviceMatchesStrings(device, identifier.DeviceStrings)
                    where DeviceMatchesAttribute(device, identifier.Attributes, configuration.Attributes)
                    select device;
