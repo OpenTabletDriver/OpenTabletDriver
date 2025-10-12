@@ -126,11 +126,6 @@
 | Wacom GD-0912-U                    |     Supported     |
 | Wacom GD-1212-U                    |     Supported     |
 | Wacom GD-1218-U                    |     Supported     |
-| Wacom XD-0405-U                    |     Supported     |
-| Wacom XD-0608-U                    |     Supported     |
-| Wacom XD-0912-U                    |     Supported     |
-| Wacom XD-1212-U                    |     Supported     |
-| Wacom XD-1218-U                    |     Supported     |
 | Wacom PTH-451                      |     Supported     |
 | Wacom PTH-651                      |     Supported     |
 | Wacom PTH-851                      |     Supported     |
@@ -139,6 +134,11 @@
 | Wacom PTK-640                      |     Supported     |
 | Wacom PTK-840                      |     Supported     |
 | Wacom PTK-1240                     |     Supported     |
+| Wacom XD-0405-U                    |     Supported     |
+| Wacom XD-0608-U                    |     Supported     |
+| Wacom XD-0912-U                    |     Supported     |
+| Wacom XD-1212-U                    |     Supported     |
+| Wacom XD-1218-U                    |     Supported     |
 | Waltop Slim Tablet 5.8"            |     Supported     |
 | XenceLabs Pen Tablet Medium        |     Supported     |
 | XenceLabs Pen Tablet Small         |     Supported     |
