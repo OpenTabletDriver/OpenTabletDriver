@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV1
             };
         }
 
-        private IDeviceReport GetToolReport(byte[] report)
+        protected IDeviceReport GetToolReport(byte[] report)
         {
             if (report[0] == 0x10 && report[1] == 0x20)
                 return new DeviceReport(report);

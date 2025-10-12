@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Touch;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.UX.Tools
 {
@@ -32,6 +33,10 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendLines(GetStringFormat(touchReport));
+            if (report is IAbsoluteWheelReport absoluteWheelReport)
+                sb.AppendLines(GetStringFormat(absoluteWheelReport));
+            if (report is IRelativeWheelReport relativeWheelReport)
+                sb.AppendLines(GetStringFormat(relativeWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendLines(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
@@ -62,6 +67,10 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendOneLine(GetStringFormat(tiltReport));
             if (report is ITouchReport touchReport)
                 sb.AppendOneLine(GetStringFormat(touchReport));
+            if (report is IAbsoluteWheelReport absoluteWheelReport)
+                sb.AppendOneLine(GetStringFormat(absoluteWheelReport));
+            if (report is IRelativeWheelReport relativeWheelReport)
+                sb.AppendOneLine(GetStringFormat(relativeWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendOneLine(GetStringFormat(mouseReport));
             if (report is IToolReport toolReport)
@@ -115,6 +124,20 @@ namespace OpenTabletDriver.UX.Tools
             foreach (var touch in touchReport.Touches)
                 if (touch != null)
                     yield return touch.ToString();
+        }
+
+        private static IEnumerable<string> GetStringFormat(IAbsoluteWheelReport wheelReport)
+        {
+            yield return $"Wheel:{wheelReport.Position?.ToString() ?? "Idle"}";
+            if (wheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
+                yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
+        }
+
+        private static IEnumerable<string> GetStringFormat(IRelativeWheelReport wheelReport)
+        {
+            yield return $"Wheel Delta:{wheelReport.Delta?.ToString() ?? "Idle"}";
+            if (wheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
+                yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
         }
 
         private static IEnumerable<string> GetStringFormat(IMouseReport mouseReport)
