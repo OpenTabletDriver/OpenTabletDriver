@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
@@ -22,9 +20,9 @@ namespace OpenTabletDriver.Desktop.Reflection
                 Assembly.Load("OpenTabletDriver.Plugin")
             };
 
-            libTypes = (from type in typeof(IDriver).Assembly.GetExportedTypes()
-                        where type.IsAbstract || type.IsInterface
-                        select type).ToArray();
+#pragma warning disable CS0618 // Type or member is obsolete
+            libTypes = OpenTabletDriver.Desktop.Extensions.GetLibTypes().ToArray();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             var internalTypes = from asm in assemblies
                                 from type in asm.DefinedTypes
@@ -39,6 +37,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         public IReadOnlyCollection<TypeInfo> PluginTypes => pluginTypes;
         protected ConcurrentBag<TypeInfo> pluginTypes;
 
+        [Obsolete($"Use {nameof(OpenTabletDriver.Desktop.Extensions.GetLibTypes)} from OpenTabletDriver.Desktop.Extensions")]
         protected readonly Type[] libTypes;
 
         public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
@@ -156,12 +155,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return true;
         }
 
-        protected virtual bool IsPluginType(Type type)
-        {
-            return !type.IsAbstract && !type.IsInterface &&
-                libTypes.Any(t => t.IsAssignableFrom(type) ||
-                    type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == t));
-        }
+        protected virtual bool IsPluginType(Type type) => type.IsPluginType();
 
         protected virtual bool IsPlatformSupported(Type type)
         {
@@ -174,27 +168,6 @@ namespace OpenTabletDriver.Desktop.Reflection
             return type.GetCustomAttributes(false).Any(a => a.GetType() == typeof(PluginIgnoreAttribute));
         }
 
-        protected virtual bool IsLoadable(Assembly asm)
-        {
-            try
-            {
-                _ = asm.DefinedTypes;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                var asmName = asm.GetName();
-                var hResultHex = ex.HResult.ToString("X");
-                var message = new LogMessage
-                {
-                    Group = "Plugin",
-                    Level = LogLevel.Warning,
-                    Message = $"Plugin '{asmName.Name}, Version={asmName.Version}' can't be loaded and is likely out of date. (HResult: 0x{hResultHex})",
-                    StackTrace = ex.Message + Environment.NewLine + ex.StackTrace
-                };
-                Log.Write(message);
-                return false;
-            }
-        }
+        protected virtual bool IsLoadable(Assembly asm) => asm.IsLoadable();
     }
 }

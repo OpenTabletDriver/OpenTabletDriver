@@ -76,6 +76,12 @@ namespace OpenTabletDriver.Console
             var settings = await GetSettings();
             var file = new FileInfo(Path.Combine(presetDir.FullName, name + ".json"));
 
+            if (file.Directory == null)
+                throw new NullReferenceException(nameof(file.Directory));
+
+            if (file.Directory.FullName != presetDir.FullName)
+                throw new ArgumentException("Preset file name must not traverse directories");
+
             settings.Serialize(file);
         }
 
@@ -167,32 +173,39 @@ namespace OpenTabletDriver.Console
             await ModifyProfile(tablet, p => p.AbsoluteModeSettings.LockAspectRatio = isEnabled);
         }
 
-        private static async Task SetOutputMode(string tablet, string mode)
+        private static async Task SetOutputMode(string tablet, string path)
         {
-            await ModifyProfile(tablet, p => p.OutputMode = new PluginSettingStore(mode));
+            var outputMode = PluginSettingStore.FromPath(path);
+            if (outputMode == null)
+                await Out.WriteLineAsync($"Invalid output mode '{path}'. Use paths like in '{nameof(ListOutputModes).ToLower()}'");
+            else
+                await ModifyProfile(tablet, p => p.OutputMode = outputMode);
         }
 
-        private static async Task SetFilters(string tablet, params string[] filters)
+        private static async Task EnableTabletFilters(string tablet, params string[] filters)
+        {
+            await ModifyProfile(tablet,
+                s => AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filters));
+        }
+
+        private static async Task EnableTools(params string[] tools)
+        {
+            await ModifySettings(s => AppendPluginStoreSettingsCollectionByPaths<ITool>(s.Tools, tools));
+        }
+
+        private static async Task DisableTabletFilters(string tablet, params string[] filters)
         {
             await ModifyProfile(tablet, s =>
             {
-                var collection = new PluginSettingStoreCollection();
-                foreach (var path in filters)
-                    collection.Add(new PluginSettingStore(path));
-
-                s.Filters = collection;
+                DisableAllInPluginStoreSettingsCollectionByPaths(s.Filters, filters);
             });
         }
 
-        private static async Task SetTools(params string[] tools)
+        private static async Task DisableTools(string[] tools)
         {
             await ModifySettings(s =>
             {
-                var collection = new PluginSettingStoreCollection();
-                foreach (var path in tools)
-                    collection.Add(new PluginSettingStore(path));
-
-                s.Tools = collection;
+                DisableAllInPluginStoreSettingsCollectionByPaths(s.Tools, tools);
             });
         }
 
@@ -284,6 +297,7 @@ namespace OpenTabletDriver.Console
         private static async Task Detect()
         {
             await Driver.Instance.DetectTablets();
+            await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
         }
 
         #endregion
@@ -319,6 +333,13 @@ namespace OpenTabletDriver.Console
         private static async Task ListBindings()
         {
             await ListTypes<IBinding>();
+        }
+
+        private static async Task ListPresets()
+        {
+            AppInfo.PresetManager.Refresh();
+            foreach (var preset in AppInfo.PresetManager.GetPresets())
+                await Out.WriteLineAsync(preset.Name);
         }
 
         #endregion

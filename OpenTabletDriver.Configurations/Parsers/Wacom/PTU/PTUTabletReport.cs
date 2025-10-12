@@ -33,6 +33,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.PTU
         public bool[] PenButtons { set; get; }
         public bool Eraser { set; get; }
         public bool NearProximity { set; get; }
-        public uint HoverDistance { set; get; }    
+        public uint HoverDistance { set; get; }
     }
 }

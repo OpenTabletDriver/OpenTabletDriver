@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -79,12 +81,15 @@ namespace OpenTabletDriver.UX.Controls
         private void RefreshContent()
         {
             var types = AppInfo.PluginManager.GetChildTypes<TSource>();
+            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName())]);
+
+            var oldSelected = sourceSelector.SelectedItem;
+            var newSelected = sortedTypes.FirstOrDefault(t => t.FullName == oldSelected?.FullName);
 
             // Update DataStore to new types, this refreshes the editor.
-            var prevIndex = sourceSelector.SelectedIndex;
-            sourceSelector.SelectedIndex = -1;
-            sourceSelector.DataStore = types;
-            sourceSelector.SelectedIndex = prevIndex;
+            sourceSelector.SelectedItem = null;
+            sourceSelector.DataStore = sortedTypes;
+            sourceSelector.SelectedItem = newSelected;
 
             this.Content = types.Any() ? mainContent : placeholder;
         }

@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Profiles;
+using OpenTabletDriver.Desktop.Reflection;
 using static System.Console;
 
 namespace OpenTabletDriver.Console
@@ -65,7 +66,14 @@ namespace OpenTabletDriver.Console
 
         static async Task ListTypes<T>(Func<Type, bool> predicate = null)
         {
-            foreach (var type in AppInfo.PluginManager.GetChildTypes<T>())
+            var types = AppInfo.PluginManager.GetChildTypes<T>();
+            if (types.Count == 0)
+            {
+                await Out.WriteAsync("No types found\n");
+                return;
+            }
+
+            foreach (var type in types)
             {
                 if (predicate?.Invoke(type) ?? true)
                 {
@@ -81,6 +89,37 @@ namespace OpenTabletDriver.Console
             var data = File.ReadAllBytes(path);
             var hash = sha256.ComputeHash(data);
             return string.Join(null, hash.Select(b => b.ToString("X")));
+        }
+
+        static void AppendPluginStoreSettingsCollectionByPaths<T>(PluginSettingStoreCollection pssc, params string[] paths) where T : class
+        {
+            foreach (var path in paths)
+            {
+                var existing = pssc.FirstOrDefault(x => x.Path == path);
+                if (existing == null)
+                {
+                    var obj = PluginSettingStore.FromPath(path).Construct<T>();
+                    pssc.Add(new PluginSettingStore(obj));
+                }
+                else
+                {
+                    existing.Enable = true;
+                }
+            }
+        }
+
+        static void DisableAllInPluginStoreSettingsCollectionByPaths(PluginSettingStoreCollection pssc, params string[] paths)
+        {
+            foreach (string path in paths)
+            {
+                var plugins = pssc.Where(x => x.Path == path).ToArray();
+
+                if (plugins.Length == 0)
+                    Out.WriteLineAsync("No plugins found matching path");
+
+                foreach (var plugin in plugins)
+                    plugin.Enable = false;
+            }
         }
     }
 }

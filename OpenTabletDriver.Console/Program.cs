@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.IO;
 using System.Threading.Tasks;
+using OpenTabletDriver.Desktop;
 
 namespace OpenTabletDriver.Console
 {
@@ -19,6 +20,10 @@ namespace OpenTabletDriver.Console
             }
 
             await Driver.Connect();
+
+            // load plugins
+            AppInfo.PluginManager.Load();
+
             await Root.InvokeAsync(args);
         }
 
@@ -65,8 +70,10 @@ namespace OpenTabletDriver.Console
         private static readonly IEnumerable<Command> ModifyCommands = new Command[]
         {
             CreateCommand<string, string>(SetOutputMode, "Sets the output mode"),
-            CreateCommand<string, string[]>(SetFilters, "Sets the filters applied to the current output mode"),
-            CreateCommand<string[]>(SetTools, "Sets the active tools"),
+            CreateCommand<string, string[]>(EnableTabletFilters, "Enables the specified filters on the specified tablet"),
+            CreateCommand<string, string[]>(DisableTabletFilters, "Disables the specified filters on the specified tablet"),
+            CreateCommand<string[]>(EnableTools, "Enables the specified tools"),
+            CreateCommand<string[]>(DisableTools, "Disables the specified tools"),
             CreateCommand<string, float, float, float, float>(SetDisplayArea, "Sets the display area"),
             CreateCommand<string, float, float, float, float, float>(SetTabletArea, "Sets the tablet area"),
             CreateCommand<string, float, float, float>(SetSensitivity, "Sets the relative sensitivity"),
@@ -76,7 +83,7 @@ namespace OpenTabletDriver.Console
             CreateCommand<string, int>(SetResetTime, "Sets the reset time in milliseconds"),
             CreateCommand<string, bool>(SetEnableClipping, "Sets whether inputs should be limited to the specified areas"),
             CreateCommand<string, bool>(SetEnableAreaLimiting, "Sets whether inputs outside of the tablet area should be ignored"),
-            CreateCommand<string, bool>(SetLockAspectRatio, "Sets whether to lock tablet width/height to display width/height ratio")
+            CreateCommand<string, bool>(SetLockAspectRatio, "Sets whether to lock tablet width/height to display width/height ratio"),
         };
 
         private static readonly IEnumerable<Command> RequestCommands = new Command[]
@@ -103,7 +110,8 @@ namespace OpenTabletDriver.Console
             CreateCommand(ListOutputModes, "Lists all available output modes"),
             CreateCommand(ListFilters, "Lists all available filters"),
             CreateCommand(ListTools, "Lists all available tools"),
-            CreateCommand(ListBindings, "Lists all available binding types")
+            CreateCommand(ListBindings, "Lists all available binding types"),
+            CreateCommand(ListPresets, "Lists all available presets"),
         };
 
         private static readonly IEnumerable<Command> ScriptingCommands = new Command[]

@@ -8,11 +8,13 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : EvdevVirtualMouse, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer
+    public class EvdevVirtualTablet : IPenActionHandler, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IDisposable
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
         private bool isEraser;
+
+        private EvdevDevice Device { set; get; }
 
         public unsafe EvdevVirtualTablet()
         {
@@ -116,6 +118,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
             // unset opposite tool (in case tablet never sends us Reset/OutOfRange)
             Device.Write(EventType.EV_KEY, currentTool, 0);
+            Flush();
 
             this.isEraser = isEraser;
         }
@@ -130,7 +133,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_KEY, eventCode, state ? 1 : 0);
         }
 
-        public sealed override void Reset()
+        public void Reset()
         {
             // Zero out everything except position and tilt
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOOL_RUBBER, 0);
@@ -144,6 +147,37 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             isEraser = false;
         }
 
-        protected override EventCode? GetCode(MouseButton button) => null;
+        private static EventCode? GetCode(PenAction button) => button switch
+        {
+            PenAction.Tip => null, // tip is handled via pressure
+            PenAction.Eraser => null, // eraser is handled via pressure
+            PenAction.BarrelButton1 => EventCode.BTN_STYLUS2, // STYLUS2 = right click
+            PenAction.BarrelButton2 => EventCode.BTN_STYLUS,
+            PenAction.BarrelButton3 => EventCode.BTN_STYLUS3,
+            _ => null,
+        };
+
+        public void Dispose()
+        {
+            Device?.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
+        public void Flush()
+        {
+            Device.Sync();
+        }
+
+        public void Activate(PenAction action)
+        {
+            if (GetCode(action) is { } code)
+                SetKeyState(code, true);
+        }
+
+        public void Deactivate(PenAction action)
+        {
+            if (GetCode(action) is { } code)
+                SetKeyState(code, false);
+        }
     }
 }

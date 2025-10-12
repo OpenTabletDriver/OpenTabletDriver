@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -13,9 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
-using Newtonsoft.Json.Schema.Generation;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Tests.Data;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,44 +22,13 @@ using Xunit.Abstractions;
 
 namespace OpenTabletDriver.Tests
 {
-    public partial class ConfigurationTest
+    public class ConfigurationTest(ITestOutputHelper testOutputHelper)
     {
-        private readonly ITestOutputHelper _testOutputHelper;
-
-        public ConfigurationTest(ITestOutputHelper testOutputHelper)
+        [Theory]
+        [MemberData(nameof(ConfigurationTestData.ParsersInConfigs), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Have_ExistentParsers(string parserName)
         {
-            _testOutputHelper = testOutputHelper;
-        }
-
-        [Fact]
-        public void Configurations_Have_ExistentParsers()
-        {
-            var serviceProvider = new DriverServiceCollection().BuildServiceProvider();
-            var parserProvider = serviceProvider.GetRequiredService<IReportParserProvider>();
-            var configurationProvider = serviceProvider.GetRequiredService<IDeviceConfigurationProvider>();
-
-            var parsers = from configuration in configurationProvider.TabletConfigurations
-                          from identifier in configuration.DigitizerIdentifiers.Concat(configuration.AuxiliaryDeviceIdentifiers ?? Enumerable.Empty<DeviceIdentifier>())
-                          orderby identifier.ReportParser
-                          select identifier.ReportParser;
-
-            var failed = false;
-
-            foreach (var parserType in parsers.Where(p => p != null).Distinct())
-            {
-                try
-                {
-                    var parser = parserProvider.GetReportParser(parserType);
-                    _testOutputHelper.WriteLine(parser.ToString());
-                }
-                catch
-                {
-                    _testOutputHelper.WriteLine($"Unable to find report parser '{parserType}'");
-                    failed = true;
-                }
-            }
-
-            Assert.False(failed);
+            ConfigurationTestData.ReportParserProvider.GetReportParser(parserName);
         }
 
         [Fact]
@@ -239,77 +207,26 @@ namespace OpenTabletDriver.Tests
             Assert.False(equality);
         }
 
-        private static string GetConfigDir([CallerFilePath] string sourceFilePath = "")
+        [Theory]
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Verify_Configs_With_Schema(TestTabletConfiguration testTabletConfiguration)
         {
-            return Path.GetFullPath(Path.Join(sourceFilePath, "../../OpenTabletDriver.Configurations/Configurations"));
-        }
+            var tabletFilename = testTabletConfiguration.File.Name;
+            var tabletConfigString = testTabletConfiguration.FileContents.Value;
+            var schema = ConfigurationTestData.TabletConfigurationSchema;
+            IList<string> errors = new List<string>();
 
-        private static readonly IEnumerable<(string, string)> ConfigFiles = Directory.EnumerateFiles(GetConfigDir(), "*.json", SearchOption.AllDirectories)
-            .Select(f => (Path.GetRelativePath(GetConfigDir(), f), File.ReadAllText(f))).OrderBy(x => x.Item1);
-
-        public static readonly IEnumerable<object?[]> Configs = ConfigFiles.Select(x => new object?[] { JsonConvert.DeserializeObject<TabletConfiguration>(x.Item2, new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace }), x.Item1 });
-
-        [Fact]
-        public void Configurations_Verify_Configs_With_Schema()
-        {
-            var gen = new JSchemaGenerator();
-            gen.DefaultRequired = Required.DisallowNull;
-
-            var schema = gen.Generate(typeof(TabletConfiguration));
-            DisallowAdditionalItemsAndProperties(schema);
-            DisallowNullsAndEmptyCollections(schema);
-
-            var failed = false;
-
-            foreach (var (tabletFilename, tabletConfigString) in ConfigFiles)
+            var tabletConfig = JObject.Parse(tabletConfigString);
+            try
             {
-                var tabletConfig = JObject.Parse(tabletConfigString);
-                if (tabletConfig.IsValid(schema, out IList<string> errors)) continue;
-
-                _testOutputHelper.WriteLine($"Tablet Configuration {tabletFilename} did not match schema:");
-                foreach (var error in errors)
-                    _testOutputHelper.WriteLine(error);
-                _testOutputHelper.WriteLine(string.Empty);
-
-                failed = true;
+                Assert.True(tabletConfig.IsValid(schema, out errors));
             }
-
-            Assert.False(failed);
-        }
-
-        private static void DisallowAdditionalItemsAndProperties(JSchema schema)
-        {
-            schema.AllowAdditionalItems = false;
-            schema.AllowAdditionalProperties = false;
-            schema.AllowUnevaluatedItems = false;
-            schema.AllowUnevaluatedProperties = false;
-
-            foreach (var child in schema.Properties)
+            catch (Exception)
             {
-                if (child.Key == nameof(TabletConfiguration.Attributes)) continue;
-                DisallowAdditionalItemsAndProperties(child.Value);
-            }
-        }
+                if (errors.Any())
+                    testOutputHelper.WriteLine($"Schema errors in {tabletFilename}: " + string.Join(",", errors));
 
-        private static void DisallowNullsAndEmptyCollections(JSchema schema)
-        {
-            var schemaType = schema.Type!.Value;
-
-            if (schemaType.HasFlag(JSchemaType.Array))
-            {
-                schema.MinimumItems = 1;
-            }
-            else if (schemaType.HasFlag(JSchemaType.Object))
-            {
-                schema.MinimumProperties = 1;
-            }
-
-            if (schema.Properties is not null)
-            {
-                foreach (var property in schema.Properties)
-                {
-                    DisallowNullsAndEmptyCollections(property.Value);
-                }
+                throw;
             }
         }
 
@@ -362,9 +279,12 @@ namespace OpenTabletDriver.Tests
         /// - Newline at end of file
         /// - Consistent newline format
         /// </summary>
-        [Fact]
-        public void Configurations_Are_Linted()
+        [Theory]
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Are_Linted(TestTabletConfiguration ttc)
         {
+            var currentContent = ttc.FileContents.Value;
+
             var serializer = new JsonSerializer()
             {
                 NullValueHandling = NullValueHandling.Ignore
@@ -378,43 +298,31 @@ namespace OpenTabletDriver.Tests
                 Indentation = 2
             };
 
-            var failedFiles = 0;
-            foreach (var (tabletFilename, actual) in ConfigFiles)
+            var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(currentContent);
+            serializer.Serialize(jtw, ourJsonObj);
+            sb.AppendLine();
+            var expected = sb.ToString();
+
+            var diff = InlineDiffBuilder.Diff(currentContent, expected, ignoreWhiteSpace: false);
+
+            if (diff.HasDifferences)
             {
-                sb.Clear();
-                try
-                {
-                    var ourJsonObj = JsonConvert.DeserializeObject<TabletConfiguration>(actual);
-                    serializer.Serialize(jtw, ourJsonObj);
-                    sb.AppendLine();
-                    var expected = sb.ToString();
-
-                    var diff = InlineDiffBuilder.Diff(expected, actual, ignoreWhiteSpace: false);
-
-                    if (diff.HasDifferences)
-                    {
-                        _testOutputHelper.WriteLine($"'{tabletFilename}' did not match linting:");
-                        PrintDiff(_testOutputHelper, diff);
-                        failedFiles++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _testOutputHelper.WriteLine($"'{tabletFilename}' failed to deserialize: {ex.Message}");
-                    failedFiles++;
-                }
+                testOutputHelper.WriteLine($"'{ttc.File.Name}' did not match linting:");
+                PrintDiff(testOutputHelper, diff);
+                Assert.True(false);
             }
-
-            Assert.True(failedFiles == 0, $"{failedFiles} configuration files failed linting.");
         }
 
-        private static readonly Regex AvaloniaReportParserPath = AvaloniaReportParserPathRegex();
+        private static readonly Regex AvaloniaReportParserPath = ConfigurationTestData.AvaloniaReportParserPathRegex();
 
         [Theory]
-        [MemberData(nameof(Configs))]
-        public void Configurations_Have_No_Legacy_Properties(TabletConfiguration config, string filePath)
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Have_No_Legacy_Properties(TestTabletConfiguration ttc)
         {
             var errors = new List<string>();
+
+            var config = ttc.Configuration.Value;
+            var filePath = $"{ttc.File.Directory?.Name ?? "unknown"}/{ttc.File.Name}";
 
             // disable warning for "obsoleted" paths
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -537,8 +445,5 @@ namespace OpenTabletDriver.Tests
                     obj.Identifier.InputReportLength);
             }
         }
-
-        [GeneratedRegex(@"^OpenTabletDriver\.Tablet\..*$", RegexOptions.Compiled)]
-        private static partial Regex AvaloniaReportParserPathRegex();
     }
 }
