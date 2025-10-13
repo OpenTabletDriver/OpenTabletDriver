@@ -101,7 +101,7 @@ namespace OpenTabletDriver.Daemon
             };
         }
 
-        private IEnumerable<string> safeGetProcessDetails(Process[] processes)
+        private IEnumerable<string>? safeGetProcessDetails(Process[] processes)
         {
             foreach (var driverProcess in processes)
             {
