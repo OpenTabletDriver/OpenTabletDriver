@@ -82,6 +82,8 @@ namespace OpenTabletDriver.Daemon
                 var processStrings = safeGetProcessDetails(driverInfo.Processes);
                 if (processStrings != null)
                     message.Append(" Processes found: [" + string.Join(", ", processStrings) + "].");
+                else
+                    message.Append("No processes found");
 
                 if (os != null)
                     message.Append($" If any problems arise, visit '{wikiUrl}'.");
