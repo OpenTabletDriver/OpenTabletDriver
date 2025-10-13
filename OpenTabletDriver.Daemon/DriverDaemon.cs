@@ -80,7 +80,8 @@ namespace OpenTabletDriver.Daemon
                     message.Append(" It may be a false positive.");
 
                 var processStrings = safeGetProcessDetails(driverInfo.Processes);
-                message.Append($" Processes found: [" + string.Join(", ", processStrings) + "].");
+                if (processStrings != null)
+                    message.Append(" Processes found: [" + string.Join(", ", processStrings) + "].");
 
                 if (os != null)
                     message.Append($" If any problems arise, visit '{wikiUrl}'.");
