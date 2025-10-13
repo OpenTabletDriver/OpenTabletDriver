@@ -10,6 +10,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 return new DriverInfo
                 {
                     Name = "OpenTabletDriver",
+                    Processes = [],
                     Status = DriverStatus.Active
                 };
             }
