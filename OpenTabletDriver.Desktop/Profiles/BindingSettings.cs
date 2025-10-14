@@ -9,18 +9,16 @@ namespace OpenTabletDriver.Desktop.Profiles
     public class BindingSettings : ViewModel
     {
         private float tP = 1, eP = 1;
-        private float ct = 15, cct = 15;
         private PluginSettingStore tipButton,
             eraserButton,
             mouseScrollUp,
-            mouseScrollDown,
-            clockwiseRotation,
-            counterClockwiseRotation;
+            mouseScrollDown;
 
         private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
             auxButtons = new PluginSettingStoreCollection(),
-            mouseButtons = new PluginSettingStoreCollection(),
-            wheelButtons = new PluginSettingStoreCollection();
+            mouseButtons = new PluginSettingStoreCollection();
+
+        private GenericSettingCollection<WheelSettings> wheels = new GenericSettingCollection<WheelSettings>();
 
         private bool disablePressure, disableTilt;
 
@@ -73,13 +71,6 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.mouseButtons;
         }
 
-        [JsonProperty("WheelButtons")]
-        public PluginSettingStoreCollection WheelButtons
-        {
-            set => this.RaiseAndSetIfChanged(ref this.wheelButtons, value);
-            get => this.wheelButtons;
-        }
-
         [JsonProperty("MouseScrollUp")]
         public PluginSettingStore MouseScrollUp
         {
@@ -94,32 +85,11 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => this.mouseScrollDown;
         }
 
-        [JsonProperty("ClockwiseRotation")]
-        public PluginSettingStore ClockwiseRotation
+        [JsonProperty("Wheels")]
+        public GenericSettingCollection<WheelSettings> Wheels
         {
-            set => this.RaiseAndSetIfChanged(ref this.clockwiseRotation, value);
-            get => this.clockwiseRotation;
-        }
-
-        [JsonProperty("ClockwiseActivationThreshold")]
-        public float ClockwiseActivationThreshold
-        {
-            set => this.RaiseAndSetIfChanged(ref this.ct, value);
-            get => this.ct;
-        }
-
-        [JsonProperty("CounterClockwiseRotation")]
-        public PluginSettingStore CounterClockwiseRotation
-        {
-            set => this.RaiseAndSetIfChanged(ref this.counterClockwiseRotation, value);
-            get => this.counterClockwiseRotation;
-        }
-
-        [JsonProperty("CounterClockwiseActivationThreshold")]
-        public float CounterClockwiseActivationThreshold
-        {
-            set => this.RaiseAndSetIfChanged(ref this.cct, value);
-            get => this.cct;
+            set => this.RaiseAndSetIfChanged(ref this.wheels, value);
+            get => this.wheels;
         }
 
         [JsonProperty("DisablePressure")]
@@ -149,7 +119,7 @@ namespace OpenTabletDriver.Desktop.Profiles
                 PenButtons = new PluginSettingStoreCollection(),
                 AuxButtons = new PluginSettingStoreCollection(),
                 MouseButtons = new PluginSettingStoreCollection(),
-                WheelButtons = new PluginSettingStoreCollection()
+                Wheels = new GenericSettingCollection<WheelSettings>()
             };
 
             bindingSettings.AddPenButtons(tabletSpecifications);
@@ -163,12 +133,12 @@ namespace OpenTabletDriver.Desktop.Profiles
             int penButtonCount = (int?)tabletSpecifications.Pen?.ButtonCount ?? 0;
             int auxButtonCount = (int?)tabletSpecifications.AuxiliaryButtons?.ButtonCount ?? 0;
             int mouseButtonCount = (int?)tabletSpecifications.MouseButtons?.ButtonCount ?? 0;
-            int wheelButtonCount = (int?)tabletSpecifications.Wheel?.Buttons.ButtonCount ?? 0;
+            int wheelCount = (int?)tabletSpecifications.Wheels?.Count ?? 0;
 
             PenButtons = PenButtons.SetExpectedCount(penButtonCount);
             AuxButtons = AuxButtons.SetExpectedCount(auxButtonCount);
             MouseButtons = MouseButtons.SetExpectedCount(mouseButtonCount);
-            WheelButtons = WheelButtons.SetExpectedCount(wheelButtonCount);
+            Wheels = Wheels.SetExpectedCount(wheelCount);
         }
 
         private void AddPenButtons(TabletSpecifications tabletSpecifications)

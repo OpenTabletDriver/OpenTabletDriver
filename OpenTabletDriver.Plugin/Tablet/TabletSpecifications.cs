@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 #nullable enable
@@ -31,12 +32,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// Specifications for the wheels.
         /// </summary>
-        public WheelSpecifications? Wheel { get; set; }
+        public List<WheelSpecifications>? Wheels { get; set; }
 
         /// <summary>
         /// Specifications for the strips.
         /// </summary>
-        public AnalogSpecifications? Strips { set; get; }
+        public List<AnalogSpecifications>? Strips { set; get; }
 
         /// <summary>
         /// Specifications for the touch digitizer.

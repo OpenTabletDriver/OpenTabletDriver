@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.UCLogic
 {
-    public struct InspiroyAuxReport : IAuxReport, IWheelButtonReport
+    public struct InspiroyAuxReport : IAuxReport, IWheelsButtonsReport
     {
         public InspiroyAuxReport(byte[] report)
         {
@@ -32,14 +32,20 @@ namespace OpenTabletDriver.Configurations.Parsers.UCLogic
                 report[6].IsBitSet(3)
             };
 
-            WheelButtons = new bool[]
-            {
-                report[5].IsBitSet(4)
+            WheelsButtons = new WheelButtonsStates[]
+            { 
+                new WheelButtonsStates()
+                {
+                    States = new bool[]
+                    {
+                        report[5].IsBitSet(4)
+                    }
+                }
             };
         }
 
         public bool[] AuxButtons { set; get; }
-        public bool[] WheelButtons { set; get; }
+        public WheelButtonsStates[] WheelsButtons { set; get; }
         public byte[] Raw { set; get; }
     }
 }

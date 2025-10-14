@@ -137,7 +137,7 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(filterEditor, true);
                 SetPageVisibility(penBindingEditor, tablet.Properties.Specifications.Pen != null);
                 SetPageVisibility(auxBindingEditor, tablet.Properties.Specifications.AuxiliaryButtons != null);
-                SetPageVisibility(wheelBindingEditor, tablet.Properties.Specifications.Wheel != null);
+                SetPageVisibility(wheelBindingEditor, tablet.Properties.Specifications.Wheels != null);
                 SetPageVisibility(mouseBindingEditor, tablet.Properties.Specifications.MouseButtons != null);
                 SetPageVisibility(toolEditor, true);
 
