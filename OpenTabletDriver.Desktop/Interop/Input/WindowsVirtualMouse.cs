@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input
 {
-    using static Windows;
+    using static OpenTabletDriver.Native.Windows.Windows;
 
     [PluginIgnore]
     public abstract class WindowsVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer
