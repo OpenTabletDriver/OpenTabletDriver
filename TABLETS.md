@@ -276,6 +276,7 @@
 | Wacom Cintiq Pro 22 (DTH-227)      |  Missing Features | Touch is not yet supported.
 | Wacom Cintiq Pro 27 (DTH-271)      |  Missing Features | Aux buttons are not yet supported.
 | Wacom Cintiq 13HD (DTK-1300)       |  Missing Features | Center button is not yet supported.
+| Wacom Cintiq 21UX (DTZ-2100)       |  Missing Features | Touch bars are not yet supported.
 | Wacom Cintiq 22HD (DTK-2200)       |  Missing Features | Touch Strips are not yet supported.
 | Wacom Cintiq 12WX (DTZ-1200W)      |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom MTE-450                      |  Missing Features | Wheel is not yet supported.
