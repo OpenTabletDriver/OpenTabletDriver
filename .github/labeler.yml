@@ -63,6 +63,8 @@ packaging:
   - any-glob-to-any-file:
     - 'eng/**'
     - 'build.sh'
+    - 'build.ps1'
+    - 'pack_local.sh'
 
 plugins:
 - changed-files:
