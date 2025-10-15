@@ -64,7 +64,6 @@ packaging:
     - 'eng/**'
     - 'build.sh'
     - 'build.ps1'
-    - 'pack_local.sh'
 
 plugins:
 - changed-files:
