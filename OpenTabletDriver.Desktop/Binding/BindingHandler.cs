@@ -70,6 +70,17 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleAbsoluteWheelReport(tablet, absoluteWheelReport);
             if (report is IRelativeWheelReport relativeWheelReport)
                 HandleRelativeWheelReport(tablet, relativeWheelReport, relativeWheelReport.Delta);
+            if (report is OutOfRangeReport)
+                HandleOutOfRangeReport(tablet, report);
+        }
+
+        private void HandleOutOfRangeReport(TabletReference tablet, IDeviceReport report)
+        {
+            for (var i = 0; i < PenButtons.Count; i++)
+            {
+                if (PenButtons.TryGetValue(i, out var binding))
+                    binding?.Invoke(tablet, report, false);
+            }
         }
 
         private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
