@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
   <ItemGroup Label="Project References">
