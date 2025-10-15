@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Numerics;
+using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
@@ -31,16 +32,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input
         private readonly IntPtr _eventSource;
         private IntPtr _mouseEvent;
         private readonly double _doubleClickIntervalInMs;
+        private readonly MacOSVirtualKeyboard _keyboard;
 
         public MacOSVirtualMouse()
         {
-
             _doubleClickIntervalInMs = GetDoubleClickInterval() * 1000;
             _doubleClickStopWatch = new Stopwatch();
             _stopWatch = new Stopwatch();
             _stopWatch.Start();
             _eventSource = CGEventSourceCreate(CGEventSourceStatePrivate);
             _mouseEvent = CGEventCreate(_eventSource);
+            _keyboard = DesktopInterop.VirtualKeyboard as MacOSVirtualKeyboard;
         }
 
         public void MouseDown(MouseButton button)
@@ -322,7 +324,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             // This uses an undocumented flag that tells the system to automatically include the event flags in the event.
             // It's a better approach than fetching the active event flags ourselves, as doing so can introduce a race condition
             // (e.g., if a modifier key is released after we check its status but before the event is posted).
-            CGEventSetFlags(_mouseEvent, ~0U);
+            // However, this flag has not effects for synthetic keyboard events, so we manually set the flags if there are modifiers bindings.
+
+            if ((_keyboard?.getCurrentFlags() ?? 0) != 0)
+                CGEventSetFlags(_mouseEvent, _keyboard.getCurrentFlags());
+            else
+                CGEventSetFlags(_mouseEvent, ~0U);
         }
 
         private void PostEvent()
