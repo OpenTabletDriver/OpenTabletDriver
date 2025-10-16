@@ -202,6 +202,7 @@
 | Gaomon M6                     |  Missing Features | Wheel and touch bar are not yet supported.
 | Gaomon M8                     |  Missing Features | Wheel is not yet supported.
 | Gaomon PD156 Pro              |  Missing Features | Wheel is not yet supported.
+| Gaomon WH851                  |  Missing Features | Wheel is not yet supported. Wireless is not yet supported.
 | Huion G10T                    |  Missing Features | Touchpad is not yet supported.
 | Huion GC610                   |  Missing Features | Touchpad is not yet supported.
 | Huion GT-156HD V2             |  Missing Features | Touch bar is not yet supported.
