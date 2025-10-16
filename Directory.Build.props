@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <VersionBase>0.6.6.1</VersionBase>
+    <VersionBase>0.6.6.2</VersionBase>
     <FrameworkBase>net8.0</FrameworkBase>
     <VersionPrefix>$(VersionBase)</VersionPrefix>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
