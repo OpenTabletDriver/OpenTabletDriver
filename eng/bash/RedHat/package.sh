@@ -4,20 +4,40 @@ redhat_src="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
 
 output="$(readlink -f "${1}")"
 
+if [ -n "$VERSION_SUFFIX" ]; then
+  # see https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/
+  if [[ "$VERSION_SUFFIX" == -* ]]; then
+    # use prerelease versioning
+    version_to_use="${OTD_VERSION_BASE}~${VERSION_SUFFIX:1}"
+  elif [[ "$VERSION_SUFFIX" == +* ]]; then
+    version_to_use="${OTD_VERSION_BASE}${VERSION_SUFFIX}"
+  else
+    # some other variant, use underscore as visual seperator as it probably isn't a version component
+    version_to_use="${OTD_VERSION_BASE}_${VERSION_SUFFIX}"
+  fi
+else
+  version_to_use="${OTD_VERSION}"
+fi
+
+version_to_use="${version_to_use//+/^}" # replace commit info with preferred format
+version_to_use="${version_to_use//-/.}" # replace illegal characters with period
+
+echo "Determined version $version_to_use"
+
 echo "RPMizing..."
 mkdir -p "${output}"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
 echo "Making a source tarball..."
-create_source_tarball_gz "${OTD_LNAME}-${OTD_VERSION}" > "${output}/SOURCES/${OTD_LNAME}-${OTD_VERSION}.tar.gz"
+create_source_tarball_gz "${OTD_LNAME}-${version_to_use}" > "${output}/SOURCES/${OTD_LNAME}-${version_to_use}.tar.gz"
 
 echo "Generating ${OTD_LNAME}.spec..."
 cat << EOF > "${output}/SPECS/${OTD_LNAME}.spec"
 Name: ${OTD_LNAME}
-Version: ${OTD_VERSION}
+Version: ${version_to_use}
 Release: 1
 Summary: A ${OTD_DESC}
 
-Source0: ${OTD_LNAME}-${OTD_VERSION}.tar.gz
+Source0: ${OTD_LNAME}-${version_to_use}.tar.gz
 
 License: LGPLv3
 URL: ${OTD_UPSTREAM_URL}
@@ -50,20 +70,20 @@ ${OTD_LONG_DESC2}
 %autosetup
 
 %build
-./eng/linux/package.sh --output bin
+VERSION_SUFFIX=${VERSION_SUFFIX} ./eng/bash/package.sh --output bin
 
 %install
 export DONT_STRIP=1
-PREFIX="%{_prefix}" ./eng/linux/package.sh --package Generic --build false
+PREFIX="%{_prefix}" ./eng/bash/package.sh --package Generic --build false
 mkdir -p "%{buildroot}"
 mv ./dist/files/* "%{buildroot}"/
 rm -rf ./dist
 mkdir -p "%{buildroot}/%{_prefix}/lib/"
 cp -r bin "%{buildroot}/%{_prefix}/lib/opentabletdriver"
 
-%post -f eng/linux/Generic/postinst
+%post -f eng/bash/Generic/postinst
 
-%postun -f eng/linux/Generic/postrm
+%postun -f eng/bash/Generic/postrm
 
 %files
 %defattr(-,root,root)

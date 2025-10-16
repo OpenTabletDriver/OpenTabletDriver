@@ -44,7 +44,9 @@ The requirements to build OpenTabletDriver are consistent across all platforms. 
 
 #### Windows
 
-Run `build.ps1` to produce binary builds to 'bin' folder. These builds will run in portable mode by default.
+Run `build.sh windows` to produce binary builds to 'bin' folder. These builds will run in portable mode by default.
+
+If you don't have WSL or some other way to access BASH with a working dotnet install, the deprecated Windows build script still exists in `build.ps1`.
 
 #### Linux
 
@@ -55,21 +57,27 @@ Required packages (some packages may be pre-installed for your distribution):
 - libevdev2
 - GTK+3
 
-Run `./eng/linux/package.sh`. If a "package" build is desired,
+Run `./eng/bash/package.sh`. If a "package" build is desired,
 there are official support for the following packaging formats:
 
 | Package Format | Command |
 | --- | --- |
-| Generic binary tarball (`.tar.gz`) | `./eng/linux/package.sh --package BinaryTarBall` |
-| Debian package (`.deb`) | `./eng/linux/package.sh --package Debian` |
-| Red Hat package (`.rpm`) | `./eng/linux/package.sh --package RedHat` |
+| Generic binary tarball (`.tar.gz`) | `./eng/bash/package.sh --package BinaryTarBall` |
+| [Simple binary package](./eng/bash/Simple/README-SimplePackage.md) (`.tar.gz`) | `./eng/bash/package.sh --package Simple` |
+| Debian package (`.deb`) | `./eng/bash/package.sh --package Debian` |
+| Red Hat package (`.rpm`) | `./eng/bash/package.sh --package RedHat` |
 
 The generic binary tarball is designed to be extracted from the root directory.
+
+The simple package should only be used for testing new features on existing
+installs, as it does not install necessary system files.
+
+You can also run `./build.sh linux` to generate files into `bin/`, but this does not include system files.
 
 #### MacOS [Experimental]
 
 A newer version of Bash and Coreutils is required to build OpenTabletDriver. You can install them using Homebrew.
-Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/macos/package.sh --package true`.
+Run `PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH" $(brew --prefix)/bin/bash ./eng/bash/package.sh -r osx-x64`.
 
 # Features
 

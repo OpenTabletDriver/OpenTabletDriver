@@ -38,6 +38,8 @@ if (!($isRelease)) {
     $Options += "/p:SourceRevisionId=$(git rev-parse --short HEAD)";
 }
 
+Write-Output "The powershell script is deprecated! Please use the BASH build system instead"
+
 $gitVersion = "$(git describe --tags --abbrev=0)"
 if (Test-Path variable:gitVersion) {
   $gitVersion = $gitVersion.replace('v','');

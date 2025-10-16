@@ -3,20 +3,15 @@
 set -eu
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
-if is_musl_based_distro; then
-  NET_RUNTIME="linux-musl-x64"
-else
-  NET_RUNTIME="linux-x64"
-fi
-
 PACKAGE_GEN=""
 PROJECTS=(
   "OpenTabletDriver.Daemon"
   "OpenTabletDriver.Console"
-  "OpenTabletDriver.UX.Gtk"
 )
 
 MOVE_RULES_TO_ETC="false"
+
+### Argument parsing
 
 print_help() {
   echo "Usage: ${BASH_SOURCE[0]} [OPTIONS]..."
@@ -24,7 +19,7 @@ print_help() {
   echo
   echo "Platform-specific options:"
   echo "  --package <package_type>      Package generation script to run after build"
-  echo "                                (see eng/linux/* for available package types)"
+  echo "                                (see eng/bash/* for available package types)"
   echo
   echo "Remarks:"
   echo "  Anything after '--', if it is specified, will be passed to dotnet publish as-is."
@@ -63,16 +58,52 @@ while [ ${#remaining_args[@]} -gt 0 ]; do
   shift_arr "remaining_args"
 done
 
+if [ -z "${NET_RUNTIME:-}" ]; then
+  if is_musl_based_distro; then # is this command even portable?
+    NET_RUNTIME="linux-musl-x64"
+  else
+    NET_RUNTIME="linux-x64"
+  fi
+  echo "WARN: You must specify a runtime! Falling back to '${NET_RUNTIME}'"
+fi
+
+### Set defaults
+
+if [[ "${NET_RUNTIME}" =~ ^win-.*$ ]]; then
+  # the following vars are imported from old packaging script
+  SINGLE_FILE="true"
+
+  PACKAGE_GEN="${PACKAGE_GEN:-"windows"}"
+  PROJECTS+=('OpenTabletDriver.UX.Wpf')
+fi
+
+if [[ "${NET_RUNTIME}" =~ ^osx-.*$ ]]; then
+  # the following vars are imported from old packaging script
+  SINGLE_FILE="false"
+  SELF_CONTAINED="true"
+
+  PACKAGE_GEN=${PACKAGE_GEN:-"macos"}
+  PROJECTS+=('OpenTabletDriver.UX.MacOS')
+fi
+
+if [[ "${NET_RUNTIME}" =~ ^linux-.*$ ]]; then
+  PROJECTS+=('OpenTabletDriver.UX.Gtk')
+fi
+
+### Build, if necessary
+
 cd "${REPO_ROOT}"
 
 prepare_build
-if ! [ -e "${PKG_SCRIPT_ROOT}/${PACKAGE_GEN:-BinaryTarBall}/no-build" ]; then
+if ! [ -e "${LIB_SCRIPT_ROOT}/${PACKAGE_GEN:-BinaryTarBall}/no-build" ]; then
   build "PROJECTS" "extra_args"
 fi
 
+### Package, if necessary
+
 if [ -n "${PACKAGE_GEN}" ]; then
   echo -e "\nCreating package with type '${PACKAGE_GEN}'..."
-  package_script="${PKG_SCRIPT_ROOT}/${PACKAGE_GEN}/package.sh"
+  package_script="${LIB_SCRIPT_ROOT}/${PACKAGE_GEN}/package.sh"
   if [ ! -f "${package_script}" ]; then
     exit_with_error "Could not find package generation script: ${package_script}"
   fi
@@ -84,4 +115,21 @@ if [ -n "${PACKAGE_GEN}" ]; then
   . "${package_script}" "${OUTPUT}"
 
   echo -e "\nPackaging finished! Package created at '${OUTPUT}/${PKG_FILE}'"
+
+  # output information to CI
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then
+    printf 'output-file=%s\n' "$PKG_FILE" >> $GITHUB_OUTPUT
+    printf 'version=%s\n' "$OTD_VERSION" >> $GITHUB_OUTPUT
+
+    # allow packaging scripts to display a custom artifact name on CI
+    if [ -n "${PKG_FILE_DISPLAY_NAME:-}" ]; then
+      display_name="${PKG_FILE_DISPLAY_NAME}"
+    else
+      display_name="${PKG_FILE}"
+    fi
+
+    printf 'output-file-display-name=%s\n' "$display_name" >> $GITHUB_OUTPUT
+
+    echo "Set values in GITHUB_OUTPUT"
+  fi
 fi

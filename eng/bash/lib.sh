@@ -12,8 +12,81 @@ VERSION_SUFFIX=${VERSION_SUFFIX:-}
 ### Global variables
 
 PREV_PATH=${PWD}
-ENG_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
-REPO_ROOT="$(readlink -f "${ENG_SCRIPT_ROOT}/../")"
+LIB_SCRIPT_ROOT="$(readlink -f $(dirname "${BASH_SOURCE[0]}"))"
+REPO_ROOT="$(readlink -f "${LIB_SCRIPT_ROOT}/../../")"
+GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
+
+# The below regex supports the following backrefs:
+# \1  Full version, e.g. '0.7.0.0alpha-rc1'
+# \2  Primary version, e.g. '0.7.0.0'
+# \3  unused (sed doesn't support non-capturing groups)
+# \4  Secondary version, e.g. 'alpha-rc1'
+# \5  unused
+# \6  Release candidate, if any, e.g. 'rc1'
+# \7  Suffix of 'git describe', e.g. '1234-g1337f00d-dirty'
+# \8  Distance from tag, e.g. '1234'
+# \9  Short-SHA of commit with trailing 'g' trimmed, e.g. '1337f00d'
+# \10 Remainder, e.g. '-dirty'
+#
+# Please tag project with any of the following formats only:
+# v0.7.0.0
+# v9.9.9.9
+# v9.9.9.99
+# v0.7.0.0alpha
+# v0.7.0.0z
+# v0.7.0.0rc1
+# v0.7.0.0-rc99
+# v1
+# v1.42
+# v10.42.123
+GIT_TAG_REGEX='^v(([0-9]+(\.[0-9]+)*)([^-\r\n]*(-?(rc[0-9]+))?))-?(([0-9]+)-g([a-f0-9]{8})(-.*)?)?$'
+
+# if suffix unset, autodetect suffix from git
+if [ -z "$VERSION_SUFFIX" ]; then
+  # limit git repo discovery to project root
+  export GIT_CEILING_DIRECTORIES="$(realpath ${REPO_ROOT}/../)"
+
+  if hash git &>/dev/null && \
+  hash sed &>/dev/null && \
+  git rev-parse --is-inside-work-tree &>/dev/null
+  then
+    GIT_DESCRIBE="$(git describe --long --tags --dirty)"
+
+    # don't set suffix if this is a tagged commit
+    COMMIT_DISTANCE_FROM_TAG="$(sed -E s/"${GIT_TAG_REGEX}"/\\8/ <<< "$GIT_DESCRIBE")"
+    if [ "$COMMIT_DISTANCE_FROM_TAG" -gt 0 ]; then
+      # use git describe as suffix
+      # commit distance from tag should not be used as a part before suffix
+      #   as that might not accurately represent version (e.g. commit distance 11
+      #   isn't necessarily newer than commit distance 5 if they're from 2 separate PR's)
+      VERSION_SUFFIX="+$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
+      #echo "DEBUG: commit distance: '$COMMIT_DISTANCE_FROM_TAG'"
+      dont_set_dirty=y
+    elif [ "$COMMIT_DISTANCE_FROM_TAG" -eq 0 ]; then
+      : # do nothing
+    else
+      echo "WARN: Unable determine commit distance from tag"
+    fi
+
+    # secondary version ('alpha-rc1' from '0.7alpha-rc1')
+    sub_version="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
+
+    if [ "$sub_version" != "" ]; then
+      VERSION_SUFFIX="-${sub_version}${VERSION_SUFFIX}"
+    fi
+
+    describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\10/ <<< "$GIT_DESCRIBE")"
+    if [ -z "$dont_set_dirty" ] && [[ $describe_remainder =~ ^.*dirty.*$ ]]; then
+      # tag dirty if dirty
+      VERSION_SUFFIX="${VERSION_SUFFIX:-}"-dirty
+    fi
+  else
+    echo "WARN: VERSION_SUFFIX unset and git or sed not found, VERSION_SUFFIX remains unset!"
+  fi
+  if [ -n "$VERSION_SUFFIX" ]; then
+    echo "Autodetected version suffix: '${VERSION_SUFFIX}'"
+  fi
+fi
 
 ### Build Requirements
 
@@ -218,33 +291,29 @@ build() {
   local options=(
     --configuration "${CONFIG}"
     --runtime "${NET_RUNTIME}"
-    --framework "${FRAMEWORK}"
     --self-contained "${SELF_CONTAINED}"
     --output "${OUTPUT}"
-    /p:PublishTrimmed=false
-    /p:DebugType=embedded
-    /p:SuppressNETCoreSdkPreviewMessage=true
-    /p:VersionSuffix=${VERSION_SUFFIX}
+    -p:PublishTrimmed=false
+    -p:DebugType=embedded
+    -p:SuppressNETCoreSdkPreviewMessage=true
+    -p:VersionSuffix=${VERSION_SUFFIX}
   )
 
   if [ "${DOG_FOOD}" != "true" ]; then
-    options+=( /p:SourceRevisionId=$(git rev-parse --short HEAD) )
+    options+=( -p:SourceRevisionId=$(git rev-parse --short HEAD) )
   fi
   if [ "${SINGLE_FILE}" == "true" ]; then
-    options+=( /p:PublishSingleFile=true )
+    options+=( -p:PublishSingleFile=true )
   fi
 
   if [ ${#extra_options[@]} -gt 0 ]; then
     options+=("${extra_options[@]}")
   fi
 
-  # this initial restore is needed to make clean work properly on cases where
-  # the projects changed dependencies (e.g. added a new nuget package)
+  # this initial restore is needed in cases projects changed dependencies
+  # (e.g. added a new nuget package)
   echo "Restoring packages..."
   dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
-
-  echo "Running dotnet clean..."
-  dotnet clean --configuration "${CONFIG}" --verbosity quiet
 
   if [ "${PORTABLE}" = "true" ]; then
     mkdir -p "${OUTPUT}/userdata"
@@ -252,12 +321,18 @@ build() {
 
   for project in "${projects[@]}"; do
     echo -e "\nBuilding ${project}...\n"
-    dotnet publish "${project}" "${options[@]}"
+    if [[ "$project" =~ ^.*UX\.Wpf.*$ ]]; then
+      local_framework="${FRAMEWORK}-windows"
+    else
+      local_framework="${FRAMEWORK}"
+    fi
+    dotnet publish "${project}" --framework "${local_framework}" "${options[@]}"
   done
 
   echo -e "\nBuild finished! Binaries created in ${OUTPUT}"
 }
 
+# always creates a subfolder by changing directory to the parent folder of source ($1)
 create_binary_tarball() {
   local source="${1}"
   local output="${2}"
@@ -310,4 +385,67 @@ create_source_tarball() {
 create_source_tarball_gz() {
   local prefix="${1}"
   git archive --format=tar.gz --prefix="${prefix}/" HEAD
+}
+
+### Linux Helper functions
+
+# From https://github.com/dotnet/install-scripts/blob/main/src/dotnet-install.sh
+is_musl_based_distro() {
+  (ldd --version 2>&1 || true) | grep -q musl
+}
+
+copy_generic_files() {
+  local output="${1}"
+
+  echo "Copying generic files..."
+  cp -Rv "${GENERIC_FILES}/usr/"* "${output}"
+  echo
+}
+
+test_rules() {
+  if ! hash udevadm 2>/dev/null; then
+    echo "INFO: test_rules: Cannot test rules without program 'udevadm'. Passing."
+    return 0
+  fi
+
+  if ! udevadm verify --help >/dev/null; then
+    echo "INFO: test_rules: Your udevadm does not support 'udevadm verify'. Passing."
+    return 0
+  fi
+
+  if [ ! -f "${1}" ]; then
+    echo "test_rules: Not a file '${1}'" >&2
+    return 1
+  fi
+
+  udevadm verify "${1}"
+}
+
+generate_rules() {
+  local output_file="${1}"
+
+  echo "Generating udev rules to ${output_file}..."
+  mkdir -p $(dirname "$output_file")
+  "${REPO_ROOT}/generate-rules.sh" > "${output_file}"
+
+  test_rules "$output_file"
+}
+
+generate_desktop_file() {
+  local output="${1}"
+
+  mkdir -p "$(dirname "${output}")"
+  cat << EOF > "${output}"
+[Desktop Entry]
+Version=1.5
+Name=${OTD_NAME}
+Comment=A ${OTD_DESC}
+Exec=${OTD_GUI}
+Icon=/usr/share/pixmaps/otd.png
+Terminal=false
+Type=Application
+Categories=Settings;
+StartupNotify=true
+StartupWMClass=OpenTabletDriver.UX
+EOF
 }
