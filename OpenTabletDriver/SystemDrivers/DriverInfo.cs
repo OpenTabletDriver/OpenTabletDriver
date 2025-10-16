@@ -21,9 +21,6 @@ namespace OpenTabletDriver.SystemDrivers
         /// <summary>
         /// Running processes that might be associated with the driver.
         /// </summary>
-        /// <remarks>
-        /// This is set to null when there is no associated process.
-        /// </remarks>
         public Process[] Processes { get; internal set; }
 
         /// <summary>

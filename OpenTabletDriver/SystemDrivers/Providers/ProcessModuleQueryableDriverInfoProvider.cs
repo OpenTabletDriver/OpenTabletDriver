@@ -62,6 +62,7 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 return new DriverInfo
                 {
                     Name = LinuxFriendlyName,
+                    Processes = [],
                     Status = DriverStatus.Active | DriverStatus.Blocking
                 };
             }

@@ -49,6 +49,17 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleAuxiliaryReport(tablet, auxReport);
             if (report is IMouseReport mouseReport)
                 HandleMouseReport(tablet, mouseReport);
+            if (report is OutOfRangeReport)
+                HandleOutOfRangeReport(tablet, report);
+        }
+
+        private void HandleOutOfRangeReport(TabletReference tablet, IDeviceReport report)
+        {
+            for (var i = 0; i < PenButtons.Count; i++)
+            {
+                if (PenButtons.TryGetValue(i, out var binding))
+                    binding?.Invoke(tablet, report, false);
+            }
         }
 
         private void HandleTabletReport(TabletReference tablet, PenSpecifications pen, ITabletReport report)
