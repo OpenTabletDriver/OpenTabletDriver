@@ -1,0 +1,31 @@
+{
+  "Name": "Genius G-Pen F509",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 227.584,
+      "Height": 136.5504,
+      "MaxX": 17920,
+      "MaxY": 10752
+    },
+    "Pen": {
+      "MaxPressure": 1023,
+      "ButtonCount": 2
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 5935,
+      "ProductID": 56,
+      "InputReportLength": 64,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Genius.GeniusReportParserV2",
+      "FeatureInitReport": [
+        "AgQA",
+        "AgIA",
+        "AhAB"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

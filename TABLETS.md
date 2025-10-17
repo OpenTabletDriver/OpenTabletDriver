@@ -192,6 +192,7 @@
 | Gaomon S56K                        |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0 or 1
 | Gaomon S630                        |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | Gaomon S830                        |    Has Quirks     | User may have to replug their tablet until it is detected.
+| Genius G-Pen F509                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i405x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Genius i608x                       |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Huion 420                          |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
