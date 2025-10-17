@@ -68,6 +68,9 @@ if [ -z "$VERSION_SUFFIX" ]; then
       echo "WARN: Unable determine commit distance from tag"
     fi
 
+    # avoid unbound variable
+    dont_set_dirty="${dont_set_dirty:-}"
+
     # secondary version ('alpha-rc1' from '0.7alpha-rc1')
     sub_version="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
 
