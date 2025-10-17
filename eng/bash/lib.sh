@@ -78,8 +78,8 @@ if [ -z "$VERSION_SUFFIX" ]; then
       VERSION_SUFFIX="-${sub_version}${VERSION_SUFFIX}"
     fi
 
-    describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\10/ <<< "$GIT_DESCRIBE")"
-    if [ -z "$dont_set_dirty" ] && [[ $describe_remainder =~ ^.*dirty.*$ ]]; then
+    describe_suffix="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
+    if [ -z "$dont_set_dirty" ] && [[ $describe_suffix =~ ^.*dirty.*$ ]]; then
       # tag dirty if dirty
       VERSION_SUFFIX="${VERSION_SUFFIX:-}"-dirty
     fi
