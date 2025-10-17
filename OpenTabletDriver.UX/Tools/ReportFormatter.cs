@@ -47,11 +47,12 @@ namespace OpenTabletDriver.UX.Tools
             return sb.ToString();
         }
 
-        public static string GetStringFormatOneLine(IDeviceReport report, TimeSpan delta, string reportType)
+        public static string GetStringFormatOneLine(TabletConfiguration tabletProperties, IDeviceReport report, TimeSpan delta, string reportType)
         {
             var sb = new StringBuilder();
 
-            sb.Append($"{{ {GetStringRaw(report)} }}");
+            sb.Append($"Device:{tabletProperties.Name}");
+            sb.Append($", {{ {GetStringRaw(report)} }}");
             sb.Append($", Delta:{delta.TotalMilliseconds:F3}ms");
             if (report is IAbsolutePositionReport absolutePositionReport)
                 sb.AppendOneLine(GetStringFormat(absolutePositionReport));
