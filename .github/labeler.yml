@@ -51,12 +51,19 @@ meta:
     - any-glob-to-any-file:
       - '.github/**'
       - '*'
-      - 'eng/**'
       - 'OpenTabletDriver.Benchmarks/**'
     - all-globs-to-all-files:
       - '!.github/workflows'
       - '!README.md'
       - '!TABLETS.md'
+      - 'build.sh'
+
+packaging:
+- changed-files:
+  - any-glob-to-any-file:
+    - 'eng/**'
+    - 'build.sh'
+    - 'build.ps1'
 
 plugins:
 - changed-files:
