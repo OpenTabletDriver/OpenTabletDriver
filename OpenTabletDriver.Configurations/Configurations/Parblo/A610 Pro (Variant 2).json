@@ -1,0 +1,32 @@
+{
+  "Name": "Parblo A610 Pro (Variant 2)",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 252,
+      "Height": 157.5,
+      "MaxX": 25200,
+      "MaxY": 15750
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 1155,
+      "ProductID": 40994,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
