@@ -26,7 +26,7 @@ GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
 # \7  Suffix of 'git describe', e.g. '1234-g1337f00d-dirty'
 # \8  Distance from tag, e.g. '1234'
 # \9  Short-SHA of commit with trailing 'g' trimmed, e.g. '1337f00d'
-# \10 Remainder, e.g. '-dirty'
+# \10 Remainder, e.g. '-dirty'. **NOTE** does not work with 'sed'
 #
 # Please tag project with any of the following formats only:
 # v0.7.0.0
