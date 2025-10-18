@@ -13,6 +13,8 @@
         RIGHTUP = 0x0010,
         XDOWN = 0x0080,
         XUP = 0x0100,
-        MOVE_NOCOALESCE = 0x2000
+        WHEEL = 0x0800,
+        HWHEEL = 0x1000,
+        MOVE_NOCOALESCE = 0x2000,
     }
 }

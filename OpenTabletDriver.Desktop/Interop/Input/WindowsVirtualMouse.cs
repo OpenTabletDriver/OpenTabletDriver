@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     using static Windows;
 
     [PluginIgnore]
-    public abstract class WindowsVirtualMouse : IMouseButtonHandler, ISynchronousPointer
+    public abstract class WindowsVirtualMouse : IMouseButtonHandler, IMouseScrollHandler, ISynchronousPointer
     {
         private bool _dirty;
 
@@ -80,6 +80,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     return;
             }
         }
+
+        public void ScrollVertically(int amount) => MouseEvent(MOUSEEVENTF.WHEEL, (uint)amount);
+
+        public void ScrollHorizontally(int amount) => MouseEvent(MOUSEEVENTF.HWHEEL, (uint)amount);
 
         protected void SetDirty()
         {

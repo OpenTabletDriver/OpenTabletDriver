@@ -471,6 +471,9 @@ namespace OpenTabletDriver.Daemon
             if (pointer is IMouseButtonHandler mouseButtonHandler)
                 bindingServiceProvider.AddService(() => mouseButtonHandler);
 
+            if (pointer is IMouseScrollHandler mouseScrollHandler)
+                bindingServiceProvider.AddService(() => mouseScrollHandler);
+
             if (pointer is IPenActionHandler penActionHandler)
                 bindingServiceProvider.AddService(() => penActionHandler);
 
