@@ -29,4 +29,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="StreamJsonRpc">
+      <HintPath>..\..\..\..\.nuget\packages\streamjsonrpc\2.6.121\lib\netcoreapp2.1\StreamJsonRpc.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
