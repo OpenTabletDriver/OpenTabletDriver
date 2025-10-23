@@ -36,6 +36,7 @@
       "VendorID": 21827,
       "ProductID": 129,
       "InputReportLength": 8,
+      "OutputReportLength": 0,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": [
         "ArAC"
