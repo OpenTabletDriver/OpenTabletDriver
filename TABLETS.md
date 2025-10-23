@@ -126,6 +126,7 @@
 | Wacom GD-0912-U                    |     Supported     |
 | Wacom GD-1212-U                    |     Supported     |
 | Wacom GD-1218-U                    |     Supported     |
+| Wacom Cintiq 18SX (PL-800-U)       |     Supported     |
 | Wacom PTH-451                      |     Supported     |
 | Wacom PTH-651                      |     Supported     |
 | Wacom PTH-851                      |     Supported     |
