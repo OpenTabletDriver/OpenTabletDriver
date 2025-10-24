@@ -18,6 +18,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.Intuos
             if (report[1].IsBitSet(6))
                 return new IntuosTabletReport(report);
 
+            if (report[1] == 0x80)
+                return new OutOfRangeReport(report);
+
             return new DeviceReport(report);
         }
     }
