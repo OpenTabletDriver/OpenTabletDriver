@@ -26,7 +26,7 @@ GENERIC_FILES="$(readlink -f "${LIB_SCRIPT_ROOT}/Generic")"
 # \7  Suffix of 'git describe', e.g. '1234-g1337f00d-dirty'
 # \8  Distance from tag, e.g. '1234'
 # \9  Short-SHA of commit with trailing 'g' trimmed, e.g. '1337f00d'
-# \10 Remainder, e.g. '-dirty'
+# \10 Remainder, e.g. '-dirty'. **NOTE** does not work with 'sed'
 #
 # Please tag project with any of the following formats only:
 # v0.7.0.0
@@ -68,6 +68,9 @@ if [ -z "$VERSION_SUFFIX" ]; then
       echo "WARN: Unable determine commit distance from tag"
     fi
 
+    # avoid unbound variable
+    dont_set_dirty="${dont_set_dirty:-}"
+
     # secondary version ('alpha-rc1' from '0.7alpha-rc1')
     sub_version="$(sed -E s/"${GIT_TAG_REGEX}"/\\4/ <<< "$GIT_DESCRIBE")"
 
@@ -75,8 +78,8 @@ if [ -z "$VERSION_SUFFIX" ]; then
       VERSION_SUFFIX="-${sub_version}${VERSION_SUFFIX}"
     fi
 
-    describe_remainder="$(sed -E s/"${GIT_TAG_REGEX}"/\\10/ <<< "$GIT_DESCRIBE")"
-    if [ -z "$dont_set_dirty" ] && [[ $describe_remainder =~ ^.*dirty.*$ ]]; then
+    describe_suffix="$(sed -E s/"${GIT_TAG_REGEX}"/\\7/ <<< "$GIT_DESCRIBE")"
+    if [ -z "$dont_set_dirty" ] && [[ $describe_suffix =~ ^.*dirty.*$ ]]; then
       # tag dirty if dirty
       VERSION_SUFFIX="${VERSION_SUFFIX:-}"-dirty
     fi
