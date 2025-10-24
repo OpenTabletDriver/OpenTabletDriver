@@ -66,6 +66,7 @@ there are official support for the following packaging formats:
 | [Simple binary package](./eng/bash/Simple/README-SimplePackage.md) (`.tar.gz`) | `./eng/bash/package.sh --package Simple` |
 | Debian package (`.deb`) | `./eng/bash/package.sh --package Debian` |
 | Red Hat package (`.rpm`) | `./eng/bash/package.sh --package RedHat` |
+| Generic Package (for package maintainers) | `./eng/bash/package.sh --package Generic` |
 
 The generic binary tarball is designed to be extracted from the root directory.
 
