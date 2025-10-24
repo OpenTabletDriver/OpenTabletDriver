@@ -26,7 +26,7 @@ mkdir -p "${output}/${PREFIX}/share/doc/opentabletdriver"
 cp -v "${REPO_ROOT}/LICENSE" "${output}/${PREFIX}/share/doc/opentabletdriver/LICENSE"
 
 copy_pixmap_assets "${output}/${PREFIX}/share/pixmaps"
-copy_manpage "${output}/${PREFIX}/share/man"
+copy_manpage "${output}/${PREFIX}/man"
 
 if [ "${MOVE_RULES_TO_ETC}" == "true" ]; then
   generate_rules "${output}/etc/udev/rules.d/70-opentabletdriver.rules"
