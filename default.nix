@@ -28,7 +28,7 @@
 
 buildDotnetModule rec {
   pname = "OpenTabletDriver";
-  version = "0.6.6.1";
+  version = "0.6.6.2";
 
   src = ./.;
 
