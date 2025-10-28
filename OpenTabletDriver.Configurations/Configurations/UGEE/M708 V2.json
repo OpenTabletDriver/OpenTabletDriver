@@ -24,7 +24,10 @@
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenReportParser",
       "OutputInitReport": [
         "ArAE"
-      ]
+      ],
+      "DeviceStrings": {
+        "4": "UG901_BPU1006"
+      }
     },
     {
       "VendorID": 10429,
