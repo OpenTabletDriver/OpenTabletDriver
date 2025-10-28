@@ -15,8 +15,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// Specifications for the pen buttons.
         /// </summary>
-        [Required(ErrorMessage = $"{nameof(ButtonCount)} must be defined")]
-        public uint ButtonCount { set; get; }
+        public uint? ButtonCount { set; get; }
 
         private bool _legacyButtonsHaveBeenSet;
 
@@ -29,7 +28,7 @@ namespace OpenTabletDriver.Plugin.Tablet
                 _legacyButtonsHaveBeenSet = true;
                 ButtonCount = value.ButtonCount;
             }
-            get => new() { ButtonCount = ButtonCount };
+            get => new() { ButtonCount = ButtonCount ?? 0 };
         }
 
         // hack which allows us to deserialize the object for backwards compatibility, but not emit it in serialization
