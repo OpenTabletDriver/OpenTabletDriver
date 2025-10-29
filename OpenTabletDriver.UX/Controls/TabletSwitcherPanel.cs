@@ -125,7 +125,7 @@ namespace OpenTabletDriver.UX.Controls
                 {
                     Log.Write("Settings", "No profiles found.");
                 }
-                if (tablets.Any() && profiles != null)
+                else if (tablets.Any())
                 {
                     var tabletsWithoutProfile = from tablet in tablets
                                                 where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
