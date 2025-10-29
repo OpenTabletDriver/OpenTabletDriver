@@ -23,6 +23,7 @@ namespace OpenTabletDriver.UX
     class CommandLineOptions
     {
         public bool StartMinimized { get; set; }
+        public bool SkipUpdate { get; set; }
     }
 
     public sealed class App : ViewModel
@@ -67,6 +68,8 @@ namespace OpenTabletDriver.UX
                 }
             }
 
+            mainForm.SkipUpdate = options.SkipUpdate;
+
             app.NotificationActivated += Current.HandleNotification;
             app.UnhandledException += ShowUnhandledException;
 
@@ -105,15 +108,25 @@ namespace OpenTabletDriver.UX
                 aliases: new[] { "-m", "--minimized" },
                 description: "Start the application minimized");
 
+            var skipUpdate = new Option<bool>(
+                aliases: new[] { "--skipupdate" },
+                description: "Skip checking for updates");
+
             var root = new RootCommand("OpenTabletDriver UX")
             {
-                minimizedOption
+                minimizedOption,
+                skipUpdate
             };
 
             root.SetHandler((minimized) =>
             {
                 commandLineOptions.StartMinimized = minimized;
             }, minimizedOption);
+
+            root.SetHandler((skipUpdate) =>
+            {
+                commandLineOptions.SkipUpdate = skipUpdate;
+            }, skipUpdate);
 
             root.Invoke(args);
             return commandLineOptions;
