@@ -128,8 +128,11 @@
 | Wacom GD-1212-U                    |     Supported     |
 | Wacom GD-1218-U                    |     Supported     |
 | Wacom PTH-451                      |     Supported     |
+| Wacom PTH-460                      |     Supported     |
 | Wacom PTH-651                      |     Supported     |
+| Wacom PTH-660                      |     Supported     |
 | Wacom PTH-851                      |     Supported     |
+| Wacom PTH-860                      |     Supported     |
 | Wacom PTK-440                      |     Supported     |
 | Wacom PTK-540WL                    |     Supported     |
 | Wacom PTK-640                      |     Supported     |
@@ -284,11 +287,8 @@
 | Wacom Cintiq 12WX (DTZ-1200W)      |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom MTE-450                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-450                      |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-460                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-650                      |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-660                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-850                      |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-860                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-450                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-470                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-650                      |  Missing Features | Wheel is not yet supported.
