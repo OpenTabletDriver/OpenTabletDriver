@@ -31,7 +31,9 @@
       "OutputReportLength": 9,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
       "OutputInitReport": [
-        "CQEE"
+        "CQEE",
+        "CQIC",
+        "CQMC"
       ]
     }
   ],
