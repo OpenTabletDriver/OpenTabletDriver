@@ -15,7 +15,7 @@
       "ButtonCount": 8
     },
     "Wheel": {
-      "StepCount": 100,
+      "StepCount": 24,
       "IsRelative": true,
       "AngleOfZeroReading": 0.0,
       "Buttons": {
