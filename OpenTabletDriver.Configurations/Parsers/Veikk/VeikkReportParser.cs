@@ -13,6 +13,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Veikk
                 return new VeikkTabletReport(report);
             else if (report[2] == 1)
                 return new VeikkAuxReport(report);
+            else if (report[2] == 3)
+                return new VeikkRelativeWheelReport(report);
 
             return new DeviceReport(report);
         }

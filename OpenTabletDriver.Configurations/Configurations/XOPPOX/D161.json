@@ -1,0 +1,43 @@
+{
+  "Name": "XOPPOX D161",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 344.2,
+      "Height": 193.6,
+      "MaxX": 68840,
+      "MaxY": 38720
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    },
+    "Wheel": {
+      "StepCount": 24,
+      "IsRelative": true,
+      "AngleOfZeroReading": 0.0,
+      "Buttons": {
+        "ButtonCount": 0
+      }
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 12267,
+      "ProductID": 4100,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Veikk.VeikkReportParser",
+      "OutputInitReport": [
+        "CQEE",
+        "CQIC",
+        "CQMC"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}

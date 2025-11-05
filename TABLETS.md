@@ -213,6 +213,7 @@
 | Turcom TS-6580                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                          |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
 | Wacom PTU-600U                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
+| XOPPOX D161                        |    Has Quirks     | Aux buttons are not in order.
 | XP-Pen Artist 10S                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 16                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 22HD                 |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
