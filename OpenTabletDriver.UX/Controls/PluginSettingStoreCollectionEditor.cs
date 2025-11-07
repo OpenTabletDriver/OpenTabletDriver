@@ -31,7 +31,11 @@ namespace OpenTabletDriver.UX.Controls
                 Panel1 = new Scrollable
                 {
                     Border = BorderType.None,
-                    Content = sourceSelector = new TypeListBox<TSource>()
+                    Content = new Panel
+                    {
+                        Content = sourceSelector = new TypeListBox<TSource>(),
+                        Padding = new Padding(0, 0, 0, 7)
+                    }
                 },
                 Panel2 = new Scrollable
                 {
