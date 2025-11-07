@@ -31,11 +31,7 @@ namespace OpenTabletDriver.UX.Controls
                 Panel1 = new Scrollable
                 {
                     Border = BorderType.None,
-                    Content = new Panel
-                    {
-                        Content = sourceSelector = new TypeListBox<TSource>(),
-                        Padding = new Padding(0, 0, 0, 7)
-                    }
+                    Content = Content = sourceSelector = new TypeListBox<TSource>()
                 },
                 Panel2 = new Scrollable
                 {
@@ -85,10 +81,10 @@ namespace OpenTabletDriver.UX.Controls
         private void RefreshContent()
         {
             var types = AppInfo.PluginManager.GetChildTypes<TSource>();
-            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName())]);
+            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName()), null]);
 
             var oldSelected = sourceSelector.SelectedItem;
-            var newSelected = sortedTypes.FirstOrDefault(t => t.FullName == oldSelected?.FullName);
+            var newSelected = sortedTypes.FirstOrDefault(t => t?.FullName == oldSelected?.FullName);
 
             // Update DataStore to new types, this refreshes the editor.
             sourceSelector.SelectedItem = null;
