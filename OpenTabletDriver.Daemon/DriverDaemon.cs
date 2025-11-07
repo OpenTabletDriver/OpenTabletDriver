@@ -18,7 +18,6 @@ using OpenTabletDriver.Desktop.Reflection.Metadata;
 using OpenTabletDriver.Desktop.RPC;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
-using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Logging;
@@ -713,14 +712,14 @@ namespace OpenTabletDriver.Daemon
                     {
                         unsafe
                         {
-                            var state = Windows.PowerThrottlingState.Create();
-                            state.ControlMask = (int)Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
+                            var state = Native.Windows.Windows.PowerThrottlingState.Create();
+                            state.ControlMask = (int)Native.Windows.Windows.PowerThrottlingStateMask.IgnoreTimerResolution;
 
-                            if (!Windows.SetProcessInformation(
+                            if (!Native.Windows.Windows.SetProcessInformation(
                                 Process.GetCurrentProcess().Handle,
-                                Windows.ProcessInformationClass.ProcessPowerThrottling,
+                                Native.Windows.Windows.ProcessInformationClass.ProcessPowerThrottling,
                                 (IntPtr)Unsafe.AsPointer(ref state),
-                                Unsafe.SizeOf<Windows.PowerThrottlingState>()))
+                                Unsafe.SizeOf<Native.Windows.Windows.PowerThrottlingState>()))
                             {
                                 Log.Write("Platform", "Failed to allow management of timer resolution, asynchronous filters may have lower timing resolution when OTD is minimized.", LogLevel.Error);
                             }
