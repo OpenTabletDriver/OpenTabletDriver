@@ -14,9 +14,9 @@ O objetivo é ser compatível com múltiplas plataformas, possuir uma interface 
   <img src="https://i.imgur.com/ZLCy6wz.png" width="410" align="middle"/>
 </p>
 
-# Tablets compatíveis
+# Mesas digitalizadoras compatíveis
 
-Todos os tablets que são compatíveis, não testados ou que estão em planejamento para testes estão [aqui](https://opentabletdriver.net/Tablets).
+Todas as mesas digitalizadoras compatíveis, não testadas ou em que estão em planejamento/testes estão [aqui](https://opentabletdriver.net/Tablets).
 Soluções de problemas comuns podem ser encontrados na wiki.
 
 # Instalação
@@ -27,7 +27,7 @@ Soluções de problemas comuns podem ser encontrados na wiki.
 
 # Executando OpenTabletDriver
 
-OpenTabletDriver funciona como dois processos separados em que comunicam entre si para poder funcionar perfeitamente.
+OpenTabletDriver funciona como dois processos separados em que se comunicam.
 O processo ativo, em que lida com o manuseio de dados, é chamado de `OpenTabletDriver.Daemon`,
 enquanto o processo de interface gráfica é chamado de `OpenTabletDriver.UI`.
 O processo ativo deve ser inicializado para que tudo possa rodar sem problemas,
@@ -36,7 +36,7 @@ Se você já possui uma configuração, elas devem ser carregadas quando o proce
 
 ## Compilando OpenTabletDriver usando o código-fonte
 
-Os requisitos para compilar OpenTabletDriver são referentes à todas as plataformas. Cada plataforma requer dependências diferentes.
+Os requisitos para compilar OpenTabletDriver são referentes à todas as plataformas. Cada plataforma pode precisar de diferentes dependências.
 
 ### Todas as plataformas
 
@@ -64,7 +64,7 @@ temos suporte para os seguintes formatos de empacotamento:
 | Debian package (`.deb`) | `./eng/linux/package.sh --package Debian` |
 | Red Hat package (`.rpm`) | `./eng/linux/package.sh --package RedHat` |
 
-O 'Generic binary tarball' é feito para ser extraído ao diretório raiz.
+'Generic binary tarball' é feito para ser extraído ao diretório raiz.
 
 #### MacOS [Experimental]
 
@@ -85,13 +85,13 @@ Execute `./eng/macos/package.sh --package true`.
   - Rotação precisa da área
 - Posicionamento relativo do cursor
   - px/mm sensibilidade horizontal e vertical
-- Vinculações de teclas (binding)
-  - Bindings na pressão da ponta da caneta
-  - Bindings nas Express Key
-  - Bindings nos botões da caneta
-  - Bindings nos botões do mouse
-  - Bindings nas teclas do teclado
-  - Bindings de plugins externos
+- Vinculações de teclas por ...
+  - pressão da ponta da caneta
+  - nos botões da mesa
+  - nos botões da caneta
+  - nos botões do mouse
+  - nas teclas do teclado
+  - de plugins externos
 - Salvando e carregando informações
   - Carregamento automático das configurações do usuário via `settings.json` no usuário ativo no diretório raiz de configurações `%localappdata%` ou `.config`
 - Plugins
@@ -115,11 +115,12 @@ Para issues e pull requests relacionados à [página web](https://opentabletdriv
 
 ### Adicionando suporte à uma nova mesa digitalizadora
 
-Se você gostaria de adicionar suporte a um novo tablet, abra uma issue ou entre em nosso
-[discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte. *Nós geralmente preferimos as solicitações por um novo tablet sejam feitas via discord, devido as trocas de ideias envolvidas*.
+Se você quiser pedir suporte à uma alguma mesa digitalizadora, abra um ticket ou entre em nosso
+[servidor do Discord](https://discord.gg/9bcMaPkVAR) solicitando o suporte.
+*Nós geralmente preferimos que as solicitações por uma nova mesa digitalizadora sejam feitas por nosso servidor do Discord, devido as trocas de ideias envolvidas.*
 
-Nós precisaremos que você faça algumas coisas como gravar os dados enviados pelo seu tablet utilizando nossa ferramenta de debug integrada, testando funcionalidades do tablet (botões do tablet, botões da caneta, pressão da caneta, etc) com uma configuração diferente quenós iremos enviar a você para testar.
+Mas antes disso, nós precisaremos que você faça algumas coisas como gravar os dados enviados pela sua mesa utilizando nossa ferramenta de debug integrada, testando funcionalidades (botões da mesa, botões da caneta, pressão da caneta, etc) com uma configuração diferente em que nós iremos enviar para você.
 
-Você também, claro, é bem vindo a abrir uma PR adicionando o suporte a tablet por você mesmo,caso tenha uma boa compreensão do que está desenvolvido.
+Você também é bem vindo em abrir um pull request adicionando suporte à alguma mesa, caso você tenha alguma compreensão do que você está desenvolvendo.
 
-Geralmente esse processo é relativamente fácil, especialmente se a fabricante do seu tablet já exisitr em algum outro tablet que já tenha suporte.
+Geralmente esse processo é relativamente fácil, especialmente se existir alguma mesa digitalizadora da fabricante que já tenha suporte.
