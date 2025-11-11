@@ -31,7 +31,7 @@ namespace OpenTabletDriver.UX.Controls
                 Panel1 = new Scrollable
                 {
                     Border = BorderType.None,
-                    Content = Content = sourceSelector = new TypeListBox<TSource>()
+                    Content = sourceSelector = new TypeListBox<TSource>()
                 },
                 Panel2 = new Scrollable
                 {
@@ -81,7 +81,7 @@ namespace OpenTabletDriver.UX.Controls
         private void RefreshContent()
         {
             var types = AppInfo.PluginManager.GetChildTypes<TSource>();
-            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName()), null]);
+            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName())]);
 
             var oldSelected = sourceSelector.SelectedItem;
             var newSelected = sortedTypes.FirstOrDefault(t => t?.FullName == oldSelected?.FullName);
