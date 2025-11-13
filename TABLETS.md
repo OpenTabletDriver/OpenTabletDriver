@@ -9,6 +9,7 @@
 | Gaomon M5                     |     Supported     |
 | Gaomon M106K                  |     Supported     |
 | Gaomon M106K Pro              |     Supported     |
+| Gaomon M5 V2                  |     Supported     |
 | Gaomon PD1161                 |     Supported     |
 | Gaomon PD1560                 |     Supported     |
 | Gaomon PD1561                 |     Supported     |
