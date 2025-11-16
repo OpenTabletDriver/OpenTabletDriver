@@ -285,6 +285,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                                                        WacomCapabilityMask.tiltYBitMask |
                                                        WacomCapabilityMask.deviceIdBitMask;
 
+            // https://www.wacomeng.com/mac/Developers%20Guide.htm#vendorPointerType
+            const long vendorPointerType = 0x802; // General Stylus
+
             // A non-zero deviceId is essential for Adobe software to map tablet events to their
             // corresponding capabilities. Randomly generated and hopefully do not conflict with another driver.
             const long deviceId = 5303613955435230461;
@@ -306,6 +309,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                             NSPointingDeviceType.Eraser : NSPointingDeviceType.Pen));
                     CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventCapabilityMask, (long)capabilityMask);
                     CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventDeviceID, deviceId);
+                    CGEventSetIntegerValueField(proximityEvent, CGEventField.tabletProximityEventVendorPointerType, vendorPointerType);
 
                     CGEventPost(CGEventTapLocation.kCGHIDEventTap, proximityEvent);
                     CFRelease(proximityEvent);
@@ -315,6 +319,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventPointerType, (long)pointerType);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventCapabilityMask, (long)capabilityMask);
                     CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventDeviceID, deviceId);
+                    CGEventSetIntegerValueField(_mouseEvent, CGEventField.tabletProximityEventVendorPointerType, vendorPointerType);
 
                     return;
                 }

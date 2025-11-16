@@ -29,6 +29,7 @@ namespace OpenTabletDriver.Native.OSX.Input
         tabletEventTiltY = 21, // double
         tabletEventDeviceID = 24, // int
         tabletProximityEventDeviceID = 31, // int
+        tabletProximityEventVendorPointerType = 33, // int
         tabletProximityEventCapabilityMask = 36, // int
         tabletProximityEventPointerType = 37, // int
         tabletProximityEventEnterProximity = 38, // int
