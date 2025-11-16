@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Native.Windows
 
         protected override bool ReleaseHandle()
         {
-            return Windows.CloseHandle(handle);
+            return WindowsAPI.CloseHandle(handle);
         }
     }
 }

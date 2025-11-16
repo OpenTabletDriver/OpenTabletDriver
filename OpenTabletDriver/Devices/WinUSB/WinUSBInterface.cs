@@ -7,7 +7,7 @@ using HidSharp.Reports;
 using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.USB;
-using static OpenTabletDriver.Native.Windows.Windows;
+using static OpenTabletDriver.Native.Windows.WindowsAPI;
 using static OpenTabletDriver.Native.Windows.WinUsb;
 
 namespace OpenTabletDriver.Devices.WinUSB

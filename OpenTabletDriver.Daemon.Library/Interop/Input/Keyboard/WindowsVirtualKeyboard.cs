@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Platform.Keyboard;
+using static OpenTabletDriver.Native.Windows.WindowsAPI;
 
 namespace OpenTabletDriver.Daemon.Library.Interop.Input.Keyboard
 {
-    using static Windows;
-
     public class WindowsVirtualKeyboard : IVirtualKeyboard
     {
         private readonly IKeyMapper _keyMapper;
