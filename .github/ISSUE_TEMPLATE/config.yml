@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
+  - name: Support Request (GitHub Discussions)
+    url: https://github.com/OpenTabletDriver/OpenTabletDriver/discussions/new?category=support-request
+    about: If you are unsure of which issue template your issue falls under, use this.
   - name: OpenTabletDriver Discord Guild
     url: https://opentabletdriver.net/Discord
     about: You may also wish to seek assistance through our Discord guild
