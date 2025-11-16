@@ -63,7 +63,8 @@ namespace OpenTabletDriver.UX
                         Environment.Exit(1);
                     }
 
-                    CheckForUpdates();
+                    if (!this.SkipUpdate)
+                        CheckForUpdates();
                 }
                 catch (Exception ex)
                 {
@@ -81,6 +82,7 @@ namespace OpenTabletDriver.UX
         private TrayIcon trayIcon;
 
         public bool SilenceDaemonShutdown { get; set; }
+        public bool SkipUpdate { get; set; }
 
         protected override void InitializeForm()
         {
