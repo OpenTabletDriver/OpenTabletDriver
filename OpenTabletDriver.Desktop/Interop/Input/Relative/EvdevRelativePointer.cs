@@ -38,7 +38,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
                     Log.Debug("Evdev", $"Successfully initialized virtual mouse. (code {result})");
                     break;
                 default:
-                    Log.Write("Evdev", $"Failed to initialize virtual mouse. (error code {result})", LogLevel.Error);
+                    Log.WriteNotify("Evdev", $"Failed to initialize virtual mouse. (error code {result})", LogLevel.Error);
                     break;
             }
         }

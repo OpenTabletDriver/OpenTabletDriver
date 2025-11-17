@@ -55,7 +55,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                     Log.Debug("Evdev", $"Successfully initialized virtual tablet. (code {result})");
                     break;
                 default:
-                    Log.Write("Evdev", $"Failed to initialize virtual tablet. (error code {result})", LogLevel.Error);
+                    Log.WriteNotify("Evdev", $"Failed to initialize virtual tablet. (error code {result})", LogLevel.Error);
                     break;
             }
         }
