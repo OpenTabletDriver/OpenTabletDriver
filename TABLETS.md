@@ -128,11 +128,8 @@
 | Wacom GD-1212-U                    |     Supported     |
 | Wacom GD-1218-U                    |     Supported     |
 | Wacom PTH-451                      |     Supported     |
-| Wacom PTH-460                      |     Supported     |
 | Wacom PTH-651                      |     Supported     |
-| Wacom PTH-660                      |     Supported     |
 | Wacom PTH-851                      |     Supported     |
-| Wacom PTH-860                      |     Supported     |
 | Wacom PTK-440                      |     Supported     |
 | Wacom PTK-540WL                    |     Supported     |
 | Wacom PTK-640                      |     Supported     |
@@ -214,6 +211,9 @@
 | Trust Flex Design Tablet           |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Turcom TS-6580                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                          |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
+| Wacom PTH-460                      |    Has Quirks     | Wheel reports in reverse direction.
+| Wacom PTH-660                      |    Has Quirks     | Wheel reports in reverse direction.
+| Wacom PTH-860                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTU-600U                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | XP-Pen Artist 10S                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | XP-Pen Artist 16                   |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
