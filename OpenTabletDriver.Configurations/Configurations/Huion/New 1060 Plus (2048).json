@@ -26,7 +26,10 @@
       },
       "InitializationStrings": [
         100
-      ]
+      ],
+      "Attributes": {
+        "Interface": "1"
+      }
     },
     {
       "VendorID": 9580,
@@ -38,11 +41,13 @@
       },
       "InitializationStrings": [
         100
-      ]
+      ],
+      "Attributes": {
+        "Interface": "0"
+      }
     }
   ],
   "Attributes": {
-    "libinputoverride": "1",
-    "Interface": "1"
+    "libinputoverride": "1"
   }
 }
