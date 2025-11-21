@@ -57,6 +57,10 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 
         protected virtual DriverInfo GetLinuxDriverInfo()
         {
+            // short circuit if modules aren't filled
+            if (string.IsNullOrEmpty(linuxModules))
+                return null;
+
             if (Regex.IsMatch(linuxModules, LinuxModuleName))
             {
                 return new DriverInfo
@@ -95,7 +99,20 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
                 }
                 case PluginPlatform.Linux:
                 {
-                    linuxModules = File.ReadAllText("/proc/modules");
+                    if (File.Exists("/proc/modules"))
+                        linuxModules = File.ReadAllText("/proc/modules");
+                    else
+                    {
+                        // TODO: check /proc/config.gz for the following keys defined with the value 'y' or 'm'
+                        // |  module name  |    config.gz key    |
+                        // | ------------- | ------------------- |
+                        // |  hid_uclogic  | CONFIG_HID_UCLOGIC  |
+                        // |   wacom       |  CONFIG_HID_WACOM   |
+
+                        Log.Write(nameof(ProcessModuleQueryableDriverInfoProvider),
+                            "Unable to probe kernel modules. Foreign driver detection may be unavailable.");
+                    }
+
                     break;
                 }
             }
