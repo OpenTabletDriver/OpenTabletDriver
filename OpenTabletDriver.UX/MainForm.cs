@@ -490,7 +490,8 @@ namespace OpenTabletDriver.UX
             var fileDialog = Extensions.SaveFileDialog(
                 "Save OpenTabletDriver settings...",
                 Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
-                [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")]
+                [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")],
+                "opentabletdriver-settings.json"
             );
 
             switch (fileDialog.ShowDialog(this))
@@ -598,10 +599,12 @@ namespace OpenTabletDriver.UX
 
         private async Task SavePresetDialog()
         {
+            // TODO: this should probably use a modal dialog instead, as presets are only readable from the Preset directory
             var fileDialog = Extensions.SaveFileDialog(
                 "Save OpenTabletDriver settings as preset...",
                 AppInfo.Current.PresetDirectory,
-                [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")]
+                [new FileFilter("OpenTabletDriver Settings (*.json)", ".json")],
+                "mypreset.json"
             );
 
             switch (fileDialog.ShowDialog(this))
