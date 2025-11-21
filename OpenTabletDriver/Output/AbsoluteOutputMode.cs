@@ -174,6 +174,8 @@ namespace OpenTabletDriver.Output
             // dependency to another pointer property. for example, proximity
             // should be set before position, because in LinuxArtistMode
             // the SetPosition method is dependent on the proximity state.
+            if (report is IConfidenceReport confidenceReport && Pointer is IConfidenceHandler confidenceHandler)
+                confidenceHandler.SetConfidence(confidenceReport.HighConfidence);
             if (report is IHoverReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
                 hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
             if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
@@ -182,6 +184,8 @@ namespace OpenTabletDriver.Output
                 tiltHandler.SetTilt(tiltReport.Tilt);
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Configuration.Specifications.Pen!.MaxPressure);
+            if (report is IToolReport toolReport && Pointer is IToolHandler toolHandler)
+                toolHandler.RegisterTool(toolReport.RawToolID, toolReport.Serial);
 
             // make sure to set the position last
             if (report is IAbsolutePositionReport absReport)
