@@ -31,10 +31,28 @@
       "InitializationStrings": [
         100
       ]
+    },
+    {
+      "VendorID": 21827,
+      "ProductID": 129,
+      "InputReportLength": 8,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetAuxReportParser",
+      "OutputInitReport": [
+        "ArAC"
+      ],
+      "DeviceStrings": {
+        "201": "F600_A60n_E\\d{4}$"
+      },
+      "InitializationStrings": [
+        100
+      ],
+      "Attributes": {
+        "Interface": "0"
+      }
     }
   ],
   "Attributes": {
-    "libinputoverride": "1",
-    "Interface": "0"
+    "libinputoverride": "1"
   }
 }
