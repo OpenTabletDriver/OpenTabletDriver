@@ -634,16 +634,26 @@ namespace OpenTabletDriver.UX
             await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
         }
 
+        private readonly string _diagnosticsPrefix = $"Diagnostics-{App.Version.Replace(".", "")}";
+
         private async Task ExportDiagnostics()
         {
             try
             {
                 var log = await Driver.Instance.GetCurrentLog();
                 var diagnosticDump = new DiagnosticInfo(log, await Driver.Instance.GetDevices());
+
+                var tablets = await Driver.Instance.GetTablets();
+                var tabletReferences = tablets as TabletReference[] ?? tablets.ToArray();
+                string tabletNames = tabletReferences.Length != 0
+                    ? " " + string.Join(", ", tabletReferences.Select(x => x.Properties.Name))
+                    : string.Empty;
+
                 var fileDialog = Extensions.SaveFileDialog(
                     "Save diagnostic information to...",
                     Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
-                    [new FileFilter("Diagnostic information", ".json")]
+                    [new FileFilter("Diagnostic information", ".json")],
+                    $"{_diagnosticsPrefix}{tabletNames}.json"
                 );
 
                 switch (fileDialog.ShowDialog(this))
