@@ -212,6 +212,9 @@
 | Trust Flex Design Tablet           |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | Turcom TS-6580                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
 | UGEE M708                          |    Has Quirks     | Windows: Might need Zadig's WinUSB to be installed on interface 0
+| Wacom PTH-460                      |    Has Quirks     | Wheel reports in reverse direction.
+| Wacom PTH-660                      |    Has Quirks     | Wheel reports in reverse direction.
+| Wacom PTH-860                      |    Has Quirks     | Wheel reports in reverse direction.
 | Wacom PTU-600U                     |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed
 | XOPPOX D161                        |    Has Quirks     | Aux buttons are not in order.
 | XP-Pen Artist 10S                  |    Has Quirks     | Windows: Requires Zadig's WinUSB to be installed on interface 0
@@ -286,11 +289,8 @@
 | Wacom Cintiq 12WX (DTZ-1200W)      |  Missing Features | Touch bars and top side buttons are not yet supported.
 | Wacom MTE-450                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-450                      |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-460                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-650                      |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-660                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTH-850                      |  Missing Features | Wheel is not yet supported.
-| Wacom PTH-860                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-450                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-650                      |  Missing Features | Wheel is not yet supported.
 | Wacom PTK-670                      |  Missing Features | Left and right wheels map to the same control.
