@@ -70,7 +70,11 @@ namespace OpenTabletDriver.UX
 
 #nullable enable
 
+        [Obsolete("Please use method specifying an initialFileName. 'null' is an acceptable value")]
         public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null)
+            where T : FileDialog, new() => BuildFileDialog<T>(title, directory, filters, null, multiSelect);
+
+        public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, string? initialFileName, bool? multiSelect = null)
             where T : FileDialog, new()
         {
             var fileDialog = new T();
@@ -96,14 +100,21 @@ namespace OpenTabletDriver.UX
             else if (multiSelect.HasValue)
                 Debug.Fail("Multiselect set without compatible file dialog type");
 
+            if (!string.IsNullOrEmpty(initialFileName))
+                fileDialog.FileName = initialFileName;
+
             return fileDialog;
         }
 
         public static OpenFileDialog OpenFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null) =>
-            BuildFileDialog<OpenFileDialog>(title, directory, filters, multiSelect);
+            BuildFileDialog<OpenFileDialog>(title, directory, filters, null, multiSelect);
 
+        [Obsolete("Please use method specifying an initialFileName. 'null' is an acceptable value")]
         public static SaveFileDialog SaveFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters) =>
             BuildFileDialog<SaveFileDialog>(title, directory, filters);
+
+        public static SaveFileDialog SaveFileDialog(string? title, string? directory, IEnumerable<FileFilter>? filters, string? initialFilename) =>
+            BuildFileDialog<SaveFileDialog>(title, directory, filters, initialFilename);
 
         public static void AddRangeToFilters(this FileDialog fileDialog, IEnumerable<FileFilter> filters)
         {
