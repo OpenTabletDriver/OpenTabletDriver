@@ -12,7 +12,7 @@
 , copyDesktopItems
 , makeDesktopItem
 , nixosTests
-, wrapGAppsHook
+, wrapGAppsHook3
 , dpkg
 , dotnetCorePackages
 
@@ -44,7 +44,7 @@ buildDotnetModule rec {
 
   nativeBuildInputs = [
     copyDesktopItems
-    wrapGAppsHook
+    wrapGAppsHook3
     dpkg
     jq
     coreutils
