@@ -300,6 +300,18 @@ namespace OpenTabletDriver.Console
             await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
         }
 
+        private static async Task InstallPlugin(string filePath)
+        {
+            if (!await Driver.Instance.InstallPlugin(filePath))
+                await Out.WriteLineAsync("Unable to install plugin");
+        }
+
+        private static async Task UninstallPlugin(string folderName)
+        {
+            var context = AppInfo.PluginManager.GetLoadedPlugins().First(x => x.Directory.Name == folderName);
+            await Driver.Instance.UninstallPlugin(context.Directory.FullName);
+        }
+
         #endregion
 
         #region Debugging
@@ -340,6 +352,12 @@ namespace OpenTabletDriver.Console
             AppInfo.PresetManager.Refresh();
             foreach (var preset in AppInfo.PresetManager.GetPresets())
                 await Out.WriteLineAsync(preset.Name);
+        }
+
+        private static async Task ListPlugins()
+        {
+            foreach (var dir in AppInfo.PluginManager.PluginDirectory.EnumerateDirectories())
+                await Out.WriteLineAsync(dir.Name);
         }
 
         #endregion

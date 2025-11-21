@@ -59,7 +59,9 @@ namespace OpenTabletDriver.Console
 
         private static readonly IEnumerable<Command> ActionCommands = new Command[]
         {
-            CreateCommand(Detect, "Detects tablets")
+            CreateCommand(Detect, "Detects tablets"),
+            CreateCommand<string>(InstallPlugin, "Install plugin from specified file path"),
+            CreateCommand<string>(UninstallPlugin, "Install plugin with specified folder name"),
         };
 
         private static readonly IEnumerable<Command> DebugCommands = new Command[]
@@ -96,7 +98,8 @@ namespace OpenTabletDriver.Console
             CreateCommand<string>(GetBindings, "Gets all current bindings"),
             CreateCommand<string>(GetMiscSettings, "Gets other uncategorized settings"),
             CreateCommand<string>(GetFilters, "Gets the currently enabled filters"),
-            CreateCommand(GetTools, "Gets the currently enabled tools")
+            CreateCommand(GetTools, "Gets the currently enabled tools"),
+            CreateCommand(ListPlugins, $"Gets the folder names of installed plugins for use in {nameof(UninstallPlugin)}")
         };
 
         private static readonly IEnumerable<Command> UpdateCommands = new Command[]
