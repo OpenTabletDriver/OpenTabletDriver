@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -137,6 +138,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected override void OnOutput(IDeviceReport report)
         {
+            var collectionMode = GCCollectionMode.Optimized;
+
             // this should be ordered from least to most chance of having a
             // dependency to another pointer property.
             if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
@@ -155,9 +158,15 @@ namespace OpenTabletDriver.Plugin.Output
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
+                {
+                    collectionMode = GCCollectionMode.Aggressive;
                     synchronousPointer.Reset();
+                }
+
                 synchronousPointer.Flush();
             }
+
+            GC.Collect(2, collectionMode);
         }
     }
 }
