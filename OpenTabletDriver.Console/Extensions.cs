@@ -41,13 +41,19 @@ namespace OpenTabletDriver.Console
             if (storeCollection.Any(s => s != null))
             {
                 int index = 0;
+                bool empty = true;
                 foreach (var store in storeCollection)
                 {
                     var str = store.Format();
                     if (!string.IsNullOrWhiteSpace(str))
+                    {
+                        empty = false;
                         yield return showIndex ? $"[{index}]: {str}" : store.Format();
+                    }
                     index++;
                 }
+                if (empty)
+                    yield return "None";
             }
             else
             {
