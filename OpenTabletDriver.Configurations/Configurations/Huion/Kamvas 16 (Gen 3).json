@@ -13,6 +13,14 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
+    },
+    "Wheel": {
+      "StepCount": 24,
+      "IsRelative": true,
+      "AngleOfZeroReading": 0.0,
+      "Buttons": {
+        "ButtonCount": 0
+      }
     }
   },
   "DigitizerIdentifiers": [
@@ -20,7 +28,7 @@
       "VendorID": 9580,
       "ProductID": 8201,
       "InputReportLength": 14,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.KamvasReportParser",
       "DeviceStrings": {
         "201": "HUION_M22d_\\d{6}$"
       },
