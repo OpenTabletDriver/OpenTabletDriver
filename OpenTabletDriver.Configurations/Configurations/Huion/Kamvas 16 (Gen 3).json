@@ -28,7 +28,7 @@
       "VendorID": 9580,
       "ProductID": 8201,
       "InputReportLength": 14,
-      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.KamvasReportParser",
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Huion.GianoReportParser",
       "DeviceStrings": {
         "201": "HUION_M22d_\\d{6}$"
       },
