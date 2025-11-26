@@ -8,8 +8,7 @@
       "MaxY": 16200
     },
     "Pen": {
-      "MaxPressure": 8191,
-      "ButtonCount": 0
+      "MaxPressure": 8191
     }
   },
   "DigitizerIdentifiers": [
