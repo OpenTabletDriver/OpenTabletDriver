@@ -14,12 +14,6 @@
     "AuxiliaryButtons": {
       "ButtonCount": 8
     },
-    "Touch": {
-      "Width": 325.12,
-      "Height": 203.2,
-      "MaxX": 4095,
-      "MaxY": 4095
-    },
     "Wheel": {
       "StepCount": 71,
       "IsRelative": false,
@@ -27,6 +21,12 @@
       "Buttons": {
         "ButtonCount": 1
       }
+    },
+    "Touch": {
+      "Width": 325.12,
+      "Height": 203.2,
+      "MaxX": 4095,
+      "MaxY": 4095
     }
   },
   "DigitizerIdentifiers": [
