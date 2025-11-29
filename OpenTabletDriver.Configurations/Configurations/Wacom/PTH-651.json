@@ -21,6 +21,12 @@
       "Buttons": {
         "ButtonCount": 1
       }
+    },
+    "Touch": {
+      "Width": 223.52,
+      "Height": 139.7,
+      "MaxX": 4095,
+      "MaxY": 4095
     }
   },
   "DigitizerIdentifiers": [
