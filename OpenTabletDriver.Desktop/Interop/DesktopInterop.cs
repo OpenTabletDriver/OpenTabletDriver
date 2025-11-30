@@ -5,6 +5,7 @@ using OpenTabletDriver.Desktop.Interop.Display;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Desktop.Interop.Input.Relative;
+using OpenTabletDriver.Desktop.Interop.Input.Touch;
 using OpenTabletDriver.Desktop.Interop.Timer;
 using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Interop;
@@ -99,6 +100,12 @@ namespace OpenTabletDriver.Desktop.Interop
         public static IPressureHandler VirtualTablet => CurrentPlatform switch
         {
             PluginPlatform.Linux => virtualTablet ??= new EvdevVirtualTablet(),
+            _ => null
+        };
+
+        public static ITouchPointer TouchPointer => CurrentPlatform switch
+        {
+            PluginPlatform.Linux => new EvdevTouchDevice(),
             _ => null
         };
 
