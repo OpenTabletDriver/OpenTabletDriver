@@ -7,6 +7,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
     {
         public IDeviceReport Parse(byte[] data)
         {
+            if (data[1] == 0xF1)
+                return new KamvasRelWheelReport(data);
             if (data[1].IsBitSet(5) && data[1].IsBitSet(6))
                 return new UCLogicAuxReport(data);
             else
