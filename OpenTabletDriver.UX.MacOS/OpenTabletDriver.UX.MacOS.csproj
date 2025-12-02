@@ -3,16 +3,25 @@
   <PropertyGroup Label="Project Properties">
     <OutputType>Exe</OutputType>
     <TargetFramework>$(FrameworkBase)</TargetFramework>
-    <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
     <AutoreleasePoolSupport>true</AutoreleasePoolSupport>
+    <UseCurrentRuntimeIdentifier>true</UseCurrentRuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
-    <PackageReference Include="Eto.Platform.Mac64" Version="2.5.10" />
+    <PackageReference Include="Eto.Platform.Mac64" Version="2.10.2" />
   </ItemGroup>
   
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
   </ItemGroup>
   
+  <ItemGroup Label="Project Resources">
+    <Content Include="../eng/bash/macos/Icon.icns" />
+    <None Include="../eng/bash/macos/Info.plist" />
+  </ItemGroup>
+
+  <Target Name="AdhocCodeSign" AfterTargets="MacFinishBundle" Condition="$([MSBuild]::IsOsPlatform(OSX))">
+    <Exec Command="codesign  -s - -f --deep &quot;$(OutputAppPath)&quot;" />
+  </Target>
+
 </Project>
