@@ -11,20 +11,6 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             bool newState = value >= StartThreshold && value <= EndThreshold;
 
-            if (report is ITabletReport tabletReport)
-            {
-                if (!newState)
-                {
-                    tabletReport.Pressure = 0;
-                }
-                else // remap pressure when beyond threshold
-                {
-                    var maxPressure = tablet.Properties.Specifications.Pen.MaxPressure;
-                    var remappedPressure = (value - StartThreshold) / (100f - StartThreshold);
-                    tabletReport.Pressure = (uint)(maxPressure * remappedPressure);
-                }
-            }
-
             base.Invoke(tablet, report, newState);
         }
 
