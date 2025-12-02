@@ -52,6 +52,7 @@
 | Huion L310                         |     Supported     |
 | Huion L610                         |     Supported     |
 | Huion New 1060 Plus                |     Supported     |
+| Huion Note X10                     |     Supported     |
 | Huion Q11K                         |     Supported     |
 | Huion Q11K V2                      |     Supported     |
 | Huion RDS-160                      |     Supported     |
