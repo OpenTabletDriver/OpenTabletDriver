@@ -20,6 +20,7 @@ namespace OpenTabletDriver.UX.Controls
             var filtersPage = CreatePage<FiltersPanel>("Filters");
             var penPage = CreatePage<PenPanel>("Pen");
             var auxPage = CreatePage<AuxPanel>("Auxiliary");
+            var gestureTouchpadPage = CreatePage<GestureTouchpadPanel>("Gesture Touchpad");
             var mousePage = CreatePage<MousePanel>("Mouse");
             var toolsPage = CreatePage<ToolsPanel>("Tools");
             var logPage = CreatePage<LogViewer>("Log");
@@ -74,6 +75,9 @@ namespace OpenTabletDriver.UX.Controls
 
                     if (specifications.AuxiliaryButtons != null)
                         pages.Add(auxPage);
+
+                    if (specifications.GestureTouchpad != null)
+                        pages.Add(gestureTouchpadPage);
 
                     if (specifications.MouseButtons != null)
                         pages.Add(mousePage);
