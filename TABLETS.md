@@ -72,6 +72,7 @@
 | UC-Logic TWMNA62                   |     Supported     |
 | UGEE EX08                          |     Supported     | Uses the same configuration as the XP-Pen Deco 01 V2.
 | UGEE M708 V2                       |     Supported     |
+| UGEE M708 V3                       |     Supported     |
 | UGEE M808                          |     Supported     |
 | UGEE S640                          |     Supported     |
 | UGEE S1060                         |     Supported     |
