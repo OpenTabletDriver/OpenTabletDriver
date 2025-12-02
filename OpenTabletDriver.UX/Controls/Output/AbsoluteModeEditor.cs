@@ -318,8 +318,9 @@ namespace OpenTabletDriver.UX.Controls.Output
                 var displays = DesktopInterop.VirtualScreen.Displays.ToArray();
 
                 // account for monitor layouts with negative offsets (e.g. Wayland supports this)
-                float xOffset = displays.MinBy(d => d.Position.X).Position.X;
-                float yOffset = displays.MinBy(d => d.Position.Y).Position.Y;
+                // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
+                float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X).Position.X;
+                float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y).Position.Y;
 
                 foreach (var display in displays)
                 {
