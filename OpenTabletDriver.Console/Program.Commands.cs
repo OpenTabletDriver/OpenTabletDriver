@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.CommandLine;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Numerics;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -24,12 +22,14 @@ namespace OpenTabletDriver.Console
 
         private static async Task HasUpdate()
         {
+            if (!await EnsureDaemonReady()) return;
             var hasUpdate = await Driver.Instance.CheckForUpdates() is not null;
             await Out.WriteLineAsync(hasUpdate.ToString().ToLowerInvariant());
         }
 
         private static async Task InstallUpdate()
         {
+            if (!await EnsureDaemonReady()) return;
             if (await Driver.Instance.CheckForUpdates() is not null)
             {
                 await Driver.Instance.InstallUpdate();
@@ -56,6 +56,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task ApplyPreset(string name)
         {
+            if (!await EnsureDaemonReady()) return;
             GetAndRefreshPresetDirectory();
 
             var preset = AppInfo.PresetManager.FindPreset(name);
@@ -64,6 +65,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task SavePreset(string name)
         {
+            if (!await EnsureDaemonReady()) return;
             var presetDir = GetAndRefreshPresetDirectory();
 
             var file = new FileInfo(Path.Combine(presetDir.FullName, name + ".json"));
@@ -224,6 +226,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task GetCurrentLog()
         {
+            if (!await EnsureDaemonReady()) return;
             var log = await Driver.Instance.GetCurrentLog();
             foreach (var message in log)
                 await Out.WriteLineAsync(Log.GetStringFormat(message));
@@ -305,18 +308,21 @@ namespace OpenTabletDriver.Console
 
         private static async Task Detect()
         {
+            if (!await EnsureDaemonReady()) return;
             await Driver.Instance.DetectTablets();
             await Driver.Instance.SetSettings(await Driver.Instance.GetSettings());
         }
 
         private static async Task InstallPlugin(string filePath)
         {
+            if (!await EnsureDaemonReady()) return;
             if (!await Driver.Instance.InstallPlugin(filePath))
                 await Out.WriteLineAsync("Unable to install plugin");
         }
 
         private static async Task UninstallPlugin(string folderName)
         {
+            if (!await EnsureDaemonReady()) return;
             var context = AppInfo.PluginManager.GetLoadedPlugins().First(x => x.Directory.Name == folderName);
             await Driver.Instance.UninstallPlugin(context.Directory.FullName);
         }
@@ -327,6 +333,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task GetString(int vid, int pid, int index)
         {
+            if (!await EnsureDaemonReady()) return;
             var str = await Driver.Instance.RequestDeviceString(vid, pid, index);
             await Out.WriteLineAsync(str);
         }
@@ -365,6 +372,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task ListPlugins()
         {
+            if (!await EnsureDaemonReady()) return;
             foreach (var dir in AppInfo.PluginManager.PluginDirectory.EnumerateDirectories())
                 await Out.WriteLineAsync(dir.Name);
         }
@@ -432,6 +440,7 @@ namespace OpenTabletDriver.Console
 
         private static async Task GetDiagnostics()
         {
+            if (!await EnsureDaemonReady()) return;
             try
             {
                 var log = await Driver.Instance.GetCurrentLog();
