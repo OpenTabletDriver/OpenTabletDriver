@@ -7,7 +7,7 @@ using OpenTabletDriver.Plugin.Timers;
 
 namespace OpenTabletDriver.Desktop.Interop.Timer
 {
-    using static Windows;
+    using static OpenTabletDriver.Native.Windows.Windows;
 
     internal class WindowsTimer : ITimer, IDisposable
     {
