@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Eto.Drawing;
@@ -313,7 +314,15 @@ namespace OpenTabletDriver.UX.Controls.Output
                 base.CreateMenu();
 
                 var subMenu = base.ContextMenu.Items.GetSubmenu("Set to display");
-                foreach (var display in DesktopInterop.VirtualScreen.Displays)
+
+                var displays = DesktopInterop.VirtualScreen.Displays.ToArray();
+
+                // account for monitor layouts with negative offsets (e.g. Wayland supports this)
+                // skip IVirtualScreen's as these tend to be normalized to 0,0, which may confuse these methods
+                float xOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.X).Position.X;
+                float yOffset = displays.Where(d => d is not IVirtualScreen).MinBy(d => d.Position.Y).Position.Y;
+
+                foreach (var display in displays)
                 {
                     subMenu.Items.Add(
                         new ActionCommand
@@ -331,8 +340,8 @@ namespace OpenTabletDriver.UX.Controls.Output
                                 else
                                 {
                                     virtualScreen = DesktopInterop.VirtualScreen;
-                                    this.Area.X = display.Position.X + virtualScreen.Position.X + (display.Width / 2);
-                                    this.Area.Y = display.Position.Y + virtualScreen.Position.Y + (display.Height / 2);
+                                    this.Area.X = display.Position.X - xOffset + virtualScreen.Position.X + (display.Width / 2);
+                                    this.Area.Y = display.Position.Y - yOffset + virtualScreen.Position.Y + (display.Height / 2);
                                 }
                             }
                         }
