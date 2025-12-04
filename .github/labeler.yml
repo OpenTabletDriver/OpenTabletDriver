@@ -56,7 +56,7 @@ meta:
       - '!.github/workflows'
       - '!README.md'
       - '!TABLETS.md'
-      - 'build.sh'
+      - '!build.sh'
 
 packaging:
 - changed-files:
