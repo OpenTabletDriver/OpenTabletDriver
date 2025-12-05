@@ -81,7 +81,7 @@ The following rules apply to all code contributions:
   relevant branch where possible, to keep history clean.
 - The code you commit must adhere to the rules defined in the project's `.editorconfig` file.
   Some IDEs can recognize `.editorconfig` files and fix some of the broken rules on each file save.
-  Otherwise, you can use the `dotnet format OpenTabletDriver` command from the root of the project to sweep through all files.
+  Otherwise, you can use the `dotnet format` command from the root of the project to sweep through all files.
   To avoid formatting unrelated files, you may want to use the `include` option as documented [here](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-format#options).
   Note that commits on pull requests will go through a formatting check as part of the CI workflow.
 - Follow the [C# Coding
