@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Desktop.Interop
             switch (CurrentPlatform)
             {
                 case PluginPlatform.Windows:
-                    var startInfo = new ProcessStartInfo("cmd", $"/c start \"{path.Replace("&", "^&")}\"")
+                    var startInfo = new ProcessStartInfo("cmd", $"/c start explorer \"{path.Replace("&", "^&")}\"")
                     {
                         CreateNoWindow = true
                     };
