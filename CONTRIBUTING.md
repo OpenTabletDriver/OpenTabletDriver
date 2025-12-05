@@ -82,7 +82,6 @@ rules must be followed:
 - Specify the reasoning for a tablet configuration update in your pull request, otherwise we have no
   way of knowing why the configuration change is being made.
 
-
 # Code Contributions
 
 We strive to keep a maintainable and easily readable codebase in order to keep OpenTabletDriver
