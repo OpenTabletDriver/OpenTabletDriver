@@ -182,7 +182,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "Shift", EventCode.KEY_LEFTSHIFT },
             { "Alt", EventCode.KEY_LEFTALT },
             { "Control", EventCode.KEY_LEFTCTRL },
-            { "Application", EventCode.KEY_LEFTMETA }
+            { "Application", EventCode.KEY_LEFTMETA },
+            { "Mute", EventCode.KEY_MUTE },
+            { "VolumeDown", EventCode.KEY_VOLUMEDOWN },
+            { "VolumeUp", EventCode.KEY_VOLUMEUP },
+            { "PlayPause", EventCode.KEY_PLAYPAUSE },
+            { "PreviousSong", EventCode.KEY_PREVIOUSSONG },
+            { "NextSong", EventCode.KEY_NEXTSONG },
+            { "StopSong", EventCode.KEY_STOP },
         };
     }
 }
