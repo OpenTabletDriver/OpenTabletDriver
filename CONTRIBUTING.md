@@ -5,7 +5,7 @@ Thank you for showing interest in the development of OpenTabletDriver!
 Our goal with this document is to describe how contributions to OpenTabletDriver should be made,
 depending on what kind of change is being performed.
 
-With any contribution you make, we ask that your commits are named sensibly and similarly to the ones in our [history](https://github.com/OpenTabletDriver/OpenTabletDriver/commits/master).
+With any contribution you make, we ask that your commits are named sensibly and similarly to the ones in our [history](https://github.com/OpenTabletDriver/OpenTabletDriver/commits/avalonia).
 At the very least, sentence-case your commits, and do consider prefixing the commit message with a component name in similar fashion to `Updater: Add file IncludeList`.
 If the reasoning for a commit is potentially cryptic, consider adding a commit description to it, succinctly explaining why it was needed.
 
@@ -74,8 +74,9 @@ alive and pleasant to work on.
 
 The following rules apply to all code contributions:
 
-- The git branch should be based on and targeting the `master` branch. You should also try to create the branch
-  from the most recent commit on master possible, to keep history clean.
+- The git branch should be based on and targeting the `avalonia` branch.
+- You should also try to create the branch from the most recent commit on the
+  relevant branch where possible, to keep history clean.
 - The code you commit must adhere to the rules defined in the project's `.editorconfig` file.
   Some IDEs can recognize `.editorconfig` files and fix some of the broken rules on each file save.
   Otherwise, you can use the `dotnet format OpenTabletDriver` command from the root of the project to sweep through all files.
@@ -114,12 +115,13 @@ you're capable of building OpenTabletDriver, by running either `build.ps1` (for 
 `build.sh` (for Linux and MacOS). If successful, these scripts will produce executables in a newly created
 `bin` subdirectory. You can then run OpenTabletDriver by running the executable for the Daemon and
 the UX. For all intents and purposes, this will be a fully functional, though potentially unstable
-(as `master` is a development branch) version of OpenTabletDriver that you can use normally.
-Do note that some plugins may not have been updated to work on the latest `master` version.
+(as `avalonia` is a development branch) version of OpenTabletDriver that you can use normally.
+
+Do note that some plugins may not have been updated to work on the latest `avalonia` version.
 
 Once you've confirmed you are able to build the application on your computer, you can begin making
 changes. Before working, however, ensure you create a new branch to work in - we
-recommend/soft-require that pull requests never be made on your fork's `master` branch - this makes
+recommend/soft-require that pull requests never be made on your fork's `avalonia` branch - this makes
 it harder to make further PRs, as you'll have to wait for your original to be merged before you can
 make another (as your new PR will contain commits from your previous).
 
