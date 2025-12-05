@@ -5,7 +5,7 @@ Thank you for showing interest in the development of OpenTabletDriver!
 Our goal with this document is to describe how contributions to OpenTabletDriver should be made,
 depending on what kind of change is being performed.
 
-With any contribution you make, we ask that your commits are named sensibly and similarly to the ones in our [history](https://github.com/OpenTabletDriver/OpenTabletDriver/commits/master).
+With any contribution you make, we ask that your commits are named sensibly and similarly to the ones in our [history](https://github.com/OpenTabletDriver/OpenTabletDriver/commits/avalonia).
 At the very least, sentence-case your commits, and do consider prefixing the commit message with a component name in similar fashion to `Updater: Add file IncludeList`.
 If the reasoning for a commit is potentially cryptic, consider adding a commit description to it, succinctly explaining why it was needed.
 
@@ -14,6 +14,20 @@ If the reasoning for a commit is potentially cryptic, consider adding a commit d
 Tablet configurations define tablets OpenTabletDriver can detect and operate. They provide
 specifications, functions, and initialization data which are all used to make a drawing tablet
 device, also referred to as a digitizer, functional.
+
+## Tablet Configuration branch target
+
+Tablet configuration pull requests must only be targeted to `0.6.x` branch,
+unless support is already included (merged) into the `0.6.x` branch.
+
+Exceptions can be made if the model is otherwise not supportable on the `0.6.x` branch.
+
+Worded differently, do not target tablet configurations for the `avalonia` branch
+unless it is to test an experimental feature that only that branch supports, or
+if you're porting a (preferably merged) tablet configuration from the `0.6.x` branch.
+
+It is the responsibility of project maintainers to ensure that tablet
+configurations are synchronized across branches regularly
 
 ## Adding a Configuration
 
@@ -31,7 +45,7 @@ rules must be followed:
   name,* with a `.json` extension. Spaces are acceptable, and
   preferable to underscores.
 - The file must be located in the directory dedicated to an individual manufacturer.
-- All trailing whitespace must be trimmed before committing.
+- The file must be correctly linted. Run `dotnet test` to confirm this - the output of `jq` can usually be used to lint the file.
 - The current formatting of the `TABLETS.md` document must be strictly followed as below:
 
   | Column | Contents                                                                                          |
@@ -55,7 +69,9 @@ rules must be followed:
   by taking `MaxX` and `MaxY` and converting it into millimeter units. Please note that specs
   published by manufacturers have unfortunately been known to be wrong on occasion - avoid trusting
   these published specs without verifying the specs are accurate to the physical product.
-- Also include a diagnostics file that shows that OTD succesfully detected the tablet.
+- Also include a diagnostics file that shows that OpenTabletDriver succesfully detected the tablet.
+- If your tablet requires device strings to properly detect, please include a full string dump where possible.
+  - At the time of writing, the `avalonia` branch does not have this feature. Please use `0.6.x` for this.
 - If you are the owner of the tablet submitting a new config for your own tablet, you may
   self-verify.
 
@@ -66,7 +82,6 @@ rules must be followed:
 - Specify the reasoning for a tablet configuration update in your pull request, otherwise we have no
   way of knowing why the configuration change is being made.
 
-
 # Code Contributions
 
 We strive to keep a maintainable and easily readable codebase in order to keep OpenTabletDriver
@@ -74,11 +89,12 @@ alive and pleasant to work on.
 
 The following rules apply to all code contributions:
 
-- The git branch should be based on and targeting the `master` branch. You should also try to create the branch
-  from the most recent commit on master possible, to keep history clean.
+- The git branch should be based on and targeting the `avalonia` branch.
+- You should also try to create the branch from the most recent commit on the
+  relevant branch where possible, to keep history clean.
 - The code you commit must adhere to the rules defined in the project's `.editorconfig` file.
   Some IDEs can recognize `.editorconfig` files and fix some of the broken rules on each file save.
-  Otherwise, you can use the `dotnet format OpenTabletDriver` command from the root of the project to sweep through all files.
+  Otherwise, you can use the `dotnet format` command from the root of the project to sweep through all files.
   To avoid formatting unrelated files, you may want to use the `include` option as documented [here](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-format#options).
   Note that commits on pull requests will go through a formatting check as part of the CI workflow.
 - Follow the [C# Coding
@@ -114,12 +130,13 @@ you're capable of building OpenTabletDriver, by running either `build.ps1` (for 
 `build.sh` (for Linux and MacOS). If successful, these scripts will produce executables in a newly created
 `bin` subdirectory. You can then run OpenTabletDriver by running the executable for the Daemon and
 the UX. For all intents and purposes, this will be a fully functional, though potentially unstable
-(as `master` is a development branch) version of OpenTabletDriver that you can use normally.
-Do note that some plugins may not have been updated to work on the latest `master` version.
+(as `avalonia` is a development branch) version of OpenTabletDriver that you can use normally.
+
+Do note that some plugins may not have been updated to work on the latest `avalonia` version.
 
 Once you've confirmed you are able to build the application on your computer, you can begin making
 changes. Before working, however, ensure you create a new branch to work in - we
-recommend/soft-require that pull requests never be made on your fork's `master` branch - this makes
+recommend/soft-require that pull requests never be made on your fork's `avalonia` branch - this makes
 it harder to make further PRs, as you'll have to wait for your original to be merged before you can
 make another (as your new PR will contain commits from your previous).
 
