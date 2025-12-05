@@ -15,6 +15,20 @@ Tablet configurations define tablets OpenTabletDriver can detect and operate. Th
 specifications, functions, and initialization data which are all used to make a drawing tablet
 device, also referred to as a digitizer, functional.
 
+## Tablet Configuration branch target
+
+Tablet configuration pull requests must only be targeted to `0.6.x` branch,
+unless support is already included (merged) into the `0.6.x` branch.
+
+Exceptions can be made if the model is otherwise not supportable on the `0.6.x` branch.
+
+Worded differently, do not target tablet configurations for the `avalonia` branch
+unless it is to test an experimental feature that only that branch supports, or
+if you're porting a (preferably merged) tablet configuration from the `0.6.x` branch.
+
+It is the responsibility of project maintainers to ensure that tablet
+configurations are synchronized across branches regularly
+
 ## Adding a Configuration
 
 Documentation for the fields within configurations can be found on the official OpenTabletDriver
