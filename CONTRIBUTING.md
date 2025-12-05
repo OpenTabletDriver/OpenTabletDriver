@@ -5,7 +5,7 @@ Thank you for showing interest in the development of OpenTabletDriver!
 Our goal with this document is to describe how contributions to OpenTabletDriver should be made,
 depending on what kind of change is being performed.
 
-With any contribution you make, we ask that your commits are named sensibly and similarly to the ones in our [history](https://github.com/OpenTabletDriver/OpenTabletDriver/commits/master).
+With any contribution you make, we ask that your commits are named sensibly and similarly to the ones in our [history](https://github.com/OpenTabletDriver/OpenTabletDriver/commits/0.6.x).
 At the very least, sentence-case your commits, and do consider prefixing the commit message with a component name in similar fashion to `Updater: Add file IncludeList`.
 If the reasoning for a commit is potentially cryptic, consider adding a commit description to it, succinctly explaining why it was needed.
 
@@ -97,7 +97,7 @@ alive and pleasant to work on.
 
 The following rules apply to all code contributions:
 
-- The git branch should be based on and targeting the `master` branch (except for config
+- The git branch should be based on and targeting the `0.6.x` branch (except for config
   contributions, mentioned above). Even if a contribution is code, if it's related to configs (eg.
   adding a parser), it should target the configs branch. You should also try to create the branch
   from the most recent commit on master possible, to keep history clean.
@@ -139,12 +139,11 @@ you're capable of building OpenTabletDriver, by running either `build.ps1` (for 
 `build.sh` (for Linux and MacOS). If successful, these scripts will produce executables in a newly created
 `bin` subdirectory. You can then run OpenTabletDriver by running the executable for the Daemon and
 the UX. For all intents and purposes, this will be a fully functional, though potentially unstable
-(as `master` is a development branch) version of OpenTabletDriver that you can use normally.
-Do note that some plugins may not have been updated to work on the latest `master` version.
+(as `0.6.x` is a development branch) version of OpenTabletDriver that you can use normally.
 
 Once you've confirmed you are able to build the application on your computer, you can begin making
 changes. Before working, however, ensure you create a new branch to work in - we
-recommend/soft-require that pull requests never be made on your fork's `master` branch - this makes
+recommend/soft-require that pull requests never be made on your fork's `0.6.x` branch - this makes
 it harder to make further PRs, as you'll have to wait for your original to be merged before you can
 make another (as your new PR will contain commits from your previous).
 
