@@ -15,10 +15,6 @@ Tablet configurations define tablets OpenTabletDriver can detect and operate. Th
 specifications, functions, and initialization data which are all used to make a drawing tablet
 device, also referred to as a digitizer, functional.
 
-The following rule(s) are applicable to contributions to `OpenTabletDriver.Configurations`:
-
-- The git branch must be based on and targeting the `configs` branch.
-
 ## Adding a Configuration
 
 Documentation for the fields within configurations can be found on the official OpenTabletDriver
@@ -71,25 +67,6 @@ rules must be followed:
 - Specify the reasoning for a tablet configuration update in your pull request, otherwise we have no
   way of knowing why the configuration change is being made.
 
-## Configuration Maintainer Notes
-
-> This applies to any user with push permissions to the `configs` branch.
-
-We use a branch (`configs`) for configuration contributions in order to quickly merge newly added
-tablet configurations. This branch will periodically be merged into the `master` branch and the
-branches will be synchronized.
-
-Ensure that all pull requests modifying or adding configurations have valid specifications and
-correctly match the status in `TABLETS.md`.
-
-Changes merged to the `configs` branch should generally only be parsers, json config files, and
-similar - anything else that runs the risk of breaking functionality not immediately related to the
-tablet in question should be split off, made dependent on the configs PR, and targeted to `master`.
-
-Essentially, merges of `configs` into `master` should ideally not introduce significant breaking
-behavior or bugs that would impact other users of other tablets.
-
-
 # Code Contributions
 
 We strive to keep a maintainable and easily readable codebase in order to keep OpenTabletDriver
@@ -97,10 +74,9 @@ alive and pleasant to work on.
 
 The following rules apply to all code contributions:
 
-- The git branch should be based on and targeting the `0.6.x` branch (except for config
-  contributions, mentioned above). Even if a contribution is code, if it's related to configs (eg.
-  adding a parser), it should target the configs branch. You should also try to create the branch
-  from the most recent commit on master possible, to keep history clean.
+- The git branch should be based on and targeting the `0.6.x` branch.
+- You should also try to create the branch from the most recent commit on the
+  relevant branch where possible, to keep history clean.
 - The code you commit must adhere to the rules defined in the project's `.editorconfig` file.
   Some IDEs can recognize `.editorconfig` files and fix some of the broken rules on each file save.
   Otherwise, you can use the `dotnet format OpenTabletDriver` command from the root of the project to sweep through all files.
