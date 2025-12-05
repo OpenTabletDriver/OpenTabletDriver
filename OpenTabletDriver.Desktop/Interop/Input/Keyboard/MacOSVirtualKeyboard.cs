@@ -177,6 +177,11 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "Alt", CGKeyCode.kVK_Option },
             { "Control", CGKeyCode.kVK_Control },
             { "Application", CGKeyCode.kVK_Command },
+            { "Mute", CGKeyCode.kVK_Mute },
+            { "VolumeDown", CGKeyCode.kVK_VolumeDown },
+            { "VolumeUp", CGKeyCode.kVK_VolumeUp },
+            // ZMK firmware documentation implies that other media keys aren't supported via key codes,
+            // only USB consumer control buttons: https://zmk.dev/docs/keymaps/list-of-keycodes#media-controls
         };
 
         private CGEventFlags fromCGKeyCode(CGKeyCode code)
