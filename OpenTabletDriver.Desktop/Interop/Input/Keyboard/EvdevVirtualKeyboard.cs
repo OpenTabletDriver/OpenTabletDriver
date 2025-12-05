@@ -190,6 +190,15 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             { "PreviousSong", EventCode.KEY_PREVIOUSSONG },
             { "NextSong", EventCode.KEY_NEXTSONG },
             { "StopSong", EventCode.KEY_STOP },
+            { "BrightnessDown", EventCode.KEY_BRIGHTNESSDOWN },
+            { "BrightnessUp", EventCode.KEY_BRIGHTNESSUP },
+            { "Homepage", EventCode.KEY_HOMEPAGE },
+            { "Calculator", EventCode.KEY_CALC },
+            { "RotateDisplay", EventCode.KEY_ROTATE_DISPLAY },
+            { "RfKill", EventCode.KEY_RFKILL },
+            { "TouchpadToggle", EventCode.KEY_TOUCHPAD_TOGGLE },
+            { "TouchpadOn", EventCode.KEY_TOUCHPAD_ON },
+            { "TouchpadOff", EventCode.KEY_TOUCHPAD_OFF },
         };
     }
 }
