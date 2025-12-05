@@ -79,7 +79,7 @@ The following rules apply to all code contributions:
   relevant branch where possible, to keep history clean.
 - The code you commit must adhere to the rules defined in the project's `.editorconfig` file.
   Some IDEs can recognize `.editorconfig` files and fix some of the broken rules on each file save.
-  Otherwise, you can use the `dotnet format OpenTabletDriver` command from the root of the project to sweep through all files.
+  Otherwise, you can use the `dotnet format` command from the root of the project to sweep through all files.
   To avoid formatting unrelated files, you may want to use the `include` option as documented [here](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-format#options).
   Note that commits on pull requests will go through a formatting check as part of the CI workflow.
 - Follow the [C# Coding
@@ -135,7 +135,7 @@ review comment. Resolve applied fixes, if they are not resolved by GitHub automa
 
 ## Unit-Testing OpenTabletDriver
 
-Our CI runs unit tests on each new commit pushed on a PR, but if you'd like to test OpenTabletDriver locally, you can do so by running the command `dotnet test OpenTabletDriver` from the project root, which will run all tests and report status.
+Our CI runs unit tests on each new commit pushed on a PR, but if you'd like to test OpenTabletDriver locally, you can do so by running the command `dotnet test` from the project root, which will run all tests and report status.
 The unit tests for the most part concern the daemon part of the driver, which performs the bulk of the "work" and thus is critical to test.
 Of course, we also welcome contributions adding more unit testing, our coverage is weaker outside of
 critical areas.
