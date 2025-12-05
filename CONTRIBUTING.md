@@ -31,7 +31,7 @@ rules must be followed:
   name,* with a `.json` extension. Spaces are acceptable, and
   preferable to underscores.
 - The file must be located in the directory dedicated to an individual manufacturer.
-- All trailing whitespace must be trimmed before committing.
+- The file must be correctly linted. Run `dotnet test` to confirm this - the output of `jq` can usually be used to lint the file.
 - The current formatting of the `TABLETS.md` document must be strictly followed as below:
 
   | Column | Contents                                                                                          |
