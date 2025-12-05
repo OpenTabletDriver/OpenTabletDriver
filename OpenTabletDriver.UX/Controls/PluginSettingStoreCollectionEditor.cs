@@ -81,10 +81,10 @@ namespace OpenTabletDriver.UX.Controls
         private void RefreshContent()
         {
             var types = AppInfo.PluginManager.GetChildTypes<TSource>();
-            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName())]);
+            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName()), null]);
 
             var oldSelected = sourceSelector.SelectedItem;
-            var newSelected = sortedTypes.FirstOrDefault(t => t.FullName == oldSelected?.FullName);
+            var newSelected = sortedTypes.FirstOrDefault(t => t?.FullName == oldSelected?.FullName);
 
             // Update DataStore to new types, this refreshes the editor.
             sourceSelector.SelectedItem = null;
