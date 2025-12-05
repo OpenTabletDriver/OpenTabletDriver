@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -34,6 +36,9 @@ namespace OpenTabletDriver.Daemon
         static async Task Main(string[] args)
         {
             var cmdLineOptions = ParseCmdLineOptions(args);
+
+            if (cmdLineOptions == null)
+                return;
 
             if (!string.IsNullOrWhiteSpace(cmdLineOptions?.AppDataDirectory?.FullName))
                 AppInfo.Current.AppDataDirectory = cmdLineOptions.AppDataDirectory.FullName;
@@ -160,9 +165,15 @@ namespace OpenTabletDriver.Daemon
                 };
             }, appDataOption, configOption, sourcesArg, destArg);
 
-            rootCommand.Invoke(args);
+            bool helpShown = false;
 
-            return cmdLineOptions;
+            var clb = new CommandLineBuilder(rootCommand)
+                .UseDefaults()
+                .UseHelp(ctx => helpShown = true)
+                .Build();
+            clb.Invoke(args);
+
+            return helpShown ? null : cmdLineOptions;
 
             void setupGlobalOptions(DirectoryInfo appData, DirectoryInfo config)
             {
