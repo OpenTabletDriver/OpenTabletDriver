@@ -55,6 +55,9 @@ rules must be followed:
   by taking `MaxX` and `MaxY` and converting it into millimeter units. Please note that specs
   published by manufacturers have unfortunately been known to be wrong on occasion - avoid trusting
   these published specs without verifying the specs are accurate to the physical product.
+- Also include a diagnostics file that shows that OpenTabletDriver succesfully detected the tablet.
+- If your tablet requires device strings to properly detect, please include a full string dump where possible.
+  - This is done via the "Device string reader" inside of the OpenTabletDriver GUI
 - If you are the owner of the tablet submitting a new config for your own tablet, you may
   self-verify.
 
