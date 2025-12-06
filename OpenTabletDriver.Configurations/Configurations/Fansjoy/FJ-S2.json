@@ -1,0 +1,38 @@
+{
+  "Name": "Fansjoy FJ-S2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 165,
+      "Height": 91,
+      "MaxX": 10500,
+      "MaxY": 16800
+    },
+    "Pen": {
+      "MaxPressure": 8191,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 4
+    },
+    "MouseButtons": null,
+    "Touch": null
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 11648,
+      "ProductID": 12307,
+      "InputReportLength": 14,
+      "OutputReportLength": 0,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.Fansjoy.FansjoyReportParser",
+      "FeatureInitReport": null,
+      "OutputInitReport": null,
+      "DeviceStrings": {},
+      "InitializationStrings": [],
+      "Attributes": {}
+    }
+  ],
+  "AuxiliaryDeviceIdentifiers": [],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
