@@ -1,5 +1,7 @@
 using System;
+using System.Text;
 using OpenTabletDriver.Plugin.Logging;
+using StreamJsonRpc;
 
 namespace OpenTabletDriver.Plugin
 {
@@ -86,7 +88,13 @@ namespace OpenTabletDriver.Plugin
             if (ex == null)
                 return;
 
-            var message = new LogMessage(ex, level);
+            LogMessage message;
+
+            if (ex is RemoteSerializationException rex)
+                message = new LogMessage(rex, level);
+            else
+                message = new LogMessage(ex, level);
+
             Write(message);
         }
     }
