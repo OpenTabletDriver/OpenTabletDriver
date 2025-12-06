@@ -1,7 +1,9 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Touch;
 
 namespace OpenTabletDriver.Plugin.Output
 {
@@ -68,13 +70,13 @@ namespace OpenTabletDriver.Plugin.Output
             {
                 var transform = CalculateTransformation(Input, Output, Tablet.Properties.Specifications.Digitizer);
 
-                var halfDisplayWidth = Output?.Width / 2 ?? 0;
-                var halfDisplayHeight = Output?.Height / 2 ?? 0;
+                var halfDisplayWidth = Output.Width / 2;
+                var halfDisplayHeight = Output.Height / 2;
 
-                var minX = Output?.Position.X - halfDisplayWidth ?? 0;
-                var maxX = Output?.Position.X + Output?.Width - halfDisplayWidth ?? 0;
-                var minY = Output?.Position.Y - halfDisplayHeight ?? 0;
-                var maxY = Output?.Position.Y + Output?.Height - halfDisplayHeight ?? 0;
+                var minX = Output.Position.X - halfDisplayWidth;
+                var maxX = Output.Position.X + Output.Width - halfDisplayWidth;
+                var minY = Output.Position.Y - halfDisplayHeight;
+                var maxY = Output.Position.Y + Output.Height - halfDisplayHeight;
 
                 this.min = new Vector2(minX, minY);
                 this.max = new Vector2(maxX, maxY);
@@ -152,6 +154,7 @@ namespace OpenTabletDriver.Plugin.Output
             // make sure to set the position last
             if (report is IAbsolutePositionReport absReport)
                 Pointer.SetPosition(absReport.Position);
+
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
