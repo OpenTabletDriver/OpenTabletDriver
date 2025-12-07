@@ -74,6 +74,7 @@ namespace OpenTabletDriver.Console
             CreateCommand<string, string>(SetOutputMode, "Sets the output mode"),
             CreateCommand<string, string[]>(EnableTabletFilters, "Enables the specified filters on the specified tablet"),
             CreateCommand<string, string[]>(DisableTabletFilters, "Disables the specified filters on the specified tablet"),
+            CreateCommand<string, string[]>(ResetTabletFilters, "Resets the specified filters to a default state on the specified tablet"),
             CreateCommand<string[]>(EnableTools, "Enables the specified tools"),
             CreateCommand<string[]>(DisableTools, "Disables the specified tools"),
             CreateCommand<string, float, float, float, float>(SetDisplayArea, "Sets the display area"),
