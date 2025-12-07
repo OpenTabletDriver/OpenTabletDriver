@@ -6,7 +6,7 @@
 
 OpenTabletDriver é um driver multi-plataforma de código aberto para mesas digitalizadoras, configurável pelo usuário.
 
-O objetivo é ser compatível com múltiplas plataformas, possuir uma interface gráfica amigável, e ter uma fácil utilização.
+O objetivo é ser compatível com múltiplas plataformas, possuir uma interface gráfica amigável, e ser fácil na parte de utilização.
 
 <p align="middle">
   <img src="https://i.imgur.com/XDYf62e.png" width="410" align="middle"/>
@@ -16,8 +16,8 @@ O objetivo é ser compatível com múltiplas plataformas, possuir uma interface 
 
 # Mesas digitalizadoras compatíveis
 
-Todas as mesas digitalizadoras compatíveis, não testadas ou em que estão em planejamento/testes estão [aqui](https://opentabletdriver.net/Tablets).
-Soluções de problemas comuns podem ser encontrados na wiki.
+Todas as mesas digitalizadoras compatíveis, não testadas ou em testes, ou aquelas que estão em planejamento, estão [aqui](https://opentabletdriver.net/Tablets).
+Soluções de problemas podem ser encontrados na wiki.
 
 # Instalação
 
@@ -28,11 +28,12 @@ Soluções de problemas comuns podem ser encontrados na wiki.
 # Executando OpenTabletDriver
 
 OpenTabletDriver funciona como dois processos separados em que se comunicam.
-O processo ativo, em que lida com o manuseio de dados, é chamado de `OpenTabletDriver.Daemon`,
-enquanto o processo de interface gráfica é chamado de `OpenTabletDriver.UI`.
+O processo ativo, em que lida com o manuseio de dados, é chamado de `OpenTabletDriver.Daemon`. Enquanto o processo da interface gráfica é chamado de `OpenTabletDriver.UI`.
+
 O processo ativo deve ser inicializado para que tudo possa rodar sem problemas,
 já o processo da interface gráfica não é necessário.
-Se você já possui uma configuração, elas devem ser carregadas quando o processo ativo iniciar.
+
+Se você possuir uma configuração, ela deve ser carregadas quando o processo ativo iniciar.
 
 ## Compilando OpenTabletDriver usando o código-fonte
 
@@ -44,25 +45,28 @@ Os requisitos para compilar OpenTabletDriver são referentes à todas as platafo
 
 #### Windows
 
-Execute `build.ps1` para produzir os binários, enviadas para a pasta 'bin'. Estes binários serão executadas no modo portátil por padrão.
+Execute `build.ps1` para produzir os binários, enviadas para a pasta 'bin' quando produzidos. Estes binários serão executadas no modo portátil por padrão.
 
 #### Linux
 
-Pacotes necessários (alguns pacotes já podem estarem pré-instalados no seu sistema)
+Pacotes necessários
+
+Alguns pacotes já podem estarem pré-instalados no seu sistema.
 
 - libx11
 - libxrandr
 - libevdev2
 - GTK+3
 
-Execute `./eng/linux/package.sh`. Se algum "pacote de instalação" é designado,
-temos suporte para os seguintes formatos de empacotamento:
+Execute `./eng/linux/package.sh`. 
+
+Caso queira produzir os binários e enviá-los em algum formato de pacote, execute `./eng/linux/package.sh --package ...`, substituindo `...` pelo formato de pacote.
 
 | Formato do pacote | Comando|
 | --- | --- |
 | Generic binary tarball (`.tar.gz`) | `./eng/linux/package.sh --package BinaryTarBall` |
-| Debian package (`.deb`) | `./eng/linux/package.sh --package Debian` |
-| Red Hat package (`.rpm`) | `./eng/linux/package.sh --package RedHat` |
+| Pacote Debian (`.deb`) | `./eng/linux/package.sh --package Debian` |
+| Pacote RedHat (`.rpm`) | `./eng/linux/package.sh --package RedHat` |
 
 'Generic binary tarball' é feito para ser extraído ao diretório raiz.
 
@@ -85,8 +89,8 @@ Execute `./eng/macos/package.sh --package true`.
   - Rotação precisa da área
 - Posicionamento relativo do cursor
   - px/mm sensibilidade horizontal e vertical
-- Vinculações de teclas por ...
-  - pressão da ponta da caneta
+- Vinculações de teclas...
+  - por pressão da ponta da caneta
   - nos botões da mesa
   - nos botões da caneta
   - nos botões do mouse
@@ -102,7 +106,7 @@ Execute `./eng/macos/package.sh --package true`.
 # Contribuindo ao OpenTabletDriver
 
 Se você deseja contribuir ao projeto OpenTabletDriver,
-confira a aba de [problemas](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
+confira a aba de [issues](https://github.com/OpenTabletDriver/OpenTabletDriver/issues).
 Quando criar pull requests, siga as orientações descritas
 em nosso [guia de contribuição](https://github.com/OpenTabletDriver/OpenTabletDriver/blob/master/CONTRIBUTING.md).
 
