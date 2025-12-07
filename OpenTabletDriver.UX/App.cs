@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using System.IO;
 using System.IO.Pipes;
 using System.Reflection;
@@ -35,6 +37,9 @@ namespace OpenTabletDriver.UX
         public static void Run(string platform, string[] args)
         {
             var commandLineOptions = ParseCmdLineOptions(args);
+
+            if (commandLineOptions == null)
+                return;
 
             using (var mutex = new Mutex(true, @$"Global\{APPNAME}.Mutex", out var firstInstance))
             {
@@ -128,8 +133,15 @@ namespace OpenTabletDriver.UX
                 commandLineOptions.SkipUpdate = skipUpdate;
             }, skipUpdate);
 
-            root.Invoke(args);
-            return commandLineOptions;
+            bool helpShown = false;
+
+            var clb = new CommandLineBuilder(root)
+                .UseDefaults()
+                .UseHelp(ctx => helpShown = true)
+                .Build();
+
+            clb.Invoke(args);
+            return helpShown ? null : commandLineOptions;
         }
 
         public static App Current { get; } = new App();
