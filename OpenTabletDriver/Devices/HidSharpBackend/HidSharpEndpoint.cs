@@ -65,7 +65,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
 
         private static void GetDeviceAttributesLinux(string devicePath, Dictionary<string, string> deviceAttributes)
         {
-            GetInterfaceNumberFromPath(deviceAttributes, devicePath, @"^.*\/.*?:.*?\.(?<interface>.+)\/.*?\/hidraw\/hidraw\d+$");
+            GetInterfaceNumberFromPath(deviceAttributes, devicePath, @"^.*\/.*?:.*?\.(?<interface>\d+)\/.*?\/hidraw\/hidraw\d+$");
         }
 
         private static void GetDeviceAttributesMacOS(string devicePath, Dictionary<string, string> deviceAttributes)
