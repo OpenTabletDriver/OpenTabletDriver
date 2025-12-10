@@ -4,6 +4,7 @@
     <TargetFramework>$(FrameworkBase)</TargetFramework>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">

@@ -5,14 +5,15 @@
     <TargetFramework>$(FrameworkBase)</TargetFramework>
     <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
     <AutoreleasePoolSupport>true</AutoreleasePoolSupport>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">
     <PackageReference Include="Eto.Platform.Mac64" Version="2.5.10" />
   </ItemGroup>
-  
+
   <ItemGroup Label="Project References">
     <ProjectReference Include="..\OpenTabletDriver.UX\OpenTabletDriver.UX.csproj" />
   </ItemGroup>
-  
+
 </Project>

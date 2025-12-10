@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>$(FrameworkBase)-windows</TargetFramework>
     <ApplicationIcon>../OpenTabletDriver.UX/Assets/otd.ico</ApplicationIcon>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup Label="NuGet Packages">

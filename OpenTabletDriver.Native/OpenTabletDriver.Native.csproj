@@ -3,6 +3,7 @@
   <PropertyGroup Label="Project Properties">
     <TargetFrameworks>$(FrameworkBase)</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package">
