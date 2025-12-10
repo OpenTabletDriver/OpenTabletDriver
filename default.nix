@@ -32,10 +32,10 @@ buildDotnetModule rec {
 
   src = ./.;
 
-  dotnet-sdk = dotnetCorePackages.sdk_8_0;
-  dotnet-runtime = dotnetCorePackages.runtime_8_0;
+  dotnet-sdk = dotnetCorePackages.sdk_10_0;
+  dotnet-runtime = dotnetCorePackages.runtime_10_0;
 
-  dotnetInstallFlags = [ "--framework=net8.0" ];
+  dotnetInstallFlags = [ "--framework=net10.0" ];
 
   projectFile = [ "OpenTabletDriver.Console" "OpenTabletDriver.Daemon" "OpenTabletDriver.UX.Gtk" ];
   nugetDeps = ./deps.json;
