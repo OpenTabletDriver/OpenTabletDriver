@@ -28,7 +28,7 @@ runs:
     - name: ${{ inputs.package-name }} ${{ inputs.runtime }} Publish
       id: build
       shell: bash
-      run: ./eng/bash/package.sh --package ${{ inputs.package-name }} --ci -r ${{ inputs.runtime }} --output build-${{ inputs.package-name }}
+      run: ./eng/bash/package.sh --package ${{ inputs.package-name }} --ci true -r ${{ inputs.runtime }} --output build-${{ inputs.package-name }}
       # should output the following keys to GITHUB_OUTPUT:
       #  - output-file: artifact name
       #  - output-file-display-name: artifact display name
