@@ -106,6 +106,7 @@ declare -g BUILD="true"
 declare -g PORTABLE="false"
 declare -g SINGLE_FILE="true"
 declare -g SELF_CONTAINED="false"
+declare -g IS_CD_CD="false"
 
 ### Global Descriptors
 
@@ -232,6 +233,13 @@ parse_build_args() {
         SELF_CONTAINED="${args[1]}"
         shift_arr "args"
         ;;
+      --ci=*)
+        IS_CI_CD="${args[0]#*=}"
+        ;;
+      --ci)
+        IS_CI_CD="${args[1]}"
+        shift_arr "args"
+        ;;
       *)
         remaining_options+=("${args[0]}")
         ;;
@@ -251,6 +259,7 @@ print_common_arg_help() {
   echo "  --portable <bool>             Whether to build portable binaries (default: ${PORTABLE})"
   echo "  --single-file <bool>          Whether to build single-file binaries (default: ${SINGLE_FILE})"
   echo "  --self-contained <bool>       Whether to build self-contained binaries (default: ${SELF_CONTAINED})"
+  echo "  --ci <bool>                   Whether the build runs inside of Continuous Integration or not (default: ${IS_CD_CD})"
   echo "  -h, --help                    Print this help message"
 }
 
@@ -316,7 +325,11 @@ build() {
   # this initial restore is needed in cases projects changed dependencies
   # (e.g. added a new nuget package)
   echo "Restoring packages..."
-  dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
+  if [ "${IS_CI_CD}" == "true" ]; then
+    dotnet restore --runtime "${NET_RUNTIME}" --locked-mode
+  else
+    dotnet restore --runtime "${NET_RUNTIME}" --verbosity quiet
+  fi
 
   if [ "${PORTABLE}" = "true" ]; then
     mkdir -p "${OUTPUT}/userdata"
