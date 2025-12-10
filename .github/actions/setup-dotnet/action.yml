@@ -15,4 +15,4 @@ runs:
         cache: true
         cache-dependency-path: |
           '**/packages.lock.json'
-          'Directory.Build.props'
+          './Directory.Build.props'
