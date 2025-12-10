@@ -14,5 +14,5 @@ runs:
         dotnet-version: ${{ inputs.dotnet-version }}
         cache: true
         cache-dependency-path: |
-          '**/packages.lock.json'
-          './Directory.Build.props'
+          **/packages.lock.json
+          ./Directory.Build.props
