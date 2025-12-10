@@ -11,6 +11,8 @@ If the reasoning for a commit is potentially cryptic, consider adding a commit d
 
 # Tablet Configuration Contributions
 
+Configurations should be targeted for `0.6.x`, and only submitted to `avalonia` if the tablet is already supported in `0.6.x`.
+
 Tablet configurations define tablets OpenTabletDriver can detect and operate. They provide
 specifications, functions, and initialization data which are all used to make a drawing tablet
 device, also referred to as a digitizer, functional.
