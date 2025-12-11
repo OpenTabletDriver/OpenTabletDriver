@@ -10,7 +10,7 @@
     <PackageReference Include="Octokit" Version="14.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="StreamJsonRpc" Version="2.22.23" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="System.CommandLine" Version="2.0.1" />
     <PackageReference Include="WaylandNET" Version="0.2.0" />
   </ItemGroup>
 
