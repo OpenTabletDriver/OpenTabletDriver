@@ -6,8 +6,6 @@ public class KamvasRelWheelReport : IRelativeWheelReport
 {
     public KamvasRelWheelReport(byte[] data)
     {
-        if (data == null)
-            return;
         Raw = data;
 
         // TODO: Handle when multi-wheel support is added
