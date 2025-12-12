@@ -115,7 +115,8 @@ namespace OpenTabletDriver.UX.Windows
             var fileDialog = Extensions.SaveFileDialog(
                 "Save string dump to...",
                 Eto.EtoEnvironment.GetFolderPath(Eto.EtoSpecialFolder.Documents),
-                [new FileFilter("String dump", ".txt")]
+                [new FileFilter("String dump", ".txt")],
+                $"string-dump_{vendorIdText.Text}-{productIdText.Text}.txt"
             );
 
             switch (fileDialog.ShowDialog(this))
