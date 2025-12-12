@@ -7,6 +7,7 @@
 | Gaomon GM116HD                     |     Supported     |
 | Gaomon GM156HD                     |     Supported     |
 | Gaomon M5                          |     Supported     |
+| Gaomon M7                          |     Supported     |
 | Gaomon M106K                       |     Supported     |
 | Gaomon M106K Pro                   |     Supported     |
 | Gaomon PD1161                      |     Supported     |
@@ -233,7 +234,6 @@
 | Gaomon M1220                       |  Missing Features | Wheel is not yet supported.
 | Gaomon M1230                       |  Missing Features | Touch bar is not yet supported.
 | Gaomon M6                          |  Missing Features | Wheel and touch bar are not yet supported.
-| Gaomon M7                          |     Supported     |
 | Gaomon M8                          |  Missing Features | Wheel is not yet supported.
 | Gaomon M8 (Variant 2)              |  Missing Features | Wheel is not yet supported.
 | Gaomon PD156 Pro                   |  Missing Features | Wheel is not yet supported.
