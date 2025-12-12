@@ -27,6 +27,7 @@
 
   <ItemGroup Label="NuGet Packages">
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="StreamJsonRpc" Version="2.6.121" />
   </ItemGroup>
 
 </Project>
