@@ -248,8 +248,8 @@
 | Huion HC16                         |  Missing Features | Wheel is not yet supported.
 | Huion HC16 (Variant 2)             |  Missing Features | Wheel is not yet supported.
 | Huion HS611                        |  Missing Features | Touch bar is not yet supported.
-| Huion Kamvas 13 (Gen 3)            |  Missing Features | Wheel is not yet supported, function-switch buttons act as regular auxiliary keys.
-| Huion Kamvas 16 (Gen 3)            |  Missing Features | Wheel is not yet supported.
+| Huion Kamvas 13 (Gen 3)            |  Missing Features | Both wheels function as a single wheel, function-switch buttons act as regular auxiliary keys.
+| Huion Kamvas 16 (Gen 3)            |  Missing Features | Both wheels function as a single wheel.
 | Huion Kamvas Pro 12                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 13                |  Missing Features | Touch bar is not yet supported.
 | Huion Kamvas Pro 16                |  Missing Features | Touch bar is not yet supported.
