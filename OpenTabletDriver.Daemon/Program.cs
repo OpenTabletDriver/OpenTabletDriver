@@ -38,6 +38,9 @@ namespace OpenTabletDriver.Daemon
         {
             var cmdLineOptions = ParseCmdLineOptions(args);
 
+            if (cmdLineOptions == null)
+                return;
+
             if (!string.IsNullOrWhiteSpace(cmdLineOptions?.AppDataDirectory?.FullName))
                 AppInfo.Current.AppDataDirectory = cmdLineOptions.AppDataDirectory.FullName;
             if (!string.IsNullOrWhiteSpace(cmdLineOptions?.ConfigurationDirectory?.FullName))
@@ -150,34 +153,34 @@ namespace OpenTabletDriver.Daemon
 
             var appDataOption = new Option<DirectoryInfo>("--appdata", "-a")
             {
-                Description = "Application data directory"
-            };
+                Description = "Application data directory",
+            }.AcceptLegalFilePathsOnly();
 
             var configOption = new Option<DirectoryInfo>("--config", "-c")
             {
-                Description = "Configuration directory"
-            };
+                Description = "Configuration directory",
+            }.AcceptExistingOnly();
 
             rootCommand.Options.Add(appDataOption);
             rootCommand.Options.Add(configOption);
 
-            rootCommand.SetAction(pResult =>
+            var parseResult = rootCommand.Parse(args);
+            if (parseResult.Errors.Any())
             {
-                setupGlobalOptions(pResult.GetRequiredValue(appDataOption), pResult.GetRequiredValue(configOption));
-            });
+                Log.Write(nameof(ParseCmdLineOptions), $"Command line parsing errors encountered: {string.Join(",", parseResult.Errors.Select(x => x.Message))}", LogLevel.Error);
+                return null;
+            }
 
+            cmdLineOptions.AppDataDirectory = parseResult.RootCommandResult.GetValue(appDataOption);
+            cmdLineOptions.ConfigurationDirectory = parseResult.RootCommandResult.GetValue(configOption);
 
-
+            if (parseResult.Action is not null)
             {
-            rootCommand.Parse(args).Invoke();
+                parseResult.Invoke();
+                return null;
+            }
 
             return cmdLineOptions;
-
-            void setupGlobalOptions(DirectoryInfo appData, DirectoryInfo config)
-            {
-                cmdLineOptions.AppDataDirectory = appData;
-                cmdLineOptions.ConfigurationDirectory = config;
-            }
         }
 
         static DriverDaemon BuildDaemon()
