@@ -43,7 +43,6 @@ namespace OpenTabletDriver.Daemon
             Log.Output += (sender, message) =>
             {
                 _logFile.Write(message);
-                Console.WriteLine(Log.GetStringFormat(message));
                 Message?.Invoke(sender, message);
             };
 
