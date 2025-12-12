@@ -19,7 +19,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Huion
                     return new DeviceReport(data);
                 case 0x00:
                     return new OutOfRangeReport(data);
-            };
+            }
 
             if (data[1].IsBitSet(7))
                 return new TiltTabletReport(data);
