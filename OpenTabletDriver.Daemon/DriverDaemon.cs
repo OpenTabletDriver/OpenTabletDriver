@@ -252,11 +252,12 @@ namespace OpenTabletDriver.Daemon
                     if (dev.OutputMode is { } outputMode)
                     {
                         outputMode.Tablet = tabletReference;
-                        var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
-                        SetOutputModeElements(dev, outputMode, profile, bindingHandler);
+                        SetOutputModeElements(dev, outputMode, profile);
 
                         outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
+
+                        AddHandlers(dev, outputMode, profile);
                     }
                 }
 
@@ -284,6 +285,16 @@ namespace OpenTabletDriver.Daemon
                 Resynchronize?.Invoke(this, EventArgs.Empty);
                 return Task.CompletedTask;
             }
+        }
+
+        private void AddHandlers(InputDeviceTree dev, IOutputMode outputMode, Profile profile)
+        {
+            var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
+            outputMode.Elements = outputMode.Elements.Append(bindingHandler).ToList();
+
+            var touchHandler = CreateTouchHandler(dev, profile.TouchSettings);
+            if (touchHandler != null)
+                outputMode.Elements = outputMode.Elements.Append(touchHandler).ToList();
         }
 
         private static void LogTiltState(string group, Profile profile)
@@ -393,7 +404,7 @@ namespace OpenTabletDriver.Daemon
             File.Move(src, dst);
         }
 
-        private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
+        private static void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile)
         {
             string group = dev.Properties.Name;
 
@@ -402,14 +413,13 @@ namespace OpenTabletDriver.Daemon
                            let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
                            where filter != null
                            select filter;
-            outputMode.Elements = elements.Append(bindingHandler).ToList();
+            outputMode.Elements = elements.ToList();
 
-            var activeFilters = outputMode.Elements.Where(e => e != bindingHandler).ToList();
-            if (activeFilters.Count != 0)
-                Log.Write(group, $"Filters: {string.Join(", ", activeFilters)}");
+            if (outputMode.Elements.Count != 0)
+                Log.Write(group, $"Filters: {string.Join(", ", outputMode.Elements)}");
         }
 
-        private void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)
+        private static void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)
         {
             string group = dev.Properties.Name;
             absoluteMode.Output = settings.Display.Area;
@@ -426,7 +436,7 @@ namespace OpenTabletDriver.Daemon
             Log.Write(group, $"Ignoring reports outside area: {(absoluteMode.AreaLimiting ? "Enabled" : "Disabled")}");
         }
 
-        private void SetRelativeModeSettings(InputDeviceTree dev, RelativeOutputMode relativeMode, RelativeModeSettings settings)
+        private static void SetRelativeModeSettings(InputDeviceTree dev, RelativeOutputMode relativeMode, RelativeModeSettings settings)
         {
             string group = dev.Properties.Name;
             relativeMode.Sensitivity = settings.Sensitivity;
@@ -444,7 +454,7 @@ namespace OpenTabletDriver.Daemon
         /// Checks for any problematic processes running on the user's computer that may
         /// impair function or detection of tablets, such as video game anti-cheat software.
         /// </summary>
-        private void CheckForProblematicProcesses()
+        private static void CheckForProblematicProcesses()
         {
             if (SystemInterop.CurrentPlatform == PluginPlatform.Windows)
             {
@@ -453,6 +463,13 @@ namespace OpenTabletDriver.Daemon
                 if (Process.GetProcessesByName("VALORANT-Win64-Shipping").Any())
                     Log.Write("Detect", "Valorant is detected. Tablet function may be impaired.", LogLevel.Warning);
             }
+        }
+
+        private TouchHandler? CreateTouchHandler(InputDeviceTree dev, TouchSettings settings)
+        {
+            if (settings.DisableTouch || dev.Properties.Specifications.Touch == null)
+                return null;
+            return new TouchHandler(dev.CreateReference(), AppInfo.PluginManager.GetService<ITouchPointer>());
         }
 
         private static BindingHandler CreateBindingHandler(InputDeviceTree dev, IOutputMode outputMode, BindingSettings settings)
