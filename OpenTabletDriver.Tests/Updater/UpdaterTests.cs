@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Tests
         // The default update version of the mock updater
         private static readonly Version MockVersion = new(1, 0);
 
-        public static TheoryData<Version?, bool> CheckForUpdates_Returns_Update_When_Available_Data => new()
+        public static TheoryData<Version, bool> CheckForUpdates_Returns_Update_When_Available_Data => new()
         {
             // These are versions of the update, not the driver
 
