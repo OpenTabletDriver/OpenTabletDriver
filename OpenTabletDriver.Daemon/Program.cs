@@ -43,44 +43,6 @@ namespace OpenTabletDriver.Daemon
             if (!string.IsNullOrWhiteSpace(cmdLineOptions?.ConfigurationDirectory?.FullName))
                 AppInfo.Current.ConfigurationDirectory = cmdLineOptions.ConfigurationDirectory.FullName;
 
-            if (cmdLineOptions.SpecialCommand is UpdateCommandOptions updateCommandOptions)
-            {
-                var sources = updateCommandOptions.Sources.Select(x => x.FullName).ToArray();
-                var destination = updateCommandOptions.Destination.FullName;
-                var ret = 0;
-
-                using (var file = File.Open(Path.Join(AppInfo.Current.AppDataDirectory, "daemon-update.log"), FileMode.Create))
-                {
-                    var logger = new StreamWriter(file) { AutoFlush = true };
-
-                    await logger.WriteLineAsync("Starting update using following files...");
-                    foreach (var source in sources)
-                        await logger.WriteLineAsync($" {source}");
-                    await logger.WriteLineAsync($"Destination: {destination}");
-
-                    try
-                    {
-                        await DesktopInterop.Updater.Install(
-                            // bypass CheckForUpdate
-                            new Update(
-                                new Version(0, 0, 0, 0),
-                                sources.ToImmutableArray(),
-                                destination
-                            )
-                        );
-                        await logger.WriteLineAsync("Update complete.");
-                    }
-                    catch (Exception ex)
-                    {
-                        await logger.WriteLineAsync(ex.ToString());
-                        await logger.WriteLineAsync("Update failed!");
-                        ret = 1;
-                    }
-                }
-
-                Environment.Exit(ret);
-            }
-
             await StartDaemon();
         }
 
@@ -186,10 +148,6 @@ namespace OpenTabletDriver.Daemon
                 TreatUnmatchedTokensAsErrors = true
             };
 
-            var updateCommand = new Command("update") { Hidden = true };
-
-            rootCommand.Subcommands.Add(updateCommand);
-
             var appDataOption = new Option<DirectoryInfo>("--appdata", "-a")
             {
                 Description = "Application data directory"
@@ -208,31 +166,9 @@ namespace OpenTabletDriver.Daemon
                 setupGlobalOptions(pResult.GetRequiredValue(appDataOption), pResult.GetRequiredValue(configOption));
             });
 
-            var sourcesArg = new Option<List<DirectoryInfo>>("--sources")
-            {
-                Required = true,
-                AllowMultipleArgumentsPerToken = true
-            };
-            var destArg = new Option<DirectoryInfo>("--destination")
-            {
-                Required = true
-            };
 
-            updateCommand.Options.Add(sourcesArg);
-            updateCommand.Options.Add(destArg);
 
-            updateCommand.SetAction(pResult =>
             {
-                var appData = pResult.GetValue(appDataOption);
-                var config = pResult.GetValue(configOption);
-                setupGlobalOptions(appData, config);
-                cmdLineOptions.SpecialCommand = new UpdateCommandOptions
-                {
-                    Sources = pResult.GetValue(sourcesArg),
-                    Destination = pResult.GetValue(destArg)
-                };
-            });
-
             rootCommand.Parse(args).Invoke();
 
             return cmdLineOptions;
