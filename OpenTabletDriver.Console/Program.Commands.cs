@@ -218,6 +218,16 @@ namespace OpenTabletDriver.Console
             });
         }
 
+        private static async Task ResetTabletFilters(string tablet, params string[] filtersToReset)
+        {
+            await ModifyProfile(tablet, s =>
+            {
+                foreach (var filterToReset in filtersToReset)
+                    s.Filters = new PluginSettingStoreCollection(s.Filters.Where(filter => filter.Path != filterToReset));
+                AppendPluginStoreSettingsCollectionByPaths<IPositionedPipelineElement<IDeviceReport>>(s.Filters, filtersToReset);
+            });
+        }
+
         #endregion
 
         #region Request Settings
