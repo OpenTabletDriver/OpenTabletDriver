@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using NSubstitute;
 using OpenTabletDriver.Plugin.Components;
 using Xunit;
 
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Tests
         [Fact]
         public void RequiredServices_CanBeReplaced()
         {
-            var stubReportParserProvider = new Mock<IReportParserProvider>().Object;
+            var stubReportParserProvider = Substitute.For<IReportParserProvider>();
             var serviceCollection = new DriverServiceCollection().AddSingleton(stubReportParserProvider);
 
             var retrievedReportParserProvider = serviceCollection.BuildServiceProvider()
