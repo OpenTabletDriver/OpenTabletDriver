@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Console
         public static Command CreateCommand(Func<Task> action, string description, params string[] aliases)
         {
             var command = SetupCommand(action, description, aliases);
-            command.SetAction(_ => action()) ;
+            command.SetAction(_ => action());
             return command;
         }
 

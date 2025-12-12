@@ -106,7 +106,7 @@ namespace OpenTabletDriver.UX
         {
             var commandLineOptions = new CommandLineOptions();
 
-            var minimizedOption = new Option<bool>( "--minimized", "-m" )
+            var minimizedOption = new Option<bool>("--minimized", "-m")
             {
                 Description = "Start the application minimized"
             };
