@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading;
 using System.Threading.Tasks;
 using OpenTabletDriver.Plugin;
 using StreamJsonRpc;
@@ -9,7 +10,6 @@ namespace OpenTabletDriver.Desktop.RPC
 {
     public class RpcHost<T> where T : class
     {
-        private JsonRpc rpc;
         private readonly string pipeName;
 
         public event EventHandler<bool> ConnectionStateChanged;
@@ -19,22 +19,37 @@ namespace OpenTabletDriver.Desktop.RPC
             this.pipeName = pipeName;
         }
 
-        public async Task Run(T host)
+        public async Task Run(T host, CancellationToken ct)
         {
-            while (true)
+            while (!ct.IsCancellationRequested)
             {
-                var stream = CreateStream();
-                await stream.WaitForConnectionAsync();
-                _ = Task.Run(async () =>
+                await Task.Run(async () =>
                 {
+                    await using var stream = CreateStream();
+                    try
+                    {
+                        await stream.WaitForConnectionAsync(ct);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // avoid throwing for intentionally canceled operations
+                        if (ct.IsCancellationRequested)
+                            return;
+
+                        throw;
+                    }
+
                     try
                     {
                         ConnectionStateChanged?.Invoke(this, true);
-                        this.rpc = JsonRpc.Attach(stream, host);
-                        await this.rpc.Completion;
+                        using var rpc = JsonRpc.Attach(stream, host);
+                        await rpc.Completion.WaitAsync(ct);
+
                     }
                     catch (ObjectDisposedException)
                     {
+                        // TODO: this empty catch clause can probably be removed now that
+                        // the `stream` is self-contained within the delegate
                     }
                     catch (IOException)
                     {
@@ -43,10 +58,9 @@ namespace OpenTabletDriver.Desktop.RPC
                     {
                         Log.Exception(ex);
                     }
+
                     ConnectionStateChanged?.Invoke(this, false);
-                    this.rpc.Dispose();
-                    await stream.DisposeAsync();
-                });
+                }, CancellationToken.None);
             }
         }
 
