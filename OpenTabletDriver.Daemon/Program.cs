@@ -33,7 +33,8 @@ namespace OpenTabletDriver.Daemon
     {
         static async Task Main(string[] args)
         {
-            Log.Output += (sender, message) => {
+            Log.Output += (sender, message) =>
+            {
                 Console.WriteLine(Log.GetStringFormat(message));
             };
 
