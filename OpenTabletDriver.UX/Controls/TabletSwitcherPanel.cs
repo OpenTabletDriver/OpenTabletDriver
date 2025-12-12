@@ -121,7 +121,11 @@ namespace OpenTabletDriver.UX.Controls
             public void HandleTabletsChanged(object sender, IList<TabletReference> tablets)
             {
                 visibleProfiles.Clear();
-                if (tablets.Any())
+                if (profiles == null)
+                {
+                    Log.Write("Settings", "No profiles found.");
+                }
+                else if (tablets.Any())
                 {
                     var tabletsWithoutProfile = from tablet in tablets
                                                 where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
