@@ -86,10 +86,7 @@ tests:
     - 'OpenTabletDriver.Native/Linux/**'
     - 'OpenTabletDriver.UX.Gtk/**'
     - 'generate-rules.sh'
-    - 'update-deps.sh'
     - '**/*Linux*' # TODO: verify that this works 1/3
-    - '**/*.nix'
-    - '**/flake.lock'
 
 'windows/wpf':
 - changed-files:
