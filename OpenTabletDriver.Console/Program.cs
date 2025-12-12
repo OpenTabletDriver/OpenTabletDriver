@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Console
             // load plugins
             AppInfo.PluginManager.Load();
 
-            await Root.InvokeAsync(args);
+            await Root.Parse(args).InvokeAsync();
         }
 
         private static readonly Lazy<RootCommand> root = new Lazy<RootCommand>(GenerateRoot);
@@ -32,10 +32,7 @@ namespace OpenTabletDriver.Console
 
         private static RootCommand GenerateRoot()
         {
-            var root = new RootCommand("OpenTabletDriver Console Client")
-            {
-                Name = "otd"
-            };
+            var root = new RootCommand("OpenTabletDriver Console Client");
 
             root.AddCommands(IOCommands);
             root.AddCommands(ActionCommands);
