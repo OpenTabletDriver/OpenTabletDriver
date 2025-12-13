@@ -85,6 +85,12 @@ namespace OpenTabletDriver.UX.Windows
                     new StackLayoutItem(deviceStringText, true)
                 }
             };
+
+            this.KeyDown += (_, args) =>
+            {
+                if (args.Key == Keys.Escape)
+                    this.Close();
+            };
         }
 
         private const int NUMERICBOX_WIDTH = 150;
