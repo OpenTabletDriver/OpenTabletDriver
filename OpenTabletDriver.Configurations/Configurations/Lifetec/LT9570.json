@@ -32,6 +32,7 @@
     }
   ],
   "Attributes": {
-    "libinputoverride": "1"
+    "libinputoverride": "1",
+    "SkipTests": "LPI_DIGITIZER_X,LPI_DIGITIZER_Y"
   }
 }

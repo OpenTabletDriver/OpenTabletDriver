@@ -22,6 +22,34 @@ namespace OpenTabletDriver.Tests.Data
         public required Lazy<TabletConfiguration> Configuration { get; init; }
         public required FileInfo File { get; init; }
         public required Lazy<string> FileContents { get; init; }
+
+        private const string SKIP_TESTS_ATTRIBUTE_KEY = "SkipTests";
+
+        public IEnumerable<TestTypes> SkippedTestTypes
+        {
+            get
+            {
+                if (this.Configuration.Value.Attributes?.ContainsKey(SKIP_TESTS_ATTRIBUTE_KEY) ?? false)
+                {
+                    foreach (string testType in this.Configuration.Value.Attributes[SKIP_TESTS_ATTRIBUTE_KEY]
+                                 .Split(','))
+                    {
+                        if (!Enum.TryParse<TestTypes>(testType, out var result))
+                            throw new ArgumentException($"Invalid value type {testType}");
+                        yield return result;
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Attribute values for the test disablement key. These should be serialized as a comma-separated string
+    /// </summary>
+    public enum TestTypes
+    {
+        LPI_DIGITIZER_X, // Lines per inches/mm test for X axis on digitizer
+        LPI_DIGITIZER_Y, // Lines per inches/mm test for Y axis on digitizer
     }
 
     public static class Extensions

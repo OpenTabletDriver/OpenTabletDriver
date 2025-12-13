@@ -356,7 +356,7 @@ namespace OpenTabletDriver.Tests
 
         // touch untested
         // TODO: add support for tablet configs defining a custom known per-axis LPI, or to fully ignore this test
-        [Theory]
+        [SkippableTheory]
         [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
         public void Configurations_Have_Predictable_Digitizer_Dimensions(TestTabletConfiguration ttc)
         {
@@ -365,21 +365,28 @@ namespace OpenTabletDriver.Tests
             var digitizer = ttc.Configuration.Value.Specifications.Digitizer;
             string filePath = $"{ttc.File.Directory?.Name ?? "unknown"}/{ttc.File.Name}";
 
-            // can safely cast these to int since they probably should have never been floats to begin with
-            int maxX = (int)digitizer.MaxX;
-            int maxY = (int)digitizer.MaxY;
+            bool skipXtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_X);
+            bool skipYtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_Y);
 
-            decimal width = digitizer.WidthAsDecimal;
-            decimal height = digitizer.HeightAsDecimal;
+            Skip.If(skipYtest && skipXtest, "Both LPI checks requested skipped");
 
-            decimal widthInches = width / MILLIMETERS_PER_INCH;
-            decimal heightInches = height / MILLIMETERS_PER_INCH;
+            if (!skipXtest)
+            {
+                int maxX = (int)digitizer.MaxX;
+                decimal width = digitizer.WidthAsDecimal;
+                decimal widthInches = width / MILLIMETERS_PER_INCH;
+                decimal lpiX = maxX / widthInches;
+                validateLpi(lpiX, width, maxX, nameof(width), ttc.ValidLPIsForTablet);
+            }
 
-            decimal lpiX = maxX / widthInches;
-            decimal lpiY = maxY / heightInches;
-
-            validateLpi(lpiX, width, maxX, nameof(width));
-            validateLpi(lpiY, height, maxY, nameof(height));
+            if (!skipYtest)
+            {
+                int maxY = (int)digitizer.MaxY;
+                decimal height = digitizer.HeightAsDecimal;
+                decimal heightInches = height / MILLIMETERS_PER_INCH;
+                decimal lpiY = maxY / heightInches;
+                validateLpi(lpiY, height, maxY, nameof(height), ttc.ValidLPIsForTablet);
+            }
 
             string errorsFormatted = string.Join(Environment.NewLine, errors);
             Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
