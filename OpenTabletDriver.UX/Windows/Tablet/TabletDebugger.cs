@@ -175,6 +175,12 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 Content = splitter
             };
 
+            this.KeyDown += (_, args) =>
+            {
+                if (args.Key == Keys.Escape)
+                    this.Close();
+            };
+
             var reportBinding = ReportDataBinding.Child(c => (c.ToObject() as IDeviceReport));
 
             deviceName.TextBinding.Bind(ReportDataBinding.Child(c => c.Tablet.Properties.Name));
