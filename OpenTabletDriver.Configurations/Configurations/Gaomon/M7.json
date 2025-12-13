@@ -22,7 +22,7 @@
       "InputReportLength": 12,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
       "DeviceStrings": {
-        "201": "GM001_T220_\\d{6}$"
+        "201": "GM001_(T220|T207)_\\d{6}$"
       },
       "InitializationStrings": [
         200
