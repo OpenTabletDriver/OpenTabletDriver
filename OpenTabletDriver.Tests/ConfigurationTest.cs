@@ -347,13 +347,6 @@ namespace OpenTabletDriver.Tests
 
         private const decimal MILLIMETERS_PER_INCH = 25.4m;
 
-        private static readonly decimal[] ValidTabletSizesInLinesPerInch = [
-            5080, // 200 LPMM
-            2540, // 100 LPMM
-            4000, // seen on some older Huion tablets
-            2000, // seen on e.g. FlooGoo FMA100, Genius G-Pen 560
-        ];
-
         // touch untested
         // TODO: add support for tablet configs defining a custom known per-axis LPI, or to fully ignore this test
         [SkippableTheory]
@@ -392,11 +385,11 @@ namespace OpenTabletDriver.Tests
             Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
             return;
 
-            void validateLpi(decimal lpi, decimal size, decimal maxLines, string physicalSide)
+            void validateLpi(decimal lpi, decimal size, decimal maxLines, string physicalSide, IEnumerable<int> validLPIs)
             {
                 decimal? closestLpi = null;
 
-                foreach (decimal validLpi in ValidTabletSizesInLinesPerInch.OrderBy(x => x))
+                foreach (decimal validLpi in validLPIs.OrderBy(x => x))
                 {
                     if (closestLpi == null)
                     {
@@ -419,7 +412,7 @@ namespace OpenTabletDriver.Tests
                 // only emit error if width/height is more than 1 unit off
                 if (Math.Abs(size - suggestedSize) > millimetersPerLine)
                     errors.Add(
-                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", ValidTabletSizesInLinesPerInch)}. {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead, assuming an LPI of {closestLpi}.");
+                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIs)}. {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead, assuming an LPI of {closestLpi}.");
             }
         }
 

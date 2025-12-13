@@ -45,6 +45,34 @@ namespace OpenTabletDriver.Tests.Data
                 }
             }
         }
+
+        private const string VERIFIED_LPI_KEY = "VerifiedLPI";
+
+        public IEnumerable<int> ValidLPIsForTablet
+        {
+            get
+            {
+                if (this.Configuration.Value.Attributes?.ContainsKey(VERIFIED_LPI_KEY) ?? false)
+                {
+                    string val = this.Configuration.Value.Attributes[VERIFIED_LPI_KEY];
+                    if (!int.TryParse(val, out var result))
+                        throw new ArgumentException($"Invalid LPI integer '{val}'");
+                    yield return result;
+                }
+
+                // loosely ordered by regularity
+                yield return 5080; // 200 LPMM
+                yield return 2540; // 100 LPMM
+                yield return 4000; // seen on some older Huion tablets
+                yield return 2000; // seen on e.g. FlooGoo FMA100, Genius G-Pen 560
+                yield return 1016; // 40 LPMM, e.g. Wacom CTF-430 / Wacom FT-0405-U
+                yield return 2032; // 80 LPMM, older Wacoms (or XP-Pen Artist 22HD)
+                yield return 10160; // 400 LPMM, seen on XP-Pen Star G540 Pro
+                // yield return 508; // 20 LPMM, much older Wacoms (TODO: which?)
+                // these aren't seen yet but are known to be correct as well:
+                // yield return 1270; // 50 LPMM
+            }
+        }
     }
 
     /// <summary>
