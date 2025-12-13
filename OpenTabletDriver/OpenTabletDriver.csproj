@@ -6,6 +6,10 @@
     <NoWarn>VSTHRD100; VSTHRD101; VSTHRD110; VSTHRD200</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenTabletDriver.Tests" />
+  </ItemGroup>
+
   <PropertyGroup Label="NuGet Package">
     <PackageId>OpenTabletDriver</PackageId>
     <Description>OpenTabletDriver core library</Description>
