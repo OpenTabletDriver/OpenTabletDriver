@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -342,6 +343,77 @@ namespace OpenTabletDriver.Tests
 
             string errorsFormatted = string.Join(Environment.NewLine, errors);
             Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
+        }
+
+        private const decimal MILLIMETERS_PER_INCH = 25.4m;
+
+        private static readonly decimal[] ValidTabletSizesInLinesPerInch = [
+            5080, // 200 LPMM
+            2540, // 100 LPMM
+            4000, // seen on some older Huion tablets
+            2000, // seen on e.g. FlooGoo FMA100, Genius G-Pen 560
+        ];
+
+        // touch untested
+        // TODO: add support for tablet configs defining a custom known per-axis LPI, or to fully ignore this test
+        [Theory]
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Have_Predictable_Digitizer_Dimensions(TestTabletConfiguration ttc)
+        {
+            var errors = new List<string>();
+
+            var digitizer = ttc.Configuration.Value.Specifications.Digitizer;
+            string filePath = $"{ttc.File.Directory?.Name ?? "unknown"}/{ttc.File.Name}";
+
+            // can safely cast these to int since they probably should have never been floats to begin with
+            int maxX = (int)digitizer.MaxX;
+            int maxY = (int)digitizer.MaxY;
+
+            decimal width = digitizer.WidthAsDecimal;
+            decimal height = digitizer.HeightAsDecimal;
+
+            decimal widthInches = width / MILLIMETERS_PER_INCH;
+            decimal heightInches = height / MILLIMETERS_PER_INCH;
+
+            decimal lpiX = maxX / widthInches;
+            decimal lpiY = maxY / heightInches;
+
+            validateLpi(lpiX, width, maxX, nameof(width));
+            validateLpi(lpiY, height, maxY, nameof(height));
+
+            string errorsFormatted = string.Join(Environment.NewLine, errors);
+            Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
+            return;
+
+            void validateLpi(decimal lpi, decimal size, decimal maxLines, string physicalSide)
+            {
+                decimal? closestLpi = null;
+
+                foreach (decimal validLpi in ValidTabletSizesInLinesPerInch.OrderBy(x => x))
+                {
+                    if (closestLpi == null)
+                    {
+                        closestLpi = validLpi;
+                        continue;
+                    }
+
+                    if (Math.Abs(validLpi - lpi) <= Math.Abs(closestLpi.Value - lpi))
+                        closestLpi = validLpi;
+                }
+
+                Debug.Assert(closestLpi.HasValue);
+
+                decimal suggestedSize = (maxLines / closestLpi.Value) * MILLIMETERS_PER_INCH;
+
+                decimal millimetersPerLine = 1 / (closestLpi.Value / MILLIMETERS_PER_INCH);
+
+                string capitalizedPhysicalSide = string.Concat(physicalSide[0].ToString().ToUpper(), physicalSide.AsSpan(1));
+
+                // only emit error if width/height is more than 1 unit off
+                if (Math.Abs(size - suggestedSize) > millimetersPerLine)
+                    errors.Add(
+                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", ValidTabletSizesInLinesPerInch)}. {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead, assuming an LPI of {closestLpi}.");
+            }
         }
 
         private static void PrintDiff(ITestOutputHelper outputHelper, DiffPaneModel diff)
