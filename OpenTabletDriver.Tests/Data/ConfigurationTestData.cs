@@ -23,6 +23,8 @@ namespace OpenTabletDriver.Tests.Data
         public required FileInfo File { get; init; }
         public required Lazy<string> FileContents { get; init; }
 
+        public string FileShortName => $"{this.File.Directory?.Name ?? "unknown"}/{this.File.Name}";
+
         private const string SKIP_TESTS_ATTRIBUTE_KEY = "SkipTests";
 
         public IEnumerable<TestTypes> SkippedTestTypes

@@ -323,7 +323,7 @@ namespace OpenTabletDriver.Tests
             var errors = new List<string>();
 
             var config = ttc.Configuration.Value;
-            var filePath = $"{ttc.File.Directory?.Name ?? "unknown"}/{ttc.File.Name}";
+            string filePath = ttc.FileShortName;
 
             // disable warning for "obsoleted" paths
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -363,7 +363,7 @@ namespace OpenTabletDriver.Tests
             var errors = new List<string>();
 
             var digitizer = ttc.Configuration.Value.Specifications.Digitizer;
-            string filePath = $"{ttc.File.Directory?.Name ?? "unknown"}/{ttc.File.Name}";
+            string filePath = ttc.FileShortName;
 
             bool skipXtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_X);
             bool skipYtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_Y);
