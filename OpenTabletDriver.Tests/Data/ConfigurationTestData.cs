@@ -25,6 +25,8 @@ namespace OpenTabletDriver.Tests.Data
 
         public string FileShortName => $"{this.File.Directory?.Name ?? "unknown"}/{this.File.Name}";
 
+        public override string ToString() => this.FileShortName;
+
         private const string SKIP_TESTS_ATTRIBUTE_KEY = "SkipTests";
 
         public IEnumerable<TestTypes> SkippedTestTypes
