@@ -32,6 +32,9 @@ namespace OpenTabletDriver.UX
         {
         }
 
+        public CancellationTokenSource Canceler { get; } = new();
+        public bool IsActive { get; private set; } = true;
+
         public static void Run(string platform, string[] args)
         {
             var commandLineOptions = ParseCmdLineOptions(args);
@@ -72,21 +75,22 @@ namespace OpenTabletDriver.UX
 
             app.NotificationActivated += Current.HandleNotification;
             app.UnhandledException += ShowUnhandledException;
+            app.Terminating += async (sender, args) => await Current.Canceler.CancelAsync();
 
             Task.Run(async () =>
             {
-                while (true)
-                {
-                    using var ipcServer = new NamedPipeServerStream(
-                        APPNAME + ".Singleton",
-                        PipeDirection.InOut,
-                        1,
-                        PipeTransmissionMode.Byte,
-                        PipeOptions.Asynchronous);
+                await using var ipcServer = new NamedPipeServerStream(
+                    APPNAME + ".Singleton",
+                    PipeDirection.InOut,
+                    1,
+                    PipeTransmissionMode.Byte,
+                    PipeOptions.Asynchronous);
 
+                while (!Current.Canceler.IsCancellationRequested)
+                {
                     // if something connects to the pipe, it means another instance is trying to start
                     // no need for any actual communication
-                    await ipcServer.WaitForConnectionAsync();
+                    await ipcServer.WaitForConnectionAsync(Current.Canceler.Token);
 
                     app.AsyncInvoke(() =>
                     {
@@ -95,6 +99,8 @@ namespace OpenTabletDriver.UX
                     });
                     ipcServer.Disconnect();
                 }
+                ipcServer.Close();
+                Current.IsActive = false;
             });
 
             app.Run(mainForm);
