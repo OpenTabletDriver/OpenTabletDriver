@@ -2,8 +2,8 @@
   "Name": "Wacom CTH-301",
   "Specifications": {
     "Digitizer": {
-      "Width": 107,
-      "Height": 67,
+      "Width": 106.9,
+      "Height": 66.8,
       "MaxX": 10690,
       "MaxY": 6680
     },
