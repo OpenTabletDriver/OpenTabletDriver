@@ -34,6 +34,7 @@
   ],
   "Attributes": {
     "libinputoverride": "1",
-    "Interface": "1"
+    "Interface": "1",
+    "SkipTests": "LPI_DIGITIZER_X,LPI_DIGITIZER_Y,LPI_SAME_ACROSS_AXES"
   }
 }

@@ -243,7 +243,7 @@
 | Huion GT-221 Pro                   |  Missing Features | Touch bar is not yet supported.
 | Huion H1061P                       |  Missing Features | Roller is not yet supported. Group keys act like auxiliary buttons.
 | Huion H1161                        |  Missing Features | Tablet buttons are not yet supported.
-| Huion H610 Pro V3                  |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1
+| Huion H610 Pro V3                  |  Missing Features | Tablet buttons are not yet supported. Windows: Requires Zadig's WinUSB to be installed on interface 1. Current tablet configuration has very low resolution.
 | Huion H951P                        |  Missing Features | Tilt Y-axis is inverted. Wheel is not yet supported. Switching groups is not yet supported; group selectors are mapped as regular buttons.
 | Huion HC16                         |  Missing Features | Wheel is not yet supported.
 | Huion HC16 (Variant 2)             |  Missing Features | Wheel is not yet supported.
