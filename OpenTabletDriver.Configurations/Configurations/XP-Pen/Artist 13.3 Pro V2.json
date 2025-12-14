@@ -1,0 +1,37 @@
+{
+  "Name": "XP-Pen Artist 13.3 Pro V2",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 293.8,
+      "Height": 165.225,
+      "MaxX": 58760,
+      "MaxY": 33045
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "Wheel": {
+      "StepCount": 24,
+      "IsRelative": true
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 10429,
+      "ProductID": 2414,
+      "InputReportLength": 14,
+      "OutputReportLength": 14,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenGen2ReportParser",
+      "OutputInitReport": [
+        "ArAE"
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
