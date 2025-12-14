@@ -433,7 +433,7 @@ namespace OpenTabletDriver.Tests
                 // only emit error if width/height is more than 1 unit off
                 if (Math.Abs(size - suggestedSize) > millimetersPerLine)
                     errors.Add(
-                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIs)}. {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead, assuming an LPI of {closestLpi}.");
+                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIs)}. Assuming an LPI of {closestLpi}, {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead.");
 
                 return closestLpi.Value;
             }
