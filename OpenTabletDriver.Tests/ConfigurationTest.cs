@@ -426,6 +426,7 @@ namespace OpenTabletDriver.Tests
                 Debug.Assert(closestLpi.HasValue);
 
                 decimal suggestedSize = (maxLines / closestLpi.Value) * MILLIMETERS_PER_INCH;
+                suggestedSize = Math.Round(suggestedSize, 8);
 
                 decimal millimetersPerLine = 1 / (closestLpi.Value / MILLIMETERS_PER_INCH);
 
