@@ -431,8 +431,8 @@ namespace OpenTabletDriver.Tests
 
                 string capitalizedPhysicalSide = string.Concat(physicalSide[0].ToString().ToUpper(), physicalSide.AsSpan(1));
 
-                // only emit error if width/height is more than 1 unit off
-                if (Math.Abs(size - suggestedSize) > millimetersPerLine)
+                // only emit error if width/height is 1 unit or more off
+                if (Math.Abs(size - suggestedSize) >= millimetersPerLine)
                     errors.Add(
                         $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIsArr)}. Assuming an LPI of {closestLpi}, {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead.");
 
