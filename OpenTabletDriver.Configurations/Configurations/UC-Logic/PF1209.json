@@ -2,8 +2,8 @@
   "Name": "UC-Logic PF1209",
   "Specifications": {
     "Digitizer": {
-      "Width": 305,
-      "Height": 229,
+      "Width": 304.79365,
+      "Height": 228.59365,
       "MaxX": 47999,
       "MaxY": 35999
     },

@@ -11,16 +11,40 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// <summary>
         /// The width of the digitizer in millimeters.
         /// </summary>
-        [Required(ErrorMessage = $"Digitizer ${nameof(Width)} must be defined")]
-        [JsonConverter(typeof(DecimalJsonConverter))]
-        public float Width { set; get; }
+        [JsonIgnore]
+        public float Width
+        {
+            set => WidthAsDecimal = (decimal)value;
+            get => (float)WidthAsDecimal;
+        }
+
+        /// <summary>
+        /// Width decoded as `decimal` type
+        ///
+        /// TODO: On API bump, make 'Width' decimal type instead?
+        /// </summary>
+        [Required(ErrorMessage = $"Digitizer ${nameof(Height)} must be defined")]
+        [JsonConverter(typeof(DecimalJsonConverter)), JsonProperty("Width")]
+        public decimal WidthAsDecimal { set; get; }
 
         /// <summary>
         /// The height of the digitizer in millimeters.
         /// </summary>
-        [Required(ErrorMessage = $"Digitizer ${nameof(Height)} must be defined")]
-        [JsonConverter(typeof(DecimalJsonConverter))]
-        public float Height { set; get; }
+        [JsonIgnore]
+        public float Height
+        {
+            set => HeightAsDecimal = (decimal)value;
+            get => (float)HeightAsDecimal;
+        }
+
+        /// <summary>
+        /// Height decoded as `decimal` type
+        ///
+        /// TODO: On API bump, make 'Height' decimal type instead?
+        /// </summary>
+        [Required(ErrorMessage = $"Digitizer ${nameof(Width)} must be defined")]
+        [JsonConverter(typeof(DecimalJsonConverter)), JsonProperty("Height")]
+        public decimal HeightAsDecimal { set; get; }
 
         /// <summary>
         /// The maximum X coordinate for the digitizer.
@@ -44,7 +68,7 @@ namespace OpenTabletDriver.Plugin.Tablet
 
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(double);
+            return objectType == typeof(double) || objectType == typeof(decimal);
         }
 
 #nullable enable
@@ -67,10 +91,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         [SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
         private static bool IsWholeValue(object value)
         {
-            if (value is float floatValue)
-                return floatValue == Math.Truncate(floatValue);
-
-            return false;
+            return value switch
+            {
+                float floatValue => floatValue == Math.Truncate(floatValue),
+                decimal decimalValue => decimalValue == Math.Truncate(decimalValue),
+                _ => false,
+            };
         }
     }
 }

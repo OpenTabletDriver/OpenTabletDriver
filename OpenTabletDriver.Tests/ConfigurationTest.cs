@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -322,7 +323,7 @@ namespace OpenTabletDriver.Tests
             var errors = new List<string>();
 
             var config = ttc.Configuration.Value;
-            var filePath = $"{ttc.File.Directory?.Name ?? "unknown"}/{ttc.File.Name}";
+            string filePath = ttc.FileShortName;
 
             // disable warning for "obsoleted" paths
 #pragma warning disable CS0618 // Type or member is obsolete
@@ -342,6 +343,102 @@ namespace OpenTabletDriver.Tests
 
             string errorsFormatted = string.Join(Environment.NewLine, errors);
             Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
+        }
+
+        private const decimal MILLIMETERS_PER_INCH = 25.4m;
+
+        // touch untested
+        [SkippableTheory]
+        [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
+        public void Configurations_Have_Predictable_Digitizer_Dimensions(TestTabletConfiguration ttc)
+        {
+            var errors = new List<string>();
+
+            var digitizer = ttc.Configuration.Value.Specifications.Digitizer;
+            string filePath = ttc.FileShortName;
+
+            bool skipXTest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_X);
+            bool skipYTest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_Y);
+            bool skipAxisEqualTest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_SAME_ACROSS_AXES);
+
+            Skip.If(skipYTest && skipXTest && skipAxisEqualTest, "All LPI checks requested skipped");
+
+            int maxX = (int)digitizer.MaxX;
+            decimal width = digitizer.WidthAsDecimal;
+            decimal? lpiXResult = null;
+
+            if (!skipXTest)
+            {
+                decimal widthInches = width / MILLIMETERS_PER_INCH;
+                decimal lpiX = maxX / widthInches;
+                lpiXResult = validateLPI(lpiX, width, maxX, nameof(width), ttc.ValidLPIsForTablet);
+            }
+
+            int maxY = (int)digitizer.MaxY;
+            decimal height = digitizer.HeightAsDecimal;
+            decimal? lpiYResult = null;
+
+            if (!skipYTest)
+            {
+                decimal heightInches = height / MILLIMETERS_PER_INCH;
+                decimal lpiY = maxY / heightInches;
+                lpiYResult = validateLPI(lpiY, height, maxY, nameof(height), ttc.ValidLPIsForTablet);
+            }
+
+            if (lpiYResult.HasValue && lpiXResult.HasValue && lpiYResult.Value != lpiXResult.Value)
+                errors.Add("Note that the returned LPI's did not match!");
+
+            if (!skipAxisEqualTest)
+            {
+                decimal lpmmY = maxY / height;
+                decimal lpmmX = maxX / width;
+
+                decimal millimetersPerXLine = 1 / lpmmX;
+                decimal millimetersPerYLine = 1 / lpmmY;
+
+                decimal diff = Math.Abs(lpmmX - lpmmY);
+
+                if (diff >= millimetersPerYLine || diff >= millimetersPerXLine)
+                    errors.Add($"X lpmm does not match Y lpmm. X: {lpmmX:0.##}, Y: {lpmmY:0.##}");
+            }
+
+            string errorsFormatted = string.Join(Environment.NewLine, errors);
+            Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
+            return;
+
+            decimal validateLPI(decimal lpi, decimal size, decimal maxLines, string physicalSide, IEnumerable<int> validLPIs)
+            {
+                decimal? closestLpi = null;
+
+                var validLPIsArr = validLPIs as int[] ?? validLPIs.ToArray();
+                foreach (decimal validLpi in validLPIsArr.OrderBy(x => x))
+                {
+                    if (closestLpi == null)
+                    {
+                        closestLpi = validLpi;
+                        continue;
+                    }
+
+                    if (Math.Abs(validLpi - lpi) <= Math.Abs(closestLpi.Value - lpi))
+                        closestLpi = validLpi;
+                }
+
+                Debug.Assert(closestLpi.HasValue);
+
+                decimal suggestedSize = (maxLines / closestLpi.Value) * MILLIMETERS_PER_INCH;
+                suggestedSize = Math.Round(suggestedSize, 8);
+
+                decimal millimetersPerLine = 1 / (closestLpi.Value / MILLIMETERS_PER_INCH);
+
+                string capitalizedPhysicalSide = string.Concat(physicalSide[0].ToString().ToUpper(), physicalSide.AsSpan(1));
+
+                // only emit error if width/height is 1 unit or more off
+                if (Math.Abs(size - suggestedSize) >= millimetersPerLine)
+                    errors.Add(
+                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIsArr)}. Assuming an LPI of {closestLpi}, {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead.");
+
+                return closestLpi.Value;
+            }
         }
 
         private static void PrintDiff(ITestOutputHelper outputHelper, DiffPaneModel diff)
