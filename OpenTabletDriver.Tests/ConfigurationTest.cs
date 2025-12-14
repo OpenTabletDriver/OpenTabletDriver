@@ -360,26 +360,27 @@ namespace OpenTabletDriver.Tests
 
             bool skipXtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_X);
             bool skipYtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_Y);
+            bool skipAxisEqualTest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_SAME_ACROSS_AXES);
 
-            Skip.If(skipYtest && skipXtest, "Both LPI checks requested skipped");
+            Skip.If(skipYtest && skipXtest && skipAxisEqualTest, "All LPI checks requested skipped");
 
+            int maxX = (int)digitizer.MaxX;
+            decimal width = digitizer.WidthAsDecimal;
             decimal? lpiXresult = null;
 
             if (!skipXtest)
             {
-                int maxX = (int)digitizer.MaxX;
-                decimal width = digitizer.WidthAsDecimal;
                 decimal widthInches = width / MILLIMETERS_PER_INCH;
                 decimal lpiX = maxX / widthInches;
                 lpiXresult = validateLpi(lpiX, width, maxX, nameof(width), ttc.ValidLPIsForTablet);
             }
 
+            int maxY = (int)digitizer.MaxY;
+            decimal height = digitizer.HeightAsDecimal;
             decimal? lpiYresult = null;
 
             if (!skipYtest)
             {
-                int maxY = (int)digitizer.MaxY;
-                decimal height = digitizer.HeightAsDecimal;
                 decimal heightInches = height / MILLIMETERS_PER_INCH;
                 decimal lpiY = maxY / heightInches;
                 lpiYresult = validateLpi(lpiY, height, maxY, nameof(height), ttc.ValidLPIsForTablet);
@@ -387,6 +388,20 @@ namespace OpenTabletDriver.Tests
 
             if (lpiYresult.HasValue && lpiXresult.HasValue && lpiYresult.Value != lpiXresult.Value)
                 errors.Add("Note that the returned LPI's did not match!");
+
+            if (!skipAxisEqualTest)
+            {
+                decimal lpmmY = maxY / height;
+                decimal lpmmX = maxX / width;
+
+                decimal millimetersPerXLine = 1 / lpmmX;
+                decimal millimetersPerYLine = 1 / lpmmY;
+
+                decimal diff = Math.Abs(lpmmX - lpmmY);
+
+                if (diff >= millimetersPerYLine || diff >= millimetersPerXLine)
+                    errors.Add($"X lpmm does not match Y lpmm. X: {lpmmX:0.##}, Y: {lpmmY:0.##}");
+            }
 
             string errorsFormatted = string.Join(Environment.NewLine, errors);
             Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");

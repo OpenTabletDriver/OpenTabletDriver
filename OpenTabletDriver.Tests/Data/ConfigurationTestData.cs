@@ -82,6 +82,7 @@ namespace OpenTabletDriver.Tests.Data
     {
         LPI_DIGITIZER_X, // Lines per inches/mm test for X axis on digitizer
         LPI_DIGITIZER_Y, // Lines per inches/mm test for Y axis on digitizer
+        LPI_SAME_ACROSS_AXES, // Test that LPI matches across both dimensions
     }
 
     public static class Extensions
