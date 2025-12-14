@@ -12,7 +12,7 @@
       "ButtonCount": 2
     },
     "Wheel": {
-      "StepCount": 6,
+      "StepCount": 24,
       "IsRelative": true
     },
     "AuxiliaryButtons": {
