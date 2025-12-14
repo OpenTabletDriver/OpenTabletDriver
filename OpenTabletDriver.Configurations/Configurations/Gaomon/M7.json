@@ -1,0 +1,35 @@
+{
+  "Name": "Gaomon M7",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 258.445,
+      "Height": 171.54,
+      "MaxX": 51689,
+      "MaxY": 34308
+    },
+    "Pen": {
+      "MaxPressure": 16383,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 13
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 9580,
+      "ProductID": 100,
+      "InputReportLength": 12,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicV2ReportParser",
+      "DeviceStrings": {
+        "201": "GM001_(T220|T207)_\\d{6}$"
+      },
+      "InitializationStrings": [
+        200
+      ]
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
