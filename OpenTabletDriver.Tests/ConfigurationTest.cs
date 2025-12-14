@@ -410,7 +410,8 @@ namespace OpenTabletDriver.Tests
             {
                 decimal? closestLpi = null;
 
-                foreach (decimal validLpi in validLPIs.OrderBy(x => x))
+                var validLPIsArr = validLPIs as int[] ?? validLPIs.ToArray();
+                foreach (decimal validLpi in validLPIsArr.OrderBy(x => x))
                 {
                     if (closestLpi == null)
                     {
@@ -433,7 +434,7 @@ namespace OpenTabletDriver.Tests
                 // only emit error if width/height is more than 1 unit off
                 if (Math.Abs(size - suggestedSize) > millimetersPerLine)
                     errors.Add(
-                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIs)}. Assuming an LPI of {closestLpi}, {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead.");
+                        $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIsArr)}. Assuming an LPI of {closestLpi}, {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead.");
 
                 return closestLpi.Value;
             }
