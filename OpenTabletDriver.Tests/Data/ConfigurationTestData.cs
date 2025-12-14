@@ -68,7 +68,7 @@ namespace OpenTabletDriver.Tests.Data
                 yield return 1016; // 40 LPMM, e.g. Wacom CTF-430 / Wacom FT-0405-U
                 yield return 2032; // 80 LPMM, older Wacoms (or XP-Pen Artist 22HD)
                 yield return 10160; // 400 LPMM, seen on XP-Pen Star G540 Pro
-                // yield return 508; // 20 LPMM, much older Wacoms (TODO: which?)
+                yield return 508; // 20 LPMM, e.g. Wacom PL-800
                 // these aren't seen yet but are known to be correct as well:
                 // yield return 1270; // 50 LPMM
             }
