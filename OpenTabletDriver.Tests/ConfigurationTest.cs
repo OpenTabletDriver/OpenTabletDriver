@@ -358,35 +358,35 @@ namespace OpenTabletDriver.Tests
             var digitizer = ttc.Configuration.Value.Specifications.Digitizer;
             string filePath = ttc.FileShortName;
 
-            bool skipXtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_X);
-            bool skipYtest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_Y);
+            bool skipXTest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_X);
+            bool skipYTest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_DIGITIZER_Y);
             bool skipAxisEqualTest = ttc.SkippedTestTypes.Contains(TestTypes.LPI_SAME_ACROSS_AXES);
 
-            Skip.If(skipYtest && skipXtest && skipAxisEqualTest, "All LPI checks requested skipped");
+            Skip.If(skipYTest && skipXTest && skipAxisEqualTest, "All LPI checks requested skipped");
 
             int maxX = (int)digitizer.MaxX;
             decimal width = digitizer.WidthAsDecimal;
-            decimal? lpiXresult = null;
+            decimal? lpiXResult = null;
 
-            if (!skipXtest)
+            if (!skipXTest)
             {
                 decimal widthInches = width / MILLIMETERS_PER_INCH;
                 decimal lpiX = maxX / widthInches;
-                lpiXresult = validateLpi(lpiX, width, maxX, nameof(width), ttc.ValidLPIsForTablet);
+                lpiXResult = validateLPI(lpiX, width, maxX, nameof(width), ttc.ValidLPIsForTablet);
             }
 
             int maxY = (int)digitizer.MaxY;
             decimal height = digitizer.HeightAsDecimal;
-            decimal? lpiYresult = null;
+            decimal? lpiYResult = null;
 
-            if (!skipYtest)
+            if (!skipYTest)
             {
                 decimal heightInches = height / MILLIMETERS_PER_INCH;
                 decimal lpiY = maxY / heightInches;
-                lpiYresult = validateLpi(lpiY, height, maxY, nameof(height), ttc.ValidLPIsForTablet);
+                lpiYResult = validateLPI(lpiY, height, maxY, nameof(height), ttc.ValidLPIsForTablet);
             }
 
-            if (lpiYresult.HasValue && lpiXresult.HasValue && lpiYresult.Value != lpiXresult.Value)
+            if (lpiYResult.HasValue && lpiXResult.HasValue && lpiYResult.Value != lpiXResult.Value)
                 errors.Add("Note that the returned LPI's did not match!");
 
             if (!skipAxisEqualTest)
@@ -407,7 +407,7 @@ namespace OpenTabletDriver.Tests
             Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
             return;
 
-            decimal validateLpi(decimal lpi, decimal size, decimal maxLines, string physicalSide, IEnumerable<int> validLPIs)
+            decimal validateLPI(decimal lpi, decimal size, decimal maxLines, string physicalSide, IEnumerable<int> validLPIs)
             {
                 decimal? closestLpi = null;
 
