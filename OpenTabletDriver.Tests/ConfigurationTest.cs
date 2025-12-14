@@ -363,14 +363,18 @@ namespace OpenTabletDriver.Tests
 
             Skip.If(skipYtest && skipXtest, "Both LPI checks requested skipped");
 
+            decimal? lpiXresult = null;
+
             if (!skipXtest)
             {
                 int maxX = (int)digitizer.MaxX;
                 decimal width = digitizer.WidthAsDecimal;
                 decimal widthInches = width / MILLIMETERS_PER_INCH;
                 decimal lpiX = maxX / widthInches;
-                validateLpi(lpiX, width, maxX, nameof(width), ttc.ValidLPIsForTablet);
+                lpiXresult = validateLpi(lpiX, width, maxX, nameof(width), ttc.ValidLPIsForTablet);
             }
+
+            decimal? lpiYresult = null;
 
             if (!skipYtest)
             {
@@ -378,14 +382,17 @@ namespace OpenTabletDriver.Tests
                 decimal height = digitizer.HeightAsDecimal;
                 decimal heightInches = height / MILLIMETERS_PER_INCH;
                 decimal lpiY = maxY / heightInches;
-                validateLpi(lpiY, height, maxY, nameof(height), ttc.ValidLPIsForTablet);
+                lpiYresult = validateLpi(lpiY, height, maxY, nameof(height), ttc.ValidLPIsForTablet);
             }
+
+            if (lpiYresult.HasValue && lpiXresult.HasValue && lpiYresult.Value != lpiXresult.Value)
+                errors.Add("Note that the returned LPI's did not match!");
 
             string errorsFormatted = string.Join(Environment.NewLine, errors);
             Assert.True(errors.Count == 0, $"Errors detected in {filePath}:{Environment.NewLine}{errorsFormatted}");
             return;
 
-            void validateLpi(decimal lpi, decimal size, decimal maxLines, string physicalSide, IEnumerable<int> validLPIs)
+            decimal validateLpi(decimal lpi, decimal size, decimal maxLines, string physicalSide, IEnumerable<int> validLPIs)
             {
                 decimal? closestLpi = null;
 
@@ -413,6 +420,8 @@ namespace OpenTabletDriver.Tests
                 if (Math.Abs(size - suggestedSize) > millimetersPerLine)
                     errors.Add(
                         $"Unexpected {physicalSide} LPI {lpi:0.##}. Must be one of {string.Join(", ", validLPIs)}. {capitalizedPhysicalSide} '{size}' needs to be '{suggestedSize:0.#####}' instead, assuming an LPI of {closestLpi}.");
+
+                return closestLpi.Value;
             }
         }
 
