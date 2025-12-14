@@ -9,7 +9,7 @@ using OpenTabletDriver.Plugin.Platform.Display;
 
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
-    using static Windows;
+    using static OpenTabletDriver.Native.Windows.Windows;
 
     public class WindowsDisplay : IVirtualScreen
     {

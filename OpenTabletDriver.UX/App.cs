@@ -35,6 +35,8 @@ namespace OpenTabletDriver.UX
         public static void Run(string platform, string[] args)
         {
             var commandLineOptions = ParseCmdLineOptions(args);
+            if (commandLineOptions == null)
+                return;
 
             using (var mutex = new Mutex(true, @$"Global\{APPNAME}.Mutex", out var firstInstance))
             {
@@ -104,13 +106,15 @@ namespace OpenTabletDriver.UX
         {
             var commandLineOptions = new CommandLineOptions();
 
-            var minimizedOption = new Option<bool>(
-                aliases: new[] { "-m", "--minimized" },
-                description: "Start the application minimized");
+            var minimizedOption = new Option<bool>("--minimized", "-m")
+            {
+                Description = "Start the application minimized"
+            };
 
-            var skipUpdate = new Option<bool>(
-                aliases: new[] { "--skipupdate" },
-                description: "Skip checking for updates");
+            var skipUpdate = new Option<bool>("--skipupdate")
+            {
+                Description = "Skip checking for updates"
+            };
 
             var root = new RootCommand("OpenTabletDriver UX")
             {
@@ -118,17 +122,16 @@ namespace OpenTabletDriver.UX
                 skipUpdate
             };
 
-            root.SetHandler((minimized) =>
+            var results = root.Parse(args);
+            if (results.Action is not null)
             {
-                commandLineOptions.StartMinimized = minimized;
-            }, minimizedOption);
+                // if we hit a built-in like --help or --version
+                results.Invoke();
+                return null;
+            }
 
-            root.SetHandler((skipUpdate) =>
-            {
-                commandLineOptions.SkipUpdate = skipUpdate;
-            }, skipUpdate);
-
-            root.Invoke(args);
+            commandLineOptions.StartMinimized = results.GetValue(minimizedOption);
+            commandLineOptions.SkipUpdate = results.GetValue(skipUpdate);
             return commandLineOptions;
         }
 

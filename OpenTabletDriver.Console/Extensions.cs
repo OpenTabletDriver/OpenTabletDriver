@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Console
         public static void AddCommands(this Command command, IEnumerable<Command> commands)
         {
             foreach (var addedCommand in commands)
-                command.AddCommand(addedCommand);
+                command.Add(addedCommand);
         }
 
         public static string Format(this PluginSetting setting)

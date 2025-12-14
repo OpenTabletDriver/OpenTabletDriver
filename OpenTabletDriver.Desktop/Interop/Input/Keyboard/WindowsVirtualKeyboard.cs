@@ -6,7 +6,7 @@ using OpenTabletDriver.Plugin.Platform.Keyboard;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 {
-    using static Windows;
+    using static OpenTabletDriver.Native.Windows.Windows;
 
     public class WindowsVirtualKeyboard : IVirtualKeyboard
     {

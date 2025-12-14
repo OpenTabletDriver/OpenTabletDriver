@@ -38,48 +38,13 @@ namespace OpenTabletDriver.Daemon
         {
             var cmdLineOptions = ParseCmdLineOptions(args);
 
+            if (cmdLineOptions == null)
+                return;
+
             if (!string.IsNullOrWhiteSpace(cmdLineOptions?.AppDataDirectory?.FullName))
                 AppInfo.Current.AppDataDirectory = cmdLineOptions.AppDataDirectory.FullName;
             if (!string.IsNullOrWhiteSpace(cmdLineOptions?.ConfigurationDirectory?.FullName))
                 AppInfo.Current.ConfigurationDirectory = cmdLineOptions.ConfigurationDirectory.FullName;
-
-            if (cmdLineOptions.SpecialCommand is UpdateCommandOptions updateCommandOptions)
-            {
-                var sources = updateCommandOptions.Sources.Select(x => x.FullName).ToArray();
-                var destination = updateCommandOptions.Destination.FullName;
-                var ret = 0;
-
-                using (var file = File.Open(Path.Join(AppInfo.Current.AppDataDirectory, "daemon-update.log"), FileMode.Create))
-                {
-                    var logger = new StreamWriter(file) { AutoFlush = true };
-
-                    await logger.WriteLineAsync("Starting update using following files...");
-                    foreach (var source in sources)
-                        await logger.WriteLineAsync($" {source}");
-                    await logger.WriteLineAsync($"Destination: {destination}");
-
-                    try
-                    {
-                        await DesktopInterop.Updater.Install(
-                            // bypass CheckForUpdate
-                            new Update(
-                                new Version(0, 0, 0, 0),
-                                sources.ToImmutableArray(),
-                                destination
-                            )
-                        );
-                        await logger.WriteLineAsync("Update complete.");
-                    }
-                    catch (Exception ex)
-                    {
-                        await logger.WriteLineAsync(ex.ToString());
-                        await logger.WriteLineAsync("Update failed!");
-                        ret = 1;
-                    }
-                }
-
-                Environment.Exit(ret);
-            }
 
             await StartDaemon();
         }
@@ -186,57 +151,36 @@ namespace OpenTabletDriver.Daemon
                 TreatUnmatchedTokensAsErrors = true
             };
 
-            var updateCommand = new Command("update") { IsHidden = true };
-
-            rootCommand.AddCommand(updateCommand);
-
-            var appDataOption = new Option<DirectoryInfo>(
-                aliases: new[] { "--appdata", "-a" },
-                description: "Application data directory"
-            );
-
-            var configOption = new Option<DirectoryInfo>(
-                aliases: new[] { "--config", "-c" },
-                description: "Configuration directory"
-            );
-
-            rootCommand.AddGlobalOption(appDataOption);
-            rootCommand.AddGlobalOption(configOption);
-
-            rootCommand.SetHandler(setupGlobalOptions, appDataOption, configOption);
-
-            var sourcesArg = new Option<List<DirectoryInfo>>("--sources")
+            var appDataOption = new Option<DirectoryInfo>("--appdata", "-a")
             {
-                IsRequired = true,
-                AllowMultipleArgumentsPerToken = true
-            };
-            var destArg = new Option<DirectoryInfo>("--destination")
+                Description = "Application data directory",
+            }.AcceptLegalFilePathsOnly();
+
+            var configOption = new Option<DirectoryInfo>("--config", "-c")
             {
-                IsRequired = true
-            };
+                Description = "Configuration directory",
+            }.AcceptExistingOnly();
 
-            updateCommand.AddOption(sourcesArg);
-            updateCommand.AddOption(destArg);
+            rootCommand.Options.Add(appDataOption);
+            rootCommand.Options.Add(configOption);
 
-            updateCommand.SetHandler((appData, config, src, dest) =>
+            var parseResult = rootCommand.Parse(args);
+            if (parseResult.Errors.Any())
             {
-                setupGlobalOptions(appData, config);
-                cmdLineOptions.SpecialCommand = new UpdateCommandOptions
-                {
-                    Sources = src,
-                    Destination = dest
-                };
-            }, appDataOption, configOption, sourcesArg, destArg);
+                Log.Write(nameof(ParseCmdLineOptions), $"Command line parsing errors encountered: {string.Join(",", parseResult.Errors.Select(x => x.Message))}", LogLevel.Error);
+                return null;
+            }
 
-            rootCommand.Invoke(args);
+            cmdLineOptions.AppDataDirectory = parseResult.RootCommandResult.GetValue(appDataOption);
+            cmdLineOptions.ConfigurationDirectory = parseResult.RootCommandResult.GetValue(configOption);
+
+            if (parseResult.Action is not null)
+            {
+                parseResult.Invoke();
+                return null;
+            }
 
             return cmdLineOptions;
-
-            void setupGlobalOptions(DirectoryInfo appData, DirectoryInfo config)
-            {
-                cmdLineOptions.AppDataDirectory = appData;
-                cmdLineOptions.ConfigurationDirectory = config;
-            }
         }
 
         static DriverDaemon BuildDaemon()
