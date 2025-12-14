@@ -16,11 +16,14 @@ namespace OpenTabletDriver.Console
 
         static async Task<Settings> GetSettings()
         {
+            if (!await EnsureDaemonReady())
+                throw new InvalidOperationException("Cannot get settings without a daemon");
             return await Driver.Instance.GetSettings();
         }
 
         static async Task ApplySettings(Settings settings)
         {
+            if (!await EnsureDaemonReady()) return;
             await Driver.Instance.SetSettings(settings);
         }
 
@@ -49,6 +52,9 @@ namespace OpenTabletDriver.Console
 
         static async Task<Profile> GetProfile(string profileName, Settings settings = null)
         {
+            if (!await EnsureDaemonReady())
+                throw new InvalidOperationException("Cannot get a profile without a daemon");
+
             const StringComparison comparer = StringComparison.InvariantCultureIgnoreCase;
             settings ??= await GetSettings();
 
@@ -66,6 +72,7 @@ namespace OpenTabletDriver.Console
 
         static async Task ListTypes<T>(Func<Type, bool> predicate = null)
         {
+            if (!await EnsureDaemonReady()) return;
             var types = AppInfo.PluginManager.GetChildTypes<T>();
             if (types.Count == 0)
             {
