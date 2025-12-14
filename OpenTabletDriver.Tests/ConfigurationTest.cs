@@ -348,7 +348,6 @@ namespace OpenTabletDriver.Tests
         private const decimal MILLIMETERS_PER_INCH = 25.4m;
 
         // touch untested
-        // TODO: add support for tablet configs defining a custom known per-axis LPI, or to fully ignore this test
         [SkippableTheory]
         [MemberData(nameof(ConfigurationTestData.TestTabletConfigurations), MemberType = typeof(ConfigurationTestData))]
         public void Configurations_Have_Predictable_Digitizer_Dimensions(TestTabletConfiguration ttc)
