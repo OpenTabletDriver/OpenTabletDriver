@@ -73,6 +73,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
         public TouchPoint[] Touches { set; get; }
-        public bool ShouldSerializeTouches() => true;
+        // can this be deleted?
+        // public bool ShouldSerializeTouches() => true;
     }
 }

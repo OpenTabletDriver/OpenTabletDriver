@@ -15,6 +15,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private AbsoluteModeSettings absoluteMode = new AbsoluteModeSettings();
         private RelativeModeSettings relativeMode = new RelativeModeSettings();
         private BindingSettings bindings = new BindingSettings();
+        private TouchSettings touchSettings = new TouchSettings();
         private PluginSettingStoreCollection filters = new PluginSettingStoreCollection();
 
         [JsonProperty("Tablet")]
@@ -59,6 +60,13 @@ namespace OpenTabletDriver.Desktop.Profiles
             get => bindings;
         }
 
+        [JsonProperty(nameof(TouchSettings))]
+        public TouchSettings TouchSettings
+        {
+            set => this.RaiseAndSetIfChanged(ref touchSettings, value);
+            get => touchSettings;
+        }
+
         private static Type DefaultOutputModeType =>
             DesktopInterop.CurrentPlatform switch
             {
@@ -74,7 +82,8 @@ namespace OpenTabletDriver.Desktop.Profiles
                 OutputMode = new PluginSettingStore(DefaultOutputModeType),
                 AbsoluteModeSettings = AbsoluteModeSettings.GetDefaults(tablet.Properties.Specifications.Digitizer),
                 RelativeModeSettings = RelativeModeSettings.GetDefaults(),
-                BindingSettings = BindingSettings.GetDefaults(tablet.Properties.Specifications)
+                BindingSettings = BindingSettings.GetDefaults(tablet.Properties.Specifications),
+                TouchSettings = new TouchSettings(),
             };
         }
     }
