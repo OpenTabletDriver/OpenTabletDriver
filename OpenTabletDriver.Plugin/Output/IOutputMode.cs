@@ -38,5 +38,10 @@ namespace OpenTabletDriver.Plugin.Output
         /// Whether to disable tilt
         /// </summary>
         public bool DisableTilt { set; get; }
+
+        /// <summary>
+        /// Whether to only emit reports when tool ID can be confirmed.
+        /// </summary>
+        public bool ConfidentReportsOnly { set; get; }
     }
 }

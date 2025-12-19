@@ -48,6 +48,8 @@ namespace OpenTabletDriver.Plugin.Output
 
         public bool DisableTilt { set; get; }
 
+        public virtual bool ConfidentReportsOnly { get; set; }
+
         public Matrix3x2 TransformationMatrix { protected set; get; }
 
         public IList<IPositionedPipelineElement<IDeviceReport>> Elements

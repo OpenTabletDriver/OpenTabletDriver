@@ -237,6 +237,8 @@ namespace OpenTabletDriver.Daemon
                             LogPressureState(group, profile);
                         if (absoluteMode.Pointer is ITiltHandler)
                             LogTiltState(group, profile);
+                        if (absoluteMode.Pointer is IConfidenceHandler)
+                            LogReportConfidence(group, profile);
                     }
 
                     if (dev.OutputMode is RelativeOutputMode relativeMode)
@@ -246,6 +248,8 @@ namespace OpenTabletDriver.Daemon
                             LogPressureState(group, profile);
                         if (relativeMode.Pointer is ITiltHandler)
                             LogTiltState(group, profile);
+                        if (relativeMode.Pointer is IConfidenceHandler)
+                            LogReportConfidence(group, profile);
                     }
 
                     if (dev.OutputMode is { } outputMode)
@@ -256,6 +260,7 @@ namespace OpenTabletDriver.Daemon
 
                         outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
+                        outputMode.ConfidentReportsOnly = profile.BindingSettings.ConfidentReportsOnly;
                     }
                 }
 
@@ -294,6 +299,12 @@ namespace OpenTabletDriver.Daemon
         {
             Log.Write(group,
                 $"Pressure: {(profile.BindingSettings.DisablePressure ? "Disabled" : "Enabled")}");
+        }
+
+        private static void LogReportConfidence(string group, Profile profile)
+        {
+            Log.Write(group,
+                $"Confident reports only: {(profile.BindingSettings.ConfidentReportsOnly ? "Enabled" : "Disabled")}");
         }
 
         private void RecoverSettings(Settings? settings)

@@ -108,6 +108,13 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                             Text = "Disable Tilt",
                                         }
                                     },
+                                    new Group {
+                                        Orientation = Orientation.Horizontal,
+                                        ToolTip = "Only emits reports when tool is confidently in range. Also enables tool identification reports. May reduce lift-off distance on some tablets",
+                                        Content = confidentReportsOnly = new CheckBox {
+                                            Text = "Confident Reports Only",
+                                        },
+                                    },
                                 }
                             }
                         }
@@ -122,11 +129,12 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             penButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.PenButtons));
             disablePressure.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisablePressure));
             disableTilt.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisableTilt));
+            confidentReportsOnly.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.ConfidentReportsOnly));
         }
 
         private BindingDisplay tipButton, eraserButton;
         private FloatSlider tipThreshold, eraserThreshold;
-        private CheckBox disablePressure, disableTilt;
+        private CheckBox disablePressure, disableTilt, confidentReportsOnly;
         private BindingDisplayList penButtons;
     }
 }

@@ -135,12 +135,28 @@ namespace OpenTabletDriver.Plugin.Output
             return report;
         }
 
+        public override bool ConfidentReportsOnly
+        {
+            get => base.ConfidentReportsOnly;
+            set
+            {
+                base.ConfidentReportsOnly = value;
+                if (Pointer is IConfidenceHandler confidenceHandler)
+                    confidenceHandler.SetConfidenceHandling(value);
+            }
+        }
+
         protected override void OnOutput(IDeviceReport report)
         {
             // this should be ordered from least to most chance of having a
             // dependency to another pointer property.
-            if (report is IProximityReport proximityReport && Pointer is IHoverDistanceHandler hoverDistanceHandler)
-                hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            if (report is IProximityReport proximityReport)
+            {
+                if (ConfidentReportsOnly && Pointer is IConfidenceHandler confidenceHandler)
+                    confidenceHandler.SetConfidence(proximityReport.NearProximity);
+                if (Pointer is IHoverDistanceHandler hoverDistanceHandler)
+                    hoverDistanceHandler.SetHoverDistance(proximityReport.HoverDistance);
+            }
             if (report is IEraserReport eraserReport && Pointer is IEraserHandler eraserHandler)
                 eraserHandler.SetEraser(eraserReport.Eraser);
             if (report is ITiltReport tiltReport && Pointer is ITiltHandler tiltHandler && !DisableTilt)
@@ -148,6 +164,8 @@ namespace OpenTabletDriver.Plugin.Output
             if (report is ITabletReport tabletReport && Pointer is IPressureHandler pressureHandler &&
                 !DisablePressure && Tablet?.Properties.Specifications.Pen != null)
                 pressureHandler.SetPressure(tabletReport.Pressure / (float)Tablet.Properties.Specifications.Pen.MaxPressure);
+            if (ConfidentReportsOnly && report is IToolReport toolReport && Pointer is IToolHandler toolHandler)
+                toolHandler.RegisterTool(toolReport.RawToolID, toolReport.Serial);
 
             // make sure to set the position last
             if (report is IAbsolutePositionReport absReport)

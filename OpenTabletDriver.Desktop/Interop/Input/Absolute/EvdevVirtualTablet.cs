@@ -8,11 +8,12 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
-    public class EvdevVirtualTablet : IPenActionHandler, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, ISynchronousPointer, IDisposable
+    public class EvdevVirtualTablet : IPenActionHandler, IAbsolutePointer, IPressureHandler, ITiltHandler, IEraserHandler, IHoverDistanceHandler, IConfidenceHandler, IToolHandler, ISynchronousPointer, IDisposable
     {
         private const int RESOLUTION = 1000; // subpixels per screen pixel
 
-        private bool isEraser;
+        private bool isEraser, useConfidenceHandling, isConfident, isToolReport;
+        private int toolID, toolSerial, lastToolSerial;
 
         private EvdevDevice Device { set; get; }
 
@@ -76,6 +77,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             input_absinfo* yTiltPtr = &yTilt;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
 
+            // enable tool ID/serial reporting
+            var toolId = new input_absinfo { minimum = 0, maximum = int.MaxValue };
+            input_absinfo* toolIdPtr = &toolId;
+            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_MISC, (IntPtr)toolIdPtr);
+            Device.EnableType(EventType.EV_MSC);
+            Device.EnableCode(EventType.EV_MSC, EventCode.MSC_SERIAL);
+
             Device.EnableTypeCodes(
                 EventType.EV_KEY,
                 supportedEventCodes
@@ -99,25 +107,30 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetPosition(Vector2 pos)
         {
-            Device.Write(EventType.EV_KEY, currentTool, 1);
+            if (useConfidenceHandling && !isConfident) return;
+            if (!useConfidenceHandling)
+                Device.Write(EventType.EV_KEY, currentTool, 1);
             Device.Write(EventType.EV_ABS, EventCode.ABS_X, (int)(pos.X * RESOLUTION));
             Device.Write(EventType.EV_ABS, EventCode.ABS_Y, (int)(pos.Y * RESOLUTION));
         }
 
         public void SetPressure(float percentage)
         {
+            if (useConfidenceHandling && !isConfident) return;
             Device.Write(EventType.EV_KEY, EventCode.BTN_TOUCH, percentage > 0 ? 1 : 0);
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, (int)(MaxPressure * percentage));
         }
 
         public void SetTilt(Vector2 tilt)
         {
+            if (useConfidenceHandling && !isConfident) return;
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_X, (int)tilt.X);
             Device.Write(EventType.EV_ABS, EventCode.ABS_TILT_Y, (int)tilt.Y);
         }
 
         public void SetEraser(bool isEraser)
         {
+            if (useConfidenceHandling && !isConfident) return;
             if (this.isEraser == isEraser)
                 return; // do nothing if no state change
 
@@ -130,6 +143,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void SetHoverDistance(uint distance)
         {
+            if (useConfidenceHandling && !isConfident) return;
             Device.Write(EventType.EV_ABS, EventCode.ABS_DISTANCE, (int)distance);
         }
 
@@ -147,6 +161,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.Write(EventType.EV_ABS, EventCode.ABS_PRESSURE, 0);
 
             isEraser = false;
+            isConfident = false;
+            lastToolSerial = toolSerial;
+            toolID = toolSerial = 0;
         }
 
         private static EventCode? GetCode(PenAction button) => button switch
@@ -167,6 +184,30 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
         public void Flush()
         {
+            if (isToolReport)
+            {
+                // drop packet for tool reports to avoid jumping cursor
+                isToolReport = false;
+                return;
+            }
+
+            if (useConfidenceHandling)
+            {
+                Device.Write(EventType.EV_ABS, EventCode.ABS_MISC, toolID);
+                if (isConfident)
+                {
+                    Device.Write(EventType.EV_KEY, currentTool, 1);
+                    if (toolSerial > 0)
+                    {
+                        Device.Write(EventType.EV_MSC, EventCode.MSC_SERIAL, toolSerial);
+                    }
+                }
+                else if (lastToolSerial != 0) // we must report serial on last out report
+                {
+                    Device.Write(EventType.EV_MSC, EventCode.MSC_SERIAL, lastToolSerial);
+                    lastToolSerial = 0;
+                }
+            }
             Device.Sync();
         }
 
@@ -180,6 +221,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
         {
             if (GetCode(action) is { } code)
                 SetKeyState(code, false);
+        }
+
+        public void SetConfidence(bool isConfident) => this.isConfident = isConfident;
+
+        public void SetConfidenceHandling(bool enableConfidenceHandling) => useConfidenceHandling = enableConfidenceHandling;
+
+        public void RegisterTool(uint toolID, ulong toolSerial)
+        {
+            this.toolID = (int)toolID;
+            this.toolSerial = (int)toolSerial;
+            isToolReport = true;
         }
     }
 }
