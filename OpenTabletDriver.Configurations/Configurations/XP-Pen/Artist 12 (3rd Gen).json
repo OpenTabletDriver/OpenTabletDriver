@@ -13,14 +13,22 @@
     },
     "AuxiliaryButtons": {
       "ButtonCount": 8
+    },
+    "Wheel": {
+      "StepCount": 24,
+      "IsRelative": true,
+      "AngleOfZeroReading": 0.0,
+      "Buttons": {
+        "ButtonCount": 0
+      }
     }
   },
   "DigitizerIdentifiers": [
     {
       "VendorID": 10429,
       "ProductID": 2429,
-      "InputReportLength": 12,
-      "OutputReportLength": 33,
+      "InputReportLength": 13,
+      "OutputReportLength": 9,
       "ReportParser": "OpenTabletDriver.Configurations.Parsers.XP_Pen.XP_PenOffsetPressureReportParser",
       "OutputInitReport": ["ArAE"]
     }
