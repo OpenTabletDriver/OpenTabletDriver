@@ -5,6 +5,7 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Wheel;
+using OpenTabletDriver.Desktop.Profiles;
 
 #nullable enable
 
@@ -13,12 +14,15 @@ namespace OpenTabletDriver.Desktop.Binding
     [PluginIgnore]
     public class BindingHandler : IPositionedPipelineElement<IDeviceReport>
     {
-        public BindingHandler(TabletReference tablet)
+    	private readonly WheelModeSlot[] wheelModes;
+    	
+        public BindingHandler(TabletReference tablet, BindingSettings settings)
         {
             this.tablet = tablet;
             this.wheelSteps = tablet.Properties.Specifications.Wheel?.StepCount ?? 0;
             this.halfWheelSteps = tablet.Properties.Specifications.Wheel?.StepCount / 2d;
             this.threeHalfWheelSteps = this.halfWheelSteps * 3d;
+            this.wheelModes = WheelConfigLoader.LoadFromConfig(settings);
         }
 
         public ThresholdBindingState? Tip { set; get; }

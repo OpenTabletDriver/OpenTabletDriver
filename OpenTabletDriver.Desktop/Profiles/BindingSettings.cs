@@ -3,6 +3,7 @@ using OpenTabletDriver.Desktop.Binding;
 using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Desktop.Profiles
 {
@@ -23,6 +24,18 @@ namespace OpenTabletDriver.Desktop.Profiles
             wheelButtons = new PluginSettingStoreCollection();
 
         private bool disablePressure, disableTilt;
+        
+        private WheelModeSlot[] wheelModes = WheelDefaults.CreateDefault();
+
+        /// <summary>
+        /// User-defined wheel mode configuration (mapping wheel input to actions).
+        /// </summary>
+        [JsonProperty("WheelModes")]
+        public WheelModeSlot[] WheelModes
+        {
+            set => this.RaiseAndSetIfChanged(ref this.wheelModes, value);
+            get => this.wheelModes;
+        }
 
         [JsonProperty("TipActivationThreshold")]
         public float TipActivationThreshold
@@ -149,11 +162,13 @@ namespace OpenTabletDriver.Desktop.Profiles
                 PenButtons = new PluginSettingStoreCollection(),
                 AuxButtons = new PluginSettingStoreCollection(),
                 MouseButtons = new PluginSettingStoreCollection(),
-                WheelButtons = new PluginSettingStoreCollection()
+                WheelButtons = new PluginSettingStoreCollection(),
+
+                // Default WheelModes
+                WheelModes = WheelDefaults.CreateDefault()
             };
 
             bindingSettings.AddPenButtons(tabletSpecifications);
-
             bindingSettings.MatchSpecifications(tabletSpecifications);
             return bindingSettings;
         }

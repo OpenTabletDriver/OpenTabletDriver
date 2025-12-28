@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Plugin.Tablet.Wheel
             }
             while (!modes[currentMode].Enabled && currentMode != start);
 
-            Console.WriteLine($"[Wheel] Switched to mode: {modes[currentMode].Name}");
+            Log.Write(nameof(WheelModeManager), $"Switched to mode: {modes[currentMode].Name}", LogLevel.Debug);
         }
 
         public void HandleDelta(int delta)

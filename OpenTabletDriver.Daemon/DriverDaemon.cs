@@ -250,7 +250,7 @@ namespace OpenTabletDriver.Daemon
                     if (dev.OutputMode is { } outputMode)
                     {
                         outputMode.Tablet = tabletReference;
-                        var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
+                        var bindingHandler = new BindingHandler(tabletReference, profile.BindingSettings);
                         SetOutputModeElements(dev, outputMode, profile, bindingHandler);
 
                         outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
@@ -457,7 +457,7 @@ namespace OpenTabletDriver.Daemon
         {
             string group = dev.Properties.Name;
             var tabletReference = outputMode.Tablet;
-            var bindingHandler = new BindingHandler(tabletReference);
+            var bindingHandler = new BindingHandler(tabletReference, settings);
 
             var bindingServiceProvider = new ServiceManager();
             object? pointer = outputMode switch

@@ -35,10 +35,5 @@ namespace OpenTabletDriver.Plugin.Tablet.Wheel
                 new WheelModeSlot { Enabled = false, Name = "Mode 6" }
             };
         }
-
-        public static WheelModeSlot[] LoadFromConfig(TabletReference tablet)
-        {
-            return tablet.Properties.WheelModes ?? CreateDefault();
-        }
     }
 }

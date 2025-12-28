@@ -40,9 +40,9 @@ namespace OpenTabletDriver.Plugin.Tablet
         public Dictionary<string, string>? Attributes { set; get; }
     
         /// <summary>
-        /// Wheel mode configuration for tablets with wheels.
+        /// Wheel specifications (relative/absolute, step count, etc.)
         /// </summary>
-        public WheelModeSlot[]? WheelModes { set; get; }
+        public WheelSpecification? Wheel { get; set; }
         
         #region Legacy Properties
 
