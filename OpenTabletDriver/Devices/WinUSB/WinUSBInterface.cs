@@ -37,6 +37,9 @@ namespace OpenTabletDriver.Devices.WinUSB
                 if (!WinUsb_QueryInterfaceSettings(winUsbHandle, 0, &interfaceDescriptor))
                     throw new IOException("Failed to get interface descriptor");
 
+                if (interfaceDescriptor.bInterfaceClass != 3)
+                    throw new IOException("Can't request a report descriptor - not a HID device");
+
                 InterfaceNum = interfaceDescriptor.bInterfaceNumber;
 
                 for (byte i = 0; i < interfaceDescriptor.bNumEndpoints; i++)
