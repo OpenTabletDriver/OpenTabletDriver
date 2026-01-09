@@ -1,0 +1,33 @@
+{
+  "Name": "Bosto BST-Y3",
+  "Specifications": {
+    "Digitizer": {
+      "Width": 292.1,
+      "Height": 162.56,
+      "MaxX": 8340,
+      "MaxY": 4680
+    },
+    "Pen": {
+      "MaxPressure": 8192,
+      "ButtonCount": 2
+    },
+    "AuxiliaryButtons": {
+      "ButtonCount": 8
+    }
+  },
+  "DigitizerIdentifiers": [
+    {
+      "VendorID": 3793,
+      "ProductID": 30753,
+      "InputReportLength": 10,
+      "ReportParser": "OpenTabletDriver.Configurations.Parsers.UCLogic.UCLogicReportParser",
+      "DeviceStrings": {
+        "3": "^A02017120201$"
+      },
+      "InitializationStrings": []
+    }
+  ],
+  "Attributes": {
+    "libinputoverride": "1"
+  }
+}
