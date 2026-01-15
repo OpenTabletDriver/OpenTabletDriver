@@ -10,6 +10,7 @@ namespace OpenTabletDriver.Native.OSX
     using CGError = Int32;
     using CGEventRef = IntPtr;
     using CGEventSourceRef = IntPtr;
+    using CFMachPortRef = IntPtr;
 
     public static class OSX
     {
@@ -49,6 +50,12 @@ namespace OpenTabletDriver.Native.OSX
         public extern static CGEventRef CGEventSetIntegerValueField(CGEventRef eventRef, CGEventField field, long value);
 
         [DllImport(Quartz)]
+        public static extern long CGEventGetIntegerValueField(IntPtr @event, CGEventField field);
+
+        [DllImport(Quartz)]
+        public static extern double CGEventGetDoubleValueField(IntPtr @event, CGEventField field);
+
+        [DllImport(Quartz)]
         public extern static void CGEventSetDoubleValueField(CGEventRef eventRef, CGEventField field, double value);
 
         [DllImport(Quartz)]
@@ -62,6 +69,12 @@ namespace OpenTabletDriver.Native.OSX
 
         [DllImport(Quartz)]
         public extern static CGEventSourceRef CGEventSourceCreate(int stateID);
+
+        [DllImport(Quartz)]
+        public static extern CFMachPortRef CGEventTapCreate(CGEventTapLocation tap, CGEventTapPlacement place, CGEventTapOptions options, CGEventTypeMask eventsOfInterest, CGEventTapCallback callback, IntPtr userInfo);
+
+        [DllImport(Quartz)]
+        public static extern void CGEventTapEnable(CFMachPortRef tap, bool enable);
 
         [DllImport(Quartz)]
         public extern static ulong CGEventSourceFlagsState(int stateID);

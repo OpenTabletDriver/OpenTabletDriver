@@ -33,5 +33,6 @@ namespace OpenTabletDriver.Native.OSX.Input
         tabletProximityEventCapabilityMask = 36, // int
         tabletProximityEventPointerType = 37, // int
         tabletProximityEventEnterProximity = 38, // int
+        eventSourceUnixProcessID = 41, // int
     }
 }

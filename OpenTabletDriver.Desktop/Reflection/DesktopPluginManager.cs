@@ -270,6 +270,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             AddService<IServiceProvider>(() => this);
             AddService(() => DesktopInterop.Timer);
             AddService(() => DesktopInterop.AbsolutePointer);
+            AddService(() => DesktopInterop.PointerFilter);
             AddService(() => DesktopInterop.RelativePointer);
             AddService(() => DesktopInterop.VirtualTablet);
             AddService(() => DesktopInterop.VirtualScreen);

@@ -134,8 +134,10 @@ namespace OpenTabletDriver.Daemon
         private Settings? Settings { set; get; }
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private IUpdater Updater = DesktopInterop.Updater;
+        private ISystemPointerFilter PointerFilter = DesktopInterop.PointerFilter;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
+        private bool _systemPointerFilterEnabled = false;
 
         private UpdateInfo? _updateInfo;
         private LogFile _logFile;
@@ -211,10 +213,16 @@ namespace OpenTabletDriver.Daemon
         {
             try
             {
-                foreach (var dev in Driver.InputDevices)
+                foreach (var dev in Driver.InputDevices) {
                     dev.OutputMode?.Dispose();
+                    dev.Disconnected += (sender, e) =>
+                    {
+                        PointerFilter.Enabled = false;
+                    };
+                }
 
                 Settings = settings ??= Settings.GetDefaults();
+                _systemPointerFilterEnabled = false;
 
                 foreach (InputDeviceTree? dev in Driver.InputDevices)
                 {
@@ -256,7 +264,24 @@ namespace OpenTabletDriver.Daemon
                         outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
                     }
+
+                    if (dev.Properties.Attributes is { } attributes) 
+                    {
+                        foreach (var pair in attributes) 
+                        {
+                            if (pair.Key == "libinputoverride") 
+                            {
+                                
+                                if (pair.Value == "1") 
+                                {
+                                    _systemPointerFilterEnabled = true;
+                                }
+                            } 
+                        }
+                    }
                 }
+
+                PointerFilter.Enabled = _systemPointerFilterEnabled;
 
                 if (Driver.InputDevices.Length > 0)
                     Log.Write("Settings", "Driver is enabled.");
