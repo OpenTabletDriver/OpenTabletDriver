@@ -1,5 +1,5 @@
 using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.Threading;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
@@ -13,19 +13,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
     public class MacOSPointerFilter : ISystemPointerFilter
     {
-        public bool Enabled { 
-            get => _filterEnabled; 
-            set 
-            {
-                if (value) 
-                {
-                    EnableFilter();
-                } else 
-                {
-                    DisableFilter();
-                }
-            }
-        }
+        public bool Enabled {  get => _filterEnabled; }
+
+        private Dictionary<string, bool> connections = new Dictionary<string, bool>();
 
         private Thread _pointerThread;
 
@@ -38,6 +28,25 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
         public MacOSPointerFilter() 
         {
+        }
+
+        public void ConnectionStatusChanged(string deviceId, bool connected)
+        {
+            var deviceAdded = connections.ContainsKey(deviceId);
+            if (connected && !deviceAdded)
+            {
+                connections.Add(deviceId, connected);
+
+                EnableFilter();
+            } 
+            else if (deviceAdded)
+            {
+                connections.Remove(deviceId);
+                if (connections.Count == 0) 
+                {
+                    DisableFilter();
+                }
+            }
         }
 
         private void EnableFilter() 
@@ -74,6 +83,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
             _pointerThread.Start();
 
             _filterEnabled = true;
+
+            Log.Debug("MacOSPointerFilter", "Filter Enabled");
         }
 
         private void DisableFilter() 
@@ -105,6 +116,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
             }
 
             _filterEnabled = false;
+
+            Log.Debug("MacOSPointerFilter", "Filter Disabled");
         }
 
         private static IntPtr EventCallback(IntPtr proxy, CGEventTypeMask type, IntPtr @event, IntPtr userInfo) 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -217,12 +217,11 @@ namespace OpenTabletDriver.Daemon
                     dev.OutputMode?.Dispose();
                     dev.Disconnected += (sender, e) =>
                     {
-                        PointerFilter.Enabled = false;
+                        PointerFilter.ConnectionStatusChanged(dev.Properties.Name, false);
                     };
                 }
 
                 Settings = settings ??= Settings.GetDefaults();
-                _systemPointerFilterEnabled = false;
 
                 foreach (InputDeviceTree? dev in Driver.InputDevices)
                 {
@@ -274,14 +273,12 @@ namespace OpenTabletDriver.Daemon
                                 
                                 if (pair.Value == "1") 
                                 {
-                                    _systemPointerFilterEnabled = true;
+                                    PointerFilter.ConnectionStatusChanged(dev.Properties.Name, true);
                                 }
                             } 
                         }
                     }
                 }
-
-                PointerFilter.Enabled = _systemPointerFilterEnabled;
 
                 if (Driver.InputDevices.Length > 0)
                     Log.Write("Settings", "Driver is enabled.");

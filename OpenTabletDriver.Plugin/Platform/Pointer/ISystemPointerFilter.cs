@@ -1,9 +1,9 @@
-using System;
-
 namespace OpenTabletDriver.Plugin.Platform.Pointer
 {
     public interface ISystemPointerFilter
     {
-        bool Enabled { get; set; }
+        bool Enabled { get; }
+
+        void ConnectionStatusChanged(string deviceName, bool connected);
     }
 }
