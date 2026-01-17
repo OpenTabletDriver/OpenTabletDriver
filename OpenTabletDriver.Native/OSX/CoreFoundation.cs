@@ -4,10 +4,10 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.OSX
 {
+    using CFMachPortRef = IntPtr;
+    using CFRunLoopMode = IntPtr;
     using CFRunLoopRef = IntPtr;
     using CFRunLoopSourceRef = IntPtr;
-    using CFRunLoopMode = IntPtr;
-    using CFMachPortRef = IntPtr;
 
     static public class CoreFoundation
     {

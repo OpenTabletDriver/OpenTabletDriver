@@ -6,11 +6,11 @@ using OpenTabletDriver.Native.OSX.Input;
 namespace OpenTabletDriver.Native.OSX
 {
     using static ObjectiveCRuntime;
+    using CFMachPortRef = IntPtr;
     using CGDirectDisplayID = UInt32;
     using CGError = Int32;
     using CGEventRef = IntPtr;
     using CGEventSourceRef = IntPtr;
-    using CFMachPortRef = IntPtr;
 
     public static class OSX
     {

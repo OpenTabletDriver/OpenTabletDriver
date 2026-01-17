@@ -8,14 +8,14 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 {
-    using static OSX;
     using static CoreFoundation;
+    using static OSX;
 
     public class MacOSPointerFilter : ISystemPointerFilter
     {
-        public bool Enabled {  get => _filterEnabled; }
+        public bool Enabled { get => _filterEnabled; }
 
-        private Dictionary<string, bool> connections = new Dictionary<string, bool>();
+        private Dictionary<string, bool> _connections = new Dictionary<string, bool>();
 
         private Thread _pointerThread;
 
@@ -26,30 +26,30 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
         private bool _filterEnabled = false;
 
-        public MacOSPointerFilter() 
+        public MacOSPointerFilter()
         {
         }
 
         public void ConnectionStatusChanged(string deviceId, bool connected)
         {
-            var deviceAdded = connections.ContainsKey(deviceId);
+            var deviceAdded = _connections.ContainsKey(deviceId);
             if (connected && !deviceAdded)
             {
-                connections.Add(deviceId, connected);
+                _connections.Add(deviceId, connected);
 
                 EnableFilter();
-            } 
+            }
             else if (deviceAdded)
             {
-                connections.Remove(deviceId);
-                if (connections.Count == 0) 
+                _connections.Remove(deviceId);
+                if (_connections.Count == 0)
                 {
                     DisableFilter();
                 }
             }
         }
 
-        private void EnableFilter() 
+        private void EnableFilter()
         {
             if (_filterEnabled) { return; }
 
@@ -60,12 +60,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
                     CGEventTapLocation.kCGHIDEventTap,
                     CGEventTapPlacement.kCGHeadInsertEventTap,
                     CGEventTapOptions.kCGEventTapOptionDefault,
-                    CGEventTypeMask.MouseMoved | 
-                    CGEventTypeMask.LeftMouseDown | 
+                    CGEventTypeMask.MouseMoved |
+                    CGEventTypeMask.LeftMouseDown |
                     CGEventTypeMask.LeftMouseDragged |
                     CGEventTypeMask.RightMouseDown |
                     CGEventTypeMask.RightMouseDragged |
-                    CGEventTypeMask.TabletPointer | 
+                    CGEventTypeMask.TabletPointer |
                     CGEventTypeMask.TabletProximity,
                     EventCallback,
                     IntPtr.Zero
@@ -73,10 +73,10 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
                 _runLoop = CFRunLoopGetCurrent();
                 _runLoopSource = CFMachPortCreateRunLoopSource(IntPtr.Zero, _tap, 0);
-                
+
                 CFRunLoopAddSource(_runLoop, _runLoopSource, kCFRunLoopCommonModes);
                 CGEventTapEnable(_tap, true);
-                
+
                 CFRunLoopRun();
             });
 
@@ -87,7 +87,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
             Log.Debug("MacOSPointerFilter", "Filter Enabled");
         }
 
-        private void DisableFilter() 
+        private void DisableFilter()
         {
             if (!_filterEnabled) { return; }
 
@@ -104,7 +104,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
                 _runLoop = IntPtr.Zero;
             }
 
-            if (_pointerThread != null && _pointerThread.IsAlive) 
+            if (_pointerThread != null && _pointerThread.IsAlive)
             {
                 _pointerThread.Join(TimeSpan.FromSeconds(2));
             }
@@ -120,16 +120,16 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
             Log.Debug("MacOSPointerFilter", "Filter Disabled");
         }
 
-        private static IntPtr EventCallback(IntPtr proxy, CGEventTypeMask type, IntPtr @event, IntPtr userInfo) 
+        private static IntPtr EventCallback(IntPtr proxy, CGEventTypeMask type, IntPtr @event, IntPtr userInfo)
         {
             var pid = CGEventGetIntegerValueField(@event, CGEventField.eventSourceUnixProcessID);
 
-            if (pid == Environment.ProcessId) 
+            if (pid == Environment.ProcessId)
             {
                 _lastTabletEvent = DateTime.UtcNow;
                 return @event;
-            } 
-            else if (pid == 0 && TabletRecentlyActive()) 
+            }
+            else if (pid == 0 && TabletRecentlyActive())
             {
                 // Ignore events coming from system when the tablet is also active.
                 return IntPtr.Zero;

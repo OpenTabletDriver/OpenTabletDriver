@@ -137,7 +137,6 @@ namespace OpenTabletDriver.Daemon
         private ISystemPointerFilter PointerFilter = DesktopInterop.PointerFilter;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
-        private bool _systemPointerFilterEnabled = false;
 
         private UpdateInfo? _updateInfo;
         private LogFile _logFile;
@@ -213,7 +212,8 @@ namespace OpenTabletDriver.Daemon
         {
             try
             {
-                foreach (var dev in Driver.InputDevices) {
+                foreach (var dev in Driver.InputDevices)
+                {
                     dev.OutputMode?.Dispose();
                     dev.Disconnected += (sender, e) =>
                     {
@@ -264,18 +264,18 @@ namespace OpenTabletDriver.Daemon
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
                     }
 
-                    if (dev.Properties.Attributes is { } attributes) 
+                    if (dev.Properties.Attributes is { } attributes)
                     {
-                        foreach (var pair in attributes) 
+                        foreach (var pair in attributes)
                         {
-                            if (pair.Key == "libinputoverride") 
+                            if (pair.Key == "libinputoverride")
                             {
-                                
-                                if (pair.Value == "1") 
+
+                                if (pair.Value == "1")
                                 {
                                     PointerFilter.ConnectionStatusChanged(dev.Properties.Name, true);
                                 }
-                            } 
+                            }
                         }
                     }
                 }
