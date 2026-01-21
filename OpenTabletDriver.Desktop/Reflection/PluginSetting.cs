@@ -9,25 +9,15 @@ namespace OpenTabletDriver.Desktop.Reflection
 {
     public class PluginSetting
     {
+        [JsonConstructor]
         public PluginSetting(string property, object value)
-            : this()
         {
             Property = property;
             SetValue(value);
         }
 
-        public PluginSetting(PropertyInfo property, object value)
+        public PluginSetting(PropertyInfo property, object value = null)
             : this(property.Name, value)
-        {
-        }
-
-        public PluginSetting(PropertyInfo property)
-            : this(property, null)
-        {
-        }
-
-        [JsonConstructor]
-        private PluginSetting()
         {
         }
 
