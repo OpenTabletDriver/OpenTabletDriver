@@ -32,14 +32,14 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
         public void ConnectionStatusChanged(string deviceId, bool connected)
         {
-            var deviceAdded = _connections.ContainsKey(deviceId);
-            if (connected && !deviceAdded)
+            var isDeviceAlreadyAdded = _connections.ContainsKey(deviceId);
+            if (connected && !isDeviceAlreadyAdded)
             {
                 _connections.Add(deviceId, connected);
 
                 EnableFilter();
             }
-            else if (deviceAdded)
+            else if (isDeviceAlreadyAdded)
             {
                 _connections.Remove(deviceId);
                 if (_connections.Count == 0)
