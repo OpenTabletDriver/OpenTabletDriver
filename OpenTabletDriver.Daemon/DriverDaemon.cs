@@ -264,19 +264,9 @@ namespace OpenTabletDriver.Daemon
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
                     }
 
-                    if (dev.Properties.Attributes is { } attributes)
+                    if ((dev.Properties.Attributes?.TryGetValue("libinputoverride", out string? libinputOverride) ?? false) && libinputOverride == "1")
                     {
-                        foreach (var pair in attributes)
-                        {
-                            if (pair.Key == "libinputoverride")
-                            {
-
-                                if (pair.Value == "1")
-                                {
-                                    PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, true);
-                                }
-                            }
-                        }
+                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, true);
                     }
                 }
 
