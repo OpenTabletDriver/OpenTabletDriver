@@ -217,7 +217,7 @@ namespace OpenTabletDriver.Daemon
                     dev.OutputMode?.Dispose();
                     dev.Disconnected += (sender, e) =>
                     {
-                        PointerFilter.ConnectionStatusChanged(dev.Properties.Name, false);
+                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, false);
                     };
                 }
 
@@ -273,7 +273,7 @@ namespace OpenTabletDriver.Daemon
 
                                 if (pair.Value == "1")
                                 {
-                                    PointerFilter.ConnectionStatusChanged(dev.Properties.Name, true);
+                                    PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, true);
                                 }
                             }
                         }
