@@ -34,6 +34,12 @@ namespace OpenTabletDriver.Plugin.Tablet
         public WheelSpecifications? Wheel { get; set; }
 
         /// <summary>
+        /// Specifications for multiple wheels (when the tablet has more than one wheel).
+        /// Each wheel is indexed starting from 0.
+        /// </summary>
+        public WheelSpecifications[]? Wheels { get; set; }
+
+        /// <summary>
         /// Specifications for the strips.
         /// </summary>
         public AnalogSpecifications? Strips { set; get; }

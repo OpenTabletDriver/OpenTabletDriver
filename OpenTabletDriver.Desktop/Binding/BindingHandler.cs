@@ -36,6 +36,10 @@ namespace OpenTabletDriver.Desktop.Binding
         public DeltaThresholdBindingState? ClockwiseRotation { set; get; }
         public DeltaThresholdBindingState? CounterClockwiseRotation { set; get; }
 
+        // Multi-wheel support: separate bindings for each wheel by index
+        public Dictionary<int, DeltaThresholdBindingState?> MultiWheelClockwiseRotations { set; get; } = new Dictionary<int, DeltaThresholdBindingState?>();
+        public Dictionary<int, DeltaThresholdBindingState?> MultiWheelCounterClockwiseRotations { set; get; } = new Dictionary<int, DeltaThresholdBindingState?>();
+
         public PipelinePosition Position => PipelinePosition.PostTransform;
 
         private readonly TabletReference tablet;
@@ -45,6 +49,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
         private uint? lastWheelPosition;
         private float currentWheelDelta;
+
+        // Multi-wheel support: track delta for each wheel independently
+        private readonly Dictionary<int, float> multiWheelDeltas = new Dictionary<int, float>();
 
         public event Action<IDeviceReport>? Emit;
 
@@ -68,7 +75,10 @@ namespace OpenTabletDriver.Desktop.Binding
                 HandleWheelButtonReport(tablet, wheelButtonReport);
             if (report is IAbsoluteWheelReport absoluteWheelReport)
                 HandleAbsoluteWheelReport(tablet, absoluteWheelReport);
-            if (report is IRelativeWheelReport relativeWheelReport)
+            // Handle multi-wheel reports with separate bindings per wheel
+            if (report is IMultiRelativeWheelReport multiWheelReport)
+                HandleMultiRelativeWheelReport(tablet, multiWheelReport, multiWheelReport.WheelIndex, multiWheelReport.Delta);
+            else if (report is IRelativeWheelReport relativeWheelReport)
                 HandleRelativeWheelReport(tablet, relativeWheelReport, relativeWheelReport.Delta);
             if (report is OutOfRangeReport)
                 HandleOutOfRangeReport(tablet, report);
@@ -130,6 +140,37 @@ namespace OpenTabletDriver.Desktop.Binding
             // This will cause consistency issues on higher end machines
             ClockwiseRotation?.Invoke(tablet, report, false);
             CounterClockwiseRotation?.Invoke(tablet, report, false);
+        }
+
+        private void HandleMultiRelativeWheelReport(TabletReference tablet, IDeviceReport report, int wheelIndex, int? delta)
+        {
+            // Initialize delta tracking for this wheel if not present
+            if (!multiWheelDeltas.ContainsKey(wheelIndex))
+                multiWheelDeltas[wheelIndex] = 0;
+
+            multiWheelDeltas[wheelIndex] += delta ?? 0;
+            float wheelDelta = multiWheelDeltas[wheelIndex];
+
+            // Try wheel-specific bindings first
+            if (MultiWheelClockwiseRotations.TryGetValue(wheelIndex, out var cwBinding) && cwBinding != null)
+            {
+                cwBinding.Invoke(tablet, report, ref wheelDelta);
+                multiWheelDeltas[wheelIndex] = wheelDelta;
+                cwBinding.Invoke(tablet, report, false);
+            }
+
+            if (MultiWheelCounterClockwiseRotations.TryGetValue(wheelIndex, out var ccwBinding) && ccwBinding != null)
+            {
+                ccwBinding.Invoke(tablet, report, ref wheelDelta);
+                multiWheelDeltas[wheelIndex] = wheelDelta;
+                ccwBinding.Invoke(tablet, report, false);
+            }
+
+            // Fall back to the default wheel bindings if no wheel-specific bindings are set
+            if (!MultiWheelClockwiseRotations.ContainsKey(wheelIndex) && !MultiWheelCounterClockwiseRotations.ContainsKey(wheelIndex))
+            {
+                HandleRelativeWheelReport(tablet, report, delta);
+            }
         }
 
         private int? ComputeWheelDelta(uint? from, uint? to)

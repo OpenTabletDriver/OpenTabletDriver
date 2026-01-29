@@ -21,7 +21,25 @@
       "Buttons": {
         "ButtonCount": 0
       }
-    }
+    },
+    "Wheels": [
+      {
+        "StepCount": 24,
+        "IsRelative": true,
+        "AngleOfZeroReading": 0.0,
+        "Buttons": {
+          "ButtonCount": 0
+        }
+      },
+      {
+        "StepCount": 24,
+        "IsRelative": true,
+        "AngleOfZeroReading": 0.0,
+        "Buttons": {
+          "ButtonCount": 0
+        }
+      }
+    ]
   },
   "DigitizerIdentifiers": [
     {
