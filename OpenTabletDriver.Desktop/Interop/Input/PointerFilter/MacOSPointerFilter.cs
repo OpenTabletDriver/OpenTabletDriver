@@ -79,7 +79,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
                 CFRunLoopRun();
             });
-
+            _pointerThread.IsBackground = true;
             _pointerThread.Start();
 
             _filterEnabled = true;
