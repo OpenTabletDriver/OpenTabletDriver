@@ -217,7 +217,7 @@ namespace OpenTabletDriver.Daemon
                     dev.OutputMode?.Dispose();
                     dev.Disconnected += (sender, e) =>
                     {
-                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, false);
+                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, dev.Properties.DigitizerIdentifiers, false);
                     };
                 }
 
@@ -266,11 +266,7 @@ namespace OpenTabletDriver.Daemon
 
                     if ((dev.Properties.Attributes?.TryGetValue("libinputoverride", out string? libinputOverride) ?? false) && libinputOverride == "1")
                     {
-                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, true);
-                        foreach (DeviceIdentifier identifier in dev.Properties.DigitizerIdentifiers)
-                        {
-                            PointerFilter?.AddDeviceInfo(identifier.VendorID, identifier.ProductID);
-                        }
+                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, dev.Properties.DigitizerIdentifiers, true);
                     }
                 }
 

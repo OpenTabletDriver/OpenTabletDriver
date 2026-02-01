@@ -5,6 +5,7 @@ using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 {
@@ -39,31 +40,45 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
         {
         }
 
-        public void AddDeviceInfo(int vendorId, int productId)
+        public void ConnectionStatusChanged(string deviceName, List<DeviceIdentifier> identifiers, bool connected)
         {
-            var infoAlreadyExists = _deviceInfoHash.Contains((vendorId, productId));
-            if (!infoAlreadyExists)
-            {
-                _deviceInfoHash.Add((vendorId, productId));
-            }
-        }
-
-        public void ConnectionStatusChanged(string deviceId, bool connected)
-        {
-            var isDeviceAlreadyAdded = _connections.ContainsKey(deviceId);
+            var isDeviceAlreadyAdded = _connections.ContainsKey(deviceName);
             if (connected && !isDeviceAlreadyAdded)
             {
-                _connections.Add(deviceId, connected);
+                _connections.Add(deviceName, connected);
 
+                AddDeviceInfo(identifiers);
                 EnableFilter();
             }
-            else if (isDeviceAlreadyAdded)
+            else if (!connected && isDeviceAlreadyAdded)
             {
-                _connections.Remove(deviceId);
+                _connections.Remove(deviceName);
+                RemoveDeviceInfo(identifiers);
                 if (_connections.Count == 0)
                 {
                     DisableFilter();
-                    _deviceInfoHash.Clear();
+                }
+            }
+        }
+
+        private void AddDeviceInfo(List<DeviceIdentifier> identifiers)
+        {
+            foreach (DeviceIdentifier identifier in identifiers) {
+                var infoAlreadyExists = _deviceInfoHash.Contains((identifier.VendorID, identifier.ProductID));
+                if (!infoAlreadyExists)
+                {
+                    _deviceInfoHash.Add((identifier.VendorID, identifier.ProductID));
+                }
+            }
+        }
+
+        private void RemoveDeviceInfo(List<DeviceIdentifier> identifiers)
+        {
+            foreach (DeviceIdentifier identifier in identifiers) {
+                var infoAlreadyExists = _deviceInfoHash.Contains((identifier.VendorID, identifier.ProductID));
+                if (infoAlreadyExists)
+                {
+                    _deviceInfoHash.Remove((identifier.VendorID, identifier.ProductID));
                 }
             }
         }
@@ -172,7 +187,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
                 if (IsMouseEvent(type))
                 {
-                    // Because there is no way see where mouse events originate from
+                    // Because there is no way to see where mouse events originate from
                     // we filter all of them in the timespan where the tablet is also active.
                     return IntPtr.Zero;
                 }
