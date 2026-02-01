@@ -63,7 +63,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
         private void AddDeviceInfo(List<DeviceIdentifier> identifiers)
         {
-            foreach (DeviceIdentifier identifier in identifiers) {
+            foreach (DeviceIdentifier identifier in identifiers)
+            {
                 var infoAlreadyExists = _deviceInfoHash.Contains((identifier.VendorID, identifier.ProductID));
                 if (!infoAlreadyExists)
                 {
@@ -74,7 +75,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
         private void RemoveDeviceInfo(List<DeviceIdentifier> identifiers)
         {
-            foreach (DeviceIdentifier identifier in identifiers) {
+            foreach (DeviceIdentifier identifier in identifiers)
+            {
                 var infoAlreadyExists = _deviceInfoHash.Contains((identifier.VendorID, identifier.ProductID));
                 if (infoAlreadyExists)
                 {
@@ -202,7 +204,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
         private static bool TabletRecentlyActive()
         {
-            return (DateTime.UtcNow - _lastTabletEvent) < TimeSpan.FromMilliseconds(150);
+            return (DateTime.UtcNow - _lastTabletEvent) < TimeSpan.FromMilliseconds(33);
         }
 
         private static bool IsMouseEvent(CGEventType type)
