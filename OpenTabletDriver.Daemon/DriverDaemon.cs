@@ -267,6 +267,10 @@ namespace OpenTabletDriver.Daemon
                     if ((dev.Properties.Attributes?.TryGetValue("libinputoverride", out string? libinputOverride) ?? false) && libinputOverride == "1")
                     {
                         PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, true);
+                        foreach (DeviceIdentifier identifier in dev.Properties.DigitizerIdentifiers)
+                        {
+                            PointerFilter?.AddDeviceInfo(identifier.VendorID, identifier.ProductID);
+                        }
                     }
                 }
 

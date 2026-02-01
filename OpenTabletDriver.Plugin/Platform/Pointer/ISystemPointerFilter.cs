@@ -5,5 +5,6 @@ namespace OpenTabletDriver.Plugin.Platform.Pointer
         bool Enabled { get; }
 
         void ConnectionStatusChanged(string deviceName, bool connected);
+        void AddDeviceInfo(int vendorId, int productId);
     }
 }

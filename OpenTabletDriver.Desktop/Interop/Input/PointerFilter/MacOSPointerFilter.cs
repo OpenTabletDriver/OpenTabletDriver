@@ -15,7 +15,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
     {
         public bool Enabled { get => _filterEnabled; }
 
-        private Dictionary<string, bool> _connections = new Dictionary<string, bool>();
+        private static readonly Dictionary<long, (int vendorId, int productId)> _vendorMap = new();
+        private static HashSet<(int vendorId, int productId)> _deviceInfoHash = new();
+        private Dictionary<string, bool> _connections = new();
 
         private Thread _pointerThread;
 
@@ -26,8 +28,24 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
 
         private bool _filterEnabled = false;
 
+        private const CGEventTypeMask _allMouseEvents =
+            CGEventTypeMask.MouseMoved |
+            CGEventTypeMask.LeftMouseDown |
+            CGEventTypeMask.RightMouseDown |
+            CGEventTypeMask.LeftMouseDragged |
+            CGEventTypeMask.RightMouseDragged;
+
         public MacOSPointerFilter()
         {
+        }
+
+        public void AddDeviceInfo(int vendorId, int productId)
+        {
+            var infoAlreadyExists = _deviceInfoHash.Contains((vendorId, productId));
+            if (!infoAlreadyExists)
+            {
+                _deviceInfoHash.Add((vendorId, productId));
+            }
         }
 
         public void ConnectionStatusChanged(string deviceId, bool connected)
@@ -45,6 +63,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
                 if (_connections.Count == 0)
                 {
                     DisableFilter();
+                    _deviceInfoHash.Clear();
                 }
             }
         }
@@ -120,9 +139,27 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
             Log.Debug("MacOSPointerFilter", "Filter Disabled");
         }
 
-        private static IntPtr EventCallback(IntPtr proxy, CGEventTypeMask type, IntPtr @event, IntPtr userInfo)
+        private static void StoreTabletIdentifiers(CGEventType type, IntPtr @event)
+        {
+            var vendorId = (int)CGEventGetIntegerValueField(@event, CGEventField.tabletProximityEventVendorID);
+            var productId = (int)CGEventGetIntegerValueField(@event, CGEventField.tabletProximityEventTabletID);
+            var deviceId = CGEventGetIntegerValueField(@event, CGEventField.tabletProximityEventDeviceID);
+
+            if (vendorId != 0 && deviceId != 0 && productId != 0)
+            {
+                _vendorMap[deviceId] = (vendorId, productId);
+            }
+        }
+
+        private static IntPtr EventCallback(IntPtr proxy, CGEventType type, IntPtr @event, IntPtr userInfo)
         {
             var pid = CGEventGetIntegerValueField(@event, CGEventField.eventSourceUnixProcessID);
+            if (type == CGEventType.kCGEventTabletProximity)
+            {
+                // In order to only filter unmanaged tablet events, we need to fetch the vendor, device and product id
+                // These can only be fetched during a proximity event.
+                StoreTabletIdentifiers(type, @event);
+            }
 
             if (pid == Environment.ProcessId)
             {
@@ -131,8 +168,18 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
             }
             else if (pid == 0 && TabletRecentlyActive())
             {
-                // Ignore events coming from system when the tablet is also active.
-                return IntPtr.Zero;
+                var deviceId = CGEventGetIntegerValueField(@event, CGEventField.tabletEventDeviceID);
+
+                if (IsMouseEvent(type))
+                {
+                    // Because there is no way see where mouse events originate from
+                    // we filter all of them in the timespan where the tablet is also active.
+                    return IntPtr.Zero;
+                }
+                else if (type == CGEventType.kCGEventTabletPointer && _vendorMap.TryGetValue(deviceId, out var data) && _deviceInfoHash.Contains(data))
+                {
+                    return IntPtr.Zero;
+                }
             }
 
             return @event;
@@ -141,6 +188,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Filter
         private static bool TabletRecentlyActive()
         {
             return (DateTime.UtcNow - _lastTabletEvent) < TimeSpan.FromMilliseconds(150);
+        }
+
+        private static bool IsMouseEvent(CGEventType type)
+        {
+            CGEventTypeMask typeMask = (CGEventTypeMask)(1UL << (int)type);
+            return (_allMouseEvents & typeMask) != 0;
         }
     }
 }
