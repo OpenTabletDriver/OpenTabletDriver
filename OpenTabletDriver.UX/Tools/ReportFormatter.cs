@@ -35,7 +35,9 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendLines(GetStringFormat(touchReport));
             if (report is IAbsoluteWheelReport absoluteWheelReport)
                 sb.AppendLines(GetStringFormat(absoluteWheelReport));
-            if (report is IRelativeWheelReport relativeWheelReport)
+            if (report is IMultiRelativeWheelReport multiWheelReport)
+                sb.AppendLines(GetStringFormat(multiWheelReport));
+            else if (report is IRelativeWheelReport relativeWheelReport)
                 sb.AppendLines(GetStringFormat(relativeWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendLines(GetStringFormat(mouseReport));
@@ -70,7 +72,9 @@ namespace OpenTabletDriver.UX.Tools
                 sb.AppendOneLine(GetStringFormat(touchReport));
             if (report is IAbsoluteWheelReport absoluteWheelReport)
                 sb.AppendOneLine(GetStringFormat(absoluteWheelReport));
-            if (report is IRelativeWheelReport relativeWheelReport)
+            if (report is IMultiRelativeWheelReport multiWheelReport)
+                sb.AppendOneLine(GetStringFormat(multiWheelReport));
+            else if (report is IRelativeWheelReport relativeWheelReport)
                 sb.AppendOneLine(GetStringFormat(relativeWheelReport));
             if (report is IMouseReport mouseReport)
                 sb.AppendOneLine(GetStringFormat(mouseReport));
@@ -138,6 +142,13 @@ namespace OpenTabletDriver.UX.Tools
         {
             yield return $"Wheel Delta:{wheelReport.Delta?.ToString() ?? "Idle"}";
             if (wheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
+                yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
+        }
+
+        private static IEnumerable<string> GetStringFormat(IMultiRelativeWheelReport multiWheelReport)
+        {
+            yield return $"Wheel[{multiWheelReport.WheelIndex}] Delta:{multiWheelReport.Delta?.ToString() ?? "Idle"}";
+            if (multiWheelReport is IWheelButtonReport wheelButtonsReport && wheelButtonsReport.WheelButtons.Length > 0)
                 yield return $"Wheel Buttons:[{string.Join(" ", wheelButtonsReport.WheelButtons)}]";
         }
 
