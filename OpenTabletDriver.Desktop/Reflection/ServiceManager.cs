@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         }
 
         /// <summary>
-        /// Clears all of the added services.
+        /// Clears all added services.
         /// </summary>
         public virtual void ResetServices()
         {

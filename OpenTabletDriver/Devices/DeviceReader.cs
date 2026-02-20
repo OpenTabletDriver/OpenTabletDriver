@@ -40,7 +40,7 @@ namespace OpenTabletDriver.Devices
         public IReportParser<T> Parser { private set; get; }
 
         /// <summary>
-        /// Whether or not to make an extra cloned report with data left unmodified.
+        /// Whether to make an extra cloned report with data left unmodified.
         /// </summary>
         public bool RawClone { set; get; }
 
@@ -59,7 +59,7 @@ namespace OpenTabletDriver.Devices
         public event EventHandler<T> RawReport;
 
         /// <summary>
-        /// Whether or not the device is actively emitting reports and being parsed.
+        /// Whether the device is actively emitting reports and being parsed.
         /// </summary>
         public bool Connected
         {

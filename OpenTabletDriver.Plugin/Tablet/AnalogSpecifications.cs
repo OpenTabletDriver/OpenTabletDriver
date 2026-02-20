@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace OpenTabletDriver.Plugin.Tablet
 {
     /// <summary>
-    /// Device specifications for a an analog reporting device, such as knobs, wheels & strips (more commonly touch strips).
+    /// Device specifications for an analog reporting device, such as knobs, wheels &amp; strips (more commonly touch strips).
     /// </summary>
     /// <remarks>
     /// This spec currently does not allow analog devices with different specs.

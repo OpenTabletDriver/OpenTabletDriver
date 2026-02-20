@@ -49,13 +49,13 @@ namespace OpenTabletDriver.Plugin.Output
         /// Whether to clip all tablet inputs to the assigned areas.
         /// </summary>
         /// <remarks>
-        /// If false, input outside of the area can escape the assigned areas, but still will be transformed.
-        /// If true, input outside of the area will be clipped to the edges of the assigned areas.
+        /// If false, input outside the area can escape the assigned areas, but still will be transformed.
+        /// If true, input outside the area will be clipped to the edges of the assigned areas.
         /// </remarks>
         public bool AreaClipping { set; get; }
 
         /// <summary>
-        /// Whether to stop accepting input outside of the assigned areas.
+        /// Whether to stop accepting input outside the assigned areas.
         /// </summary>
         /// <remarks>
         /// If true, <see cref="AreaClipping"/> is automatically implied true.

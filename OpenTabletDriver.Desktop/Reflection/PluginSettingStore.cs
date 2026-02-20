@@ -72,6 +72,10 @@ namespace OpenTabletDriver.Desktop.Reflection
             return pathType != null ? new PluginSettingStore(pathType) : null;
         }
 
+        /// <summary>
+        /// Apply <see cref="Settings"/> values for <see cref="PropertyAttribute"/> properties
+        /// </summary>
+        /// <param name="target">The target to apply settings for</param>
         public void ApplySettings(object target)
         {
             if (target == null)

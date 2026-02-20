@@ -1,7 +1,7 @@
 namespace OpenTabletDriver.Plugin
 {
     /// <summary>
-    /// Various severity levels for <see cref="LogMessage"/>s.
+    /// Various severity levels for <see cref="Logging.LogMessage"/>s.
     /// </summary>
     public enum LogLevel
     {

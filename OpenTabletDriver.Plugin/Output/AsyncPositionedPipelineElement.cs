@@ -84,7 +84,6 @@ namespace OpenTabletDriver.Plugin.Output
         /// <remarks>
         /// This is called by <see cref="Consume"/> whenever a report is received from a linked upstream element.
         /// </remarks>
-        /// <param name="value"></param>
         protected abstract void ConsumeState();
 
         /// <summary>

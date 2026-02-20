@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Plugin.Tablet
 {
+    /// <summary>
+    /// Specifications and identifiers for a full tablet configuration
+    /// </summary>
     public class TabletConfiguration
     {
         /// <summary>

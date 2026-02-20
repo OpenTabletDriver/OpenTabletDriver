@@ -22,6 +22,8 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         /// <summary>
         /// The plugin's long description.
+        /// <para/>
+        /// GUI currently expects this property to be filled with something useful in some manner
         /// </summary>
         public string Description { set; get; }
 
@@ -38,6 +40,8 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         /// <summary>
         /// The plugin's maximum supported OpenTabletDriver version.
+        /// <para/>
+        /// You probably want to leave this <c>null</c> unless a minor version bump from upstream breaks your plugin
         /// </summary>
         public Version MaxSupportedDriverVersion { set; get; }
 
@@ -54,11 +58,13 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         /// <summary>
         /// The compression format used in the binary download from <see cref="DownloadUrl"/>.
         /// </summary>
+        /// <remarks>Should be <c>null</c> if there is no DownloadURL</remarks>
         public string CompressionFormat { set; get; }
 
         /// <summary>
         /// The SHA256 hash of the file at <see cref="DownloadUrl"/>, used for verifying file integrity.
         /// </summary>
+        /// <remarks>Should be <c>null</c> if there is no DownloadURL</remarks>
         public string SHA256 { set; get; }
 
         /// <summary>

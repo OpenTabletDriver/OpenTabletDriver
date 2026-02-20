@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Plugin
         private static event EventHandler<LogMessage>? _output;
 
         /// <summary>
-        /// Event hook to recieve log messages.
+        /// Event hook to receive log messages.
         /// </summary>
         public static event EventHandler<LogMessage>? Output
         {
@@ -71,7 +71,8 @@ namespace OpenTabletDriver.Plugin
         /// <param name="group">The group in which the <see cref="LogMessage"/> belongs to.</param>
         /// <param name="text">Text for the <see cref="LogMessage"/>.</param>
         /// <param name="level">The severity level of the <see cref="LogMessage"/>.</param>
-        /// <param name="notify">Whether or not the log message should create a notification in the user's desktop environment.</param>
+        /// <param name="createStackTrace">Whether to include stack trace in the log message</param>
+        /// <param name="notify">Whether the log message should create a notification in the user's desktop environment. BUG: only works when GUI is handling log messages</param>
         public static void Write(string group, string text, LogLevel level = LogLevel.Info, bool createStackTrace = false, bool notify = false)
         {
             var message = new LogMessage
@@ -111,6 +112,7 @@ namespace OpenTabletDriver.Plugin
         /// Writes to the log event with an exception, encoding its stack trace.
         /// </summary>
         /// <param name="ex">The <see cref="System.Exception"/> object to create the <see cref="LogMessage"/> from.</param>
+        /// <param name="level">The severity level to label the exception as</param>
         public static void Exception(Exception? ex, LogLevel level = LogLevel.Error)
         {
             if (ex == null)
