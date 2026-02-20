@@ -2,28 +2,29 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Plugin.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class PropertyValidatedAttribute : Attribute
+    [MeansImplicitUse(ImplicitUseKindFlags.Access)]
+    public partial class PropertyValidatedAttribute(string memberName) : Attribute
     {
-        public PropertyValidatedAttribute(string memberName)
-        {
-            MemberName = memberName;
-        }
-
         /// <summary>
         /// The name of the member in which the property this is assigned to is allowed to have.
         /// </summary>
         /// <remarks>
         /// This member must return <see cref="System.Collections.Generic.IEnumerable{T}"/> statically.
         /// </remarks>
-        public string MemberName { get; }
+        public string MemberName { get; } = memberName;
 
         public T GetValue<T>(PropertyInfo property)
         {
             var sourceType = property.ReflectedType;
+
+            if (sourceType == null)
+                throw new InvalidOperationException($"Could not look up reflected type of property {property}");
+
             var member = sourceType.GetMember(MemberName).First();
             try
             {
@@ -39,7 +40,7 @@ namespace OpenTabletDriver.Plugin.Attributes
             {
                 Log.Write("Plugin", $"Failed to get valid binding values for '{MemberName}'", LogLevel.Error);
 
-                var match = Regex.Match(e.Message, "Non-static (.*) requires a target\\.");
+                var match = TargetExceptionNonStaticRegex().Match(e.Message);
 
                 if (e is TargetException && match.Success)
                 {
@@ -53,5 +54,8 @@ namespace OpenTabletDriver.Plugin.Attributes
 
             return default;
         }
+
+        [GeneratedRegex("Non-static (.*) requires a target\\.")]
+        private static partial Regex TargetExceptionNonStaticRegex();
     }
 }

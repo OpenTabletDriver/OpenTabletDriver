@@ -1,5 +1,8 @@
-﻿namespace OpenTabletDriver.Native.Windows.Input
+﻿using System;
+
+namespace OpenTabletDriver.Native.Windows.Input
 {
+    [Flags]
     public enum MOUSEEVENTF : uint
     {
         ABSOLUTE = 0x8000,

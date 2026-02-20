@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Plugin.Attributes
 {
@@ -6,6 +7,7 @@ namespace OpenTabletDriver.Plugin.Attributes
     /// Marks a property to be modified and saved by a client to settings.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
+    [MeansImplicitUse(ImplicitUseTargetFlags.Itself)]
     public class PropertyAttribute : Attribute
     {
         public PropertyAttribute(string displayName)

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.UX.Controls
@@ -16,7 +15,7 @@ namespace OpenTabletDriver.UX.Controls
     {
         public TabletSwitcherPanel()
         {
-            base.Content = layout = new StackLayout
+            base.Content = new StackLayout
             {
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 Items =
@@ -37,12 +36,12 @@ namespace OpenTabletDriver.UX.Controls
                             {
                                 new StackLayoutItem
                                 {
-                                    Control = tabletSwitcher = new TabletSwitcher()
+                                    Control = tabletSwitcher,
                                 },
                                 new StackLayoutItem(null, true),
                                 new StackLayoutItem
                                 {
-                                    Control = commandsPanel = new Panel()
+                                    Control = commandsPanel,
                                 }
                             }
                         }
@@ -59,10 +58,9 @@ namespace OpenTabletDriver.UX.Controls
             Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
         }
 
-        private StackLayout layout;
-        private TabletSwitcher tabletSwitcher;
+        private TabletSwitcher tabletSwitcher = new();
         private ControlPanel controlPanel;
-        private Panel commandsPanel;
+        private Panel commandsPanel = new();
 
         public Control CommandsControl
         {
@@ -86,7 +84,7 @@ namespace OpenTabletDriver.UX.Controls
 
             private readonly ObservableCollection<Profile> visibleProfiles = new ObservableCollection<Profile>();
 
-            private ProfileCollection profiles;
+            private ProfileCollection profiles = [];
             public ProfileCollection Profiles
             {
                 set
@@ -121,23 +119,15 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            public void HandleTabletsChanged(object sender, IList<TabletReference> tablets)
+            public void HandleTabletsChanged(object _, IList<TabletReference> tablets)
             {
                 visibleProfiles.Clear();
-                profiles ??= [];
 
-                if (tablets.Any())
+                foreach (var tablet in tablets)
+                    visibleProfiles.Add(Profiles[tablet]);
+
+                if (visibleProfiles.Any())
                 {
-                    var tabletsWithoutProfile = from tablet in tablets
-                                                where !profiles.Any(p => p.Tablet == tablet.Properties.Name)
-                                                select tablet;
-
-                    foreach (var tablet in tabletsWithoutProfile)
-                        profiles.Generate(tablet);
-
-                    foreach (var tablet in tablets)
-                        visibleProfiles.Add(Profiles.FirstOrDefault(p => p.Tablet == tablet.Properties.Name));
-
                     if (this.SelectedIndex < 0)
                     {
                         this.SelectedIndex = 0;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Input;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
@@ -10,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
     public class WindowsVirtualKeyboard : IVirtualKeyboard
     {
-        private void KeyEvent(string key, bool isPress)
+        private static void KeyEvent(string key, bool isPress)
         {
             var vk = EtoKeysymToVK[key];
             var input = new INPUT
@@ -29,7 +28,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
                 }
             };
 
-            var inputs = new INPUT[] { input };
+            var inputs = new[] { input };
             SendInput((uint)inputs.Length, inputs, INPUT.Size);
         }
 

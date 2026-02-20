@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Conversion
         public string Bottom => "Bottom";
         public string Right => "Right";
 
-        protected double GetConversionFactor(TabletReference tablet)
+        protected static double GetConversionFactor(TabletReference tablet)
         {
             var digitizer = tablet.Properties.Specifications.Digitizer;
             return digitizer.MaxX / digitizer.Width;

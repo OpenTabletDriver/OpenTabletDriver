@@ -16,7 +16,7 @@ namespace OpenTabletDriver
         {
             ServiceDescriptor.Singleton<IReportParserProvider, ReportParserProvider>(),
             ServiceDescriptor.Singleton<IDeviceHubsProvider, DeviceHubsProvider>(serviceProvider => new DeviceHubsProvider(serviceProvider)),
-            ServiceDescriptor.Singleton<ICompositeDeviceHub, RootHub>(serviceProvider => RootHub.WithProvider(serviceProvider)),
+            ServiceDescriptor.Singleton<ICompositeDeviceHub, RootHub>(RootHub.WithProvider),
             ServiceDescriptor.Singleton<IDeviceConfigurationProvider, DeviceConfigurationProvider>()
         };
 

@@ -4,7 +4,6 @@ using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -25,6 +24,8 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
                 Pointer?.MouseDown(mouseButton);
+            else
+                Log.Write(nameof(MouseBinding), $"Invalid {nameof(Button)}: {Button}", LogLevel.Error);
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)

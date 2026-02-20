@@ -43,6 +43,7 @@ namespace OpenTabletDriver
         {
             mutex.Close();
             mutex.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

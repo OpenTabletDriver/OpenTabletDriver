@@ -7,7 +7,6 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
     public class RotationAreaEditor : AreaEditor
     {
         public RotationAreaEditor()
-            : base()
         {
             settingsPanel.Items.Add(
                 new StackLayoutItem

@@ -1,4 +1,3 @@
-using OpenTabletDriver.Desktop.Reflection;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -13,6 +12,9 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public virtual void Invoke(TabletReference tablet, IDeviceReport report, bool newState)
         {
+            if (Binding == null)
+                Log.Write(nameof(BindingState), $"Binding state not set for binding associated with {tablet}", LogLevel.Warning);
+
             if (Binding is IStateBinding stateBinding)
             {
                 if (newState && !PreviousState)

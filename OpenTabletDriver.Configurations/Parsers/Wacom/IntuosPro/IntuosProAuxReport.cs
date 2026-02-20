@@ -26,7 +26,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosPro
 
             var wheelByte = report[2];
 
-            // Wheel Start at Position zero (0x80) and Provides a value between 0x80 & 0xC7 on PTH-x50 & PTH-x51     
+            // Wheel Start at Position zero (0x80) and Provides a value between 0x80 & 0xC7 on PTH-x50 & PTH-x51
             if (wheelByte.IsBitSet(7))
                 Position = (uint)wheelByte - 0x80;
 

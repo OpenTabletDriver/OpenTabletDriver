@@ -44,7 +44,7 @@ namespace OpenTabletDriver.Plugin.Output
                     this.scheduler.Start();
                 }
             }
-            get => this.scheduler;
+            get => this.scheduler ?? throw new InvalidOperationException($"{nameof(Scheduler)} was not correctly resolved via dependency injection.");
         }
 
         [Property("Frequency"), Unit("hz"), DefaultPropertyValue(1000.0f)]
@@ -121,8 +121,9 @@ namespace OpenTabletDriver.Plugin.Output
 
         public void Dispose()
         {
-            Scheduler?.Dispose();
-            Scheduler = null;
+            scheduler?.Dispose();
+            scheduler = null;
+            GC.SuppressFinalize(this);
         }
 
         ~AsyncPositionedPipelineElement() => Dispose();

@@ -48,13 +48,13 @@ namespace OpenTabletDriver.UX.Controls
             set
             {
                 this.value = value;
-                ValueChanged?.Invoke(this, new EventArgs());
+                ValueChanged?.Invoke(this, EventArgs.Empty);
             }
             get => this.value;
         }
 
         [DefaultValue(0)]
-        public int Minimum { set; get; } = 0;
+        public int Minimum { set; get; }
 
         [DefaultValue(100)]
         public int Maximum { set; get; } = 100;

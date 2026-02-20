@@ -24,9 +24,9 @@ namespace OpenTabletDriver.UX.Windows
 
         public void Show()
         {
-            var window = GetWindow();
+            var lockedWindow = GetWindow();
 
-            switch (window)
+            switch (lockedWindow)
             {
                 case DesktopForm desktopForm:
                     desktopForm.Show();

@@ -2,11 +2,5 @@ using System;
 
 namespace OpenTabletDriver.Devices.WinUSB
 {
-    public class WindowsEnumerationException : Exception
-    {
-        public WindowsEnumerationException(string msg)
-            : base(msg)
-        {
-        }
-    }
+    public class WindowsEnumerationException(string msg) : Exception(msg);
 }

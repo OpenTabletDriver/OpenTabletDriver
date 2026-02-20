@@ -21,11 +21,6 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         private int kqueue;
         private readonly object stateLock = new();
 
-        public MacOSTimer()
-        {
-
-        }
-
         public bool Enabled { private set; get; }
 
         public float Interval { get; set; } = 1;

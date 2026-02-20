@@ -13,8 +13,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
     {
         private bool _dirty;
 
-        protected INPUT[] inputs = new INPUT[]
-        {
+        protected INPUT[] inputs =
+        [
             new INPUT
             {
                 type = INPUT_TYPE.MOUSE_INPUT,
@@ -26,8 +26,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
                         dwExtraInfo = UIntPtr.Zero
                     }
                 }
-            }
-        };
+            },
+        ];
 
         protected void MouseEvent(MOUSEEVENTF arg, uint dwData = 0)
         {

@@ -1,8 +1,10 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -15,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private AbsoluteModeSettings absoluteMode = new AbsoluteModeSettings();
         private RelativeModeSettings relativeMode = new RelativeModeSettings();
         private BindingSettings bindings = new BindingSettings();
-        private PluginSettingStoreCollection filters = new PluginSettingStoreCollection();
+        private PluginSettingStoreCollection filters = [];
 
         [JsonProperty("Tablet")]
         public string Tablet
@@ -60,7 +62,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         }
 
         private static Type DefaultOutputModeType =>
-            DesktopInterop.CurrentPlatform switch
+            SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Linux => typeof(LinuxArtistMode),
                 _ => typeof(AbsoluteMode)

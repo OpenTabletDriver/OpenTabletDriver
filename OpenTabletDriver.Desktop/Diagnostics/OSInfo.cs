@@ -10,18 +10,11 @@ using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop
 {
-    public class OSInfo
+    public class OSInfo(string name, string version, IDictionary<string, string>? attributes)
     {
-        public string Name { get; }
-        public string Version { get; }
-        public IDictionary<string, string>? Attributes { get; }
-
-        public OSInfo(string name, string version, IDictionary<string, string>? attributes)
-        {
-            Name = name;
-            Version = version;
-            Attributes = attributes;
-        }
+        public string Name { get; } = name;
+        public string Version { get; } = version;
+        public IDictionary<string, string>? Attributes { get; } = attributes;
 
         public static OSInfo GetOSInfo()
         {
@@ -56,7 +49,7 @@ namespace OpenTabletDriver.Desktop
             };
 
             // search for valid path
-            var osReleasePath = osReleasePaths.First(x => File.Exists(x));
+            var osReleasePath = osReleasePaths.FirstOrDefault(File.Exists);
             if (osReleasePath == null)
             {
                 // fallback

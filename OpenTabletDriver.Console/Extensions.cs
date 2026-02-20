@@ -23,10 +23,10 @@ namespace OpenTabletDriver.Console
 
         public static string Format(this PluginSettingStore store)
         {
-            if (store == null || !store.Enable)
+            if (store is not { Enable: true })
                 return null;
 
-            IList<string> storeSettings = new List<string>();
+            var storeSettings = new List<string>();
             foreach (var setting in store.Settings)
                 storeSettings.Add(setting.Format());
 

@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Runtime.CompilerServices;
 using OpenTabletDriver.Native.Windows.USB;
 using OpenTabletDriver.Plugin.Devices;
@@ -36,17 +35,23 @@ namespace OpenTabletDriver.Devices.WinUSB
                 readBuffer = GC.AllocateArray<byte>(usbInterface.InputReportLength, true);
                 readPtr = (byte*)Unsafe.AsPointer(ref readBuffer[0]);
             }
-
-            if (usbInterface.OutputPipe is byte writePipe)
+            else if (usbInterface.OutputPipe is byte writePipe)
             {
                 this.writePipe = writePipe;
                 writeBuffer = GC.AllocateArray<byte>(usbInterface.OutputReportLength, true);
                 writePtr = (byte*)Unsafe.AsPointer(ref writeBuffer[0]);
             }
+            else
+            {
+                throw new InvalidOperationException("Unsupported pipe type");
+            }
         }
 
         public byte[] Read()
         {
+            if (readBuffer == null)
+                throw new InvalidOperationException("Tried to read when interface doesn't have a read pipe");
+
             WinUsb_ReadPipe(winUsbHandle, readPipe, readPtr, (uint)readBuffer.Length, out var bytesRead, null);
             return bytesRead < readBuffer.Length
                 ? readBuffer.AsSpan(0, (int)bytesRead).ToArray()
@@ -55,6 +60,9 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         public void Write(byte[] buffer)
         {
+            if (writeBuffer == null)
+                throw new InvalidOperationException("Tried to write when interface doesn't have a write pipe");
+
             if (buffer.Length < writeBuffer.Length)
             {
                 writeBuffer.AsSpan().Clear();
@@ -70,7 +78,7 @@ namespace OpenTabletDriver.Devices.WinUSB
             }
         }
 
-        public unsafe void GetFeature(byte[] buffer)
+        public void GetFeature(byte[] buffer)
         {
             var length = buffer.Length; // requires HID report descriptor parsing to implement properly, assume caller is correct for now
             var packet = new SetupPacket()

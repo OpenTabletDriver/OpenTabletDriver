@@ -16,14 +16,10 @@ namespace OpenTabletDriver
         public InputDevice(IDriver driver, IDeviceEndpoint device, TabletConfiguration configuration, DeviceIdentifier identifier)
             : base(device, driver.GetReportParser(identifier))
         {
-            if (driver == null || device == null || configuration == null || identifier == null)
-            {
-                string argumentName = driver == null ? nameof(driver) :
-                    device == null ? nameof(device) :
-                    configuration == null ? nameof(configuration) :
-                    nameof(identifier);
-                throw new ArgumentNullException(argumentName);
-            }
+            ArgumentNullException.ThrowIfNull(driver);
+            ArgumentNullException.ThrowIfNull(device);
+            ArgumentNullException.ThrowIfNull(configuration);
+            ArgumentNullException.ThrowIfNull(identifier);
 
             Endpoint = device;
             Configuration = configuration;
@@ -57,6 +53,9 @@ namespace OpenTabletDriver
             if (!base.Initialize())
                 return false;
 
+            if (ReportStream == null)
+                throw new InvalidOperationException($"Cannot initialize with a null {nameof(ReportStream)}");
+
             Log.Debug("Device", $"Initializing device '{Endpoint.FriendlyName}' {Endpoint.DevicePath}");
             Log.Debug("Device", $"Using report parser type '{Identifier.ReportParser}'");
 
@@ -71,7 +70,7 @@ namespace OpenTabletDriver
 
             foreach (var report in Identifier.FeatureInitReport ?? new List<byte[]>())
             {
-                if (report == null || report.Length == 0)
+                if (report.Length == 0)
                     continue;
 
                 try
@@ -89,7 +88,7 @@ namespace OpenTabletDriver
 
             foreach (var report in Identifier.OutputInitReport ?? new List<byte[]>())
             {
-                if (report == null || report.Length == 0)
+                if (report.Length == 0)
                     continue;
 
                 try

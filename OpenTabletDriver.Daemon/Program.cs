@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.CommandLine;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -11,32 +9,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.RPC;
-using OpenTabletDriver.Desktop.Updater;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
 
 namespace OpenTabletDriver.Daemon
 {
-    class CommandLineOptions
+    internal class CommandLineOptions
     {
-        public object SpecialCommand { get; set; }
         public DirectoryInfo AppDataDirectory { get; set; }
         public DirectoryInfo ConfigurationDirectory { get; set; }
     }
 
-    class UpdateCommandOptions
+    internal static class Program
     {
-        public List<DirectoryInfo> Sources { get; set; }
-        public DirectoryInfo Destination { get; set; }
-    }
-
-    partial class Program
-    {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
-            Log.Output += (sender, message) =>
+            Log.Output += (_, message) =>
             {
                 Console.WriteLine(Log.GetStringFormat(message));
             };
@@ -51,7 +40,7 @@ namespace OpenTabletDriver.Daemon
             await StartDaemon();
         }
 
-        static async Task StartDaemon()
+        private static async Task StartDaemon()
         {
             using var instance = new Instance("OpenTabletDriver.Daemon");
             if (instance.AlreadyExists)
@@ -140,12 +129,12 @@ namespace OpenTabletDriver.Daemon
         private static RpcHost<DriverDaemon> GetRpcHost()
         {
             var host = new RpcHost<DriverDaemon>("OpenTabletDriver.Daemon");
-            host.ConnectionStateChanged += (sender, state) =>
+            host.ConnectionStateChanged += (_, state) =>
                 Log.Write("IPC", $"{(state ? "Connected to" : "Disconnected from")} a client.", LogLevel.Debug);
             return host;
         }
 
-        static CommandLineOptions ParseCmdLineOptions(string[] args)
+        private static CommandLineOptions ParseCmdLineOptions(string[] args)
         {
             var cmdLineOptions = new CommandLineOptions();
 
@@ -186,7 +175,7 @@ namespace OpenTabletDriver.Daemon
             return cmdLineOptions;
         }
 
-        static DriverDaemon BuildDaemon()
+        private static DriverDaemon BuildDaemon()
         {
             return new DriverDaemon(new DriverBuilder()
                 .ConfigureServices(serviceCollection =>

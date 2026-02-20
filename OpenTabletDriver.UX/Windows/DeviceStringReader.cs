@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace OpenTabletDriver.UX.Windows
         public DeviceStringReader()
             : base(Application.Instance.MainForm)
         {
+            Debug.Assert(App.Driver.Instance != null);
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
             this.ClientSize = new Size(-1, 300);
@@ -25,7 +27,7 @@ namespace OpenTabletDriver.UX.Windows
             };
 
             sendRequestButton.Click += async (_, _) => await SendRequestWithTimeout(stringIndexText.Text,
-                (s) => deviceStringText.Text = s != null ? System.Text.Json.JsonEncodedText.Encode(s).ToString() : s,
+                (s) => deviceStringText.Text = System.Text.Json.JsonEncodedText.Encode(s).ToString(),
                 (e) => MessageBox.Show($"Error: {e.Message}", MessageBoxType.Error),
                 () => MessageBox.Show(OperationTimedOut)
             );
@@ -37,30 +39,9 @@ namespace OpenTabletDriver.UX.Windows
 
             sendRequestAllStringsButton.Click += SendRequestAllStrings;
 
-            this.vendorIdText = new NumericMaskedTextBox<ushort>
-            {
-                PlaceholderText = DecimalStyle,
-                Width = NUMERICBOX_WIDTH
-            };
-            this.productIdText = new NumericMaskedTextBox<ushort>
-            {
-                PlaceholderText = DecimalStyle,
-                Width = NUMERICBOX_WIDTH
-            };
-            this.stringIndexText = new NumericMaskedTextBox<ushort>
-            {
-                PlaceholderText = "[1..255]",
-                Width = NUMERICBOX_WIDTH
-            };
-            this.deviceStringText = new TextBox
-            {
-                PlaceholderText = "Device String",
-                ReadOnly = true
-            };
-
-            this.vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
-            this.productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
-            this.stringIndexCtrl = new Group("String Index", stringIndexText, Orientation.Horizontal, false);
+            var vendorIdCtrl = new Group("VendorID", vendorIdText, Orientation.Horizontal, false);
+            var productIdCtrl = new Group("ProductID", productIdText, Orientation.Horizontal, false);
+            var stringIndexCtrl = new Group("String Index", stringIndexText, Orientation.Horizontal, false);
 
             this.Content = new StackLayout
             {
@@ -111,7 +92,7 @@ namespace OpenTabletDriver.UX.Windows
             this.deviceDropDown.ItemTextBinding = Binding.Delegate<SerializedDeviceEndpoint, string>(x =>
             {
                 // don't include manufacturer if it's already in the product name (e.g. Razer)
-                string name = x.ProductName ?? x.FriendlyName;
+                string name = x.ProductName;
                 string title = name.Contains(x.Manufacturer) ? name : $"{x.Manufacturer} {name}";
 
                 if (title.Length >= 32) // truncate if too long, used in GUI
@@ -138,7 +119,7 @@ namespace OpenTabletDriver.UX.Windows
                 bool shouldRead = true;
                 await SendRequestWithTimeout($"{i}",
                     (str) => stringDump.AppendLine($"{StringIndex} {i}: {str}"),
-                    (e) => shouldRead = AskReconnection(stringDump, i),
+                    (_) => shouldRead = AskReconnection(stringDump, i),
                     () => stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {OperationTimedOut} }}")
                 );
 
@@ -161,8 +142,9 @@ namespace OpenTabletDriver.UX.Windows
                     var file = new FileInfo(fileDialog.FileName);
                     if (file.Exists)
                         file.Delete();
-                    using (var fs = file.OpenWrite())
-                    using (var sw = new StreamWriter(fs))
+
+                    await using (var fs = file.OpenWrite())
+                    await using (var sw = new StreamWriter(fs))
                         await sw.WriteAsync(stringDump);
                     break;
             }
@@ -193,17 +175,21 @@ namespace OpenTabletDriver.UX.Windows
             }
         }
 
-        private async Task<string> SendRequest(string strIndex, string strVid, string strPid)
+        private static async Task<string> SendRequest(string strIndex, string strVid, string strPid)
         {
             if (int.TryParse(strIndex, out var index) && index < 256 && index > 0)
             {
+                if (!App.Driver.IsConnected)
+                    throw new InvalidOperationException(
+                        "Unable to request device string with no driver being connected");
+
                 if (int.TryParse(strVid, out var vid) && int.TryParse(strPid, out var pid))
                     return await App.Driver.Instance.RequestDeviceString(vid, pid, index);
             }
             throw new ArgumentException("Invalid index");
         }
 
-        private bool AskReconnection(StringBuilder stringDump, int i)
+        private static bool AskReconnection(StringBuilder stringDump, int i)
         {
             stringDump.AppendLine($"{StringIndex} {i}: {{ OTD: {DisconnectionIndex} }}");
             var result = MessageBox.Show(RequestTabletReplug, MessageBoxButtons.OKCancel);
@@ -211,8 +197,26 @@ namespace OpenTabletDriver.UX.Windows
         }
 
         private readonly DropDown<SerializedDeviceEndpoint> deviceDropDown = new();
-        private readonly NumericMaskedTextBox<ushort> vendorIdText, productIdText, stringIndexText;
-        private readonly TextBox deviceStringText;
-        private readonly Group vendorIdCtrl, productIdCtrl, stringIndexCtrl;
+
+        private readonly NumericMaskedTextBox<ushort> vendorIdText = new()
+        {
+            PlaceholderText = DecimalStyle,
+            Width = NUMERICBOX_WIDTH,
+        };
+        private readonly NumericMaskedTextBox<ushort> productIdText = new()
+        {
+            PlaceholderText = DecimalStyle,
+            Width = NUMERICBOX_WIDTH,
+        };
+        private readonly NumericMaskedTextBox<ushort> stringIndexText = new()
+        {
+            PlaceholderText = "[1..255]",
+            Width = NUMERICBOX_WIDTH,
+        };
+        private readonly TextBox deviceStringText = new()
+        {
+            PlaceholderText = "Device String",
+            ReadOnly = true,
+        };
     }
 }

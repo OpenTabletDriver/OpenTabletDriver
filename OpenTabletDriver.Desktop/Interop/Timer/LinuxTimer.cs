@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
     {
         private Thread _timerThread;
         private readonly object _stateLock = new object();
-        private int _timerFD;
+        private IntPtr _timerFD;
         private ITimerSpec _timerSpec;
 
         private volatile bool _enabled;
@@ -31,7 +31,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
             {
                 if (!_enabled)
                 {
-                    int timerFD = TimerCreate(ClockID.Monotonic, 0);
+                    IntPtr timerFD = TimerCreate(ClockID.Monotonic, 0);
 
                     if (timerFD == -1)
                     {

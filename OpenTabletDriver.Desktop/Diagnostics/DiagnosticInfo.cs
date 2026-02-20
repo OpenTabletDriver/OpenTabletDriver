@@ -10,35 +10,31 @@ using OpenTabletDriver.Plugin.Logging;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
-    public class DiagnosticInfo
+    public class DiagnosticInfo(IEnumerable<LogMessage> log, IEnumerable<SerializedDeviceEndpoint> devices)
     {
-        public DiagnosticInfo(IEnumerable<LogMessage> log, IEnumerable<SerializedDeviceEndpoint> devices)
-        {
-            ConsoleLog = log;
-            Devices = devices;
-        }
-
         [JsonProperty("App Version")]
         public string AppVersion { private set; get; } = GetAppVersion();
 
         [JsonProperty("Build Date")]
-        public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>().BuildDate;
+        public string BuildDate { private set; get; } = typeof(BuildDateAttribute).Assembly.GetCustomAttribute<BuildDateAttribute>()?.BuildDate
+                                                        ?? "<unknown build date>";
 
         [JsonProperty("Operating System")]
-        public OSInfo OperatingSystem => OSInfo.GetOSInfo();
+        public static OSInfo OperatingSystem => OSInfo.GetOSInfo();
 
         [JsonProperty("Environment Variables")]
         public IDictionary<string, string> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
 
         [JsonProperty("HID Devices")]
-        public IEnumerable<SerializedDeviceEndpoint> Devices { private set; get; }
+        public IEnumerable<SerializedDeviceEndpoint> Devices { private set; get; } = devices;
 
         [JsonProperty("Console Log")]
-        public IEnumerable<LogMessage> ConsoleLog { private set; get; }
+        public IEnumerable<LogMessage> ConsoleLog { private set; get; } = log;
 
         private static string GetAppVersion()
         {
-            string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            string? version = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            version ??= "<unknown>";
             return $"OpenTabletDriver v{version}";
         }
 

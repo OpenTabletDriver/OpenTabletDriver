@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using HidSharp.Reports;
-using OpenTabletDriver.Devices.HidSharpBackend;
+using JetBrains.Annotations;
 using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.USB;
 using OpenTabletDriver.Plugin.Devices;
@@ -159,10 +159,10 @@ namespace OpenTabletDriver.Devices.WinUSB
 
                 fixed (void* bufferPtr = &buffer[0])
                 {
-                    if (!WinUsb_ControlTransfer(winUsbHandle, packet, bufferPtr, StringDescriptor.MaxSize, out var descriptorLength, null))
+                    if (!WinUsb_ControlTransfer(winUsbHandle, packet, bufferPtr, StringDescriptor.MaxSize, out _, null))
                     {
                         ArrayPool<byte>.Shared.Return(buffer);
-                        return null;
+                        return $"<{nameof(WinUSBInterface)} retrieval error>";
                     }
 
                     ArrayPool<byte>.Shared.Return(buffer);
@@ -176,7 +176,7 @@ namespace OpenTabletDriver.Devices.WinUSB
             return new WinUSBInterfaceStream(new WeakReference<WinUSBInterface>(this));
         }
 
-        private void WithHandle(Action<SafeWinUsbInterfaceHandle> predicate)
+        private void WithHandle([InstantHandle] Action<SafeWinUsbInterfaceHandle> predicate)
         {
             var handle = BorrowHandle();
             try
@@ -233,8 +233,8 @@ namespace OpenTabletDriver.Devices.WinUSB
 
             if (Interlocked.Decrement(ref referenceCount) == 0)
             {
-                activeWinUsbHandle.Dispose();
-                activeFileHandle.Dispose();
+                activeWinUsbHandle?.Dispose();
+                activeFileHandle?.Dispose();
 
                 activeWinUsbHandle = null;
                 activeFileHandle = null;

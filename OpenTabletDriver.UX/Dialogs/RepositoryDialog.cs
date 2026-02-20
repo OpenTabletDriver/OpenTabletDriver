@@ -50,7 +50,7 @@ namespace OpenTabletDriver.UX.Dialogs
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new Button((sender, e) => Close(null))
+                        Control = new Button((_, _) => Close(null))
                         {
                             Text = "Cancel"
                         }
@@ -58,7 +58,7 @@ namespace OpenTabletDriver.UX.Dialogs
                     new StackLayoutItem
                     {
                         Expand = true,
-                        Control = new Button((sender, e) => Return(owner, repo, gitRef))
+                        Control = new Button((_, _) => Return(owner, repo, gitRef))
                         {
                             Text = "Apply"
                         }
@@ -132,7 +132,7 @@ namespace OpenTabletDriver.UX.Dialogs
                     Width = TEXTBOX_WIDTH,
                     PlaceholderText = DefaultInputText
                 };
-                textbox.TextChanged += (sender, e) => InputText = textbox.Text;
+                textbox.TextChanged += (_, _) => InputText = textbox.Text;
 
                 base.Content = new StackLayout
                 {

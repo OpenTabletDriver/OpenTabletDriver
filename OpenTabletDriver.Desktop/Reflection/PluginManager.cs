@@ -42,7 +42,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public virtual T ConstructObject<T>(string name, object[] args = null) where T : class
         {
-            args ??= new object[0];
+            args ??= [];
             if (!string.IsNullOrWhiteSpace(name))
             {
                 try
@@ -57,10 +57,8 @@ namespace OpenTabletDriver.Desktop.Reflection
 
                         if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
                         {
-                            T obj = (T)constructor.Invoke(args) ?? null;
-
-                            if (obj != null)
-                                Inject(this, obj, type);
+                            T obj = (T)constructor.Invoke(args);
+                            Inject(this, obj, type);
                             return obj;
                         }
                         else

@@ -5,7 +5,7 @@ namespace OpenTabletDriver.Plugin.Tablet
 {
     public struct TiltTabletReport : ITabletReport, ITiltReport
     {
-        public TiltTabletReport(byte[] report, bool invertTiltX, bool invertTiltY)
+        public TiltTabletReport(byte[] report, bool invertTiltX = false, bool invertTiltY = false)
         {
             Raw = report;
 
@@ -29,8 +29,6 @@ namespace OpenTabletDriver.Plugin.Tablet
                 penByte.IsBitSet(3)
             };
         }
-
-        public TiltTabletReport(byte[] report) : this(report, false, false) { }
 
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }

@@ -2,7 +2,7 @@ using OpenTabletDriver.Plugin.Tablet.Wheel;
 
 namespace OpenTabletDriver.Configurations.Parsers.Huion;
 
-public class KamvasRelWheelReport : IRelativeWheelReport
+public struct KamvasRelWheelReport : IRelativeWheelReport
 {
     public KamvasRelWheelReport(byte[] data)
     {

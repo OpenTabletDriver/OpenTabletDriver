@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using OpenTabletDriver.Native.Windows;
 using OpenTabletDriver.Native.Windows.Timers;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Timers;
@@ -86,6 +85,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
         private static bool IsSupportedNatively(float interval)
         {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
             return interval == (int)interval;
         }
 
@@ -93,6 +93,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         {
             if (Enabled)
                 Stop();
+            // ReSharper disable once PossiblyImpureMethodCallOnReadonlyVariable
             callbackHandle.Free();
             GC.SuppressFinalize(this);
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
@@ -20,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             ItemTextBinding = Binding.Property<PluginMetadata, string>(m => m.Name);
 
             Refresh();
-            AppInfo.PluginManager.AssembliesChanged += (sender, e) => Refresh();
+            AppInfo.PluginManager.AssembliesChanged += (_, _) => Refresh();
         }
 
         public static PluginMetadataCollection Repository { private set; get; }
@@ -59,8 +58,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
             var query = from plugin in plugins
                         let meta = plugin.FirstOrDefault()
-                        orderby meta.Name
-                        orderby local.Any(m => PluginMetadata.Match(m, meta)) descending
+                        orderby meta.Name, local.Any(m => PluginMetadata.Match(m, meta)) descending
                         select meta;
 
             this.DataStore = query.ToList();
@@ -76,7 +74,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             }
         }
 
-        protected async Task<PluginMetadataCollection> DownloadMetadataAsync()
+        protected static async Task<PluginMetadataCollection> DownloadMetadataAsync()
         {
             var repoFetch = PluginMetadataCollection.DownloadAsync();
             var timeoutTask = Task.Delay(DOWNLOAD_TIMEOUT);

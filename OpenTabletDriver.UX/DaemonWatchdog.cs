@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
@@ -12,7 +12,7 @@ namespace OpenTabletDriver.UX
 
         private Process daemonProcess;
 
-        private readonly static ProcessStartInfo startInfo = DesktopInterop.CurrentPlatform switch
+        private static readonly ProcessStartInfo startInfo = SystemInterop.CurrentPlatform switch
         {
             PluginPlatform.Windows => new ProcessStartInfo
             {
@@ -43,7 +43,7 @@ namespace OpenTabletDriver.UX
                 StartInfo = startInfo,
                 EnableRaisingEvents = true
             };
-            this.daemonProcess.Exited += (_, e) =>
+            this.daemonProcess.Exited += (_, _) =>
             {
                 DaemonExited?.Invoke(this, EventArgs.Empty);
             };

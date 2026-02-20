@@ -73,7 +73,7 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             return displayCollection;
         }
 
-        private IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
+        private static IEnumerable<DisplayInfo> InternalDisplays => GetDisplays().OrderBy(e => e.Left);
 
         public float Width
         {

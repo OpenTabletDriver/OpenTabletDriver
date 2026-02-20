@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace OpenTabletDriver.Native.Linux.Xorg
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct XRRMonitorInfo
+    public record struct XRRMonitorInfo
     {
         public IntPtr Name;
         public int Primary;

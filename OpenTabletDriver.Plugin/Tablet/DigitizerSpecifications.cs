@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
@@ -24,7 +23,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// TODO: On API bump, make 'Width' decimal type instead?
         /// </summary>
         [Required(ErrorMessage = $"Digitizer ${nameof(Height)} must be defined")]
-        [JsonConverter(typeof(DecimalJsonConverter)), JsonProperty("Width")]
+        [JsonConverter(typeof(DecimalJsonConverter)), JsonProperty(nameof(Width))]
         public decimal WidthAsDecimal { set; get; }
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace OpenTabletDriver.Plugin.Tablet
         /// TODO: On API bump, make 'Height' decimal type instead?
         /// </summary>
         [Required(ErrorMessage = $"Digitizer ${nameof(Width)} must be defined")]
-        [JsonConverter(typeof(DecimalJsonConverter)), JsonProperty("Height")]
+        [JsonConverter(typeof(DecimalJsonConverter)), JsonProperty(nameof(Height))]
         public decimal HeightAsDecimal { set; get; }
 
         /// <summary>

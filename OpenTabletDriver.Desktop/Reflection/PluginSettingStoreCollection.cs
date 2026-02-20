@@ -56,7 +56,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             if (type == null)
                 return null;
 
-            var store = this.FirstOrDefault(s => s.Path == type.FullName) ?? new PluginSettingStore(type, false);
+            var store = this.FirstOrDefault(s => s?.Path == type.FullName) ?? new PluginSettingStore(type, false);
             if (!this.Contains(store))
                 this.Add(store);
             return store;

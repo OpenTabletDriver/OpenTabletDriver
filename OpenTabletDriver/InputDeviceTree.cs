@@ -19,12 +19,12 @@ namespace OpenTabletDriver
             foreach (var dev in InputDevices)
             {
                 // Hook endpoint states
-                dev.ConnectionStateChanged += (sender, reading) =>
+                dev.ConnectionStateChanged += (_, reading) =>
                 {
                     if (this.connected && !reading)
                     {
                         this.connected = false;
-                        Disconnected?.Invoke(this, new EventArgs());
+                        Disconnected?.Invoke(this, EventArgs.Empty);
                     }
                 };
             }

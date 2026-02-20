@@ -17,10 +17,10 @@ namespace OpenTabletDriver.Desktop.Profiles
             clockwiseRotation,
             counterClockwiseRotation;
 
-        private PluginSettingStoreCollection penButtons = new PluginSettingStoreCollection(),
-            auxButtons = new PluginSettingStoreCollection(),
-            mouseButtons = new PluginSettingStoreCollection(),
-            wheelButtons = new PluginSettingStoreCollection();
+        private PluginSettingStoreCollection penButtons = [],
+            auxButtons = [],
+            mouseButtons = [],
+            wheelButtons = [];
 
         private bool disablePressure, disableTilt;
 
@@ -146,10 +146,6 @@ namespace OpenTabletDriver.Desktop.Profiles
                 EraserButton = new PluginSettingStore(
                     new AdaptiveBinding(PenAction.Eraser)
                 ),
-                PenButtons = new PluginSettingStoreCollection(),
-                AuxButtons = new PluginSettingStoreCollection(),
-                MouseButtons = new PluginSettingStoreCollection(),
-                WheelButtons = new PluginSettingStoreCollection()
             };
 
             bindingSettings.AddPenButtons(tabletSpecifications);

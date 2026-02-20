@@ -9,6 +9,11 @@ namespace OpenTabletDriver.UX.Controls.Bindings
     {
         public PenBindingEditor()
         {
+            BindingDisplayList penButtons;
+            CheckBox disableTilt, disablePressure;
+            FloatSlider eraserThreshold, tipThreshold;
+            BindingDisplay eraserButton, tipButton;
+
             this.Content = new Scrollable
             {
                 Border = BorderType.None,
@@ -123,10 +128,5 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             disablePressure.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisablePressure));
             disableTilt.CheckedBinding.Cast<bool>().Bind(SettingsBinding.Child(c => c.DisableTilt));
         }
-
-        private BindingDisplay tipButton, eraserButton;
-        private FloatSlider tipThreshold, eraserThreshold;
-        private CheckBox disablePressure, disableTilt;
-        private BindingDisplayList penButtons;
     }
 }

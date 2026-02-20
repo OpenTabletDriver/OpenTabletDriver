@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop;
 using OpenTabletDriver.Desktop.Binding;
@@ -47,7 +46,7 @@ namespace OpenTabletDriver.Daemon
 
             InitializePlatform();
             Driver.TabletsChanged += (sender, e) => TabletsChanged?.Invoke(sender, e);
-            Driver.CompositeDeviceHub.DevicesChanged += async (sender, args) =>
+            Driver.CompositeDeviceHub.DevicesChanged += async (_, args) =>
             {
                 if (!args.Additions.Any()) return;
 
@@ -106,7 +105,7 @@ namespace OpenTabletDriver.Daemon
             };
         }
 
-        private IEnumerable<string> safeGetProcessDetails(Process[] processes)
+        private static IEnumerable<string> safeGetProcessDetails(Process[] processes)
         {
             foreach (var driverProcess in processes)
             {
@@ -234,11 +233,15 @@ namespace OpenTabletDriver.Daemon
                     dev.OutputMode = profile.OutputMode.Construct<IOutputMode>(tabletReference);
 
                     if (dev.OutputMode != null)
+                    {
                         Log.Write(group, $"Output mode: {profile.OutputMode.Name}");
+                        dev.OutputMode.Tablet = tabletReference;
+                    }
 
                     if (dev.OutputMode is AbsoluteOutputMode absoluteMode)
                     {
                         SetAbsoluteModeSettings(dev, absoluteMode, profile.AbsoluteModeSettings);
+
                         if (absoluteMode.Pointer is IPressureHandler)
                             LogPressureState(group, profile);
                         if (absoluteMode.Pointer is ITiltHandler)
@@ -256,7 +259,6 @@ namespace OpenTabletDriver.Daemon
 
                     if (dev.OutputMode is { } outputMode)
                     {
-                        outputMode.Tablet = tabletReference;
                         var bindingHandler = CreateBindingHandler(dev, outputMode, profile.BindingSettings);
                         SetOutputModeElements(dev, outputMode, profile, bindingHandler);
 
@@ -386,7 +388,7 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private void MoveSettingsFile()
+        private static void MoveSettingsFile()
         {
             var src = AppInfo.Current.SettingsFile;
 
@@ -398,12 +400,12 @@ namespace OpenTabletDriver.Daemon
             File.Move(src, dst);
         }
 
-        private void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
+        private static void SetOutputModeElements(InputDeviceTree dev, IOutputMode outputMode, Profile profile, BindingHandler bindingHandler)
         {
             string group = dev.Properties.Name;
 
             var elements = (from store in profile.Filters
-                            where store.Enable
+                            where store is { Enable: true }
                             let filter = store.Construct<IPositionedPipelineElement<IDeviceReport>>(outputMode.Tablet)
                             where filter != null
                             select filter!).ToArray();
@@ -412,14 +414,14 @@ namespace OpenTabletDriver.Daemon
 
             foreach (var filter in elements)
             {
-                var pluginSettings = profile.Filters.First(x => x.Path == filter.GetType().FullName);
+                var pluginSettings = profile.Filters.First(x => x?.Path == filter.GetType().FullName);
                 if (pluginSettings == null) continue;
 
                 Log.Write(group, $"Filter Settings {pluginSettings.GetHumanReadableString()}");
             }
         }
 
-        private void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)
+        private static void SetAbsoluteModeSettings(InputDeviceTree dev, AbsoluteOutputMode absoluteMode, AbsoluteModeSettings settings)
         {
             string group = dev.Properties.Name;
             absoluteMode.Output = settings.Display.Area;
@@ -436,7 +438,7 @@ namespace OpenTabletDriver.Daemon
             Log.Write(group, $"Ignoring reports outside area: {(absoluteMode.AreaLimiting ? "Enabled" : "Disabled")}");
         }
 
-        private void SetRelativeModeSettings(InputDeviceTree dev, RelativeOutputMode relativeMode, RelativeModeSettings settings)
+        private static void SetRelativeModeSettings(InputDeviceTree dev, RelativeOutputMode relativeMode, RelativeModeSettings settings)
         {
             string group = dev.Properties.Name;
             relativeMode.Sensitivity = settings.Sensitivity;
@@ -469,6 +471,7 @@ namespace OpenTabletDriver.Daemon
         {
             string group = dev.Properties.Name;
             var tabletReference = outputMode.Tablet;
+            Debug.Assert(tabletReference != null); // should be initialized earlier in DriverDaemon
             var bindingHandler = new BindingHandler(tabletReference);
 
             var bindingServiceProvider = new ServiceManager();
@@ -547,7 +550,7 @@ namespace OpenTabletDriver.Daemon
 
             if (scrollUp.Binding != null || scrollDown.Binding != null)
             {
-                Log.Write(group, $"Mouse Scroll: Up: [{scrollUp?.Binding}] Down: [{scrollDown?.Binding}]");
+                Log.Write(group, $"Mouse Scroll: Up: [{scrollUp.Binding}] Down: [{scrollDown.Binding}]");
             }
 
             var clockwiseRotation = bindingHandler.ClockwiseRotation = new DeltaThresholdBindingState
@@ -568,7 +571,7 @@ namespace OpenTabletDriver.Daemon
 
             if (clockwiseRotation.Binding != null || counterClockwiseRotation.Binding != null)
             {
-                Log.Write(group, $"Wheel: Clockwise Rotation: [{clockwiseRotation?.Binding}] Counter-Clockwise Rotation: [{counterClockwiseRotation?.Binding}]");
+                Log.Write(group, $"Wheel: Clockwise Rotation: [{clockwiseRotation.Binding}] Counter-Clockwise Rotation: [{counterClockwiseRotation.Binding}]");
             }
 
             return bindingHandler;
@@ -589,26 +592,6 @@ namespace OpenTabletDriver.Daemon
             }
         }
 
-        private static void SetBindingHandlerRangeCollectionSettings(IServiceManager serviceManager, PluginSettingStoreCollection collection, float[] ends, Dictionary<int, RangeBindingState?> targetDict, TabletReference tabletReference)
-        {
-            var start = 0;
-
-            for (int index = 0; index < collection.Count; index++)
-            {
-                var binding = collection[index]?.Construct<IBinding>(serviceManager, tabletReference);
-                var end = ends[index];
-                var state = binding == null ? null : new RangeBindingState
-                {
-                    Binding = binding,
-                    StartThreshold = start,
-                    EndThreshold = end >= start ? end : start
-                };
-
-                if (!targetDict.TryAdd(index, state))
-                    targetDict[index] = state;
-            }
-        }
-
         private void SetToolSettings()
         {
             foreach (var runningTool in Tools)
@@ -617,9 +600,9 @@ namespace OpenTabletDriver.Daemon
 
             if (Settings != null)
             {
-                foreach (PluginSettingStore store in Settings.Tools)
+                foreach (var store in Settings.Tools)
                 {
-                    if (store.Enable == false)
+                    if (store is not { Enable: true })
                         continue;
 
                     var tool = store.Construct<ITool>();
@@ -696,10 +679,6 @@ namespace OpenTabletDriver.Daemon
             {
                 var update = await _updateInfo.GetUpdate();
                 Updater?.Install(update);
-            }
-            catch
-            {
-                throw;
             }
             finally
             {

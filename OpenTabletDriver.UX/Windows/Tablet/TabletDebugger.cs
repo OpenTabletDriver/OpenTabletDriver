@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -27,6 +28,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         public TabletDebugger()
             : base(Application.Instance.MainForm)
         {
+            DebuggerGroup reportsRecordedGroup;
+            TabletVisualizer tabletVisualizer;
+            Label maxReportedPosition, reportsRecorded, reportRate, tablet, rawTablet, deviceName;
+
             Title = "Tablet Debugger";
 
             var debugger = new StackLayout
@@ -208,8 +213,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             App.Driver.DeviceReport += HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
-            // ReSharper disable once AsyncVoidMethod
-            Application.Instance.AsyncInvoke(async void () => await App.Driver.Instance.SetTabletDebug(true));
+
+            Debug.Assert(App.Driver.Instance != null);
+
+            App.Driver.Instance.SetTabletDebug(true);
 
             string fileName = "tablet-data_" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() + ".txt";
 
@@ -219,12 +226,16 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
         protected override async void OnClosing(CancelEventArgs e)
         {
-            base.OnClosing(e);
+            if (App.Driver.IsConnected)
+                await App.Driver.Instance.SetTabletDebug(false);
 
-            await App.Driver.Instance.SetTabletDebug(false);
+            App.Driver.DeviceReport -= HandleReport;
+            App.Driver.TabletsChanged -= HandleTabletsChanged;
 
             dataRecordingOutput?.Close();
             dataRecordingOutput = null;
+
+            base.OnClosing(e);
         }
 
         private static string MaxPositionString(Vector2 pos)
@@ -235,11 +246,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             return $"Max Position: [{pos.X},{pos.Y}]";
         }
 
-        private Label deviceName, rawTablet, tablet, reportRate, reportsRecorded, maxReportedPosition;
         private Vector2 maxPosition;
-        private TabletVisualizer tabletVisualizer;
-        private DebuggerGroup reportsRecordedGroup;
-        private CheckBox enableDataRecording;
+        private readonly CheckBox enableDataRecording;
 
         private DebugReportData reportData;
         private double reportPeriod;
@@ -296,7 +304,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
         protected virtual void OnReportDataChanged()
         {
-            ReportDataChanged?.Invoke(this, new EventArgs());
+            ReportDataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual void OnDataRecordingStateChanged()
@@ -305,9 +313,9 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 NumberOfReportsRecorded = 0;
         }
 
-        protected virtual void OnReportPeriodChanged() => ReportPeriodChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnNumberOfReportsRecordedChanged() => NumberOfReportsRecordedChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnMaxPositionReportedChanged() => MaxPositionReportedChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnReportPeriodChanged() => ReportPeriodChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnNumberOfReportsRecordedChanged() => NumberOfReportsRecordedChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnMaxPositionReportedChanged() => MaxPositionReportedChanged?.Invoke(this, EventArgs.Empty);
 
         public BindableBinding<TabletDebugger, Vector2> MaxPositionBinding
         {
@@ -430,7 +438,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             protected override void OnNextFrame(PaintEventArgs e)
             {
-                if (ReportData?.Tablet is TabletReference tablet)
+                if (ReportData?.Tablet is { } tablet)
                 {
                     var graphics = e.Graphics;
                     using (graphics.SaveTransformState())
@@ -453,7 +461,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
 
             protected void DrawBackground(Graphics graphics, float scale, TabletReference tablet)
             {
-                var digitizer = ReportData.Tablet.Properties.Specifications.Digitizer;
+                var digitizer = tablet.Properties.Specifications.Digitizer;
                 var bg = new RectangleF(0, 0, digitizer.Width, digitizer.Height) * scale;
 
                 graphics.FillRectangle(SystemColors.WindowBackground, bg);
@@ -463,33 +471,18 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             protected void DrawPosition(Graphics graphics, float scale, TabletReference tablet)
             {
                 var report = ReportData?.ToObject();
-                var specifications = ReportData?.Tablet.Properties.Specifications;
-                var tabletName = ReportData?.Tablet.Properties.Name;
+                var specifications = tablet.Properties.Specifications;
+                var tabletName = tablet.Properties.Name;
                 var touchDigitizerSpecification = specifications?.Touch;
                 var absDigitizerSpecification = specifications?.Digitizer;
 
                 if (report is IAbsolutePositionReport absReport)
                 {
-                    if (absDigitizerSpecification != null)
-                    {
-                        var tabletScale = calculateTabletScale(absDigitizerSpecification, scale);
-                        var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
+                    var tabletScale = calculateTabletScale(absDigitizerSpecification, scale);
+                    var position = new PointF(absReport.Position.X, absReport.Position.Y) * tabletScale;
 
-                        var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
-                        graphics.FillEllipse(AccentColor, drawRect);
-                    }
-                    else
-                    {
-                        var absHashName = tabletName + "abs";
-                        var absHash = absHashName.GetHashCode();
-                        if (!_warnedDigitizers.Contains(absHash))
-                        {
-                            _warnedDigitizers.Add(absHash);
-                            Log.Write("TabletDebugger",
-                                "Digitizer undefined in tablet configuration - unable to draw points",
-                                LogLevel.Warning);
-                        }
-                    }
+                    var drawRect = RectangleF.FromCenter(position, new SizeF(SPACING, SPACING));
+                    graphics.FillEllipse(AccentColor, drawRect);
                 }
 
                 // touch reports
@@ -499,7 +492,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     {
                         var tabletScale = calculateTabletScale(touchDigitizerSpecification, scale);
 
-                        foreach (TouchPoint touchPoint in touchReport.Touches.Where((t) => t != null))
+                        foreach (var touchPoint in touchReport.Touches.Where(t => t != null))
                         {
                             var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
                             var drawPen = new Pen(AccentColor, SPACING / 2);
@@ -522,7 +515,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 }
             }
 
-            protected SizeF calculateTabletScale(DigitizerSpecifications digitizer, float scale)
+            protected static SizeF calculateTabletScale(DigitizerSpecifications digitizer, float scale)
             {
                 var tabletMm = new SizeF(digitizer.Width, digitizer.Height);
                 var tabletPx = new SizeF(digitizer.MaxX, digitizer.MaxY);

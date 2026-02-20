@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Interop
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
                     return PluginPlatform.FreeBSD;
                 else
-                    return 0;
+                    return PluginPlatform.Unknown;
             }
         }
     }

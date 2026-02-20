@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Eto.Forms;
 using OpenTabletDriver.Desktop;
-using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX
 {
@@ -20,7 +19,7 @@ namespace OpenTabletDriver.UX
 
             RefreshMenuItems();
 
-            Indicator.Activated += (object sender, System.EventArgs e) =>
+            Indicator.Activated += (_, _) =>
             {
                 window.Show();
                 window.BringToFront();
@@ -42,7 +41,7 @@ namespace OpenTabletDriver.UX
             {
                 Text = "Show Window"
             };
-            showWindow.Click += (sender, e) =>
+            showWindow.Click += (_, _) =>
             {
                 window.Show();
                 window.BringToFront();
@@ -52,7 +51,7 @@ namespace OpenTabletDriver.UX
             {
                 Text = "Close"
             };
-            close.Click += (sender, e) => window.Close();
+            close.Click += (_, _) => window.Close();
 
             var items = new List<MenuItem>();
             var presets = AppInfo.PresetManager.GetPresets();

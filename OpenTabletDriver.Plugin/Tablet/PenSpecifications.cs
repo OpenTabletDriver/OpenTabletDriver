@@ -33,10 +33,10 @@ namespace OpenTabletDriver.Plugin.Tablet
         }
 
         // hack which allows us to deserialize the object for backwards compatibility, but not emit it in serialization
-        [JsonProperty("Buttons")]
+#pragma warning disable CS0618 // Type or member is obsolete
+        [JsonProperty(nameof(Buttons))]
         private ButtonSpecifications Buttons2
         {
-#pragma warning disable CS0618 // Type or member is obsolete
             set => Buttons = value;
 #pragma warning restore CS0618 // Type or member is obsolete
         }

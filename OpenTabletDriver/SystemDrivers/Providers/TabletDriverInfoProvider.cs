@@ -2,7 +2,7 @@ using System.Linq;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
-namespace OpenTabletDriver.SystemDrivers.InfoProviders
+namespace OpenTabletDriver.SystemDrivers.Providers
 {
     internal class TabletDriverInfoProvider : IDriverInfoProvider
     {

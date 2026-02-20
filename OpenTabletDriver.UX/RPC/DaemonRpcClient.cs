@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Contracts;
 using OpenTabletDriver.Desktop.RPC;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Logging;
 using OpenTabletDriver.Plugin.Tablet;
 
@@ -23,6 +23,8 @@ namespace OpenTabletDriver.UX.RPC
         protected override void OnConnected()
         {
             base.OnConnected();
+
+            Debug.Assert(Instance != null, $"{nameof(OnConnected)} called with no instance");
 
             Instance.Message += (sender, e) =>
                 Application.Instance.AsyncInvoke(() => Message?.Invoke(sender, e));

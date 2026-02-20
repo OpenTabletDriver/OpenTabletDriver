@@ -1,8 +1,4 @@
-﻿using OpenTabletDriver.Plugin.Tablet;
-
-namespace OpenTabletDriver.Plugin
+﻿namespace OpenTabletDriver.Plugin
 {
-    public interface IBinding
-    {
-    }
+    public interface IBinding;
 }

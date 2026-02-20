@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
@@ -103,7 +103,7 @@ namespace OpenTabletDriver.UX.Windows
                     new StackLayoutItem
                     {
                         HorizontalAlignment = HorizontalAlignment.Right,
-                        Control = applyButton = new Button((sender, e) => ConvertArea())
+                        Control = applyButton = new Button((_, _) => ConvertArea())
                         {
                             Text = "Apply",
                             Enabled = false
@@ -112,14 +112,15 @@ namespace OpenTabletDriver.UX.Windows
                 }
             };
 
-            converterList.SelectedIndexChanged += (sender, e) => OnSelectionChanged();
+            converterList.SelectedIndexChanged += (_, _) => OnSelectionChanged();
 
             // ReSharper disable once AsyncVoidMethod
             Application.Instance.AsyncInvoke(async void () =>
             {
+                Debug.Assert(App.Driver.IsConnected);
                 var tablets = await App.Driver.Instance.GetTablets();
-                var targetProfile = App.Current.Settings.Profiles.FirstOrDefault(p => p.AbsoluteModeSettings.Tablet == this.DataContext);
-                var tablet = tablets.FirstOrDefault(t => t.Properties.Name == targetProfile.Tablet);
+                var targetProfile = App.Current.Settings.Profiles.First(p => p.AbsoluteModeSettings.Tablet == this.DataContext);
+                var tablet = tablets.First(t => t.Properties.Name == targetProfile.Tablet);
                 Select(tablet);
             });
         }
@@ -153,10 +154,12 @@ namespace OpenTabletDriver.UX.Windows
 
         protected void ConvertArea()
         {
-            var converter = this.converterList.ConstructSelectedType();
+            var context = this.DataContext as AreaSettings ?? throw new InvalidOperationException("Invalid data context");
+            var converter = this.converterList.ConstructSelectedType() ?? throw new InvalidOperationException("Could not get selected converter type");
+            Debug.Assert(selectedTablet != null);
             var convertedArea = converter.Convert(selectedTablet, top.Value, left.Value, bottom.Value, right.Value);
 
-            (this.DataContext as AreaSettings).Area = convertedArea;
+            context.Area = convertedArea;
             this.Close();
         }
 

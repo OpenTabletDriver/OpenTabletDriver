@@ -126,7 +126,7 @@ namespace OpenTabletDriver.Desktop.Interop
                 return new XScreen();
 
             Log.Write("Display", "Neither Wayland nor X11 were detected, defaulting to X11.", LogLevel.Warning);
-            return new XScreen();
+            return new XScreen(); // FIXME: this will always crash as this calls X11's XOpenDisplay which references the DISPLAY env var
         }
     }
 }

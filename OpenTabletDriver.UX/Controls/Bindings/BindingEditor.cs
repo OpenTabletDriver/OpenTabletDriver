@@ -34,8 +34,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
         public event EventHandler<EventArgs> ProfileChanged;
         public event EventHandler<EventArgs> TabletChanged;
 
-        protected virtual void OnProfileChanged() => ProfileChanged?.Invoke(this, new EventArgs());
-        protected virtual void OnTabletChanged() => TabletChanged?.Invoke(this, new EventArgs());
+        protected virtual void OnProfileChanged() => ProfileChanged?.Invoke(this, EventArgs.Empty);
+        protected virtual void OnTabletChanged() => TabletChanged?.Invoke(this, EventArgs.Empty);
 
         public BindableBinding<BindingEditor, Profile> ProfileBinding
         {

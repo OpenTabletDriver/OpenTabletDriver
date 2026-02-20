@@ -14,7 +14,7 @@ namespace OpenTabletDriver.UX
 {
     public static class Extensions
     {
-        private static bool MessageBoxActive = false;
+        private static bool MessageBoxActive;
 
         public static void ShowMessageBox(this Exception exception)
         {
@@ -33,7 +33,7 @@ namespace OpenTabletDriver.UX
         {
             string message = errorData.Message + Environment.NewLine + errorData.StackTrace;
             Log.Write(
-                errorData.TypeName,
+                errorData.TypeName ?? "<unknown type>",
                 message,
                 LogLevel.Error
             );

@@ -1,4 +1,3 @@
-﻿using OpenTabletDriver.Plugin;
 using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Plugin.Tablet;
 

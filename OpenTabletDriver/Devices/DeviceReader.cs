@@ -106,6 +106,9 @@ namespace OpenTabletDriver.Devices
                 Connected = true;
                 while (Connected)
                 {
+                    if (ReportStream == null)
+                        throw new NullReferenceException($"Cannot read from a null {nameof(ReportStream)}");
+
                     var data = ReportStream.Read();
                     if (Parser.Parse(data) is T report)
                         OnReport(report);
@@ -144,6 +147,7 @@ namespace OpenTabletDriver.Devices
         {
             Connected = false;
             ReportStream?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

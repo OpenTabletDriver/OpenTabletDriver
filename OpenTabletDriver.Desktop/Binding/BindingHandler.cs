@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Configurations.Parsers.Wacom.Intuos4;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
@@ -143,15 +142,6 @@ namespace OpenTabletDriver.Desktop.Binding
             {
                 if (bindings.TryGetValue(i, out var binding))
                     binding?.Invoke(tablet, report, newStates[i]);
-            }
-        }
-
-        private static void HandleRangeBindingCollection(TabletReference tablet, IDeviceReport report, IDictionary<int, RangeBindingState?> bindings, float value)
-        {
-            for (int i = 0; i < bindings.Count; i++)
-            {
-                if (bindings.TryGetValue(i, out var binding))
-                    binding?.Invoke(tablet, report, value);
             }
         }
     }

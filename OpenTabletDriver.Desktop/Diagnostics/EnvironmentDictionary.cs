@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
@@ -10,8 +10,9 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public EnvironmentDictionary()
         {
             AddVariable("USER");
-            switch (DesktopInterop.CurrentPlatform)
+            switch (SystemInterop.CurrentPlatform)
             {
+                case PluginPlatform.FreeBSD:
                 case PluginPlatform.Linux:
                     AddVariable(
                             // IVirtualScreen lookup, at least 1 needs to be present
@@ -38,6 +39,13 @@ namespace OpenTabletDriver.Desktop.Diagnostics
                             "USERPROFILE"
                     );
                     break;
+                case PluginPlatform.MacOS:
+                case PluginPlatform.Android:
+                case PluginPlatform.iOS:
+                case PluginPlatform.Unknown:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 

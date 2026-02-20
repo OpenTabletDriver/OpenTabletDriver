@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 
     public class MacOSAbsolutePointer : MacOSVirtualMouse, IAbsolutePointer
     {
-        private Vector2 _offset;
+        private readonly Vector2 _offset;
         private Vector2? _lastPos;
         private Vector2? _delta;
 

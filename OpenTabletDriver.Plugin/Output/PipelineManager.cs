@@ -104,7 +104,7 @@ namespace OpenTabletDriver.Plugin.Output
 
         protected IList<IPositionedPipelineElement<T>> GroupElements(IList<IPositionedPipelineElement<T>> elements, PipelinePosition position)
         {
-            return elements.Where(e => e.Position == position)?.ToArray() ?? Array.Empty<IPositionedPipelineElement<T>>();
+            return elements.Where(e => e.Position == position).ToArray();
         }
     }
 }

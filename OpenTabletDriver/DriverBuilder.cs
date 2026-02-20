@@ -6,19 +6,12 @@ using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver
 {
-    public class DriverBuilder
+    public class DriverBuilder(DriverServiceCollection driverServices)
     {
-        private readonly DriverServiceCollection _driverServices;
         private bool _hasBuilt;
 
-        public DriverBuilder()
+        public DriverBuilder() : this(new DriverServiceCollection())
         {
-            _driverServices = new DriverServiceCollection();
-        }
-
-        public DriverBuilder(DriverServiceCollection serviceCollection)
-        {
-            _driverServices = serviceCollection;
         }
 
         public DriverBuilder ConfigureServices(Action<IServiceCollection> configure)
@@ -26,7 +19,7 @@ namespace OpenTabletDriver
             if (_hasBuilt)
                 throw new DriverAlreadyBuiltException();
 
-            configure(_driverServices);
+            configure(driverServices);
             return this;
         }
 
@@ -40,18 +33,18 @@ namespace OpenTabletDriver
             if (_hasBuilt)
                 throw new DriverAlreadyBuiltException();
 
-            _driverServices.AddSingleton<IDriver, T>();
+            driverServices.AddSingleton<IDriver, T>();
 #if DEBUG
-            var serviceProvider = _driverServices.BuildServiceProvider(new ServiceProviderOptions
+            var serviceProvider = driverServices.BuildServiceProvider(new ServiceProviderOptions
             {
                 ValidateScopes = true,
                 ValidateOnBuild = true
             });
 #else
-            var serviceProvider = _driverServices.BuildServiceProvider();
+            var serviceProvider = driverServices.BuildServiceProvider();
 #endif
             _hasBuilt = true;
-            serviceCollection = _driverServices;
+            serviceCollection = driverServices;
 
             if (serviceProvider.GetService<IDriver>() is not T driver)
                 throw new InvalidOperationException();

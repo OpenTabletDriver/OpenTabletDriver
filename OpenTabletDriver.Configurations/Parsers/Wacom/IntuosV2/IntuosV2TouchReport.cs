@@ -42,6 +42,5 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
         public const int MAX_POINTS = 16;
         public byte[] Raw { set; get; }
         public TouchPoint[] Touches { set; get; }
-        public bool ShouldSerializeTouches() => true;
     }
 }

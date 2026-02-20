@@ -4,13 +4,8 @@ using static OpenTabletDriver.Native.Windows.CfgMgr32;
 
 namespace OpenTabletDriver.Devices.WinUSB
 {
-    public class SafeCmNotificationHandle : SafeHandleZeroOrMinusOneIsInvalid
+    public class SafeCmNotificationHandle() : SafeHandleZeroOrMinusOneIsInvalid(true)
     {
-        public SafeCmNotificationHandle()
-            : base(true)
-        {
-        }
-
         protected override bool ReleaseHandle()
         {
             return CM_Unregister_Notification(handle) == CR.SUCCESS;

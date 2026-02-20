@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using OpenTabletDriver.SystemDrivers.InfoProviders;
+using OpenTabletDriver.SystemDrivers.Providers;
 
 namespace OpenTabletDriver.SystemDrivers
 {

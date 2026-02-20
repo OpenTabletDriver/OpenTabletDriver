@@ -28,17 +28,17 @@ namespace OpenTabletDriver.UX.Windows.Greeter
             foreach (var page in GetGreeterPages())
                 pageViewer.Pages.Add(page);
 
-            var nextButton = new Button((sender, e) => pageViewer.NextPage())
+            var nextButton = new Button((_, _) => pageViewer.NextPage())
             {
                 Text = "Next"
             };
 
-            var prevButton = new Button((sender, e) => pageViewer.PreviousPage())
+            var prevButton = new Button((_, _) => pageViewer.PreviousPage())
             {
                 Text = "Previous"
             };
 
-            pageViewer.SelectedIndexChanged += (sender, e) =>
+            pageViewer.SelectedIndexChanged += (_, _) =>
             {
                 prevButton.Enabled = pageViewer.SelectedIndex > 0;
                 nextButton.Enabled = pageViewer.SelectedIndex <= pageViewer.Pages.Count;
@@ -69,7 +69,7 @@ namespace OpenTabletDriver.UX.Windows.Greeter
             };
         }
 
-        private IEnumerable<DocumentPage> GetGreeterPages()
+        private static IEnumerable<DocumentPage> GetGreeterPages()
         {
             yield return new WelcomePage();
             yield return new AreaEditorPage();

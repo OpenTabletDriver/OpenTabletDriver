@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Numerics;
 using OpenTabletDriver.Native.OSX;
 using OpenTabletDriver.Native.OSX.Input;
@@ -34,7 +33,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
             QueuePendingPosition(0, 0);
         }
 
-        private CGPoint GetCursorPosition()
+        private static CGPoint GetCursorPosition()
         {
             var eventRef = CGEventCreate(IntPtr.Zero);
             var pos = CGEventGetLocation(eventRef);

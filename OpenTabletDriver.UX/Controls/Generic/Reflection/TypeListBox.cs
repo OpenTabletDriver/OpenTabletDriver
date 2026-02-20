@@ -19,13 +19,11 @@ namespace OpenTabletDriver.UX.Controls.Generic.Reflection
             this.DataStore = CreateDefaultDataStore();
         }
 
-        public T ConstructSelectedType(params object[] args)
+        public T ConstructSelectedType()
         {
             if (SelectedItem != null)
-            {
-                args ??= Array.Empty<object>();
                 return AppInfo.PluginManager.ConstructObject<T>(SelectedItem.FullName);
-            }
+
             return null;
         }
 

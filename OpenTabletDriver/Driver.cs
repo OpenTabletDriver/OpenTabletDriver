@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 using OpenTabletDriver.Devices.HidSharpBackend;
 using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
@@ -64,7 +63,7 @@ namespace OpenTabletDriver
                         success = true;
                         treeBuilder.Add(tree);
 
-                        tree.Disconnected += (sender, e) =>
+                        tree.Disconnected += (_, _) =>
                         {
                             tree.OutputMode?.Dispose();
 

@@ -35,7 +35,7 @@ namespace OpenTabletDriver.Desktop
                 if (Settings.TryDeserialize(preset, out var settings))
                 {
                     Presets.Add(new Preset(preset.Name.Remove(preset.Name.Length - 5), settings));
-                    Log.Write("Settings", $"Loaded preset '{preset.Name}'", LogLevel.Info);
+                    Log.Write("Settings", $"Loaded preset '{preset.Name}'");
                 }
                 else
                 {
@@ -48,7 +48,7 @@ namespace OpenTabletDriver.Desktop
         {
             Presets.Clear();
             Load();
-            Log.Write("Settings", $"Presets have been refreshed. Loaded {Presets.Count} presets.", LogLevel.Info);
+            Log.Write("Settings", $"Presets have been refreshed. Loaded {Presets.Count} presets.");
         }
     }
 }

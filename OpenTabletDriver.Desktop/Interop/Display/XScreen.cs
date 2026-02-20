@@ -16,13 +16,20 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         public unsafe XScreen()
         {
             Display = XOpenDisplay(null);
+
+            if (Display == IntPtr.Zero)
+                throw new InvalidOperationException("Could not open X display");
+
             RootWindow = XDefaultRootWindow(Display);
 
-            var monitors = GetXRandrDisplays().ToList();
+            if (RootWindow == IntPtr.Zero)
+                throw new InvalidOperationException("Could not get X root window");
+
+            var monitors = GetXRandrDisplays();
             var primary = monitors.FirstOrDefault(d => d.Primary != 0);
 
-            var displays = new List<IDisplay>();
-            displays.Add(this);
+            var displays = new List<IDisplay> { this };
+
             foreach (var monitor in monitors)
             {
                 var display = new Interop.Display.Display(
@@ -40,21 +47,15 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         private Window Display;
         private Window RootWindow;
 
-        public float Width
-        {
-            get => XDisplayWidth(Display, 0);
-        }
+        public float Width => XDisplayWidth(Display, 0);
 
-        public float Height
-        {
-            get => XDisplayHeight(Display, 0);
-        }
+        public float Height => XDisplayHeight(Display, 0);
 
-        public Vector2 Position { private set; get; } = new Vector2(0, 0);
+        public Vector2 Position { private set; get; }
 
-        private unsafe IEnumerable<XRRMonitorInfo> GetXRandrDisplays()
+        private unsafe List<XRRMonitorInfo> GetXRandrDisplays()
         {
-            ICollection<XRRMonitorInfo> monitors = new List<XRRMonitorInfo>();
+            var monitors = new List<XRRMonitorInfo>();
             var xRandrMonitors = XRRGetMonitors(Display, RootWindow, true, out var count);
             for (int i = 0; i < count; i++)
                 monitors.Add(xRandrMonitors[i]);

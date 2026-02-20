@@ -1,7 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Eto.Drawing;
 using Eto.Forms;
-using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.UX.Controls.Generic
@@ -10,6 +11,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
     {
         public Group()
         {
+            Text = string.Empty;
         }
 
         public Group(string text, Control content, Orientation orientation = DEFAULT_ORIENTATION, bool expand = true)
@@ -23,7 +25,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         private const Orientation DEFAULT_ORIENTATION = Orientation.Vertical;
 
-        protected virtual Padding ContentPadding => DesktopInterop.CurrentPlatform == PluginPlatform.Windows ? new Padding(5, 10, 5, 5) : new Padding(5);
+        protected virtual Padding ContentPadding => SystemInterop.CurrentPlatform == PluginPlatform.Windows ? new Padding(5, 10, 5, 5) : new Padding(5);
 
         protected virtual Color HorizontalBackgroundColor => SystemColors.ControlBackground;
         protected virtual Color VerticalBackgroundColor => SystemColors.WindowBackground;
@@ -31,6 +33,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         private string text;
         public string Text
         {
+            [MemberNotNull(nameof(text))]
             set
             {
                 this.text = value;
@@ -60,7 +63,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             if (!this.Loaded)
                 return;
 
-            switch (Orientation, DesktopInterop.CurrentPlatform)
+            switch (Orientation, SystemInterop.CurrentPlatform)
             {
                 case (_, PluginPlatform.MacOS):
                 {

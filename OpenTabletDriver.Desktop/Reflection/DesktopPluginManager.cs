@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Reflection.Metadata;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
@@ -115,7 +116,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             {
                 if (!IsPlatformSupported(type))
                 {
-                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {DesktopInterop.CurrentPlatform}", LogLevel.Info);
+                    Log.Write("Plugin", $"Plugin '{type.FullName}' is not supported on {SystemInterop.CurrentPlatform}", LogLevel.Info);
                     return;
                 }
                 if (IsPluginIgnored(type))
@@ -167,7 +168,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                     throw new InvalidOperationException($"Unsupported archive type: {file.Extension}");
             }
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == pluginDir.FullName);
-            var result = pluginDir.Exists ? UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
+            var result = pluginDir.Exists && context != null ? UpdatePlugin(context, tempDir) : InstallPlugin(pluginDir, tempDir);
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())
                 Directory.Delete(TemporaryDirectory.FullName, true);
@@ -194,9 +195,9 @@ namespace OpenTabletDriver.Desktop.Reflection
             sourceDir.Refresh();
 
             var context = Plugins.FirstOrDefault(ctx => ctx.Directory.FullName == targetDir.FullName);
-            var result = targetDir.Exists ? UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
+            var result = targetDir.Exists && context != null ? UpdatePlugin(context, sourceDir) : InstallPlugin(targetDir, sourceDir);
 
-            using (var fs = File.Create(metadataPath))
+            await using (var fs = File.Create(metadataPath))
                 Serialization.Serialize(fs, metadata);
 
             if (!TemporaryDirectory.GetFileSystemInfos().Any())

@@ -9,8 +9,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
         protected override void OnLoadComplete(EventArgs e)
         {
             base.OnLoadComplete(e);
-            base.ParentWindow.Closing += (sender, e) => CompositionScheduler.Unregister(OnCompose);
-            base.ParentWindow.WindowStateChanged += (sender, e) =>
+            base.ParentWindow.Closing += (_, _) => CompositionScheduler.Unregister(OnCompose);
+            base.ParentWindow.WindowStateChanged += (_, _) =>
             {
                 if (base.ParentWindow == null || base.ParentWindow.WindowState == WindowState.Minimized)
                     CompositionScheduler.Unregister(OnCompose);

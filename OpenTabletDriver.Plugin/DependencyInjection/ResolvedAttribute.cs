@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Plugin.DependencyInjection
 {
@@ -7,7 +8,6 @@ namespace OpenTabletDriver.Plugin.DependencyInjection
     /// It's value will be set as soon as the object is constructed.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    public class ResolvedAttribute : Attribute
-    {
-    }
+    [MeansImplicitUse(ImplicitUseKindFlags.Assign)]
+    public class ResolvedAttribute : Attribute;
 }

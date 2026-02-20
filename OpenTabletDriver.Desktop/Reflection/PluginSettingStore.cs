@@ -113,12 +113,9 @@ namespace OpenTabletDriver.Desktop.Reflection
                 if (Settings.FirstOrDefault(t => t.Property == propertyName) is PluginSetting setting)
                 {
                     Settings.Remove(setting);
-                    Settings.Add(value);
                 }
-                else
-                {
-                    Settings.Add(value);
-                }
+
+                Settings.Add(value);
             }
             get
             {

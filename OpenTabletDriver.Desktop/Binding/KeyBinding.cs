@@ -1,7 +1,7 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
+using OpenTabletDriver.Interop;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
@@ -23,27 +23,31 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
+            if (Keyboard == null)
+                throw new InvalidOperationException($"{nameof(KeyBinding)} can only be used if {nameof(Keyboard)} is set.");
+
             if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard.Press(Key);
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
+            if (Keyboard == null)
+                throw new InvalidOperationException($"{nameof(KeyBinding)} can only be used if {nameof(Keyboard)} is set.");
+
             if (!string.IsNullOrWhiteSpace(Key))
                 Keyboard.Release(Key);
         }
 
-        private static IEnumerable<string> validKeys;
-        public static IEnumerable<string> ValidKeys
-        {
-            get => validKeys ??= DesktopInterop.CurrentPlatform switch
+        private static IEnumerable<string>? validKeys;
+        public static IEnumerable<string> ValidKeys =>
+            validKeys ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
                 PluginPlatform.Linux => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
                 PluginPlatform.MacOS => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
-                _ => null
+                _ => throw new InvalidOperationException($"Unknown platform {SystemInterop.CurrentPlatform}"),
             };
-        }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Key}";
     }

@@ -61,7 +61,7 @@ namespace OpenTabletDriver.Desktop.Updater
             var asset = release.Assets.First(r => r.Name.Contains("win-x64"));
 
             using (var client = new HttpClient())
-            using (var stream = await client.GetStreamAsync(asset.BrowserDownloadUrl))
+            await using (var stream = await client.GetStreamAsync(asset.BrowserDownloadUrl))
             using (var zipStream = new ZipArchive(stream))
             {
                 zipStream.ExtractToDirectory(downloadPath);

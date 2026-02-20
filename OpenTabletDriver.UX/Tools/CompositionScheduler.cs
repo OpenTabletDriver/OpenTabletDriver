@@ -53,7 +53,7 @@ namespace OpenTabletDriver.UX.Tools
 
         private static void OnCompose()
         {
-            Compose?.Invoke(null, null);
+            Compose?.Invoke(null, EventArgs.Empty);
         }
 
         private static bool running;

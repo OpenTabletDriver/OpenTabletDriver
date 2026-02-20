@@ -18,12 +18,10 @@ namespace OpenTabletDriver.Tests.Updater
         public FakeUpdater(UpdaterEnvironment env) : base(env.Version, env.BinaryDir, env.AppDataDir, env.RollBackDir)
         {
             env.HookToUpdater(this);
-            Environment = env;
             if (!Directory.Exists(_downloadPath))
                 Directory.CreateDirectory(_downloadPath);
         }
 
-        public UpdaterEnvironment Environment { get; }
         public List<FakeFileSystemEntry> UpdateFiles { get; set; } = new();
 
         public async Task CreateUpdateAsync(Version version)

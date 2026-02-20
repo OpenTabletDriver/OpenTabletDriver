@@ -4,8 +4,6 @@ using System.Runtime.InteropServices;
 namespace OpenTabletDriver.Native.Linux.Xorg
 {
     using Display = IntPtr;
-    using IntPtr = IntPtr;
-    using KeySym = IntPtr;
     using Window = IntPtr;
 
     public class XLib

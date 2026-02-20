@@ -8,16 +8,13 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 
-#nullable enable
-
 namespace OpenTabletDriver.Devices
 {
     public class RootHub : ICompositeDeviceHub, IDeviceHub
     {
         public RootHub(IDeviceHubsProvider hubsProvider)
         {
-            internalHubs = hubsProvider.DeviceHubs.ToHashSet();
-            hubs = new HashSet<IDeviceHub>(internalHubs);
+            hubs = new HashSet<IDeviceHub>(hubsProvider.DeviceHubs.ToHashSet());
             ForceEnumeration();
 
             foreach (var hub in hubs)
@@ -29,7 +26,6 @@ namespace OpenTabletDriver.Devices
         }
 
         private readonly object syncObject = new();
-        private readonly HashSet<IDeviceHub> internalHubs;
         private readonly HashSet<IDeviceHub> hubs;
         private List<IDeviceEndpoint>? oldEndpoints;
         private readonly List<IDeviceEndpoint> endpoints = new();

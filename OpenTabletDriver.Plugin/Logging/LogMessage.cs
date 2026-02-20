@@ -45,7 +45,7 @@ namespace OpenTabletDriver.Plugin.Logging
         /// <summary>
         /// True if the log message should create a notification in the user's desktop environment.
         /// </summary>
-        public bool Notification { set; get; } = false;
+        public bool Notification { set; get; }
 
         public override string ToString()
         {

@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.BambooPad
             };
         }
 
-        private IDeviceReport GetToolReport(byte[] report)
+        private static IDeviceReport GetToolReport(byte[] report)
         {
             if (report[1] == 0x01)
                 return new BambooPadTabletReport(report);

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Numerics;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Native.OSX;
+using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
@@ -257,12 +258,12 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             };
         }
 
-        private bool IsButtonSet(int buttonStates, CGMouseButton button)
+        private static bool IsButtonSet(int buttonStates, CGMouseButton button)
         {
             return (buttonStates & (1 << (int)button)) != 0;
         }
 
-        private void SetButtonState(ref int buttonStates, CGMouseButton button, bool state)
+        private static void SetButtonState(ref int buttonStates, CGMouseButton button, bool state)
         {
             if (state)
                 buttonStates |= 1 << (int)button;
@@ -356,7 +357,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             // (e.g., if a modifier key is released after we check its status but before the event is posted).
             // However, this flag has not effects for synthetic keyboard events, so we manually set the flags if there are modifiers bindings.
 
-            if ((_keyboard?.getCurrentFlags() ?? 0) != 0)
+            if (_keyboard.getCurrentFlags() != 0)
                 CGEventSetFlags(_mouseEvent, _keyboard.getCurrentFlags());
             else
                 CGEventSetFlags(_mouseEvent, ~0U);

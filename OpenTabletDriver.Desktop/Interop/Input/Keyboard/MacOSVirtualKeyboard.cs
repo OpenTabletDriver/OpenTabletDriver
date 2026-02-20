@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Native.OSX;
-using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 
@@ -12,13 +11,13 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
     public class MacOSVirtualKeyboard : IVirtualKeyboard
     {
         // Keep track of current modifier flags, as CGEventSourceFlagsState does not return updated flags immediately after an event is posted.
-        private ulong _currentFlags = 0;
+        private ulong _currentFlags;
         private void KeyEvent(string key, bool isPress)
         {
             if (EtoKeysymToVK.TryGetValue(key, out var code))
             {
                 var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
-                var flag = fromCGKeyCode((CGKeyCode)code);
+                var flag = fromCGKeyCode(code);
                 if (flag != 0)
                 {
                     if (!isPress)
@@ -184,7 +183,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             // only USB consumer control buttons: https://zmk.dev/docs/keymaps/list-of-keycodes#media-controls
         };
 
-        private CGEventFlags fromCGKeyCode(CGKeyCode code)
+        private static CGEventFlags fromCGKeyCode(CGKeyCode code)
         {
             return code switch
             {

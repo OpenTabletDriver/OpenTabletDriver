@@ -1,6 +1,6 @@
 namespace OpenTabletDriver.Plugin.Output
 {
-    public interface IPointerProvider<T> where T : class
+    public interface IPointerProvider<out T> where T : class
     {
         T Pointer { get; }
     }
