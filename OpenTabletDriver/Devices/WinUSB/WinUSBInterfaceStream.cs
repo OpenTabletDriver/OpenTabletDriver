@@ -118,6 +118,8 @@ namespace OpenTabletDriver.Devices.WinUSB
         {
             if (parentInterface.TryGetTarget(out var usbInterface))
                 usbInterface.ReturnHandle(winUsbHandle);
+
+            GC.SuppressFinalize(this);
         }
     }
 }

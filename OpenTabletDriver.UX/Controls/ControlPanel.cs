@@ -165,7 +165,7 @@ namespace OpenTabletDriver.UX.Controls
             SetPageVisibility(logView, true);
         });
 
-        private void OnTabletChanged(TabletReference? tablet)
+        private void OnTabletChanged(TabletReference tablet)
         {
             penBindingEditor.Tablet = tablet;
             auxBindingEditor.Tablet = tablet;

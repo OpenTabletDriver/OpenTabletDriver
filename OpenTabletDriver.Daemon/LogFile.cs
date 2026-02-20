@@ -133,6 +133,8 @@ namespace OpenTabletDriver.Daemon
             _writer.Flush();
             _writer.Dispose();
             _stream.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         ~LogFile()

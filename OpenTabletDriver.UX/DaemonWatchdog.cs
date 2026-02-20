@@ -61,6 +61,8 @@ namespace OpenTabletDriver.UX
         public void Dispose()
         {
             Stop();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

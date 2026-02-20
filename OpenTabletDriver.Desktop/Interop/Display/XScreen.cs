@@ -74,6 +74,8 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         public void Dispose()
         {
             XCloseDisplay(Display);
+
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -19,6 +19,11 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
         public void GetFeature(byte[] buffer) => stream.GetFeature(buffer);
         public void SetFeature(byte[] buffer) => stream.SetFeature(buffer);
 
-        public void Dispose() => stream.Dispose();
+        public void Dispose()
+        {
+            stream.Dispose();
+
+            System.GC.SuppressFinalize(this);
+        }
     }
 }

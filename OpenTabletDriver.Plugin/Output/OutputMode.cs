@@ -137,6 +137,8 @@ namespace OpenTabletDriver.Plugin.Output
             foreach (var obj in Elements ?? [])
                 if (obj is IDisposable disposable)
                     disposable.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

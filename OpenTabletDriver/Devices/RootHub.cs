@@ -8,6 +8,8 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 
+#nullable enable
+
 namespace OpenTabletDriver.Devices
 {
     public class RootHub : ICompositeDeviceHub, IDeviceHub

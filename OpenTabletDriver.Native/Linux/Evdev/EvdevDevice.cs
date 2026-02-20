@@ -32,6 +32,8 @@ namespace OpenTabletDriver.Native.Linux.Evdev
                 this.uidev = IntPtr.Zero;
                 this.device = IntPtr.Zero;
             }
+
+            GC.SuppressFinalize(this);
         }
 
         public void EnableProperty(InputProperty prop) => libevdev_enable_property(this.device, (uint)prop);

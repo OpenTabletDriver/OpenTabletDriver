@@ -33,6 +33,8 @@ namespace OpenTabletDriver.UX
         {
             Indicator.Hide();
             Indicator.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         public void RefreshMenuItems()

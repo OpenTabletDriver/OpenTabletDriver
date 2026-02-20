@@ -30,6 +30,8 @@ namespace OpenTabletDriver.Plugin.Tablet
             };
         }
 
+        public TiltTabletReport(byte[] report) : this(report, false, false) { }
+
         public byte[] Raw { set; get; }
         public Vector2 Position { set; get; }
         public Vector2 Tilt { set; get; }

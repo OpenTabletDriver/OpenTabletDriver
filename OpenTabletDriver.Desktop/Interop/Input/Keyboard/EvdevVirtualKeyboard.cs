@@ -63,6 +63,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
         public void Dispose()
         {
             Device?.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         public IEnumerable<string> SupportedKeys => EtoKeysymToEventCode.Keys;
