@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace OpenTabletDriver.Plugin.Devices
 {
     public class SerializedDeviceEndpoint
     {
+        [JsonConstructor]
         public SerializedDeviceEndpoint()
         {
+            DeviceAttributes = new Dictionary<string, string>();
         }
 
         public SerializedDeviceEndpoint(IDeviceEndpoint endpoint)
@@ -24,28 +27,40 @@ namespace OpenTabletDriver.Plugin.Devices
             DeviceAttributes = endpoint.DeviceAttributes;
         }
 
+        [JsonProperty(nameof(DevicePath))]
         public string DevicePath { get; set; }
 
+        [JsonProperty(nameof(Manufacturer))]
         public string Manufacturer { get; set; }
 
+        [JsonProperty(nameof(ProductName))]
         public string ProductName { get; set; }
 
+        [JsonProperty(nameof(SerialNumber))]
         public string SerialNumber { get; set; }
 
+        [JsonProperty(nameof(FriendlyName))]
         public string FriendlyName { get; set; }
 
+        [JsonProperty(nameof(VendorID))]
         public int VendorID { get; set; }
 
+        [JsonProperty(nameof(ProductID))]
         public int ProductID { get; set; }
 
+        [JsonProperty(nameof(InputReportLength))]
         public int InputReportLength { get; set; }
 
+        [JsonProperty(nameof(OutputReportLength))]
         public int OutputReportLength { get; set; }
 
+        [JsonProperty(nameof(FeatureReportLength))]
         public int FeatureReportLength { get; set; }
 
+        [JsonProperty(nameof(CanOpen))]
         public bool CanOpen { get; set; }
 
+        [JsonProperty(nameof(DeviceAttributes))]
         public IDictionary<string, string> DeviceAttributes { get; set; }
     }
 }

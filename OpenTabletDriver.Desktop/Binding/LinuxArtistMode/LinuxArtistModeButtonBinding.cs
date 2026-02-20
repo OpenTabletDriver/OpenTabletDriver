@@ -37,7 +37,7 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
             { "Pen Button 3", EventCode.BTN_STYLUS3 },
         };
 
-        public static string[] ValidButtons => SupportedButtons.Keys.ToArray();
+        public static string[] ValidButtons { get; } = SupportedButtons.Keys.ToArray();
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string? Button { get; set; }

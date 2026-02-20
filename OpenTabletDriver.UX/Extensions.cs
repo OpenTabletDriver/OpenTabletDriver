@@ -34,7 +34,7 @@ namespace OpenTabletDriver.UX
         {
             string message = errorData.Message + Environment.NewLine + errorData.StackTrace;
             Log.Write(
-                errorData.TypeName,
+                errorData.TypeName ?? "<unknown type>",
                 message,
                 LogLevel.Error
             );

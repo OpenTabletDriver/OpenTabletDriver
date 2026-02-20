@@ -36,7 +36,7 @@ namespace OpenTabletDriver.Desktop.Binding
             set
             {
                 this.keysString = value;
-                this.keys = ParseKeys(Keys);
+                this.keys = ParseKeys(value);
             }
             get => this.keysString;
         }
@@ -45,6 +45,8 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             if (keys.Length > 0)
                 Keyboard?.Press(this.keys);
+            else
+                Log.Debug(nameof(MultiKeyBinding), "No keys defined to press");
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
@@ -57,7 +59,10 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             if (str == null || Keyboard == null) return [];
             var newKeys = str.Split(KEYS_SPLITTER, StringSplitOptions.TrimEntries);
-            return newKeys.All(k => Keyboard.SupportedKeys.Contains(k)) ? newKeys : [];
+            var rv = newKeys.All(k => Keyboard.SupportedKeys.Contains(k)) ? newKeys : [];
+            if (rv.Length != newKeys.Length)
+                Log.Write(nameof(MultiKeyBinding), $"Only partially parsed input keys: {newKeys}", LogLevel.Warning);
+            return rv;
         }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Keys}";

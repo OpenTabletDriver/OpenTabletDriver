@@ -35,6 +35,8 @@ namespace OpenTabletDriver.Desktop.Binding
         {
             if (Enum.TryParse<MouseButton>(Button, true, out var mouseButton))
                 Pointer?.MouseDown(mouseButton);
+            else
+                Log.Write(nameof(MouseBinding), $"Invalid {nameof(Button)}: {Button}", LogLevel.Error);
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)

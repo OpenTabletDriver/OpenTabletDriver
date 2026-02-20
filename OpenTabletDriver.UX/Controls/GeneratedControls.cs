@@ -174,8 +174,8 @@ namespace OpenTabletDriver.UX.Controls
 
         private static DirectBinding<T> Convert<T>(this DirectBinding<PluginSetting> binding, PropertyInfo property)
         {
-            return binding.Convert(
-                s => s.GetValueOrDefault<T>(property),
+            return binding.Convert<T>(
+                s => s.GetValueOrDefault<T>(property) ?? throw new InvalidOperationException($"Could not get default value for '{property.Name}'"),
                 v => new PluginSetting(property, v)
             );
         }

@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Plugin.Output
     [PluginIgnore]
     public abstract class RelativeOutputMode : OutputMode
     {
-        private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch();
+        private HPETDeltaStopwatch stopwatch = new();
         private Vector2? lastTransformedPos;
         private Vector2 lastReadPos;
         private bool outOfRange;
@@ -78,7 +78,7 @@ namespace OpenTabletDriver.Plugin.Output
         protected override Matrix3x2 CreateTransformationMatrix()
         {
             var transform = Matrix3x2.CreateRotation(
-                (float)(-Rotation * System.Math.PI / 180));
+                (float)(-Rotation * Math.PI / 180));
 
             var digitizer = Tablet?.Properties.Specifications.Digitizer;
             return transform *= Matrix3x2.CreateScale(

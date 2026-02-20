@@ -26,9 +26,9 @@ namespace OpenTabletDriver.Devices.WinUSB
         ];
 
         private readonly CM_NOTIFY_CALLBACK _callback;
-        private readonly GCHandle _callbackPin;
-        private List<WinUSBInterface> _oldDevices;
-        private List<WinUSBInterface> _currentDevices;
+        private GCHandle _callbackPin;
+        private List<WinUSBInterface> _oldDevices = [];
+        private List<WinUSBInterface> _currentDevices = [];
         private readonly Dictionary<Guid, SafeCmNotificationHandle> _notificationHandles = new();
 
         public unsafe WinUSBRootHub()
@@ -72,7 +72,7 @@ namespace OpenTabletDriver.Devices.WinUSB
 
         private static void EnumerateAllDevicesWithGuid(List<WinUSBInterface> list, Guid guid)
         {
-            var deviceInfoSet = SetupDiGetClassDevs(in guid, IntPtr.Zero, IntPtr.Zero, DIGCF.Present | DIGCF.DeviceInterface);
+            var deviceInfoSet = SetupDiGetClassDevs(in guid, null, IntPtr.Zero, DIGCF.Present | DIGCF.DeviceInterface);
 
             try
             {
@@ -122,8 +122,6 @@ namespace OpenTabletDriver.Devices.WinUSB
                 case CM_NOTIFY_ACTION.DEVICEINTERFACEARRIVAL:
                 case CM_NOTIFY_ACTION.DEVICEINTERFACEREMOVAL:
                     Enumerate();
-                    break;
-                default:
                     break;
             }
             return 0;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Interop;
@@ -43,16 +44,15 @@ namespace OpenTabletDriver.Desktop.Binding
         }
 
         private static IEnumerable<string>? validKeys;
-        public static IEnumerable<string>? ValidKeys
-        {
-            get => validKeys ??= SystemInterop.CurrentPlatform switch
+
+        public static IEnumerable<string> ValidKeys =>
+            validKeys ??= SystemInterop.CurrentPlatform switch
             {
                 PluginPlatform.Windows => WindowsVirtualKeyboard.EtoKeysymToVK.Keys,
                 PluginPlatform.Linux => EvdevVirtualKeyboard.EtoKeysymToEventCode.Keys,
                 PluginPlatform.MacOS => MacOSVirtualKeyboard.EtoKeysymToVK.Keys,
-                _ => null
+                _ => throw new InvalidOperationException($"Unknown platform {SystemInterop.CurrentPlatform}"),
             };
-        }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Key}";
     }

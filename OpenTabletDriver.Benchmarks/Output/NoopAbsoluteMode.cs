@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Benchmarks.Output
     {
         public override IAbsolutePointer Pointer { set; get; } = new NoopPointer();
 
-        public class NoopPointer : IAbsolutePointer
+        private class NoopPointer : IAbsolutePointer
         {
             public Vector2 Position { private set; get; }
 

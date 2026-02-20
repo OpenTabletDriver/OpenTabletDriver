@@ -1,6 +1,4 @@
 namespace OpenTabletDriver.Plugin
 {
-    public interface IBinding
-    {
-    }
+    public interface IBinding;
 }

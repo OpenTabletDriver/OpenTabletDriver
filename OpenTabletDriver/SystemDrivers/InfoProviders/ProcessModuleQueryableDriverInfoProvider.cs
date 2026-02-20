@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -32,22 +31,24 @@ namespace OpenTabletDriver.SystemDrivers.InfoProviders
 
         protected virtual DriverInfo GetWinDriverInfo()
         {
-            IEnumerable<Process> processes;
+            if (pnpUtil == null)
+                throw new InvalidOperationException($"Must run {nameof(Refresh)} before getting driver info");
+
             var match = Heuristics.Any(name => Regex.IsMatch(pnpUtil, name, RegexOptions.IgnoreCase));
             if (match)
             {
-                processes = DriverInfo.SystemProcesses
+                var processes = DriverInfo.SystemProcesses
                     .Where(p => WinProcessNames.Concat(Heuristics)
-                    .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase)));
+                        .Any(n => Regex.IsMatch(p.ProcessName, n, RegexOptions.IgnoreCase))).ToArray();
 
                 var status = DriverStatus.Blocking;
-                if (processes.Any())
+                if (processes.Length != 0)
                     status |= DriverStatus.Active;
 
                 return new DriverInfo
                 {
                     Name = FriendlyName,
-                    Processes = processes.Any() ? processes.ToArray() : Array.Empty<Process>(),
+                    Processes = processes.Length != 0 ? processes.ToArray() : [],
                     Status = status
                 };
             }

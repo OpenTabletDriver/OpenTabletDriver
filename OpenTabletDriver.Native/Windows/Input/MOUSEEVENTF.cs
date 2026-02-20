@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace OpenTabletDriver.Native.Windows.Input

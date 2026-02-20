@@ -19,7 +19,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             ItemTextBinding = Binding.Property<PluginMetadata, string>(m => m.Name);
 
             Refresh();
-            AppInfo.PluginManager.AssembliesChanged += (sender, e) => Refresh();
+            AppInfo.PluginManager.AssembliesChanged += (_, _) => Refresh();
         }
 
         public static PluginMetadataCollection Repository { private set; get; }
@@ -58,8 +58,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
             var query = from plugin in plugins
                         let meta = plugin.FirstOrDefault()
-                        orderby meta.Name
-                        orderby local.Any(m => PluginMetadata.Match(m, meta)) descending
+                        orderby meta.Name, local.Any(m => PluginMetadata.Match(m, meta)) descending
                         select meta;
 
             this.DataStore = query.ToList();

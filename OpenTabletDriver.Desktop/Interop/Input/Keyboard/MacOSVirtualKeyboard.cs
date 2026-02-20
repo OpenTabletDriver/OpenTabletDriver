@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
             if (EtoKeysymToVK.TryGetValue(key, out var code))
             {
                 var keyEvent = CGEventCreateKeyboardEvent(IntPtr.Zero, code, isPress);
-                var flag = fromCGKeyCode((CGKeyCode)code);
+                var flag = fromCGKeyCode(code);
                 if (flag != 0)
                 {
                     if (!isPress)

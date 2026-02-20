@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
@@ -15,7 +16,7 @@ namespace OpenTabletDriver.Desktop.Profiles
         private AbsoluteModeSettings absoluteMode = new AbsoluteModeSettings();
         private RelativeModeSettings relativeMode = new RelativeModeSettings();
         private BindingSettings bindings = new BindingSettings();
-        private PluginSettingStoreCollection filters = new PluginSettingStoreCollection();
+        private PluginSettingStoreCollection filters = [];
 
         [JsonProperty(nameof(Tablet))]
         public string Tablet

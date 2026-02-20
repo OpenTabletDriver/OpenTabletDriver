@@ -9,7 +9,5 @@ namespace OpenTabletDriver.Plugin.DependencyInjection
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     [MeansImplicitUse(ImplicitUseKindFlags.Assign)]
-    public class ResolvedAttribute : Attribute
-    {
-    }
+    public class ResolvedAttribute : Attribute;
 }

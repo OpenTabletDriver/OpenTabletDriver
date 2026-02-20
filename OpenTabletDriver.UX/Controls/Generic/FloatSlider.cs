@@ -46,7 +46,7 @@ namespace OpenTabletDriver.UX.Controls
             set
             {
                 this._value = value;
-                ValueChanged?.Invoke(this, new EventArgs());
+                ValueChanged?.Invoke(this, EventArgs.Empty);
             }
             get => this._value;
         }

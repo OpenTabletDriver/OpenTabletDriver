@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using OpenTabletDriver.Plugin;
@@ -106,6 +106,9 @@ namespace OpenTabletDriver.Devices
                 Connected = true;
                 while (Connected)
                 {
+                    if (ReportStream == null)
+                        throw new NullReferenceException($"Cannot read from a null {nameof(ReportStream)}");
+
                     var data = ReportStream.Read();
                     if (Parser.Parse(data) is T report)
                         OnReport(report);

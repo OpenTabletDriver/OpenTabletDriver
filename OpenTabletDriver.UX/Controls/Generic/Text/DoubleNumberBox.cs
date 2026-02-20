@@ -16,7 +16,7 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text
             public override double Value
             {
                 set => Text = value.ToString(CultureInfo.InvariantCulture);
-                get => double.TryParse(Text, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : default(double);
+                get => double.TryParse(Text, NumberStyles.Any, CultureInfo.InvariantCulture, out var val) ? val : 0;
             }
         }
     }

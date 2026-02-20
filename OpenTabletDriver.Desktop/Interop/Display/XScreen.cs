@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -15,20 +15,30 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         public unsafe XScreen()
         {
             Display = XOpenDisplay(null);
+
+            if (Display == IntPtr.Zero)
+                throw new InvalidOperationException("Could not open X display");
+
             RootWindow = XDefaultRootWindow(Display);
 
-            var monitors = GetXRandrDisplays().ToList();
+            if (RootWindow == IntPtr.Zero)
+                throw new InvalidOperationException("Could not get X root window");
+
+            var monitors = GetXRandrDisplays();
             var primary = monitors.FirstOrDefault(d => d.Primary != 0);
 
-            var displays = new List<IDisplay>();
-            displays.Add(this);
-            foreach (var monitor in monitors)
+            var displays = new List<IDisplay> { this };
+
+            for (int index = 0; index < monitors.Length; index++)
             {
+                var monitor = monitors[index];
+
                 var display = new Interop.Display.Display(
                     monitor.Width,
                     monitor.Height,
                     new Vector2(monitor.X - primary.X, monitor.Y - primary.Y),
-                    monitors.IndexOf(monitor) + 1);
+                    index + 1);
+
                 displays.Add(display);
             }
 
@@ -39,17 +49,11 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         private IntPtr Display;
         private IntPtr RootWindow;
 
-        public float Width
-        {
-            get => XDisplayWidth(Display, 0);
-        }
+        public float Width => XDisplayWidth(Display, 0);
 
-        public float Height
-        {
-            get => XDisplayHeight(Display, 0);
-        }
+        public float Height => XDisplayHeight(Display, 0);
 
-        public Vector2 Position { private set; get; } = new Vector2(0, 0);
+        public Vector2 Position { private set; get; }
 
         private unsafe XRRMonitorInfo[] GetXRandrDisplays()
         {

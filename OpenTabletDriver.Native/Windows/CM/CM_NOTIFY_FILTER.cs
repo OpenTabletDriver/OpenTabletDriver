@@ -81,8 +81,7 @@ namespace OpenTabletDriver.Native.Windows.CM
 
         public static CM_NOTIFY_FILTER Create(string instanceId)
         {
-            if (instanceId == null)
-                throw new ArgumentNullException(nameof(instanceId));
+            ArgumentNullException.ThrowIfNull(instanceId);
 
             if (instanceId.Length > MAX_DEVICE_ID_LEN)
                 throw new ArgumentException("The length of instanceId cannot exceed " + nameof(MAX_DEVICE_ID_LEN), nameof(instanceId));
@@ -96,7 +95,7 @@ namespace OpenTabletDriver.Native.Windows.CM
             fixed (char* pInstanceId = instanceId)
             {
                 int cbSource = instanceId.Length * 2; // char to byte length
-                int cbTarget = MAX_DEVICE_ID_LEN * 2; // char to byte length
+                const int cbTarget = MAX_DEVICE_ID_LEN * 2; // char to byte length
                 Buffer.MemoryCopy(pInstanceId, filter.InstanceId, cbTarget, cbSource);
             }
 

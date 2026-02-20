@@ -58,9 +58,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                         if (matchingConstructors.FirstOrDefault() is ConstructorInfo constructor)
                         {
                             T obj = (T)constructor.Invoke(args);
-
-                            if (obj != null)
-                                Inject(this, obj, type);
+                            Inject(this, obj, type);
                             return obj;
                         }
                         else

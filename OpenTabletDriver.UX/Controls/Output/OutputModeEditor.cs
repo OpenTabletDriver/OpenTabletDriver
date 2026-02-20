@@ -33,13 +33,13 @@ namespace OpenTabletDriver.UX.Controls.Output
             relativeModeEditor.SettingsBinding.Bind(ProfileBinding.Child(p => p.RelativeModeSettings));
 
             outputModeSelector.SelectedItemBinding.Convert<PluginSettingStore>(
-                c => PluginSettingStore.FromPath(c?.FullName),
+                c => PluginSettingStore.FromPath(c?.FullName) ?? throw new InvalidOperationException($"TypeInfo lookup: unknown path '{c?.FullName}'"),
                 v => v?.GetTypeInfo()
             ).Bind(ProfileBinding.Child(c => c.OutputMode));
 
-            outputModeSelector.SelectedValueChanged += (sender, e) => UpdateOutputMode(Profile?.OutputMode);
+            outputModeSelector.SelectedValueChanged += (_, _) => UpdateOutputMode(Profile?.OutputMode);
 
-            App.Driver.TabletsChanged += (sender, e) => UpdateTablet(e);
+            App.Driver.TabletsChanged += (_, e) => UpdateTablet(e);
             UpdateTablet();
         }
 
@@ -67,7 +67,7 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         protected virtual void OnProfileChanged()
         {
-            ProfileChanged?.Invoke(this, new EventArgs());
+            ProfileChanged?.Invoke(this, EventArgs.Empty);
             UpdateTablet();
             UpdateOutputMode(Profile?.OutputMode);
             outputModeSelector.Enabled = Profile != null;

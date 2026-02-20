@@ -29,7 +29,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
                 }
             };
 
-            var inputs = new INPUT[] { input };
+            var inputs = new[] { input };
             var result = SendInput((uint)inputs.Length, inputs, INPUT.Size);
             if (result != inputs.Length)
                 Log.Write("WindowsKeyboard", $"SendInput failed: {result}/{inputs.Length} events inserted", LogLevel.Error);

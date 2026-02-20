@@ -82,6 +82,8 @@ namespace OpenTabletDriver.UX.Controls
             filterEditor.StoreCollectionBinding.Bind(ProfileBinding.Child(p => p.Filters));
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
+            if (DesktopInterop.VirtualScreen == null)
+                throw new InvalidOperationException("Need a virtual screen to render display area");
             outputModeEditor.SetDisplaySize(DesktopInterop.VirtualScreen.Displays);
 
             Log.Output += (_, message) => Application.Instance.AsyncInvoke(() =>
@@ -169,7 +171,7 @@ namespace OpenTabletDriver.UX.Controls
             SetPageVisibility(logView, true);
         });
 
-        public void OnTabletChanged(TabletReference tablet)
+        private void OnTabletChanged(TabletReference tablet)
         {
             // ensure we have enough wheel binding editors
             int tabletWheels = tablet?.Properties.Specifications.Wheels?.Count ?? 0;

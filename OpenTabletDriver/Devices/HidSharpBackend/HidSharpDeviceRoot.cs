@@ -12,9 +12,9 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
     {
         public HidSharpDeviceRootHub()
         {
-            DeviceList.Local.Changed += (sender, e) =>
+            DeviceList.Local.Changed += (_, _) =>
             {
-                var newList = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
+                var newList = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d)).ToArray();
                 var changes = new DevicesChangedEventArgs(hidDevices, newList);
                 if (changes.Changes.Any())
                 {
@@ -24,7 +24,7 @@ namespace OpenTabletDriver.Devices.HidSharpBackend
             };
         }
 
-        private IEnumerable<IDeviceEndpoint> hidDevices = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d));
+        private IEnumerable<IDeviceEndpoint> hidDevices = DeviceList.Local.GetHidDevices().Select(d => new HidSharpEndpoint(d)).ToArray();
 
         public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
 

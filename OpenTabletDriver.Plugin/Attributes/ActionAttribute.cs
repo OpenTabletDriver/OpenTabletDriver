@@ -7,15 +7,9 @@ namespace OpenTabletDriver.Plugin.Attributes
     /// <b>WARNING:</b> Currently unimplemented in codebase as of v0.6.7
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
-    public class ActionAttribute : Attribute
+    public class ActionAttribute(string groupName, string displayText) : Attribute
     {
-        public ActionAttribute(string groupName, string displayText)
-        {
-            GroupName = groupName;
-            DisplayText = displayText;
-        }
-
-        public string GroupName { set; get; }
-        public string DisplayText { set; get; }
+        public string GroupName { set; get; } = groupName;
+        public string DisplayText { set; get; } = displayText;
     }
 }

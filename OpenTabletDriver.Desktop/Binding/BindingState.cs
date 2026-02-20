@@ -29,6 +29,8 @@ namespace OpenTabletDriver.Desktop.Binding
                 else if (!newState && PreviousState)
                     stateBinding.Release(tablet, report);
             }
+            else if (Binding == null)
+                Log.Write(nameof(BindingState), $"Binding state not set for binding associated with {tablet}", LogLevel.Warning);
 
             if (!newState || pressureThresholdIsMetOrUnneeded) // don't update state to true without threshold
                 PreviousState = newState;

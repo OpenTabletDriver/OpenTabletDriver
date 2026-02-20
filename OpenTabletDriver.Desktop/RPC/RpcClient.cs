@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Pipes;
 using System.Threading.Tasks;
 using StreamJsonRpc;
@@ -8,11 +9,13 @@ namespace OpenTabletDriver.Desktop.RPC
     public class RpcClient<T> where T : class
     {
         private readonly string pipeName;
-        private NamedPipeClientStream stream;
+        private readonly NamedPipeClientStream stream;
         private JsonRpc rpc;
 
         public T Instance { private set; get; }
-        public bool IsConnected { get => rpc != null && !rpc.IsDisposed; }
+
+        [MemberNotNullWhen(true, nameof(Instance))]
+        public bool IsConnected => Instance != null && rpc is { IsDisposed: false };
 
         public event EventHandler Connected;
         public event EventHandler Disconnected;
@@ -20,11 +23,11 @@ namespace OpenTabletDriver.Desktop.RPC
         public RpcClient(string pipeName)
         {
             this.pipeName = pipeName;
+            stream = GetStream();
         }
 
         public async Task Connect()
         {
-            this.stream = GetStream();
             await this.stream.ConnectAsync();
 
             rpc = new JsonRpc(this.stream);

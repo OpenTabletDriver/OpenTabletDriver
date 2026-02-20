@@ -8,7 +8,5 @@ namespace OpenTabletDriver.Plugin.DependencyInjection
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     [MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
-    public class OnDependencyLoadAttribute : Attribute
-    {
-    }
+    public class OnDependencyLoadAttribute : Attribute;
 }

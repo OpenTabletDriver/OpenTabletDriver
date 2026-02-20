@@ -87,7 +87,7 @@ namespace OpenTabletDriver.Desktop.Reflection
                 PluginPlatform.Windows => $"{dllName}.dll",
                 PluginPlatform.Linux => $"lib{dllName}.so",
                 PluginPlatform.MacOS => $"lib{dllName}.dylib",
-                _ => null
+                _ => throw new InvalidOperationException("Unsupported platform"),
             };
         }
     }

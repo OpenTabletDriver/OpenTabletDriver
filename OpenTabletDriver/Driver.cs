@@ -63,7 +63,7 @@ namespace OpenTabletDriver
                         success = true;
                         treeBuilder.Add(tree);
 
-                        tree.Disconnected += (sender, e) =>
+                        tree.Disconnected += (_, _) =>
                         {
                             tree.OutputMode?.Dispose();
 

@@ -2,28 +2,29 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace OpenTabletDriver.Plugin.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public partial class PropertyValidatedAttribute : Attribute
+    [MeansImplicitUse(ImplicitUseKindFlags.Access)]
+    public partial class PropertyValidatedAttribute(string memberName) : Attribute
     {
-        public PropertyValidatedAttribute(string memberName)
-        {
-            MemberName = memberName;
-        }
-
         /// <summary>
         /// The name of the member in which the property this is assigned to is allowed to have.
         /// </summary>
         /// <remarks>
         /// This member must return <see cref="System.Collections.Generic.IEnumerable{T}"/> statically.
         /// </remarks>
-        public string MemberName { get; }
+        public string MemberName { get; } = memberName;
 
         public T GetValue<T>(PropertyInfo property)
         {
             var sourceType = property.ReflectedType;
+
+            if (sourceType == null)
+                throw new InvalidOperationException($"Could not look up reflected type of property {property}");
+
             var member = sourceType.GetMember(MemberName).First();
             try
             {

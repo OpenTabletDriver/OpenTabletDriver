@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Eto.Drawing;
 using Eto.Forms;
 using OpenTabletDriver.Interop;
@@ -10,6 +11,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
     {
         public Group()
         {
+            Text = string.Empty;
         }
 
         public Group(string text, Control content, Orientation orientation = DEFAULT_ORIENTATION, bool expand = true)
@@ -31,6 +33,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
         private string text;
         public string Text
         {
+            [MemberNotNull(nameof(text))]
             set
             {
                 this.text = value;

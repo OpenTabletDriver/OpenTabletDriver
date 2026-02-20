@@ -25,6 +25,8 @@ namespace OpenTabletDriver.Desktop.Compression
                         zipStream.Decompress(outputDir);
                     break;
                 }
+                case null:
+                    throw new ArgumentNullException(nameof(format), "null formats are not supported");
                 default:
                     throw new NotSupportedException($"{format} is not supported.");
             }

@@ -9,6 +9,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
     {
         public AuxiliaryBindingEditor()
         {
+            BindingDisplayList auxButtons;
+
             this.Content = new Scrollable
             {
                 Border = BorderType.None,
@@ -32,7 +34,5 @@ namespace OpenTabletDriver.UX.Controls.Bindings
 
             auxButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.AuxButtons));
         }
-
-        private BindingDisplayList auxButtons;
     }
 }

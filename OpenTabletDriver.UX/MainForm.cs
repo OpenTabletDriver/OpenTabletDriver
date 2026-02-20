@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -21,32 +23,32 @@ using OpenTabletDriver.UX.Controls;
 
 namespace OpenTabletDriver.UX
 {
-    public class MainForm : DesktopForm
+    public sealed class MainForm : DesktopForm
     {
         public MainForm()
         {
-            this.DataContext = App.Current;
+            DataContext = App.Current;
 
             // Call InitializeForm on ctor since DesktopForm.Show() won't be called on binary launch
             InitializeForm();
             InitializePlatform();
 
-            SetTitle();
+            SetEmptyTitle();
             Menu = ConstructLimitedMenu();
 
-            base.Content = placeholder = new Placeholder
+            Content = placeholder = new Placeholder
             {
                 Text = "Connecting to OpenTabletDriver Daemon..."
             };
 
-            trayIcon?.Indicator?.Show();
+            trayIcon?.Indicator.Show();
 
-            saveButton = new Button(async (s, e) => await SaveSettings())
+            saveButton = new Button(async void (_, _) => await SaveSettings())
             {
                 Text = "Save"
             };
 
-            applyButton = new Button(async (s, e) => await ApplySettings())
+            applyButton = new Button(async void (_, _) => await ApplySettings())
             {
                 Text = "Apply"
             };
@@ -108,11 +110,11 @@ namespace OpenTabletDriver.UX
         private const int DEFAULT_CLIENT_WIDTH = 960;
         private const int DEFAULT_CLIENT_HEIGHT = 760;
 
-        private MenuBar menu;
-        private Placeholder placeholder;
+        private readonly Placeholder placeholder;
         private TrayIcon trayIcon;
 
-        public bool SilenceDaemonShutdown { get; set; }
+        private bool isLimitedMenu { get; set; }
+
         public bool SkipUpdate { get; set; }
 
         protected override void InitializeForm()
@@ -135,7 +137,7 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        protected void InitializePlatform()
+        private void InitializePlatform()
         {
             switch (SystemInterop.CurrentPlatform)
             {
@@ -163,7 +165,7 @@ namespace OpenTabletDriver.UX
                     this.Visible = false;
                     this.ShowInTaskbar = false;
                 }
-                this.WindowStateChanged += (sender, e) =>
+                this.WindowStateChanged += (_, _) =>
                 {
                     switch (this.WindowState)
                     {
@@ -178,7 +180,7 @@ namespace OpenTabletDriver.UX
                             break;
                     }
                 };
-                Application.Instance.Terminating += (sender, e) => trayIcon.Dispose();
+                Application.Instance.Terminating += (_, _) => trayIcon.Dispose();
             }
 
             if (App.EnableDaemonWatchdog)
@@ -186,13 +188,13 @@ namespace OpenTabletDriver.UX
                 // Check if daemon is already active, if not then start it as a subprocess if it exists in the local path.
                 StartDaemonWatchdog();
 
-                AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+                AppDomain.CurrentDomain.UnhandledException += (_, _) =>
                 {
                     App.DaemonWatchdog?.Dispose();
                     App.DaemonWatchdog = null;
                 };
 
-                this.Closing += (sender, e) =>
+                this.Closing += (_, _) =>
                 {
                     App.DaemonWatchdog?.Dispose();
                     App.DaemonWatchdog = null;
@@ -212,13 +214,13 @@ namespace OpenTabletDriver.UX
         private static MenuBar ConstructLimitedMenu()
         {
             var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
-            quitCommand.Executed += (sender, e) => Application.Instance.Quit();
+            quitCommand.Executed += (_, _) => Application.Instance.Quit();
 
             var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
-            aboutCommand.Executed += (sender, e) => App.Current.AboutWindow.Show();
+            aboutCommand.Executed += (_, _) => App.Current.AboutWindow.Show();
 
             var wikiUrl = new Command { MenuText = "Open Wiki..." };
-            wikiUrl.Executed += (sender, e) => DesktopInterop.Open(App.WikiUrl);
+            wikiUrl.Executed += (_, _) => DesktopInterop.Open(App.WikiUrl);
 
             var menuBar = new MenuBar
             {
@@ -243,58 +245,58 @@ namespace OpenTabletDriver.UX
         private MenuBar ConstructMenu()
         {
             var quitCommand = new Command { MenuText = "Quit", Shortcut = Application.Instance.CommonModifier | Keys.Q };
-            quitCommand.Executed += (sender, e) => Application.Instance.Quit();
+            quitCommand.Executed += (_, _) => Application.Instance.Quit();
 
             var aboutCommand = new Command { MenuText = "About...", Shortcut = Keys.F1 };
-            aboutCommand.Executed += (sender, e) => App.Current.AboutWindow.Show();
+            aboutCommand.Executed += (_, _) => App.Current.AboutWindow.Show();
 
             var resetSettings = new Command { MenuText = "Reset to defaults" };
-            resetSettings.Executed += async (sender, e) => await ResetSettingsDialog();
+            resetSettings.Executed += async (_, _) => await ResetSettingsDialog();
 
             var loadSettings = new Command { MenuText = "Load settings...", Shortcut = Application.Instance.CommonModifier | Keys.O };
-            loadSettings.Executed += async (sender, e) => await LoadSettingsDialog();
+            loadSettings.Executed += async (_, _) => await LoadSettingsDialog();
 
             var saveSettingsAs = new Command { MenuText = "Save settings as...", Shortcut = Application.Instance.CommonModifier | Keys.Shift | Keys.S };
-            saveSettingsAs.Executed += async (sender, e) => await SaveSettingsDialog();
+            saveSettingsAs.Executed += async (_, _) => await SaveSettingsDialog();
 
             var saveSettings = new Command { MenuText = "Save settings", Shortcut = Application.Instance.CommonModifier | Keys.S };
-            saveSettings.Executed += async (sender, e) => await SaveSettings();
+            saveSettings.Executed += async (_, _) => await SaveSettings();
 
             var applySettings = new Command { MenuText = "Apply settings", Shortcut = Application.Instance.CommonModifier | Keys.Enter };
-            applySettings.Executed += async (sender, e) => await ApplySettings();
+            applySettings.Executed += async (_, _) => await ApplySettings();
 
             var refreshPresets = new Command { MenuText = "Refresh presets" };
-            refreshPresets.Executed += async (sender, e) => await RefreshPresets();
+            refreshPresets.Executed += async (_, _) => await RefreshPresets();
 
             var savePreset = new Command { MenuText = "Save as preset..." };
-            savePreset.Executed += async (sender, e) => await SavePresetDialog();
+            savePreset.Executed += async (_, _) => await SavePresetDialog();
 
             var detectTablet = new Command { MenuText = "Detect tablet", Shortcut = Application.Instance.CommonModifier | Keys.D };
-            detectTablet.Executed += async (sender, e) => await DetectTablet();
+            detectTablet.Executed += async (_, _) => await DetectTablet();
 
             var showTabletDebugger = new Command { MenuText = "Tablet debugger..." };
-            showTabletDebugger.Executed += (sender, e) => App.Current.DebuggerWindow.Show();
+            showTabletDebugger.Executed += (_, _) => App.Current.DebuggerWindow.Show();
 
             var deviceStringReader = new Command { MenuText = "Device string reader..." };
-            deviceStringReader.Executed += (sender, e) => App.Current.StringReaderWindow.Show();
+            deviceStringReader.Executed += (_, _) => App.Current.StringReaderWindow.Show();
 
             var pluginManager = new Command { MenuText = "Open Plugin Manager..." };
-            pluginManager.Executed += (sender, e) => App.Current.PluginManagerWindow.Show();
+            pluginManager.Executed += (_, _) => App.Current.PluginManagerWindow.Show();
 
             var wikiUrl = new Command { MenuText = "Open Wiki..." };
-            wikiUrl.Executed += (sender, e) => DesktopInterop.Open(App.WikiUrl);
+            wikiUrl.Executed += (_, _) => DesktopInterop.Open(App.WikiUrl);
 
             var showGuide = new Command { MenuText = "Show guide..." };
-            showGuide.Executed += (sender, e) => App.Current.StartupGreeterWindow.Show();
+            showGuide.Executed += (_, _) => App.Current.StartupGreeterWindow.Show();
 
             var exportDiagnostics = new Command { MenuText = "Export diagnostics..." };
-            exportDiagnostics.Executed += async (sender, e) => await ExportDiagnostics();
+            exportDiagnostics.Executed += async (_, _) => await ExportDiagnostics();
 
             var exportDiagnosticsToClipboard = new Command { MenuText = "Export diagnostics to Clipboard..." };
-            exportDiagnosticsToClipboard.Executed += async (sender, e) => await ExportDiagnosticsToClipboard();
+            exportDiagnosticsToClipboard.Executed += async (_, _) => await ExportDiagnosticsToClipboard();
 
             var updater = new Command { MenuText = "Check for updates..." };
-            updater.Executed += (sender, e) => App.Current.UpdaterWindow.Show();
+            updater.Executed += (_, _) => App.Current.UpdaterWindow.Show();
 
             var menuBar = new MenuBar
             {
@@ -381,16 +383,20 @@ namespace OpenTabletDriver.UX
             return menuBar;
         }
 
-        private void SetTitle(IEnumerable<TabletReference> tablets = null)
+        private void SetEmptyTitle() => SetTitle([]);
+
+        private void SetTitle(IEnumerable<TabletReference> tablets)
         {
             string prefix = $"OpenTabletDriver v{App.Version}";
             string affix = string.Empty;
 
-            if (tablets?.Any() ?? false)
+            var tabletReferences = tablets as TabletReference[] ?? tablets.ToArray();
+
+            if (tabletReferences.Length != 0)
             {
                 // Limit to 3 tablets in the title
-                int numTablets = Math.Min(tablets.Count(), 3);
-                affix = string.Join(", ", tablets.Take(numTablets).Select(t => t.Properties.Name));
+                int numTablets = Math.Min(tabletReferences.Count(), 3);
+                affix = string.Join(", ", tabletReferences.Take(numTablets).Select(t => t.Properties.Name));
             }
 
             this.Title = !string.IsNullOrEmpty(affix)
@@ -401,12 +407,15 @@ namespace OpenTabletDriver.UX
         // ReSharper disable once AsyncVoidMethod
         private void HandleDaemonConnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async void () =>
         {
+            Debug.Assert(App.Driver.IsConnected);
+
             // Hook events after the instance is (re)instantiated
             Log.Output += LogToDriver;
-            App.Driver.TabletsChanged += (sender, tablet) => SetTitle(tablet);
+            App.Driver.TabletsChanged += (_, changedTablets) => SetTitle(changedTablets);
 
             // Load full menu
             this.Menu = ConstructMenu();
+            this.isLimitedMenu = false;
 
             // Load the application information from the daemon
             AppInfo.Current = await App.Driver.Instance.GetApplicationInfo();
@@ -423,11 +432,10 @@ namespace OpenTabletDriver.UX
 
             // Synchronize settings
             await SyncSettings();
-            App.Driver.Resynchronize += async (sender, e) => await SyncSettings();
+            App.Driver.Resynchronize += async (_, _) => await SyncSettings();
 
             // Set window content
-            base.Menu = menu ??= ConstructMenu();
-            base.Content = new TabletSwitcherPanel
+            Content = new TabletSwitcherPanel
             {
                 CommandsControl = new StackLayout
                 {
@@ -446,29 +454,29 @@ namespace OpenTabletDriver.UX
             await RefreshPresets();
 
             // Update title to new instance
-            if (await App.Driver.Instance.GetTablets() is IEnumerable<TabletReference> tablets)
+            if (await App.Driver.Instance.GetTablets() is { } tablets)
                 SetTitle(tablets);
         });
 
-        private Button saveButton;
-        private Button applyButton;
+        private readonly Button saveButton;
+        private readonly Button applyButton;
 
-        private async void LogToDriver(object sender, LogMessage message)
+        [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+        private static async void LogToDriver(object? sender, LogMessage message)
         {
-            if (App.Driver.IsConnected) await App.Driver.Instance?.WriteMessage(message);
+            if (App.Driver.IsConnected) await App.Driver.Instance.WriteMessage(message);
         }
 
         private void HandleDaemonDisconnected(object sender, EventArgs e)
         {
             Log.Output -= LogToDriver;
-            if (SilenceDaemonShutdown)
-                return;
 
             // Hide all controls until reconnected
             Application.Instance.Invoke(() =>
             {
-                base.Content = placeholder;
-                base.Menu = null;
+                Content = placeholder;
+                Menu = ConstructLimitedMenu();
+                isLimitedMenu = true;
 
                 Application.Instance.InvokeAsync(ConnectToDaemon).ConfigureAwait(false);
             });
@@ -476,6 +484,7 @@ namespace OpenTabletDriver.UX
 
         private static async Task ResetSettings()
         {
+            Debug.Assert(App.Driver.IsConnected);
             await App.Driver.Instance.ResetSettings();
             App.Current.Settings = await App.Driver.Instance.GetSettings();
         }
@@ -488,6 +497,7 @@ namespace OpenTabletDriver.UX
 
         private static async Task SyncSettings()
         {
+            Debug.Assert(App.Driver.IsConnected);
             App.Current.Settings = await App.Driver.Instance.GetSettings();
         }
 
@@ -596,6 +606,7 @@ namespace OpenTabletDriver.UX
 
         private async Task ApplySettings()
         {
+            Debug.Assert(App.Driver.IsConnected);
             DisableApplySaveButtons(false);
 
             try
@@ -610,9 +621,9 @@ namespace OpenTabletDriver.UX
                 var stack = (string)err["stack"];
                 var logMessage = new LogMessage
                 {
-                    Group = type,
-                    Message = message,
-                    StackTrace = stack
+                    Group = type ?? "<null>",
+                    Message = message ?? "<null>",
+                    StackTrace = stack ?? "<null>",
                 };
                 Log.Write(logMessage);
             }
@@ -622,14 +633,16 @@ namespace OpenTabletDriver.UX
 
         private Task RefreshPresets()
         {
+            if (isLimitedMenu) return Task.CompletedTask;
+
             LoadPresets();
 
-            if (trayIcon != null) // Check non-Linux
-                trayIcon.RefreshMenuItems();
+            trayIcon?.RefreshMenuItems();
 
             // Update File submenu
             var presets = AppInfo.PresetManager.GetPresets();
-            var presetsMenu = menu.Items.GetSubmenu("&File").Items.GetSubmenu("Presets") as ButtonMenuItem;
+            var presetsMenu = Menu.Items.GetSubmenu("&File").Items.GetSubmenu("Presets");
+
             presetsMenu.Items.Clear();
 
             if (presets.Count != 0)
@@ -683,15 +696,24 @@ namespace OpenTabletDriver.UX
 
         public static void PresetButtonHandler(object sender, EventArgs e)
         {
-            var presetName = (sender as ButtonMenuItem).Text;
+            var buttonItem = sender as ButtonMenuItem;
+            Debug.Assert(buttonItem != null);
+
+            var presetName = buttonItem.Text;
             var preset = AppInfo.PresetManager.FindPreset(presetName);
+            Debug.Assert(preset != null);
+
             App.Current.Settings = preset.Settings;
+
+            Debug.Assert(App.Driver.IsConnected);
             App.Driver.Instance.SetSettings(App.Current.Settings);
             Log.Write("Settings", $"Applied preset '{preset.Name}'");
         }
 
-        private static async Task DetectTablet()
+        private async Task DetectTablet()
         {
+            Debug.Assert(!isLimitedMenu);
+            Debug.Assert(App.Driver.IsConnected);
             await App.Driver.Instance.DetectTablets();
             await App.Driver.Instance.SetSettings(await App.Driver.Instance.GetSettings());
         }
@@ -700,6 +722,9 @@ namespace OpenTabletDriver.UX
 
         private async Task ExportDiagnostics()
         {
+            Debug.Assert(!isLimitedMenu);
+            Debug.Assert(App.Driver.IsConnected);
+
             try
             {
                 var diagnosticDump = await App.Driver.Instance.GetDiagnosticInfo();
@@ -738,8 +763,11 @@ namespace OpenTabletDriver.UX
                 ex.ShowMessageBox();
             }
         }
-        private static async Task ExportDiagnosticsToClipboard()
+        private async Task ExportDiagnosticsToClipboard()
         {
+            Debug.Assert(!isLimitedMenu);
+            Debug.Assert(App.Driver.IsConnected);
+
             try
             {
                 var log = await App.Driver.Instance.GetCurrentLog();
@@ -754,6 +782,7 @@ namespace OpenTabletDriver.UX
                 ex.ShowMessageBox();
             }
         }
+
         private static void CheckForUpdates()
         {
             // ReSharper disable once AsyncVoidMethod

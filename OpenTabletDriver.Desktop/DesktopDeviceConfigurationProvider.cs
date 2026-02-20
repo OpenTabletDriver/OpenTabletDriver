@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +18,7 @@ namespace OpenTabletDriver.Desktop
 
         private IEnumerable<TabletConfiguration> GetTabletConfigurations()
         {
-            IEnumerable<(ConfigurationSource, TabletConfiguration)> jsonConfigurations = Array.Empty<(ConfigurationSource, TabletConfiguration)>();
+            IEnumerable<(ConfigurationSource, TabletConfiguration)> jsonConfigurations = [];
 
             if (Directory.Exists(AppInfo.Current.ConfigurationDirectory))
             {
@@ -31,7 +30,7 @@ namespace OpenTabletDriver.Desktop
                         ? $"{files.Count} configurations exist in '{AppInfo.Current.ConfigurationDirectory}'. Built-in configurations may be overridden if the Name matches exactly."
                         : $"Configuration overrides specified as '{AppInfo.Current.ConfigurationDirectory}' but folder is empty.");
 
-                jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path)))
+                jsonConfigurations = files.Select(path => Serialization.Deserialize<TabletConfiguration>(File.OpenRead(path))).Where(x => x != null)
                     .Select(jsonConfig => (ConfigurationSource.File, jsonConfig));
             }
 

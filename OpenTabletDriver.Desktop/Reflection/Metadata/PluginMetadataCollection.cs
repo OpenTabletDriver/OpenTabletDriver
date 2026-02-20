@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
 using Newtonsoft.Json;
+using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
 {
@@ -41,7 +42,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return await DownloadAsync(REPOSITORY_OWNER, REPOSITORY_NAME);
         }
 
-        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name, string gitRef = null)
+        public static async Task<PluginMetadataCollection> DownloadAsync(string owner, string name, string gitRef = "")
         {
             string archiveUrl = $"https://api.github.com/repos/{owner}/{name}/tarball/{gitRef}";
             return await DownloadAsync(archiveUrl);
