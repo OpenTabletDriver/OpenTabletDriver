@@ -8,13 +8,8 @@ namespace OpenTabletDriver.Plugin.Attributes
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
     [MeansImplicitUse(ImplicitUseKindFlags.Access | ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Itself)]
-    public class PropertyAttribute : Attribute
+    public class PropertyAttribute(string displayName) : Attribute
     {
-        public PropertyAttribute(string displayName)
-        {
-            DisplayName = displayName;
-        }
-
-        public string DisplayName { set; get; }
+        public string DisplayName { set; get; } = displayName;
     }
 }

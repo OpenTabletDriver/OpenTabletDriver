@@ -151,7 +151,7 @@ namespace OpenTabletDriver.Plugin.Output
 
             // make sure to set the position last
             if (report is IAbsolutePositionReport absReport)
-                Pointer.SetPosition(absReport.Position);
+                Pointer?.SetPosition(absReport.Position);
             if (Pointer is ISynchronousPointer synchronousPointer)
             {
                 if (report is OutOfRangeReport)
