@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
@@ -18,6 +19,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
+        [CollectionAccess(CollectionAccessType.ModifyExistingContent)]
         public PluginSettingStoreCollection Trim()
         {
             while (true)
@@ -29,6 +31,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return this;
         }
 
+        [CollectionAccess(CollectionAccessType.UpdatedContent | CollectionAccessType.ModifyExistingContent | CollectionAccessType.Read)]
         public PluginSettingStoreCollection SetExpectedCount(int expectedCount)
         {
             int trimmed = 0;
@@ -51,6 +54,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             return this;
         }
 
+        [CollectionAccess(CollectionAccessType.Read | CollectionAccessType.ModifyExistingContent)]
         public PluginSettingStore FromType(TypeInfo type)
         {
             if (type == null)
