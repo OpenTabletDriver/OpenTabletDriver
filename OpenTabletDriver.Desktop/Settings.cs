@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
@@ -16,35 +17,35 @@ namespace OpenTabletDriver.Desktop
         private PluginSettingStoreCollection tools = new PluginSettingStoreCollection();
         private string revision = GetVersion();
 
-        [JsonProperty("Revision")]
+        [JsonProperty(nameof(Revision))]
         public string Revision
         {
             set => this.RaiseAndSetIfChanged(ref revision, value);
             get => revision;
         }
 
-        [JsonProperty("Profiles")]
+        [JsonProperty(nameof(Profiles))]
         public ProfileCollection Profiles
         {
             set => this.RaiseAndSetIfChanged(ref profiles, value);
             get => profiles;
         }
 
-        [JsonProperty("LockUsableAreaDisplay")]
+        [JsonProperty(nameof(LockUsableAreaDisplay))]
         public bool LockUsableAreaDisplay
         {
             set => this.RaiseAndSetIfChanged(ref this.lockUsableAreaDisplay, value);
             get => this.lockUsableAreaDisplay;
         }
 
-        [JsonProperty("LockUsableAreaTablet")]
+        [JsonProperty(nameof(LockUsableAreaTablet))]
         public bool LockUsableAreaTablet
         {
             set => this.RaiseAndSetIfChanged(ref this.lockUsableAreaTablet, value);
             get => this.lockUsableAreaTablet;
         }
 
-        [JsonProperty("Tools")]
+        [JsonProperty(nameof(Tools))]
         public PluginSettingStoreCollection Tools
         {
             set => RaiseAndSetIfChanged(ref this.tools, value);
