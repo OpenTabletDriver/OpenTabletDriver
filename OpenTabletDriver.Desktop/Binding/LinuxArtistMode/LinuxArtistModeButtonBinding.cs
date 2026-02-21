@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenTabletDriver.Desktop.Interop;
 using OpenTabletDriver.Desktop.Interop.Input.Absolute;
 using OpenTabletDriver.Native.Linux.Evdev;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
+using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
@@ -13,7 +14,14 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
     [PluginName("Linux Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
     public class LinuxArtistModeButtonBinding : IStateBinding
     {
-        private readonly EvdevVirtualTablet virtualTablet = (EvdevVirtualTablet)DesktopInterop.VirtualTablet;
+        private EvdevVirtualTablet? virtualTablet;
+
+        [Resolved]
+        public IPressureHandler? PressureHandler
+        {
+            set => virtualTablet = value as EvdevVirtualTablet
+                                   ?? throw new InvalidOperationException($"Only {nameof(EvdevVirtualTablet)} is supported for {nameof(LinuxArtistModeButtonBinding)}");
+        }
 
         public static Dictionary<string, EventCode> SupportedButtons { get; } = new() {
             { "Pen Button 1", EventCode.BTN_STYLUS },
