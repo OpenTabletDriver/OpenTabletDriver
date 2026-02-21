@@ -33,11 +33,6 @@ namespace OpenTabletDriver
         }
 
         /// <summary>
-        /// The driver in which this <see cref="InputDevice"/> was sourced from.
-        /// </summary>
-        public IDriver Driver { private set; get; }
-
-        /// <summary>
         /// The tablet configuration referring to this device.
         /// </summary>
         public TabletConfiguration Configuration { private set; get; }
