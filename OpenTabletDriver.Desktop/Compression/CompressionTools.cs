@@ -34,24 +34,18 @@ namespace OpenTabletDriver.Desktop.Compression
 
         public static void Decompress(this ZipInputStream zipStream, string outputDir)
         {
+            if (zipStream.Available == 0) return;
+
+            Directory.CreateDirectory(outputDir);
+
+            var buffer = new byte[0x1000];
+
             while (zipStream.GetNextEntry() is ZipEntry entry)
             {
-                var entryFileName = entry.Name;
-                var buffer = new byte[0x1000];
-
-                // Manipulate the output filename here as desired.
-                var zipPath = Path.Combine(outputDir, entryFileName);
-                var directoryName = Path.GetDirectoryName(zipPath);
-                if (directoryName.Length > 0)
-                    Directory.CreateDirectory(directoryName);
-
-                // Skip directory entry
-                if (Path.GetFileName(zipPath).Length == 0)
-                {
+                if (entry.IsDirectory)
                     continue;
-                }
 
-                using (FileStream streamWriter = File.Create(zipPath))
+                using (var streamWriter = File.Create(Path.Combine(outputDir, entry.Name)))
                     StreamUtils.Copy(zipStream, streamWriter, buffer);
             }
         }
