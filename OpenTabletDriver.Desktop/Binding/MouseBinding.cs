@@ -15,10 +15,10 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Mouse Button Binding";
 
         [Resolved]
-        public IMouseButtonHandler Pointer { set; get; }
+        public IMouseButtonHandler? Pointer { set; get; }
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
-        public string Button { set; get; }
+        public string? Button { set; get; }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
@@ -34,10 +34,10 @@ namespace OpenTabletDriver.Desktop.Binding
                 Pointer?.MouseUp(mouseButton);
         }
 
-        private static IEnumerable<string> validButtons;
+        private static IEnumerable<string>? validButtons;
         public static IEnumerable<string> ValidButtons
         {
-            get => validButtons ??= Enum.GetValues<MouseButton>().Select(Enum.GetName);
+            get => validButtons ??= Enum.GetValues<MouseButton>().Select(Enum.GetName)!;
         }
 
         public override string ToString() => $"{PLUGIN_NAME}: {Button}";

@@ -119,7 +119,7 @@ namespace OpenTabletDriver.UX.Windows
             {
                 Debug.Assert(App.Driver.IsConnected);
                 var tablets = await App.Driver.Instance.GetTablets();
-                var targetProfile = App.Current.Settings.Profiles.First(p => p.AbsoluteModeSettings.Tablet == this.DataContext);
+                var targetProfile = App.Current.Settings.Profiles.First(p => p.AbsoluteModeSettings?.Tablet == this.DataContext);
                 var tablet = tablets.First(t => t.Properties.Name == targetProfile.Tablet);
                 Select(tablet);
             });
@@ -129,7 +129,7 @@ namespace OpenTabletDriver.UX.Windows
         private Group topGroup, leftGroup, bottomGroup, rightGroup;
         private FloatNumberBox top, left, bottom, right;
         private Button applyButton;
-        private TabletReference selectedTablet;
+        private TabletReference? selectedTablet;
 
         protected void OnSelectionChanged()
         {
@@ -165,10 +165,10 @@ namespace OpenTabletDriver.UX.Windows
 
         private void Select(TabletReference tablet)
         {
-            if (tablet.Identifiers?.FirstOrDefault()?.VendorID is int vendorId)
+            if (tablet.Identifiers.FirstOrDefault()?.VendorID is int vendorId)
             {
                 var vendor = (DeviceVendor)vendorId;
-                converterList.Select(t => t.Vendor.HasFlag(vendor));
+                converterList.Select(t => t!.Vendor.HasFlag(vendor));
                 applyButton.Enabled = true;
                 selectedTablet = tablet;
             }

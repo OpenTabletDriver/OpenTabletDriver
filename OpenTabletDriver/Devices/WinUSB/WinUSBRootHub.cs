@@ -50,7 +50,7 @@ namespace OpenTabletDriver.Devices.WinUSB
                 EnumerateAllDevicesWithGuid(_currentDevices, guid);
         }
 
-        public event EventHandler<DevicesChangedEventArgs> DevicesChanged;
+        public event EventHandler<DevicesChangedEventArgs>? DevicesChanged;
 
         public IEnumerable<IDeviceEndpoint> GetDevices()
         {

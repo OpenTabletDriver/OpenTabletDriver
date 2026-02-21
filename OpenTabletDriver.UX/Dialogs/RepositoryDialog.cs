@@ -8,7 +8,7 @@ using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Dialogs
 {
-    public class RepositoryDialog : Dialog<PluginMetadataCollection>
+    public class RepositoryDialog : Dialog<PluginMetadataCollection?>
     {
         public RepositoryDialog()
         {
@@ -112,14 +112,14 @@ namespace OpenTabletDriver.UX.Dialogs
                 base.Orientation = Orientation.Horizontal;
             }
 
-            private string inputText;
+            private string? inputText;
             public string InputText
             {
                 protected set => this.inputText = value;
                 get => this.inputText ?? DefaultInputText;
             }
 
-            public string DefaultInputText { set; get; }
+            public required string DefaultInputText { set; get; }
 
             protected const int TEXTBOX_WIDTH = 200;
 

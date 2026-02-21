@@ -84,10 +84,10 @@ namespace OpenTabletDriver.UX.Windows.Updater
             }
         }
 
-        private void OpenRelease(object sender, EventArgs e)
+        private void OpenRelease(object? sender, EventArgs e)
             => DesktopInterop.Open(LATEST_RELEASE_URL);
 
-        private void OpenDirectory(object sender, EventArgs e)
+        private void OpenDirectory(object? sender, EventArgs e)
             => DesktopInterop.Open(AppContext.BaseDirectory);
     }
 }

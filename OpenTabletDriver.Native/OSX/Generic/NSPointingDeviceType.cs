@@ -1,3 +1,6 @@
+// TODO: remove nullable disable
+#nullable disable
+
 namespace OpenTabletDriver.Native.OSX.Generic;
 
 public enum NSPointingDeviceType

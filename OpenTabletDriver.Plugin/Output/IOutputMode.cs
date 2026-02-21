@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// The current tablet assigned to this <see cref="IOutputMode"/>
         /// </summary>
-        TabletReference Tablet { set; get; }
+        TabletReference? Tablet { set; get; }
 
         /// <summary>
         /// Whether to disable pressure

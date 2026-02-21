@@ -45,7 +45,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             _stopWatch.Start();
             _eventSource = CGEventSourceCreate(CGEventSourceStatePrivate);
             _mouseEvent = CGEventCreate(_eventSource);
-            _keyboard = DesktopInterop.VirtualKeyboard as MacOSVirtualKeyboard;
+            _keyboard = DesktopInterop.VirtualKeyboard as MacOSVirtualKeyboard
+                        ?? throw new InvalidOperationException("Could not get virtual keyboard");
         }
 
         public void MouseDown(MouseButton button)

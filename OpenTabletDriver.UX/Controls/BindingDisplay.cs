@@ -35,7 +35,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            mainButton.TextBinding.Bind(this.StoreBinding.Convert<string>(s => s?.GetHumanReadableString()));
+            mainButton.TextBinding.Bind(this.StoreBinding.Convert<string?>(s => s?.GetHumanReadableString()));
 
             mainButton.Click += async (_, _) =>
             {
@@ -50,10 +50,10 @@ namespace OpenTabletDriver.UX.Controls
             };
         }
 
-        public event EventHandler<EventArgs> StoreChanged;
+        public event EventHandler<EventArgs>? StoreChanged;
 
-        private PluginSettingStore store;
-        public PluginSettingStore Store
+        private PluginSettingStore? store;
+        public PluginSettingStore? Store
         {
             set
             {
@@ -63,11 +63,11 @@ namespace OpenTabletDriver.UX.Controls
             get => this.store;
         }
 
-        public BindableBinding<BindingDisplay, PluginSettingStore> StoreBinding
+        public BindableBinding<BindingDisplay, PluginSettingStore?> StoreBinding
         {
             get
             {
-                return new BindableBinding<BindingDisplay, PluginSettingStore>(
+                return new BindableBinding<BindingDisplay, PluginSettingStore?>(
                     this,
                     c => c.Store,
                     (c, v) => c.Store = v,

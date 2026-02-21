@@ -7,10 +7,10 @@ namespace OpenTabletDriver.UX.Controls.Bindings
 {
     public abstract class BindingEditor : Panel
     {
-        public DirectBinding<BindingSettings> SettingsBinding => ProfileBinding.Child(b => b.BindingSettings);
+        public DirectBinding<BindingSettings> SettingsBinding => ProfileBinding.Child(b => b!.BindingSettings);
 
-        private Profile profile;
-        public Profile Profile
+        private Profile? profile;
+        public Profile? Profile
         {
             set
             {
@@ -20,8 +20,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             get => this.profile;
         }
 
-        private TabletReference tablet;
-        public TabletReference Tablet
+        private TabletReference? tablet;
+        public TabletReference? Tablet
         {
             set
             {
@@ -31,17 +31,17 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             get => this.tablet;
         }
 
-        public event EventHandler<EventArgs> ProfileChanged;
-        public event EventHandler<EventArgs> TabletChanged;
+        public event EventHandler<EventArgs>? ProfileChanged;
+        public event EventHandler<EventArgs>? TabletChanged;
 
         protected virtual void OnProfileChanged() => ProfileChanged?.Invoke(this, EventArgs.Empty);
         protected virtual void OnTabletChanged() => TabletChanged?.Invoke(this, EventArgs.Empty);
 
-        public BindableBinding<BindingEditor, Profile> ProfileBinding
+        public BindableBinding<BindingEditor, Profile?> ProfileBinding
         {
             get
             {
-                return new BindableBinding<BindingEditor, Profile>(
+                return new BindableBinding<BindingEditor, Profile?>(
                     this,
                     c => c.Profile,
                     (c, v) => c.Profile = v,
@@ -51,11 +51,11 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             }
         }
 
-        public BindableBinding<BindingEditor, TabletReference> TabletBinding
+        public BindableBinding<BindingEditor, TabletReference?> TabletBinding
         {
             get
             {
-                return new BindableBinding<BindingEditor, TabletReference>(
+                return new BindableBinding<BindingEditor, TabletReference?>(
                     this,
                     c => c.Tablet,
                     (c, v) => c.Tablet = v,

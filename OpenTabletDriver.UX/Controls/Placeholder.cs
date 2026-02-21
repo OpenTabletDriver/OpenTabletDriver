@@ -35,8 +35,8 @@ namespace OpenTabletDriver.UX.Controls
 
         private Panel extraPanel;
 
-        private string text;
-        public string Text
+        private string? text;
+        public string? Text
         {
             set
             {
@@ -46,15 +46,15 @@ namespace OpenTabletDriver.UX.Controls
             get => this.text;
         }
 
-        public event EventHandler<EventArgs> TextChanged;
+        public event EventHandler<EventArgs>? TextChanged;
 
         protected virtual void OnTextChanged() => TextChanged?.Invoke(this, EventArgs.Empty);
 
-        public BindableBinding<Placeholder, string> TextBinding
+        public BindableBinding<Placeholder, string?> TextBinding
         {
             get
             {
-                return new BindableBinding<Placeholder, string>(
+                return new BindableBinding<Placeholder, string?>(
                     this,
                     c => c.Text,
                     (c, v) => c.Text = v,
@@ -64,8 +64,8 @@ namespace OpenTabletDriver.UX.Controls
             }
         }
 
-        private Control extraContent;
-        public Control ExtraContent
+        private Control? extraContent;
+        public Control? ExtraContent
         {
             set
             {

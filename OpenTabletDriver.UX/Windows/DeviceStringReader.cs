@@ -110,7 +110,7 @@ namespace OpenTabletDriver.UX.Windows
         private const string DisconnectionIndex = "Device disconnected";
         private const string OperationTimedOut = "Operation timed-out";
 
-        private async void SendRequestAllStrings(object sender, EventArgs args)
+        private async void SendRequestAllStrings(object? sender, EventArgs args)
         {
             var stringDump = new StringBuilder();
 

@@ -94,7 +94,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             counterClockwiseButton.StoreBinding.Bind(SettingsBinding.Child(c => c.CounterClockwiseRotation));
             clockwiseThreshold.ValueBinding.Bind(SettingsBinding.Child(c => c.ClockwiseActivationThreshold));
             counterClockwiseThreshold.ValueBinding.Bind(SettingsBinding.Child(c => c.CounterClockwiseActivationThreshold));
-            wheelButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.WheelButtons));
+            wheelButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.WheelButtons)!);
         }
 
         private Group wheelButtonGroup;
@@ -106,7 +106,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
         {
             base.OnTabletChanged();
 
-            if (Tablet?.Properties?.Specifications?.Wheel != null)
+            if (Tablet?.Properties.Specifications.Wheel != null)
             {
                 Application.Instance.AsyncInvoke(() =>
                 {

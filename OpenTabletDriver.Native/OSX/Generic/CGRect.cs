@@ -1,5 +1,8 @@
 using System.Runtime.InteropServices;
 
+// TODO: remove nullable disable
+#nullable disable
+
 namespace OpenTabletDriver.Native.OSX.Generic
 {
     [StructLayout(LayoutKind.Sequential)]

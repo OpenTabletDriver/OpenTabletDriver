@@ -18,7 +18,7 @@ namespace OpenTabletDriver.UX.Tools
 
         public static string ToHexString(byte[] value) => "0x" + BitConverter.ToString(value).Replace("-", " 0x");
 
-        public static byte[] ToByteArray(string hex)
+        public static byte[]? ToByteArray(string hex)
         {
             var raw = hex.Split(' ');
             byte[] buffer = new byte[raw.Length];

@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Desktop
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         // TODO: On API bump, make this return `bool` instead of `void`
         [NotifyPropertyChangedInvocator]

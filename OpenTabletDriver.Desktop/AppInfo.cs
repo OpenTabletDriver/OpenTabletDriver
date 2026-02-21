@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop
 
     public class AppInfo
     {
-        private string configurationDirectory,
+        private string? configurationDirectory,
             settingsFile,
             pluginDirectory,
             presetDirectory,
@@ -32,7 +32,9 @@ namespace OpenTabletDriver.Desktop
             }
         }
 
-        private static AppInfo current;
+        private static AppInfo? current;
+
+        // null assignment warnings suppressed in this property because the properties have sane fallback values if set to null
         public static AppInfo Current
         {
             set => current = value;
@@ -44,16 +46,16 @@ namespace OpenTabletDriver.Desktop
                 },
                 PluginPlatform.Linux => new AppInfo
                 {
-                    ConfigurationDirectory = GetExistingPath("$XDG_DATA_HOME/OpenTabletDriver/Configurations", "~/.local/share/OpenTabletDriver/Configurations"),
+                    ConfigurationDirectory = GetExistingPath("$XDG_DATA_HOME/OpenTabletDriver/Configurations", "~/.local/share/OpenTabletDriver/Configurations")!,
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "$XDG_CONFIG_HOME/OpenTabletDriver", "~/.config/OpenTabletDriver"),
-                    TemporaryDirectory = GetPath("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver"),
-                    CacheDirectory = GetPath("$XDG_CACHE_HOME/OpenTabletDriver", "~/.cache/OpenTabletDriver"),
+                    TemporaryDirectory = GetPath("$XDG_RUNTIME_DIR/OpenTabletDriver", "$TEMP/OpenTabletDriver")!,
+                    CacheDirectory = GetPath("$XDG_CACHE_HOME/OpenTabletDriver", "~/.cache/OpenTabletDriver")!,
                 },
                 PluginPlatform.MacOS => new AppInfo()
                 {
                     AppDataDirectory = GetExistingPathOrLast(Path.Join(ProgramDirectory, "userdata"), "~/Library/Application Support/OpenTabletDriver"),
-                    TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver"),
-                    CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")
+                    TemporaryDirectory = GetPath("$TMPDIR/OpenTabletDriver")!,
+                    CacheDirectory = GetPath("~/Library/Caches/OpenTabletDriver")!,
                 },
                 _ => throw new InvalidOperationException("Unable to determine OS platform"),
             };
@@ -63,7 +65,7 @@ namespace OpenTabletDriver.Desktop
 
         public static PresetManager PresetManager { set; get; } = new PresetManager();
 
-        public string AppDataDirectory { set; get; }
+        public required string AppDataDirectory { set; get; }
 
         public string ConfigurationDirectory
         {
@@ -136,7 +138,7 @@ namespace OpenTabletDriver.Desktop
         private string GetDefaultBackupDirectory() => Path.Join(AppDataDirectory, "Backup");
         private string GetDefaultTrashDirectory() => Path.Join(AppDataDirectory, "Trash");
 
-        private static bool IsEnvVarUnset([DisallowNull] string envVar) =>
+        private static bool IsEnvVarUnset(string envVar) =>
             string.IsNullOrEmpty(Environment.GetEnvironmentVariable(envVar));
     }
 }

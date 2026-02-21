@@ -37,7 +37,7 @@ namespace OpenTabletDriver.UX.Tools
 
         public bool IsReadOnly => false;
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         public void Add(LogMessage message)
         {

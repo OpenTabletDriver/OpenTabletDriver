@@ -140,27 +140,27 @@ namespace OpenTabletDriver.UX
         public static App Current { get; } = new App();
 
         public const string WikiUrl = "https://opentabletdriver.net/Wiki";
-        public static readonly string Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        public static readonly string Version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
 
         public IDictionary<string, Action> NotificationHandlers { get; } = new Dictionary<string, Action>();
 
         public static DaemonRpcClient Driver { get; } = new DaemonRpcClient("OpenTabletDriver.Daemon");
-        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png"));
+        public static Bitmap Logo { get; } = new Bitmap(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.Assets.otd.png")!);
 
         public static Uri Website { get; } = new Uri(@"https://github.com/OpenTabletDriver/OpenTabletDriver");
-        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")).ReadToEnd();
+        public static string License { get; } = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("OpenTabletDriver.UX.LICENSE")!).ReadToEnd();
 
-        private Settings settings;
+        private Settings? settings;
         public Settings Settings
         {
-            set => this.RaiseAndSetIfChanged(ref this.settings, value);
-            get => this.settings;
+            set => this.RaiseAndSetIfChanged(ref this.settings!, value);
+            get => this.settings ?? throw new InvalidOperationException("Settings cannot be null");
         }
 
         private const string APPNAME = "OpenTabletDriver.UX";
         public readonly static bool EnableTrayIcon = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
         public readonly static bool EnableDaemonWatchdog = (PluginPlatform.Windows | PluginPlatform.MacOS).HasFlag(SystemInterop.CurrentPlatform);
-        public static DaemonWatchdog DaemonWatchdog;
+        public static DaemonWatchdog? DaemonWatchdog;
 
         public WindowSingleton<StartupGreeterWindow> StartupGreeterWindow { get; } = new WindowSingleton<StartupGreeterWindow>();
         public WindowSingleton<PluginManagerWindow> PluginManagerWindow { get; } = new WindowSingleton<PluginManagerWindow>();
@@ -175,13 +175,13 @@ namespace OpenTabletDriver.UX
             NotificationHandlers.Add(identifier, handler);
         }
 
-        private void HandleNotification(object sender, NotificationEventArgs e)
+        private void HandleNotification(object? sender, NotificationEventArgs e)
         {
             if (NotificationHandlers.TryGetValue(e.ID, out var value))
                 value.Invoke();
         }
 
-        private static void ShowUnhandledException(object sender, Eto.UnhandledExceptionEventArgs e)
+        private static void ShowUnhandledException(object? sender, Eto.UnhandledExceptionEventArgs e)
         {
             try
             {

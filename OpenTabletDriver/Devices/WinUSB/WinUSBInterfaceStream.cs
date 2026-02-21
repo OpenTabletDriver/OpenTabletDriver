@@ -13,9 +13,9 @@ namespace OpenTabletDriver.Devices.WinUSB
         private readonly SafeWinUsbInterfaceHandle winUsbHandle;
         private readonly byte readPipe;
         private readonly byte writePipe;
-        private readonly byte[] readBuffer;
+        private readonly byte[]? readBuffer;
         private readonly byte* readPtr;
-        private readonly byte[] writeBuffer;
+        private readonly byte[]? writeBuffer;
         private readonly byte* writePtr;
 
         public WinUSBInterfaceStream(WeakReference<WinUSBInterface> parentInterface)

@@ -7,11 +7,11 @@ namespace OpenTabletDriver.Plugin.Output
         /// <summary>
         /// Handles an object to be processed by the <see cref="IPipelineElement{T}"/>.
         /// </summary>
-        void Consume(T value);
+        void Consume(T? obj);
 
         /// <summary>
         /// Invoked when an object of <see cref="T"/> is to be pushed to the next link in the pipeline.
         /// </summary>
-        event Action<T> Emit;
+        event Action<T?>? Emit;
     }
 }

@@ -43,7 +43,7 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public IReadOnlyCollection<DesktopPluginContext> GetLoadedPlugins() => Plugins;
 
-        public event EventHandler AssembliesChanged;
+        public event EventHandler? AssembliesChanged;
 
         public void Clean()
         {
@@ -215,9 +215,6 @@ namespace OpenTabletDriver.Desktop.Reflection
 
         public bool UninstallPlugin(DesktopPluginContext plugin)
         {
-            if (plugin == null)
-                return false;
-
             var random = new Random();
             if (!Directory.Exists(TrashDirectory.FullName))
                 TrashDirectory.Create();

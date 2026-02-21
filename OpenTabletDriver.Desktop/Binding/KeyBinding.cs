@@ -16,10 +16,10 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Key Binding";
 
         [Resolved]
-        public IVirtualKeyboard Keyboard { set; get; }
+        public IVirtualKeyboard? Keyboard { set; get; }
 
         [Property("Key"), PropertyValidated(nameof(ValidKeys))]
-        public string Key { set; get; }
+        public string? Key { set; get; }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {

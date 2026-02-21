@@ -5,8 +5,6 @@ using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Wheel;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginIgnore]
@@ -47,7 +45,7 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public event Action<IDeviceReport>? Emit;
 
-        public void Consume(IDeviceReport report)
+        public void Consume(IDeviceReport? report)
         {
             if (report == null) return;
 

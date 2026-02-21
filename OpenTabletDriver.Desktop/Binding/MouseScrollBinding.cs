@@ -15,15 +15,15 @@ namespace OpenTabletDriver.Desktop.Binding
     {
         private const string PLUGIN_NAME = "Mouse Scroll Binding";
 
-        private ITimer _timer;
+        private ITimer? _timer;
         private ScrollDirection _direction;
         private int _interval = 1;
 
         [Resolved]
-        public IMouseScrollHandler Pointer { set; get; }
+        public IMouseScrollHandler? Pointer { set; get; }
 
         [Resolved]
-        public ITimer Timer
+        public ITimer? Timer
         {
             get => _timer;
             set
@@ -104,11 +104,9 @@ namespace OpenTabletDriver.Desktop.Binding
                 synchronousPointer.Flush();
         }
 
-        private static IEnumerable<string> validDirections;
-        public static IEnumerable<string> ValidDirections
-        {
-            get => validDirections ??= Enum.GetValues<ScrollDirection>().Select(Enum.GetName);
-        }
+        private static IEnumerable<string>? validDirections;
+        public static IEnumerable<string> ValidDirections =>
+            validDirections ??= Enum.GetValues<ScrollDirection>().Select(Enum.GetName)!;
 
         public override string ToString() => $"{PLUGIN_NAME}: Direction: {Direction}, Amount: {Amount}, Interval: {Interval}";
     }

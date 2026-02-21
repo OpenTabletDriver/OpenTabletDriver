@@ -129,7 +129,7 @@ namespace OpenTabletDriver.Tests.ConfigurationTest
                 return IsEqual(x.Identifier, y.Identifier);
             }
 
-            public int GetHashCode([DisallowNull] IdentificationContext obj)
+            public int GetHashCode(IdentificationContext obj)
             {
                 return HashCode.Combine(
                     obj.Identifier.VendorID,

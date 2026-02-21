@@ -40,7 +40,7 @@ namespace OpenTabletDriver.UX.Controls
             };
         }
 
-        public event EventHandler<EventArgs> ValueChanged;
+        public event EventHandler<EventArgs>? ValueChanged;
 
         private float value;
         public float Value

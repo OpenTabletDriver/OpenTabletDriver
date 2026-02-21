@@ -8,8 +8,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Octokit;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Updater
 {
     public sealed class WindowsUpdater : GitHubUpdater

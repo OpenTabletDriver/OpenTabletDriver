@@ -105,7 +105,7 @@ namespace OpenTabletDriver.UX
         private const int DEFAULT_CLIENT_HEIGHT = 760;
 
         private readonly Placeholder placeholder;
-        private TrayIcon trayIcon;
+        private TrayIcon? trayIcon;
 
         private bool isLimitedMenu { get; set; }
 
@@ -399,7 +399,7 @@ namespace OpenTabletDriver.UX
         }
 
         // ReSharper disable once AsyncVoidMethod
-        private void HandleDaemonConnected(object sender, EventArgs e) => Application.Instance.AsyncInvoke(async void () =>
+        private void HandleDaemonConnected(object? sender, EventArgs e) => Application.Instance.AsyncInvoke(async void () =>
         {
             Debug.Assert(App.Driver.IsConnected);
 
@@ -461,7 +461,7 @@ namespace OpenTabletDriver.UX
             if (App.Driver.IsConnected) await App.Driver.Instance.WriteMessage(message);
         }
 
-        private void HandleDaemonDisconnected(object sender, EventArgs e)
+        private void HandleDaemonDisconnected(object? sender, EventArgs e)
         {
             Log.Output -= LogToDriver;
 
@@ -513,7 +513,7 @@ namespace OpenTabletDriver.UX
                         if (Settings.TryDeserialize(file, out var settings))
                         {
                             App.Current.Settings = settings;
-                            await App.Driver.Instance.SetSettings(settings);
+                            await App.Driver.Instance!.SetSettings(settings);
                         }
                         else
                         {
@@ -556,7 +556,7 @@ namespace OpenTabletDriver.UX
 
             if (App.Current.Settings is Settings settings)
             {
-                if (settings.Profiles.Any(p => p.AbsoluteModeSettings.Tablet.Width + p.AbsoluteModeSettings.Tablet.Height == 0))
+                if (settings.Profiles.Any(p => p.AbsoluteModeSettings?.Tablet.Width + p.AbsoluteModeSettings?.Tablet.Height == 0))
                 {
                     var result = MessageBox.Show(
                         "Warning: Your tablet area is invalid. Saving this configuration may cause problems." + Environment.NewLine +
@@ -609,9 +609,9 @@ namespace OpenTabletDriver.UX
             }
             catch (StreamJsonRpc.RemoteInvocationException riex) when (riex.ErrorData is JObject err)
             {
-                var type = (string)err["type"];
-                var message = (string)err["message"];
-                var stack = (string)err["stack"];
+                var type = (string?)err["type"];
+                var message = (string?)err["message"];
+                var stack = (string?)err["stack"];
                 var logMessage = new LogMessage
                 {
                     Group = type ?? "<null>",
@@ -687,7 +687,7 @@ namespace OpenTabletDriver.UX
             }
         }
 
-        public static void PresetButtonHandler(object sender, EventArgs e)
+        public static void PresetButtonHandler(object? sender, EventArgs e)
         {
             var buttonItem = sender as ButtonMenuItem;
             Debug.Assert(buttonItem != null);

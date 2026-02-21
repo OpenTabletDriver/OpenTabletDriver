@@ -5,7 +5,7 @@ using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Diagnostics
 {
-    public class EnvironmentDictionary : Dictionary<string, string>
+    public class EnvironmentDictionary : Dictionary<string, string?>
     {
         public EnvironmentDictionary()
         {

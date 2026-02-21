@@ -31,7 +31,7 @@ namespace OpenTabletDriver.SystemDrivers.Providers
             "Veikk"
         };
 
-        protected override DriverInfo GetWinDriverInfo()
+        protected override DriverInfo? GetWinDriverInfo()
         {
             var processes = DriverInfo.SystemProcesses
                 .Where(p => WinProcessNames.Concat(Heuristics)

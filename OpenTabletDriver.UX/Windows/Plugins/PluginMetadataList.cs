@@ -22,10 +22,10 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             AppInfo.PluginManager.AssembliesChanged += (_, _) => Refresh();
         }
 
-        public static PluginMetadataCollection Repository { private set; get; }
+        public static PluginMetadataCollection? Repository { private set; get; }
 
         private static readonly TimeSpan DOWNLOAD_TIMEOUT = TimeSpan.FromSeconds(5);
-        private static readonly Version AppVersion = Assembly.GetEntryAssembly().GetName().Version;
+        private static readonly Version AppVersion = Assembly.GetEntryAssembly()!.GetName().Version!;
 
         // ReSharper disable once AsyncVoidMethod
         public void Refresh() => Application.Instance.AsyncInvoke(async void () =>

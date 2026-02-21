@@ -10,15 +10,15 @@ namespace OpenTabletDriver.Desktop.RPC
     {
         private readonly string pipeName;
         private readonly NamedPipeClientStream stream;
-        private JsonRpc rpc;
+        private JsonRpc? rpc;
 
-        public T Instance { private set; get; }
+        public T? Instance { private set; get; }
 
         [MemberNotNullWhen(true, nameof(Instance))]
         public bool IsConnected => Instance != null && rpc is { IsDisposed: false };
 
-        public event EventHandler Connected;
-        public event EventHandler Disconnected;
+        public event EventHandler? Connected;
+        public event EventHandler? Disconnected;
 
         public RpcClient(string pipeName)
         {

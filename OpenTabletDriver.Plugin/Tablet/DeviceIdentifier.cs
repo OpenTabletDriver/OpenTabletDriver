@@ -2,8 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-#nullable enable
-
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public class DeviceIdentifier

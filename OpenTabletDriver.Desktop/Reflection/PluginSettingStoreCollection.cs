@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,7 +7,7 @@ using OpenTabletDriver.Plugin;
 
 namespace OpenTabletDriver.Desktop.Reflection
 {
-    public class PluginSettingStoreCollection : ObservableCollection<PluginSettingStore>
+    public class PluginSettingStoreCollection : ObservableCollection<PluginSettingStore?>
     {
         public PluginSettingStoreCollection()
         {
@@ -57,9 +56,6 @@ namespace OpenTabletDriver.Desktop.Reflection
         [CollectionAccess(CollectionAccessType.Read | CollectionAccessType.ModifyExistingContent)]
         public PluginSettingStore FromType(TypeInfo type)
         {
-            if (type == null)
-                return null;
-
             var store = this.FirstOrDefault(s => s?.Path == type.FullName) ?? new PluginSettingStore(type, false);
             if (!this.Contains(store))
                 this.Add(store);

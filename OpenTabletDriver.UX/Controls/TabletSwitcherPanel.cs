@@ -49,13 +49,13 @@ namespace OpenTabletDriver.UX.Controls
                 }
             };
 
-            controlPanel.ProfileBinding.Bind(tabletSwitcher.SelectedValueBinding.Cast<Profile>());
+            controlPanel.ProfileBinding.Bind(tabletSwitcher.SelectedValueBinding.Cast<Profile?>());
 
             tabletSwitcher.ProfilesBinding.BindDataContext<App>(a => a.Settings.Profiles);
 
             App.Driver.TabletsChanged += HandleTabletsChanged;
             // ReSharper disable once AsyncVoidMethod
-            Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance.GetTablets()));
+            Application.Instance.AsyncInvoke(async void () => HandleTabletsChanged(this, await App.Driver.Instance!.GetTablets()));
         }
 
         private TabletSwitcher tabletSwitcher = new();
@@ -68,7 +68,7 @@ namespace OpenTabletDriver.UX.Controls
             get => commandsPanel.Content;
         }
 
-        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets)
+        private void HandleTabletsChanged(object? sender, IEnumerable<TabletReference> tablets)
         {
             tabletSwitcher.HandleTabletsChanged(sender, tablets.ToImmutableArray());
         }
@@ -96,12 +96,12 @@ namespace OpenTabletDriver.UX.Controls
                 get => this.profiles;
             }
 
-            public event EventHandler<EventArgs> ProfilesChanged;
+            public event EventHandler<EventArgs>? ProfilesChanged;
 
             protected virtual async Task OnProfilesChanged()
             {
                 ProfilesChanged?.Invoke(this, EventArgs.Empty);
-                var tablets = await App.Driver.Instance.GetTablets();
+                var tablets = await App.Driver.Instance!.GetTablets();
                 HandleTabletsChanged(this, tablets.ToImmutableArray());
             }
 
@@ -119,7 +119,7 @@ namespace OpenTabletDriver.UX.Controls
                 }
             }
 
-            public void HandleTabletsChanged(object _, IList<TabletReference> tablets)
+            public void HandleTabletsChanged(object? _, IList<TabletReference> tablets)
             {
                 visibleProfiles.Clear();
 

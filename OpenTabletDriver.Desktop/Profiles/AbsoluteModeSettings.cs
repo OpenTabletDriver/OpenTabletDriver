@@ -1,3 +1,5 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Tablet;
@@ -10,16 +12,18 @@ namespace OpenTabletDriver.Desktop.Profiles
         private bool _lockar, _clipping, _areaLimiting;
 
         [JsonProperty(nameof(Display))]
-        public AreaSettings Display
+        public required AreaSettings Display
         {
-            set => this.RaiseAndSetIfChanged(ref this.display, value);
+            [MemberNotNull(nameof(display))]
+            set => this.RaiseAndSetIfChanged(ref this.display!, value);
             get => this.display;
         }
 
         [JsonProperty(nameof(Tablet))]
-        public AreaSettings Tablet
+        public required AreaSettings Tablet
         {
-            set => this.RaiseAndSetIfChanged(ref this.tablet, value);
+            [MemberNotNull(nameof(tablet))]
+            set => this.RaiseAndSetIfChanged(ref this.tablet!, value);
             get => this.tablet;
         }
 
@@ -46,7 +50,7 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         public static AbsoluteModeSettings GetDefaults(DigitizerSpecifications digitizer)
         {
-            var display = AppInfo.PluginManager.GetService<IVirtualScreen>();
+            var display = AppInfo.PluginManager.GetService<IVirtualScreen>() ?? throw new InvalidOperationException($"Could not get {nameof(IVirtualScreen)} from DI");
 
             return new AbsoluteModeSettings
             {

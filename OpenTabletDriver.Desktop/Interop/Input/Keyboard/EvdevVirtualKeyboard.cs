@@ -62,7 +62,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
 
         public void Dispose()
         {
-            Device?.Dispose();
+            Device.Dispose();
 
             GC.SuppressFinalize(this);
         }

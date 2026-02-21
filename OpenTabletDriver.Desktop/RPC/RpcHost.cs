@@ -11,7 +11,7 @@ namespace OpenTabletDriver.Desktop.RPC
     public class RpcHost<T>(string pipeName)
         where T : class
     {
-        public event EventHandler<bool> ConnectionStateChanged;
+        public event EventHandler<bool>? ConnectionStateChanged;
 
         public async Task Run(T host, CancellationToken ct)
         {

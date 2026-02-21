@@ -7,7 +7,7 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
 {
     public struct WacomTouchReport : ITouchReport, IAuxReport
     {
-        public WacomTouchReport(byte[] report, ref TouchPoint[] prevTouches)
+        public WacomTouchReport(byte[] report, ref TouchPoint?[]? prevTouches)
         {
             Raw = report;
             AuxButtons = Array.Empty<bool>();
@@ -72,6 +72,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom
         public const int MAX_POINTS = 16;
         public byte[] Raw { set; get; }
         public bool[] AuxButtons { set; get; }
-        public TouchPoint[] Touches { set; get; }
+        public TouchPoint?[] Touches { set; get; }
     }
 }

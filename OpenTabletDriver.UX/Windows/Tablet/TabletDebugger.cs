@@ -186,12 +186,12 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     this.Close();
             };
 
-            var reportBinding = ReportDataBinding.Child(c => (c.ToObject() as IDeviceReport));
+            var reportBinding = ReportDataBinding.Child(c => (c!.ToObject() as IDeviceReport));
 
-            deviceName.TextBinding.Bind(ReportDataBinding.Child(c => c.Tablet.Properties.Name));
-            rawTablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringRaw(c)));
-            tablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringFormat(c)));
-            maxReportedPosition.TextBinding.Bind(MaxPositionBinding.Convert(c => MaxPositionString(c)));
+            deviceName.TextBinding.Bind(ReportDataBinding.Child(c => c!.Tablet.Properties.Name));
+            rawTablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringRaw(c!)));
+            tablet.TextBinding.Bind(reportBinding.Child(c => ReportFormatter.GetStringFormat(c!)));
+            maxReportedPosition.TextBinding.Bind(MaxPositionBinding.Convert(MaxPositionString));
             reportRate.TextBinding.Bind(ReportPeriodBinding.Convert(c => Math.Round(1000.0 / c) + "hz"));
             reportsRecorded.TextBinding.Bind(NumberOfReportsRecordedBinding.Convert(c => c.ToString()));
             tabletVisualizer.ReportDataBinding.Bind(ReportDataBinding);
@@ -249,14 +249,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         private Vector2 maxPosition;
         private readonly CheckBox enableDataRecording;
 
-        private DebugReportData reportData;
+        private DebugReportData? reportData;
         private double reportPeriod;
         private int numReportsRecorded;
 
         private HPETDeltaStopwatch stopwatch = new HPETDeltaStopwatch();
-        private TextWriter dataRecordingOutput;
+        private TextWriter? dataRecordingOutput;
 
-        public DebugReportData ReportData
+        public DebugReportData? ReportData
         {
             set
             {
@@ -297,10 +297,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             get => maxPosition;
         }
 
-        public event EventHandler<EventArgs> ReportDataChanged;
-        public event EventHandler<EventArgs> ReportPeriodChanged;
-        public event EventHandler<EventArgs> NumberOfReportsRecordedChanged;
-        public event EventHandler<EventArgs> MaxPositionReportedChanged;
+        public event EventHandler<EventArgs>? ReportDataChanged;
+        public event EventHandler<EventArgs>? ReportPeriodChanged;
+        public event EventHandler<EventArgs>? NumberOfReportsRecordedChanged;
+        public event EventHandler<EventArgs>? MaxPositionReportedChanged;
 
         protected virtual void OnReportDataChanged()
         {
@@ -331,11 +331,11 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         }
 
-        public BindableBinding<TabletDebugger, DebugReportData> ReportDataBinding
+        public BindableBinding<TabletDebugger, DebugReportData?> ReportDataBinding
         {
             get
             {
-                return new BindableBinding<TabletDebugger, DebugReportData>(
+                return new BindableBinding<TabletDebugger, DebugReportData?>(
                     this,
                     c => c.ReportData,
                     (c, v) => c.ReportData = v,
@@ -373,7 +373,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         }
 
-        private void HandleReport(object sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
+        private void HandleReport(object? sender, DebugReportData data) => Application.Instance.AsyncInvoke(() =>
         {
             ReportData = data;
             var tabletProperties = data.Tablet.Properties;
@@ -400,10 +400,10 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             }
         });
 
-        private void HandleTabletsChanged(object sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
+        private void HandleTabletsChanged(object? sender, IEnumerable<TabletReference> tablets) => Application.Instance.AsyncInvoke(() =>
         {
             StringBuilder sb = new StringBuilder("Tablet Debugger");
-            if (tablets != null && tablets.Any())
+            if (tablets.Any())
             {
                 var numTablets = Math.Min(tablets.Count(), 3);
                 sb.Append(" - ");
@@ -421,14 +421,14 @@ namespace OpenTabletDriver.UX.Windows.Tablet
         {
             private static readonly Color AccentColor = SystemColors.Highlight;
 
-            public DebugReportData ReportData { set; get; }
+            public DebugReportData? ReportData { set; get; }
             private List<int> _warnedDigitizers = [];
 
-            public BindableBinding<TabletVisualizer, DebugReportData> ReportDataBinding
+            public BindableBinding<TabletVisualizer, DebugReportData?> ReportDataBinding
             {
                 get
                 {
-                    return new BindableBinding<TabletVisualizer, DebugReportData>(
+                    return new BindableBinding<TabletVisualizer, DebugReportData?>(
                         this,
                         c => c.ReportData,
                         (c, v) => c.ReportData = v
@@ -473,8 +473,8 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                 var report = ReportData?.ToObject();
                 var specifications = tablet.Properties.Specifications;
                 var tabletName = tablet.Properties.Name;
-                var touchDigitizerSpecification = specifications?.Touch;
-                var absDigitizerSpecification = specifications?.Digitizer;
+                var touchDigitizerSpecification = specifications.Touch;
+                var absDigitizerSpecification = specifications.Digitizer;
 
                 if (report is IAbsolutePositionReport absReport)
                 {
@@ -492,7 +492,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
                     {
                         var tabletScale = calculateTabletScale(touchDigitizerSpecification, scale);
 
-                        foreach (var touchPoint in touchReport.Touches.Where(t => t != null))
+                        foreach (var touchPoint in touchReport.Touches.Where(t => t != null).Cast<TouchPoint>())
                         {
                             var position = new PointF(touchPoint.Position.X, touchPoint.Position.Y) * tabletScale;
                             var drawPen = new Pen(AccentColor, SPACING / 2);

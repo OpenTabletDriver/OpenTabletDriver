@@ -5,8 +5,6 @@ using System.Linq;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver
 {
     public class InputDeviceTree

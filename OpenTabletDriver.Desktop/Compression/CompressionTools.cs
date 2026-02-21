@@ -9,7 +9,7 @@ namespace OpenTabletDriver.Desktop.Compression
 {
     public static class CompressionTools
     {
-        public static void Decompress(this Stream stream, string outputDir, string format)
+        public static void Decompress(this Stream stream, string outputDir, string? format)
         {
             switch (format)
             {

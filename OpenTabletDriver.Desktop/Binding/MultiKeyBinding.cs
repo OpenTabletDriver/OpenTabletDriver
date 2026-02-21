@@ -14,14 +14,14 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Multi-Key Binding";
         private const char KEYS_SPLITTER = '+';
 
-        private string[] keys;
-        private string keysString;
+        private string[]? keys;
+        private string? keysString;
 
         [Resolved]
-        public IVirtualKeyboard Keyboard { set; get; }
+        public IVirtualKeyboard? Keyboard { set; get; }
 
         [Property("Keys")]
-        public string Keys
+        public string? Keys
         {
             set
             {
@@ -53,7 +53,7 @@ namespace OpenTabletDriver.Desktop.Binding
                 Log.Debug(nameof(MultiKeyBinding), "No keys to release");
         }
 
-        private string[] ParseKeys(string str)
+        private string[] ParseKeys(string? str)
         {
             if (str == null) return [];
 

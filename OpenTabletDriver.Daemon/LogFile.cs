@@ -9,8 +9,6 @@ using Newtonsoft.Json.Linq;
 using OpenTabletDriver.Plugin.Logging;
 using SysDirectory = System.IO.Directory;
 
-#nullable enable
-
 namespace OpenTabletDriver.Daemon
 {
     public sealed class LogFile : IDisposable

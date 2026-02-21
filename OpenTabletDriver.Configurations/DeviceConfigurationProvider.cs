@@ -24,13 +24,13 @@ namespace OpenTabletDriver.Configurations
 
         private readonly JsonSerializer jsonSerializer = new JsonSerializer();
 
-        private TabletConfiguration Deserialize(Stream stream)
+        private TabletConfiguration Deserialize(Stream? stream)
         {
             ArgumentNullException.ThrowIfNull(stream);
 
             using var reader = new StreamReader(stream);
             using var jsonReader = new JsonTextReader(reader);
-            return jsonSerializer.Deserialize<TabletConfiguration>(jsonReader);
+            return jsonSerializer.Deserialize<TabletConfiguration>(jsonReader) ?? throw new InvalidOperationException("Unable to deserialize tablet configuration from stream");
         }
     }
 }

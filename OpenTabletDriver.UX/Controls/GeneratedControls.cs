@@ -30,13 +30,6 @@ namespace OpenTabletDriver.UX.Controls
         public static Control GetControlForProperty(PluginSettingStore store, PropertyInfo property)
         {
             var attr = property.GetCustomAttribute<PropertyAttribute>();
-            PluginSetting setting = store[property];
-
-            if (setting == null)
-            {
-                setting = new PluginSetting(property, null);
-                store.Settings.Add(setting);
-            }
 
             var settingBinding = new DelegateBinding<PluginSetting>(
                 () => store[property],
@@ -45,24 +38,17 @@ namespace OpenTabletDriver.UX.Controls
 
             var control = GetControlForSetting(property, settingBinding);
 
-            if (control != null)
-            {
-                // Apply all visual modifier attributes
-                foreach (ModifierAttribute modifierAttr in property.GetCustomAttributes<ModifierAttribute>())
-                    control = ApplyModifierAttribute(control, modifierAttr);
+            // Apply all visual modifier attributes
+            foreach (ModifierAttribute modifierAttr in property.GetCustomAttributes<ModifierAttribute>())
+                control = ApplyModifierAttribute(control, modifierAttr);
 
-                control.Width = 400;
-                return new Group(attr.DisplayName ?? property.Name, control, Orientation.Horizontal, false);
-            }
-            else
-            {
-                throw new NullReferenceException($"{nameof(control)} is null. This is likely due to {property.PropertyType.Name} being an unsupported type.");
-            }
+            control.Width = 400;
+            return new Group(attr?.DisplayName ?? property.Name, control, Orientation.Horizontal, false);
         }
 
         private static Control GetControlForSetting(PropertyInfo property, DirectBinding<PluginSetting> binding)
         {
-            Control rv = null;
+            Control? rv = null;
             if (property.PropertyType == typeof(string))
             {
                 if (property.GetCustomAttribute<PropertyValidatedAttribute>() is PropertyValidatedAttribute validateAttr)
@@ -71,7 +57,7 @@ namespace OpenTabletDriver.UX.Controls
                     {
                         DataStore = validateAttr.GetValue<IEnumerable<string>>(property),
                     };
-                    comboBox.SelectedItemBinding.Bind(binding.Convert<string>(property));
+                    comboBox.SelectedItemBinding.Bind(binding.Convert<string?>(property));
                     rv = comboBox;
                 }
                 else
@@ -169,14 +155,14 @@ namespace OpenTabletDriver.UX.Controls
         private static TControl GetMaskedTextBox<TControl, T>(PropertyInfo property, DirectBinding<PluginSetting> binding) where TControl : MaskedTextBox<T>, new()
         {
             var textBox = new TControl();
-            textBox.ValueBinding.Bind(binding.Convert<T>(property));
+            textBox.ValueBinding.Bind(binding.Convert<T>(property)!);
             return textBox;
         }
 
-        private static DirectBinding<T> Convert<T>(this DirectBinding<PluginSetting> binding, PropertyInfo property)
+        private static DirectBinding<T?> Convert<T>(this DirectBinding<PluginSetting> binding, PropertyInfo property)
         {
             return binding.Convert(
-                s => s.GetValueOrDefault<T>(property) ?? throw new InvalidOperationException($"Could not get default value for '{property.Name}'"),
+                s => s.GetValueOrDefault<T>(property),
                 v => new PluginSetting(property, v)
             );
         }

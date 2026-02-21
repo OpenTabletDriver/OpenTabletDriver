@@ -8,9 +8,9 @@ namespace OpenTabletDriver.UX
 {
     public class DaemonWatchdog : IDisposable
     {
-        public event EventHandler DaemonExited;
+        public event EventHandler? DaemonExited;
 
-        private Process daemonProcess;
+        private Process? daemonProcess;
 
         private static readonly ProcessStartInfo startInfo = SystemInterop.CurrentPlatform switch
         {

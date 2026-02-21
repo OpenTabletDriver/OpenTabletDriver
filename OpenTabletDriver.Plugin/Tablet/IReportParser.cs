@@ -11,6 +11,6 @@ namespace OpenTabletDriver.Plugin.Tablet
     /// </remarks>
     public interface IReportParser<out T> where T : IDeviceReport
     {
-        T Parse(byte[] report);
+        T? Parse(byte[] report);
     }
 }

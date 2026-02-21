@@ -28,10 +28,11 @@ namespace OpenTabletDriver.Tests
         [MemberData(nameof(PluginMetadata_DeclaresDriverSupport_Properly_Data))]
         public void PluginMetadata_DeclaresDriverSupport_Properly(Version supportedDriverVersion, Version? maxSupportedDriverVersion, Version driverVersion, bool expectedSupport)
         {
-            var pluginMetaData = new PluginMetadata()
+            var pluginMetaData = new PluginMetadata
             {
                 SupportedDriverVersion = supportedDriverVersion,
-                MaxSupportedDriverVersion = maxSupportedDriverVersion
+                MaxSupportedDriverVersion = maxSupportedDriverVersion,
+                Name = "Spoofed Plugin",
             };
 
             var supportStatus = pluginMetaData.IsSupportedBy(driverVersion);

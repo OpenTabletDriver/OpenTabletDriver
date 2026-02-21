@@ -18,7 +18,7 @@ namespace OpenTabletDriver.Plugin.Attributes
         /// </remarks>
         public string MemberName { get; } = memberName;
 
-        public T GetValue<T>(PropertyInfo property)
+        public T? GetValue<T>(PropertyInfo property)
         {
             var sourceType = property.ReflectedType;
 
@@ -30,9 +30,9 @@ namespace OpenTabletDriver.Plugin.Attributes
             {
                 return member.MemberType switch
                 {
-                    MemberTypes.Property => (T)sourceType.GetProperty(MemberName).GetValue(null),
-                    MemberTypes.Field => (T)sourceType.GetField(MemberName).GetValue(null),
-                    MemberTypes.Method => (T)sourceType.GetMethod(MemberName).Invoke(null, null),
+                    MemberTypes.Property => (T?)sourceType.GetProperty(MemberName)!.GetValue(null),
+                    MemberTypes.Field => (T?)sourceType.GetField(MemberName)!.GetValue(null),
+                    MemberTypes.Method => (T?)sourceType.GetMethod(MemberName)!.Invoke(null, null),
                     _ => default
                 };
             }

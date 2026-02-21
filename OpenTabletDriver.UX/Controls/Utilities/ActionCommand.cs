@@ -5,7 +5,7 @@ namespace OpenTabletDriver.UX.Controls.Utilities
 {
     public class ActionCommand : Command
     {
-        public Action Action { set; get; }
+        public Action? Action { set; get; }
 
         protected override void OnExecuted(EventArgs e)
         {

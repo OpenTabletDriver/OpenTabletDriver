@@ -19,8 +19,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
             Spacing = 5
         };
 
-        private IList<T> itemSource;
-        public IList<T> ItemSource
+        private IList<T>? itemSource;
+        public IList<T>? ItemSource
         {
             set
             {
@@ -38,13 +38,13 @@ namespace OpenTabletDriver.UX.Controls.Generic
             get => this.itemSource;
         }
 
-        public event EventHandler<EventArgs> ItemSourceChanged;
+        public event EventHandler<EventArgs>? ItemSourceChanged;
 
-        public BindableBinding<GeneratedItemList<T>, IList<T>> ItemSourceBinding
+        public BindableBinding<GeneratedItemList<T>, IList<T>?> ItemSourceBinding
         {
             get
             {
-                return new BindableBinding<GeneratedItemList<T>, IList<T>>(
+                return new BindableBinding<GeneratedItemList<T>, IList<T>?>(
                     this,
                     c => c.ItemSource,
                     (c, v) => c.ItemSource = v,
@@ -76,7 +76,7 @@ namespace OpenTabletDriver.UX.Controls.Generic
             HandleCollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        protected virtual void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {

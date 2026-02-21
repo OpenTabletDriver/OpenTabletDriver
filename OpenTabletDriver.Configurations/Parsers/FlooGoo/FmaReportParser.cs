@@ -6,10 +6,10 @@ namespace OpenTabletDriver.Configurations.Parsers.FlooGoo
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
     public class FmaReportParser : IReportParser<IDeviceReport>
     {
-        public IDeviceReport Parse(byte[] report)
+        public IDeviceReport? Parse(byte[] report)
         {
             if (report == null || report.Length == 0)
-                return null!; // returning null makes OTD ignore this report
+                return null; // returning null makes OTD ignore this report
             if (report.Length < 12 || report[0] != 0x01)
                 return new DeviceReport(report);
 

@@ -97,8 +97,19 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         protected static IEnumerable<PluginMetadata> EnumeratePluginMetadata(string directoryPath)
         {
             foreach (var file in Directory.EnumerateFiles(directoryPath, "*.json", SearchOption.AllDirectories))
-                using (var fs = File.OpenRead(file))
-                    yield return Serialization.Deserialize<PluginMetadata>(fs);
+            {
+                using var fs = File.OpenRead(file);
+
+                var metadata = Serialization.Deserialize<PluginMetadata>(fs);
+
+                if (metadata == null)
+                {
+                    Log.Write(nameof(PluginMetadataCollection), $"Invalid {nameof(PluginMetadata)} file: '{fs.Name}'");
+                    continue;
+                }
+
+                yield return metadata;
+            }
         }
     }
 }

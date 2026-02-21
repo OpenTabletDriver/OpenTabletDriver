@@ -17,7 +17,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         }
 
         private uint timerId;
-        private FallbackTimer fallbackTimer;
+        private FallbackTimer? fallbackTimer;
         private readonly TimerCallback callbackDelegate;
         private readonly GCHandle callbackHandle;
         private readonly object stateLock = new object();
@@ -25,7 +25,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         public bool Enabled { private set; get; }
         public float Interval { set; get; } = 1;
 
-        public event Action Elapsed;
+        public event Action? Elapsed;
 
         public unsafe void Start()
         {

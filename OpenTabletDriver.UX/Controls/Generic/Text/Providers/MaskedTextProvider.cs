@@ -19,13 +19,11 @@ namespace OpenTabletDriver.UX.Controls.Generic.Text.Providers
             set
             {
                 builder.Clear();
-                if (value != null)
+
+                int pos = 0;
+                foreach (char ch in value)
                 {
-                    int pos = 0;
-                    foreach (char ch in value)
-                    {
-                        Insert(ch, ref pos);
-                    }
+                    Insert(ch, ref pos);
                 }
             }
             get => builder.ToString();

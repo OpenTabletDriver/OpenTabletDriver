@@ -78,7 +78,7 @@ namespace OpenTabletDriver.UX.Controls
             auxBindingEditor.ProfileBinding.Bind(ProfileBinding);
             wheelBindingEditor.ProfileBinding.Bind(ProfileBinding);
             mouseBindingEditor.ProfileBinding.Bind(ProfileBinding);
-            filterEditor.StoreCollectionBinding.Bind(ProfileBinding.Child(p => p.Filters));
+            filterEditor.StoreCollectionBinding.Bind(ProfileBinding.Child(p => p!.Filters)!);
             toolEditor.StoreCollectionBinding.Bind(App.Current, a => a.Settings.Tools);
 
             if (DesktopInterop.VirtualScreen == null)
@@ -102,8 +102,9 @@ namespace OpenTabletDriver.UX.Controls
         private PluginSettingStoreCollectionEditor<IPositionedPipelineElement<IDeviceReport>> filterEditor;
         private PluginSettingStoreCollectionEditor<ITool> toolEditor;
 
-        private Profile profile;
-        public Profile Profile
+        private Profile? profile;
+
+        private Profile? Profile
         {
             set
             {
@@ -113,7 +114,7 @@ namespace OpenTabletDriver.UX.Controls
             get => this.profile;
         }
 
-        public event EventHandler<EventArgs> ProfileChanged;
+        public event EventHandler<EventArgs>? ProfileChanged;
 
         // ReSharper disable once AsyncVoidMethod
         protected virtual void OnProfileChanged() => Application.Instance.AsyncInvoke(async void () =>
@@ -134,7 +135,7 @@ namespace OpenTabletDriver.UX.Controls
                 SetPageVisibility(placeholder, false);
                 SetPageVisibility(outputModeEditor, true);
                 SetPageVisibility(filterEditor, true);
-                SetPageVisibility(penBindingEditor, tablet.Properties.Specifications.Pen != null);
+                SetPageVisibility(penBindingEditor, true);
                 SetPageVisibility(auxBindingEditor, tablet.Properties.Specifications.AuxiliaryButtons != null);
                 SetPageVisibility(wheelBindingEditor, tablet.Properties.Specifications.Wheel != null);
                 SetPageVisibility(mouseBindingEditor, tablet.Properties.Specifications.MouseButtons != null);
@@ -165,7 +166,7 @@ namespace OpenTabletDriver.UX.Controls
             SetPageVisibility(logView, true);
         });
 
-        private void OnTabletChanged(TabletReference tablet)
+        private void OnTabletChanged(TabletReference? tablet)
         {
             penBindingEditor.Tablet = tablet;
             auxBindingEditor.Tablet = tablet;
@@ -173,11 +174,11 @@ namespace OpenTabletDriver.UX.Controls
             mouseBindingEditor.Tablet = tablet;
         }
 
-        public BindableBinding<ControlPanel, Profile> ProfileBinding
+        public BindableBinding<ControlPanel, Profile?> ProfileBinding
         {
             get
             {
-                return new BindableBinding<ControlPanel, Profile>(
+                return new BindableBinding<ControlPanel, Profile?>(
                     this,
                     c => c.Profile,
                     (c, v) => c.Profile = v,
