@@ -5,10 +5,10 @@ namespace OpenTabletDriver.UX.Controls.Generic
 {
     public class ListBox<T> : ListBox where T : class
     {
-        public T SelectedItem
+        public T? SelectedItem
         {
             set => base.SelectedValue = value;
-            get => (T)base.SelectedValue;
+            get => (T?)base.SelectedValue;
         }
 
         public IList<T> Source
@@ -17,6 +17,6 @@ namespace OpenTabletDriver.UX.Controls.Generic
             get => (IList<T>)base.DataStore;
         }
 
-        public DirectBinding<T> SelectedItemBinding => SelectedValueBinding.Cast<T>();
+        public DirectBinding<T?> SelectedItemBinding => SelectedValueBinding.Cast<T?>();
     }
 }

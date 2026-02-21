@@ -6,8 +6,6 @@ using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver.Desktop.Binding
 {
     [PluginName(PLUGIN_NAME)]
@@ -16,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Binding
         private const string PLUGIN_NAME = "Multi-Key Binding";
         private const char KEYS_SPLITTER = '+';
 
-        private string[] keys = [];
+        private string[]? keys;
         private string? keysString;
 
         [Resolved]
@@ -43,13 +41,13 @@ namespace OpenTabletDriver.Desktop.Binding
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
-            if (keys.Length > 0)
+            if (keys?.Length > 0)
                 Keyboard?.Press(this.keys);
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
-            if (keys.Length > 0)
+            if (keys?.Length > 0)
                 Keyboard?.Release(this.keys);
         }
 

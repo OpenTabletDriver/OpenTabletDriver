@@ -10,8 +10,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
             unitLabel.TextBinding.Bind(UnitBinding);
         }
 
-        private string unit;
-        public string Unit
+        private string? unit;
+        public string? Unit
         {
             set
             {
@@ -21,15 +21,15 @@ namespace OpenTabletDriver.UX.Controls.Generic
             get => this.unit;
         }
 
-        public event EventHandler<EventArgs> UnitChanged;
+        public event EventHandler<EventArgs>? UnitChanged;
 
         protected virtual void OnUnitChanged() => UnitChanged?.Invoke(this, new EventArgs());
 
-        public BindableBinding<UnitGroup, string> UnitBinding
+        public BindableBinding<UnitGroup, string?> UnitBinding
         {
             get
             {
-                return new BindableBinding<UnitGroup, string>(
+                return new BindableBinding<UnitGroup, string?>(
                     this,
                     c => c.Unit,
                     (c, v) => c.Unit = v,
@@ -41,8 +41,8 @@ namespace OpenTabletDriver.UX.Controls.Generic
 
         private Label unitLabel = new Label();
 
-        private Control content;
-        public new Control Content
+        private Control? content;
+        public new Control? Content
         {
             set
             {

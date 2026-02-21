@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Output;
 using OpenTabletDriver.Desktop.Reflection;
@@ -12,22 +13,24 @@ namespace OpenTabletDriver.Desktop.Profiles
     {
         private string tablet;
         private PluginSettingStore outputMode;
-        private AbsoluteModeSettings absoluteMode = new AbsoluteModeSettings();
-        private RelativeModeSettings relativeMode = new RelativeModeSettings();
+        private AbsoluteModeSettings? absoluteMode;
+        private RelativeModeSettings? relativeMode;
         private BindingSettings bindings = new BindingSettings();
         private PluginSettingStoreCollection filters = new PluginSettingStoreCollection();
 
         [JsonProperty(nameof(Tablet))]
-        public string Tablet
+        public required string Tablet
         {
-            set => this.RaiseAndSetIfChanged(ref tablet, value);
+            [MemberNotNull(nameof(tablet))]
+            set => this.RaiseAndSetIfChanged(ref tablet!, value);
             get => tablet;
         }
 
         [JsonProperty(nameof(OutputMode))]
-        public PluginSettingStore OutputMode
+        public required PluginSettingStore OutputMode
         {
-            set => RaiseAndSetIfChanged(ref outputMode, value);
+            [MemberNotNull(nameof(outputMode))]
+            set => RaiseAndSetIfChanged(ref outputMode!, value);
             get => outputMode;
         }
 
@@ -39,14 +42,14 @@ namespace OpenTabletDriver.Desktop.Profiles
         }
 
         [JsonProperty(nameof(AbsoluteModeSettings))]
-        public AbsoluteModeSettings AbsoluteModeSettings
+        public AbsoluteModeSettings? AbsoluteModeSettings
         {
             set => this.RaiseAndSetIfChanged(ref absoluteMode, value);
             get => absoluteMode;
         }
 
         [JsonProperty(nameof(RelativeModeSettings))]
-        public RelativeModeSettings RelativeModeSettings
+        public RelativeModeSettings? RelativeModeSettings
         {
             set => this.RaiseAndSetIfChanged(ref relativeMode, value);
             get => relativeMode;

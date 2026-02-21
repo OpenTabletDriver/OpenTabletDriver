@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
@@ -10,6 +11,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class EvdevAbsolutePointer : EvdevVirtualMouse, IAbsolutePointer
     {
+        [SetsRequiredMembers]
         public unsafe EvdevAbsolutePointer()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Tablet");
@@ -17,16 +19,18 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             Device.EnableType(EventType.EV_ABS);
             Device.EnableType(EventType.EV_REL);
 
+            var virtualScreen = DesktopInterop.VirtualScreen ?? throw new InvalidOperationException("Could not get virtual screen");
+
             var xAbs = new input_absinfo
             {
-                maximum = (int)DesktopInterop.VirtualScreen.Width
+                maximum = (int)virtualScreen.Width,
             };
             input_absinfo* xPtr = &xAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_X, (IntPtr)xPtr);
 
             var yAbs = new input_absinfo
             {
-                maximum = (int)DesktopInterop.VirtualScreen.Height
+                maximum = (int)virtualScreen.Height,
             };
             input_absinfo* yPtr = &yAbs;
             Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);

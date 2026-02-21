@@ -55,19 +55,19 @@ namespace OpenTabletDriver.UX.Controls.Output
                 }
             };
 
-            xSens.ValueBinding.Bind(SettingsBinding.Child(s => s.XSensitivity));
-            ySens.ValueBinding.Bind(SettingsBinding.Child(s => s.YSensitivity));
-            rotation.ValueBinding.Bind(SettingsBinding.Child(s => s.RelativeRotation));
+            xSens.ValueBinding.Bind(SettingsBinding.Child(s => s!.XSensitivity));
+            ySens.ValueBinding.Bind(SettingsBinding.Child(s => s!.YSensitivity));
+            rotation.ValueBinding.Bind(SettingsBinding.Child(s => s!.RelativeRotation));
             resetTime.ValueBinding.Convert<TimeSpan>(
                 c => TimeSpan.FromMilliseconds(c),
                 v => (float)v.TotalMilliseconds
-            ).Bind(SettingsBinding.Child(s => s.ResetTime));
+            ).Bind(SettingsBinding.Child(s => s!.ResetTime));
         }
 
         private MaskedTextBox<float> xSens, ySens, rotation, resetTime;
 
-        private RelativeModeSettings settings;
-        public RelativeModeSettings Settings
+        private RelativeModeSettings? settings;
+        public RelativeModeSettings? Settings
         {
             set
             {
@@ -77,15 +77,15 @@ namespace OpenTabletDriver.UX.Controls.Output
             get => this.settings;
         }
 
-        public event EventHandler<EventArgs> SettingsChanged;
+        public event EventHandler<EventArgs>? SettingsChanged;
 
         protected virtual void OnSettingsChanged() => SettingsChanged?.Invoke(this, new EventArgs());
 
-        public BindableBinding<RelativeModeEditor, RelativeModeSettings> SettingsBinding
+        public BindableBinding<RelativeModeEditor, RelativeModeSettings?> SettingsBinding
         {
             get
             {
-                return new BindableBinding<RelativeModeEditor, RelativeModeSettings>(
+                return new BindableBinding<RelativeModeEditor, RelativeModeSettings?>(
                     this,
                     c => c.Settings,
                     (c, v) => c.Settings = v,

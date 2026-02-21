@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
     internal class LinuxTimer : ITimer, IDisposable
     {
-        private Thread _timerThread;
+        private Thread? _timerThread;
         private readonly object _stateLock = new object();
         private int _timerFD;
         private ITimerSpec _timerSpec;
@@ -23,7 +23,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 
         public float Interval { set; get; } = 1;
 
-        public event Action Elapsed;
+        public event Action? Elapsed;
 
         public void Start()
         {

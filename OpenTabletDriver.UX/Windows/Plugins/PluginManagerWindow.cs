@@ -179,7 +179,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             };
         }
 
-        private async void PromptInstallPlugin(object sender, EventArgs e)
+        private async void PromptInstallPlugin(object? sender, EventArgs e)
         {
             if (!this.ParentWindow.Enabled)
                 return;
@@ -200,7 +200,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
             }
         }
 
-        private void RefreshHandler(object sender, EventArgs e)
+        private void RefreshHandler(object? sender, EventArgs e)
         {
             if (this.ParentWindow.Enabled)
                 pluginList.Refresh();

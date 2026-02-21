@@ -108,7 +108,7 @@ namespace OpenTabletDriver.UX.Controls
                     HeaderText = "Level",
                     DataCell = new TextBoxCell
                     {
-                        Binding = Binding.Property<LogMessage, string>(m => Enum.GetName(m.Level))
+                        Binding = Binding.Property<LogMessage, string>(m => Enum.GetName(m.Level)!)
                     }
                 },
                 new GridColumn
@@ -130,7 +130,7 @@ namespace OpenTabletDriver.UX.Controls
             }
         };
 
-        private LogDataStore messageStore;
+        private LogDataStore messageStore = null!; // initialized asynchronously
 
         private void AddMessage(LogMessage message)
         {

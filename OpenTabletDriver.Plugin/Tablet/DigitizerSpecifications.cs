@@ -70,8 +70,6 @@ namespace OpenTabletDriver.Plugin.Tablet
             return objectType == typeof(double) || objectType == typeof(decimal);
         }
 
-#nullable enable
-
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
         {
             if (value == null)

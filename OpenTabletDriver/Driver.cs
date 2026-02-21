@@ -12,8 +12,6 @@ using OpenTabletDriver.Plugin.Components;
 using OpenTabletDriver.Plugin.Devices;
 using OpenTabletDriver.Plugin.Tablet;
 
-#nullable enable
-
 namespace OpenTabletDriver
 {
     public class Driver : IDriver, IDisposable

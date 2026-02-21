@@ -1,4 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Output;
@@ -11,6 +11,6 @@ namespace OpenTabletDriver.Desktop.Output
     public class RelativeMode : RelativeOutputMode
     {
         [Resolved]
-        public override IRelativePointer Pointer { set; get; }
+        public override IRelativePointer? Pointer { set; get; }
     }
 }

@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using OpenTabletDriver.Plugin.Logging;
 
-#nullable enable
-
 namespace OpenTabletDriver.Plugin
 {
     public static class Log

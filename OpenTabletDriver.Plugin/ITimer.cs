@@ -8,6 +8,6 @@ namespace OpenTabletDriver.Plugin.Timers
         void Stop();
         bool Enabled { get; }
         float Interval { get; set; }
-        event Action Elapsed;
+        event Action? Elapsed;
     }
 }

@@ -30,10 +30,10 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private const string DRAG_DROP_SUPPORTED = "Drop plugin here...";
         private const string DRAG_DROP_UNSUPPORTED = "Drag and drop is not supported on this platform.";
 
-        public event Func<string, Task> RequestPluginInstall;
+        public event Func<string, Task>? RequestPluginInstall;
 
-        private Control content;
-        public new Control Content
+        private Control? content;
+        public new Control? Content
         {
             set
             {

@@ -61,13 +61,11 @@ namespace OpenTabletDriver.UX
             );
         }
 
-        public static async Task<TabletReference> GetTabletReference(this Profile profile)
+        public static async Task<TabletReference?> GetTabletReference(this Profile profile)
         {
             var tablets = await App.Driver.Instance.GetTablets();
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }
-
-#nullable enable
 
         [Obsolete("Please use method specifying an initialFileName. 'null' is an acceptable value")]
         public static T BuildFileDialog<T>(string? title, string? directory, IEnumerable<FileFilter>? filters, bool? multiSelect = null)

@@ -10,7 +10,7 @@ namespace OpenTabletDriver.Native.Windows
         public const int ERROR_NO_MORE_ITEMS = 259;
 
         [DllImport("setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr SetupDiGetClassDevs(in Guid classGuid, [MarshalAs(UnmanagedType.LPWStr)] string enumerator, IntPtr hwndParent, DIGCF flags);
+        public static extern IntPtr SetupDiGetClassDevs(in Guid classGuid, [MarshalAs(UnmanagedType.LPWStr)] string? enumerator, IntPtr hwndParent, DIGCF flags);
 
         [DllImport("setupapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern IntPtr SetupDiGetClassDevs(in Guid classGuid, IntPtr enumerator, IntPtr hwndParent, DIGCF flags);

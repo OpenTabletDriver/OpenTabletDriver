@@ -1,5 +1,8 @@
 using System;
 
+// TODO: remove nullable disable
+#nullable disable
+
 namespace OpenTabletDriver.Native.OSX.Timers
 {
     public enum FilterType : Int16

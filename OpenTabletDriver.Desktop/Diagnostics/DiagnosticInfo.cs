@@ -30,7 +30,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
         public static OSInfo OperatingSystem => OSInfo.GetOSInfo();
 
         [JsonProperty("Environment Variables")]
-        public IDictionary<string, string> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
+        public IDictionary<string, string?> EnvironmentVariables { private set; get; } = new EnvironmentDictionary();
 
         [JsonProperty("HID Devices")]
         public IEnumerable<SerializedDeviceEndpoint> Devices { private set; get; }
@@ -40,7 +40,8 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         private static string GetAppVersion()
         {
-            string version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            string? version = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            version ??= "<unknown>";
             return $"OpenTabletDriver v{version}";
         }
 

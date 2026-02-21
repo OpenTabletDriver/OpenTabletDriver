@@ -13,12 +13,12 @@ namespace OpenTabletDriver.Desktop.Output
     public class LinuxArtistMode : AbsoluteOutputMode
     {
         [Resolved]
-        public IPressureHandler VirtualTablet { get; set; }
+        public IPressureHandler? VirtualTablet { get; set; }
 
-        public override IAbsolutePointer Pointer
+        public override IAbsolutePointer? Pointer
         {
             set => throw new NotSupportedException();
-            get => (IAbsolutePointer)VirtualTablet;
+            get => (IAbsolutePointer)(VirtualTablet ?? throw new InvalidOperationException($"{nameof(VirtualTablet)} was not properly injected by DI"));
         }
     }
 }

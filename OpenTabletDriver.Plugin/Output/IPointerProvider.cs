@@ -8,6 +8,6 @@ namespace OpenTabletDriver.Plugin.Output
     [Obsolete($"This interface provides an incomplete implementation in the 0.6.x codebase. If you're checking inheritance, use {nameof(AbsoluteOutputMode)} or {nameof(RelativeOutputMode)} instead")]
     public interface IPointerProvider<T> where T : class
     {
-        T Pointer { get; }
+        T? Pointer { get; }
     }
 }

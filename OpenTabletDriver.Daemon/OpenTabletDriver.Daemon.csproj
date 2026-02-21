@@ -7,6 +7,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TieredPGO>true</TieredPGO>
     <AutoreleasePoolSupport>true</AutoreleasePoolSupport>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup Label="Project References">

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using OpenTabletDriver.Desktop.Compression;
 
 namespace OpenTabletDriver.Desktop.Reflection.Metadata
@@ -12,69 +13,86 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
         /// <summary>
         /// The name of the plugin.
         /// </summary>
-        public string Name { set; get; }
+        [JsonRequired]
+        [JsonProperty(nameof(Name))]
+        public required string Name { set; get; }
 
         /// <summary>
         /// The owner of the plugin's source code repository.
         /// </summary>
-        public string Owner { set; get; }
+        [JsonRequired]
+        [JsonProperty(nameof(Owner))]
+        public string? Owner { set; get; }
 
         /// <summary>
         /// The plugin's long description.
         /// <para/>
         /// GUI currently expects this property to be filled with something useful in some manner
         /// </summary>
-        public string Description { set; get; }
+        [JsonRequired]
+        [JsonProperty(nameof(Description))]
+        public string? Description { set; get; }
 
         /// <summary>
         /// The plugins' version.
         /// Newer supported versions will be preferred by default.
         /// </summary>
-        public Version PluginVersion { set; get; }
+        [JsonRequired]
+        [JsonProperty(nameof(PluginVersion))]
+        public Version? PluginVersion { set; get; }
 
         /// <summary>
         /// The plugin's minimum supported OpenTabletDriver version,
         /// </summary>
-        public Version SupportedDriverVersion { set; get; }
+        [JsonRequired]
+        [JsonProperty(nameof(SupportedDriverVersion))]
+        public required Version SupportedDriverVersion { set; get; }
 
         /// <summary>
         /// The plugin's maximum supported OpenTabletDriver version.
         /// <para/>
         /// You probably want to leave this <c>null</c> unless a minor version bump from upstream breaks your plugin
         /// </summary>
-        public Version MaxSupportedDriverVersion { set; get; }
+        [JsonProperty(nameof(MaxSupportedDriverVersion))]
+        public Version? MaxSupportedDriverVersion { set; get; }
 
         /// <summary>
         /// The plugin's source code repository URL.
         /// </summary>
-        public string RepositoryUrl { set; get; }
+        [JsonProperty(nameof(RepositoryUrl))]
+        public string? RepositoryUrl { set; get; }
 
         /// <summary>
         /// The plugin's binary download URL.
         /// </summary>
-        public string DownloadUrl { set; get; }
+        [JsonProperty(nameof(DownloadUrl))]
+        public string? DownloadUrl { set; get; }
 
         /// <summary>
         /// The compression format used in the binary download from <see cref="DownloadUrl"/>.
         /// </summary>
         /// <remarks>Should be <c>null</c> if there is no DownloadURL</remarks>
-        public string CompressionFormat { set; get; }
+        [JsonProperty(nameof(CompressionFormat))]
+        public string? CompressionFormat { set; get; }
 
         /// <summary>
         /// The SHA256 hash of the file at <see cref="DownloadUrl"/>, used for verifying file integrity.
         /// </summary>
         /// <remarks>Should be <c>null</c> if there is no DownloadURL</remarks>
-        public string SHA256 { set; get; }
+        [JsonProperty(nameof(SHA256))]
+        public string? SHA256 { set; get; }
 
         /// <summary>
         /// The plugin's wiki URL.
         /// </summary>
-        public string WikiUrl { set; get; }
+        [JsonProperty(nameof(WikiUrl))]
+        public string? WikiUrl { set; get; }
 
         /// <summary>
         /// The SPDX license identifier expression.
         /// </summary>
-        public string LicenseIdentifier { set; get; }
+        [JsonProperty(nameof(LicenseIdentifier))]
+        public string? LicenseIdentifier { set; get; }
 
         public static string GetSHA256(Stream stream)
         {
@@ -93,10 +111,11 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
 
         public async Task<Stream> GetDownloadStream()
         {
-            using (var client = PluginMetadataCollection.GetClient())
-            {
-                return string.IsNullOrWhiteSpace(DownloadUrl) ? null : await client.GetStreamAsync(DownloadUrl);
-            }
+            ArgumentException.ThrowIfNullOrEmpty(DownloadUrl);
+
+            using var client = PluginMetadataCollection.GetClient();
+
+            return await client.GetStreamAsync(DownloadUrl);
         }
 
         public async Task DownloadAsync(string outputDirectory)
@@ -143,7 +162,7 @@ namespace OpenTabletDriver.Desktop.Reflection.Metadata
             return true;
         }
 
-        public static bool Match(PluginMetadata primary, PluginMetadata secondary)
+        public static bool Match(PluginMetadata? primary, PluginMetadata? secondary)
         {
             if (primary == null || secondary == null)
                 return false;

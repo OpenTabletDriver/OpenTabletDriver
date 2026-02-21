@@ -1,14 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
 using Eto.Drawing;
 using Eto.Forms;
-using JetBrains.Annotations;
 
 namespace OpenTabletDriver.UX.Controls.Generic
 {
     public sealed class UnitLabel : Label
     {
         [SetsRequiredMembers]
-        public UnitLabel(Font font, string exampleValue, [CanBeNull] string unit, bool spaced = false)
+        public UnitLabel(Font font, string exampleValue, string? unit, bool spaced = false)
         {
             this.Font = font;
             this.TextAlignment = TextAlignment.Right;

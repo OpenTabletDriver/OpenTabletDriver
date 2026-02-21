@@ -8,14 +8,14 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
 {
     internal class FallbackTimer : ITimer, IDisposable
     {
-        private Thread threadTimer;
+        private Thread? threadTimer;
         private bool runTimer = true;
 
         public float Interval { get; set; }
         public float IgnoreEventIfLateBy { get; set; } = float.MaxValue;
         public bool Enabled => this.threadTimer != null && this.threadTimer.IsAlive;
 
-        public event Action Elapsed;
+        public event Action? Elapsed;
 
         public void Start()
         {
@@ -37,7 +37,7 @@ namespace OpenTabletDriver.Desktop.Interop.Timer
         public void Stop()
         {
             this.runTimer = false;
-            this.threadTimer.Join();
+            this.threadTimer?.Join();
         }
 
         private void ThreadMain()

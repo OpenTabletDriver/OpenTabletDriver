@@ -57,6 +57,6 @@ namespace OpenTabletDriver.UX.Tools
         }
 
         private static bool running;
-        private static event EventHandler Compose;
+        private static event EventHandler? Compose;
     }
 }

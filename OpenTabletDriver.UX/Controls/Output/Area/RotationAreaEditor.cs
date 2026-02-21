@@ -23,7 +23,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                 }
             );
 
-            var rotationBinding = AreaBinding.Child(c => c.Rotation);
+            var rotationBinding = AreaBinding.Child(c => c!.Rotation);
             rotation.ValueBinding.Bind(rotationBinding);
             rotation.ValueChanged += (_, _) => Display.Invalidate();
         }
@@ -40,10 +40,10 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
                     MenuText = "Handedness",
                     Action = () =>
                     {
-                        Area.Rotation += 180;
-                        Area.Rotation %= 360;
-                        Area.X = FullAreaBounds.Width - Area.X;
-                        Area.Y = FullAreaBounds.Height - Area.Y;
+                        Area!.Rotation += 180;
+                        Area!.Rotation %= 360;
+                        Area!.X = FullAreaBounds!.Value.Width - Area.X;
+                        Area!.Y = FullAreaBounds!.Value.Height - Area.Y;
                     }
                 }
             );

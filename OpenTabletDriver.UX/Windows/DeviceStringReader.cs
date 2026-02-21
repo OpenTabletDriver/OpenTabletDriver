@@ -138,7 +138,7 @@ namespace OpenTabletDriver.UX.Windows
         private const string OperationTimedOut = "Operation timed-out";
         private const string OperationFailed = "Operation failed";
 
-        private async void SendRequestAllStrings(object sender, EventArgs args)
+        private async void SendRequestAllStrings(object? sender, EventArgs args)
         {
             var validVid = int.TryParse(vendorIdText.Text, out var vid);
             var validPid = int.TryParse(productIdText.Text, out var pid);

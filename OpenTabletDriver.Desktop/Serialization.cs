@@ -18,12 +18,12 @@ namespace OpenTabletDriver.Desktop
             Formatting = Formatting.Indented
         };
 
-        private static void SerializationErrorHandler(object sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
+        private static void SerializationErrorHandler(object? sender, Newtonsoft.Json.Serialization.ErrorEventArgs args)
         {
             Log.Exception(args.ErrorContext.Error);
         }
 
-        public static bool TryDeserialize<T>(FileInfo file, out T value)
+        public static bool TryDeserialize<T>(FileInfo file, out T? value)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace OpenTabletDriver.Desktop
             }
         }
 
-        public static T Deserialize<T>(FileInfo file)
+        public static T? Deserialize<T>(FileInfo file)
         {
             using (var fs = file.OpenRead())
                 return Deserialize<T>(fs);
@@ -52,7 +52,7 @@ namespace OpenTabletDriver.Desktop
                 Serialize(fs, value);
         }
 
-        public static T Deserialize<T>(Stream stream)
+        public static T? Deserialize<T>(Stream stream)
         {
             using (var sr = new StreamReader(stream))
             using (var jr = new JsonTextReader(sr))
@@ -66,7 +66,7 @@ namespace OpenTabletDriver.Desktop
                 Serialize(jw, value);
         }
 
-        public static T Deserialize<T>(JsonTextReader textReader)
+        public static T? Deserialize<T>(JsonTextReader textReader)
         {
             return serializer.Deserialize<T>(textReader);
         }

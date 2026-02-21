@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Numerics;
 using OpenTabletDriver.Desktop.Interop.Input.Keyboard;
 using OpenTabletDriver.Native.OSX;
+using OpenTabletDriver.Native.OSX.Generic;
 using OpenTabletDriver.Native.OSX.Input;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
@@ -61,7 +62,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input
             _stopWatch.Start();
             _eventSource = CGEventSourceCreate(CGEventSourceStatePrivate);
             _mouseEvent = CGEventCreate(_eventSource);
-            _keyboard = DesktopInterop.VirtualKeyboard as MacOSVirtualKeyboard;
+            _keyboard = DesktopInterop.VirtualKeyboard as MacOSVirtualKeyboard
+                        ?? throw new InvalidOperationException("Could not get virtual keyboard");
         }
 
         public void MouseDown(MouseButton button)

@@ -55,7 +55,7 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                 }
             };
 
-            mouseButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.MouseButtons));
+            mouseButtons.ItemSourceBinding.Bind(SettingsBinding.Child(c => (IList<PluginSettingStore>)c.MouseButtons)!);
             scrollUp.StoreBinding.Bind(SettingsBinding.Child(c => c.MouseScrollUp));
             scrollDown.StoreBinding.Bind(SettingsBinding.Child(c => c.MouseScrollDown));
         }

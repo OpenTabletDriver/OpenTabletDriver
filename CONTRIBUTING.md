@@ -112,6 +112,13 @@ The following rules apply to all code contributions:
 - If the pull request closes an issue, link that issue with [closing
   keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)
   referring to that issue.
+- As of 2026, the project has been rewritten to support NRT's (nullable
+  reference types) - types of properties, fields, and return values, should be
+  appended with `?` if the value is ever expected to be null on use.
+  - In new classes, initializing fields or properties with `null!` should only
+    ever be done if there is no other way to inform the compiler that the value
+    won't be null at the end of the constructor.
+  - Suppressing null warnings with `!` should only be used very sparingly.
 
 ## Setting up your environment
 
