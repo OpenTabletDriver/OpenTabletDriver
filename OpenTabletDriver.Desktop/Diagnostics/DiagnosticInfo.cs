@@ -34,7 +34,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
 
         private static string GetAppVersion()
         {
-            string? version = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            string version = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
             version ??= "<unknown>";
             return $"OpenTabletDriver v{version}";
         }
