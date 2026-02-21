@@ -215,6 +215,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
+            ArgumentNullException.ThrowIfNull(updatedMetadata);
+
             if (RequestPluginInstall != null)
                 await RequestPluginInstall.Invoke(updatedMetadata);
 
@@ -224,6 +226,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         private async void UninstallHandler(object sender, EventArgs e)
         {
             this.ParentWindow.Enabled = false;
+
+            ArgumentNullException.ThrowIfNull(Metadata);
 
             if (RequestPluginUninstall != null)
                 await RequestPluginUninstall.Invoke(Metadata);
