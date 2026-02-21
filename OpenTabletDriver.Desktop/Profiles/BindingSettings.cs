@@ -24,112 +24,112 @@ namespace OpenTabletDriver.Desktop.Profiles
 
         private bool disablePressure, disableTilt;
 
-        [JsonProperty("TipActivationThreshold")]
+        [JsonProperty(nameof(TipActivationThreshold))]
         public float TipActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.tP, value);
             get => this.tP;
         }
 
-        [JsonProperty("TipButton")]
+        [JsonProperty(nameof(TipButton))]
         public PluginSettingStore TipButton
         {
             set => this.RaiseAndSetIfChanged(ref this.tipButton, value);
             get => this.tipButton;
         }
 
-        [JsonProperty("EraserActivationThreshold")]
+        [JsonProperty(nameof(EraserActivationThreshold))]
         public float EraserActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.eP, value);
             get => this.eP;
         }
 
-        [JsonProperty("EraserButton")]
+        [JsonProperty(nameof(EraserButton))]
         public PluginSettingStore EraserButton
         {
             set => this.RaiseAndSetIfChanged(ref this.eraserButton, value);
             get => this.eraserButton;
         }
 
-        [JsonProperty("PenButtons")]
+        [JsonProperty(nameof(PenButtons))]
         public PluginSettingStoreCollection PenButtons
         {
             set => this.RaiseAndSetIfChanged(ref this.penButtons, value);
             get => this.penButtons;
         }
 
-        [JsonProperty("AuxButtons")]
+        [JsonProperty(nameof(AuxButtons))]
         public PluginSettingStoreCollection AuxButtons
         {
             set => this.RaiseAndSetIfChanged(ref this.auxButtons, value);
             get => this.auxButtons;
         }
 
-        [JsonProperty("MouseButtons")]
+        [JsonProperty(nameof(MouseButtons))]
         public PluginSettingStoreCollection MouseButtons
         {
             set => this.RaiseAndSetIfChanged(ref this.mouseButtons, value);
             get => this.mouseButtons;
         }
 
-        [JsonProperty("WheelButtons")]
+        [JsonProperty(nameof(WheelButtons))]
         public PluginSettingStoreCollection WheelButtons
         {
             set => this.RaiseAndSetIfChanged(ref this.wheelButtons, value);
             get => this.wheelButtons;
         }
 
-        [JsonProperty("MouseScrollUp")]
+        [JsonProperty(nameof(MouseScrollUp))]
         public PluginSettingStore MouseScrollUp
         {
             set => this.RaiseAndSetIfChanged(ref this.mouseScrollUp, value);
             get => this.mouseScrollUp;
         }
 
-        [JsonProperty("MouseScrollDown")]
+        [JsonProperty(nameof(MouseScrollDown))]
         public PluginSettingStore MouseScrollDown
         {
             set => this.RaiseAndSetIfChanged(ref this.mouseScrollDown, value);
             get => this.mouseScrollDown;
         }
 
-        [JsonProperty("ClockwiseRotation")]
+        [JsonProperty(nameof(ClockwiseRotation))]
         public PluginSettingStore ClockwiseRotation
         {
             set => this.RaiseAndSetIfChanged(ref this.clockwiseRotation, value);
             get => this.clockwiseRotation;
         }
 
-        [JsonProperty("ClockwiseActivationThreshold")]
+        [JsonProperty(nameof(ClockwiseActivationThreshold))]
         public float ClockwiseActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.ct, value);
             get => this.ct;
         }
 
-        [JsonProperty("CounterClockwiseRotation")]
+        [JsonProperty(nameof(CounterClockwiseRotation))]
         public PluginSettingStore CounterClockwiseRotation
         {
             set => this.RaiseAndSetIfChanged(ref this.counterClockwiseRotation, value);
             get => this.counterClockwiseRotation;
         }
 
-        [JsonProperty("CounterClockwiseActivationThreshold")]
+        [JsonProperty(nameof(CounterClockwiseActivationThreshold))]
         public float CounterClockwiseActivationThreshold
         {
             set => this.RaiseAndSetIfChanged(ref this.cct, value);
             get => this.cct;
         }
 
-        [JsonProperty("DisablePressure")]
+        [JsonProperty(nameof(DisablePressure))]
         public bool DisablePressure
         {
             set => this.RaiseAndSetIfChanged(ref this.disablePressure, value);
             get => this.disablePressure;
         }
 
-        [JsonProperty("DisableTilt")]
+        [JsonProperty(nameof(DisableTilt))]
         public bool DisableTilt
         {
             set => this.RaiseAndSetIfChanged(ref this.disableTilt, value);

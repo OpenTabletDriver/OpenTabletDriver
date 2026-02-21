@@ -10,35 +10,35 @@ namespace OpenTabletDriver.Desktop.Profiles
     {
         private float width, height, x, y, rotation;
 
-        [JsonProperty("Width")]
+        [JsonProperty(nameof(Width))]
         public float Width
         {
             set => this.RaiseAndSetIfChanged(ref this.width, value);
             get => this.width;
         }
 
-        [JsonProperty("Height")]
+        [JsonProperty(nameof(Height))]
         public float Height
         {
             set => this.RaiseAndSetIfChanged(ref this.height, value);
             get => this.height;
         }
 
-        [JsonProperty("X")]
+        [JsonProperty(nameof(X))]
         public float X
         {
             set => this.RaiseAndSetIfChanged(ref this.x, value);
             get => this.x;
         }
 
-        [JsonProperty("Y")]
+        [JsonProperty(nameof(Y))]
         public float Y
         {
             set => this.RaiseAndSetIfChanged(ref this.y, value);
             get => this.y;
         }
 
-        [JsonProperty("Rotation")]
+        [JsonProperty(nameof(Rotation))]
         public float Rotation
         {
             set => this.RaiseAndSetIfChanged(ref this.rotation, value);

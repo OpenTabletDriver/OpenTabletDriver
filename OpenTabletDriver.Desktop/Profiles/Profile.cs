@@ -19,35 +19,35 @@ namespace OpenTabletDriver.Desktop.Profiles
         private BindingSettings bindings = new BindingSettings();
         private PluginSettingStoreCollection filters = [];
 
-        [JsonProperty("Tablet")]
+        [JsonProperty(nameof(Tablet))]
         public string Tablet
         {
             set => this.RaiseAndSetIfChanged(ref tablet, value);
             get => tablet;
         }
 
-        [JsonProperty("OutputMode")]
+        [JsonProperty(nameof(OutputMode))]
         public PluginSettingStore OutputMode
         {
             set => RaiseAndSetIfChanged(ref outputMode, value);
             get => outputMode;
         }
 
-        [JsonProperty("Filters")]
+        [JsonProperty(nameof(Filters))]
         public PluginSettingStoreCollection Filters
         {
             set => RaiseAndSetIfChanged(ref filters, value);
             get => filters;
         }
 
-        [JsonProperty("AbsoluteModeSettings")]
+        [JsonProperty(nameof(AbsoluteModeSettings))]
         public AbsoluteModeSettings AbsoluteModeSettings
         {
             set => this.RaiseAndSetIfChanged(ref absoluteMode, value);
             get => absoluteMode;
         }
 
-        [JsonProperty("RelativeModeSettings")]
+        [JsonProperty(nameof(RelativeModeSettings))]
         public RelativeModeSettings RelativeModeSettings
         {
             set => this.RaiseAndSetIfChanged(ref relativeMode, value);

@@ -9,21 +9,21 @@ namespace OpenTabletDriver.Desktop.Profiles
         private float xS, yS, relRot;
         private TimeSpan rT;
 
-        [JsonProperty("XSensitivity")]
+        [JsonProperty(nameof(XSensitivity))]
         public float XSensitivity
         {
             set => RaiseAndSetIfChanged(ref this.xS, value);
             get => this.xS;
         }
 
-        [JsonProperty("YSensitivity")]
+        [JsonProperty(nameof(YSensitivity))]
         public float YSensitivity
         {
             set => RaiseAndSetIfChanged(ref this.yS, value);
             get => this.yS;
         }
 
-        [JsonProperty("RelativeRotation")]
+        [JsonProperty(nameof(RelativeRotation))]
         public float RelativeRotation
         {
             set => RaiseAndSetIfChanged(ref this.relRot, value);

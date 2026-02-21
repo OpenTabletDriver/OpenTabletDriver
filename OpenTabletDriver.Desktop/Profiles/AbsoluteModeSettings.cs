@@ -9,35 +9,35 @@ namespace OpenTabletDriver.Desktop.Profiles
         private AreaSettings display, tablet;
         private bool _lockar, _clipping, _areaLimiting;
 
-        [JsonProperty("Display")]
+        [JsonProperty(nameof(Display))]
         public AreaSettings Display
         {
             set => this.RaiseAndSetIfChanged(ref this.display, value);
             get => this.display;
         }
 
-        [JsonProperty("Tablet")]
+        [JsonProperty(nameof(Tablet))]
         public AreaSettings Tablet
         {
             set => this.RaiseAndSetIfChanged(ref this.tablet, value);
             get => this.tablet;
         }
 
-        [JsonProperty("EnableClipping")]
+        [JsonProperty(nameof(EnableClipping))]
         public bool EnableClipping
         {
             set => RaiseAndSetIfChanged(ref _clipping, value);
             get => _clipping;
         }
 
-        [JsonProperty("EnableAreaLimiting")]
+        [JsonProperty(nameof(EnableAreaLimiting))]
         public bool EnableAreaLimiting
         {
             set => RaiseAndSetIfChanged(ref _areaLimiting, value);
             get => _areaLimiting;
         }
 
-        [JsonProperty("LockAspectRatio")]
+        [JsonProperty(nameof(LockAspectRatio))]
         public bool LockAspectRatio
         {
             set => RaiseAndSetIfChanged(ref _lockar, value);
