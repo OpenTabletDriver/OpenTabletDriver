@@ -1,3 +1,5 @@
+namespace OpenTabletDriver.Native.OSX.Generic;
+
 public enum NSPointingDeviceType
 {
     Unknown = 0,
