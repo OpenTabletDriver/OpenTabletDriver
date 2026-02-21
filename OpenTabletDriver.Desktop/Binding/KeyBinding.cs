@@ -39,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Binding
                 Keyboard.Release(Key);
         }
 
-        private static IEnumerable<string>? validKeys;
+        private static IEnumerable<string> validKeys;
         public static IEnumerable<string> ValidKeys =>
             validKeys ??= SystemInterop.CurrentPlatform switch
             {
