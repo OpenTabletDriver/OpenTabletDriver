@@ -21,11 +21,6 @@ namespace OpenTabletDriver.Desktop.Reflection
         {
         }
 
-        public PluginSetting(PropertyInfo property)
-            : this(property, null)
-        {
-        }
-
         [JsonProperty]
         public string Property { set; get; }
 

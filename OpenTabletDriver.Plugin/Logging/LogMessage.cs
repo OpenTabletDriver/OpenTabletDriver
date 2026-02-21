@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 
 namespace OpenTabletDriver.Plugin.Logging
 {

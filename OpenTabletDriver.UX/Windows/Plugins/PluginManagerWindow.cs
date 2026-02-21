@@ -81,7 +81,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task<bool> DownloadAndInstall(PluginMetadata metadata)
         {
-            Debug.Assert(App.Driver.Instance != null);
+            Debug.Assert(App.Driver.IsConnected);
             try
             {
                 if (await App.Driver.Instance.DownloadPlugin(metadata))
@@ -127,7 +127,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task Install(string path)
         {
-            Debug.Assert(App.Driver.Instance != null);
+            Debug.Assert(App.Driver.IsConnected);
             if (await App.Driver.Instance.InstallPlugin(path))
             {
                 AppInfo.PluginManager.Load();
@@ -140,7 +140,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
 
         protected async Task<bool> Uninstall(PluginMetadata metadata)
         {
-            Debug.Assert(App.Driver.Instance != null);
+            Debug.Assert(App.Driver.IsConnected);
 
             var context = AppInfo.PluginManager.GetLoadedPlugins().First(
                 c => PluginMetadata.Match(c.GetMetadata(), metadata)

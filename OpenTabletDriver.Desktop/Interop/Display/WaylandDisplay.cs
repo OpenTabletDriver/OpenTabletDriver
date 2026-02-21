@@ -10,11 +10,10 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 {
     public class WaylandDisplay : IVirtualScreen
     {
-        private List<WaylandOutput> _outputs;
+        private readonly List<WaylandOutput> _outputs = [];
 
         public WaylandDisplay()
         {
-            _outputs = new List<WaylandOutput>();
             using (var connection = new WaylandClientConnection())
             {
                 ZxdgOutputManagerV1 outputManager = null;

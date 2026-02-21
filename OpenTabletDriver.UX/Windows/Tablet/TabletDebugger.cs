@@ -214,7 +214,7 @@ namespace OpenTabletDriver.UX.Windows.Tablet
             App.Driver.DeviceReport += HandleReport;
             App.Driver.TabletsChanged += HandleTabletsChanged;
 
-            Debug.Assert(App.Driver.Instance != null);
+            Debug.Assert(App.Driver.IsConnected);
 
             App.Driver.Instance.SetTabletDebug(true);
 

@@ -1,4 +1,4 @@
-﻿namespace OpenTabletDriver.Native.OSX.Input
+namespace OpenTabletDriver.Native.OSX.Input
 {
     public enum CGMouseButton : uint
     {

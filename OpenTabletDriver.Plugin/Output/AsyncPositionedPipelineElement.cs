@@ -64,7 +64,7 @@ namespace OpenTabletDriver.Plugin.Output
         public void Consume(T value)
         {
             // Block DeviceReport and ITouchReport from being consumed for now
-            if (value is DeviceReport or ITouchReport)
+            if (value is null || value is DeviceReport or ITouchReport)
                 return;
 
             lock (synchronizationObject)

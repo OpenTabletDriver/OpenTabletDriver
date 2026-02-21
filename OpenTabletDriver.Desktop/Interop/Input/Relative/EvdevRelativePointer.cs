@@ -8,7 +8,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 {
     public class EvdevRelativePointer : EvdevVirtualMouse, IRelativePointer
     {
-        public unsafe EvdevRelativePointer()
+        public EvdevRelativePointer()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Mouse");
 

@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace OpenTabletDriver.Plugin.Tablet
 {
     public interface IAreaConverter

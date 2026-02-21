@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using OpenTabletDriver.Plugin;
@@ -38,7 +39,7 @@ namespace OpenTabletDriver.Desktop.Diagnostics
             return $"OpenTabletDriver v{version}";
         }
 
-        [OnError]
+        [OnError, UsedImplicitly]
         internal void OnError(StreamingContext _, ErrorContext errorContext)
         {
             errorContext.Handled = true;

@@ -71,6 +71,7 @@ namespace OpenTabletDriver.UX.Controls
 
         private async Task InitializeAsync()
         {
+            Debug.Assert(App.Driver.IsConnected);
             var currentMessages = await App.Driver.Instance.GetCurrentLog();
             messageList.DataStore = messageStore = new LogDataStore(currentMessages);
 

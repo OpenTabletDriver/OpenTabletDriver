@@ -62,6 +62,7 @@ namespace OpenTabletDriver.UX
 
         public static async Task<TabletReference> GetTabletReference(this Profile profile)
         {
+            Debug.Assert(App.Driver.IsConnected);
             var tablets = await App.Driver.Instance.GetTablets();
             return tablets.FirstOrDefault(t => t.Properties.Name == profile.Tablet);
         }

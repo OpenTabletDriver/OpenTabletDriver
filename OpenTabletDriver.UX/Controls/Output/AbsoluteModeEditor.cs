@@ -208,7 +208,9 @@ namespace OpenTabletDriver.UX.Controls.Output
 
         private void ForceAreaConstraint(object sender, EventArgs args)
         {
+            Debug.Assert(sender != null);
             var display = (AreaDisplay)sender;
+
             if (!handlingForcedArConstraint && !handlingSettingsChanging && display.LockToUsableArea && display.Area != null)
             {
                 handlingForcedArConstraint = true;
@@ -240,6 +242,7 @@ namespace OpenTabletDriver.UX.Controls.Output
             bounds.Y = 0;
 
             var area = display.Area;
+            Debug.Assert(area != null);
             var rect = RectangleF.FromCenter(PointF.Empty, new SizeF(area.Width, area.Height));
 
             var corners = new PointF[]

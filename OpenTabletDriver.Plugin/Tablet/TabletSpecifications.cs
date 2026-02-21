@@ -41,6 +41,7 @@ namespace OpenTabletDriver.Plugin.Tablet
 
         /// <summary>
         /// Specifications for the strips.
+        /// <b>NOTE:</b> This is not a complete feature and might change in the future
         /// </summary>
         public AnalogSpecifications? Strips { set; get; }
 

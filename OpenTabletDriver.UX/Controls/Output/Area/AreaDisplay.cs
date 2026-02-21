@@ -383,7 +383,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
         private void DrawRatioText(Graphics graphics, RectangleF area)
         {
             Debug.Assert(Area != null);
-            string ratio = Math.Round(Area.Width / Area.Height, 4).ToString();
+            string ratio = Math.Round(Area.Width / Area.Height, 4).ToString(CultureInfo.InvariantCulture);
             SizeF ratioMeasure = graphics.MeasureString(Font, ratio);
             var offsetY = area.Center.Y + (ratioMeasure.Height / 2);
             if (offsetY + ratioMeasure.Height > area.Y + area.Height)
