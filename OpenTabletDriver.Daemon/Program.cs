@@ -27,7 +27,7 @@ namespace OpenTabletDriver.Daemon
         {
             Log.Output += (_, message) =>
             {
-                Console.WriteLine(Log.GetStringFormat(message));
+                Console.WriteLine($"[{DateTime.Now}] {Log.GetStringFormat(message)}");
             };
 
             var cmdLineOptions = ParseCmdLineOptions(args);
