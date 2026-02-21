@@ -1,5 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace OpenTabletDriver.Native.Linux.Evdev
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public enum EventCode : uint
     {
         SYN_REPORT = 0,
