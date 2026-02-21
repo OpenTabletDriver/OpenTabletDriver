@@ -426,7 +426,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             }
         }
 
-        private void DrawText(Graphics graphics, string? errorText)
+        private void DrawText(Graphics graphics, string errorText)
         {
             ArgumentNullException.ThrowIfNull(errorText);
             if (errorText.Length == 0) return;
