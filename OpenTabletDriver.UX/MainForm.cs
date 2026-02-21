@@ -456,7 +456,7 @@ namespace OpenTabletDriver.UX
         private readonly Button applyButton;
 
         [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-        private static async void LogToDriver(object? sender, LogMessage message)
+        private static async void LogToDriver(object sender, LogMessage message)
         {
             if (App.Driver.IsConnected) await App.Driver.Instance.WriteMessage(message);
         }
