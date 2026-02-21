@@ -14,10 +14,10 @@ namespace OpenTabletDriver.Desktop.Binding.LinuxArtistMode
     [PluginName("Linux Artist Mode"), SupportedPlatform(PluginPlatform.Linux)]
     public class LinuxArtistModeButtonBinding : IStateBinding
     {
-        private EvdevVirtualTablet? virtualTablet;
+        private EvdevVirtualTablet virtualTablet;
 
         [Resolved]
-        public IPressureHandler? PressureHandler
+        public IPressureHandler PressureHandler
         {
             set => virtualTablet = value as EvdevVirtualTablet
                                    ?? throw new InvalidOperationException($"Only {nameof(EvdevVirtualTablet)} is supported for {nameof(LinuxArtistModeButtonBinding)}");
