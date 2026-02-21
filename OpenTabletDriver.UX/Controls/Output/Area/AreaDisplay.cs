@@ -241,7 +241,7 @@ namespace OpenTabletDriver.UX.Controls.Output.Area
             new SizeF(Area.Width, Area.Height)
         );
 
-        public float PixelScale => CalculateScale(FullAreaBounds ?? throw new InvalidOperationException($"Unable to look up pixel scale when {nameof(FullAreaBounds)} is unset"));
+        public float PixelScale => CalculateScale(FullAreaBounds);
 
         protected override void OnMouseDown(MouseEventArgs e)
         {

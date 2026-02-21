@@ -189,10 +189,7 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             MetadataChanged?.Invoke(this, EventArgs.Empty);
 
-            this.Content = Metadata != null ? content : placeholder ??= new Placeholder
-            {
-                Text = "No plugin selected."
-            };
+            this.Content = Metadata != null ? content : placeholder;
         }
 
         public BindableBinding<MetadataViewer, PluginMetadata> MetadataBinding
@@ -218,6 +215,8 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
+            ArgumentNullException.ThrowIfNull(updatedMetadata);
+
             if (RequestPluginInstall != null)
                 await RequestPluginInstall.Invoke(updatedMetadata);
 
@@ -228,13 +227,15 @@ namespace OpenTabletDriver.UX.Windows.Plugins
         {
             this.ParentWindow.Enabled = false;
 
+            ArgumentNullException.ThrowIfNull(Metadata);
+
             if (RequestPluginUninstall != null)
                 await RequestPluginUninstall.Invoke(Metadata);
 
             this.ParentWindow.Enabled = true;
         }
 
-        private static IEnumerable<PluginMetadata> GetRepoMetadataForPlugin(PluginMetadataCollection repo, PluginMetadata localMetadata, Version currentDriverVersion)
+        private static IEnumerable<PluginMetadata> GetRepoMetadataForPlugin(PluginMetadataCollection repo, PluginMetadata Metadata, Version CurrentDriverVersion)
         {
             if (repo == null) return [];
 
