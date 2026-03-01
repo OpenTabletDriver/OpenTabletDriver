@@ -26,37 +26,32 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
             EventCode.BTN_TOOL_RUBBER,
         ];
 
-        public unsafe EvdevVirtualTablet()
+        public EvdevVirtualTablet()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Artist Tablet");
 
             Device.EnableProperty(InputProperty.INPUT_PROP_DIRECT);
             Device.EnableProperty(InputProperty.INPUT_PROP_POINTER);
 
-            Device.EnableType(EventType.EV_ABS);
-
             var xAbs = new input_absinfo
             {
                 maximum = (int)(DesktopInterop.VirtualScreen.Width * RESOLUTION),
                 resolution = 100000
             };
-            input_absinfo* xPtr = &xAbs;
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_X, (IntPtr)xPtr);
+            Device.EnableAbsCode(EventCode.ABS_X, xAbs);
 
             var yAbs = new input_absinfo
             {
                 maximum = (int)(DesktopInterop.VirtualScreen.Height * RESOLUTION),
                 resolution = 100000
             };
-            input_absinfo* yPtr = &yAbs;
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
+            Device.EnableAbsCode(EventCode.ABS_Y, yAbs);
 
             var pressure = new input_absinfo
             {
                 maximum = MaxPressure
             };
-            input_absinfo* pressurePtr = &pressure;
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_PRESSURE, (IntPtr)pressurePtr);
+            Device.EnableAbsCode(EventCode.ABS_PRESSURE, pressure);
 
             var xTilt = new input_absinfo
             {
@@ -64,8 +59,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 maximum = 63,
                 resolution = 57
             };
-            input_absinfo* xTiltPtr = &xTilt;
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_X, (IntPtr)xTiltPtr);
+            Device.EnableAbsCode(EventCode.ABS_TILT_X, xTilt);
 
             var yTilt = new input_absinfo
             {
@@ -73,10 +67,9 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 maximum = 63,
                 resolution = 57
             };
-            input_absinfo* yTiltPtr = &yTilt;
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_TILT_Y, (IntPtr)yTiltPtr);
+            Device.EnableAbsCode(EventCode.ABS_TILT_Y, yTilt);
 
-            Device.EnableTypeCodes(
+            Device.EnableCodes(
                 EventType.EV_KEY,
                 supportedEventCodes
             );

@@ -5,6 +5,8 @@ using System.Numerics;
 using OpenTabletDriver.Native.Linux.Xorg;
 using OpenTabletDriver.Plugin.Platform.Display;
 
+#nullable enable
+
 namespace OpenTabletDriver.Desktop.Interop.Display
 {
     using static XLib;
@@ -12,12 +14,12 @@ namespace OpenTabletDriver.Desktop.Interop.Display
 
     public class XScreen : IVirtualScreen, IDisposable
     {
-        public unsafe XScreen()
+        public XScreen()
         {
-            Display = XOpenDisplay(null);
-            RootWindow = XDefaultRootWindow(Display);
+            _display = XOpenDisplay(null);
+            _rootWindow = XDefaultRootWindow(_display);
 
-            var monitors = GetXRandrDisplays().ToList();
+            var monitors = GetXRandrDisplays();
             var primary = monitors.FirstOrDefault(d => d.Primary != 0);
 
             var displays = new List<IDisplay>();
@@ -36,29 +38,19 @@ namespace OpenTabletDriver.Desktop.Interop.Display
             Position = new Vector2(primary.X, primary.Y);
         }
 
-        private IntPtr Display;
-        private IntPtr RootWindow;
+        private XLibDisplayHandle? _display;
+        private XLibWindowHandle? _rootWindow;
 
-        public float Width
-        {
-            get => XDisplayWidth(Display, 0);
-        }
+        public float Width => XDisplayWidth(_display ?? throw new InvalidOperationException("Display unset"), 0);
 
-        public float Height
-        {
-            get => XDisplayHeight(Display, 0);
-        }
+        public float Height => XDisplayHeight(_display ?? throw new InvalidOperationException("Display unset"), 0);
 
-        public Vector2 Position { private set; get; } = new Vector2(0, 0);
+        public Vector2 Position { private set; get; }
 
-        private unsafe IEnumerable<XRRMonitorInfo> GetXRandrDisplays()
-        {
-            ICollection<XRRMonitorInfo> monitors = new List<XRRMonitorInfo>();
-            var xRandrMonitors = XRRGetMonitors(Display, RootWindow, true, out var count);
-            for (int i = 0; i < count; i++)
-                monitors.Add(xRandrMonitors[i]);
-            return monitors;
-        }
+        private List<XRRMonitorInfo> GetXRandrDisplays() =>
+            [..XRRGetMonitors(_display is { IsInvalid: false } ? _display : throw new InvalidOperationException("Invalid Display"),
+                _rootWindow is { IsInvalid: false } ? _rootWindow : throw new InvalidOperationException("Invalid RootWindow"),
+                true, out _)];
 
         public IEnumerable<IDisplay> Displays { private set; get; }
 
@@ -81,12 +73,14 @@ namespace OpenTabletDriver.Desktop.Interop.Display
         {
             if (_isDisposed) return;
 
-            if (Display != IntPtr.Zero)
-            {
-                int result = XCloseDisplay(Display);
-                Display = IntPtr.Zero;
-            }
-            RootWindow = IntPtr.Zero;
+            if (_display is { IsInvalid: false })
+                _display.Dispose();
+            _display = null;
+
+            if (_rootWindow is { IsInvalid: false })
+                _rootWindow.Dispose();
+            _rootWindow = null;
+
             _isDisposed = true;
         }
 

@@ -14,7 +14,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Keyboard
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Keyboard");
 
-            Device.EnableTypeCodes(EventType.EV_KEY, EtoKeysymToEventCode.Values.Distinct().ToArray());
+            Device.EnableCodes(EventType.EV_KEY, EtoKeysymToEventCode.Values.Distinct().ToArray());
 
             var result = Device.Initialize();
             switch (result)
