@@ -111,9 +111,24 @@ namespace OpenTabletDriver
                     if ((config.AuxiliaryDeviceIdentifiers?.Count ?? 0) > 0)
                     {
                         if (MatchDevice(config, config.AuxiliaryDeviceIdentifiers!) is InputDevice aux)
+                        {
                             devices.Add(aux);
+                        }
+                        else if (AnyIdentifierHasInitReadTimeout(config.AuxiliaryDeviceIdentifiers!))
+                        {
+                            // An auxiliary identifier with InitReadTimeout timed out, meaning
+                            // the device matched USB descriptors but no data arrived (e.g., a
+                            // wireless dongle without the tablet powered on). Reject the entire
+                            // tablet detection to avoid a false positive.
+                            Log.Write("Detect", $"Rejecting '{config.Name}': auxiliary device did not respond within timeout (dongle without tablet?).");
+                            foreach (var dev in devices)
+                                dev.Dispose();
+                            return null;
+                        }
                         else
+                        {
                             Log.Write("Detect", "Failed to find auxiliary device, express keys may be unavailable.", LogLevel.Warning);
+                        }
                     }
 
                     return new InputDeviceTree(config, devices);
@@ -159,7 +174,21 @@ namespace OpenTabletDriver
                 {
                     try
                     {
-                        return new InputDevice(this, dev, config, identifier);
+                        var device = new InputDevice(this, dev, config, identifier);
+
+                        if (identifier.Attributes?.TryGetValue("InitReadTimeout", out var timeoutStr) == true
+                            && int.TryParse(timeoutStr, out var timeoutMs)
+                            && timeoutMs > 0)
+                        {
+                            if (!device.WaitForFirstReport(timeoutMs))
+                            {
+                                device.Dispose();
+                                Log.Debug("Detect", $"Device matched descriptors for '{config.Name}' but no reports received within {timeoutMs}ms.");
+                                continue;
+                            }
+                        }
+
+                        return device;
                     }
                     catch (Exception ex)
                     {
@@ -168,6 +197,12 @@ namespace OpenTabletDriver
                 }
             }
             return null;
+        }
+
+        private static bool AnyIdentifierHasInitReadTimeout(IList<DeviceIdentifier> identifiers)
+        {
+            return identifiers.Any(id =>
+                id.Attributes?.ContainsKey("InitReadTimeout") == true);
         }
 
         private IEnumerable<IDeviceEndpoint> GetMatchingDevices(TabletConfiguration configuration, DeviceIdentifier identifier)
