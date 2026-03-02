@@ -22,6 +22,7 @@ namespace OpenTabletDriver.Devices
         }
 
         private readonly Thread workerThread;
+        private readonly ManualResetEventSlim _firstReport = new ManualResetEventSlim(false);
         private bool initialized, connected;
 
         /// <summary>
@@ -137,7 +138,22 @@ namespace OpenTabletDriver.Devices
             }
         }
 
-        protected virtual void OnReport(T report) => Report?.Invoke(this, report);
+        /// <summary>
+        /// Waits for the first report to be received from the device.
+        /// </summary>
+        /// <param name="timeoutMs">Maximum time to wait in milliseconds.</param>
+        /// <returns>True if a report was received within the timeout, false otherwise.</returns>
+        public bool WaitForFirstReport(int timeoutMs)
+        {
+            return _firstReport.Wait(timeoutMs);
+        }
+
+        protected virtual void OnReport(T report)
+        {
+            _firstReport.Set();
+            Report?.Invoke(this, report);
+        }
+
         protected virtual void OnRawReport(T report) => RawReport?.Invoke(this, report);
 
         public void Dispose()
@@ -156,6 +172,7 @@ namespace OpenTabletDriver.Devices
             {
                 Connected = false;
                 ReportStream?.Dispose();
+                _firstReport.Dispose();
             }
 
             _isDisposed = true;
