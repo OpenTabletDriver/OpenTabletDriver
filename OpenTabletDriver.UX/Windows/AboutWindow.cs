@@ -70,7 +70,7 @@ namespace OpenTabletDriver.UX.Windows
                 {
                     new ImageView
                     {
-                        Image = new Bitmap(App.Logo.WithSize(256, 256)),
+                        Image = new Bitmap(App.Logo, 256, 256),
                     },
                     new Label
                     {

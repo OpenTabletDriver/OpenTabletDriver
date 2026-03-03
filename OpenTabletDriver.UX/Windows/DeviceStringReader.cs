@@ -17,7 +17,7 @@ namespace OpenTabletDriver.UX.Windows
         {
             this.Title = "Device String Reader";
             this.Icon = App.Logo.WithSize(App.Logo.Size);
-            this.ClientSize = new Size(-1, 320);
+            this.ClientSize = new Size(400, 320);
 
             var sendRequestButton = new Button
             {
