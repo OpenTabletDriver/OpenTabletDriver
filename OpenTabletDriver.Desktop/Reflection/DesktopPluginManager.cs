@@ -273,6 +273,7 @@ namespace OpenTabletDriver.Desktop.Reflection
             AddService(() => DesktopInterop.AbsolutePointer);
             AddService(() => DesktopInterop.RelativePointer);
             AddService(() => DesktopInterop.VirtualTablet);
+            AddService(() => DesktopInterop.VirtualPad);
             AddService(() => DesktopInterop.VirtualScreen);
             AddService(() => DesktopInterop.VirtualKeyboard);
         }

@@ -53,6 +53,7 @@ configs_arr=$(jq -s "$script" $OTD_CONFIGURATIONS/**/**.json | tr -d '"')
 echo \# OpenTabletDriver udev rules \(https://github.com/OpenTabletDriver/OpenTabletDriver\)
 echo KERNEL==\"uinput\", SUBSYSTEM==\"misc\", OPTIONS+=\"static_node=uinput\", TAG+=\"uaccess\", TAG+=\"udev-acl\"
 echo KERNEL==\"js[0-9]*\", SUBSYSTEM==\"input\", ATTRS{name}==\"OpenTabletDriver Virtual Tablet\", RUN+=\"/usr/bin/env rm %E{DEVNAME}\"
+echo SUBSYSTEM==\"input\", ATTRS{name}==\"OpenTabletDriver Virtual*\", ENV{LIBINPUT_DEVICE_GROUP}=\"OpenTabletDriver\"
 
 IFS=':'
 while read s; do

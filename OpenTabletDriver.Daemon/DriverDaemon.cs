@@ -543,6 +543,8 @@ namespace OpenTabletDriver.Daemon
                             wheelBindingHandler.WheelButtons.Select(b => b.Value?.Binding)) + "]");
                 }
 
+                wheelBindingHandler.IsPassingThrough = wheelBindingSetting.WheelPassthrough;
+
                 var clockwiseRotation = wheelBindingHandler.ClockwiseRotation = new DeltaThresholdBindingState
                 {
                     Binding = wheelBindingSetting.ClockwiseRotation?.Construct<IBinding>(bindingServiceProvider,
