@@ -21,6 +21,7 @@ namespace OpenTabletDriver.Desktop.Profiles
             _counterClockwiseRotation;
 
         private double? _stepSize;
+        private bool _wheelPassthrough;
 
         [JsonProperty(nameof(WheelButtons))]
         public PluginSettingStoreCollection WheelButtons
@@ -63,6 +64,13 @@ namespace OpenTabletDriver.Desktop.Profiles
         {
             set => RaiseAndSetIfChanged(ref _stepSize, value);
             get => _stepSize;
+        }
+
+        [JsonProperty(nameof(WheelPassthrough))]
+        public bool WheelPassthrough
+        {
+            get => _wheelPassthrough;
+            set => RaiseAndSetIfChanged(ref _wheelPassthrough, value);
         }
     }
 }

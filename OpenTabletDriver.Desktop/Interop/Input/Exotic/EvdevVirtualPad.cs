@@ -29,7 +29,7 @@ public sealed class EvdevVirtualPad : IVirtualPad, IDisposable
         { TabletPadEvent.BUTTON_10, EventCode.BTN_0 },
     };
 
-    private static readonly EventCode[] s_SupportedEventCodes = s_ValidButtons.Values.ToArray();
+    private static readonly EventCode[] s_SupportedEventCodes = s_ValidButtons.Values.Append(EventCode.ABS_WHEEL).ToArray();
 
     public unsafe EvdevVirtualPad()
     {
@@ -59,6 +59,14 @@ public sealed class EvdevVirtualPad : IVirtualPad, IDisposable
         input_absinfo* yPtr = &yAbs;
         Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
 
+        var wheelAbs = new input_absinfo
+        {
+            minimum = 0,
+            maximum = 359,
+        };
+        input_absinfo* wheelPtr = &wheelAbs;
+        Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_WHEEL, (IntPtr)wheelPtr);
+
         Device.EnableTypeCodes(EventType.EV_KEY, s_SupportedEventCodes);
 
         var result = Device.Initialize();
@@ -80,6 +88,17 @@ public sealed class EvdevVirtualPad : IVirtualPad, IDisposable
         var eventCode = s_ValidButtons[key];
 
         Device.Write(EventType.EV_KEY, eventCode, isPress ? 1 : 0);
+        Sync(isPress);
+    }
+
+    public void WheelEvent(uint? degrees)
+    {
+        Device.Write(EventType.EV_ABS, EventCode.ABS_WHEEL, (int)(degrees ?? 0));
+        Sync(degrees.HasValue);
+    }
+
+    private void Sync(bool isPress)
+    {
         Device.Write(EventType.EV_ABS, EventCode.ABS_MISC, isPress ? _WACOM_MAGIC_NUMBER : 0);
         Device.Sync();
     }

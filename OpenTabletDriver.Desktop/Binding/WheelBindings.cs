@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using OpenTabletDriver.Desktop.Interop;
+using OpenTabletDriver.Plugin.Platform.Keyboard;
 using OpenTabletDriver.Plugin.Tablet;
 
 #nullable enable
@@ -33,7 +35,11 @@ namespace OpenTabletDriver.Desktop.Binding
         public DeltaThresholdBindingState? ClockwiseRotation { set; get; }
         public DeltaThresholdBindingState? CounterClockwiseRotation { set; get; }
 
+        public bool IsPassingThrough;
+
         private uint? _lastAbsolutePosition;
+
+        private readonly IVirtualPad? _virtualPad = DesktopInterop.VirtualPad;
 
         /// <summary>
         /// Invoke the appropriate <see cref="ClockwiseRotation"/> or <see cref="CounterClockwiseRotation"/>
@@ -53,6 +59,12 @@ namespace OpenTabletDriver.Desktop.Binding
         /// <param name="position">The current position of the wheel, or <c>null</c> to reset deltas</param>
         public void HandleAbsoluteWheel(TabletReference tabletReference, IDeviceReport report, uint? position)
         {
+            if (IsPassingThrough)
+            {
+                _virtualPad?.WheelEvent((uint?)(position * _stepsPerTick));
+                return;
+            }
+
             if (position == null)
             {
                 Reset(); // next delta will now be invalid, reset states

@@ -1,8 +1,6 @@
-using System;
 using System.Diagnostics;
 using Eto.Forms;
 using OpenTabletDriver.Desktop.Profiles;
-using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.UX.Controls.Generic;
 
 namespace OpenTabletDriver.UX.Controls.Bindings
@@ -91,7 +89,8 @@ namespace OpenTabletDriver.UX.Controls.Bindings
                                 }
                             }
                         },
-                        wheelButtonGroup
+                        wheelButtonGroup,
+                        _shouldPassthrough,
                     }
                 }
             };
@@ -145,11 +144,19 @@ namespace OpenTabletDriver.UX.Controls.Bindings
             // set wheel button group visible based on whether there are wheel buttons to assign
             wheelButtonGroup.BindDataContext(x => x.Visible,
                 Binding.Property((WheelBindingSettings wbs) => wbs.WheelButtons).Convert(x => x is { Count: > 0 }));
+
+            _shouldPassthrough.CheckedBinding.BindDataContext((WheelBindingSettings wbs) => wbs.WheelPassthrough);
         }
 
         private Group wheelButtonGroup;
         private BindingDisplay clockwiseButton, counterClockwiseButton;
         private FloatSlider clockwiseThreshold, counterClockwiseThreshold;
         private BindingDisplayList wheelButtons;
+
+        private readonly CheckBox _shouldPassthrough = new()
+        {
+            Text = "Pass through wheel reports",
+            ToolTip = "Disables binding handlers and instead exposes wheel information directly to the OS (only Linux supported for now)",
+        };
     }
 }
