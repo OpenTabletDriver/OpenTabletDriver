@@ -142,6 +142,7 @@ namespace OpenTabletDriver.Daemon
         private Settings? Settings { set; get; }
         private Collection<ITool> Tools { set; get; } = new Collection<ITool>();
         private IUpdater Updater = DesktopInterop.Updater;
+        private ISystemPointerFilter PointerFilter = DesktopInterop.PointerFilter;
         private readonly ISleepDetector? SleepDetector = new SleepDetector();
         private Settings? lastValidSettings;
 
@@ -220,7 +221,13 @@ namespace OpenTabletDriver.Daemon
             try
             {
                 foreach (var dev in Driver.InputDevices)
+                {
                     dev.OutputMode?.Dispose();
+                    dev.Disconnected += (sender, e) =>
+                    {
+                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, dev.Properties.DigitizerIdentifiers, false);
+                    };
+                }
 
                 Settings = settings ??= Settings.GetDefaults();
 
@@ -263,6 +270,11 @@ namespace OpenTabletDriver.Daemon
 
                         outputMode.DisablePressure = profile.BindingSettings.DisablePressure;
                         outputMode.DisableTilt = profile.BindingSettings.DisableTilt;
+                    }
+
+                    if ((dev.Properties.Attributes?.TryGetValue("libinputoverride", out string? libinputOverride) ?? false) && libinputOverride == "1")
+                    {
+                        PointerFilter?.ConnectionStatusChanged(dev.Properties.Name, dev.Properties.DigitizerIdentifiers, true);
                     }
                 }
 

@@ -12,6 +12,7 @@ namespace OpenTabletDriver.Native.OSX.Input
         kCGEventRightMouseDragged = 7,
         kCGEventKeyDown = 10,
         kCGEventKeyUp = 11,
+        kCGEventTabletPointer = 23,
         kCGEventTabletProximity = 24,
         kCGEventOtherMouseDown = 25,
         kCGEventOtherMouseUp = 26,
