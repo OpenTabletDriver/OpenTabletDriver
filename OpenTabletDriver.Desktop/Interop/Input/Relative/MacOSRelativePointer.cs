@@ -11,6 +11,8 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
     public class MacOSRelativePointer : MacOSVirtualMouse, IRelativePointer
     {
+        private Vector2 error;
+
         public void SetPosition(Vector2 delta)
         {
             QueuePendingPosition(delta.X, delta.Y);
@@ -18,9 +20,17 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
 
         protected override void SetPendingPosition(IntPtr mouseEvent, float x, float y)
         {
-            CGEventSetLocation(mouseEvent, GetCursorPosition() + new CGPoint(x, y));
-            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, x);
-            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, y);
+            var pos = GetCursorPosition();
+            if (CGCursorIsVisible())
+                CGEventSetLocation(mouseEvent, pos + new CGPoint(x, y));
+            else
+                CGEventSetLocation(mouseEvent, pos);
+
+            Vector2 delta = new Vector2(x, y) + error;
+            error = new Vector2(delta.X % 1, delta.Y % 1);
+
+            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaX, Math.Truncate(delta.X));
+            CGEventSetDoubleValueField(mouseEvent, CGEventField.mouseEventDeltaY, Math.Truncate(delta.Y));
         }
 
         protected override void ResetPendingPosition(IntPtr mouseEvent)
