@@ -4,7 +4,7 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
 {
-    public struct IntuosV2Report : ITabletReport, IProximityReport, ITiltReport, IEraserReport
+    public struct IntuosV2Report : ITabletReport, IProximityReport, ITiltReport, IEraserReport, IRotationReport
     {
         public IntuosV2Report(byte[] report)
         {
@@ -31,6 +31,9 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
             ];
             NearProximity = report[1].IsBitSet(5);
             HoverDistance = report[16];
+
+            const uint MAX_ROTATION = 2047;
+            Rotation = (double)(report[12] | ((report[13] & 0x07) << 8)) / MAX_ROTATION * 360;
         }
 
         public byte[] Raw { set; get; }
@@ -41,5 +44,6 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV2
         public bool[] PenButtons { set; get; }
         public bool NearProximity { set; get; }
         public uint HoverDistance { set; get; }
+        public double Rotation { set; get; }
     }
 }
