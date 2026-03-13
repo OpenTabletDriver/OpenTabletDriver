@@ -15,6 +15,7 @@ namespace OpenTabletDriver.Desktop.RPC
 
         public async Task Run(T host, CancellationToken ct)
         {
+            int clientId = 0;
             while (!ct.IsCancellationRequested)
             {
                 var stream = CreateStream();
@@ -24,12 +25,13 @@ namespace OpenTabletDriver.Desktop.RPC
                 }
                 catch (OperationCanceledException) { } // ignore exceptions caused by daemon shutting down
 
-                _ = RespondToRpcRequestAsync(host, stream, ct);
+                _ = RespondToRpcRequestAsync(host, stream, clientId++, ct);
             }
         }
 
-        private async Task RespondToRpcRequestAsync(T host, Stream stream, CancellationToken ct)
+        private async Task RespondToRpcRequestAsync(T host, Stream stream, int clientId, CancellationToken ct)
         {
+            Log.Debug(nameof(RpcHost<T>), $"Handling RPC connection from client {clientId}");
             try
             {
                 using var rpc = new JsonRpc(stream, stream, host);
@@ -45,6 +47,7 @@ namespace OpenTabletDriver.Desktop.RPC
             }
 
             ConnectionStateChanged?.Invoke(this, false);
+            Log.Debug(nameof(RpcHost<T>), $"Finished handling RPC connection from client {clientId}");
             await stream.DisposeAsync();
         }
 
