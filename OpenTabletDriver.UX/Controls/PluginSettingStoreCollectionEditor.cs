@@ -81,14 +81,20 @@ namespace OpenTabletDriver.UX.Controls
         private void RefreshContent()
         {
             var types = AppInfo.PluginManager.GetChildTypes<TSource>();
-            var sortedTypes = new ReadOnlyCollection<TypeInfo>([.. types.OrderBy(t => t.GetFriendlyName()), null]);
+            var sortedTypes = types.OrderBy(t => t.GetFriendlyName());
 
+            // On Unix based platforms, the last plugin in the list may be hidden behind an horizontal scrollbar
+            // We add another elements as padding to avoid this.
+            var finalTypes = OperatingSystem.IsWindows() ? new ReadOnlyCollection<TypeInfo>([.. sortedTypes]) :
+                                                           new ReadOnlyCollection<TypeInfo>([.. sortedTypes, null]);
+
+            // Select the last selected plugin, or none if last selected was removed or none were selected.
             var oldSelected = sourceSelector.SelectedItem;
-            var newSelected = sortedTypes.FirstOrDefault(t => t?.FullName == oldSelected?.FullName);
+            var newSelected = finalTypes.FirstOrDefault(t => t?.FullName == oldSelected?.FullName) ?? finalTypes.FirstOrDefault();
 
             // Update DataStore to new types, this refreshes the editor.
             sourceSelector.SelectedItem = null;
-            sourceSelector.DataStore = sortedTypes;
+            sourceSelector.DataStore = finalTypes;
             sourceSelector.SelectedItem = newSelected;
 
             this.Content = types.Any() ? mainContent : placeholder;
