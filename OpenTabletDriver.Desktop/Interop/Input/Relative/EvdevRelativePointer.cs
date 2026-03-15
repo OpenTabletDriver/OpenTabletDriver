@@ -12,7 +12,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Mouse");
 
-            Device.EnableTypeCodes(
+            Device.EnableCodes(
                 EventType.EV_REL,
                 EventCode.REL_X,
                 EventCode.REL_Y,
@@ -22,7 +22,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Relative
                 EventCode.REL_HWHEEL_HI_RES
             );
 
-            Device.EnableTypeCodes(
+            Device.EnableCodes(
                 EventType.EV_KEY,
                 EventCode.BTN_LEFT,
                 EventCode.BTN_MIDDLE,

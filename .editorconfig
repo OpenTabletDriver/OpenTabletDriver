@@ -27,15 +27,24 @@ csharp_space_after_semicolon_in_for_statement = true
 csharp_space_before_semicolon_in_for_statement = false
 csharp_space_around_declaration_statements = false
 dotnet_sort_system_directives_first = true
+
 # Disposable types
 dotnet_diagnostic.CA1063.severity = warning
 dotnet_diagnostic.CA1816.severity = warning
 dotnet_diagnostic.CA2213.severity = warning
 dotnet_diagnostic.CA2216.severity = warning
+
 # Method can be marked as static
 dotnet_diagnostic.CA1822.severity = warning
+
 # use compile-time regex
 dotnet_diagnostic.SYSLIB1045.severity = warning
+
+# P/Invoke
+## P/Invoke should not be visible, TODO: warn
+dotnet_diagnostic.CA1401.severity = suggestion
+## Use LibraryImport instead of DllImport (LibraryImport source-gen's marshalling code), TODO: warn
+dotnet_diagnostic.SYSLIB1054.severity = suggestion
 
 # IDE-only inspections (Rider, etc.)
 resharper_can_simplify_dictionary_lookup_with_try_get_value_highlighting=warning

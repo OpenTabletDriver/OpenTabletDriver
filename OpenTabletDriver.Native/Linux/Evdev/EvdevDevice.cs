@@ -1,5 +1,9 @@
 using System;
-using System.IO;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using OpenTabletDriver.Native.Linux.Evdev.Structs;
+
+#nullable enable
 
 namespace OpenTabletDriver.Native.Linux.Evdev
 {
@@ -16,16 +20,13 @@ namespace OpenTabletDriver.Native.Linux.Evdev
             libevdev_set_name(this.device, deviceName);
         }
 
-        public bool CanWrite { private set; get; }
+        [MemberNotNullWhen(true, nameof(uidev))]
+        public bool CanWrite => !uidev?.IsInvalid ?? false;
 
-        private IntPtr device, uidev;
+        private readonly EvdevHandle device;
+        private EvdevUinputHandle? uidev;
 
-        public ERRNO Initialize()
-        {
-            var err = libevdev_uinput_create_from_device(this.device, LIBEVDEV_UINPUT_OPEN_MANAGED, out this.uidev);
-            CanWrite = err == 0;
-            return (ERRNO)(-err);
-        }
+        public ERRNO Initialize() => libevdev_uinput_create_from_device(this.device, out this.uidev);
 
         public void Dispose()
         {
@@ -39,42 +40,34 @@ namespace OpenTabletDriver.Native.Linux.Evdev
         {
             if (_isDisposed) return;
 
-            CanWrite = false;
+            if (uidev is { IsInvalid: false })
+                uidev.Dispose();
+            uidev = null;
 
-            if (this.uidev != IntPtr.Zero)
-            {
-                libevdev_uinput_destroy(this.uidev);
-                this.uidev = IntPtr.Zero;
-                this.device = IntPtr.Zero;
-            }
+            if (device is { IsInvalid: false })
+                device.Dispose();
 
             _isDisposed = true;
         }
 
         ~EvdevDevice() => Dispose(false);
 
-        public void EnableProperty(InputProperty prop) => libevdev_enable_property(this.device, (uint)prop);
+        public void EnableProperty(InputProperty prop) => libevdev_enable_property(this.device, prop);
 
-        public void EnableType(EventType type) => libevdev_enable_event_type(this.device, (uint)type);
+        public void EnableType(EventType type) => libevdev_enable_event_type(this.device, type);
 
-        public void EnableCode(EventType type, EventCode code) => libevdev_enable_event_code(this.device, (uint)type, (uint)code, IntPtr.Zero);
+        public void EnableCode(EventType type, EventCode code) => libevdev_enable_event_code(this.device, type, code);
         public void EnableCodes(EventType type, params EventCode[] codes)
         {
             foreach (var code in codes)
                 EnableCode(type, code);
         }
 
-        public void EnableCustomCode(EventType type, EventCode code, IntPtr ptr) => libevdev_enable_event_code(this.device, (uint)type, (uint)code, ptr);
+        public void EnableAbsCode(EventCode code, input_absinfo absinfo) => libevdev_enable_event_code_abs(this.device, code, absinfo);
 
-        public void EnableTypeCodes(EventType type, params EventCode[] codes)
+        public ERRNO Write(EventType type, EventCode code, int value)
         {
-            EnableType(type);
-            EnableCodes(type, codes);
-        }
-
-        public int Write(EventType type, EventCode code, int value)
-        {
-            return CanWrite ? libevdev_uinput_write_event(this.uidev, (uint)type, (uint)code, value) : int.MinValue;
+            return CanWrite ? libevdev_uinput_write_event(this.uidev, type, code, value) : throw new InvalidOperationException("Unable to write to an unavailable device");
         }
 
         public bool Sync()

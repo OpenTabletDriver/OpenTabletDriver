@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 using OpenTabletDriver.Native.Linux;
 using OpenTabletDriver.Native.Linux.Evdev;
@@ -10,28 +9,23 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
 {
     public class EvdevAbsolutePointer : EvdevVirtualMouse, IAbsolutePointer
     {
-        public unsafe EvdevAbsolutePointer()
+        public EvdevAbsolutePointer()
         {
             Device = new EvdevDevice("OpenTabletDriver Virtual Tablet");
-
-            Device.EnableType(EventType.EV_ABS);
-            Device.EnableType(EventType.EV_REL);
 
             var xAbs = new input_absinfo
             {
                 maximum = (int)DesktopInterop.VirtualScreen.Width
             };
-            input_absinfo* xPtr = &xAbs;
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_X, (IntPtr)xPtr);
+            Device.EnableAbsCode(EventCode.ABS_X, xAbs);
 
             var yAbs = new input_absinfo
             {
                 maximum = (int)DesktopInterop.VirtualScreen.Height
             };
-            input_absinfo* yPtr = &yAbs;
-            Device.EnableCustomCode(EventType.EV_ABS, EventCode.ABS_Y, (IntPtr)yPtr);
+            Device.EnableAbsCode(EventCode.ABS_Y, yAbs);
 
-            Device.EnableTypeCodes(
+            Device.EnableCodes(
                 EventType.EV_KEY,
                 EventCode.BTN_LEFT,
                 EventCode.BTN_MIDDLE,
@@ -40,7 +34,7 @@ namespace OpenTabletDriver.Desktop.Interop.Input.Absolute
                 EventCode.BTN_EXTRA
             );
 
-            Device.EnableTypeCodes(
+            Device.EnableCodes(
                 EventType.EV_REL,
                 EventCode.REL_WHEEL,
                 EventCode.REL_WHEEL_HI_RES,

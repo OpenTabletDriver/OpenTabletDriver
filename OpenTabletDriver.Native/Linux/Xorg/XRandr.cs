@@ -1,16 +1,17 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+
+#nullable enable
 
 namespace OpenTabletDriver.Native.Linux.Xorg
 {
-    using Display = IntPtr;
-    using Window = IntPtr;
-
-    public static class XRandr
+    public static partial class XRandr
     {
         private const string libXRandr = "libXrandr.so.2";
 
-        [DllImport(libXRandr, EntryPoint = "XRRGetMonitors")]
-        public unsafe extern static XRRMonitorInfo* XRRGetMonitors(Display dpy, Window window, bool get_active, out int nmonitors);
+        [LibraryImport(libXRandr, EntryPoint = "XRRGetMonitors")]
+        [return: MarshalUsing(CountElementName = "nmonitors")]
+        public static partial XRRMonitorInfo[] XRRGetMonitors(XLib.XLibDisplayHandle dpy, XLib.XLibWindowHandle window, [MarshalAs(UnmanagedType.Bool)] bool get_active, out int nmonitors);
     }
 }
