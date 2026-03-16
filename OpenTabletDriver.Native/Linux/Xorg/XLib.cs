@@ -13,7 +13,7 @@ namespace OpenTabletDriver.Native.Linux.Xorg
         private static readonly object Lock = new object();
 
         [DllImport(libX11, EntryPoint = "XOpenDisplay")]
-        private extern unsafe static IntPtr sys_XOpenDisplay(char* display);
+        private static extern unsafe IntPtr sys_XOpenDisplay(char* display);
         public static unsafe IntPtr XOpenDisplay(char* display)
         {
             lock (Lock)
@@ -21,7 +21,7 @@ namespace OpenTabletDriver.Native.Linux.Xorg
         }
 
         [DllImport(libX11, EntryPoint = "XCloseDisplay")]
-        public extern static int XCloseDisplay(IntPtr display);
+        public static extern int XCloseDisplay(IntPtr display);
 
         [DllImport(libX11, EntryPoint = "XDefaultRootWindow")]
         public static extern Window XDefaultRootWindow(Display display);

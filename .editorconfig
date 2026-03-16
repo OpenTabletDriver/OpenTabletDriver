@@ -49,6 +49,7 @@ resharper_can_simplify_dictionary_lookup_with_try_get_value_highlighting=warning
 
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
 dotnet_style_readonly_field = true:warning
+csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async:warning
 
 [*.{sh,md,csproj,json,yml}]
 indent_size = 2

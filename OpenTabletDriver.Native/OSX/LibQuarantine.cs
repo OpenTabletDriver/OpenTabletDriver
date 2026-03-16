@@ -2,11 +2,11 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.OSX
 {
-    static public class LibQuarantine
+    public static class LibQuarantine
     {
         private const string QtLib = "/usr/lib/system/libquarantine.dylib";
 
         [DllImport(QtLib)]
-        static public extern int responsibility_get_pid_responsible_for_pid(int pid);
+        public static extern int responsibility_get_pid_responsible_for_pid(int pid);
     }
 }

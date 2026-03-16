@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Native.Windows.USB
 
         public const int MaxSize = 255 + 2;
 
-        public unsafe static string GetString(StringDescriptor* descriptor)
+        public static unsafe string GetString(StringDescriptor* descriptor)
         {
             if (descriptor->bDescriptorType != DescriptorType.StringDescriptor && descriptor->bLength != 0)
                 throw new IOException($"Invalid descriptor type '{descriptor->bDescriptorType}'. Expected '{DescriptorType.StringDescriptor}'");
@@ -28,7 +28,7 @@ namespace OpenTabletDriver.Native.Windows.USB
             return deviceString;
         }
 
-        public unsafe static byte[] GetRaw(StringDescriptor* descriptor)
+        public static unsafe byte[] GetRaw(StringDescriptor* descriptor)
         {
             return new ReadOnlySpan<byte>(descriptor, descriptor->bLength).ToArray();
         }

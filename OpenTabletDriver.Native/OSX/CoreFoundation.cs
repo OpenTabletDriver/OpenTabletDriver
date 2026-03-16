@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace OpenTabletDriver.Native.OSX
 {
-    static public class CoreFoundation
+    public static class CoreFoundation
     {
         private const string CFLib = "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation";
         private static readonly IntPtr handle = LibSystem.dlopen(CFLib, 0);

@@ -10,7 +10,7 @@ using OpenTabletDriver.Native.OSX.IOkit;
 
 namespace OpenTabletDriver.UX.MacOS
 {
-    static public class PermissionHelper
+    public static class PermissionHelper
     {
         public static bool HasPermissions()
         {
