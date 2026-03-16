@@ -12,12 +12,12 @@ namespace OpenTabletDriver.Configurations.Parsers.TenMoon
 
             Position = new Vector2
             {
-                X = report[1] << 8 | report[2],
-                Y = Math.Max((short)(report[3] << 8 | report[4]), (short)0)
+                X = (report[1] << 8) | report[2],
+                Y = Math.Max((short)((report[3] << 8) | report[4]), (short)0)
             };
 
             var buttonPressed = (report[9] & 6) != 0;
-            var prePressure = report[5] << 8 | report[6];
+            var prePressure = (report[5] << 8) | report[6];
             Pressure = (uint)(0x0672 - (prePressure - (buttonPressed ? 50 : 0)));
 
             PenButtons =

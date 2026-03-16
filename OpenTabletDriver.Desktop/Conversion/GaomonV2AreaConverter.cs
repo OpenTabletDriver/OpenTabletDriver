@@ -21,10 +21,10 @@ namespace OpenTabletDriver.Desktop.Conversion
         {
             var digitizer = tablet.Properties.Specifications.Digitizer;
 
-            var oWidth = (iWidth / digitizer.MaxX) * digitizer.Width;
-            var oHeight = (iHeight / digitizer.MaxY) * digitizer.Height;
-            var offsetX = (x / digitizer.MaxX) * digitizer.Width + (oWidth / 2);
-            var offsetY = (x / digitizer.MaxY) * digitizer.Height + (oHeight / 2);
+            var oWidth = iWidth / digitizer.MaxX * digitizer.Width;
+            var oHeight = iHeight / digitizer.MaxY * digitizer.Height;
+            var offsetX = (x / digitizer.MaxX * digitizer.Width) + (oWidth / 2);
+            var offsetY = (x / digitizer.MaxY * digitizer.Height) + (oHeight / 2);
 
             return new Area((float)oWidth, (float)oHeight, new Vector2((float)offsetX, (float)offsetY), 0f);
         }

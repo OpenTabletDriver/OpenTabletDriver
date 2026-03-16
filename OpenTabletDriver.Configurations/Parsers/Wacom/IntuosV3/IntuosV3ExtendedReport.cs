@@ -12,8 +12,8 @@ namespace OpenTabletDriver.Configurations.Parsers.Wacom.IntuosV3
 
             Position = new Vector2
             {
-                X = Unsafe.ReadUnaligned<ushort>(ref report[3]) | report[5] << 16,
-                Y = Unsafe.ReadUnaligned<ushort>(ref report[6]) | report[8] << 16
+                X = Unsafe.ReadUnaligned<ushort>(ref report[3]) | (report[5] << 16),
+                Y = Unsafe.ReadUnaligned<ushort>(ref report[6]) | (report[8] << 16)
             };
 
             Tilt = new Vector2

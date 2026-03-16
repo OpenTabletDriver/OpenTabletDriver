@@ -21,7 +21,7 @@ namespace OpenTabletDriver.UX.Tools
         public static string ToHexString(byte[] value)
         {
             if (value is byte[] array)
-                return "0x" + BitConverter.ToString(array).Replace("-", " 0x") ?? string.Empty;
+                return ("0x" + BitConverter.ToString(array).Replace("-", " 0x")) ?? string.Empty;
             else
                 return string.Empty;
         }

@@ -15,7 +15,7 @@ namespace OpenTabletDriver.Desktop.Reflection
         /// <returns>True if adding the service was successful, otherwise false.</returns>
         public bool AddService<T>(Func<T> value)
         {
-            return services.TryAdd(typeof(T), (value as Func<object>));
+            return services.TryAdd(typeof(T), value as Func<object>);
         }
 
         /// <summary>
